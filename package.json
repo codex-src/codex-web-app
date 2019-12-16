@@ -1,0 +1,49 @@
+{
+  "name": "codex-app.js",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "DocumentTitle": "codex-src/documenttitle.js",
+    "debug.css": "codex-src/debug.css",
+    "material-colors.css": "codex-src/material-colors.css",
+    "minireset.css": "^0.0.6",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-feather": "^2.0.3",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.3.0",
+    "stylex": "codex-src/stylex.js",
+    "use-graphql": "codex-src/use-graphql.js",
+    "use-methods": "^0.5.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "test": "react-scripts test",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.5",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.7.2",
+    "prettier": "^1.19.1"
+  }
+}

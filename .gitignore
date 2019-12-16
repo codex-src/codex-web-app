@@ -1,0 +1,5 @@
+/node_modules
+/pkg
+
+.DS_Store
+yarn-error.log
