@@ -1,10 +1,12 @@
-import * as reducer from "./reducer"
+import * as SignInReducer from "./SignInReducer"
 import Errors from "components/Errors"
 import Feather from "components/Feather"
 import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
+import Input from "components/Input"
 import Overlay from "components/Overlay"
 import React from "react"
+import Status from "components/Status"
 import stylex from "stylex"
 import UI from "components/UI"
 import useMethods from "use-methods"
@@ -13,7 +15,7 @@ import User from "components/User"
 function SignIn(props) {
 	const [, { login }] = React.useContext(User.Context)
 
-	const [state, dispatch] = useMethods(reducer.reducer, reducer.initialState)
+	const [state, dispatch] = useMethods(SignInReducer.reducer, SignInReducer.initialState)
 
 	const [{ fetching }, createSession] = GraphQL.useLazyMutation(`
 		mutation CreateSession($username: String!, $password: String!) {
@@ -50,18 +52,7 @@ function SignIn(props) {
 	}
 
 	return (
-		<Overlay.Overlay>
-
-			{/* Back: */}
-			<Overlay.ButtonList>
-				<div style={stylex("absolute -l -t")}>
-					<Overlay.ButtonItem>
-						<Overlay.Icon icon={Feather.ArrowLeft} />
-					</Overlay.ButtonItem>
-				</div>
-			</Overlay.ButtonList>
-
-			{/* Form: */}
+		<Overlay>
 			<div style={stylex("p-x:32 p-y:128 flex -r -x:center")}>
 				<div style={stylex("w:320")}>
 					<form onSubmit={asyncHandleSubmit}>
@@ -75,12 +66,54 @@ function SignIn(props) {
 							</UI.StyledH2>
 						</header>
 
-						{/* ... */}
+						<Input.Label style={stylex("m-y:16")}>
+							Username
+							<Input.Text
+								value={state.username}
+								onChange={e => dispatch.setUsername(e.target.value)}
+								autoComplete="current-username"
+							/>
+						</Input.Label>
+
+						<Input.Label style={stylex("m-y:16")}>
+							Password
+							<Input.WithShow show={state.show} setShow={dispatch.setShow}>
+								<Input.Password
+									value={state.password}
+									onChange={e => dispatch.setPassword(e.target.value)}
+									autoComplete="current-password"
+								/>
+							</Input.WithShow>
+						</Input.Label>
+
+						{state.info && (
+							<Status.Info style={stylex("m-t:40 m-b:-24")}>
+								{state.info}
+							</Status.Info>
+						)}
+
+						<Input.Submit style={stylex("m-t:40 m-b:16")}>
+							{!fetching ? (
+								"Sign in"
+							) : (
+								"Loading…"
+							)}
+						</Input.Submit>
+
+						{!state.warn ? (
+							<Input.Nevermind style={stylex("m-t:-16")} to="/reset-password">
+								I forgot my password
+							</Input.Nevermind>
+						) : (
+							<Status.Warn style={stylex("m-t:16")}>
+								{state.warn}
+							</Status.Warn>
+						)}
 
 					</form>
 				</div>
 			</div>
-		</Overlay.Overlay>
+		</Overlay>
 	)
 }
 
