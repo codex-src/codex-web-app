@@ -21,52 +21,53 @@ const Providers = props => (
 	</Router.BrowserRouter>
 )
 
+const Codex = title => `${title} - Codex`
+
 const App = props => (
 	<Providers>
 		<div style={stylex("flex -c -y:between h:max")}>
 			<div>
 				<Nav />
-				{/* FIXME: `Router.Switch`. */}
-				<main style={stylex("pre-wrap")}>
-					{`hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-hello
-`}
-				</main>
+				<Router.Switch>
+
+					<User.UnprotectedRoute
+						path="/our-story"
+						exact
+						title={Codex("Our story")}
+						component={props => "TODO"}
+					/>
+					<User.UnprotectedRoute
+						path="/features"
+						exact
+						title={Codex("Features")}
+						component={props => "TODO"}
+					/>
+					<User.UnprotectedRoute
+						path="/pricing"
+						exact
+						title={Codex("Pricing")}
+						component={props => "TODO"}
+					/>
+					<User.UnprotectedRoute
+						path="/faq"
+						exact
+						title={Codex("FAQ")}
+						component={props => "TODO"}
+					/>
+					<User.UnprotectedRoute
+						path="/sign-in"
+						exact
+						title={Codex("Sign in")}
+						component={props => "TODO"}
+					/>
+					<User.UnprotectedRoute
+						path="/sign-up"
+						exact
+						title={Codex("Sign up")}
+						component={props => "TODO"}
+					/>
+
+				</Router.Switch>
 			</div>
 			<Footer />
 		</div>

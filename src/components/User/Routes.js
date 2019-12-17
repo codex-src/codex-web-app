@@ -12,8 +12,8 @@ export const Route = ({ title, ...props }) => (
 )
 
 // `UnprotectedRoute` guards authenticated users.
-export function UnprotectedRoute({ title, ...props }) {
-	const [state] = React.useContext(Context)
+export function UnprotectedRoute(props) {
+	const [state] = React.useContext(Context.Context)
 
 	if (state.isAuth) {
 		return <Router.Redirect to="/" />
@@ -22,8 +22,8 @@ export function UnprotectedRoute({ title, ...props }) {
 }
 
 // `ProtectedRoute` guards unauthenticated users.
-export function ProtectedRoute({ title, ...props }) {
-	const [state] = React.useContext(Context)
+export function ProtectedRoute(props) {
+	const [state] = React.useContext(Context.Context)
 
 	if (!state.isAuth) {
 		return <Router.Redirect to="/sign-in" />

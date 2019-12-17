@@ -51,12 +51,17 @@ const Nav = props => (
 
 				{/* RHS */}
 				<NavList>
-					<NavItem to="/#features">
+					<NavItem to="/our-story">
+						<Text>
+							Our story
+						</Text>
+					</NavItem>
+					<NavItem to="/features">
 						<Text>
 							Features
 						</Text>
 					</NavItem>
-					<NavItem to="/#pricing">
+					<NavItem to="/pricing">
 						<Text>
 							Pricing
 						</Text>

@@ -62,11 +62,6 @@ const Footer = props => (
 						Contribute
 					</Text>
 				</FooterItem>
-				<FooterItem to="/faq">
-					<Text>
-						FAQ
-					</Text>
-				</FooterItem>
 				<FooterItem to="/support">
 					<Text>
 						Support
