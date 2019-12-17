@@ -1,9 +1,8 @@
+import * as StatusDot from "./StatusDot"
 import React from "react"
 import Router from "components/Router"
-import StatusDot from "./StatusDot"
 import stylex from "stylex"
 
-// 1.484375%
 const Text = ({ style, ...props }) => (
 	<p style={{ ...stylex("fw:700 fs:15 lh:100% c:gray-200"), ...style }} {...props}>
 		{props.children}
@@ -44,7 +43,7 @@ const Footer = props => (
 			<FooterList>
 				<FooterItem to="/systems">
 					<Text>
-						<StatusDot />{" "}
+						<StatusDot.Info />{" "}
 						&nbsp;Systems
 					</Text>
 				</FooterItem>
@@ -84,7 +83,7 @@ const Footer = props => (
 			<FooterList>
 				<FooterItem>
 					<CopyrightText>
-						© 2020 Codex, Inc.
+						© 2019 Codex, Inc.
 					</CopyrightText>
 				</FooterItem>
 			</FooterList>
