@@ -9,28 +9,27 @@ const Text = ({ style, ...props }) => (
 	</p>
 )
 
+// CTA: Call to action.
+const CTAButton = props => (
+	<div style={{ ...stylex("p-x:8 p-y:10 br:2"), boxShadow: "0 0 0 1px hsla(var(--blue-a400), 0.5)" }}>
+		{props.children}
+	</div>
+)
+
 function NavItem(props) {
 	let Wrapper = newProps => <div {...newProps} />
 	if (props.to) {
 		Wrapper = newProps => <Router.Link {...newProps} />
 	}
 	return (
-		<Wrapper style={stylex("p-x:8 flex -r -y:center h:max")}>
+		<Wrapper style={stylex("p-x:8 flex -r -y:center h:max")} {...props}>
 			{props.children}
 		</Wrapper>
 	)
 }
 
-const NavItemCTA = props => (
-	<NavItem>
-		<div style={{ ...stylex("p-x:8 p-y:10 br:2"), boxShadow: "0 0 0 1px hsla(var(--blue-a400), 0.5)" }}>
-			{props.children}
-		</div>
-	</NavItem>
-)
-
 const NavList = props => (
-	<div style={stylex("m-x:-8 flex -r")} {...props}>
+	<div style={stylex("m-x:-8 flex -r")}>
 		{props.children}
 	</div>
 )
@@ -62,16 +61,18 @@ const Nav = props => (
 							Pricing
 						</Text>
 					</NavItem>
-					<NavItem to="/login">
+					<NavItem to="/sign-in">
 						<Text>
 							Our story
 						</Text>
 					</NavItem>
-					<NavItemCTA to="/Sign up now">
-						<Text style={stylex("c:blue-a400")}>
-							Sign up now
-						</Text>
-					</NavItemCTA>
+					<NavItem to="/sign-up">
+						<CTAButton>
+							<Text style={stylex("c:blue-a400")}>
+								Sign up now
+							</Text>
+						</CTAButton>
+					</NavItem>
 				</NavList>
 
 			</div>
