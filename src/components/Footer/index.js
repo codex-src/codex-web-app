@@ -78,7 +78,7 @@ const Footer = props => (
 			<FooterList>
 				<FooterItem>
 					<CopyrightText>
-						© 2019 Codex, Inc.
+						© Codex
 					</CopyrightText>
 				</FooterItem>
 			</FooterList>

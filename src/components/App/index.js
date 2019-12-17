@@ -11,15 +11,23 @@ const client = new GraphQL.Client({
 	fetchGraphQL,
 })
 
-const App = props => (
+const Providers = props => (
 	<Router.BrowserRouter>
 		<GraphQL.Provider client={client}>
 			<User.Provider>
-				<div style={stylex("flex -c -y:between h:max")}>
-					<div>
-						<Nav />
-						<main style={stylex("pre-wrap")}>
-							{`hello
+				{props.children}
+			</User.Provider>
+		</GraphQL.Provider>
+	</Router.BrowserRouter>
+)
+
+const App = props => (
+	<Providers>
+		<div style={stylex("flex -c -y:between h:max")}>
+			<div>
+				<Nav />
+				<main style={stylex("pre-wrap")}>
+					{`hello
 hello
 hello
 hello
@@ -57,13 +65,11 @@ hello
 hello
 hello
 `}
-						</main>
-					</div>
-					<Footer />
-				</div>
-			</User.Provider>
-		</GraphQL.Provider>
-	</Router.BrowserRouter>
+				</main>
+			</div>
+			<Footer />
+		</div>
+	</Providers>
 )
 
 export default App
