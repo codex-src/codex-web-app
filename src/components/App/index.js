@@ -30,6 +30,7 @@ const App = props => (
 				<Nav />
 				<Router.Switch>
 
+					{/* Unprotected: */}
 					<User.UnprotectedRoute
 						path="/our-story"
 						exact
@@ -65,6 +66,15 @@ const App = props => (
 						exact
 						title={Codex("Sign up")}
 						component={props => "TODO"}
+					/>
+
+					{/* Protected: */}
+					{/* ... */}
+
+					<User.Route
+						path="/"
+						title={Codex("404")}
+						component={props => "Page not found"}
 					/>
 
 				</Router.Switch>
