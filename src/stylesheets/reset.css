@@ -1,0 +1,8 @@
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-size-adjust: 100%; -moz-tab-size: 4; tab-size: 4; }
+
+a { text-decoration: none; color: inherit; }
+button, input, textarea { margin: 0; padding: 0; text-align: inherit; font: inherit; letter-spacing: inherit; color: inherit; background: none; border: none; outline: none; }
+textarea { resize: none; }
+[contenteditable] { outline: none; }
+
+input::placeholder, textarea::placeholder { color: hsl(var(--gray, 0, 0%, 61.9608%)); }

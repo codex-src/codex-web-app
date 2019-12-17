@@ -4,6 +4,9 @@ import ReactDOM from "react-dom"
 
 import "minireset.css"
 import "material-colors.css"
+import "stylesheets/reset.css"
+import "stylesheets/index.css"
+import "stylesheets/focus.css"
 import "debug.css"
 
 ReactDOM.render(<App />, document.getElementById("root"))
