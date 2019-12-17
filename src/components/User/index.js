@@ -1,3 +1,9 @@
 import * as Context from "./Context"
+import * as Routes from "./Routes"
 
-export default Context
+const User = {
+	...Context,
+	...Routes,
+}
+
+export default User

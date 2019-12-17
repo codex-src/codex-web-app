@@ -26,6 +26,7 @@ const App = props => (
 		<div style={stylex("flex -c -y:between h:max")}>
 			<div>
 				<Nav />
+				{/* FIXME: `Router.Switch`. */}
 				<main style={stylex("pre-wrap")}>
 					{`hello
 hello
