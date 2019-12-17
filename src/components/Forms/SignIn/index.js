@@ -3,6 +3,7 @@ import Errors from "components/Errors"
 import Feather from "components/Feather"
 import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
+import Overlay from "components/Overlay"
 import React from "react"
 import stylex from "stylex"
 import UI from "components/UI"
@@ -49,69 +50,39 @@ function SignIn(props) {
 	}
 
 	return (
-		<Overlay>
+		<Overlay.Overlay>
 
-			<ButtonList>
+			{/* Back: */}
+			<Overlay.ButtonList>
 				<div style={stylex("absolute -l -t")}>
-					<ButtonItem>
-						<Icon icon={Feather.ArrowLeft} />
-					</ButtonItem>
+					<Overlay.ButtonItem>
+						<Overlay.Icon icon={Feather.ArrowLeft} />
+					</Overlay.ButtonItem>
 				</div>
-			</ButtonList>
+			</Overlay.ButtonList>
 
-			<FormContainer>
-				<form onSubmit={asyncHandleSubmit}>
+			{/* Form: */}
+			<div style={stylex("p-x:32 p-y:128 flex -r -x:center")}>
+				<div style={stylex("w:320")}>
+					<form onSubmit={asyncHandleSubmit}>
 
-					<header style={stylex("m-b:40")}>
-						<UI.StyledH1 style={stylex("center")}>
-							Sign in
-						</UI.StyledH1>
-						<UI.StyledH2 style={stylex("center")}>
-							to continue with <span style={stylex("c:blue-a400")}>Codex</span>
-						</UI.StyledH2>
-					</header>
+						<header style={stylex("m-b:40")}>
+							<UI.StyledH1 style={stylex("center")}>
+								Sign in
+							</UI.StyledH1>
+							<UI.StyledH2 style={stylex("center")}>
+								to continue with <span style={stylex("c:blue-a400")}>Codex</span>
+							</UI.StyledH2>
+						</header>
 
-					{/* ... */}
+						{/* ... */}
 
-				</form>
-			</FormContainer>
-		</Overlay>
+					</form>
+				</div>
+			</div>
+		</Overlay.Overlay>
 	)
 }
-
-const Icon = ({ icon: Icon, style, ...props }) => (
-	<Icon style={{ ...stylex("wh:20 sw:500"), ...style }} {...props} />
-)
-
-const ButtonItem = ({ style, ...props }) => (
-	<div style={{ ...stylex("m:-20 p:20 flex -r :center pointer"), ...style }} {...props}>
-		{props.children}
-	</div>
-)
-
-const ButtonList = props => (
-	<div style={stylex("absolute -x -t")}>
-		<div style={stylex("p:16 flex -r -x:center")}>
-			<div style={stylex("relative w:1280")}>
-				{props.children}
-			</div>
-		</div>
-	</div>
-)
-
-const FormContainer = props => (
-	<div style={stylex("p-x:32 p-y:128 flex -r -x:center")}>
-		<div style={stylex("w:320")}>
-			{props.children}
-		</div>
-	</div>
-)
-
-const Overlay = props => (
-	<aside style={stylex("absolute -x -y b:white")}>
-		{props.children}
-	</aside>
-)
 
 export default SignIn
 

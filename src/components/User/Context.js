@@ -1,4 +1,4 @@
-import * as reducer from "./reducer"
+import * as ContextReducer from "./ContextReducer"
 import Errors from "components/Errors"
 import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
@@ -44,7 +44,7 @@ function Fetcher(props) {
 }
 
 export function Provider(props) {
-	const [state, dispatch] = useMethods(reducer.reducer, reducer.initialState)
+	const [state, dispatch] = useMethods(ContextReducer.reducer, ContextReducer.initialState)
 
 	const { Provider } = Context
 	return (

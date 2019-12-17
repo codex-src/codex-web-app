@@ -1,4 +1,5 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import stylex from "stylex"
 
 export const Icon = ({ icon: Icon, style, ...props }) => (
@@ -21,9 +22,21 @@ export const ButtonList = props => (
 	</div>
 )
 
-// FIXME: Add `useEffect` for `#root`.
-export const Overlay = props => (
-	<aside style={stylex("absolute -x -y b:white")}>
-		{props.children}
-	</aside>
-)
+// export const Overlay = props => (
+// 	<aside style={stylex("absolute -x -y b:white z:max")}>
+// 		{props.children}
+// 	</aside>
+// )
+
+export function Overlay(props) {
+	React.useEffect(() => {
+		const root = document.getElementById("root")
+		root.style.display = "none"
+		return () => {
+			root.style.display = ""
+		}
+	}, [])
+
+	const root2 = document.getElementById("root2")
+	return ReactDOM.createPortal(props.children, root2)
+}
