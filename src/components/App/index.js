@@ -1,5 +1,6 @@
 import fetchGraphQL from "./fetchGraphQL"
 import Footer from "components/Footer"
+import Forms from "components/Forms"
 import GraphQL from "use-graphql"
 import Nav from "components/Nav"
 import PageNotFound from "./PageNotFound"
@@ -62,7 +63,7 @@ const App = props => (
 								path="/sign-in"
 								exact
 								title={Codex("Sign in")}
-								component={props => "TODO"}
+								component={Forms.SignIn}
 							/>
 							<User.UnprotectedRoute
 								path="/sign-up"
