@@ -2,9 +2,8 @@ import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
 
-// Extends.
 const Text = ({ style, ...props }) => (
-	<p style={{ ...stylex("fs:15 lh:100% c:gray-800"), ...style }} {...props}>
+	<p style={{ ...stylex("pre fs:15 lh:100% c:gray-800"), ...style }} {...props}>
 		{props.children}
 	</p>
 )
@@ -16,10 +15,12 @@ const CTAButton = props => (
 	</div>
 )
 
+// FIXME: `jsx-a11y/anchor-has-content`.
 function NavItem(props) {
 	let Wrapper = newProps => <div {...newProps} />
-	if (props.to) {
-		Wrapper = newProps => <Router.Link {...newProps} />
+	if (props.to || props.href) {
+		Wrapper = newProps => props.to ? <Router.Link {...newProps} />
+			: <a {...newProps} />
 	}
 	return (
 		<Wrapper style={stylex("p-x:8 flex -r -y:center h:max")} {...props}>
@@ -37,8 +38,8 @@ const NavList = props => (
 // TODO: Add authenticated `nav`.
 const Nav = props => (
 	<nav style={stylex("sticky -x -t")}>
-		<div style={stylex("p-x:32 flex -r -x:center")}>
-			<div style={{ ...stylex("flex -r -x:between w:1024 h:64"), boxShadow: "inset 0 -1px hsl(var(--gray-200))" }}>
+		<div style={stylex("p-x:32 flex -r -x:center b:white")}>
+			<div style={{ ...stylex("flex -r -x:between w:1024 h:80"), boxShadow: "inset 0 -1px hsl(var(--gray-200))" }}>
 
 				{/* LHS */}
 				<NavList>
@@ -63,7 +64,7 @@ const Nav = props => (
 					</NavItem>
 					<NavItem to="/sign-in">
 						<Text>
-							Our story
+							Login
 						</Text>
 					</NavItem>
 					<NavItem to="/sign-up">
