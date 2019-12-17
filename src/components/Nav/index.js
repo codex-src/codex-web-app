@@ -3,7 +3,7 @@ import Router from "components/Router"
 import stylex from "stylex"
 
 const Text = ({ style, ...props }) => (
-	<p style={{ ...stylex("pre fs:15 lh:100% c:gray-800"), ...style }} {...props}>
+	<p style={{ ...stylex("fs:15 lh:100% c:gray-800"), ...style }} {...props}>
 		{props.children}
 	</p>
 )

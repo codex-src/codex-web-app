@@ -3,14 +3,15 @@ import Router from "components/Router"
 import StatusDot from "./StatusDot"
 import stylex from "stylex"
 
+// 1.484375%
 const Text = ({ style, ...props }) => (
-	<p style={{ ...stylex("pre fw:700 fs:11.25 lh:100% c:blue-a400"), ...style }} {...props}>
+	<p style={{ ...stylex("fw:700 fs:15 lh:100% c:gray-200"), ...style }} {...props}>
 		{props.children}
 	</p>
 )
 
 const CopyrightText = ({ style, ...props }) => (
-	<p style={{ ...stylex("pre fs:15 lh:100% c:gray"), ...style }} {...props}>
+	<p style={{ ...stylex("fs:15 lh:100% c:gray"), ...style }} {...props}>
 		{props.children}
 	</p>
 )
@@ -35,18 +36,16 @@ const FooterList = props => (
 	</div>
 )
 
-// TODO: Add social media icons.
 const Footer = props => (
-	<footer style={{ ...stylex("flex -r -x:center"), boxShadow: "inset 0 1px hsl(var(--gray-200))" }} {...props}>
+	<footer style={stylex("flex -r -x:center b:gray-900")}>
 		<div style={stylex("p-x:32 flex -r -x:between w:1024 h:80")}>
 
 			{/* LHS */}
 			<FooterList>
-				{/* Idea: Add a pulse animation to the status dot. */}
-				<FooterItem to="/status">
+				<FooterItem to="/systems">
 					<Text>
 						<StatusDot />{" "}
-						&nbsp;STATUS
+						&nbsp;Systems
 					</Text>
 				</FooterItem>
 				<FooterItem to="/api">
@@ -56,12 +55,12 @@ const Footer = props => (
 				</FooterItem>
 				<FooterItem to="https://github.com/codex-src">
 					<Text>
-						OPEN SOURCE
+						Open source
 					</Text>
 				</FooterItem>
 				<FooterItem to="/contribute">
 					<Text>
-						CONTRIBUTE
+						Contribute
 					</Text>
 				</FooterItem>
 				<FooterItem to="/faq">
@@ -71,12 +70,12 @@ const Footer = props => (
 				</FooterItem>
 				<FooterItem to="/support">
 					<Text>
-						SUPPORT
+						Support
 					</Text>
 				</FooterItem>
 				<FooterItem to="/feedback">
 					<Text>
-						FEEDBACK
+						Feedback
 					</Text>
 				</FooterItem>
 			</FooterList>
