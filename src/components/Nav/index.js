@@ -9,7 +9,7 @@ const Text = ({ style, ...props }) => (
 )
 
 const CTAButton = props => (
-	<div style={{ ...stylex("p-x:8 p-y:10 br:2"), boxShadow: "0 0 0 1px hsla(var(--blue-a400), 0.5)" }}>
+	<div style={{ ...stylex("p:10 br:2"), boxShadow: "0 0 0 1px hsla(var(--blue-a400), 0.5)" }}>
 		{props.children}
 	</div>
 )
@@ -38,7 +38,7 @@ const NavList = props => (
 const Nav = props => (
 	<nav style={stylex("sticky -x -t")}>
 		<div style={stylex("p-x:32 flex -r -x:center b:white")}>
-			<div style={{ ...stylex("flex -r -x:between w:1024 h:80"), boxShadow: "inset 0 -1px hsl(var(--gray-200))" }}>
+			<div style={stylex("flex -r -x:between w:1024 h:64")}>
 
 				{/* LHS */}
 				<NavList>
@@ -51,14 +51,19 @@ const Nav = props => (
 
 				{/* RHS */}
 				<NavList>
-					<NavItem to="/our-story">
+					<NavItem to="/#features">
 						<Text>
-							Our story
+							Features
 						</Text>
 					</NavItem>
-					<NavItem to="/pricing">
+					<NavItem to="/#pricing">
 						<Text>
 							Pricing
+						</Text>
+					</NavItem>
+					<NavItem to="/faq">
+						<Text>
+							FAQ
 						</Text>
 					</NavItem>
 					<NavItem to="/sign-in">
@@ -69,7 +74,7 @@ const Nav = props => (
 					<NavItem to="/sign-up">
 						<CTAButton>
 							<Text style={stylex("c:blue-a400")}>
-								Sign up now
+								Become a member
 							</Text>
 						</CTAButton>
 					</NavItem>

@@ -72,11 +72,6 @@ const Footer = props => (
 						Support
 					</Text>
 				</FooterItem>
-				<FooterItem to="/feedback">
-					<Text>
-						Feedback
-					</Text>
-				</FooterItem>
 			</FooterList>
 
 			{/* RHS */}
