@@ -8,14 +8,13 @@ const Text = ({ style, ...props }) => (
 	</p>
 )
 
-// CTA: Call to action.
 const CTAButton = props => (
 	<div style={{ ...stylex("p-x:8 p-y:10 br:2"), boxShadow: "0 0 0 1px hsla(var(--blue-a400), 0.5)" }}>
 		{props.children}
 	</div>
 )
 
-// FIXME: `jsx-a11y/anchor-has-content`.
+/* eslint-disable jsx-a11y/anchor-has-content */
 function NavItem(props) {
 	let Wrapper = newProps => <div {...newProps} />
 	if (props.to || props.href) {

@@ -14,7 +14,7 @@ const CopyrightText = ({ style, ...props }) => (
 	</p>
 )
 
-// FIXME: `jsx-a11y/anchor-has-content`.
+/* eslint-disable jsx-a11y/anchor-has-content */
 function FooterItem(props) {
 	let Wrapper = newProps => <div {...newProps} />
 	if (props.to || props.href) {
