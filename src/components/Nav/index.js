@@ -17,9 +17,9 @@ const CTAButton = props => (
 /* eslint-disable jsx-a11y/anchor-has-content */
 function NavItem(props) {
 	let Wrapper = newProps => <div {...newProps} />
-	if (props.to || props.href) {
-		Wrapper = newProps => props.to ? <Router.Link {...newProps} />
-			: <a {...newProps} />
+	if (props.to) {
+		Wrapper = newProps => props.to.startsWith("/") ? <Router.Link {...newProps} />
+			: <a href={props.to} {...{ ...newProps, to: undefined }} />
 	}
 	return (
 		<Wrapper style={stylex("p-x:8 flex -r -y:center h:max")} {...props}>

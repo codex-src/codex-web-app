@@ -1,0 +1,9 @@
+/* https://tipue.com/blog/css-pulse-buttons */
+.status-dot {
+	animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+	0%  { box-shadow: 0 0 0 0   hsla(var(--green-a400), 0.25); }
+	50% { box-shadow: 0 0 0 6px hsla(var(--green-a400), 0);    }
+}

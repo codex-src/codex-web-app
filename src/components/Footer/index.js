@@ -1,5 +1,6 @@
 import React from "react"
 import Router from "components/Router"
+import StatusDot from "./StatusDot"
 import stylex from "stylex"
 
 const Text = ({ style, ...props }) => (
@@ -17,9 +18,9 @@ const CopyrightText = ({ style, ...props }) => (
 /* eslint-disable jsx-a11y/anchor-has-content */
 function FooterItem(props) {
 	let Wrapper = newProps => <div {...newProps} />
-	if (props.to || props.href) {
-		Wrapper = newProps => props.to ? <Router.Link {...newProps} />
-			: <a {...newProps} />
+	if (props.to) {
+		Wrapper = newProps => props.to.startsWith("/") ? <Router.Link {...newProps} />
+			: <a href={props.to} {...{ ...newProps, to: undefined }} />
 	}
 	return (
 		<Wrapper style={stylex("p-x:8 flex -r -y:center h:max")} {...props}>
@@ -41,12 +42,24 @@ const Footer = props => (
 
 			{/* LHS */}
 			<FooterList>
-				<FooterItem href="https://github.com/codex-src">
+				{/* Idea: Add a pulse animation to the status dot. */}
+				<FooterItem to="/status">
+					<Text>
+						<StatusDot />{" "}
+						&nbsp;STATUS
+					</Text>
+				</FooterItem>
+				<FooterItem to="/api">
+					<Text>
+						API
+					</Text>
+				</FooterItem>
+				<FooterItem to="https://github.com/codex-src">
 					<Text>
 						OPEN SOURCE
 					</Text>
 				</FooterItem>
-				<FooterItem href="https://github.com/codex-src">
+				<FooterItem to="/contribute">
 					<Text>
 						CONTRIBUTE
 					</Text>
@@ -61,13 +74,18 @@ const Footer = props => (
 						SUPPORT
 					</Text>
 				</FooterItem>
+				<FooterItem to="/feedback">
+					<Text>
+						FEEDBACK
+					</Text>
+				</FooterItem>
 			</FooterList>
 
 			{/* RHS */}
 			<FooterList>
 				<FooterItem>
 					<CopyrightText>
-						© 2020 Codex. All rights reserved.
+						© 2020 Codex, Inc.
 					</CopyrightText>
 				</FooterItem>
 			</FooterList>
