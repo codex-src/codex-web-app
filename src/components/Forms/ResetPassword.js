@@ -5,7 +5,7 @@ import Errors       from "components/Errors"
 import Fragments    from "components/Fragments"
 import GraphQL      from "use-graphql"
 import Headers      from "components/Headers"
-import Inputs       from "components/Inputs"
+import Input        from "components/Input"
 import Overlay      from "components/Overlay"
 import React        from "react"
 import Status       from "components/Status"
@@ -75,43 +75,43 @@ function ResetPassword(props) {
 						</Headers.H2>
 					</header>
 
-					<Inputs.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex("m-y:16")}>
 						Username
-						<Inputs.Text
+						<Input.Text
 							value={state.username}
 							onChange={e => dispatch.setUsername(e.target.value)}
 							autoComplete="current-username"
 							spellCheck={false}
 						/>
-					</Inputs.Label>
+					</Input.Label>
 
-					<Inputs.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex("m-y:16")}>
 						Password and card last four
-						<Inputs.KeychainContainer>
-							<Inputs.Keychain
+						<Input.KeychainContainer>
+							<Input.Keychain
 								value={state.passcode}
 								onChange={e => dispatch.setPasscode(e.target.value)}
 								autoComplete="none"
 								spellCheck={false}
 							/>
-							<Inputs.Keychain
+							<Input.Keychain
 								value={state.lastFour}
 								onChange={e => dispatch.setLastFour(e.target.value)}
 								autoComplete="none"
 								spellCheck={false}
 							/>
-						</Inputs.KeychainContainer>
-					</Inputs.Label>
+						</Input.KeychainContainer>
+					</Input.Label>
 
-					<Inputs.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex("m-y:16")}>
 						New password
-						<Inputs.Text
+						<Input.Text
 							value={state.newPassword}
 							onChange={e => dispatch.setNewPassword(e.target.value)}
 							autoComplete="new-password"
 							spellCheck={false}
 						/>
-					</Inputs.Label>
+					</Input.Label>
 
 					{state.info && (
 						<Status.Info style={stylex("m-t:40 m-b:-24")}>
@@ -119,9 +119,9 @@ function ResetPassword(props) {
 						</Status.Info>
 					)}
 
-					<Inputs.Submit style={stylex("m-t:40 m-b:16")} fetching={fetching}>
+					<Input.Submit style={stylex("m-t:40 m-b:16")} fetching={fetching}>
 						Sign in
-					</Inputs.Submit>
+					</Input.Submit>
 
 					{state.warn && (
 						<Status.Warn style={stylex("m-t:16")}>

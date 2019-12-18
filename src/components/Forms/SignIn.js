@@ -5,7 +5,7 @@ import Errors     from "components/Errors"
 import Fragments  from "components/Fragments"
 import GraphQL    from "use-graphql"
 import Headers    from "components/Headers"
-import Inputs     from "components/Inputs"
+import Input      from "components/Input"
 import Overlay    from "components/Overlay"
 import React      from "react"
 import Status     from "components/Status"
@@ -67,27 +67,27 @@ function SignIn(props) {
 						</Headers.H2>
 					</header>
 
-					<Inputs.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex("m-y:16")}>
 						Username
-						<Inputs.Text
+						<Input.Text
 							value={state.username}
 							onChange={e => dispatch.setUsername(e.target.value)}
 							autoComplete="current-username"
 							spellCheck={false}
 						/>
-					</Inputs.Label>
+					</Input.Label>
 
-					<Inputs.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex("m-y:16")}>
 						Password
-						<Inputs.WithShow show={state.show} setShow={dispatch.setShow}>
-							<Inputs.Password
+						<Input.WithShow show={state.show} setShow={dispatch.setShow}>
+							<Input.Password
 								value={state.password}
 								onChange={e => dispatch.setPassword(e.target.value)}
 								autoComplete="current-password"
 								spellCheck={false}
 							/>
-						</Inputs.WithShow>
-					</Inputs.Label>
+						</Input.WithShow>
+					</Input.Label>
 
 					{state.info && (
 						<Status.Info style={stylex("m-t:40 m-b:-24")}>
@@ -95,14 +95,14 @@ function SignIn(props) {
 						</Status.Info>
 					)}
 
-					<Inputs.Submit style={stylex("m-t:40 m-b:16")} fetching={fetching}>
+					<Input.Submit style={stylex("m-t:40 m-b:16")} fetching={fetching}>
 						Sign in
-					</Inputs.Submit>
+					</Input.Submit>
 
 					{!state.warn ? (
-						<Inputs.SubmitClickAway style={stylex("m-t:-16")} to="/reset-password">
+						<Input.SubmitClickAway style={stylex("m-t:-16")} to="/reset-password">
 							I forgot my password
-						</Inputs.SubmitClickAway>
+						</Input.SubmitClickAway>
 					) : (
 						<Status.Warn style={stylex("m-t:16")}>
 							{state.warn}

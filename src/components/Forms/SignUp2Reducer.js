@@ -1,33 +1,31 @@
-const months = {
-	0:  "January",
-	1:  "February",
-	2:  "March",
-	3:  "April",
-	4:  "May",
-	5:  "June",
-	6:  "July",
-	7:  "August",
-	8:  "September",
-	9:  "October",
-	10: "November",
-	11: "December",
-}
+const months = [
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December",
+]
+
+const newDate = () => ({
+	year:  "(loading…)",
+	month: "(loading…)",
+	day:   "(loading…)",
+})
 
 export const initialState = {
 	chargeMonth: -1,
-	nextMo: {
-		year:  "(loading…)",
-		month: "(loading…)",
-		day:   "(loading…)",
-	},
-	nextYr: {
-		year:  "(loading…)",
-		month: "(loading…)",
-		day:   "(loading…)",
-	},
-	info:     "",
-	warn:     "",
-	fetching: false,
+	nextMo:      newDate(),
+	nextYr:      newDate(),
+	info:        "",
+	warn:        "",
+	fetching:    false,
 }
 
 export const reducer = state => ({
@@ -37,8 +35,7 @@ export const reducer = state => ({
 	setNextYr(payload) {
 		state.nextYr = { ...payload }
 	},
-	setChargeMonth() {
-		// FIXME?
+	setChargeMo() {
 		// if (state.chargeMonth === 1) {
 		// 	return
 		// }
@@ -46,8 +43,7 @@ export const reducer = state => ({
 		state.chargeMonth = 1
 		state.info = `You will be charged $8 today and then on ${months[state.nextMo.month]} ${state.nextMo.day}.`
 	},
-	setChargeYear() {
-		// FIXME?
+	setChargeYr() {
 		// if (state.chargeMonth === 0) {
 		// 	return
 		// }

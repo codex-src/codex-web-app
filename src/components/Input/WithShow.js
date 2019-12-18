@@ -3,7 +3,7 @@ import React from "react"
 import stylex from "stylex"
 
 const ShowButton = ({ show, setShow, style, ...props }) => (
-	<Base.Button style={{ ...stylex("flex -r :center w:74.469 br:6"), ...style }} onClick={e => setShow(!show)}>
+	<Base.StyledButton style={{ ...stylex("flex -r :center w:74.469"), ...style }} onClick={e => setShow(!show)}>
 		<p style={stylex("fw:500 fs:12 ls:10% lh:100% c:gray")}>
 			{!show ? (
 				"SHOW"
@@ -11,7 +11,7 @@ const ShowButton = ({ show, setShow, style, ...props }) => (
 				"HIDE"
 			)}
 		</p>
-	</Base.Button>
+	</Base.StyledButton>
 )
 
 const WithShow = ({ show, setShow, ...props }) => (

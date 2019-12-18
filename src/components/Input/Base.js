@@ -11,7 +11,7 @@ export const Input = ({ style, ...props }) => (
 )
 
 export const StyledInput = ({ style, ...props }) => (
-	<Input style={{ ...stylex("p-x:16 h:48 br:6"), ...style }} {...props} />
+	<Input style={{ ...stylex("p-x:16 p-y:12 br:6"), ...style }} {...props} />
 )
 
 export const StyledInputWithBoxShadow = ({ style, ...props }) => (
@@ -22,4 +22,8 @@ export const Button = ({ style, ...props }) => (
 	<button style={{ ...stylex("block w:max"), ...style }} type="button" {...props}>
 		{props.children}
 	</button>
+)
+
+export const StyledButton = ({ style, ...props }) => (
+	<Button style={{ ...stylex("p-x:16 p-y:12 br:6"), ...style }} {...props} />
 )

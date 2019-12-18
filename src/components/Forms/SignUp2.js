@@ -4,7 +4,7 @@ import * as Stripe from "./Stripe"
 import Fragments from "components/Fragments"
 import GraphQL   from "use-graphql"
 import Headers   from "components/Headers"
-import Inputs    from "components/Inputs"
+import Input     from "components/Input"
 import invariant from "invariant"
 import Overlay   from "components/Overlay"
 import React     from "react"
@@ -29,7 +29,7 @@ function SignUpBilling({ state, dispatch, ...props }) {
 
 	React.useEffect(
 		React.useCallback(() => {
-			;(async () => {
+			(async () => {
 				const { errors, data } = await GraphQL.fetchAsGraphQL(`
 					query NextSubscriptionDate {
 						nextMo: nextMonth { ...date }
@@ -93,10 +93,29 @@ function SignUpBilling({ state, dispatch, ...props }) {
 						</Headers.H2>
 					</header>
 
-					<Inputs.Label style={stylex("m-y:32")}>
+					<Input.Label style={stylex("m-y:16")}>
+						Subscription
+						<Input.SubscriptionSelect>
+							<Input.SubscriptionOption
+								selected={state.chargeMonth === 1}
+								text="Charge me per month"
+								price="$8 per month"
+								onClick={dispatch.setChargeMo}
+							/>
+							<Input.SubscriptionOption
+								selected={state.chargeMonth === 0}
+								text="Charge me per year"
+								price="$80 per year"
+								discount="SAVE 20%"
+								onClick={dispatch.setChargeYr}
+							/>
+						</Input.SubscriptionSelect>
+					</Input.Label>
+
+					<Input.Label style={stylex("m-y:32")}>
 						Payment method
-						<Inputs.StripeCard />
-					</Inputs.Label>
+						<Input.StripeCard />
+					</Input.Label>
 
 					{state.info && (
 						<Status.Info style={stylex("m-t:40 m-b:-24")}>
@@ -104,9 +123,9 @@ function SignUpBilling({ state, dispatch, ...props }) {
 						</Status.Info>
 					)}
 
-					<Inputs.Submit style={stylex("m-t:40 m-b:16")} fetching={state.fetching}>
+					<Input.Submit style={stylex("m-t:40 m-b:16")} fetching={state.fetching}>
 						Sign up now
-					</Inputs.Submit>
+					</Input.Submit>
 
 					{state.warn && (
 						<Status.Warn style={stylex("m-t:16")}>
@@ -119,57 +138,5 @@ function SignUpBilling({ state, dispatch, ...props }) {
 		</Overlay>
 	)
 }
-
-// <header style={stylex("m-b:40")}>
-// 	<UI.StylisticHeader style={stylex("center")}>
-// 		Sign up
-// 	</UI.StylisticHeader>
-// 	<UI.StylisticSubheader style={stylex("center")}>
-// 		to continue with <span style={stylex("c:blue-a200")}>Codex</span>
-// 	</UI.StylisticSubheader>
-// </header>
-//
-// <UI.Label style={stylex("m-y:16")}>
-// 	Subscription
-// 	<UI.SubscriptionSelect>
-// 		<UI.SubscriptionOption
-// 			selected={state.chargeMonth === 1}
-// 			text="Charge me per month"
-// 			subtext="$8 per month"
-// 			onClick={dispatch.setChargeMonth}
-// 		/>
-// 		<UI.SubscriptionOption
-// 			selected={state.chargeMonth === 0}
-// 			text="Charge me per year"
-// 			subtext="$80 per year"
-// 			onClick={dispatch.setChargeYear}
-// 		/>
-// 	</UI.SubscriptionSelect>
-// </UI.Label>
-//
-// <UI.Label style={stylex("m-y:32")}>
-// 	Payment method
-// 	<UI.InputStripeCard />
-// </UI.Label>
-//
-// {state.info && (
-// 	<UI.StatusInfo style={stylex("m-t:40 m-b:-24")}>
-// 		{state.info}
-// 	</UI.StatusInfo>
-// )}
-//
-// <UI.InputSubmit style={stylex("m-t:40 m-b:16")}>
-// 	{!state.fetching ? (
-// 		"Sign up now"
-// 	) : (
-// 		"Loading…"
-// 	)}
-// </UI.InputSubmit>
-//
-// {state.warn && (
-// 	<UI.StatusWarn style={stylex("m-t:16")}>
-// 		{state.warn}
-// 	</UI.StatusWarn>
-// )}
 
 export default SignUpBilling

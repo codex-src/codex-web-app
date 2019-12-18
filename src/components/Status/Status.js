@@ -1,8 +1,8 @@
 import React from "react"
 import stylex from "stylex"
 
-const infoStyle = { background: "hsla(var(--blue-a400), 0.1)", boxShadow: "0 0 0 0.5px hsl(var(--blue-a400), 0.25)" }
-const warnStyle = { background:       "hsla(var(--red), 0.1)", boxShadow: "0 0 0 0.5px       hsl(var(--red), 0.25)" }
+const infoStyle = { background: "hsla(var(--blue-a400), 0.1)", boxShadow: "inset 0 0 0 0.5px hsl(var(--blue-a400), 0.25)" }
+const warnStyle = { background:       "hsla(var(--red), 0.1)", boxShadow: "inset 0 0 0 0.5px       hsl(var(--red), 0.25)" }
 
 const Text = ({ style, ...props }) => (
 	<p style={{ ...stylex("fw:500 fs:14", style), ...style }} {...props}>

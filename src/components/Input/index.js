@@ -1,10 +1,12 @@
-import * as Inputs from "./Inputs"
+import * as Input from "./Input"
+import * as Subscription from "./Subscription"
 import KeychainContainer from "./KeychainContainer"
 import Label from "./Label"
 import WithShow from "./WithShow"
 
 const exports = {
-	...Inputs,
+	...Input,
+	...Subscription,
 	KeychainContainer,
 	Label,
 	WithShow,

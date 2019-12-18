@@ -2,19 +2,7 @@ import * as Base from "./Base"
 import React from "react"
 import stylex from "stylex"
 
-// Compound component:
-//
-// <KeychainContainer>
-//   <Passcode
-//     ...
-//     ...
-//   />
-//   <Passcode
-//     ...
-//     ...
-//   />
-// </KeychainContainer>
-//
+// Compound component.
 const KeychainContainer = props => (
 	<div style={{ ...stylex("flex -r br:6"), ...Base.boxShadow }}>
 		{React.cloneElement(

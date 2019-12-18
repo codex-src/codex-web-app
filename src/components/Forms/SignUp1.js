@@ -1,7 +1,7 @@
 /* eslint-disable no-multi-spaces */
 import GraphQL      from "use-graphql"
 import Headers      from "components/Headers"
-import Inputs       from "components/Inputs"
+import Input        from "components/Input"
 import Overlay      from "components/Overlay"
 import React        from "react"
 import Status       from "components/Status"
@@ -63,39 +63,39 @@ function SignUp({ state, dispatch, ...props }) {
 						</Headers.H2>
 					</header>
 
-					<Inputs.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex("m-y:16")}>
 						Username
-						<Inputs.Text
+						<Input.Text
 							value={state.username}
 							onChange={e => dispatch.setUsername(e.target.value)}
 							autoComplete="new-username"
 							spellCheck={false}
 						/>
-					</Inputs.Label>
+					</Input.Label>
 
-					<Inputs.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex("m-y:16")}>
 						Password
-						<Inputs.WithShow show={state.show} setShow={dispatch.setShow}>
-							<Inputs.Password
+						<Input.WithShow show={state.show} setShow={dispatch.setShow}>
+							<Input.Password
 								value={state.password}
 								onChange={e => dispatch.setPassword(e.target.value)}
 								autoComplete="new-password"
 								spellCheck={false}
 							/>
-						</Inputs.WithShow>
-					</Inputs.Label>
+						</Input.WithShow>
+					</Input.Label>
 
-					<Inputs.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex("m-y:16")}>
 						Passcode
-						<Inputs.WithShow show={state.show} setShow={dispatch.setShow}>
-							<Inputs.Passcode
+						<Input.WithShow show={state.show} setShow={dispatch.setShow}>
+							<Input.Passcode
 								value={state.passcode}
 								onChange={e => dispatch.setPasscode(e.target.value)}
 								autoComplete="none"
 								spellCheck={false}
 							/>
-						</Inputs.WithShow>
-					</Inputs.Label>
+						</Input.WithShow>
+					</Input.Label>
 
 					{state.info && (
 						<Status.Info style={stylex("m-t:40 m-b:-24")}>
@@ -103,14 +103,14 @@ function SignUp({ state, dispatch, ...props }) {
 						</Status.Info>
 					)}
 
-					<Inputs.Submit style={stylex("m-t:40 m-b:16")}>
+					<Input.Submit style={stylex("m-t:40 m-b:16")}>
 						Continue
-					</Inputs.Submit>
+					</Input.Submit>
 
 					{!state.warn ? (
-						<Inputs.SubmitClickAway style={stylex("m-t:-16")} to="/reset-password">
+						<Input.SubmitClickAway style={stylex("m-t:-16")} to="/reset-password">
 							I have an account
-						</Inputs.SubmitClickAway>
+						</Input.SubmitClickAway>
 					) : (
 						<Status.Warn style={stylex("m-t:16")}>
 							{state.warn}
