@@ -60,16 +60,22 @@ const App = props => (
 								component={props => "TODO"}
 							/>
 							<User.UnprotectedRoute
+								path="/sign-up"
+								exact
+								title={Codex("Sign up")}
+								component={props => "TODO"}
+							/>
+							<User.UnprotectedRoute
 								path="/sign-in"
 								exact
 								title={Codex("Sign in")}
 								component={Forms.SignIn}
 							/>
 							<User.UnprotectedRoute
-								path="/sign-up"
+								path="/reset-password"
 								exact
-								title={Codex("Sign up")}
-								component={props => "TODO"}
+								title={Codex("Reset password")}
+								component={Forms.ResetPassword}
 							/>
 
 							<User.Route

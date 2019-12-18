@@ -15,6 +15,10 @@ export const Passcode = ({ style, ...props }) => (
 	<Base.StyledInput style={{ ...stylex("ls:25%"), ...style }} {...props} />
 )
 
+export const Keychain = ({ style, ...props }) => (
+	<Passcode style={{ ...stylex("center"), ...style }} {...props} />
+)
+
 export const Stripe = ({ style, ...props }) => (
 	<div id="card-element" style={{ ...stylex("p-x:16 p-y:14.4075 br:6"), ...Base.boxShadow, cursor: "text", ...style }} {...props} />
 )

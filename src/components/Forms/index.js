@@ -1,7 +1,9 @@
+import ResetPassword from "./ResetPassword"
 import SignIn from "./SignIn"
 
-const Forms = {
+const exports = {
+	ResetPassword,
 	SignIn,
 }
 
-export default Forms
+export default exports

@@ -15,10 +15,15 @@ import stylex from "stylex"
 //   />
 // </KeychainContainer>
 //
-// FIXME: `props`?
 function KeychainContainer(props) {
-	const clonedElementLHS = React.cloneElement(props.children[0], { style: stylex("br-r:0") })
-	const clonedElementRHS = React.cloneElement(props.children[1], { style: stylex("br-l:0") })
+	const clonedElementLHS = React.cloneElement(
+		props.children[0],
+		{ style: stylex("br-r:0") },
+	)
+	const clonedElementRHS = React.cloneElement(
+		props.children[1],
+		{ style: stylex("br-l:0") },
+	)
 
 	return (
 		<div style={{ ...stylex("flex -r br:6"), ...Base.boxShadow }}>
