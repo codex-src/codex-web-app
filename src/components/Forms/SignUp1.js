@@ -86,7 +86,7 @@ function SignUp({ state, dispatch, ...props }) {
 					</Input.Label>
 
 					<Input.Label style={stylex("m-y:16")}>
-						Passcode
+						Passcode (4-digit code)
 						<Input.WithShow show={state.show} setShow={dispatch.setShow}>
 							<Input.Passcode
 								value={state.passcode}

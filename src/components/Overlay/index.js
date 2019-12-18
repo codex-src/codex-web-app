@@ -8,7 +8,7 @@ import ReactDOM from "react-dom"
 // )
 
 function Overlay(props) {
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		const root = document.getElementById("root")
 		root.style.display = "none"
 		return () => {

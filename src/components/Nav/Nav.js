@@ -1,3 +1,4 @@
+import Feather from "components/Feather"
 import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
@@ -11,21 +12,21 @@ const Text = ({ style, ...props }) => (
 	</p>
 )
 
-const CTAButton = props => (
-	<div style={{ ...stylex("p:12 br:2"), boxShadow: "inset 0 0 0 1px hsla(var(--blue-a400), 0.5)" }}>
+const CTAButton = ({ style, ...props }) => (
+	<div style={{ ...stylex("p:12 br:2"), boxShadow: "inset 0 0 0 1px hsla(var(--blue-a400), 0.5)", ...style }} {...props}>
 		{props.children}
 	</div>
 )
 
 /* eslint-disable jsx-a11y/anchor-has-content */
-function NavItem(props) {
+function NavItem({ style, ...props }) {
 	let Wrapper = newProps => <div {...newProps} />
 	if (props.to) {
 		Wrapper = newProps => props.to.startsWith("/") ? <Router.Link {...newProps} />
 			: <a href={props.to} {...{ ...newProps, to: undefined }} />
 	}
 	return (
-		<Wrapper style={stylex("p-x:8 flex -r -y:center h:max")} {...props}>
+		<Wrapper style={{ ...stylex("p-x:8 flex -r -y:center h:max"), ...style }} {...props}>
 			{props.children}
 		</Wrapper>
 	)
@@ -61,8 +62,10 @@ const UnauthNav = props => (
 		</NavItem>
 		<NavItem to="/sign-up">
 			<CTAButton>
-				<Text style={stylex("c:blue-a400")}>
-					Sign up now
+				{/* FIXME: Add `Icon`. */}
+				<Text style={stylex("flex -r :center c:blue-a400")}>
+					Sign up now{" \u00a0"}
+					<Feather.Plus style={stylex("wh:15")} />
 				</Text>
 			</CTAButton>
 		</NavItem>

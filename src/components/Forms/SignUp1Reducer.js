@@ -3,7 +3,7 @@ export const initialState = {
 	password: "",
 	passcode: "",
 	show:     false,
-	info:     "You can change these later. 👍",
+	info:     "You can change these later.",
 	warn:     "",
 	complete: false,
 }
