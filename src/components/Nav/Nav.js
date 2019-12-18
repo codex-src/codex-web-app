@@ -62,7 +62,6 @@ const UnauthNav = props => (
 		</NavItem>
 		<NavItem to="/sign-up">
 			<CTAButton>
-				{/* FIXME: Add `Icon`. */}
 				<Text style={stylex("flex -r :center c:blue-a400")}>
 					Sign up now{" \u00a0"}
 					<Feather.Plus style={stylex("wh:15")} />
@@ -104,14 +103,12 @@ function Nav(props) {
 	return (
 		<nav style={stylex("sticky -x -t")}>
 			<div style={stylex("p-x:32 flex -r -x:center b:white")}>
-				<div style={stylex("flex -r -x:between w:1024 h:64")}>
+				<div style={stylex("flex -r -x:between w:1024 h:80")}>
 
 					<NavList>
 						<NavItem to="/">
-							<div style={stylex("p-r:8")}>
-								<div style={stylex("wh:18 b:blue-a400 br:max")} />
-							</div>
-							<CodexLogo style={stylex("w:72 h:18")} />
+							<div style={stylex("m-r:12 wh:24 b:gray-200 br:max")} />
+							<CodexLogo style={stylex("w:80 h:20")} />
 						</NavItem>
 					</NavList>
 

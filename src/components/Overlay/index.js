@@ -8,6 +8,8 @@ import ReactDOM from "react-dom"
 // )
 
 function Overlay(props) {
+	// NOTE: `useLayoutEffect` is preferred because of
+	// `SignUpFlow`.
 	React.useLayoutEffect(() => {
 		const root = document.getElementById("root")
 		root.style.display = "none"

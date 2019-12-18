@@ -25,7 +25,7 @@ export const StripeCard = ({ style, ...props }) => (
 
 // NOTE: `Submit` uses `children` instead of `value`.
 export const Submit = ({ fetching, children, style, ...props }) => (
-	<Base.StyledInputWithBoxShadow style={{ ...stylex("center fw:600 fs:17 c:white b:blue-a400 pointer"), ...style }} type="submit" value={!fetching ? children : "Loading…"} {...props} />
+	<Base.StyledInputWithBoxShadow style={{ ...stylex("center fw:600 fs:17 ls:1.25% c:white b:blue-a400 pointer"), ...style }} type="submit" value={!fetching ? children : "Loading…"} {...props} />
 )
 
 export const SubmitClickAway = ({ style, ...props }) => (
