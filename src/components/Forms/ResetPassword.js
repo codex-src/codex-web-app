@@ -123,7 +123,7 @@ function ResetPassword(props) {
 						</Inputs.Submit>
 
 						{state.warn && (
-							<Status.Warn style={stylex("m-t:-16")}>
+							<Status.Warn style={stylex("m-t:16")}>
 								{state.warn}
 							</Status.Warn>
 						)}

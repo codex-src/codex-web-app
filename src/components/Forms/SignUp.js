@@ -1,7 +1,5 @@
 import * as SignUpReducer from "./SignUpReducer"
 
-import Errors from "components/Errors"
-import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
 import Headers from "components/Headers"
 import Inputs from "components/Inputs"
@@ -13,20 +11,14 @@ import testPasscode from "./helpers/testPasscode"
 import testPassword from "./helpers/testPassword"
 import testUsername from "./helpers/testUsername"
 import useMethods from "use-methods"
-import User from "components/User"
 
 function SignIn(props) {
-	const [, { login }] = React.useContext(User.Context)
-
 	const [state, dispatch] = useMethods(SignUpReducer.reducer, SignUpReducer.initialState)
 
-	const [{ fetching }, createSession] = GraphQL.useLazyMutation(`
-		mutation CreateSession($username: String!, $password: String!) {
-			createSession(username: $username, password: $password) {
-				...user
-			}
+	const [, testUsernameTaken] = GraphQL.useLazyQuery(`
+		query TestUsernameTaken($username: String!) {
+			TestUsernameTaken(username: $username)
 		}
-		${Fragments.user}
 	`)
 
 	const asyncHandleSubmit = async e => {
@@ -49,11 +41,11 @@ function SignIn(props) {
 			return
 		}
 		// Test username:
-		const { errors, data } = await testUsername({ username })
+		const { errors, data } = await testUsernameTaken({ username })
 		if (errors) {
 			dispatch.setWarn("An unexpected error occurred.")
 			return
-		} else if (!data.testUsername) {
+		} else if (data.testUsernameTaken) {
 			dispatch.setWarn(`Username ${username} is taken.`)
 			return
 		}
@@ -124,7 +116,7 @@ function SignIn(props) {
 								I have an account
 							</Inputs.SubmitClickAway>
 						) : (
-							<Status.Warn>
+							<Status.Warn style={stylex("m-t:16")}>
 								{state.warn}
 							</Status.Warn>
 						)}

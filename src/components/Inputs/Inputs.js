@@ -28,8 +28,8 @@ export const Submit = ({ fetching, children, style, ...props }) => (
 	<Base.StyledInputWithBoxShadow style={{ ...stylex("center fw:600 fs:17 ls:1.25% c:white b:blue-a400 pointer"), ...style }} type="submit" value={!fetching ? children : "Loading…"} {...props} />
 )
 
-export const SubmitClickAway = props => (
-	<Router.Link style={stylex("flex -r :center h:48")} {...props}>
+export const SubmitClickAway = ({ style, ...props }) => (
+	<Router.Link style={{ ...stylex("flex -r :center h:48"), ...style }} {...props}>
 		<p style={stylex("fw:500 fs:15 c:blue-a400")}>
 			{props.children}
 		</p>

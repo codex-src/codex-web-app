@@ -10,24 +10,18 @@ const Text = ({ style, ...props }) => (
 	</p>
 )
 
-const Container = ({ style, ...props }) => (
-	<div style={{ ...stylex("p-x:16 p-y:12 br:6"), ...style }} {...props}>
-		{props.children}
-	</div>
-)
-
-export const Info = props => (
-	<Container style={infoStyle}>
+export const Info = ({ style, ...props }) => (
+	<div style={{ ...stylex("p-x:16 p-y:12 br:6"), ...infoStyle, ...style }}>
 		<Text style={stylex("pre-wrap c:blue-a400")}>
 			{props.children}
 		</Text>
-	</Container>
+	</div>
 )
 
-export const Warn = props => (
-	<Container style={warnStyle}>
+export const Warn = ({ style, ...props }) => (
+	<div style={{ ...stylex("p-x:16 p-y:12 br:6"), ...warnStyle, ...style }}>
 		<Text style={stylex("pre-wrap c:red")}>
 			{props.children}
 		</Text>
-	</Container>
+	</div>
 )
