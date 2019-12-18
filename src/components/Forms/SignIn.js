@@ -1,16 +1,16 @@
 import * as SignInReducer from "./SignInReducer"
 
-import Errors     from "components/Errors"
-import Fragments  from "components/Fragments"
-import GraphQL    from "use-graphql"
-import Headers    from "components/Headers"
-import Inputs     from "components/Inputs"
-import Overlay    from "components/Overlay"
-import React      from "react"
-import Status     from "components/Status"
-import stylex     from "stylex"
+import Errors from "components/Errors"
+import Fragments from "components/Fragments"
+import GraphQL from "use-graphql"
+import Headers from "components/Headers"
+import Inputs from "components/Inputs"
+import Overlay from "components/Overlay"
+import React from "react"
+import Status from "components/Status"
+import stylex from "stylex"
 import useMethods from "use-methods"
-import User       from "components/User"
+import User from "components/User"
 
 function SignIn(props) {
 	const [, { login }] = React.useContext(User.Context)
@@ -54,62 +54,60 @@ function SignIn(props) {
 	return (
 		<Overlay>
 			<div style={stylex("p-x:32 p-y:128 flex -r -x:center")}>
-				<div style={stylex("w:320")}>
-					<form onSubmit={asyncHandleSubmit}>
+				<form style={stylex("w:320")} onSubmit={asyncHandleSubmit}>
 
-						<header style={stylex("m-b:40")}>
-							<Headers.H1 style={stylex("center")}>
-								Sign in
-							</Headers.H1>
-							<Headers.H2 style={stylex("center")}>
-								to continue with <span style={stylex("c:blue-a400")}>Codex</span>
-							</Headers.H2>
-						</header>
+					<header style={stylex("m-b:40")}>
+						<Headers.H1 style={stylex("center")}>
+							Sign in
+						</Headers.H1>
+						<Headers.H2 style={stylex("center")}>
+							to continue with <span style={stylex("c:blue-a400")}>Codex</span>
+						</Headers.H2>
+					</header>
 
-						<Inputs.Label style={stylex("m-y:16")}>
-							Username
-							<Inputs.Text
-								value={state.username}
-								onChange={e => dispatch.setUsername(e.target.value)}
-								autoComplete="current-username"
+					<Inputs.Label style={stylex("m-y:16")}>
+						Username
+						<Inputs.Text
+							value={state.username}
+							onChange={e => dispatch.setUsername(e.target.value)}
+							autoComplete="current-username"
+							spellCheck={false}
+						/>
+					</Inputs.Label>
+
+					<Inputs.Label style={stylex("m-y:16")}>
+						Password
+						<Inputs.WithShow show={state.show} setShow={dispatch.setShow}>
+							<Inputs.Password
+								value={state.password}
+								onChange={e => dispatch.setPassword(e.target.value)}
+								autoComplete="current-password"
 								spellCheck={false}
 							/>
-						</Inputs.Label>
+						</Inputs.WithShow>
+					</Inputs.Label>
 
-						<Inputs.Label style={stylex("m-y:16")}>
-							Password
-							<Inputs.WithShow show={state.show} setShow={dispatch.setShow}>
-								<Inputs.Password
-									value={state.password}
-									onChange={e => dispatch.setPassword(e.target.value)}
-									autoComplete="current-password"
-									spellCheck={false}
-								/>
-							</Inputs.WithShow>
-						</Inputs.Label>
+					{state.info && (
+						<Status.Info style={stylex("m-t:40 m-b:-24")}>
+							{state.info}
+						</Status.Info>
+					)}
 
-						{state.info && (
-							<Status.Info style={stylex("m-t:40 m-b:-24")}>
-								{state.info}
-							</Status.Info>
-						)}
+					<Inputs.Submit style={stylex("m-t:40 m-b:16")} fetching={fetching}>
+						Sign in
+					</Inputs.Submit>
 
-						<Inputs.Submit style={stylex("m-t:40 m-b:16")} fetching={fetching}>
-							Sign in
-						</Inputs.Submit>
+					{!state.warn ? (
+						<Inputs.SubmitClickAway style={stylex("m-t:-16")} to="/reset-password">
+							I forgot my password
+						</Inputs.SubmitClickAway>
+					) : (
+						<Status.Warn style={stylex("m-t:16")}>
+							{state.warn}
+						</Status.Warn>
+					)}
 
-						{!state.warn ? (
-							<Inputs.SubmitClickAway style={stylex("m-t:-16")} to="/reset-password">
-								I forgot my password
-							</Inputs.SubmitClickAway>
-						) : (
-							<Status.Warn style={stylex("m-t:16")}>
-								{state.warn}
-							</Status.Warn>
-						)}
-
-					</form>
-				</div>
+				</form>
 			</div>
 		</Overlay>
 	)

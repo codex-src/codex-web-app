@@ -62,74 +62,72 @@ function ResetPassword(props) {
 	return (
 		<Overlay>
 			<div style={stylex("p-x:32 p-y:128 flex -r -x:center")}>
-				<div style={stylex("w:320")}>
-					<form onSubmit={asyncHandleSubmit}>
+				<form style={stylex("w:320")} onSubmit={asyncHandleSubmit}>
 
-						<header style={stylex("m-b:40")}>
-							<Headers.H1 style={stylex("center")}>
-								Reset
-							</Headers.H1>
-							<Headers.H2 style={stylex("center")}>
-								to continue with <span style={stylex("c:blue-a400")}>Codex</span>
-							</Headers.H2>
-						</header>
+					<header style={stylex("m-b:40")}>
+						<Headers.H1 style={stylex("center")}>
+							Reset
+						</Headers.H1>
+						<Headers.H2 style={stylex("center")}>
+							to continue with <span style={stylex("c:blue-a400")}>Codex</span>
+						</Headers.H2>
+					</header>
 
-						<Inputs.Label style={stylex("m-y:16")}>
-							Username
-							<Inputs.Text
-								value={state.username}
-								onChange={e => dispatch.setUsername(e.target.value)}
-								autoComplete="current-username"
+					<Inputs.Label style={stylex("m-y:16")}>
+						Username
+						<Inputs.Text
+							value={state.username}
+							onChange={e => dispatch.setUsername(e.target.value)}
+							autoComplete="current-username"
+							spellCheck={false}
+						/>
+					</Inputs.Label>
+
+					<Inputs.Label style={stylex("m-y:16")}>
+						Password and card last four
+						<Inputs.KeychainContainer>
+							<Inputs.Keychain
+								value={state.passcode}
+								onChange={e => dispatch.setPasscode(e.target.value)}
+								autoComplete="none"
 								spellCheck={false}
 							/>
-						</Inputs.Label>
-
-						<Inputs.Label style={stylex("m-y:16")}>
-							Password and card last four
-							<Inputs.KeychainContainer>
-								<Inputs.Keychain
-									value={state.passcode}
-									onChange={e => dispatch.setPasscode(e.target.value)}
-									autoComplete="none"
-									spellCheck={false}
-								/>
-								<Inputs.Keychain
-									value={state.lastFour}
-									onChange={e => dispatch.setLastFour(e.target.value)}
-									autoComplete="none"
-									spellCheck={false}
-								/>
-							</Inputs.KeychainContainer>
-						</Inputs.Label>
-
-						<Inputs.Label style={stylex("m-y:16")}>
-							New password
-							<Inputs.Text
-								value={state.newPassword}
-								onChange={e => dispatch.setNewPassword(e.target.value)}
-								autoComplete="new-password"
+							<Inputs.Keychain
+								value={state.lastFour}
+								onChange={e => dispatch.setLastFour(e.target.value)}
+								autoComplete="none"
 								spellCheck={false}
 							/>
-						</Inputs.Label>
+						</Inputs.KeychainContainer>
+					</Inputs.Label>
 
-						{state.info && (
-							<Status.Info style={stylex("m-t:40 m-b:-24")}>
-								{state.info}
-							</Status.Info>
-						)}
+					<Inputs.Label style={stylex("m-y:16")}>
+						New password
+						<Inputs.Text
+							value={state.newPassword}
+							onChange={e => dispatch.setNewPassword(e.target.value)}
+							autoComplete="new-password"
+							spellCheck={false}
+						/>
+					</Inputs.Label>
 
-						<Inputs.Submit style={stylex("m-t:40 m-b:16")} fetching={fetching}>
-							Sign in
-						</Inputs.Submit>
+					{state.info && (
+						<Status.Info style={stylex("m-t:40 m-b:-24")}>
+							{state.info}
+						</Status.Info>
+					)}
 
-						{state.warn && (
-							<Status.Warn style={stylex("m-t:16")}>
-								{state.warn}
-							</Status.Warn>
-						)}
+					<Inputs.Submit style={stylex("m-t:40 m-b:16")} fetching={fetching}>
+						Sign in
+					</Inputs.Submit>
 
-					</form>
-				</div>
+					{state.warn && (
+						<Status.Warn style={stylex("m-t:16")}>
+							{state.warn}
+						</Status.Warn>
+					)}
+
+				</form>
 			</div>
 		</Overlay>
 	)
