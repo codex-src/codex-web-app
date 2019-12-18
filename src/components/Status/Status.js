@@ -16,16 +16,16 @@ const Container = ({ style, ...props }) => (
 	</div>
 )
 
-export const Info = ({ style, ...props }) => (
-	<Container style={{ ...infoStyle, ...style }} {...props}>
+export const Info = props => (
+	<Container style={infoStyle}>
 		<Text style={stylex("pre-wrap c:blue-a400")}>
 			{props.children}
 		</Text>
 	</Container>
 )
 
-export const Warn = ({ style, ...props }) => (
-	<Container style={{ ...warnStyle, ...style }} {...props}>
+export const Warn = props => (
+	<Container style={warnStyle}>
 		<Text style={stylex("pre-wrap c:red")}>
 			{props.children}
 		</Text>

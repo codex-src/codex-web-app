@@ -1,12 +1,12 @@
+import Headers from "components/Headers"
 import React from "react"
 import stylex from "stylex"
-import UI from "components/UI"
 
 const PageNotFound = props => (
 	<header>
-		<UI.StyledH1 style={stylex("center")}>
+		<Headers.H1 style={stylex("center")}>
 			404
-		</UI.StyledH1>
+		</Headers.H1>
 	</header>
 )
 

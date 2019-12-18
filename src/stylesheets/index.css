@@ -12,7 +12,6 @@ html {
  * 	const em = (1 - fontSize / 16) / 20
  * 	console.log(`[style*="font-size: ${fontSize}px"] { letter-spacing: ${em}em; }`)
  * }
- *
  */
 [style*="font-size: 10px"]:not([style*="font-family"]) { letter-spacing:   0.01875em; }
 [style*="font-size: 11px"]:not([style*="font-family"]) { letter-spacing:  0.015625em; }

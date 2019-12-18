@@ -1,14 +1,13 @@
 import * as SignInReducer from "./SignInReducer"
 import Errors from "components/Errors"
-import Feather from "components/Feather"
 import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
-import Input from "components/Input"
+import Headers from "components/Headers"
+import Inputs from "components/Inputs"
 import Overlay from "components/Overlay"
 import React from "react"
 import Status from "components/Status"
 import stylex from "stylex"
-import UI from "components/UI"
 import useMethods from "use-methods"
 import User from "components/User"
 
@@ -58,54 +57,60 @@ function SignIn(props) {
 					<form onSubmit={asyncHandleSubmit}>
 
 						<header style={stylex("m-b:40")}>
-							<UI.StyledH1 style={stylex("center")}>
+							<Headers.H1 style={stylex("center")}>
 								Sign in
-							</UI.StyledH1>
-							<UI.StyledH2 style={stylex("center")}>
+							</Headers.H1>
+							<Headers.H2 style={stylex("center")}>
 								to continue with <span style={stylex("c:blue-a400")}>Codex</span>
-							</UI.StyledH2>
+							</Headers.H2>
 						</header>
 
-						<Input.Label style={stylex("m-y:16")}>
-							Username
-							<Input.Text
-								value={state.username}
-								onChange={e => dispatch.setUsername(e.target.value)}
-								autoComplete="current-username"
-							/>
-						</Input.Label>
-
-						<Input.Label style={stylex("m-y:16")}>
-							Password
-							<Input.WithShow show={state.show} setShow={dispatch.setShow}>
-								<Input.Password
-									value={state.password}
-									onChange={e => dispatch.setPassword(e.target.value)}
-									autoComplete="current-password"
+						<div style={stylex("m-y:16")}>
+							<Inputs.Label>
+								Username
+								<Inputs.Text
+									value={state.username}
+									onChange={e => dispatch.setUsername(e.target.value)}
+									autoComplete="current-username"
 								/>
-							</Input.WithShow>
-						</Input.Label>
+							</Inputs.Label>
+						</div>
+
+						<div style={stylex("m-y:16")}>
+							<Inputs.Label>
+								Password
+								<Inputs.WithShow show={state.show} setShow={dispatch.setShow}>
+									<Inputs.Password
+										value={state.password}
+										onChange={e => dispatch.setPassword(e.target.value)}
+										autoComplete="current-password"
+									/>
+								</Inputs.WithShow>
+							</Inputs.Label>
+						</div>
 
 						{state.info && (
-							<Status.Info style={stylex("m-t:40 m-b:-24")}>
-								{state.info}
-							</Status.Info>
+							<div style={stylex("m-t:40 m-b:16")}>
+								<Status.Info>
+									{state.info}
+								</Status.Info>
+							</div>
 						)}
 
-						<Input.Submit style={stylex("m-t:40 m-b:16")}>
-							{!fetching ? (
-								"Sign in"
-							) : (
-								"Loading…"
-							)}
-						</Input.Submit>
+						<div style={stylex("m-t:40 m-b:16")}>
+							<Inputs.Submit fetching={fetching}>
+								Sign in
+							</Inputs.Submit>
+						</div>
 
 						{!state.warn ? (
-							<Input.Nevermind style={stylex("m-t:-16")} to="/reset-password">
-								I forgot my password
-							</Input.Nevermind>
+							<div style={stylex("m-t:-16")}>
+								<Inputs.SubmitClickAway to="/reset-password">
+									I forgot my password
+								</Inputs.SubmitClickAway>
+							</div>
 						) : (
-							<Status.Warn style={stylex("m-t:16")}>
+							<Status.Warn>
 								{state.warn}
 							</Status.Warn>
 						)}
@@ -118,64 +123,3 @@ function SignIn(props) {
 }
 
 export default SignIn
-
-// <UI.Overlay>
-// 	<div style={stylex("flex -r -x:center")}>
-// 		<form style={stylex("m-y:128 w:320")} onSubmit={asyncHandleSubmit}>
-//
-// 			<header style={stylex("m-b:40")}>
-// 				<UI.StyledH1 style={stylex("center")}>
-// 					Sign in
-// 				</UI.StyledH1>
-// 				<UI.StyledH2 style={stylex("center")}>
-// 					to continue with <span style={stylex("c:blue-a400")}>Codex</span>
-// 				</UI.StyledH2>
-// 			</header>
-//
-// 		<UI.Label style={stylex("m-y:16")}>
-// 			Username
-// 			<UI.InputText
-// 				value={state.username}
-// 				autoComplete="current-username"
-// 				onChange={e => dispatch.setUsername(e.target.value)}
-// 			/>
-// 		</UI.Label>
-//
-// 		<UI.Label style={stylex("m-y:16")}>
-// 			Password
-// 			<UI.InputPassword
-// 				show={state.show}
-// 				setShow={dispatch.setShow}
-// 				value={state.password}
-// 				autoComplete="current-password"
-// 				onChange={e => dispatch.setPassword(e.target.value)}
-// 			/>
-// 		</UI.Label>
-//
-// 		{state.info && (
-// 			<UI.StatusInfo style={stylex("m-t:40 m-b:-24")}>
-// 				{state.info}
-// 			</UI.StatusInfo>
-// 		)}
-//
-// 		<UI.InputSubmit style={stylex("m-t:40 m-b:16")}>
-// 			{!fetching ? (
-// 				"Sign in"
-// 			) : (
-// 				"Loading…"
-// 			)}
-// 		</UI.InputSubmit>
-//
-// 		{!state.warn ? (
-// 			<UI.InputSubmitAlternate style={stylex("m-t:-16")} to="/reset-password">
-// 				I forgot my password
-// 			</UI.InputSubmitAlternate>
-// 		) : (
-// 			<UI.StatusWarn style={stylex("m-t:16")}>
-// 				{state.warn}
-// 			</UI.StatusWarn>
-// 		)}
-//
-// 		</form>
-// 	</div>
-// </UI.Overlay>

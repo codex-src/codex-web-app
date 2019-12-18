@@ -1,4 +1,4 @@
-const Fragments = {
+const exports = {
 
 	user: `
 		fragment user on User {
@@ -39,4 +39,4 @@ const Fragments = {
 
 }
 
-export default Fragments
+export default exports
