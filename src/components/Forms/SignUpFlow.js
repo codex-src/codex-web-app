@@ -10,7 +10,7 @@ function SignUpFlow(props) {
 	const [state1, dispatch1] = useMethods(SignUp1Reducer.reducer, SignUp1Reducer.initialState)
 	const [state2, dispatch2] = useMethods(SignUp2Reducer.reducer, SignUp2Reducer.initialState)
 
-	if (!state1.complete) {
+	if (state1.complete) {
 		return <SignUp1 state={state1} dispatch={dispatch1} />
 	}
 	// Merge `state`:

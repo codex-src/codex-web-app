@@ -14,7 +14,7 @@ import testUsername from "./helpers/testUsername"
 function SignUp({ state, dispatch, ...props }) {
 	const [, testUsernameTaken] = GraphQL.useLazyQuery(`
 		query TestUsernameTaken($username: String!) {
-			TestUsernameTaken(username: $username)
+			testUsernameTaken(username: $username)
 		}
 	`)
 

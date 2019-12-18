@@ -1,19 +1,16 @@
 /* eslint-disable no-multi-spaces */
 import * as Stripe from "./Stripe"
 
-import Fragments    from "components/Fragments"
-import GraphQL      from "use-graphql"
-import Headers      from "components/Headers"
-import Inputs       from "components/Inputs"
-import invariant    from "invariant"
-import Overlay      from "components/Overlay"
-import React        from "react"
-import Status       from "components/Status"
-import stylex       from "stylex"
-import testPasscode from "./helpers/testPasscode"
-import testPassword from "./helpers/testPassword"
-import testUsername from "./helpers/testUsername"
-import User         from "components/User"
+import Fragments from "components/Fragments"
+import GraphQL   from "use-graphql"
+import Headers   from "components/Headers"
+import Inputs    from "components/Inputs"
+import invariant from "invariant"
+import Overlay   from "components/Overlay"
+import React     from "react"
+import Status    from "components/Status"
+import stylex    from "stylex"
+import User      from "components/User"
 /* eslint-enable no-multi-spaces */
 
 function SignUpBilling({ state, dispatch, ...props }) {
@@ -31,20 +28,22 @@ function SignUpBilling({ state, dispatch, ...props }) {
 	`)
 
 	React.useEffect(
-		React.useCallback(async () => {
-			const { errors, data } = await GraphQL.fetchAsGraphQL(`
-				query NextSubscriptionDate {
-					nextMo: nextMonth { ...date }
-					nextYr: nextYear  { ...date }
+		React.useCallback(() => {
+			;(async () => {
+				const { errors, data } = await GraphQL.fetchAsGraphQL(`
+					query NextSubscriptionDate {
+						nextMo: nextMonth { ...date }
+						nextYr: nextYear  { ...date }
+					}
+					${Fragments.date}
+				`)
+				if (errors) {
+					invariant(false, errors.map(error => error.message).join(", "))
+					return
 				}
-				${Fragments.date}
-			`)
-			if (errors) {
-				invariant(false, errors.map(error => error.message).join(", "))
-				return
-			}
-			dispatch.setNextMo(data.nextMo)
-			dispatch.setNextYr(data.nextYr)
+				dispatch.setNextMo(data.nextMo)
+				dispatch.setNextYr(data.nextYr)
+			})()
 		}, [dispatch]),
 		[],
 	)
@@ -71,7 +70,6 @@ function SignUpBilling({ state, dispatch, ...props }) {
 			return
 		}
 		// Create user:
-		// NOTE: Convert `chargeMonth` to a boolean.
 		const res2 = await createUser({ user: { username, password, passcode, chargeMonth: chargeMonth === 1, stripeCardID, stripeCardBrand, stripeCardLastFour } })
 		if (res2.errors) {
 			dispatch.setFetching(false)
@@ -95,38 +93,9 @@ function SignUpBilling({ state, dispatch, ...props }) {
 						</Headers.H2>
 					</header>
 
-					<Inputs.Label style={stylex("m-y:16")}>
-						Username
-						<Inputs.Text
-							value={state.username}
-							onChange={e => dispatch.setUsername(e.target.value)}
-							autoComplete="new-username"
-							spellCheck={false}
-						/>
-					</Inputs.Label>
-
-					<Inputs.Label style={stylex("m-y:16")}>
-						Password
-						<Inputs.WithShow show={state.show} setShow={dispatch.setShow}>
-							<Inputs.Password
-								value={state.password}
-								onChange={e => dispatch.setPassword(e.target.value)}
-								autoComplete="new-password"
-								spellCheck={false}
-							/>
-						</Inputs.WithShow>
-					</Inputs.Label>
-
-					<Inputs.Label style={stylex("m-y:16")}>
-						Passcode
-						<Inputs.WithShow show={state.show} setShow={dispatch.setShow}>
-							<Inputs.Passcode
-								value={state.passcode}
-								onChange={e => dispatch.setPasscode(e.target.value)}
-								autoComplete="none"
-								spellCheck={false}
-							/>
-						</Inputs.WithShow>
+					<Inputs.Label style={stylex("m-y:32")}>
+						Payment method
+						<Inputs.StripeCard />
 					</Inputs.Label>
 
 					{state.info && (
@@ -135,15 +104,11 @@ function SignUpBilling({ state, dispatch, ...props }) {
 						</Status.Info>
 					)}
 
-					<Inputs.Submit style={stylex("m-t:40 m-b:16")}>
-						Continue
+					<Inputs.Submit style={stylex("m-t:40 m-b:16")} fetching={state.fetching}>
+						Sign up now
 					</Inputs.Submit>
 
-					{!state.warn ? (
-						<Inputs.SubmitClickAway style={stylex("m-t:-16")} to="/reset-password">
-							I have an account
-						</Inputs.SubmitClickAway>
-					) : (
+					{state.warn && (
 						<Status.Warn style={stylex("m-t:16")}>
 							{state.warn}
 						</Status.Warn>
@@ -154,7 +119,6 @@ function SignUpBilling({ state, dispatch, ...props }) {
 		</Overlay>
 	)
 }
-
 
 // <header style={stylex("m-b:40")}>
 // 	<UI.StylisticHeader style={stylex("center")}>
