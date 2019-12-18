@@ -1,5 +1,13 @@
 const exports = {
 
+	date: `
+		fragment date on Date {
+			year
+			month
+			day
+		}
+	`,
+
 	user: `
 		fragment user on User {
 			userID

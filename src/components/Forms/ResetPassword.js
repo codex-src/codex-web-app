@@ -1,18 +1,20 @@
+/* eslint-disable no-multi-spaces */
 import * as ResetPasswordReducer from "./ResetPasswordReducer"
 
-import Errors from "components/Errors"
-import Fragments from "components/Fragments"
-import GraphQL from "use-graphql"
-import Headers from "components/Headers"
-import Inputs from "components/Inputs"
-import Overlay from "components/Overlay"
-import React from "react"
-import Status from "components/Status"
-import stylex from "stylex"
+import Errors       from "components/Errors"
+import Fragments    from "components/Fragments"
+import GraphQL      from "use-graphql"
+import Headers      from "components/Headers"
+import Inputs       from "components/Inputs"
+import Overlay      from "components/Overlay"
+import React        from "react"
+import Status       from "components/Status"
+import stylex       from "stylex"
 import testPasscode from "./helpers/testPasscode"
 import testPassword from "./helpers/testPassword"
-import useMethods from "use-methods"
-import User from "components/User"
+import useMethods   from "use-methods"
+import User         from "components/User"
+/* eslint-enable no-multi-spaces */
 
 function ResetPassword(props) {
 	const [, { login }] = React.useContext(User.Context)

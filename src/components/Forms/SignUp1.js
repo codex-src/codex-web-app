@@ -1,20 +1,17 @@
-import * as SignUpReducer from "./SignUpReducer"
-
-import GraphQL from "use-graphql"
-import Headers from "components/Headers"
-import Inputs from "components/Inputs"
-import Overlay from "components/Overlay"
-import React from "react"
-import Status from "components/Status"
-import stylex from "stylex"
+/* eslint-disable no-multi-spaces */
+import GraphQL      from "use-graphql"
+import Headers      from "components/Headers"
+import Inputs       from "components/Inputs"
+import Overlay      from "components/Overlay"
+import React        from "react"
+import Status       from "components/Status"
+import stylex       from "stylex"
 import testPasscode from "./helpers/testPasscode"
 import testPassword from "./helpers/testPassword"
 import testUsername from "./helpers/testUsername"
-import useMethods from "use-methods"
+/* eslint-enable no-multi-spaces */
 
-function SignIn(props) {
-	const [state, dispatch] = useMethods(SignUpReducer.reducer, SignUpReducer.initialState)
-
+function SignUp({ state, dispatch, ...props }) {
 	const [, testUsernameTaken] = GraphQL.useLazyQuery(`
 		query TestUsernameTaken($username: String!) {
 			TestUsernameTaken(username: $username)
@@ -126,4 +123,4 @@ function SignIn(props) {
 	)
 }
 
-export default SignIn
+export default SignUp

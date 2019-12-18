@@ -1,11 +1,11 @@
 import ResetPassword from "./ResetPassword"
 import SignIn from "./SignIn"
-import SignUp from "./SignUp"
+import SignUpFlow from "./SignUpFlow"
 
 const exports = {
 	ResetPassword,
 	SignIn,
-	SignUp,
+	SignUpFlow,
 }
 
 export default exports

@@ -2,7 +2,7 @@ export const initialState = {
 	username: "",
 	password: "",
 	show:     false,
-	info:     null,
+	info:     "",
 	warn:     "",
 }
 

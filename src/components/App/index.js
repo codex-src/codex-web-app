@@ -1,13 +1,15 @@
+/* eslint-disable no-multi-spaces */
 import fetchGraphQL from "./fetchGraphQL"
-import Footer from "components/Footer"
-import Forms from "components/Forms"
-import GraphQL from "use-graphql"
-import Nav from "components/Nav"
+import Footer       from "components/Footer"
+import Forms        from "components/Forms"
+import GraphQL      from "use-graphql"
+import Nav          from "components/Nav"
 import PageNotFound from "./PageNotFound"
-import React from "react"
-import Router from "components/Router"
-import stylex from "stylex"
-import User from "components/User"
+import React        from "react"
+import Router       from "components/Router"
+import stylex       from "stylex"
+import User         from "components/User"
+/* eslint-enable no-multi-spaces */
 
 const client = new GraphQL.Client({
 	fetchGraphQL,
@@ -63,7 +65,7 @@ const App = props => (
 								path="/sign-up"
 								exact
 								title={Codex("Sign up")}
-								component={Forms.SignUp}
+								component={Forms.SignUpFlow}
 							/>
 							<User.UnprotectedRoute
 								path="/sign-in"
