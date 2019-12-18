@@ -11,8 +11,8 @@ import stylex from "stylex"
 //   />
 // </Label>
 //
-const Label = props => (
-	<label style={stylex("block")}>
+const Label = ({ style, ...props }) => (
+	<label style={{ ...stylex("block"), ...style }}>
 		<div style={stylex("p-x:2 p-y:4 flex -r -y:end h:24")}>
 			<p style={stylex("fw:500 fs:14 c:blue-a400")}>
 				{props.children[0]}

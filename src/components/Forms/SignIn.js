@@ -1,15 +1,16 @@
 import * as SignInReducer from "./SignInReducer"
-import Errors from "components/Errors"
-import Fragments from "components/Fragments"
-import GraphQL from "use-graphql"
-import Headers from "components/Headers"
-import Inputs from "components/Inputs"
-import Overlay from "components/Overlay"
-import React from "react"
-import Status from "components/Status"
-import stylex from "stylex"
+
+import Errors     from "components/Errors"
+import Fragments  from "components/Fragments"
+import GraphQL    from "use-graphql"
+import Headers    from "components/Headers"
+import Inputs     from "components/Inputs"
+import Overlay    from "components/Overlay"
+import React      from "react"
+import Status     from "components/Status"
+import stylex     from "stylex"
 import useMethods from "use-methods"
-import User from "components/User"
+import User       from "components/User"
 
 function SignIn(props) {
 	const [, { login }] = React.useContext(User.Context)
@@ -65,50 +66,42 @@ function SignIn(props) {
 							</Headers.H2>
 						</header>
 
-						<div style={stylex("m-y:16")}>
-							<Inputs.Label>
-								Username
-								<Inputs.Text
-									value={state.username}
-									onChange={e => dispatch.setUsername(e.target.value)}
-									autoComplete="current-username"
-								/>
-							</Inputs.Label>
-						</div>
+						<Inputs.Label style={stylex("m-y:16")}>
+							Username
+							<Inputs.Text
+								value={state.username}
+								onChange={e => dispatch.setUsername(e.target.value)}
+								autoComplete="current-username"
+								spellCheck={false}
+							/>
+						</Inputs.Label>
 
-						<div style={stylex("m-y:16")}>
-							<Inputs.Label>
-								Password
-								<Inputs.WithShow show={state.show} setShow={dispatch.setShow}>
-									<Inputs.Password
-										value={state.password}
-										onChange={e => dispatch.setPassword(e.target.value)}
-										autoComplete="current-password"
-									/>
-								</Inputs.WithShow>
-							</Inputs.Label>
-						</div>
+						<Inputs.Label style={stylex("m-y:16")}>
+							Password
+							<Inputs.WithShow show={state.show} setShow={dispatch.setShow}>
+								<Inputs.Password
+									value={state.password}
+									onChange={e => dispatch.setPassword(e.target.value)}
+									autoComplete="current-password"
+									spellCheck={false}
+								/>
+							</Inputs.WithShow>
+						</Inputs.Label>
 
 						{state.info && (
-							<div style={stylex("m-t:40 m-b:16")}>
-								<Status.Info>
-									{state.info}
-								</Status.Info>
-							</div>
+							<Status.Info style={stylex("m-t:40 m-b:-24")}>
+								{state.info}
+							</Status.Info>
 						)}
 
-						<div style={stylex("m-t:40 m-b:16")}>
-							<Inputs.Submit fetching={fetching}>
-								Sign in
-							</Inputs.Submit>
-						</div>
+						<Inputs.Submit style={stylex("m-t:40 m-b:16")} fetching={fetching}>
+							Sign in
+						</Inputs.Submit>
 
 						{!state.warn ? (
-							<div style={stylex("m-t:-16")}>
-								<Inputs.SubmitClickAway to="/reset-password">
-									I forgot my password
-								</Inputs.SubmitClickAway>
-							</div>
+							<Inputs.SubmitClickAway style={stylex("m-t:-16")} to="/reset-password">
+								I forgot my password
+							</Inputs.SubmitClickAway>
 						) : (
 							<Status.Warn>
 								{state.warn}

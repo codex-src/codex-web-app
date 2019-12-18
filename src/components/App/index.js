@@ -63,7 +63,7 @@ const App = props => (
 								path="/sign-up"
 								exact
 								title={Codex("Sign up")}
-								component={props => "TODO"}
+								component={Forms.SignUp}
 							/>
 							<User.UnprotectedRoute
 								path="/sign-in"

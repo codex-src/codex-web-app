@@ -7,7 +7,7 @@ export const boxShadow = {
 }
 
 export const Input = ({ style, ...props }) => (
-	<input style={{ ...stylex("block w:max"), ...style }} spellCheck={false} {...props} />
+	<input style={{ ...stylex("block w:max"), ...style }} {...props} />
 )
 
 export const StyledInput = ({ style, ...props }) => (
