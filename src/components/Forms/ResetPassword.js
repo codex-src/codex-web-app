@@ -90,11 +90,13 @@ function ResetPassword(props) {
 								<Inputs.Keychain
 									value={state.passcode}
 									onChange={e => dispatch.setPasscode(e.target.value)}
+									autoComplete="none"
 									spellCheck={false}
 								/>
 								<Inputs.Keychain
 									value={state.lastFour}
 									onChange={e => dispatch.setLastFour(e.target.value)}
+									autoComplete="none"
 									spellCheck={false}
 								/>
 							</Inputs.KeychainContainer>

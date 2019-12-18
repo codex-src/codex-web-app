@@ -103,6 +103,7 @@ function SignIn(props) {
 								<Inputs.Passcode
 									value={state.passcode}
 									onChange={e => dispatch.setPasscode(e.target.value)}
+									autoComplete="none"
 									spellCheck={false}
 								/>
 							</Inputs.WithShow>
