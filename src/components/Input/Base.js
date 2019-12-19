@@ -14,6 +14,7 @@ export const StyledInput = ({ style, ...props }) => (
 	<Input style={{ ...stylex("p-x:16 p-y:12 br:6"), ...style }} {...props} />
 )
 
+// DEPRECATE?
 export const StyledInputWithBoxShadow = ({ style, ...props }) => (
 	<StyledInput style={{ ...boxShadow, ...style }} {...props} />
 )

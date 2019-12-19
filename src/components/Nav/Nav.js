@@ -18,19 +18,11 @@ const CTAButton = ({ style, ...props }) => (
 	</div>
 )
 
-/* eslint-disable jsx-a11y/anchor-has-content */
-function NavItem({ style, ...props }) {
-	let Wrapper = newProps => <div {...newProps} />
-	if (props.to) {
-		Wrapper = newProps => props.to.startsWith("/") ? <Router.Link {...newProps} />
-			: <a href={props.to} {...{ ...newProps, to: undefined }} />
-	}
-	return (
-		<Wrapper style={{ ...stylex("p-x:8 flex -r -y:center h:max"), ...style }} {...props}>
-			{props.children}
-		</Wrapper>
-	)
-}
+const NavItem = props => (
+	<Router.Link style={stylex("p-x:8 flex -r -y:center h:max")} {...props}>
+		{props.children}
+	</Router.Link>
+)
 
 const NavList = props => (
 	<div style={stylex("m-x:-8 flex -r")}>
