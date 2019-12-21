@@ -13,7 +13,7 @@ export const Context = React.createContext()
 function Fetcher(props) {
 	const [, { login }] = React.useContext(Context)
 
-	const history = Router.useHistory()
+	const [history, { pathname }] = [Router.useHistory(), Router.useLocation()]
 
 	const { fetching, errors, data } = GraphQL.useQuery(`
 		query Me {
@@ -24,14 +24,14 @@ function Fetcher(props) {
 		${Fragments.user}
 	`)
 
-	React.useEffect(
+	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!data) {
 				return
 			}
 			login(data.me)
-			history.push(window.location.pathname)
-		}, [data, history, login]), // Sorted alphabetically.
+			history.push(pathname)
+		}, [data, history, login, pathname]), // Sorted alphabetically.
 		[data],
 	)
 
