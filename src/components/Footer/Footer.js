@@ -4,6 +4,8 @@ import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
 
+import { ReactComponent as CodexLogo } from "assets/codex.svg"
+
 const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
 	<Icon style={stylex.parse("wh:15 c:gray-200")} />
 ))
@@ -33,8 +35,8 @@ const FooterList = stylex.Unstyleable(props => (
 ))
 
 const Footer = props => (
-	<footer style={stylex.parse("flex -r -x:center b:gray-900")}>
-		<div style={stylex.parse("p-x:32 flex -r -x:between w:1024 h:80")}>
+	<footer style={stylex.parse("p-x:32 flex -r -x:center b:gray-900")}>
+		<div style={stylex.parse("flex -r -x:between w:1024 h:80")}>
 
 			<FooterList>
 				<FooterItem to="/systems">
@@ -57,20 +59,21 @@ const Footer = props => (
 						Open source
 					</Text>
 				</FooterItem>
-				{/* <FooterItem to="/support"> */}
-				{/* 	<Icon style={{ fill: "currentColor" }} icon={Feather.MessageSquare} /> */}
-				{/* 	<div style={stylex.parse("w:6")} /> */}
-				{/* 	<Text> */}
-				{/* 		Support */}
-				{/* 	</Text> */}
-				{/* </FooterItem> */}
+				<FooterItem to="/support">
+					<Icon style={{ fill: "currentColor" }} icon={Feather.MessageSquare} />
+					<div style={stylex.parse("w:6")} />
+					<Text>
+						Support
+					</Text>
+				</FooterItem>
 			</FooterList>
 
 			<FooterList>
 				<FooterItem>
-					<CopyrightText>
-						© Codex
-					</CopyrightText>
+					{/* <CopyrightText> */}
+					{/* 	© Codex */}
+					{/* </CopyrightText> */}
+					<CodexLogo style={stylex.parse("w:80 h:20 c:gray-200")} />
 				</FooterItem>
 			</FooterList>
 
