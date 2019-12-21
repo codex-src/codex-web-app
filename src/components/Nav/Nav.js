@@ -1,3 +1,4 @@
+import Feather from "components/Feather"
 import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
@@ -9,6 +10,10 @@ const Text = stylex.Styleable(props => (
 	<p style={stylex.parse("fs:15 lh:100% c:gray-800")} {...props}>
 		{props.children}
 	</p>
+))
+
+const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
+	<Icon style={stylex.parse("wh:15 middle c:blue-a400")} />
 ))
 
 const CTAButton = stylex.Styleable(props => (
@@ -64,21 +69,29 @@ const UnauthNav = props => (
 const AuthNav = props => (
 	<NavList>
 		<NavItem to="/new">
+			<Icon icon={Feather.Plus} />
+			<div style={stylex.parse("w:8")} />
 			<Text>
 				New note
 			</Text>
 		</NavItem>
 		<NavItem to="/notes">
+			<Icon icon={Feather.Book} />
+			<div style={stylex.parse("w:8")} />
 			<Text>
 				My notes
 			</Text>
 		</NavItem>
 		<NavItem to="/preferences">
+			<Icon icon={Feather.Sliders} />
+			<div style={stylex.parse("w:8")} />
 			<Text>
 				Preferences
 			</Text>
 		</NavItem>
 		<NavItem to="/account">
+			<Icon icon={Feather.Lock} />
+			<div style={stylex.parse("w:8")} />
 			<Text>
 				Account
 			</Text>
@@ -96,7 +109,8 @@ function Nav(props) {
 
 					<NavList>
 						<NavItem to="/">
-							<div style={stylex.parse("m-r:12 wh:24 b:gray-200 br:max")} />
+							<div style={stylex.parse("wh:24 b:gray-200 br:max")} />
+							<div style={stylex.parse("w:12")} />
 							<CodexLogo style={stylex.parse("w:80 h:20")} />
 						</NavItem>
 					</NavList>

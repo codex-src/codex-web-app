@@ -21,10 +21,10 @@ function ResetPassword(props) {
 	const [{ fetching }, resetPassword] = GraphQL.useLazyMutation(`
 		mutation ResetPassword($username: String!, $keychain: String!, $newPassword: String!) {
 			resetPassword(username: $username, keychain: $keychain, newPassword: $newPassword) {
-				...userFields
+				...user
 			}
 		}
-		${Fragments.userFields}
+		${Fragments.user}
 	`)
 
 	const asyncHandleSubmit = async e => {
@@ -48,14 +48,17 @@ function ResetPassword(props) {
 		}
 		// Reset password:
 		const { errors, data } = await resetPassword({ username, keychain: `${passcode}-${lastFour}`, newPassword })
-		if (GraphQL.errorsIs(errors, Errors.SQLNoRows)) {
+		if (GraphQL.errorsIs(errors, Errors.sqlNoRows)) {
 			dispatch.setWarn("Invalid username and or keychain.")
 			return
 		} else if (errors) {
 			dispatch.setWarn("An unexpected error occurred.")
 			return
 		}
-		login(data.resetPassword)
+		// Use `setTimeout` to prevent memory leak:
+		setTimeout(() => {
+			login(data.resetPassword)
+		}, 0)
 	}
 
 	return (

@@ -47,7 +47,10 @@ function SignIn(props) {
 			dispatch.setWarn("An unexpected error occurred.")
 			return
 		}
-		login(data.createSession)
+		// Use `setTimeout` to prevent memory leak:
+		setTimeout(() => {
+			login(data.createSession)
+		}, 0)
 	}
 
 	return (

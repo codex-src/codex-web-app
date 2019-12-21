@@ -3,7 +3,7 @@ import React from "react"
 import stylex from "stylex"
 
 // Compound component.
-const KeychainContainer = props => (
+const KeychainContainer = stylex.Unstyleable(props => (
 	<div style={{ ...stylex.parse("flex -r br:6"), ...Base.boxShadow }}>
 		{React.cloneElement(
 			props.children[0],
@@ -15,6 +15,6 @@ const KeychainContainer = props => (
 			{ style: stylex.parse("br-l:0") },
 		)}
 	</div>
-)
+))
 
 export default KeychainContainer

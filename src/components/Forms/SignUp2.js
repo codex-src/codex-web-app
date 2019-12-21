@@ -73,7 +73,10 @@ function SignUpBilling({ state, dispatch, ...props }) {
 			dispatch.setWarn("An unexpected error occurred.")
 			return
 		}
-		login(res2.data.createUser)
+		// Use `setTimeout` to prevent memory leak:
+		setTimeout(() => {
+			login(res2.data.createUser)
+		}, 0)
 	}
 
 	// TODO: Add back button.
