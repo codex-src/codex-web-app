@@ -6,14 +6,14 @@ import User from "components/User"
 
 import { ReactComponent as CodexLogo } from "assets/codex.svg"
 
+const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
+	<Icon style={stylex.parse("wh:15 c:blue-a400")} />
+))
+
 const Text = stylex.Styleable(props => (
 	<p style={stylex.parse("fs:15 lh:100% c:gray-800")} {...props}>
 		{props.children}
 	</p>
-))
-
-const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
-	<Icon style={stylex.parse("wh:15 middle c:blue-a400")} />
 ))
 
 // NOTE (1): `CTAButton` doesn’t use `flex -r -y:center`.
