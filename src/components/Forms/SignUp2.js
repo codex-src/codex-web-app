@@ -3,10 +3,10 @@ import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
 import Headers from "components/Headers"
 import Input from "components/Input"
+import InputStatus from "components/InputStatus"
 import invariant from "invariant"
 import Overlay from "components/Overlay"
 import React from "react"
-import Status from "components/Status"
 import stylex from "stylex"
 import User from "components/User"
 
@@ -116,9 +116,9 @@ function SignUpBilling({ state, dispatch, ...props }) {
 					</Input.Label>
 
 					{state.info && (
-						<Status.Info style={stylex.parse("m-t:40 m-b:-24")}>
+						<InputStatus.Info style={stylex.parse("m-t:40 m-b:-24")}>
 							{state.info}
-						</Status.Info>
+						</InputStatus.Info>
 					)}
 
 					<Input.Submit style={stylex.parse("m-t:40 m-b:16")} fetching={state.fetching}>
@@ -126,9 +126,9 @@ function SignUpBilling({ state, dispatch, ...props }) {
 					</Input.Submit>
 
 					{state.warn && (
-						<Status.Warn style={stylex.parse("m-t:16")}>
+						<InputStatus.Warn style={stylex.parse("m-t:16")}>
 							{state.warn}
-						</Status.Warn>
+						</InputStatus.Warn>
 					)}
 
 				</form>

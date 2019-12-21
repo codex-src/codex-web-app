@@ -1,14 +1,14 @@
 import * as Context from "./Context"
-import DocumentTitle from "DocumentTitle"
+import CodexTitle from "components/CodexTitle"
 import React from "react"
 import Router from "components/Router"
 
 export const Route = ({ title, ...props }) => (
-	<DocumentTitle title={title}>
+	<CodexTitle title={title}>
 		<Router.Route {...props}>
 			{props.children}
 		</Router.Route>
-	</DocumentTitle>
+	</CodexTitle>
 )
 
 // `UnprotectedRoute` guards authenticated users.

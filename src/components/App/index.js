@@ -9,88 +9,79 @@ import Router from "components/Router"
 import stylex from "stylex"
 import User from "components/User"
 
-const client = new GraphQL.Client({
-	fetchGraphQL,
-})
-
-const Providers = props => (
+// FIXME: Add home route.
+const App = props => (
 	<Router.BrowserRouter>
-		<GraphQL.Provider client={client}>
+		<GraphQL.Provider client={new GraphQL.Client({ fetchGraphQL })}>
 			<User.Provider>
-				{props.children}
+
+				<div style={stylex.parse("flex -c -y:between h:max")}>
+					<div>
+						<Nav />
+						<main style={stylex.parse("p-x:32 p-y:96 flex -r -x:center")}>
+							<div style={stylex.parse("w:1024")}>
+								<Router.Switch>
+
+									{/* Unprotected: */}
+									<User.UnprotectedRoute
+										path="/our-story"
+										exact
+										title={"Our story"}
+										component={props => "TODO"}
+									/>
+									<User.UnprotectedRoute
+										path="/features"
+										exact
+										title={"Features"}
+										component={props => "TODO"}
+									/>
+									<User.UnprotectedRoute
+										path="/pricing"
+										exact
+										title={"Pricing"}
+										component={props => "TODO"}
+									/>
+									<User.UnprotectedRoute
+										path="/faq"
+										exact
+										title={"FAQ"}
+										component={props => "TODO"}
+									/>
+									<User.UnprotectedRoute
+										path="/sign-up"
+										exact
+										title={"Sign up"}
+										component={Forms.SignUpFlow}
+									/>
+									<User.UnprotectedRoute
+										path="/sign-in"
+										exact
+										title={"Sign in"}
+										component={Forms.SignIn}
+									/>
+									<User.UnprotectedRoute
+										path="/reset-password"
+										exact
+										title={"Reset password"}
+										component={Forms.ResetPassword}
+									/>
+
+									<User.Route
+										path="/"
+										title={"404"}
+										component={PageNotFound}
+									/>
+
+								</Router.Switch>
+							</div>
+						</main>
+					</div>
+					<Footer />
+				</div>
+
 			</User.Provider>
 		</GraphQL.Provider>
 	</Router.BrowserRouter>
-)
-
-const Codex = title => `${title} - Codex`
-
-const App = props => (
-	<Providers>
-		<div style={stylex.parse("flex -c -y:between h:max")}>
-			<div>
-				<Nav />
-				<main style={stylex.parse("p-x:32 p-y:96 flex -r -x:center")}>
-					<div style={stylex.parse("w:1024")}>
-						<Router.Switch>
-
-							{/* Unprotected: */}
-							<User.UnprotectedRoute
-								path="/our-story"
-								exact
-								title={Codex("Our story")}
-								component={props => "TODO"}
-							/>
-							<User.UnprotectedRoute
-								path="/features"
-								exact
-								title={Codex("Features")}
-								component={props => "TODO"}
-							/>
-							<User.UnprotectedRoute
-								path="/pricing"
-								exact
-								title={Codex("Pricing")}
-								component={props => "TODO"}
-							/>
-							<User.UnprotectedRoute
-								path="/faq"
-								exact
-								title={Codex("FAQ")}
-								component={props => "TODO"}
-							/>
-							<User.UnprotectedRoute
-								path="/sign-up"
-								exact
-								title={Codex("Sign up")}
-								component={Forms.SignUpFlow}
-							/>
-							<User.UnprotectedRoute
-								path="/sign-in"
-								exact
-								title={Codex("Sign in")}
-								component={Forms.SignIn}
-							/>
-							<User.UnprotectedRoute
-								path="/reset-password"
-								exact
-								title={Codex("Reset password")}
-								component={Forms.ResetPassword}
-							/>
-
-							<User.Route
-								path="/"
-								title={Codex("404")}
-								component={PageNotFound}
-							/>
-
-						</Router.Switch>
-					</div>
-				</main>
-			</div>
-			<Footer />
-		</div>
-	</Providers>
 )
 
 export default App

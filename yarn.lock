@@ -1766,12 +1766,6 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-DocumentTitle@codex-src/documenttitle.js:
-  version "0.1.0"
-  resolved "https://codeload.github.com/codex-src/documenttitle.js/tar.gz/e952f2da777613e37d84b1938bdca1836380d3d7"
-  dependencies:
-    invariant "^2.2.4"
-
 abab@^2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.3.tgz#623e2075e02eb2d3f2475e49f99c91846467907a"
@@ -3631,6 +3625,12 @@ doctrine@^3.0.0:
   integrity sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==
   dependencies:
     esutils "^2.0.2"
+
+document-title@codex-src/DocumentTitle.js:
+  version "0.1.0"
+  resolved "https://codeload.github.com/codex-src/DocumentTitle.js/tar.gz/2a728dfc6e356314a4ab1474c7ab4887e7f5101b"
+  dependencies:
+    invariant "^2.2.4"
 
 dom-converter@^0.2:
   version "0.2.0"

@@ -1,7 +1,7 @@
 import React from "react"
 import stylex from "stylex"
 
-import "./StatusDot.css"
+import "./status-dot.css"
 
 const StatusDot = ({ style, ...props }) => (
 	<span className="status-dot" style={{ ...stylex.parse("inline-block wh:6 middle c:current-color b:current-color br:max"), ...style }} {...props} />
