@@ -1,7 +1,7 @@
 import * as Base from "./Base"
-import Feather from "components/Feather"
 import React from "react"
 import stylex from "stylex"
+import { Check } from "react-feather"
 
 const Text = stylex.Styleable(props => (
 	<p {...props}>
@@ -23,8 +23,8 @@ const Discount = stylex.Styleable(props => (
 	</span>
 ))
 
-const Check = stylex.Styleable(props => (
-	<Feather.Check style={stylex.parse("wh:16 square sw:900 c:green-a400")} {...props} />
+const Checkmark = stylex.Styleable(props => (
+	<Check style={stylex.parse("wh:16 square sw:900 c:green-a400")} {...props} />
 ))
 
 export const SubscriptionOption = stylex.Styleable(props => (
@@ -49,7 +49,7 @@ export const SubscriptionOption = stylex.Styleable(props => (
 		{/* RHS */}
 		<div>
 			{props.selected && (
-				<Check />
+				<Checkmark />
 			)}
 		</div>
 	</Base.StyledButton>

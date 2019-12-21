@@ -1,8 +1,8 @@
 import * as StatusDot from "./StatusDot"
-import Feather from "components/Feather"
 import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
+import { Cpu, GitHub, MessageSquare } from "react-feather"
 
 import { ReactComponent as CodexLogo } from "assets/codex.svg"
 
@@ -46,21 +46,21 @@ const Footer = props => (
 					</Text>
 				</FooterItem>
 				<FooterItem to="/api">
-					<Icon icon={Feather.Cpu} />
+					<Icon icon={Cpu} />
 					<div style={stylex.parse("w:6")} />
 					<Text>
 						API
 					</Text>
 				</FooterItem>
 				<FooterItem to="https://github.com/codex-src">
-					<Icon icon={Feather.GitHub} />
+					<Icon icon={GitHub} />
 					<div style={stylex.parse("w:6")} />
 					<Text>
 						Open source
 					</Text>
 				</FooterItem>
 				<FooterItem to="/support">
-					<Icon style={{ fill: "currentColor" }} icon={Feather.MessageSquare} />
+					<Icon style={{ fill: "currentColor" }} icon={MessageSquare} />
 					<div style={stylex.parse("w:6")} />
 					<Text>
 						Support

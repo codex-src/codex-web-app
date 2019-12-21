@@ -1,12 +1,13 @@
 import parse from "./Components"
 import useMethods from "use-methods"
 
+// FIXME: `pos1` and `pos2`.
 const initialState = {
-	isFocused:  false,      // Is the editor focused?
-	data:       "",         // What’s the editor’s data?
-	pos1:       0, // FIXME // What’s the editor’s cursor start position?
-	pos2:       0, // FIXME // What’s the editor’s cursor end position?
-	Components: parse(""),  // What’s are the editor’s components.
+	isFocused:  false,     // Is the editor focused?
+	data:       "",        // What’s the editor’s data?
+	pos1:       0,         // What’s the editor’s cursor start position?
+	pos2:       0,         // What’s the editor’s cursor end position?
+	Components: parse(""), // What’s are the editor’s components.
 }
 
 const reducer = state => ({
