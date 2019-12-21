@@ -25,13 +25,13 @@ const CTAButton = stylex.Styleable(props => (
 ))
 
 const NavItem = stylex.Unstyleable(props => (
-	<Router.Link style={stylex.parse("p-x:10 flex -r -y:center h:max")} {...props}>
+	<Router.Link style={stylex.parse("p-x:12 flex -r -y:center h:max")} {...props}>
 		{props.children}
 	</Router.Link>
 ))
 
 const NavList = stylex.Unstyleable(props => (
-	<div style={stylex.parse("m-x:-10 flex -r")}>
+	<div style={stylex.parse("m-x:-12 flex -r")}>
 		{props.children}
 	</div>
 ))
@@ -120,7 +120,7 @@ function Nav(props) {
 					<NavList>
 						<NavItem to="/">
 							<div style={stylex.parse("wh:24 b:gray-200 br:max")} />
-							<div style={stylex.parse("w:10")} />
+							<div style={stylex.parse("w:12")} />
 							<CodexLogo style={stylex.parse("w:80 h:20")} />
 						</NavItem>
 					</NavList>
