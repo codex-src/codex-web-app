@@ -3,32 +3,32 @@ import Feather from "components/Feather"
 import React from "react"
 import stylex from "stylex"
 
-const Text = props => (
+const Text = stylex.Styleable(props => (
 	<p {...props}>
 		{props.children}
 	</p>
-)
+))
 
-const Subtext = ({ style, ...props }) => (
-	<p style={{ ...stylex.parse("fw:500 fs:14 c:blue-a400"), ...style }} {...props}>
+const Subtext = stylex.Styleable(props => (
+	<p style={stylex.parse("fw:500 fs:14 c:blue-a400")} {...props}>
 		{props.children}
 	</p>
-)
+))
 
-const Discount = ({ style, ...props }) => (
+const Discount = stylex.Styleable(props => (
 	<span style={{ ...stylex.parse("p-x:4 p-y:6 inline-flex -r :center br:2"), background: "hsla(var(--green-a700), 0.05)", boxShadow: "inset 0 0 0 0.5px hsl(var(--green-a700), 0.25)" }} {...props}>
 		<span style={stylex.parse("fw:700 fs:10.5 ls:5% lh:100% c:green-a700")}>
 			{props.children}
 		</span>
 	</span>
-)
+))
 
-const Check = ({ style, ...props }) => (
-	<Feather.Check style={{ ...stylex.parse("wh:16 square sw:900 c:green-a400"), ...style }} {...props} />
-)
+const Check = stylex.Styleable(props => (
+	<Feather.Check style={stylex.parse("wh:16 square sw:900 c:green-a400")} {...props} />
+))
 
-export const SubscriptionOption = ({ style, ...props }) => (
-	<Base.StyledButton style={{ ...stylex.parse("flex -r -x:between -y:center"), ...style }} {...props}>
+export const SubscriptionOption = stylex.Styleable(props => (
+	<Base.StyledButton style={stylex.parse("flex -r -x:between -y:center")} {...props}>
 		{/* LHS */}
 		<div>
 			<Text>
@@ -53,11 +53,11 @@ export const SubscriptionOption = ({ style, ...props }) => (
 			)}
 		</div>
 	</Base.StyledButton>
-)
+))
 
 // Compound component.
-export const SubscriptionSelect = ({ style, ...props }) => (
-	<div style={{ ...stylex.parse("br:6"), ...Base.boxShadow, ...style }}>
+export const SubscriptionSelect = stylex.Unstyleable(props => (
+	<div style={{ ...stylex.parse("br:6"), ...Base.boxShadow }}>
 		{React.cloneElement(
 			props.children[0],
 			{ style: stylex.parse("br-b:0") },
@@ -68,4 +68,4 @@ export const SubscriptionSelect = ({ style, ...props }) => (
 			{ style: stylex.parse("br-t:0") },
 		)}
 	</div>
-)
+))

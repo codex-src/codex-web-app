@@ -1,7 +1,3 @@
-const exports = {
-	bcryptMismatch: "crypto/bcrypt: hashedPassword is not the hash of the given password",
-	fetch:          "Failed to fetch",
-	sqlNoRows:      "sql: no rows in result set",
-}
+import * as Errors from "./Errors"
 
-export default exports
+export default Errors

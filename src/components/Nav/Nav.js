@@ -12,7 +12,7 @@ const Text = stylex.Styleable(props => (
 ))
 
 const CTAButton = stylex.Styleable(props => (
-	<div style={{ ...stylex.parse("p:12 br:2"), boxShadow: "inset 0 0 0 1px hsla(var(--blue-a400), 0.5)" }} {...props}>
+	<div style={{ ...stylex.parse("p-x:12 p-y:10 br:2"), boxShadow: "inset 0 0 0 1px hsla(var(--blue-a400), 0.5)" }} {...props}>
 		{props.children}
 	</div>
 ))

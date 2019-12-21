@@ -23,7 +23,7 @@ function SignUp({ state, dispatch, ...props }) {
 			dispatch.setWarn("Username needs to be 3-20 characters.")
 			return
 		} else if (!testUsername(username)) {
-			dispatch.setWarn("Username needs to be a combo of:\n\n- a-z, A-Z\n- 0-9\n- _\n\n(And not start with a number)")
+			dispatch.setWarn("Username needs to be a combo of:\n\n- a-z, A-Z\n- 0-9\n- _\n\n(And start with a-z or A-Z)")
 			return
 		} else if (password.length < 8) {
 			dispatch.setWarn("Password needs to be 8 or more characters.")
