@@ -1,9 +1,9 @@
 import * as Router from "react-router-dom"
-import LinkHOC from "./LinkHOC"
+import Link from "./Link"
 
 const exports = {
 	...Router,
-	Link: LinkHOC, // Overwrite `Link`.
+	Link,
 }
 
 export default exports

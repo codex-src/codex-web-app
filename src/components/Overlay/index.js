@@ -2,7 +2,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 
 // const Overlay = props => (
-// 	<aside style={stylex("absolute -x -y b:white z:max")}>
+// 	<aside style={stylex.parse("absolute -x -y b:white z:max")}>
 // 		{props.children}
 // 	</aside>
 // )

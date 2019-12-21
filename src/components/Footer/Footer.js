@@ -3,48 +3,39 @@ import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
 
-const Text = ({ style, ...props }) => (
-	<p style={{ ...stylex("fw:700 fs:15 lh:100% c:gray-200"), ...style }} {...props}>
+const Text = stylex.Styleable(props => (
+	<p style={stylex.parse("fw:700 fs:15 lh:100% c:gray-200")} {...props}>
 		{props.children}
 	</p>
-)
+))
 
-const CopyrightText = ({ style, ...props }) => (
-	<p style={{ ...stylex("fs:15 lh:100% c:gray"), ...style }} {...props}>
+const CopyrightText = stylex.Styleable(props => (
+	<p style={stylex.parse("fs:15 lh:100% c:gray")} {...props}>
 		{props.children}
 	</p>
-)
+))
 
-/* eslint-disable jsx-a11y/anchor-has-content */
-function FooterItem({ style, ...props }) {
-	let Wrapper = newProps => <div {...newProps} />
-	if (props.to) {
-		Wrapper = newProps => props.to.startsWith("/") ? <Router.Link {...newProps} />
-			: <a href={props.to} {...{ ...newProps, to: undefined }} />
-	}
-	return (
-		<Wrapper style={{ ...stylex("p-x:8 flex -r -y:center h:max"), ...style }} {...props}>
-			{props.children}
-		</Wrapper>
-	)
-}
+const FooterItem = stylex.Unstyleable(props => (
+	<Router.Link style={stylex.parse("p-x:8 flex -r -y:center h:max")} {...props}>
+		{props.children}
+	</Router.Link>
+))
 
-const FooterList = props => (
-	<div style={stylex("m-x:-8 flex -r")}>
+const FooterList = stylex.Unstyleable(props => (
+	<div style={stylex.parse("m-x:-8 flex -r")}>
 		{props.children}
 	</div>
-)
+))
 
 const Footer = props => (
-	<footer style={stylex("flex -r -x:center b:gray-900")}>
-		<div style={stylex("p-x:32 flex -r -x:between w:1024 h:80")}>
+	<footer style={stylex.parse("flex -r -x:center b:gray-900")}>
+		<div style={stylex.parse("p-x:32 flex -r -x:between w:1024 h:80")}>
 
-			{/* LHS */}
 			<FooterList>
 				<FooterItem to="/systems">
 					<Text>
-						<StatusDot.Info />{" "}
-						&nbsp;Systems
+						<StatusDot.Info />{" \u00a0"}
+						Systems
 					</Text>
 				</FooterItem>
 				<FooterItem to="/api">
@@ -69,7 +60,6 @@ const Footer = props => (
 				</FooterItem>
 			</FooterList>
 
-			{/* RHS */}
 			<FooterList>
 				<FooterItem>
 					<CopyrightText>

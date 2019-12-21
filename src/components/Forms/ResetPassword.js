@@ -1,20 +1,17 @@
-/* eslint-disable no-multi-spaces */
 import * as ResetPasswordReducer from "./ResetPasswordReducer"
-
-import Errors       from "components/Errors"
-import Fragments    from "components/Fragments"
-import GraphQL      from "use-graphql"
-import Headers      from "components/Headers"
-import Input        from "components/Input"
-import Overlay      from "components/Overlay"
-import React        from "react"
-import Status       from "components/Status"
-import stylex       from "stylex"
+import Errors from "components/Errors"
+import Fragments from "components/Fragments"
+import GraphQL from "use-graphql"
+import Headers from "components/Headers"
+import Input from "components/Input"
+import Overlay from "components/Overlay"
+import React from "react"
+import Status from "components/Status"
+import stylex from "stylex"
 import testPasscode from "./helpers/testPasscode"
 import testPassword from "./helpers/testPassword"
-import useMethods   from "use-methods"
-import User         from "components/User"
-/* eslint-enable no-multi-spaces */
+import useMethods from "use-methods"
+import User from "components/User"
 
 function ResetPassword(props) {
 	const [, { login }] = React.useContext(User.Context)
@@ -63,19 +60,19 @@ function ResetPassword(props) {
 
 	return (
 		<Overlay>
-			<div style={stylex("p-x:32 p-y:128 flex -r -x:center")}>
-				<form style={stylex("w:320")} onSubmit={asyncHandleSubmit}>
+			<div style={stylex.parse("p-x:32 p-y:128 flex -r -x:center")}>
+				<form style={stylex.parse("w:320")} onSubmit={asyncHandleSubmit}>
 
-					<header style={stylex("m-b:40")}>
-						<Headers.H1 style={stylex("center")}>
+					<header style={stylex.parse("m-b:40")}>
+						<Headers.H1 style={stylex.parse("center")}>
 							Reset
 						</Headers.H1>
-						<Headers.H2 style={stylex("center")}>
-							to continue with <span style={stylex("c:blue-a400")}>Codex</span>
+						<Headers.H2 style={stylex.parse("center")}>
+							to continue with <span style={stylex.parse("c:blue-a400")}>Codex</span>
 						</Headers.H2>
 					</header>
 
-					<Input.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex.parse("m-y:16")}>
 						Username
 						<Input.Text
 							value={state.username}
@@ -85,7 +82,7 @@ function ResetPassword(props) {
 						/>
 					</Input.Label>
 
-					<Input.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex.parse("m-y:16")}>
 						Password and card last four
 						<Input.KeychainContainer>
 							<Input.Keychain
@@ -103,7 +100,7 @@ function ResetPassword(props) {
 						</Input.KeychainContainer>
 					</Input.Label>
 
-					<Input.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex.parse("m-y:16")}>
 						New password
 						<Input.Text
 							value={state.newPassword}
@@ -114,17 +111,17 @@ function ResetPassword(props) {
 					</Input.Label>
 
 					{state.info && (
-						<Status.Info style={stylex("m-t:40 m-b:-24")}>
+						<Status.Info style={stylex.parse("m-t:40 m-b:-24")}>
 							{state.info}
 						</Status.Info>
 					)}
 
-					<Input.Submit style={stylex("m-t:40 m-b:16")} fetching={fetching}>
+					<Input.Submit style={stylex.parse("m-t:40 m-b:16")} fetching={fetching}>
 						Sign in
 					</Input.Submit>
 
 					{state.warn && (
-						<Status.Warn style={stylex("m-t:16")}>
+						<Status.Warn style={stylex.parse("m-t:16")}>
 							{state.warn}
 						</Status.Warn>
 					)}

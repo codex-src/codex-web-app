@@ -3,35 +3,40 @@ import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
 
-export const Text = props => (
+/*
+ * Styleable
+ */
+
+export const Text = stylex.Styleable(props => (
 	<Base.StyledInputWithBoxShadow type="text" {...props} />
-)
+))
 
-export const Password = ({ style, ...props }) => (
-	<Base.StyledInput style={props.type === "password" ? { ...stylex("ls:10%"), ...style } : style} {...props} />
-)
+// Omits `box-shadow` because of `<WithShow>Z`.
+export const Password = stylex.Styleable(props => (
+	<Base.StyledInput style={props.type === "password" ? stylex.parse("ls:10%") : null} {...props} />
+))
 
-export const Passcode = ({ style, ...props }) => (
-	<Base.StyledInput style={{ ...stylex("ls:25%"), ...style }} {...props} />
-)
+// Omits `box-shadow` because of `<WithShow>Z`.
+export const Passcode = stylex.Styleable(props => (
+	<Base.StyledInput style={stylex.parse("ls:25%")} {...props} />
+))
 
-export const Keychain = ({ style, ...props }) => (
-	<Passcode style={{ ...stylex("center"), ...style }} {...props} />
-)
+export const StripeCard = stylex.Styleable(props => (
+	<div id="card-element" style={{ ...stylex.parse("p-x:16 p-y:14.4075 h:48 br:6"), ...Base.boxShadow, cursor: "text" }} {...props} />
+))
 
-export const StripeCard = ({ style, ...props }) => (
-	<div id="card-element" style={{ ...stylex("p-x:16 p-y:14.4075 br:6"), ...Base.boxShadow, cursor: "text", ...style }} {...props} />
-)
+/*
+ * Unstyleable
+ */
 
-// NOTE: `Submit` uses `children` instead of `value`.
-export const Submit = ({ fetching, children, style, ...props }) => (
-	<Base.StyledInputWithBoxShadow style={{ ...stylex("center fw:600 fs:17 ls:1.25% c:white b:blue-a400 pointer"), ...style }} type="submit" value={!fetching ? children : "Loading…"} {...props} />
-)
+export const Submit = stylex.Unstyleable(({ fetching, children, ...props }) => (
+	<Base.StyledInputWithBoxShadow style={stylex.parse("center fw:600 fs:17 ls:1.25% c:white b:blue-a400 pointer")} type="submit" value={!fetching ? children : "Loading…"} {...props} />
+))
 
-export const SubmitClickAway = ({ style, ...props }) => (
-	<Router.Link style={{ ...stylex("flex -r :center h:48"), ...style }} {...props}>
-		<p style={stylex("fw:500 fs:15 c:blue-a400")}>
+export const SubmitClickAway = stylex.Unstyleable(props => (
+	<Router.Link style={stylex.parse("flex -r :center h:48")} {...props}>
+		<p style={stylex.parse("fw:500 fs:15 c:blue-a400")}>
 			{props.children}
 		</p>
 	</Router.Link>
-)
+))

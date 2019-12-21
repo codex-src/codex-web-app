@@ -1,4 +1,3 @@
-import Feather from "components/Feather"
 import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
@@ -6,29 +5,29 @@ import User from "components/User"
 
 import { ReactComponent as CodexLogo } from "assets/codex.svg"
 
-const Text = ({ style, ...props }) => (
-	<p style={{ ...stylex("fs:15 lh:100% c:gray-800"), ...style }} {...props}>
+const Text = stylex.Styleable(props => (
+	<p style={stylex.parse("fs:15 lh:100% c:gray-800")} {...props}>
 		{props.children}
 	</p>
-)
+))
 
-const CTAButton = ({ style, ...props }) => (
-	<div style={{ ...stylex("p:12 br:2"), boxShadow: "inset 0 0 0 1px hsla(var(--blue-a400), 0.5)", ...style }} {...props}>
+const CTAButton = stylex.Styleable(props => (
+	<div style={{ ...stylex.parse("p:12 br:2"), boxShadow: "inset 0 0 0 1px hsla(var(--blue-a400), 0.5)" }} {...props}>
 		{props.children}
 	</div>
-)
+))
 
-const NavItem = props => (
-	<Router.Link style={stylex("p-x:8 flex -r -y:center h:max")} {...props}>
+const NavItem = stylex.Unstyleable(props => (
+	<Router.Link style={stylex.parse("p-x:8 flex -r -y:center h:max")} {...props}>
 		{props.children}
 	</Router.Link>
-)
+))
 
-const NavList = props => (
-	<div style={stylex("m-x:-8 flex -r")}>
+const NavList = stylex.Unstyleable(props => (
+	<div style={stylex.parse("m-x:-8 flex -r")}>
 		{props.children}
 	</div>
-)
+))
 
 const UnauthNav = props => (
 	<NavList>
@@ -54,9 +53,8 @@ const UnauthNav = props => (
 		</NavItem>
 		<NavItem to="/sign-up">
 			<CTAButton>
-				<Text style={stylex("flex -r :center c:blue-a400")}>
-					Sign up now{" \u00a0"}
-					<Feather.Plus style={stylex("wh:15")} />
+				<Text style={stylex.parse("c:blue-a400")}>
+					Sign up
 				</Text>
 			</CTAButton>
 		</NavItem>
@@ -88,19 +86,18 @@ const AuthNav = props => (
 	</NavList>
 )
 
-// TODO: Add authenticated `nav`.
 function Nav(props) {
 	const [state] = React.useContext(User.Context)
 
 	return (
-		<nav style={stylex("sticky -x -t")}>
-			<div style={stylex("p-x:32 flex -r -x:center b:white")}>
-				<div style={stylex("flex -r -x:between w:1024 h:80")}>
+		<nav style={stylex.parse("sticky -x -t")}>
+			<div style={stylex.parse("p-x:32 flex -r -x:center b:white")}>
+				<div style={stylex.parse("flex -r -x:between w:1024 h:80")}>
 
 					<NavList>
 						<NavItem to="/">
-							<div style={stylex("m-r:12 wh:24 b:gray-200 br:max")} />
-							<CodexLogo style={stylex("w:80 h:20")} />
+							<div style={stylex.parse("m-r:12 wh:24 b:gray-200 br:max")} />
+							<CodexLogo style={stylex.parse("w:80 h:20")} />
 						</NavItem>
 					</NavList>
 

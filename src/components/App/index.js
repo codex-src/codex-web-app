@@ -1,15 +1,13 @@
-/* eslint-disable no-multi-spaces */
 import fetchGraphQL from "./fetchGraphQL"
-import Footer       from "components/Footer"
-import Forms        from "components/Forms"
-import GraphQL      from "use-graphql"
-import Nav          from "components/Nav"
+import Footer from "components/Footer"
+import Forms from "components/Forms"
+import GraphQL from "use-graphql"
+import Nav from "components/Nav"
 import PageNotFound from "./PageNotFound"
-import React        from "react"
-import Router       from "components/Router"
-import stylex       from "stylex"
-import User         from "components/User"
-/* eslint-enable no-multi-spaces */
+import React from "react"
+import Router from "components/Router"
+import stylex from "stylex"
+import User from "components/User"
 
 const client = new GraphQL.Client({
 	fetchGraphQL,
@@ -29,11 +27,11 @@ const Codex = title => `${title} - Codex`
 
 const App = props => (
 	<Providers>
-		<div style={stylex("flex -c -y:between h:max")}>
+		<div style={stylex.parse("flex -c -y:between h:max")}>
 			<div>
 				<Nav />
-				<main style={stylex("p-x:32 p-y:96 flex -r -x:center")}>
-					<div style={stylex("w:1024")}>
+				<main style={stylex.parse("p-x:32 p-y:96 flex -r -x:center")}>
+					<div style={stylex.parse("w:1024")}>
 						<Router.Switch>
 
 							{/* Unprotected: */}

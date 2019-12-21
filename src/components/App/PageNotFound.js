@@ -4,7 +4,7 @@ import stylex from "stylex"
 
 const PageNotFound = props => (
 	<header>
-		<Headers.H1 style={stylex("center")}>
+		<Headers.H1 style={stylex.parse("center")}>
 			404
 		</Headers.H1>
 	</header>

@@ -1,15 +1,13 @@
-/* eslint-disable no-multi-spaces */
-import GraphQL      from "use-graphql"
-import Headers      from "components/Headers"
-import Input        from "components/Input"
-import Overlay      from "components/Overlay"
-import React        from "react"
-import Status       from "components/Status"
-import stylex       from "stylex"
+import GraphQL from "use-graphql"
+import Headers from "components/Headers"
+import Input from "components/Input"
+import Overlay from "components/Overlay"
+import React from "react"
+import Status from "components/Status"
+import stylex from "stylex"
 import testPasscode from "./helpers/testPasscode"
 import testPassword from "./helpers/testPassword"
 import testUsername from "./helpers/testUsername"
-/* eslint-enable no-multi-spaces */
 
 function SignUp({ state, dispatch, ...props }) {
 	const [, testUsernameTaken] = GraphQL.useLazyQuery(`
@@ -51,19 +49,19 @@ function SignUp({ state, dispatch, ...props }) {
 
 	return (
 		<Overlay>
-			<div style={stylex("p-x:32 p-y:128 flex -r -x:center")}>
-				<form style={stylex("w:320")} onSubmit={asyncHandleSubmit}>
+			<div style={stylex.parse("p-x:32 p-y:128 flex -r -x:center")}>
+				<form style={stylex.parse("w:320")} onSubmit={asyncHandleSubmit}>
 
-					<header style={stylex("m-b:40")}>
-						<Headers.H1 style={stylex("center")}>
+					<header style={stylex.parse("m-b:40")}>
+						<Headers.H1 style={stylex.parse("center")}>
 							Sign up
 						</Headers.H1>
-						<Headers.H2 style={stylex("center")}>
-							to continue with <span style={stylex("c:blue-a400")}>Codex</span>
+						<Headers.H2 style={stylex.parse("center")}>
+							to continue with <span style={stylex.parse("c:blue-a400")}>Codex</span>
 						</Headers.H2>
 					</header>
 
-					<Input.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex.parse("m-y:16")}>
 						Username
 						<Input.Text
 							value={state.username}
@@ -73,7 +71,7 @@ function SignUp({ state, dispatch, ...props }) {
 						/>
 					</Input.Label>
 
-					<Input.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex.parse("m-y:16")}>
 						Password
 						<Input.WithShow show={state.show} setShow={dispatch.setShow}>
 							<Input.Password
@@ -85,7 +83,7 @@ function SignUp({ state, dispatch, ...props }) {
 						</Input.WithShow>
 					</Input.Label>
 
-					<Input.Label style={stylex("m-y:16")}>
+					<Input.Label style={stylex.parse("m-y:16")}>
 						Passcode (4-digit code)
 						<Input.WithShow show={state.show} setShow={dispatch.setShow}>
 							<Input.Passcode
@@ -98,21 +96,21 @@ function SignUp({ state, dispatch, ...props }) {
 					</Input.Label>
 
 					{state.info && (
-						<Status.Info style={stylex("m-t:40 m-b:-24")}>
+						<Status.Info style={stylex.parse("m-t:40 m-b:-24")}>
 							{state.info}
 						</Status.Info>
 					)}
 
-					<Input.Submit style={stylex("m-t:40 m-b:16")}>
+					<Input.Submit style={stylex.parse("m-t:40 m-b:16")}>
 						Continue
 					</Input.Submit>
 
 					{!state.warn ? (
-						<Input.SubmitClickAway style={stylex("m-t:-16")} to="/reset-password">
+						<Input.SubmitClickAway style={stylex.parse("m-t:-16")} to="/reset-password">
 							I have an account
 						</Input.SubmitClickAway>
 					) : (
-						<Status.Warn style={stylex("m-t:16")}>
+						<Status.Warn style={stylex.parse("m-t:16")}>
 							{state.warn}
 						</Status.Warn>
 					)}
