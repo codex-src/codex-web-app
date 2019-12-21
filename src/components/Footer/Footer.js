@@ -16,11 +16,11 @@ const Text = stylex.Styleable(props => (
 	</p>
 ))
 
-const CopyrightText = stylex.Styleable(props => (
-	<p style={stylex.parse("fs:15 lh:100% c:gray")} {...props}>
-		{props.children}
-	</p>
-))
+// const CopyrightText = stylex.Styleable(props => (
+// 	<p style={stylex.parse("fs:15 lh:100% c:gray")} {...props}>
+// 		{props.children}
+// 	</p>
+// ))
 
 const FooterItem = stylex.Unstyleable(props => (
 	<Router.Link style={stylex.parse("p-x:12 flex -r -y:center h:max")} {...props}>
