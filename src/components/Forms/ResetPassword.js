@@ -48,7 +48,7 @@ function ResetPassword(props) {
 		}
 		// Reset password:
 		const { errors, data } = await resetPassword({ username, keychain: `${passcode}-${lastFour}`, newPassword })
-		if (GraphQL.errorsIs(errors, Errors.sqlNoRows)) {
+		if (GraphQL.errorsIs(errors, Errors.SQLNoRows)) {
 			dispatch.setWarn("Invalid username and or keychain.")
 			return
 		} else if (errors) {

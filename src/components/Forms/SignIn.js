@@ -37,7 +37,7 @@ function SignIn(props) {
 		}
 		// Create session:
 		const { errors, data } = await createSession({ username, password })
-		if (GraphQL.errorsIs(errors, Errors.sqlNoRows)) {
+		if (GraphQL.errorsIs(errors, Errors.SQLNoRows)) {
 			dispatch.setWarn("Invalid username and or password.")
 			return
 		} else if (GraphQL.errorsIs(errors, Errors.bcryptMismatch)) {

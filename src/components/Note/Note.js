@@ -1,4 +1,4 @@
-import CodexEditor from "components/CodexEditor"
+import Editor from "components/Editor"
 import React from "react"
 import stylex from "stylex"
 
@@ -9,10 +9,12 @@ import stylex from "stylex"
 // </header>
 
 function Note(props) {
+	const [state, dispatch] = Editor.useEditor("Hello, world!")
+
 	return (
 		<div style={stylex.parse("flex -r -x:center")}>
 			<div style={stylex.parse("w:768")}>
-				<CodexEditor />
+				<Editor.Editor state={state} dispatch={dispatch} />
 			</div>
 		</div>
 	)

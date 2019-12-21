@@ -35,7 +35,7 @@ function Fetcher(props) {
 		[data],
 	)
 
-	if (errors && !GraphQL.errorsIs(errors, Errors.sqlNoRows)) {
+	if (errors && !GraphQL.errorsIs(errors, Errors.SQLNoRows)) {
 		invariant(false, errors.map(error => error.message).join(", "))
 	} else if (fetching) {
 		return null
