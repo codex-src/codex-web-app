@@ -3,6 +3,7 @@ import Footer from "components/Footer"
 import Forms from "components/Forms"
 import GraphQL from "use-graphql"
 import Nav from "components/Nav"
+import Note from "components/Note"
 import PageNotFound from "./PageNotFound"
 import React from "react"
 import Router from "components/Router"
@@ -22,7 +23,7 @@ const App = props => (
 							<div style={stylex.parse("w:1024")}>
 								<Router.Switch>
 
-									{/* Unprotected: */}
+									{/* Unprotected routes: */}
 									<User.UnprotectedRoute
 										path="/our-story"
 										exact
@@ -64,6 +65,14 @@ const App = props => (
 										exact
 										title={"Reset password"}
 										component={Forms.ResetPassword}
+									/>
+
+									{/* Protected routes: */}
+									<User.ProtectedRoute
+										path="/new"
+										exact
+										title={"New note"}
+										component={Note}
 									/>
 
 									<User.Route
