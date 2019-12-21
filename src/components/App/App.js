@@ -10,7 +10,7 @@ import Router from "components/Router"
 import stylex from "stylex"
 import User from "components/User"
 
-// FIXME: Add home route.
+// TODO: Add home route.
 const App = props => (
 	<Router.BrowserRouter>
 		<GraphQL.Provider client={new GraphQL.Client({ fetchGraphQL })}>
@@ -20,7 +20,7 @@ const App = props => (
 					<div>
 						<Nav />
 						<main style={stylex.parse("p-x:32 p-y:96 flex -r -x:center")}>
-							<div style={stylex.parse("w:1024")}>
+							<div style={stylex.parse("w:1024 no-min-w")}>
 								<Router.Switch>
 
 									{/* Unprotected routes: */}

@@ -1,8 +1,8 @@
+import * as Feather from "react-feather"
 import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
 import User from "components/User"
-import { MapPin, Package, Tag, LogIn, Plus, Book, Sliders, Lock, } from "react-feather"
 
 import { ReactComponent as CodexLogo } from "assets/codex.svg"
 
@@ -38,28 +38,28 @@ const NavList = stylex.Unstyleable(props => (
 const UnauthNav = props => (
 	<NavList>
 		<NavItem to="/our-story">
-			<Icon icon={MapPin} />
+			<Icon icon={Feather.MapPin} />
 			<div style={stylex.parse("w:6")} />
 			<Text>
 				Our story
 			</Text>
 		</NavItem>
 		<NavItem to="/features">
-			<Icon icon={Package} />
+			<Icon icon={Feather.Package} />
 			<div style={stylex.parse("w:6")} />
 			<Text>
 				Features
 			</Text>
 		</NavItem>
 		<NavItem to="/pricing">
-			<Icon icon={Tag} />
+			<Icon icon={Feather.Tag} />
 			<div style={stylex.parse("w:6")} />
 			<Text>
 				Pricing
 			</Text>
 		</NavItem>
 		<NavItem to="/sign-in">
-			<Icon icon={LogIn} />
+			<Icon icon={Feather.LogIn} />
 			<div style={stylex.parse("w:6")} />
 			<Text>
 				Login
@@ -78,28 +78,28 @@ const UnauthNav = props => (
 const AuthNav = props => (
 	<NavList>
 		<NavItem to="/new">
-			<Icon icon={Plus} />
+			<Icon icon={Feather.Plus} />
 			<div style={stylex.parse("w:6")} />
 			<Text>
 				New note
 			</Text>
 		</NavItem>
 		<NavItem to="/notes">
-			<Icon icon={Book} />
+			<Icon icon={Feather.Book} />
 			<div style={stylex.parse("w:6")} />
 			<Text>
 				My notes
 			</Text>
 		</NavItem>
 		<NavItem to="/preferences">
-			<Icon icon={Sliders} />
+			<Icon icon={Feather.Sliders} />
 			<div style={stylex.parse("w:6")} />
 			<Text>
 				Preferences
 			</Text>
 		</NavItem>
 		<NavItem to="/account">
-			<Icon icon={Lock} />
+			<Icon icon={Feather.Lock} />
 			<div style={stylex.parse("w:6")} />
 			<Text>
 				Account

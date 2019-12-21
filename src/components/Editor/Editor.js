@@ -30,7 +30,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						// `onSelect` responds to cursor movements.
 						onSelect: e => {
 							e.preventDefault()
-							console.log("onSelect")
+							// ...
 
 							// const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
 							// if (anchorNode === ref.current || focusNode === ref.current) {
@@ -47,7 +47,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						// `onKeyPress` responds to character input.
 						onKeyPress: e => {
 							e.preventDefault()
-							console.log("onKeyPress")
+							// ...
 
 							// e.preventDefault()
 							// const data = e.key !== "Enter" ? e.key : "\n"
@@ -57,7 +57,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						// `onKeyDown` responds to shortcut input.
 						onKeyDown: e => {
 							e.preventDefault()
-							console.log("onKeyDown")
+							// ...
 
 							// switch (true) {
 							// 	case Browser.isTab(e):
@@ -96,49 +96,21 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						// TODO: Add `onInput`.
 
 						// `onCut` responds to `ctrl-x` events.
-						//
-						// FIXME: Prune.
 						onCut: e => {
 							e.preventDefault()
-							console.log("onCut")
-
-							// e.preventDefault()
-							// if (state.pos1.pos === state.pos2.pos) {
-							// 	return
-							// }
-							// const cut = state.data.slice(state.pos1.pos, state.pos2.pos)
-							// e.clipboardData.setData("text/plain", cut)
-							// dispatch.insert("")
+							// ...
 						},
 
 						// `onCopy` responds to `ctrl-c` events.
-						//
-						// FIXME: Don’t prune.
 						onCopy: e => {
 							e.preventDefault()
-							console.log("onCopy")
-
-							// e.preventDefault()
-							// if (state.pos1.pos === state.pos2.pos) {
-							// 	return
-							// }
-							// const copy = state.data.slice(state.pos1.pos, state.pos2.pos)
-							// e.clipboardData.setData("text/plain", copy)
+							// ...
 						},
 
 						// `onPaste` responds to `ctrl-v` events.
-						//
-						// FIXME: Prune.
 						onPaste: e => {
 							e.preventDefault()
-							console.log("onPaste")
-
-							// e.preventDefault()
-							// const paste = e.clipboardData.getData("text/plain")
-							// if (!paste) {
-							// 	return
-							// }
-							// dispatch.insert(paste)
+							// ...
 						},
 
 						// TODO

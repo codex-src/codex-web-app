@@ -1,8 +1,8 @@
+import * as Feather from "react-feather"
 import * as StatusDot from "./StatusDot"
 import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
-import { Cpu, GitHub, MessageSquare } from "react-feather"
 
 import { ReactComponent as CodexLogo } from "assets/codex.svg"
 
@@ -46,21 +46,29 @@ const Footer = props => (
 					</Text>
 				</FooterItem>
 				<FooterItem to="/api">
-					<Icon icon={Cpu} />
+					<Icon icon={Feather.Cpu} />
 					<div style={stylex.parse("w:6")} />
 					<Text>
 						API
 					</Text>
 				</FooterItem>
 				<FooterItem to="https://github.com/codex-src">
-					<Icon icon={GitHub} />
+					<Icon icon={Feather.GitHub} />
 					<div style={stylex.parse("w:6")} />
 					<Text>
 						Open source
 					</Text>
 				</FooterItem>
+				{/* FIXME: Change URL. */}
+				<FooterItem to="https://twitter.com/@username_ZAYDEK">
+					<Icon icon={Feather.Twitter} />
+					<div style={stylex.parse("w:6")} />
+					<Text>
+						Twitter
+					</Text>
+				</FooterItem>
 				<FooterItem to="/support">
-					<Icon style={{ fill: "currentColor" }} icon={MessageSquare} />
+					<Icon icon={Feather.MessageSquare} />
 					<div style={stylex.parse("w:6")} />
 					<Text>
 						Support
@@ -70,9 +78,6 @@ const Footer = props => (
 
 			<FooterList>
 				<FooterItem>
-					{/* <CopyrightText> */}
-					{/* 	© Codex */}
-					{/* </CopyrightText> */}
 					<CodexLogo style={stylex.parse("w:80 h:20 c:gray-200")} />
 				</FooterItem>
 			</FooterList>
