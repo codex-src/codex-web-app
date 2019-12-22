@@ -5,23 +5,24 @@ import stylex from "stylex"
 
 export const Context = React.createContext()
 
+// NOTE: Backspace and deletion events is not yet supported.
 export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
 	// Rerender components on `state.data` changes:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			// if (!state.isFocused) {
-			// 	return
-			// }
+			if (!state.isFocused) {
+				return
+			}
 			dispatch.render()
-		}, [dispatch]),
+		}, [dispatch, state]), // Sorted alphabetically.
 		[state.data],
 	)
 
 	// Rerender cursor on `state.Components` changes:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			if (!state.isFocused) { // FIXME
+			if (!state.isFocused) {
 				return
 			}
 			const range = document.createRange()
@@ -32,7 +33,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 			const selection = document.getSelection()
 			selection.removeAllRanges()
 			selection.addRange(range)
-			// scrollToPosIfNeeded() // FIXME
 		}, [state]),
 		[state.Components],
 	)
@@ -57,14 +57,13 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						contentEditable: true,
 						suppressContentEditableWarning: true,
 
-						onFocus: dispatch.focus,
-						onBlur:  dispatch.blur,
+						onFocus: dispatch.opFocus,
+						onBlur:  dispatch.opBlur,
 
-						// `onSelect` responds to cursor movements.
 						onSelect: e => {
 							e.preventDefault()
 							const { anchorOffset, focusOffset } = document.getSelection()
-							dispatch.setState(state.data, anchorOffset, focusOffset)
+							dispatch.opSelect(state.data, anchorOffset, focusOffset)
 
 							// const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
 							// if (anchorNode === ref.current || focusNode === ref.current) {
@@ -78,14 +77,12 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							// dispatch.setState(state.data, pos1, pos2)
 						},
 
-						// `onKeyPress` responds to character input.
 						onKeyPress: e => {
-							e.preventDefault()
+							// e.preventDefault()
 							const data = e.key !== "Enter" ? e.key : "\n"
-							dispatch.insert(data)
+							dispatch.opWrite("onKeyPress", data)
 						},
 
-						// // `onKeyDown` responds to shortcut input.
 						// onKeyDown: e => {
 						// 	e.preventDefault()
 						// 	// switch (true) {
@@ -124,19 +121,16 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
 						// TODO: Add `onInput`.
 
-						// `onCut` responds to `ctrl-x` events.
 						onCut: e => {
 							e.preventDefault()
 							// ...
 						},
 
-						// `onCopy` responds to `ctrl-c` events.
 						onCopy: e => {
 							e.preventDefault()
 							// ...
 						},
 
-						// `onPaste` responds to `ctrl-v` events.
 						onPaste: e => {
 							e.preventDefault()
 							// ...

@@ -1,50 +1,58 @@
 import * as Components from "./Components"
+// import opTypes from "./opTypes"
 import useMethods from "use-methods"
 
 const initialState = {
-	isFocused:  false,                // Is the editor focused?
-	data:       "",                   // What’s the editor’s data?                  // FIXME?
-	pos1:       0,                    // What’s the editor’s cursor start position? // FIXME
-	pos2:       0,                    // What’s the editor’s cursor end position?   // FIXME
-	Components: Components.parse(""), // What’s are the editor’s components.
+	isFocused:    false,
+	data:         "",
+	pos1:         0,
+	pos2:         0,
+	shouldRender: true,
+	Components:   [],
 }
 
-// NOTE: Return `state` because `state = { ...state }` loses
-// the reference to `state`.
+// NOTE: Use `Object.assign` to assign multiple properties
+// because `state` is a reference type.
 const reducer = state => ({
-	focus() {
+	opFocus() {
+		// state.lastOpType = opTypes.focus
 		state.isFocused = true
-		return state
 	},
-	blur() {
+	opBlur() {
+		// state.lastOpType = opTypes.blur
 		state.isFocused = false
-		return state
 	},
-	setState(data, pos1 = state.pos1, pos2 = state.pos2) {
+	// NOTE: Based on experience, `opSelect` needs to set
+	// `data` and `pos1` and `pos2`.
+	opSelect(data, pos1 = state.pos1, pos2 = state.pos2) {
+		// state.lastOpType = opTypes.select
 		if (pos1 < pos2) {
-			state = { ...state, data, pos1, pos2 }
+			Object.assign(state, { data, pos1, pos2 })
 		} else {
-			// Reverse order:
-			state = { ...state, data, pos1: pos2, pos2: pos1 }
+			// Reverse order; `pos1` can never be greater than
+			// `pos2`.
+			Object.assign(state, { data, pos1: pos2, pos2: pos1 })
 		}
-		return state
 	},
-	collapseSelection() {
+	collapse() {
 		state.pos2 = state.pos1
-		return state
 	},
-	insert(data) {
+	opWrite(inputType, data) {
+		state.shouldRender = inputType !== "onKeyPress"
 		state.data = state.data.slice(0, state.pos1) + data + state.data.slice(state.pos2)
 		state.pos1 += data.length
-		this.collapseSelection()
-		return state
+		this.collapse()
 	},
-	delete() {
+	opDelete() {
 		// ...
 	},
 	render() {
+		if (!state.shouldRender) {
+			// Reset shouldRender:
+			state.shouldRender = true
+			return
+		}
 		state.Components = Components.parse(state.data)
-		return state
 	},
 })
 
@@ -52,8 +60,8 @@ function init(state) {
 	return { ...state, Components: Components.parse(state.data) }
 }
 
-function useEditor(initialValue = "") {
-	return useMethods(reducer, { ...initialState, data: initialValue }, init)
+function useEditor(data = "") {
+	return useMethods(reducer, { ...initialState, data }, init)
 }
 
 export default useEditor
