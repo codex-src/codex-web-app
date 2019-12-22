@@ -116,6 +116,7 @@ function Nav(props) {
 			<div style={stylex.parse("p-x:32 flex -r -x:center b:white")}>
 				<div style={stylex.parse("flex -r -x:between w:1024 h:80")}>
 
+					{/* LHS */}
 					<NavList>
 						<NavItem to="/">
 							<div style={stylex.parse("wh:24 b:gray-200 br:max")} />
@@ -124,6 +125,7 @@ function Nav(props) {
 						</NavItem>
 					</NavList>
 
+					{/* RHS */}
 					{!state.isAuth ? (
 						// Unauthenticated:
 						<UnauthNav />

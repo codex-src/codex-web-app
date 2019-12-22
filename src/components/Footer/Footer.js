@@ -38,6 +38,7 @@ const Footer = props => (
 	<footer style={stylex.parse("p-x:32 flex -r -x:center b:gray-900")}>
 		<div style={stylex.parse("flex -r -x:between w:1024 h:80")}>
 
+			{/* LHS */}
 			<FooterList>
 				<FooterItem to="/systems">
 					<Text>
@@ -76,9 +77,10 @@ const Footer = props => (
 				</FooterItem>
 			</FooterList>
 
+			{/* RHS */}
 			<FooterList>
 				<FooterItem>
-					<CodexLogo style={stylex.parse("w:80 h:20 c:gray-200")} />
+					<CodexLogo style={stylex.parse("w:80 h:20 c:white")} />
 				</FooterItem>
 			</FooterList>
 
