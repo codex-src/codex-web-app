@@ -1,3 +1,4 @@
+import * as detect from "./detect"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
 import Stringify from "./Stringify"
@@ -92,33 +93,34 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						},
 
 						onKeyDown: e => {
-							// switch (true) {
-							// case detect.isBackspace(e):
-							// 	e.preventDefault()
-							// 	dispatch.backspace()
-							// 	return
-							// case detect.isBackspaceWord(e):
-							// 	e.preventDefault()
-							// 	dispatch.backspaceWord()
-							// 	return
-							// case detect.isBackspaceLine(e):
-							// 	e.preventDefault()
-							// 	dispatch.backspaceLine()
-							// 	return
+							switch (true) {
+							case detect.isBackspace(e):
+								e.preventDefault()
+								dispatch.opBackspace()
+								return
+							case detect.isBackspaceWord(e):
+								e.preventDefault()
+								dispatch.opBackspaceWord()
+								return
+							case detect.isBackspaceLine(e):
+								e.preventDefault()
+								dispatch.opBackspaceLine()
+								return
 							// case detect.isDelete(e):
 							// 	e.preventDefault()
-							// 	dispatch.delete()
+							// 	dispatch.opDelete()
 							// 	return
 							// case detect.isDeleteWord(e):
 							// 	e.preventDefault()
-							// 	dispatch.deleteWord()
+							// 	dispatch.opDeleteWord()
 							// 	return
-							// default:
-							// 	e.preventDefault()
-							// 	const copy = { ...e }
-							// 	invariant(false, `onKeyDown=${JSON.stringify(copy)}`) // Untested.
-							// 	return
-							// }
+							default:
+								e.preventDefault()
+								const copy = { ...e }
+								console.warn(copy)
+								// invariant(false, `onKeyDown=${JSON.stringify(copy)}`) // Untested.
+								return
+							}
 						},
 
 						// TODO: Add `onInput` and composition events.
