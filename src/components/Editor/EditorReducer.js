@@ -61,7 +61,7 @@ const reducer = state => ({
 		this.collapse()
 		// NOTE: To opt-in to native rendering, conditionally
 		// increment `shouldRenderComponents`.
-		state.shouldRenderComponents++
+		state.shouldRenderComponents += inputType !== "onKeyPress"
 	},
 	delete(lengthL, lengthR) {
 		if (state.pos1 !== state.pos2) {
