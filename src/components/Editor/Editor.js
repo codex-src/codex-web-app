@@ -7,11 +7,6 @@ export const Context = React.createContext()
 
 export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
-	// const [renderPos, setRenderPos] = React.useState(false)
-	// const toggleRenderPos = () => {
-	// 	setRenderPos(!renderPos)
-	// }
-
 	// Render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -83,7 +78,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
 						// FIXME: Add `e.preventDefault()` on enter.
 						onKeyPress: e => {
-							e.preventDefault()
+							// e.preventDefault()
 							const data = e.key !== "Enter" ? e.key : "\n"
 							dispatch.opWrite("onKeyPress", data)
 						},

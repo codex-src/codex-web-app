@@ -14,15 +14,19 @@ const initialState = {
 	pos1:      0,
 	pos2:      0,
 
-	// `shouldRenderComponents` provides a hint as to whether
-	// the editor’s components should be rerendered. This
-	// mocks Draft.js’s native rendering feature.
+	// NOTE: `shouldRenderComponents` and `shouldRenderPos`
+	// use a counter (instead of a flag) because the value is
+	// unimportant, and a counter can count VDOM rerenders.
+	//
+	// `shouldRenderComponents` hints whether the editor’s
+	// components should be rerendered. This mocks Draft.js’s
+	// native rendering feature.
 	//
 	// https://draftjs.org/docs/api-reference-editor-state/#nativelyrenderedcontent
 	shouldRenderComponents: 0,
-
-	// `shouldRenderPos` provides a hint as to whether the
-	// editor’s cursor should to be rerendered.
+	//
+	// `shouldRenderPos` hints whether the editor’s cursor
+	// positions should be rerendered.
 	shouldRenderPos: 0,
 
 	Components: [],
@@ -55,17 +59,15 @@ const reducer = state => ({
 		state.data = state.data.slice(0, state.pos1) + data + state.data.slice(state.pos2)
 		state.pos1 += data.length
 		this.collapse()
-		// state.shouldRenderComponents = inputType !== "onKeyPress"
-		state.shouldRenderComponents++
+		// NOTE: To opt-in to native rendering, conditionally
+		// increment `shouldRenderComponents`.
+		state.shouldRenderComponents += inputType !== "onKeyPress"
 	},
 	opDelete() {
 		// ...
 	},
 	render() {
 		state.Components = Components.parse(state.data)
-		state.shouldRenderPos++
-	},
-	forceRenderPos() {
 		state.shouldRenderPos++
 	},
 })
