@@ -1,5 +1,5 @@
 import * as Feather from "react-feather"
-import * as StatusDot from "./StatusDot"
+import * as StatusCircle from "./StatusCircle"
 import React from "react"
 import Router from "components/Router"
 import stylex from "stylex"
@@ -41,7 +41,7 @@ const Footer = props => (
 			<FooterList>
 				<FooterItem to="/systems">
 					<Text>
-						<StatusDot.Info />{" \u00a0"}
+						<StatusCircle.Info />{" \u00a0"}
 						Systems
 					</Text>
 				</FooterItem>
