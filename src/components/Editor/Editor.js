@@ -76,56 +76,50 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							// dispatch.setState(state.data, pos1, pos2)
 						},
 
-						// FIXME: Add `e.preventDefault()` on enter.
 						onKeyPress: e => {
-							// e.preventDefault()
-							const data = e.key !== "Enter" ? e.key : "\n"
+							// DELETEME
+							if (e.key === "Enter") {
+								e.preventDefault()
+								return
+							}
+
+							let data = e.key
+							if (e.key === "Enter") {
+								e.preventDefault()
+								data = "\n"
+							}
 							dispatch.opWrite("onKeyPress", data)
 						},
 
-						// FIXME
 						onKeyDown: e => {
-							if (e.keyCode !== 8) {
-								return
-							}
-							e.preventDefault()
+							// switch (true) {
+							// case detect.isBackspace(e):
+							// 	e.preventDefault()
+							// 	dispatch.backspace()
+							// 	return
+							// case detect.isBackspaceWord(e):
+							// 	e.preventDefault()
+							// 	dispatch.backspaceWord()
+							// 	return
+							// case detect.isBackspaceLine(e):
+							// 	e.preventDefault()
+							// 	dispatch.backspaceLine()
+							// 	return
+							// case detect.isDelete(e):
+							// 	e.preventDefault()
+							// 	dispatch.delete()
+							// 	return
+							// case detect.isDeleteWord(e):
+							// 	e.preventDefault()
+							// 	dispatch.deleteWord()
+							// 	return
+							// default:
+							// 	e.preventDefault()
+							// 	const copy = { ...e }
+							// 	invariant(false, `onKeyDown=${JSON.stringify(copy)}`) // Untested.
+							// 	return
+							// }
 						},
-
-						// onKeyDown: e => {
-						// 	e.preventDefault()
-						// 	// switch (true) {
-						// 	// 	case Browser.isTab(e):
-						// 	// 		e.preventDefault()
-						// 	// 		dispatch.tab()
-						// 	// 		return
-						// 	// 	case Browser.isDetab(e):
-						// 	// 		e.preventDefault()
-						// 	// 		dispatch.detab()
-						// 	// 		return
-						// 	// 	case Browser.isBackspace(e):
-						// 	// 		e.preventDefault()
-						// 	// 		dispatch.backspace()
-						// 	// 		return
-						// 	// 	case Browser.isBackspaceWord(e):
-						// 	// 		e.preventDefault()
-						// 	// 		dispatch.backspaceWord()
-						// 	// 		return
-						// 	// 	case Browser.isBackspaceLine(e):
-						// 	// 		e.preventDefault()
-						// 	// 		dispatch.backspaceLine()
-						// 	// 		return
-						// 	// 	case Browser.isDelete(e):
-						// 	// 		e.preventDefault()
-						// 	// 		dispatch.delete()
-						// 	// 		return
-						// 	// 	case Browser.isDeleteWord(e):
-						// 	// 		e.preventDefault()
-						// 	// 		dispatch.deleteWord()
-						// 	// 		return
-						// 	// 	default:
-						// 	// 		return
-						// 	// }
-						// },
 
 						// TODO: Add `onInput` and composition events.
 						// ...

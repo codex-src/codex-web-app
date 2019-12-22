@@ -63,7 +63,24 @@ const reducer = state => ({
 		// increment `shouldRenderComponents`.
 		state.shouldRenderComponents += inputType !== "onKeyPress"
 	},
+	opBackspace() {
+		console.log("opBackspace")
+		// ...
+	},
+	opBackspaceWord() {
+		console.log("opBackspaceWord")
+		// ...
+	},
+	opBackspaceLine() {
+		console.log("opBackspaceLine")
+		// ...
+	},
 	opDelete() {
+		console.log("opDelete")
+		// ...
+	},
+	opDeleteWord() {
+		console.log("opDeleteWord")
 		// ...
 	},
 	render() {
