@@ -1,4 +1,3 @@
-import invariant from "invariant"
 import React from "react"
 
 class ErrorBoundary extends React.Component {
@@ -10,7 +9,7 @@ class ErrorBoundary extends React.Component {
 		return { hasError: true }
 	}
 	componentDidCatch(error, errorInfo) {
-		invariant(false, `ErrorBoundary.componentDidCatch=${error.message}`)
+		console.warn(`ErrorBoundary.componentDidCatch=${error.message}`)
 	}
 	render() {
 		return this.props.children

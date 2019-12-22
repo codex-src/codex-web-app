@@ -72,7 +72,9 @@ const App = props => (
 										path="/new"
 										exact
 										title={"New note"}
-										component={Note}
+										// Use `render` instead of component
+										// because of `key`.
+										render={props => <Note key={Math.random().toString(16).slice(2, 6)} />}
 									/>
 
 									<User.Route

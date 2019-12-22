@@ -61,28 +61,38 @@ const reducer = state => ({
 		this.collapse()
 		// NOTE: To opt-in to native rendering, conditionally
 		// increment `shouldRenderComponents`.
-		state.shouldRenderComponents += inputType !== "onKeyPress"
+		state.shouldRenderComponents++
+	},
+	delete(lengthL, lengthR) {
+		if (state.pos1 !== state.pos2) {
+			lengthL = 0
+			lengthR = 0
+		}
+		// Guard the current node:
+		if ((!state.pos1 && lengthL) || (state.pos2 === state.data.length && lengthR)) {
+			// No-op.
+			return
+		}
+		state.data = state.data.slice(0, state.pos1 - lengthL) + state.data.slice(state.pos2 + lengthR)
+		state.pos1 -= lengthL
+		this.collapse()
+		state.shouldRenderComponents++
 	},
 	opBackspace() {
-		console.log("opBackspace")
-		// ...
+		this.delete(1, 0)
 	},
 	opBackspaceWord() {
-		console.log("opBackspaceWord")
 		// ...
 	},
 	opBackspaceLine() {
-		console.log("opBackspaceLine")
 		// ...
 	},
-	opDelete() {
-		console.log("opDelete")
-		// ...
-	},
-	opDeleteWord() {
-		console.log("opDeleteWord")
-		// ...
-	},
+	// opDelete() {
+	// 	// ...
+	// },
+	// opDeleteWord() {
+	// 	// ...
+	// },
 	render() {
 		state.Components = Components.parse(state.data)
 		state.shouldRenderPos++

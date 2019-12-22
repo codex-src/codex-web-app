@@ -6,12 +6,26 @@ import stylex from "stylex"
 
 export const Context = React.createContext()
 
+// It’s not clear how to implement native rendering. There’s
+// also the unintended side effect that markdown syntax
+// won’t trigger a rerender without intervention.
+//
+// The benefit of using `e.preventDefault()` everywhere is
+// that it guarentees that the DOM and VDOM are in sync,
+// which is arguably more important.
+//
+// It may be possible in the future to use
+// `ReactDOMServer.renderToString` on the current node where
+// an update is queued, e.g. `shouldRenderComponents`.
+//
+// https://reactjs.org/docs/react-dom-server.html#rendertostring
 export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
 	// Render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
+			// No-op.
 				return
 			}
 			dispatch.render()
@@ -23,6 +37,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
+				// No-op.
 				return
 			}
 			const range = document.createRange()
@@ -84,9 +99,9 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 								return
 							}
 
+							e.preventDefault()
 							let data = e.key
 							if (e.key === "Enter") {
-								e.preventDefault()
 								data = "\n"
 							}
 							dispatch.opWrite("onKeyPress", data)
@@ -98,14 +113,14 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 								e.preventDefault()
 								dispatch.opBackspace()
 								return
-							case detect.isBackspaceWord(e):
-								e.preventDefault()
-								dispatch.opBackspaceWord()
-								return
-							case detect.isBackspaceLine(e):
-								e.preventDefault()
-								dispatch.opBackspaceLine()
-								return
+							// case detect.isBackspaceWord(e):
+							// 	e.preventDefault()
+							// 	dispatch.opBackspaceWord()
+							// 	return
+							// case detect.isBackspaceLine(e):
+							// 	e.preventDefault()
+							// 	dispatch.opBackspaceLine()
+							// 	return
 							// case detect.isDelete(e):
 							// 	e.preventDefault()
 							// 	dispatch.opDelete()
@@ -115,10 +130,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							// 	dispatch.opDeleteWord()
 							// 	return
 							default:
-								e.preventDefault()
-								const copy = { ...e }
-								console.warn(copy)
-								// invariant(false, `onKeyDown=${JSON.stringify(copy)}`) // Untested.
+								// No-op.
 								return
 							}
 						},
@@ -163,7 +175,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						// TODO
 						onDragStart: e => e.preventDefault(),
 						onDragEnd:   e => e.preventDefault(),
-
 					},
 					state.Components,
 				)}

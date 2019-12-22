@@ -2,7 +2,7 @@ import React from "react"
 import stylex from "stylex"
 
 const Paragraph = stylex.Styleable(props => (
-	<p className="editor-p" style={stylex.parse("fs:19")} {...props}>
+	<p style={stylex.parse("fs:19")} {...props}>
 		{props.children || (
 			<br />
 		)}
