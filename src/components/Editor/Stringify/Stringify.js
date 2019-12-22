@@ -4,7 +4,7 @@ import stylex from "stylex"
 
 const Stringify = stylex.Unstyleable(props => (
 	<pre style={stylex.parse("overflow -x:scroll")}>
-		<p style={{ ...stylex.parse("fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
+		<p style={{ ...stylex.parse("fs:12 lh:125%"), MozTabSize: 2, tabSize: 2, fontFamily: "'Monaco'" }}>
 			{_stringify(props.state)}
 		</p>
 	</pre>
