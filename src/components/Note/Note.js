@@ -9,7 +9,7 @@ import stylex from "stylex"
 // </header>
 
 function Note(props) {
-	const [state, dispatch] = Editor.useEditor("Hello, world!")
+	const [state, dispatch] = Editor.useEditor("Hello, 😀 world!")
 
 	return (
 		<div style={stylex.parse("flex -r -x:center")}>

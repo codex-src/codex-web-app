@@ -1,30 +1,12 @@
 import * as detect from "./detect"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
-import ReactDOMServer from "react-dom/server"
 import Stringify from "./Stringify"
 import stylex from "stylex"
 
 export const Context = React.createContext()
 
-// It’s not clear how to implement native rendering. There’s
-// also the unintended side effect that markdown syntax
-// won’t trigger a rerender without intervention.
-//
-// The benefit of using `e.preventDefault()` everywhere is
-// that it guarentees that the DOM and VDOM are in sync,
-// which is arguably more important.
-//
-// It may be possible in the future to use
-// `ReactDOMServer.renderToString` on the current node where
-// an update is queued, e.g. `shouldRenderComponents`.
-//
-// This technique may work but requires `TraverseDOM`
-// because the cursor is reset to the root node.
-//
-// https://reactjs.org/docs/react-dom-server.html#rendertostring
 export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
-	const ref = React.useRef()
 
 	// Render components:
 	React.useLayoutEffect(
@@ -38,30 +20,25 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 		[state.shouldRenderComponents],
 	)
 
-	React.useLayoutEffect(() => {
-		ref.current.innerHTML = ReactDOMServer.renderToString(state.Components)
-	}, [state.Components])
-
 	// Render cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			// if (!state.isFocused) {
-			// 	// No-op.
-			// 	return
-			// }
-			// const range = document.createRange()
-			// const { anchorNode } = document.getSelection()
-			// const { pos1: anchorOffset } = state
-			// range.setStart(anchorNode, anchorOffset)
-			// range.collapse()
-			// const selection = document.getSelection()
-			// selection.removeAllRanges()
-			// selection.addRange(range)
+			if (!state.isFocused) {
+				// No-op.
+				return
+			}
+			const range = document.createRange()
+			const { anchorNode } = document.getSelection()
+			range.setStart(anchorNode, state.pos1) // FIXME: `TraverseDOM` is needed.
+			range.collapse()
+			const selection = document.getSelection()
+			selection.removeAllRanges()
+			selection.addRange(range)
 		}, [state]),
-		[state.Components],
-		// [state.shouldRenderPos],
+		[state.shouldRenderPos],
 	)
 
+	// GPU optimization:
 	let translateZ = {}
 	if (state.isFocused) {
 		translateZ = { transform: "translateZ(0px)" }
@@ -74,9 +51,11 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 				{React.createElement(
 					"article",
 					{
-						ref,
-
-						style: translateZ,
+						style: {
+							whiteSpace: "pre-wrap",
+							overflowWrap: "break-word",
+							...translateZ,
+						},
 
 						contentEditable: true,
 						suppressContentEditableWarning: true,
@@ -108,7 +87,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 								return
 							}
 
-							// e.preventDefault()
+							e.preventDefault()
 							let data = e.key
 							if (e.key === "Enter") {
 								data = "\n"
@@ -122,22 +101,22 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 								e.preventDefault()
 								dispatch.opBackspace()
 								return
-							// case detect.isBackspaceWord(e):
-							// 	e.preventDefault()
-							// 	dispatch.opBackspaceWord()
-							// 	return
-							// case detect.isBackspaceLine(e):
-							// 	e.preventDefault()
-							// 	dispatch.opBackspaceLine()
-							// 	return
-							// case detect.isDelete(e):
-							// 	e.preventDefault()
-							// 	dispatch.opDelete()
-							// 	return
-							// case detect.isDeleteWord(e):
-							// 	e.preventDefault()
-							// 	dispatch.opDeleteWord()
-							// 	return
+							case detect.isBackspaceWord(e):
+								e.preventDefault()
+								dispatch.opBackspaceWord()
+								return
+							case detect.isBackspaceLine(e):
+								e.preventDefault()
+								dispatch.opBackspaceLine()
+								return
+							case detect.isDelete(e):
+								e.preventDefault()
+								dispatch.opDelete()
+								return
+							case detect.isDeleteWord(e):
+								e.preventDefault()
+								dispatch.opDeleteWord()
+								return
 							default:
 								// No-op.
 								return
@@ -188,8 +167,8 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 					state.Components,
 				)}
 			</Provider>
-			{/* NOTE: Disable in production. */}
-			<Stringify style={stylex.parse("m-t:16")} state={state} />
+			<div style={stylex.parse("h:16")} />
+			<Stringify state={state} />
 		</ErrorBoundary>
 	)
 })

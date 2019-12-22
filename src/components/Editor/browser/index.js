@@ -1,3 +1,7 @@
-import * as browser from "./browser"
+import browser from "./browser"
 
-export default browser
+const exports = {
+	...browser, // Use spread.
+}
+
+export default exports

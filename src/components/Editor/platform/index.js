@@ -1,3 +1,9 @@
-import * as platform from "./platform"
+import isMetaOrCtrlKey from "./metaKey"
+import platform from "./platform"
 
-export default platform
+const exports = {
+  ...platform, // Use spread.
+  isMetaOrCtrlKey,
+}
+
+export default exports

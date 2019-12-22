@@ -59,15 +59,12 @@ const reducer = state => ({
 		state.data = state.data.slice(0, state.pos1) + data + state.data.slice(state.pos2)
 		state.pos1 += data.length
 		this.collapse()
-		// NOTE: To opt-in to native rendering, conditionally
-		// increment `shouldRenderComponents`.
-		state.shouldRenderComponents += inputType !== "onKeyPress"
+		// // NOTE: To opt-in to native rendering, conditionally
+		// // increment `shouldRenderComponents`.
+		// state.shouldRenderComponents += inputType !== "onKeyPress"
+		state.shouldRenderComponents++
 	},
 	delete(lengthL, lengthR) {
-		if (state.pos1 !== state.pos2) {
-			lengthL = 0
-			lengthR = 0
-		}
 		// Guard the current node:
 		if ((!state.pos1 && lengthL) || (state.pos2 === state.data.length && lengthR)) {
 			// No-op.
@@ -79,20 +76,43 @@ const reducer = state => ({
 		state.shouldRenderComponents++
 	},
 	opBackspace() {
-		this.delete(1, 0)
+		// console.log("backspace")
+
+		// The following is Unicode-friendly but does not cover
+		// skin tones and extended graphemes.
+		let length = 0
+		if (state.pos1 && state.pos1 === state.pos2) {
+			// Assumes a maximum UTF-8 length of 4 bytes:
+			const chunks = [...state.data.slice(state.pos1 - 4, state.pos1)]
+			length = chunks[chunks.length - 1].length
+		}
+		this.delete(length, 0)
 	},
 	opBackspaceWord() {
+		console.log("backspace word")
 		// ...
 	},
 	opBackspaceLine() {
+		console.log("backspace line")
 		// ...
 	},
-	// opDelete() {
-	// 	// ...
-	// },
-	// opDeleteWord() {
-	// 	// ...
-	// },
+	opDelete() {
+		// console.log("delete")
+
+		// The following is Unicode-friendly but does not cover
+		// skin tones and extended graphemes.
+		let length = 0
+		if (state.pos2 < state.data.length && state.pos1 === state.pos2) {
+			// Assumes a maximum UTF-8 length of 4 bytes:
+			const chunks = [...state.data.slice(state.pos2, state.pos2 + 4)]
+			length = chunks[0].length
+		}
+		this.delete(0, length)
+	},
+	opDeleteWord() {
+		console.log("delete word")
+		// ...
+	},
 	render() {
 		state.Components = Components.parse(state.data)
 		state.shouldRenderPos++
