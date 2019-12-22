@@ -1,41 +1,55 @@
-import parse from "./Components"
+import * as Components from "./Components"
 import useMethods from "use-methods"
 
-// FIXME: `pos1` and `pos2`.
 const initialState = {
-	isFocused:  false,     // Is the editor focused?
-	data:       "",        // What’s the editor’s data?
-	pos1:       0,         // What’s the editor’s cursor start position?
-	pos2:       0,         // What’s the editor’s cursor end position?
-	Components: parse(""), // What’s are the editor’s components.
+	isFocused:  false,                // Is the editor focused?
+	data:       "",                   // What’s the editor’s data?                  // FIXME?
+	pos1:       0,                    // What’s the editor’s cursor start position? // FIXME
+	pos2:       0,                    // What’s the editor’s cursor end position?   // FIXME
+	Components: Components.parse(""), // What’s are the editor’s components.
 }
 
+// NOTE: Return `state` because `state = { ...state }` loses
+// the reference to `state`.
 const reducer = state => ({
-	// Focus the editor.
 	focus() {
 		state.isFocused = true
+		return state
 	},
-	// Unfocus th editor; blur.
 	blur() {
 		state.isFocused = false
+		return state
 	},
 	setState(data, pos1 = state.pos1, pos2 = state.pos2) {
-		// ...
+		if (pos1 < pos2) {
+			state = { ...state, data, pos1, pos2 }
+		} else {
+			// Reverse order:
+			state = { ...state, data, pos1: pos2, pos2: pos1 }
+		}
+		return state
 	},
-	insert() {
-		// ...
+	collapseSelection() {
+		state.pos2 = state.pos1
+		return state
+	},
+	insert(data) {
+		state.data = state.data.slice(0, state.pos1) + data + state.data.slice(state.pos2)
+		state.pos1 += data.length
+		this.collapseSelection()
+		return state
 	},
 	delete() {
 		// ...
 	},
 	render() {
-		// ...
+		state.Components = Components.parse(state.data)
+		return state
 	},
 })
 
-// FIXME: Can we reuse `render`?
 function init(state) {
-	return { ...state, Components: parse(state.data) }
+	return { ...state, Components: Components.parse(state.data) }
 }
 
 function useEditor(initialValue = "") {
