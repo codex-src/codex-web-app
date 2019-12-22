@@ -1,19 +1,31 @@
 import * as Components from "./Components"
 import useMethods from "use-methods"
 
-const initialState = {
-	isFocused:    false,
-	data:         "",
-	pos1:         0,
-	pos2:         0,
+// // `shouldRender` provides a hint to `render` as to
+// // whether a rerender is needed. This mocks Draft.js’s
+// // native rendering feature.
+// //
+// // https://draftjs.org/docs/api-reference-editor-state/#nativelyrenderedcontent
+// shouldRender: true,
 
-	// `shouldRender` provides a hint to `render` as to
-	// whether a rerender is needed. This mocks Draft.js’s
-	// native rendering feature.
+const initialState = {
+	isFocused: false,
+	data:      "",
+	pos1:      0,
+	pos2:      0,
+
+	// `shouldRenderComponents` provides a hint as to whether
+	// the editor’s components should be rerendered. This
+	// mocks Draft.js’s native rendering feature.
 	//
 	// https://draftjs.org/docs/api-reference-editor-state/#nativelyrenderedcontent
-	shouldRender: true,
-	Components:   [],
+	shouldRenderComponents: 0,
+
+	// `shouldRenderPos` provides a hint as to whether the
+	// editor’s cursor should to be rerendered.
+	shouldRenderPos: 0,
+
+	Components: [],
 }
 
 // NOTE: Use `Object.assign` to assign multiple properties
@@ -40,20 +52,21 @@ const reducer = state => ({
 		state.pos2 = state.pos1
 	},
 	opWrite(inputType, data) {
-		state.shouldRender = inputType !== "onKeyPress"
 		state.data = state.data.slice(0, state.pos1) + data + state.data.slice(state.pos2)
 		state.pos1 += data.length
 		this.collapse()
+		// state.shouldRenderComponents = inputType !== "onKeyPress"
+		state.shouldRenderComponents++
 	},
 	opDelete() {
 		// ...
 	},
 	render() {
-		if (!state.shouldRender) {
-			state.shouldRender = true // Reset.
-			return
-		}
 		state.Components = Components.parse(state.data)
+		state.shouldRenderPos++
+	},
+	forceRenderPos() {
+		state.shouldRenderPos++
 	},
 })
 
