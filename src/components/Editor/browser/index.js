@@ -1,3 +1,3 @@
-import browser from "./browser"
+import * as browser from "./browser"
 
 export default browser

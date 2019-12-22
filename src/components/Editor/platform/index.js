@@ -1,3 +1,3 @@
-import platform from "./platform"
+import * as platform from "./platform"
 
 export default platform
