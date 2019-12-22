@@ -5,10 +5,9 @@ import stylex from "stylex"
 
 export const Context = React.createContext()
 
-// NOTE: Backspace and deletion events is not yet supported.
 export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
-	// Rerender components on `state.data` changes:
+	// Render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -19,7 +18,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 		[state.data],
 	)
 
-	// Rerender cursor on `state.Components` changes:
+	// Render cursor: (chained to render components)
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -77,6 +76,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							// dispatch.setState(state.data, pos1, pos2)
 						},
 
+						// FIXME: Add `e.preventDefault()` on enter.
 						onKeyPress: e => {
 							// e.preventDefault()
 							const data = e.key !== "Enter" ? e.key : "\n"
@@ -119,21 +119,42 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						// 	// }
 						// },
 
-						// TODO: Add `onInput`.
+						// TODO: Add `onInput` and composition events if
+						// needed.
 
+						// TODO: Prune redo stack.
 						onCut: e => {
 							e.preventDefault()
-							// ...
+							if (state.pos1 === state.pos2) {
+								// No-op.
+								return
+							}
+							const cutData = state.data.slice(state.pos1, state.pos2)
+							e.clipboardData.setData("text/plain", cutData)
+							dispatch.opWrite("onCut", "")
 						},
 
+						// TODO: Don’t prune redo stack.
 						onCopy: e => {
 							e.preventDefault()
-							// ...
+							if (state.pos1 === state.pos2) {
+								// No-op.
+								return
+							}
+							const copyData = state.data.slice(state.pos1, state.pos2)
+							e.clipboardData.setData("text/plain", copyData)
 						},
 
+						// FIXME: Force render cursor.
+						// TODO: Prune redo stack.
 						onPaste: e => {
 							e.preventDefault()
-							// ...
+							const pasteData = e.clipboardData.getData("text/plain")
+							if (!pasteData) {
+								// No-op.
+								return
+							}
+							dispatch.opWrite("onPaste", pasteData)
 						},
 
 						// TODO
