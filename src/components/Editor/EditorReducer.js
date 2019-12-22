@@ -1,5 +1,4 @@
 import * as Components from "./Components"
-// import opTypes from "./opTypes"
 import useMethods from "use-methods"
 
 const initialState = {
@@ -7,6 +6,12 @@ const initialState = {
 	data:         "",
 	pos1:         0,
 	pos2:         0,
+
+	// `shouldRender` provides a hint to `render` as to
+	// whether a rerender is needed. This mocks Draft.js’s
+	// native rendering feature.
+	//
+	// https://draftjs.org/docs/api-reference-editor-state/#nativelyrenderedcontent
 	shouldRender: true,
 	Components:   [],
 }
@@ -15,17 +20,14 @@ const initialState = {
 // because `state` is a reference type.
 const reducer = state => ({
 	opFocus() {
-		// state.lastOpType = opTypes.focus
 		state.isFocused = true
 	},
 	opBlur() {
-		// state.lastOpType = opTypes.blur
 		state.isFocused = false
 	},
 	// NOTE: Based on experience, `opSelect` needs to set
 	// `data` and `pos1` and `pos2`.
 	opSelect(data, pos1 = state.pos1, pos2 = state.pos2) {
-		// state.lastOpType = opTypes.select
 		if (pos1 < pos2) {
 			Object.assign(state, { data, pos1, pos2 })
 		} else {
@@ -48,8 +50,7 @@ const reducer = state => ({
 	},
 	render() {
 		if (!state.shouldRender) {
-			// Reset shouldRender:
-			state.shouldRender = true
+			state.shouldRender = true // Reset.
 			return
 		}
 		state.Components = Components.parse(state.data)
