@@ -112,7 +112,8 @@ function Nav(props) {
 	const [state] = React.useContext(User.Context)
 
 	return (
-		<nav style={stylex.parse("sticky -x -t")}>
+		// NOTE: Use `z:1` to guard `translate-z`.
+		<nav style={stylex.parse("sticky -x -t z:1")}>
 			<div style={stylex.parse("p-x:32 flex -r -x:center b:white")}>
 				<div style={stylex.parse("flex -r -x:between w:1024 h:80")}>
 
