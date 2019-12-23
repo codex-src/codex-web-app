@@ -22,12 +22,22 @@ const initialState = {
 // NOTE: Use `Object.assign` to assign multiple properties
 // because `state` is a reference type.
 const reducer = state => ({
+
+	/*
+	 * Focus and blur
+	 */
+
 	opFocus() {
 		state.isFocused = true
 	},
 	opBlur() {
 		state.isFocused = false
 	},
+
+	/*
+	 * Select and write
+	 */
+
 	// NOTE: Based on experience, `opSelect` needs to set
 	// `data` and `pos1` and `pos2`.
 	opSelect(data, pos1 = state.pos1, pos2 = state.pos2) {
@@ -51,6 +61,10 @@ const reducer = state => ({
 		// state.shouldRenderComponents += inputType !== "onKeyPress"
 		state.shouldRenderComponents++
 	},
+
+	/*
+	 * Backspace and delete
+	 */
 
 	delete(lengthL, lengthR) {
 		// Guard the current node:
@@ -78,7 +92,7 @@ const reducer = state => ({
 		}
 		// Iterate spaces:
 		let index = state.pos1
-		while (index >= 0) {
+		while (index) {
 			const char = utf8.prevChar(state.data, index)
 			if (!utf8.isHWhiteSpace(char)) {
 				break
@@ -86,7 +100,7 @@ const reducer = state => ({
 			index -= char.length
 		}
 		// Iterate non-word characters:
-		while (index >= 0) {
+		while (index) {
 			const char = utf8.prevChar(state.data, index)
 			if (utf8.isAlphanum(char)) {
 				break
@@ -94,7 +108,7 @@ const reducer = state => ({
 			index -= char.length
 		}
 		// Iterate word characters:
-		while (index >= 0) {
+		while (index) {
 			const char = utf8.prevChar(state.data, index)
 			if (!utf8.isAlphanum(char)) {
 				break
@@ -105,7 +119,20 @@ const reducer = state => ({
 		this.delete(length, 0)
 	},
 	opBackspaceLine() {
-		// TODO
+		if (state.pos1 !== state.pos2) {
+			this.delete(0, 0)
+			return
+		}
+		let index = state.pos1
+		while (index) {
+			const char = utf8.prevChar(state.data, index)
+			if (utf8.isVWhiteSpace(char)) {
+				break
+			}
+			index -= char.length
+		}
+		const length = state.pos1 - index
+		this.delete(length, 0)
 	},
 	opDelete() {
 		if (state.pos1 !== state.pos2) {
@@ -119,63 +146,15 @@ const reducer = state => ({
 		// TODO
 	},
 
-	// deleteWordOperation(dir) {
-	// 	const { data, pos1, pos2 } = getVars(state)
-	// 	if (pos1 !== pos2 || (((dir === -1 && pos1 - 1 >= 0) || (!dir && pos1 < data.length)) && data[pos1 + dir] === "\n")) {
-	// 		this.deleteOperation(dir || 1)
-	// 		return
-	// 	}
-	// 	// Iterate spaces.
-	// 	let index = pos1 // Use `let`.
-	// 	while ((dir === -1 && index - 1 >= 0) || (!dir && index < data.length)) {
-	// 		if (data[index + dir] !== " ") {
-	// 			break
-	// 		}
-	// 		index += dir || 1
-	// 	}
-	// 	// Iterate non-word characters.
-	// 	while ((dir === -1 && index - 1 >= 0) || (!dir && index < data.length)) {
-	// 		if (Unicode.isAlphanum(data[index + dir]) || data[index + dir] === "\n") {
-	// 			break
-	// 		}
-	// 		index += dir || 1
-	// 	}
-	// 	// Iterate word characters.
-	// 	while ((dir === -1 && index - 1 >= 0) || (!dir && index < data.length)) {
-	// 		if (!Unicode.isAlphanum(data[index + dir])) {
-	// 			break
-	// 		}
-	// 		index += dir || 1
-	// 	}
-	// 	dir = index - pos1
-	// 	this.deleteOperation(dir)
-	// },
-	// deleteLineOperation(dir) {
-	// 	const { data, pos1, pos2 } = getVars(state)
-	// 	if (pos1 !== pos2 || (((dir === -1 && pos1 - 1 >= 0) || (!dir && pos1 < data.length)) && data[pos1 + dir] === "\n")) {
-	// 		this.deleteOperation(dir || 1)
-	// 		return
-	// 	}
-	// 	let index = pos1 // Use `let`.
-	// 	while ((dir === -1 && index - 1 >= 0) || (!dir && index < data.length)) {
-	// 		if (data[index + dir] === "\n") {
-	// 			break
-	// 		}
-	// 		index += dir || 1
-	// 	}
-	// 	dir = index - pos1
-	// 	this.deleteOperation(dir)
-	// },
-	// commitBackspace()     { this.deleteOperation    (-1) },
-	// commitBackspaceWord() { this.deleteWordOperation(-1) },
-	// commitBackspaceLine() { this.deleteLineOperation(-1) },
-	// commitDelete()        { this.deleteOperation    ( 1) }, // NOTE: Use `1`.
-	// commitDeleteWord()    { this.deleteWordOperation( 0) },
+	/*
+	 * Render
+	 */
 
 	render() {
 		state.Components = Components.parse(state.data)
 		state.shouldRenderPos++
 	},
+
 })
 
 function init(state) {
