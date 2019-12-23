@@ -4,7 +4,7 @@ import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
 import Headers from "components/Headers"
 import Input from "components/Input"
-import InputStatus from "components/InputStatus"
+import InputResponse from "components/InputResponse"
 import invariant from "invariant"
 import Overlay from "components/Overlay"
 import React from "react"
@@ -115,9 +115,9 @@ function ResetPassword(props) {
 					</Input.Label>
 
 					{state.info && (
-						<InputStatus.Info style={stylex.parse("m-t:40 m-b:-24")}>
+						<InputResponse.Info style={stylex.parse("m-t:40 m-b:-24")}>
 							{state.info}
-						</InputStatus.Info>
+						</InputResponse.Info>
 					)}
 
 					<Input.Submit style={stylex.parse("m-t:40 m-b:16")} fetching={fetching}>
@@ -125,9 +125,9 @@ function ResetPassword(props) {
 					</Input.Submit>
 
 					{state.warn && (
-						<InputStatus.Warn style={stylex.parse("m-t:16")}>
+						<InputResponse.Warn style={stylex.parse("m-t:16")}>
 							{state.warn}
-						</InputStatus.Warn>
+						</InputResponse.Warn>
 					)}
 
 				</form>

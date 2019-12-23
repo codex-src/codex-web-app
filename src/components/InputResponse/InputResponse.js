@@ -10,7 +10,7 @@ const Text = stylex.Styleable(props => (
 	</p>
 ))
 
-const Status = stylex.Styleable(props => (
+const Response = stylex.Styleable(props => (
 	<div style={{ ...stylex.parse("p-x:16 p-y:12 br:6"), background: "hsla(var(--current-color), 0.1)", boxShadow: "inset 0 0 0 0.5px hsl(var(--current-color), 0.25)" }}>
 		<Text style={stylex.parse("pre-wrap c:current-color")}>
 			{props.children}
@@ -19,13 +19,13 @@ const Status = stylex.Styleable(props => (
 ))
 
 export const Info = stylex.Unstyleable(props => (
-	<Status style={infoCSSVar}>
+	<Response style={infoCSSVar}>
 		{props.children}
-	</Status>
+	</Response>
 ))
 
 export const Warn = stylex.Unstyleable(props => (
-	<Status style={warnCSSVar}>
+	<Response style={warnCSSVar}>
 		{props.children}
-	</Status>
+	</Response>
 ))
