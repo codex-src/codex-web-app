@@ -3,10 +3,12 @@ import DebugEditor from "./DebugEditor"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
 import stylex from "stylex"
+import traverseDOM from "./traverseDOM"
 
 export const Context = React.createContext()
 
 export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
+	const ref = React.useRef()
 
 	// Render components:
 	React.useLayoutEffect(
@@ -20,6 +22,23 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 		[state.shouldRenderComponents],
 	)
 
+	// // Cursor:
+	// React.useLayoutEffect(
+	// 	React.useCallback(() => {
+	// 		if (!state.hasFocus || state.pos1.pos === pos1.current) {
+	// 			return
+	// 		}
+	// 		const range = document.createRange()
+	// 		const { node, offset } = TraverseDOM.computeNodeFromPos(ref.current, state.pos1.pos, state.pos2.pos)
+	// 		range.setStart(node, offset)
+	// 		range.collapse()
+	// 		const selection = document.getSelection()
+	// 		selection.removeAllRanges()
+	// 		selection.addRange(range)
+	// 		scrollToPosIfNeeded()
+	// 	}, [state.hasFocus, state.pos1, state.pos2]),
+	// [state.Components])
+
 	// Render cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -28,12 +47,13 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 				return
 			}
 			const range = document.createRange()
-			const { anchorNode } = document.getSelection()
-			range.setStart(anchorNode, state.pos1) // FIXME: `TraverseDOM` is needed.
+			const { node, offset } = traverseDOM.computeNodeFromPos(ref.current, state.pos1.pos, state.pos2.pos)
+			range.setStart(node, offset)
 			range.collapse()
 			const selection = document.getSelection()
 			selection.removeAllRanges()
 			selection.addRange(range)
+			// scrollToPosIfNeeded() // TODO
 		}, [state]),
 		[state.shouldRenderPos],
 	)
@@ -51,6 +71,8 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 				{React.createElement(
 					"article",
 					{
+						ref,
+
 						style: {
 							whiteSpace: "pre-wrap",
 							overflowWrap: "break-word",
@@ -64,19 +86,17 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						onBlur:  dispatch.opBlur,
 
 						onSelect: e => {
-							const { anchorOffset, focusOffset } = document.getSelection()
-							dispatch.opSelect(state.data, anchorOffset, focusOffset)
-
-							// const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-							// if (anchorNode === ref.current || focusNode === ref.current) {
-							// 	return
-							// }
-							// const pos1 = TraverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
-							// let pos2 = pos1
-							// if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-							// 	pos2 = TraverseDOM.computePosFromNode(ref.current, focusNode, focusOffset)
-							// }
-							// dispatch.setState(state.data, pos1, pos2)
+							const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+							if (anchorNode === ref.current || focusNode === ref.current) {
+								// No-op.
+								return
+							}
+							const pos1 = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+							let pos2 = { ...pos1 }
+							if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+								pos2 = traverseDOM.computePosFromNode(ref.current, focusNode, focusOffset)
+							}
+							dispatch.opSelect(state.data, pos1, pos2)
 						},
 
 						onKeyPress: e => {
@@ -122,11 +142,11 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						// TODO: Prune redo stack.
 						onCut: e => {
 							e.preventDefault()
-							if (state.pos1 === state.pos2) {
+							if (state.pos1.pos === state.pos2.pos) {
 								// No-op.
 								return
 							}
-							const cutData = state.data.slice(state.pos1, state.pos2)
+							const cutData = state.data.slice(state.pos1.pos, state.pos2.pos)
 							e.clipboardData.setData("text/plain", cutData)
 							dispatch.opWrite("onCut", "")
 						},
@@ -134,11 +154,11 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						// TODO: Don’t prune redo stack.
 						onCopy: e => {
 							e.preventDefault()
-							if (state.pos1 === state.pos2) {
+							if (state.pos1.pos === state.pos2.pos) {
 								// No-op.
 								return
 							}
-							const copyData = state.data.slice(state.pos1, state.pos2)
+							const copyData = state.data.slice(state.pos1.pos, state.pos2.pos)
 							e.clipboardData.setData("text/plain", copyData)
 						},
 

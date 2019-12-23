@@ -1,12 +1,13 @@
 import * as Components from "./Components"
+import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
 import utf8 from "./utf8"
 
 const initialState = {
-	isFocused: false,
-	data:      "",
-	pos1:      0,
-	pos2:      0,
+	isFocused: false,                // Is the editor focused?
+	data:      "",                   // The editor’s plain text data. FIXME: Use array of blocks.
+	pos1:      traverseDOM.newPos(), // The editor’s VDOM cursor start position.
+	pos2:      traverseDOM.newPos(), // The editor’s VDOM cursor end position.
 
 	// `shouldRenderComponents` hints whether the editor’s
 	// components should be rerendered.
@@ -16,7 +17,7 @@ const initialState = {
 	// positions should be rerendered.
 	shouldRenderPos: 0,
 
-	Components: [],
+	Components: [], // The editor’s rendered components.
 }
 
 // NOTE: Use `Object.assign` to assign multiple properties
@@ -38,23 +39,21 @@ const reducer = state => ({
 	 * Select and write
 	 */
 
-	// NOTE: Based on experience, `opSelect` needs to set
-	// `data` and `pos1` and `pos2`.
-	opSelect(data, pos1 = state.pos1, pos2 = state.pos2) {
-		if (pos1 < pos2) {
+	// FIXME: Rename to `setState`?
+	opSelect(data, pos1, pos2) { // FIXME: `data`?
+		if (pos1.pos < pos2.pos) {
 			Object.assign(state, { data, pos1, pos2 })
 		} else {
-			// Reverse order; `pos1` can never be greater than
-			// `pos2`.
+			// Reverse order:
 			Object.assign(state, { data, pos1: pos2, pos2: pos1 })
 		}
 	},
 	collapse() {
-		state.pos2 = state.pos1
+		state.pos2 = { ...state.pos1 }
 	},
 	opWrite(inputType, data) {
-		state.data = state.data.slice(0, state.pos1) + data + state.data.slice(state.pos2)
-		state.pos1 += data.length
+		state.data = state.data.slice(0, state.pos1.pos) + data + state.data.slice(state.pos2.pos)
+		state.pos1.pos += data.length // Breaks `pos1`.
 		this.collapse()
 		// // NOTE: To opt-in to native rendering, conditionally
 		// // increment `shouldRenderComponents`.
@@ -68,30 +67,30 @@ const reducer = state => ({
 
 	delete(lengthL, lengthR) {
 		// Guard the current node:
-		if ((!state.pos1 && lengthL) || (state.pos2 === state.data.length && lengthR)) {
+		if ((!state.pos1.pos && lengthL) || (state.pos2.pos === state.data.length && lengthR)) {
 			// No-op.
 			return
 		}
-		state.data = state.data.slice(0, state.pos1 - lengthL) + state.data.slice(state.pos2 + lengthR)
-		state.pos1 -= lengthL
+		state.data = state.data.slice(0, state.pos1.pos - lengthL) + state.data.slice(state.pos2.pos + lengthR)
+		state.pos1.pos -= lengthL // Breaks `pos1`.
 		this.collapse()
 		state.shouldRenderComponents++
 	},
 	opBackspace() {
-		if (state.pos1 !== state.pos2) {
+		if (state.pos1.pos !== state.pos2.pos) {
 			this.delete(0, 0)
 			return
 		}
-		const { length } = utf8.prevChar(state.data, state.pos1)
+		const { length } = utf8.prevChar(state.data, state.pos1.pos)
 		this.delete(length, 0)
 	},
 	opBackspaceWord() {
-		if (state.pos1 !== state.pos2) {
+		if (state.pos1.pos !== state.pos2.pos) {
 			this.delete(0, 0)
 			return
 		}
 		// Iterate spaces:
-		let index = state.pos1
+		let index = state.pos1.pos
 		while (index) {
 			const char = utf8.prevChar(state.data, index)
 			if (!utf8.isHWhiteSpace(char)) {
@@ -115,15 +114,15 @@ const reducer = state => ({
 			}
 			index -= char.length
 		}
-		const length = state.pos1 - index
+		const length = state.pos1.pos - index
 		this.delete(length, 0)
 	},
 	opBackspaceLine() {
-		if (state.pos1 !== state.pos2) {
+		if (state.pos1.pos !== state.pos2.pos) {
 			this.delete(0, 0)
 			return
 		}
-		let index = state.pos1
+		let index = state.pos1.pos
 		while (index) {
 			const char = utf8.prevChar(state.data, index)
 			if (utf8.isVWhiteSpace(char)) {
@@ -131,15 +130,15 @@ const reducer = state => ({
 			}
 			index -= char.length
 		}
-		const length = state.pos1 - index
+		const length = state.pos1.pos - index
 		this.delete(length, 0)
 	},
 	opDelete() {
-		if (state.pos1 !== state.pos2) {
+		if (state.pos1.pos !== state.pos2.pos) {
 			this.delete(0, 0)
 			return
 		}
-		const { length } = utf8.nextChar(state.data, state.pos1)
+		const { length } = utf8.nextChar(state.data, state.pos1.pos)
 		this.delete(0, length)
 	},
 	opDeleteWord() {

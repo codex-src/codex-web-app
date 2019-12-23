@@ -118,12 +118,14 @@ export function computeNodeFromPos(root, pos) {
 		for (const each of start.childNodes) {
 			if (isTextNode(each)) {
 				const { length } = nodeValue(each)
-				// TODO
-				// // Guard checkbox:
-				// if (pos - length <= 0 && each.nodeName !== "INPUT") {
-				// 	Object.assign(node, { node: each, offset: pos })
-				// 	return true
-				// }
+				// Guard checkbox:
+				if (pos - length <= 0) { // && each.nodeName !== "INPUT") {
+					Object.assign(node, {
+						node: each,
+						offset: pos,
+					})
+					return true
+				}
 				pos -= length
 			} else {
 				if (recurse(each)) {
