@@ -29,7 +29,7 @@
 
 export function isHWhiteSpace(char) {
 	// Fast pass:
-	const code = char.charCodeAt(0)
+	const code = char.codePointAt(0)
 	if (code !== 0x9 && code !== 0x20 && code !== 0xa0 && code < 0x1680) {
 		return false
 	}
