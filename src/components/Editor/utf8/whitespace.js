@@ -30,7 +30,7 @@
 export function isHorizontalWS(char) {
 	// Optimization:
 	const code = char.charCodeAt(0)
-	if (code !== 9 && code !== 32 && code !== 160 && code < 5760) {
+	if (code !== 0x9 && code !== 0x20 && code !== 0xa0 && code < 0x1680) {
 		return false
 	}
 	const ok = (
