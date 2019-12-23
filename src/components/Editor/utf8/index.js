@@ -1,9 +1,11 @@
-import * as count from "./count"
+import * as utf8 from "./utf8"
 import * as whiteSpace from "./whiteSpace"
+import isAlphanum from "./isAlphanum"
 
 const exports = {
-	...count,
+	...utf8,
 	...whiteSpace,
+	isAlphanum,
 }
 
 export default exports

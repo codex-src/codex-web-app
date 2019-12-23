@@ -19,17 +19,17 @@ function isAlphanum(char) {
 	// ASCII:
 	case code >= 0 && code <= 0x7f:
 		return ascii.isAlphanum(char)
-		break
 	// Basic multilingual plane:
 	case code >= BMPRange[0] && code <= BMPRange[1]:
 		return BMPRegex.test(char)
-		break
 	// NOTE: Astral plane is omitted as it is not currently
 	// understood.
 	// // Astral plane:
 	// case code >= ASTRange[0] && code <= ASTRange[1]:
 	// 	return ASTRegex.test(char)
-	// 	break
+	default:
+		// No-op.
+		break
 	}
 	return false
 }

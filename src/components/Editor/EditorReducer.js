@@ -71,17 +71,40 @@ const reducer = state => ({
 		this.delete(length, 0)
 	},
 	opBackspaceWord() {
-		console.log("backspace word")
+		const startIndex = state.pos1 - utf8.countPrev(state.data, state.pos1)
+		let index = startIndex
 
-		// Iterate spaces.
-		// while (...) {
-		//   if (... === <space>) {
-		//     break
-		//   }
+		// const startIndex = state.pos1 - utf8.countPrev(state.data, state.pos1)
+		// let index = startIndex
+		// // `decrement` is a higher-order convenience function
+		// // that mutates `index` by the UTF-8 length of the
+		// // previous character.
+		// const decrement = () => {
+		// 	index -= utf8.countPrev(state.data, index)
 		// }
-
-		// Iterate non-word characters.
-		// Iterate word characters.
+		// // Iterate spaces:
+		// while (index >= 0) {
+		// 	if (!utf8.isHWhiteSpace(state.data[index])) {
+		// 		break
+		// 	}
+		// 	decrement()
+		// }
+		// // Iterate non-word characters:
+		// while (index >= 0) {
+		// 	if (utf8.isAlphanum(state.data[index])) {
+		// 		break
+		// 	}
+		// 	decrement()
+		// }
+		// // Iterate word characters:
+		// while (index >= 0) {
+		// 	if (!utf8.isAlphanum(state.data[index])) {
+		// 		break
+		// 	}
+		// 	decrement()
+		// }
+		// const length = startIndex - index
+		// this.delete(length, 0)
 	},
 	opBackspaceLine() {
 		console.log("backspace line")

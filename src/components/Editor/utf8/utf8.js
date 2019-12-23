@@ -12,21 +12,25 @@
 // This package is Unicode and emoji-friendly but does not
 // cover skin tones and compound graphemes.
 
-// `count` counts the UTF-8 length of a Unicode string.
-export function count(str) {
+// `count` counts the UTF-8 Unicode character length.
+function count(str) {
 	return [...str].length
 }
 
-// `countPrev` counts the UTF-8 length of the previous
-// character in a Unicode string.
-export function countPrev(str, index) {
+// `prevChar` returns the previous UTF-8 Unicode character.
+function prevChar(str, index) {
+	if (!index) {
+		return ""
+	}
 	const chars = [...str.slice(index - 4, index)]
-	return chars[chars.length - 1].length
+	return chars[chars.length - 1]
 }
 
-// `countNext` counts the UTF-8 length of the next character
-// in a Unicode string.
-export function countNext(str, index) {
+// `nextChar` returns the next UTF-8 Unicode character.
+function nextChar(str, index) {
+	if (index + 1 === str.length) {
+		return ""
+	}
 	const chars = [...str.slice(index, index + 4)]
-	return chars[0].length
+	return chars[0]
 }

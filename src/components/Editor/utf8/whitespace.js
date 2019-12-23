@@ -27,7 +27,7 @@
 // 0x205f   MEDIUM MATHEMATICAL SPACE   h s
 // 0x3000           IDEOGRAPHIC SPACE   h s
 
-export function isHorizontalWS(char) {
+export function isHWhiteSpace(char) {
 	// Fast pass:
 	const code = char.charCodeAt(0)
 	if (code !== 0x9 && code !== 0x20 && code !== 0xa0 && code < 0x1680) {
@@ -57,7 +57,7 @@ export function isHorizontalWS(char) {
 	return ok
 }
 
-export function isVerticalWS(char) {
+export function isVWhiteSpace(char) {
 	const ok = (
 		char === "\u000a" || //    10
 		char === "\u000b" || //    11
@@ -70,10 +70,10 @@ export function isVerticalWS(char) {
 	return ok
 }
 
-export function isHorizontalOrVerticalWS(char) {
+export function isWhiteSpace(char) {
 	const ok = (
-		isHorizontalWS(char) ||
-		isVerticalWS(char)
+		isHWhiteSpace(char) ||
+		isVWhiteSpace(char)
 	)
 	return ok
 }
