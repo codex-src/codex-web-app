@@ -1,7 +1,7 @@
 import * as detect from "./detect"
+import DebugEditor from "./DebugEditor"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
-import Stringify from "./Stringify"
 import stylex from "stylex"
 
 export const Context = React.createContext()
@@ -168,7 +168,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 				)}
 			</Provider>
 			<div style={stylex.parse("h:16")} />
-			<Stringify state={state} />
+			<DebugEditor state={state} />
 		</ErrorBoundary>
 	)
 })

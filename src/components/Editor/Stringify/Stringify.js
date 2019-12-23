@@ -1,13 +1,35 @@
-import _stringify from "./_stringify"
-import React from "react"
-import stylex from "stylex"
+import * as Components from "../Components"
 
-const Stringify = stylex.Unstyleable(props => (
-	<pre style={stylex.parse("overflow -x:scroll")}>
-		<p style={{ ...stylex.parse("fs:12 lh:125%"), MozTabSize: 2, tabSize: 2, fontFamily: "'Monaco'" }}>
-			{_stringify(props.state)}
-		</p>
-	</pre>
-))
+function destructure(Component) {
+	// Guard non-objects.
+	if (!Component || typeof Component !== "object") {
+		return Component
+	}
+	// Guard arrays.
+	if (Array.isArray(Component)) {
+		return Component.map(each => destructure(each))
+	}
+	// Guard non-React components.
+	if (!Component.$$typeof && Component.$$typeof !== Symbol.for("react.element")) {
+		return Component
+	}
+	// React component:
+	const { type, props } = Component
+	return { Component: Components.Types[btoa(type)], props }
+}
 
-export default Stringify
+function stringify(obj) {
+	const data = JSON.stringify(
+		obj,
+		(key, value) => {
+			if (key === "Components" || key === "children") {
+				return destructure(value)
+			}
+			return value
+		},
+		"\t",
+	)
+	return data
+}
+
+export default stringify

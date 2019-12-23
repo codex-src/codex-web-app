@@ -46,8 +46,8 @@ export function isBackspaceLine(e) {
  * Delete
  */
 
-// Assumes macOS:
 function isDeleteMacOS(e) {
+	// Assumes macOS:
 	const ok = (
 		e.ctrlKey &&
 		!e.altKey &&

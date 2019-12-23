@@ -1,3 +1,3 @@
-import Stringify from "./Stringify"
+import stringify from "./stringify"
 
-export default Stringify
+export default stringify
