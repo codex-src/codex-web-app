@@ -1,30 +1,16 @@
 import * as Components from "./Components"
 import useMethods from "use-methods"
 
-// // `shouldRender` provides a hint to `render` as to
-// // whether a rerender is needed. This mocks Draft.js’s
-// // native rendering feature.
-// //
-// // https://draftjs.org/docs/api-reference-editor-state/#nativelyrenderedcontent
-// shouldRender: true,
-
 const initialState = {
 	isFocused: false,
 	data:      "",
 	pos1:      0,
 	pos2:      0,
 
-	// NOTE: `shouldRenderComponents` and `shouldRenderPos`
-	// use a counter (instead of a flag) because the value is
-	// unimportant, and a counter can count VDOM rerenders.
-	//
 	// `shouldRenderComponents` hints whether the editor’s
-	// components should be rerendered. This mocks Draft.js’s
-	// native rendering feature.
-	//
-	// https://draftjs.org/docs/api-reference-editor-state/#nativelyrenderedcontent
+	// components should be rerendered.
 	shouldRenderComponents: 0,
-	//
+
 	// `shouldRenderPos` hints whether the editor’s cursor
 	// positions should be rerendered.
 	shouldRenderPos: 0,
@@ -35,12 +21,14 @@ const initialState = {
 // NOTE: Use `Object.assign` to assign multiple properties
 // because `state` is a reference type.
 const reducer = state => ({
+
 	opFocus() {
 		state.isFocused = true
 	},
 	opBlur() {
 		state.isFocused = false
 	},
+
 	// NOTE: Based on experience, `opSelect` needs to set
 	// `data` and `pos1` and `pos2`.
 	opSelect(data, pos1 = state.pos1, pos2 = state.pos2) {
@@ -52,6 +40,7 @@ const reducer = state => ({
 			Object.assign(state, { data, pos1: pos2, pos2: pos1 })
 		}
 	},
+
 	collapse() {
 		state.pos2 = state.pos1
 	},
@@ -64,6 +53,7 @@ const reducer = state => ({
 		// state.shouldRenderComponents += inputType !== "onKeyPress"
 		state.shouldRenderComponents++
 	},
+
 	delete(lengthL, lengthR) {
 		// Guard the current node:
 		if ((!state.pos1 && lengthL) || (state.pos2 === state.data.length && lengthR)) {
@@ -76,8 +66,6 @@ const reducer = state => ({
 		state.shouldRenderComponents++
 	},
 	opBackspace() {
-		// console.log("backspace")
-
 		// The following is Unicode-friendly but does not cover
 		// skin tones and extended graphemes.
 		let length = 0
@@ -90,15 +78,11 @@ const reducer = state => ({
 	},
 	opBackspaceWord() {
 		console.log("backspace word")
-		// ...
 	},
 	opBackspaceLine() {
 		console.log("backspace line")
-		// ...
 	},
 	opDelete() {
-		// console.log("delete")
-
 		// The following is Unicode-friendly but does not cover
 		// skin tones and extended graphemes.
 		let length = 0
@@ -111,8 +95,79 @@ const reducer = state => ({
 	},
 	opDeleteWord() {
 		console.log("delete word")
-		// ...
 	},
+
+	// delete(delL, delR) {
+	// 	const { data, pos1, pos2 } = getVars(state)
+	// 	if ((delL && !pos1) || (delR && pos2 === data.lenth)) {
+	// 		return
+	// 	}
+	// 	state.data = data.slice(0, pos1 - delL) + data.slice(pos2 + delR)
+	// 	state.pos1.abs -= delL
+	// 	this.collapse()
+	// },
+	// deleteOperation(dir) {
+	// 	const { pos1, pos2 } = getVars(state)
+	// 	if (pos1 !== pos2) {
+	// 		dir = 0
+	// 	}
+	// 	const delL = dir < 0 ? -dir : 0
+	// 	const delR = dir > 0 ?  dir : 0
+	// 	this.delete(delL, delR)
+	// },
+	// deleteWordOperation(dir) {
+	// 	const { data, pos1, pos2 } = getVars(state)
+	// 	if (pos1 !== pos2 || (((dir === -1 && pos1 - 1 >= 0) || (!dir && pos1 < data.length)) && data[pos1 + dir] === "\n")) {
+	// 		this.deleteOperation(dir || 1)
+	// 		return
+	// 	}
+	// 	// Iterate spaces.
+	// 	let index = pos1 // Use `let`.
+	// 	while ((dir === -1 && index - 1 >= 0) || (!dir && index < data.length)) {
+	// 		if (data[index + dir] !== " ") {
+	// 			break
+	// 		}
+	// 		index += dir || 1
+	// 	}
+	// 	// Iterate non-word characters.
+	// 	while ((dir === -1 && index - 1 >= 0) || (!dir && index < data.length)) {
+	// 		if (Unicode.isAlphanum(data[index + dir]) || data[index + dir] === "\n") {
+	// 			break
+	// 		}
+	// 		index += dir || 1
+	// 	}
+	// 	// Iterate word characters.
+	// 	while ((dir === -1 && index - 1 >= 0) || (!dir && index < data.length)) {
+	// 		if (!Unicode.isAlphanum(data[index + dir])) {
+	// 			break
+	// 		}
+	// 		index += dir || 1
+	// 	}
+	// 	dir = index - pos1
+	// 	this.deleteOperation(dir)
+	// },
+	// deleteLineOperation(dir) {
+	// 	const { data, pos1, pos2 } = getVars(state)
+	// 	if (pos1 !== pos2 || (((dir === -1 && pos1 - 1 >= 0) || (!dir && pos1 < data.length)) && data[pos1 + dir] === "\n")) {
+	// 		this.deleteOperation(dir || 1)
+	// 		return
+	// 	}
+	// 	let index = pos1 // Use `let`.
+	// 	while ((dir === -1 && index - 1 >= 0) || (!dir && index < data.length)) {
+	// 		if (data[index + dir] === "\n") {
+	// 			break
+	// 		}
+	// 		index += dir || 1
+	// 	}
+	// 	dir = index - pos1
+	// 	this.deleteOperation(dir)
+	// },
+	// commitBackspace()     { this.deleteOperation    (-1) },
+	// commitBackspaceWord() { this.deleteWordOperation(-1) },
+	// commitBackspaceLine() { this.deleteLineOperation(-1) },
+	// commitDelete()        { this.deleteOperation    ( 1) }, // NOTE: Use `1`.
+	// commitDeleteWord()    { this.deleteWordOperation( 0) },
+
 	render() {
 		state.Components = Components.parse(state.data)
 		state.shouldRenderPos++

@@ -1,8 +1,8 @@
 import platform from "./platform"
 
-// `isMetaOrCtrlKey` returns whether a key down event uses
-// the macOS command key or control key on Linux and
-// Windows.
+// `isMetaOrCtrlKey` returns whether a key down event
+// exclusively uses the macOS command key or control key on
+// Linux and Windows.
 function isMetaOrCtrlKey(e) {
 	// macOS:
 	if (platform.isMacOS) {
