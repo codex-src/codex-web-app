@@ -81,12 +81,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						},
 
 						onKeyPress: e => {
-							// DELETEME
-							if (e.key === "Enter") {
-								e.preventDefault()
-								return
-							}
-
 							e.preventDefault()
 							let data = e.key
 							if (e.key === "Enter") {

@@ -1,3 +1,4 @@
+import DebugCSS from "components/DebugCSS"
 import fetchGraphQL from "./fetchGraphQL"
 import Footer from "components/Footer"
 import Forms from "components/Forms"
@@ -11,17 +12,19 @@ import stylex from "stylex"
 import User from "components/User"
 
 const AppContainer = props => (
-	<div style={stylex.parse("flex -c -y:between h:max")}>
-		<div>
-			<Nav />
-			<main style={stylex.parse("p-x:32 p-y:96 flex -r -x:center")}>
-				<div style={stylex.parse("w:1024 no-min-w")}>
-					{props.children}
-				</div>
-			</main>
+	<DebugCSS keyCode={220}>
+		<div style={stylex.parse("flex -c -y:between h:max")}>
+			<div>
+				<Nav />
+				<main style={stylex.parse("p-x:32 p-y:96 flex -r -x:center")}>
+					<div style={stylex.parse("w:1024 no-min-w")}>
+						{props.children}
+					</div>
+				</main>
+			</div>
+			<Footer />
 		</div>
-		<Footer />
-	</div>
+	</DebugCSS>
 )
 
 const client = new GraphQL.Client({ fetchGraphQL })
