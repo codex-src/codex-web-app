@@ -1,3 +1,7 @@
-import * as utf8 from "./utf8"
+import * as count from "./count"
 
-export default utf8
+const exports = {
+	...count,
+}
+
+export default exports

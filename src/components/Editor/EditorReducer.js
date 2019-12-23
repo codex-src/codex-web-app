@@ -1,6 +1,6 @@
 import * as Components from "./Components"
-import * as utf8 from "./utf8"
 import useMethods from "use-methods"
+import utf8 from "./utf8"
 
 const initialState = {
 	isFocused: false,
@@ -64,13 +64,9 @@ const reducer = state => ({
 		state.shouldRenderComponents++
 	},
 	opBackspace() {
-		// The following is Unicode-friendly but does not cover
-		// skin tones and extended graphemes.
 		let length = 0
 		if (state.pos1 && state.pos1 === state.pos2) {
-			// Assumes a maximum UTF-8 length of 4 bytes:
-			const chunks = [...state.data.slice(state.pos1 - 4, state.pos1)]
-			length = chunks[chunks.length - 1].length
+			length = utf8.countPrev(state.data, state.pos1)
 		}
 		this.delete(length, 0)
 	},
@@ -91,13 +87,9 @@ const reducer = state => ({
 		console.log("backspace line")
 	},
 	opDelete() {
-		// The following is Unicode-friendly but does not cover
-		// skin tones and extended graphemes.
 		let length = 0
-		if (state.pos2 < state.data.length && state.pos1 === state.pos2) {
-			// Assumes a maximum UTF-8 length of 4 bytes:
-			const chunks = [...state.data.slice(state.pos2, state.pos2 + 4)]
-			length = chunks[0].length
+		if (state.pos2 < state.data.length && state.pos2 === state.pos1) {
+			length = utf8.countNext(state.data, state.pos2)
 		}
 		this.delete(0, length)
 	},
