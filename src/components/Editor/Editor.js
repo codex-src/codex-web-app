@@ -20,23 +20,23 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 		[state.shouldRenderComponents],
 	)
 
-	// Render cursor:
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			if (!state.isFocused) {
-				// No-op.
-				return
-			}
-			const range = document.createRange()
-			const { anchorNode } = document.getSelection()
-			range.setStart(anchorNode, state.pos1) // FIXME: `TraverseDOM` is needed.
-			range.collapse()
-			const selection = document.getSelection()
-			selection.removeAllRanges()
-			selection.addRange(range)
-		}, [state]),
-		[state.shouldRenderPos],
-	)
+	// // Render cursor:
+	// React.useLayoutEffect(
+	// 	React.useCallback(() => {
+	// 		if (!state.isFocused) {
+	// 			// No-op.
+	// 			return
+	// 		}
+	// 		const range = document.createRange()
+	// 		const { anchorNode } = document.getSelection()
+	// 		range.setStart(anchorNode, state.pos1) // FIXME: `TraverseDOM` is needed.
+	// 		range.collapse()
+	// 		const selection = document.getSelection()
+	// 		selection.removeAllRanges()
+	// 		selection.addRange(range)
+	// 	}, [state]),
+	// 	[state.shouldRenderPos],
+	// )
 
 	// GPU optimization:
 	let translateZ = {}
