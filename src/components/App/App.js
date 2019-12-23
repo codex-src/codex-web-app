@@ -14,8 +14,6 @@ import User from "components/User"
 const AppContainer = props => (
 	<DebugCSS keyCode={220}>
 		<div style={stylex.parse("flex -c -y:between h:max")}>
-			{/* NOTE: Use `b:white` because `Footer` sets `html`
-			background. */}
 			<div style={stylex.parse("b:white")}>
 				<Nav />
 				<main style={stylex.parse("p-x:32 p-y:96 flex -r -x:center")}>
