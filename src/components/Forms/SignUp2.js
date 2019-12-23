@@ -56,27 +56,21 @@ function SignUpBilling({ state, dispatch, ...props }) {
 		dispatch.setFetching(true)
 		const res1 = await createToken()
 		if (res1.error) { // Not a GraphQL error.
+			invariant(false, res1.error.message)
 			dispatch.setFetching(false)
 			dispatch.setWarn(res1.error.message)
 			return
 		}
-		const { card: { id: stripeCardID, brand: stripeCardBrand, last4: stripeCardLastFour } } = res1.token
-		if (!stripeCardID || !stripeCardBrand || !stripeCardLastFour) {
-			dispatch.setFetching(false)
-			dispatch.setWarn("An unexpected error occurred.\n\n(You were not charged)")
-			return
-		}
 		// Create user:
+		const { card: { id: stripeCardID, brand: stripeCardBrand, last4: stripeCardLastFour } } = res1.token
 		const res2 = await createUser({ user: { username, password, passcode, chargeMonth: chargeMonth === 1, stripeCardID, stripeCardBrand, stripeCardLastFour } })
 		if (res2.errors) {
+			invariant(false, res2.errors.map(error => error.message).join(", "))
 			dispatch.setFetching(false)
 			dispatch.setWarn("An unexpected error occurred.")
 			return
 		}
-		// Use `setTimeout` to prevent memory leak:
-		setTimeout(() => {
-			login(res2.data.createUser)
-		}, 0)
+		login(res2.data.createUser)
 	}
 
 	// TODO: Add back button.

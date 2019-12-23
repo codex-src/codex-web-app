@@ -2,12 +2,11 @@ import GraphQL from "use-graphql"
 import Headers from "components/Headers"
 import Input from "components/Input"
 import InputStatus from "components/InputStatus"
+import invariant from "invariant"
 import Overlay from "components/Overlay"
 import React from "react"
 import stylex from "stylex"
-import testPasscode from "./helpers/testPasscode"
-import testPassword from "./helpers/testPassword"
-import testUsername from "./helpers/testUsername"
+import test from "./test"
 
 function SignUp({ state, dispatch, ...props }) {
 	const [, testUsernameTaken] = GraphQL.useLazyQuery(`
@@ -22,26 +21,27 @@ function SignUp({ state, dispatch, ...props }) {
 		if (username.length < 3 || username.length > 20) {
 			dispatch.setWarn("Username needs to be 3-20 characters.")
 			return
-		} else if (!testUsername(username)) {
-			dispatch.setWarn("Username needs to be a combo of:\n\n- a-z, A-Z\n- 0-9\n- _\n\n(And start with a-z or A-Z)")
+		} else if (!test.username(username)) {
+			dispatch.setWarn("Username needs to be a combo of:\n\n- a-z, A-Z\n- 0-9\n- _\n\n(And start with a-z, A-Z, or _)")
 			return
 		} else if (password.length < 8) {
 			dispatch.setWarn("Password needs to be 8 or more characters.")
 			return
- 		} else if (!testPassword(password)) {
+ 		} else if (!test.password(password)) {
 			dispatch.setWarn("Password needs to be a combo of:\n\n- a-z\n- A-Z\n- 0-9\n\n(Spaces are allowed)")
 			return
-		} else if (!testPasscode(passcode)) {
+		} else if (passcode.length !== 4 || !test.integers(passcode)) {
 			dispatch.setWarn("Passcode needs to be 4 numbers.")
 			return
 		}
 		// Test username:
 		const { errors, data } = await testUsernameTaken({ username })
-		if (errors) {
-			dispatch.setWarn("An unexpected error occurred.")
-			return
-		} else if (data.testUsernameTaken) {
+		if (data && data.testUsernameTaken) { // Guard `data`.
 			dispatch.setWarn(`Username ${username} is taken.`)
+			return
+		} else if (errors) {
+			invariant(false, errors.map(error => error.message).join(", "))
+			dispatch.setWarn("An unexpected error occurred.")
 			return
 		}
 		dispatch.setComplete(true)
@@ -106,7 +106,7 @@ function SignUp({ state, dispatch, ...props }) {
 					</Input.Submit>
 
 					{!state.warn ? (
-						<Input.SubmitClickAway style={stylex.parse("m-t:-16")} to="/reset-password">
+						<Input.SubmitClickAway style={stylex.parse("m-t:-16")} to="/sign-in">
 							I have an account
 						</Input.SubmitClickAway>
 					) : (

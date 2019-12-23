@@ -5,9 +5,11 @@ import GraphQL from "use-graphql"
 import Headers from "components/Headers"
 import Input from "components/Input"
 import InputStatus from "components/InputStatus"
+import invariant from "invariant"
 import Overlay from "components/Overlay"
 import React from "react"
 import stylex from "stylex"
+import test from "./test"
 import useMethods from "use-methods"
 import User from "components/User"
 
@@ -31,8 +33,14 @@ function SignIn(props) {
 		if (username.length < 3 || username.length > 20) {
 			dispatch.setWarn("Username needs to be 3-20 characters.")
 			return
+		} else if (!test.username(username)) {
+			dispatch.setWarn("Username needs to be a combo of:\n\n- a-z, A-Z\n- 0-9\n- _\n\n(And start with a-z, A-Z, or _)")
+			return
 		} else if (password.length < 8) {
 			dispatch.setWarn("Password needs to be 8+ characters.")
+			return
+		} else if (!test.password(password)) {
+			dispatch.setWarn("Password needs to be a combo of:\n\n- a-z\n- A-Z\n- 0-9\n\n(Spaces are allowed)")
 			return
 		}
 		// Create session:
@@ -44,13 +52,11 @@ function SignIn(props) {
 			dispatch.setWarn("Invalid username and or password.")
 			return
 		} else if (errors) {
+			invariant(false, errors.map(error => error.message).join(", "))
 			dispatch.setWarn("An unexpected error occurred.")
 			return
 		}
-		// Use `setTimeout` to prevent memory leak:
-		setTimeout(() => {
-			login(data.createSession)
-		}, 0)
+		login(data.createSession)
 	}
 
 	return (
