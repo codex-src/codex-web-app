@@ -1,4 +1,5 @@
 import * as Components from "./Components"
+import * as utf8 from "./utf8"
 import useMethods from "use-methods"
 
 const initialState = {
@@ -21,14 +22,12 @@ const initialState = {
 // NOTE: Use `Object.assign` to assign multiple properties
 // because `state` is a reference type.
 const reducer = state => ({
-
 	opFocus() {
 		state.isFocused = true
 	},
 	opBlur() {
 		state.isFocused = false
 	},
-
 	// NOTE: Based on experience, `opSelect` needs to set
 	// `data` and `pos1` and `pos2`.
 	opSelect(data, pos1 = state.pos1, pos2 = state.pos2) {
@@ -40,7 +39,6 @@ const reducer = state => ({
 			Object.assign(state, { data, pos1: pos2, pos2: pos1 })
 		}
 	},
-
 	collapse() {
 		state.pos2 = state.pos1
 	},
@@ -78,6 +76,16 @@ const reducer = state => ({
 	},
 	opBackspaceWord() {
 		console.log("backspace word")
+
+		// Iterate spaces.
+		// while (...) {
+		//   if (... === <space>) {
+		//     break
+		//   }
+		// }
+
+		// Iterate non-word characters.
+		// Iterate word characters.
 	},
 	opBackspaceLine() {
 		console.log("backspace line")
@@ -97,24 +105,6 @@ const reducer = state => ({
 		console.log("delete word")
 	},
 
-	// delete(delL, delR) {
-	// 	const { data, pos1, pos2 } = getVars(state)
-	// 	if ((delL && !pos1) || (delR && pos2 === data.lenth)) {
-	// 		return
-	// 	}
-	// 	state.data = data.slice(0, pos1 - delL) + data.slice(pos2 + delR)
-	// 	state.pos1.abs -= delL
-	// 	this.collapse()
-	// },
-	// deleteOperation(dir) {
-	// 	const { pos1, pos2 } = getVars(state)
-	// 	if (pos1 !== pos2) {
-	// 		dir = 0
-	// 	}
-	// 	const delL = dir < 0 ? -dir : 0
-	// 	const delR = dir > 0 ?  dir : 0
-	// 	this.delete(delL, delR)
-	// },
 	// deleteWordOperation(dir) {
 	// 	const { data, pos1, pos2 } = getVars(state)
 	// 	if (pos1 !== pos2 || (((dir === -1 && pos1 - 1 >= 0) || (!dir && pos1 < data.length)) && data[pos1 + dir] === "\n")) {
