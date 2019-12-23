@@ -1,9 +1,9 @@
 import * as count from "./count"
-import * as whitespace from "./whitespace"
+import * as whiteSpace from "./whiteSpace"
 
 const exports = {
 	...count,
-	...whitespace,
+	...whiteSpace,
 }
 
 export default exports
