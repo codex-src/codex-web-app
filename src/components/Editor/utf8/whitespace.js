@@ -1,3 +1,5 @@
+// $ perldoc perlrecharclass
+//
 // 0x0009        CHARACTER TABULATION   h s
 // 0x000a              LINE FEED (LF)    vs
 // 0x000b             LINE TABULATION    vs
@@ -24,3 +26,54 @@
 // 0x202f       NARROW NO-BREAK SPACE   h s
 // 0x205f   MEDIUM MATHEMATICAL SPACE   h s
 // 0x3000           IDEOGRAPHIC SPACE   h s
+
+export function isHorizontalWS(char) {
+	// Optimization:
+	const code = char.charCodeAt(0)
+	if (code !== 9 && code !== 32 && code !== 160 && code < 5760) {
+		return false
+	}
+	const ok = (
+		char === "\u0009" || //     9
+		char === "\u0020" || //    32
+		char === "\u00a0" || //   160
+		char === "\u1680" || //  5760
+		char === "\u180e" || //  6158
+		char === "\u2000" || //  8192
+		char === "\u2001" || //  8193
+		char === "\u2002" || //  8194
+		char === "\u2003" || //  8195
+		char === "\u2004" || //  8196
+		char === "\u2005" || //  8197
+		char === "\u2006" || //  8198
+		char === "\u2007" || //  8199
+		char === "\u2008" || //  8200
+		char === "\u2009" || //  8201
+		char === "\u200a" || //  8202
+		char === "\u202f" || //  8239
+		char === "\u205f" || //  8287
+		char === "\u3000"    // 12288
+	)
+	return ok
+}
+
+export function isVerticalWS(char) {
+	const ok = (
+		char === "\u000a" || //    10
+		char === "\u000b" || //    11
+		char === "\u000c" || //    12
+		char === "\u000d" || //    13
+		char === "\u0085" || //   133
+		char === "\u2028" || //  8232
+		char === "\u2029"    //  8233
+	)
+	return ok
+}
+
+export function isHorizontalOrVerticalWS(char) {
+	const ok = (
+		isHorizontalWS(char) ||
+		isVerticalWS(char)
+	)
+	return ok
+}
