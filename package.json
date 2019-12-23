@@ -20,6 +20,7 @@
     "use-methods": "^0.5.1"
   },
   "scripts": {
+    "lint": "yarn eslint --ignore-pattern=build .",
     "start": "react-scripts start",
     "test": "react-scripts test",
     "build": "react-scripts build",

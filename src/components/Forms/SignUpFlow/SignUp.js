@@ -6,7 +6,7 @@ import invariant from "invariant"
 import Overlay from "components/Overlay"
 import React from "react"
 import stylex from "stylex"
-import test from "./test"
+import test from "../test"
 
 function SignUp({ state, dispatch, ...props }) {
 	const [, testUsernameTaken] = GraphQL.useLazyQuery(`
@@ -27,7 +27,7 @@ function SignUp({ state, dispatch, ...props }) {
 		} else if (password.length < 8) {
 			dispatch.setWarn("Password needs to be 8 or more characters.")
 			return
- 		} else if (!test.password(password)) {
+		} else if (!test.password(password)) {
 			dispatch.setWarn("Password needs to be a combo of:\n\n- a-z\n- A-Z\n- 0-9\n\n(Spaces are allowed)")
 			return
 		} else if (passcode.length !== 4 || !test.integers(passcode)) {

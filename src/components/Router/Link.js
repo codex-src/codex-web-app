@@ -17,8 +17,11 @@ function Link({ to, ...props }) {
 		Wrapper = newProps => <Router.Link to={to} {...newProps} />
 		break
 	default:
-		/* eslint-disable jsx-a11y/anchor-has-content */
-		Wrapper = newProps => <a href={to} {...newProps} />
+		Wrapper = newProps => (
+			<a href={to} {...newProps}>
+				{newProps.children}
+			</a>
+		)
 		break
 	}
 	return (

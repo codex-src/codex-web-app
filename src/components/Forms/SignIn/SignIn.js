@@ -9,7 +9,7 @@ import invariant from "invariant"
 import Overlay from "components/Overlay"
 import React from "react"
 import stylex from "stylex"
-import test from "./test"
+import test from "../test"
 import useMethods from "use-methods"
 import User from "components/User"
 

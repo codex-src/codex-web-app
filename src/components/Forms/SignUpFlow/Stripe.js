@@ -5,10 +5,10 @@ export const cardOptions = {
 	mount: "#card-element",
 	style: {
 		base: {
-			fontSmoothing: "antialiased",
-			fontSize: "16px",
-			fontFamily: "'BlinkMacSystemFont', 'system-ui', '-apple-system'",
-			color: "#212121",
+			"fontSmoothing": "antialiased",
+			"fontSize": "16px",
+			"fontFamily": "'BlinkMacSystemFont', 'system-ui', '-apple-system'",
+			"color": "#212121",
 			"::placeholder": {
 				color: "#9E9E9E",
 			},
@@ -25,9 +25,7 @@ export function useCard(options) {
 			card.mount(options.mount)
 			// NOTE: Return a function that returns a function
 			// because of `useEffect`.
-			setCreateToken(() => {
-				return () => StripeAPI.createToken(card)
-			})
+			setCreateToken(() => () => StripeAPI.createToken(card))
 		}, [options]),
 		[],
 	)

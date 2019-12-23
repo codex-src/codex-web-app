@@ -13,16 +13,10 @@ const months = [
 	"December",
 ]
 
-const newDate = () => ({
-	year:  "(loading…)",
-	month: "(loading…)",
-	day:   "(loading…)",
-})
-
 export const initialState = {
 	chargeMonth: -1,
-	nextMo:      newDate(),
-	nextYr:      newDate(),
+	nextMo:      { year: "(loading…)", month: "(loading…)", day: "(loading…)" },
+	nextYr:      { year: "(loading…)", month: "(loading…)", day: "(loading…)" },
 	info:        "",
 	warn:        "",
 	fetching:    false,
@@ -36,17 +30,11 @@ export const reducer = state => ({
 		state.nextYr = { ...payload }
 	},
 	setChargeMo() {
-		// if (state.chargeMonth === 1) {
-		// 	return
-		// }
 		state.warn = ""
 		state.chargeMonth = 1
 		state.info = `You will be charged $8 today and then on ${months[state.nextMo.month]} ${state.nextMo.day}.`
 	},
 	setChargeYr() {
-		// if (state.chargeMonth === 0) {
-		// 	return
-		// }
 		state.warn = ""
 		state.chargeMonth = 0
 		state.info = `You will be charged $80 today and then on ${months[state.nextYr.month]} ${state.nextYr.day}, ${state.nextYr.year}.`
