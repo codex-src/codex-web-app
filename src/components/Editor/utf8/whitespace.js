@@ -28,7 +28,7 @@
 // 0x3000           IDEOGRAPHIC SPACE   h s
 
 export function isHorizontalWS(char) {
-	// Optimization:
+	// Fast pass:
 	const code = char.charCodeAt(0)
 	if (code !== 0x9 && code !== 0x20 && code !== 0xa0 && code < 0x1680) {
 		return false
