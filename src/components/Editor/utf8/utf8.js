@@ -13,24 +13,24 @@
 // cover skin tones and compound graphemes.
 
 // `count` counts the UTF-8 Unicode character length.
-function count(str) {
+export function count(str) {
 	return [...str].length
 }
 
 // `prevChar` returns the previous UTF-8 Unicode character.
-function prevChar(str, index) {
-	if (!index) {
+export function prevChar(str, index) {
+	const chars = [...str.slice(Math.max(index - 4, 0), index)] // Must be non-negative.
+	if (!chars.length) {
 		return ""
 	}
-	const chars = [...str.slice(index - 4, index)]
 	return chars[chars.length - 1]
 }
 
 // `nextChar` returns the next UTF-8 Unicode character.
-function nextChar(str, index) {
-	if (index + 1 === str.length) {
+export function nextChar(str, index) {
+	const chars = [...str.slice(index, index + 4)]
+	if (!chars.length) {
 		return ""
 	}
-	const chars = [...str.slice(index, index + 4)]
 	return chars[0]
 }

@@ -64,60 +64,59 @@ const reducer = state => ({
 		state.shouldRenderComponents++
 	},
 	opBackspace() {
-		let length = 0
-		if (state.pos1 && state.pos1 === state.pos2) {
-			length = utf8.countPrev(state.data, state.pos1)
+		if (state.pos1 !== state.pos2) {
+			this.delete(0, 0)
+			return
 		}
+		const { length } = utf8.prevChar(state.data, state.pos1)
 		this.delete(length, 0)
 	},
 	opBackspaceWord() {
-		const startIndex = state.pos1 - utf8.countPrev(state.data, state.pos1)
-		let index = startIndex
-
-		// const startIndex = state.pos1 - utf8.countPrev(state.data, state.pos1)
-		// let index = startIndex
-		// // `decrement` is a higher-order convenience function
-		// // that mutates `index` by the UTF-8 length of the
-		// // previous character.
-		// const decrement = () => {
-		// 	index -= utf8.countPrev(state.data, index)
-		// }
-		// // Iterate spaces:
-		// while (index >= 0) {
-		// 	if (!utf8.isHWhiteSpace(state.data[index])) {
-		// 		break
-		// 	}
-		// 	decrement()
-		// }
-		// // Iterate non-word characters:
-		// while (index >= 0) {
-		// 	if (utf8.isAlphanum(state.data[index])) {
-		// 		break
-		// 	}
-		// 	decrement()
-		// }
-		// // Iterate word characters:
-		// while (index >= 0) {
-		// 	if (!utf8.isAlphanum(state.data[index])) {
-		// 		break
-		// 	}
-		// 	decrement()
-		// }
-		// const length = startIndex - index
-		// this.delete(length, 0)
+		if (state.pos1 !== state.pos2) {
+			this.delete(0, 0)
+			return
+		}
+		// Iterate spaces:
+		let index = state.pos1
+		while (index >= 0) {
+			const char = utf8.prevChar(state.data, index)
+			if (!utf8.isHWhiteSpace(char)) {
+				break
+			}
+			index -= char.length
+		}
+		// Iterate non-word characters:
+		while (index >= 0) {
+			const char = utf8.prevChar(state.data, index)
+			if (utf8.isAlphanum(char)) {
+				break
+			}
+			index -= char.length
+		}
+		// Iterate word characters:
+		while (index >= 0) {
+			const char = utf8.prevChar(state.data, index)
+			if (!utf8.isAlphanum(char)) {
+				break
+			}
+			index -= char.length
+		}
+		const length = state.pos1 - index
+		this.delete(length, 0)
 	},
 	opBackspaceLine() {
-		console.log("backspace line")
+		// TODO
 	},
 	opDelete() {
-		let length = 0
-		if (state.pos2 < state.data.length && state.pos2 === state.pos1) {
-			length = utf8.countNext(state.data, state.pos2)
+		if (state.pos1 !== state.pos2) {
+			this.delete(0, 0)
+			return
 		}
+		const { length } = utf8.nextChar(state.data, state.pos1)
 		this.delete(0, length)
 	},
 	opDeleteWord() {
-		console.log("delete word")
+		// TODO
 	},
 
 	// deleteWordOperation(dir) {
