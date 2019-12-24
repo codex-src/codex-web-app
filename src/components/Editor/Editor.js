@@ -1,7 +1,8 @@
-import * as detect from "./detect"
 import DebugEditor from "./DebugEditor"
+import detect from "./detect"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
+import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 
@@ -22,23 +23,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 		[state.shouldRenderComponents],
 	)
 
-	// // Cursor:
-	// React.useLayoutEffect(
-	// 	React.useCallback(() => {
-	// 		if (!state.hasFocus || state.pos1.pos === pos1.current) {
-	// 			return
-	// 		}
-	// 		const range = document.createRange()
-	// 		const { node, offset } = TraverseDOM.computeNodeFromPos(ref.current, state.pos1.pos, state.pos2.pos)
-	// 		range.setStart(node, offset)
-	// 		range.collapse()
-	// 		const selection = document.getSelection()
-	// 		selection.removeAllRanges()
-	// 		selection.addRange(range)
-	// 		scrollToPosIfNeeded()
-	// 	}, [state.hasFocus, state.pos1, state.pos2]),
-	// [state.Components])
-
 	// Render cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -53,7 +37,11 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 			const selection = document.getSelection()
 			selection.removeAllRanges()
 			selection.addRange(range)
-			// scrollToPosIfNeeded() // TODO
+			// NOTE (1): Use `Math.floor` to mimic Chrome.
+			// NOTE (2): Use `... - 1` to prevent jumping.
+			const buffer = Math.floor(19 * 1.5) - 1
+			const top = document.querySelector("nav").offsetHeight
+			scrollIntoViewIfNeeded({ top: top + buffer, bottom: buffer })
 		}, [state]),
 		[state.shouldRenderPos],
 	)
@@ -180,8 +168,8 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 					state.Components,
 				)}
 			</Provider>
-			<div style={stylex.parse("h:16")} />
-			<DebugEditor state={state} />
+			{/* <div style={stylex.parse("h:16")} /> */}
+			{/* <DebugEditor state={state} /> */}
 		</ErrorBoundary>
 	)
 })

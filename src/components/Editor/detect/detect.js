@@ -1,4 +1,4 @@
-import platform from "./platform"
+import platform from "../platform"
 
 const keyCode = {
 	// tab:     9, // Tab and untab.
@@ -8,10 +8,6 @@ const keyCode = {
 	// z:      90, // Undo and redo.
 	// y:      89, // Redo yank.
 }
-
-/*
- * Backspace
- */
 
 export function isBackspace(e) {
 	const ok = (
@@ -41,10 +37,6 @@ export function isBackspaceLine(e) {
 	)
 	return ok
 }
-
-/*
- * Delete
- */
 
 function isDeleteMacOS(e) {
 	// Assumes macOS:

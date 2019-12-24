@@ -52,9 +52,12 @@ function Footer(props) {
 
 	React.useEffect(() => {
 		if (!shouldSetBackdrop) {
+			document.body.parentNode.style.background = ""
 			document.body.style.background = ""
 		} else {
-			document.body.style.background = "hsl(var(--gray-900))"
+			// Reverse order:
+			document.body.style.background = "hsl(var(--white))"
+			document.body.parentNode.style.background = "hsl(var(--gray-900))"
 		}
 	}, [shouldSetBackdrop])
 
