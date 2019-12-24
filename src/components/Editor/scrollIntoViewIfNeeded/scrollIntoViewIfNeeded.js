@@ -25,12 +25,12 @@ function scrollIntoViewIfNeeded(buffer = { top: 0, bottom: 0 }) { // { left: 0, 
 		return
 	}
 	let y = 0
-	const min = window.scrollY + focus.y
-	const max = window.scrollY + focus.y + focus.height
-	if (min < window.scrollY) {
-		y = min - (buffer.top || 0)
-	} else if (max > window.scrollY + window.innerHeight) {
-		y = max - window.innerHeight + (buffer.bottom || 0)
+	const top = window.scrollY + focus.y
+	const bottom = window.scrollY + focus.y + focus.height
+	if (window.scrollY > top - (buffer.top || 0)) {
+		y = top - (buffer.top || 0)
+	} else if (window.scrollY + window.innerHeight < bottom + (buffer.bottom || 0)) {
+		y = bottom - window.innerHeight + (buffer.bottom || 0)
 	}
 	if (!y) {
 		// No-op.
@@ -38,5 +38,14 @@ function scrollIntoViewIfNeeded(buffer = { top: 0, bottom: 0 }) { // { left: 0, 
 	}
 	window.scrollTo(0, y)
 }
+
+// let y = 0
+// const top = window.scrollY + focus.y - (buffer.top || 0)
+// const bottom = window.scrollY + focus.y + focus.height + (buffer.bottom || 0)
+// if (window.scrollY > top) {
+// 	y = top
+// } else if (window.scrollY + window.innerHeight > bottom) {
+// 	y = bottom
+// }
 
 export default scrollIntoViewIfNeeded

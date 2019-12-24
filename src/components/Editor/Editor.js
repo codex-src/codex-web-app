@@ -8,6 +8,7 @@ import traverseDOM from "./traverseDOM"
 
 export const Context = React.createContext()
 
+// FIXME: `{...props}`?
 export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 	const ref = React.useRef()
 
@@ -40,11 +41,23 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 			// NOTE (1): Use `Math.floor` to mimic Chrome.
 			// NOTE (2): Use `... - 1` to prevent jumping.
 			const buffer = Math.floor(19 * 1.5) - 1
-			const top = document.querySelector("nav").offsetHeight
-			scrollIntoViewIfNeeded({ top: top + buffer, bottom: buffer })
-		}, [state]),
+			scrollIntoViewIfNeeded({ top: (props.nav || 0) + buffer, bottom: buffer })
+		}, [props, state]),
 		[state.shouldRenderPos],
 	)
+
+	// Feature: `scrollPastEnd`.
+	let scrollPastEnd = {}
+	if (props.scrollPastEnd) {
+		scrollPastEnd = {
+			paddingBottom: `calc(100vh - ${
+				(props.nav || 0) +
+				(props.mainInsetTop || 0) +
+				(props.mainInsetBottom || 0) +
+				(props.footer || 0)
+			}px)`,
+		}
+	}
 
 	// GPU optimization:
 	let translateZ = {}
@@ -62,6 +75,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						ref,
 
 						style: {
+							...scrollPastEnd,
 							whiteSpace: "pre-wrap",
 							overflowWrap: "break-word",
 							...translateZ,
