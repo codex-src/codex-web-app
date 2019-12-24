@@ -4,10 +4,12 @@ import useMethods from "use-methods"
 import utf8 from "./utf8"
 
 const initialState = {
-	isFocused: false,                // Is the editor focused?
-	data:      "",                   // The editor’s plain text data. FIXME: Use array of blocks.
-	pos1:      traverseDOM.newPos(), // The editor’s VDOM cursor start position.
-	pos2:      traverseDOM.newPos(), // The editor’s VDOM cursor end position.
+	isFocused:    false,                // Is the editor focused?
+	data:         "",                   // The editor’s plain text data. FIXME: Use an array of blocks.
+	pos1:         traverseDOM.newPos(), // The editor’s VDOM cursor start position.
+	pos2:         traverseDOM.newPos(), // The editor’s VDOM cursor end position.
+	history:      [],                   // The editor’s history (and future) state stack.
+	historyIndex: -1,                   // The editor’s history (and future) state stack index.
 
 	// `shouldRenderComponents` hints whether the editor’s
 	// components should be rerendered.
@@ -20,12 +22,14 @@ const initialState = {
 	Components: [], // The editor’s rendered components.
 }
 
-// NOTE: Use `Object.assign` to assign multiple properties
-// because `state` is a reference type.
+// const reducer = state => ({
+// 	...writeReducer,
+// 	...stateReducer,
+// })
 const reducer = state => ({
 
 	/*
-	 * focus and blur
+	 * focus, blur
 	 */
 
 	opFocus() {
@@ -36,7 +40,7 @@ const reducer = state => ({
 	},
 
 	/*
-	 * setState and write
+	 * setState, write
 	 */
 
 	setState(data, pos1, pos2) {
@@ -61,7 +65,7 @@ const reducer = state => ({
 	},
 
 	/*
-	 * backspace and delete
+	 * backspace, delete
 	 */
 
 	delete(lengthL, lengthR) {
@@ -147,9 +151,25 @@ const reducer = state => ({
 	/*
 	 * storeUndo, undo, redo, prune
 	 */
+
 	storeUndo() {
-		console.log("storeUndo")
-		// ...
+		// if (state.historyIndex !== -1) {
+		const undo = state.history[state.historyIndex]
+		if (undo.data.length === state.data.length && undo.data === state.data) {
+			// No-op.
+			return
+		}
+		// }
+		const { data, pos1, pos2 } = state
+		// if (state.history.length === 1) {
+		// 	let undo = state.history[0] // Use `let`.
+		// 	undo.pos1 = { ...pos1 }   // Create a copy of `pos1`.
+		// 	undo.pos2 = { ...pos2 }   // Create a copy of `pos2`.
+		// 	undo.pos1.abs -= data.length - undo.data.length // ??
+		// 	undo.pos2.abs -= data.length - undo.data.length // ??
+		// }
+		state.history.push({ data, pos1, pos2 })
+		state.historyIndex++
 	},
 	prune() {
 		console.log("prune")
@@ -176,7 +196,14 @@ const reducer = state => ({
 })
 
 function init(state) {
-	return { ...state, Components: Components.parse(state.data) }
+	const { data, pos1, pos2 } = state
+	const newState = {
+		...state,
+		history: [{ data, pos1, pos2 }],
+		historyIndex: 0,
+		Components: Components.parse(data),
+	}
+	return newState
 }
 
 function useEditor(data = "") {
