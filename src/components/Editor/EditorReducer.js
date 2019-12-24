@@ -152,6 +152,8 @@ const reducer = state => ({
 	 * storeUndo, undo, redo, prune
 	 */
 
+	// FIXME: Try removing everything except for `pos` from
+	// `pos1` and `pos2`; should work as is.
 	storeUndo() {
 		// if (state.historyIndex !== -1) {
 		const undo = state.history[state.historyIndex]
@@ -171,17 +173,14 @@ const reducer = state => ({
 		state.history.push({ data, pos1, pos2 })
 		state.historyIndex++
 	},
-	prune() {
-		console.log("prune")
-		// ...
-	},
 	opUndo() {
 		console.log("opUndo")
-		// ...
 	},
 	opRedo() {
 		console.log("opRedo")
-		// ...
+	},
+	prune() {
+		// TODO
 	},
 
 	/*

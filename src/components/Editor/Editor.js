@@ -157,6 +157,14 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 								e.preventDefault()
 								dispatch.opDeleteWord()
 								return
+							case detect.isUndo(e):
+								e.preventDefault()
+								dispatch.opUndo()
+								return
+							case detect.isRedo(e):
+								e.preventDefault()
+								dispatch.opRedo()
+								return
 							default:
 								// No-op.
 								return
