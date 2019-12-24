@@ -3,6 +3,11 @@
 // 	`VDOM: \`pos1=${pos1}\` and or \`pos2=${pos2}\` are out of bounds (\`count=${this.count}\`).`,
 // )
 
+// TODO: VDOM needs to parse each node with a key (and
+// component or component type in the future?) and for write
+// to update the current VDOM instead of blowing it away.
+// Also, VDOM needs to handle deleted, modififed, and added
+// nodes.
 class VDOM {
 	// state = {
 	// 	data:  "", // The VDOM’s data.
