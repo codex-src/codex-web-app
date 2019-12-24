@@ -58,7 +58,7 @@ function nodeValue(node) {
 // `computePosFromNode` computes a VDOM cursor position from
 // a root node, node, and offset.
 export function computePosFromNode(root, node, textOffset) {
-	// Recurse to the innermost text or break node:
+	// Iterate to the innermost node:
 	const pos = newPos()
 	while (node.childNodes && node.childNodes.length) {
 		node = node.childNodes[textOffset] // ??
@@ -106,8 +106,7 @@ export function computeNodeFromPos(root, pos) {
 		for (const each of start.childNodes) {
 			if (isTextNode(each)) {
 				const { length } = nodeValue(each)
-				// Guard checkbox:
-				if (pos - length <= 0) { // && each.nodeName !== "INPUT") {
+				if (pos - length <= 0) { // && each.nodeName !== "INPUT") { // TODO
 					Object.assign(node, {
 						node: each,
 						offset: pos,
