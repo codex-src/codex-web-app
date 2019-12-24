@@ -18,54 +18,45 @@ export function newNode() {
 	return node
 }
 
-// `isBlockNode` returns whether a node is semantically a
-// block node.
+// `isBlockNode` returns whether a node is a block node.
 function isBlockNode(node) {
 	const ok = (
 		node.parentNode.nodeType === Node.ELEMENT_NODE && (
 			node.parentNode.nodeName === "ARTICLE"
 			// node.parentNode.nodeName === "UL" || // TODO
 			// node.parentNode.nodeName === "OL"    // TODO
-		) &&
-		// FIXME: Shouldn’t have to guarantee next sibling.
-		node.nextSibling
+		)
 	)
 	return ok
 }
 
-// `isTextNode` returns whether a node is semantically a
-// text node.
+// `isTextNode` returns whether a node is a text node.
 function isTextNode(node) {
 	const ok = (
 		node.nodeType === Node.TEXT_NODE || (
 			node.nodeType === Node.ELEMENT_NODE && (
 				// node.nodeName === "INPUT" || // TODO
-				node.nodeName === "BR"       // Break.
+				node.nodeName === "BR"
 			)
 		)
 	)
 	return ok
 }
 
-// `nodeValue` reads a text node, guarding break nodes.
+// `nodeValue` reads a text node.
 function nodeValue(node) {
-	// FIXME: Add `invariant` for non-break nodes?
 	if (node.nodeType === Node.ELEMENT_NODE) {
 		// TODO
 		// if (node.nodeName === "INPUT") {
 		// 	return !node.checked ? "-" : "+" // Checkbox.
 		// }
-		return "" // Break.
+		return ""
 	}
 	return node.nodeValue
 }
 
 // `computePosFromNode` computes a VDOM cursor position from
-// a root node, the current node, and the current node’s
-// offset.
-//
-// NOTE: Use `Object.assign` because `pos` is a reference
-// type.
+// a root node, node, and offset.
 export function computePosFromNode(root, node, textOffset) {
 	// Recurse to the innermost text or break node:
 	const pos = newPos()
@@ -92,7 +83,7 @@ export function computePosFromNode(root, node, textOffset) {
 			} else {
 				if (recurse(each)) {
 					return true
-				} else if (isBlockNode(each)) {
+				} else if (isBlockNode(each) && each.nextSibling) {
 					Object.assign(pos, {
 						index: pos.index + 1,
 						offset: 0,
@@ -107,11 +98,8 @@ export function computePosFromNode(root, node, textOffset) {
 	return pos
 }
 
-// `computeNodeFromPos` computes the node (node and offset),
+// `computeNodeFromPos` computes the node (node and offset)
 // for a VDOM cursor position.
-//
-// NOTE: Use `Object.assign` because `pos` is a reference
-// type.
 export function computeNodeFromPos(root, pos) {
 	const node = newNode()
 	const recurse = start => {
@@ -130,7 +118,7 @@ export function computeNodeFromPos(root, pos) {
 			} else {
 				if (recurse(each)) {
 					return true
-				} else if (isBlockNode(each)) {
+				} else if (isBlockNode(each) && each.nextSibling) {
 					pos--
 				}
 			}
@@ -149,7 +137,7 @@ export function computeNodeFromPos(root, pos) {
 // 				data += nodeValue(each)
 // 			} else {
 // 				recurse(each)
-// 				if (isBlockNode(each)) {
+// 				if (isBlockNode(each) && each.nextSibling) {
 // 					data += "\n"
 // 				}
 // 			}
