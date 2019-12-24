@@ -100,7 +100,7 @@ const reducer = state => ({
 		// Iterate non-word characters:
 		while (index) {
 			const char = utf8.prevChar(state.data, index)
-			if (utf8.isAlphanum(char)) {
+			if (utf8.isAlphanum(char) || utf8.isVWhiteSpace(char)) {
 				break
 			}
 			index -= char.length
@@ -113,7 +113,12 @@ const reducer = state => ({
 			}
 			index -= char.length
 		}
+		// NOTE: Must delete at least one character.
 		const length = state.pos1.pos - index
+		if (!length) {
+			this.opBackspace()
+			return
+		}
 		this.delete(length, 0)
 	},
 	opBackspaceLine() {
