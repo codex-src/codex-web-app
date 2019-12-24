@@ -8,7 +8,6 @@ import traverseDOM from "./traverseDOM"
 
 export const Context = React.createContext()
 
-// FIXME: `{...props}`?
 export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 	const ref = React.useRef()
 
