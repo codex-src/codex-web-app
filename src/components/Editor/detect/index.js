@@ -1,3 +1,11 @@
-import * as detect from "./detect"
+import * as _delete from "./_delete"
+import * as backspace from "./backspace"
+import * as undo from "./undo"
 
-export default detect
+const exports = {
+	..._delete,
+	...backspace,
+	...undo,
+}
+
+export default exports
