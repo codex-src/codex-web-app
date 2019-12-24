@@ -4,12 +4,13 @@ import useMethods from "use-methods"
 import utf8 from "./utf8"
 
 const initialState = {
-	isFocused:    false,                // Is the editor focused?
-	data:         "",                   // The editor’s plain text data. FIXME: Use an array of blocks.
-	pos1:         traverseDOM.newPos(), // The editor’s VDOM cursor start position.
-	pos2:         traverseDOM.newPos(), // The editor’s VDOM cursor end position.
-	history:      [],                   // The editor’s history (and future) state stack.
-	historyIndex: -1,                   // The editor’s history (and future) state stack index.
+	isFocused:     false,                // Is the editor focused?
+	data:          "",                   // The editor’s plain text data. FIXME: Use an array of blocks.
+	didCorrectPos: false,                // Did correct the editor’s first `pos1.pos` and `pos2.pos`?
+	pos1:          traverseDOM.newPos(), // The editor’s VDOM cursor start position.
+	pos2:          traverseDOM.newPos(), // The editor’s VDOM cursor end position.
+	history:       [],                   // The editor’s history (and future) state stack.
+	historyIndex:  -1,                   // The editor’s history (and future) state stack index.
 
 	// `shouldRenderComponents` hints whether the editor’s
 	// components should be rerendered.
@@ -47,10 +48,10 @@ const reducer = state => ({
 		state.pos2 = { ...state.pos1 }
 	},
 	opWrite(inputType, data) {
-		// FIXME
-		if (!state.historyIndex && !state.history[0].pos1.pos && !state.history[0].pos2.pos) {
+		if (!state.didCorrectPos) {
 			state.history[0].pos1.pos = state.pos1.pos
 			state.history[0].pos2.pos = state.pos2.pos
+			state.didCorrectPos = true
 		}
 		this.prune()
 		state.data = state.data.slice(0, state.pos1.pos) + data + state.data.slice(state.pos2.pos)
@@ -160,7 +161,7 @@ const reducer = state => ({
 	},
 	opUndo() {
 		if (!state.historyIndex) {
-			// No-op.
+			state.didCorrectPos = false
 			return
 		}
 		state.historyIndex--
