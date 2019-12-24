@@ -55,6 +55,8 @@ const reducer = state => ({
 		state.pos2 = { ...state.pos1 }
 	},
 	opWrite(inputType, data) {
+		// TODO: Does this work as expected after adding
+		// `prune`?
 		if (!state.historyIndex && !state.history[0].pos1.pos && !state.history[0].pos2.pos) {
 			state.history[0].pos1.pos = state.pos1.pos
 			state.history[0].pos2.pos = state.pos2.pos
@@ -192,7 +194,7 @@ const reducer = state => ({
 		state.shouldRenderComponents++
 	},
 	prune() {
-		// TODO
+		state.history.splice(state.historyIndex + 1)
 	},
 
 	/*
