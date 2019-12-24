@@ -155,13 +155,11 @@ const reducer = state => ({
 	// FIXME: Try removing everything except for `pos` from
 	// `pos1` and `pos2`; should work as is.
 	storeUndo() {
-		// if (state.historyIndex !== -1) {
 		const undo = state.history[state.historyIndex]
 		if (undo.data.length === state.data.length && undo.data === state.data) {
 			// No-op.
 			return
 		}
-		// }
 		const { data, pos1, pos2 } = state
 		// if (state.history.length === 1) {
 		// 	let undo = state.history[0] // Use `let`.
@@ -174,10 +172,24 @@ const reducer = state => ({
 		state.historyIndex++
 	},
 	opUndo() {
-		console.log("opUndo")
+		if (!state.historyIndex) {
+			// No-op.
+			return
+		}
+		state.historyIndex--
+		const { data, pos1, pos2 } = state.history[state.historyIndex]
+		Object.assign(state, { data, pos1, pos2 })
+		state.shouldRenderComponents++
 	},
 	opRedo() {
-		console.log("opRedo")
+		if (state.historyIndex + 1 === state.history.length) {
+			// No-op.
+			return
+		}
+		state.historyIndex++
+		const { data, pos1, pos2 } = state.history[state.historyIndex]
+		Object.assign(state, { data, pos1, pos2 })
+		state.shouldRenderComponents++
 	},
 	prune() {
 		// TODO
