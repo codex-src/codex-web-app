@@ -96,7 +96,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 								pos2 = traverseDOM.computePosFromNode(ref.current, focusNode, focusOffset)
 							}
-							dispatch.opSelect(state.data, pos1, pos2)
+							dispatch.setState(state.data, pos1, pos2)
 						},
 
 						onKeyPress: e => {

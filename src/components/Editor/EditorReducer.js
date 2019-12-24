@@ -25,7 +25,7 @@ const initialState = {
 const reducer = state => ({
 
 	/*
-	 * Focus and blur
+	 * focus and blur
 	 */
 
 	opFocus() {
@@ -36,11 +36,10 @@ const reducer = state => ({
 	},
 
 	/*
-	 * Select and write
+	 * setState and write
 	 */
 
-	// FIXME: Rename to `setState`?
-	opSelect(data, pos1, pos2) { // FIXME: `data`?
+	setState(data, pos1, pos2) {
 		if (pos1.pos < pos2.pos) {
 			Object.assign(state, { data, pos1, pos2 })
 		} else {
@@ -62,7 +61,7 @@ const reducer = state => ({
 	},
 
 	/*
-	 * Backspace and delete
+	 * backspace and delete
 	 */
 
 	delete(lengthL, lengthR) {
@@ -146,7 +145,7 @@ const reducer = state => ({
 	},
 
 	/*
-	 * Render
+	 * render
 	 */
 
 	render() {
