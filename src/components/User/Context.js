@@ -31,7 +31,7 @@ function Fetcher(props) {
 			}
 			login(data.me)
 			history.push(pathname)
-		}, [data, history, login, pathname]), // Sorted alphabetically.
+		}, [data, history, login, pathname]),
 		[data],
 	)
 
