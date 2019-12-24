@@ -55,6 +55,10 @@ const reducer = state => ({
 		state.pos2 = { ...state.pos1 }
 	},
 	opWrite(inputType, data) {
+		if (!state.historyIndex && !state.history[0].pos1.pos && !state.history[0].pos2.pos) {
+			state.history[0].pos1.pos = state.pos1.pos
+			state.history[0].pos2.pos = state.pos2.pos
+		}
 		state.data = state.data.slice(0, state.pos1.pos) + data + state.data.slice(state.pos2.pos)
 		state.pos1.pos += data.length // Breaks `pos1`.
 		this.collapse()
@@ -120,6 +124,7 @@ const reducer = state => ({
 		const length = state.pos1.pos - index
 		this.delete(length, 0)
 	},
+	// FIXME: Should delete at least one line; `(... || 1)`?
 	opBackspaceLine() {
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.delete(0, 0)
@@ -152,8 +157,6 @@ const reducer = state => ({
 	 * storeUndo, undo, redo, prune
 	 */
 
-	// FIXME: Try removing everything except for `pos` from
-	// `pos1` and `pos2`; should work as is.
 	storeUndo() {
 		const undo = state.history[state.historyIndex]
 		if (undo.data.length === state.data.length && undo.data === state.data) {
@@ -161,13 +164,6 @@ const reducer = state => ({
 			return
 		}
 		const { data, pos1, pos2 } = state
-		// if (state.history.length === 1) {
-		// 	let undo = state.history[0] // Use `let`.
-		// 	undo.pos1 = { ...pos1 }   // Create a copy of `pos1`.
-		// 	undo.pos2 = { ...pos2 }   // Create a copy of `pos2`.
-		// 	undo.pos1.abs -= data.length - undo.data.length // ??
-		// 	undo.pos2.abs -= data.length - undo.data.length // ??
-		// }
 		state.history.push({ data, pos1, pos2 })
 		state.historyIndex++
 	},
