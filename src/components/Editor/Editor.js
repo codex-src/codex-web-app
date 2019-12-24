@@ -129,15 +129,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
 						onKeyDown: e => {
 							switch (true) {
-							// // TODO
-							// case detect.isTab(e):
-							// 	e.preventDefault()
-							// 	dispatch.tab()
-							// 	return
-							// case detect.isUntab(e):
-							// 	e.preventDefault()
-							// 	dispatch.untab()
-							// 	return
 							case detect.isBackspace(e):
 								e.preventDefault()
 								dispatch.opBackspace()
@@ -175,7 +166,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						// TODO: Add `onInput` and composition events.
 						// ...
 
-						// TODO: Prune redo stack.
 						onCut: e => {
 							e.preventDefault()
 							if (state.pos1.pos === state.pos2.pos) {
@@ -187,7 +177,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							dispatch.opWrite("onCut", "")
 						},
 
-						// TODO: Don’t prune redo stack.
 						onCopy: e => {
 							e.preventDefault()
 							if (state.pos1.pos === state.pos2.pos) {
@@ -198,7 +187,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							e.clipboardData.setData("text/plain", copyData)
 						},
 
-						// TODO: Prune redo stack.
 						onPaste: e => {
 							e.preventDefault()
 							const pasteData = e.clipboardData.getData("text/plain")
@@ -216,8 +204,8 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 					state.Components,
 				)}
 			</Provider>
-			{/* <div style={stylex.parse("h:16")} /> */}
-			{/* <DebugEditor state={state} /> */}
+			<div style={stylex.parse("h:28")} />
+			<DebugEditor state={state} />
 		</ErrorBoundary>
 	)
 })

@@ -28,20 +28,12 @@ const initialState = {
 // })
 const reducer = state => ({
 
-	/*
-	 * focus, blur
-	 */
-
 	opFocus() {
 		state.isFocused = true
 	},
 	opBlur() {
 		state.isFocused = false
 	},
-
-	/*
-	 * setState, write
-	 */
 
 	setState(data, pos1, pos2) {
 		if (pos1.pos < pos2.pos) {
@@ -55,12 +47,12 @@ const reducer = state => ({
 		state.pos2 = { ...state.pos1 }
 	},
 	opWrite(inputType, data) {
-		// TODO: Does this work as expected after adding
-		// `prune`?
+		// FIXME
 		if (!state.historyIndex && !state.history[0].pos1.pos && !state.history[0].pos2.pos) {
 			state.history[0].pos1.pos = state.pos1.pos
 			state.history[0].pos2.pos = state.pos2.pos
 		}
+		this.prune()
 		state.data = state.data.slice(0, state.pos1.pos) + data + state.data.slice(state.pos2.pos)
 		state.pos1.pos += data.length // Breaks `pos1`.
 		this.collapse()
@@ -70,16 +62,13 @@ const reducer = state => ({
 		state.shouldRenderComponents++
 	},
 
-	/*
-	 * backspace, delete
-	 */
-
 	delete(lengthL, lengthR) {
 		// Guard the current node:
 		if ((!state.pos1.pos && lengthL) || (state.pos2.pos === state.data.length && lengthR)) {
 			// No-op.
 			return
 		}
+		this.prune()
 		state.data = state.data.slice(0, state.pos1.pos - lengthL) + state.data.slice(state.pos2.pos + lengthR)
 		state.pos1.pos -= lengthL // Breaks `pos1`.
 		this.collapse()
@@ -159,10 +148,6 @@ const reducer = state => ({
 		// TODO
 	},
 
-	/*
-	 * storeUndo, undo, redo, prune
-	 */
-
 	storeUndo() {
 		const undo = state.history[state.historyIndex]
 		if (undo.data.length === state.data.length && undo.data === state.data) {
@@ -196,10 +181,6 @@ const reducer = state => ({
 	prune() {
 		state.history.splice(state.historyIndex + 1)
 	},
-
-	/*
-	 * render
-	 */
 
 	render() {
 		state.Components = Components.parse(state.data)
