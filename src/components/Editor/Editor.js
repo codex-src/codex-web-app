@@ -46,6 +46,23 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 		[state.shouldRenderPos],
 	)
 
+	// Undo process:
+	React.useEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				return
+			}
+			const id = setInterval(dispatch.storeUndo, 1e3)
+			return () => {
+				// Let the last undo be stored:
+				setTimeout(() => {
+					clearInterval(id)
+				}, 1e3)
+			}
+		}, [dispatch, state]),
+		[state.isFocused],
+	)
+
 	// Feature: `scrollPastEnd`.
 	let scrollPastEnd = {}
 	if (props.scrollPastEnd) {
@@ -112,6 +129,14 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
 						onKeyDown: e => {
 							switch (true) {
+							// case detect.isTab(e):
+							// 	e.preventDefault()
+							// 	dispatch.tab()
+							// 	return
+							// case detect.isUntab(e):
+							// 	e.preventDefault()
+							// 	dispatch.untab()
+							// 	return
 							case detect.isBackspace(e):
 								e.preventDefault()
 								dispatch.opBackspace()

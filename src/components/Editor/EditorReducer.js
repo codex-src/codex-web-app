@@ -145,6 +145,26 @@ const reducer = state => ({
 	},
 
 	/*
+	 * storeUndo, undo, redo, prune
+	 */
+	storeUndo() {
+		console.log("storeUndo")
+		// ...
+	},
+	prune() {
+		console.log("prune")
+		// ...
+	},
+	opUndo() {
+		console.log("opUndo")
+		// ...
+	},
+	opRedo() {
+		console.log("opRedo")
+		// ...
+	},
+
+	/*
 	 * render
 	 */
 
