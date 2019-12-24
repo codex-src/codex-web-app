@@ -124,7 +124,6 @@ const reducer = state => ({
 		const length = state.pos1.pos - index
 		this.delete(length, 0)
 	},
-	// FIXME: Should delete at least one line; `(... || 1)`?
 	opBackspaceLine() {
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.delete(0, 0)
@@ -138,7 +137,12 @@ const reducer = state => ({
 			}
 			index -= char.length
 		}
+		// NOTE: Must delete at least one character.
 		const length = state.pos1.pos - index
+		if (!length) {
+			this.opBackspace()
+			return
+		}
 		this.delete(length, 0)
 	},
 	opDelete() {
