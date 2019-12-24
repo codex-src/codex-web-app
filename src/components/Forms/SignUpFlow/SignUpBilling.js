@@ -26,7 +26,7 @@ function SignUpBilling({ state, dispatch, ...props }) {
 
 	React.useEffect(
 		React.useCallback(() => {
-			(async () => {
+			;(async () => {
 				const { errors, data } = await GraphQL.fetchAsGraphQL(`
 					query NextSubscriptionDate {
 						nextMo: nextMonth { ...date }
