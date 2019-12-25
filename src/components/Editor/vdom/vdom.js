@@ -1,17 +1,9 @@
-// https://gist.github.com/jed/982883
-//
-// newUUID() // 96ace54c-69b0-4a9c-a8d5-7a22b111d05b
-// newUUID() // 4e27fdb6-d5ba-4825-8f2b-a975eb96ed6f
-// newUUID() // 5f542e0f-f0d0-402c-b246-d7e049ec648e
-//
-function newUUID(a) {
-	return a ? (a ^ Math.random() * 16 >> a / 4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, newUUID)
-}
+import uuidv4 from "uuid/v4"
 
 // `parse` parses data into discrete, keyed nodes.
 function parse(data) {
 	const nodes = data.split("\n").map(data => ({
-		key: newUUID(),
+		key: uuidv4(),
 		data,
 	}))
 	return nodes
@@ -27,13 +19,17 @@ class VDOM {
 	}
 	// `read` reads the VDOM.
 	read(pos1 = 0, pos2 = this.data.length) { // Arguments can be omitted.
+		// Fast pass:
+		if (!pos1 && pos2 === this.data.length) {
+			return this.data
+		}
 		return this.data.slice(pos1, pos2)
 	}
 	// `_writeRange` is a convenience method that generates
 	// the node and offset ranges for `write`.
 	_writeRange(pos1, pos2) {
-		let node = [0, 0]
-		let offset = [0, 0]
+		const node = [0, 0]
+		const offset = [0, 0]
 
 		// Start node and offset:
 		let pos = pos1
@@ -107,17 +103,4 @@ class VDOM {
 
 }
 
-const v = new VDOM("foo\nbar\nbaz")
-v.write("abc\ndef\nghi", 2, 9)
-
-// foo
-// bar
-// baz
-//
-// abc
-// def
-// ghi
-//
-// foabc
-// def
-// ghiaz
+export default VDOM

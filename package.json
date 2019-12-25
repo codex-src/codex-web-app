@@ -17,7 +17,8 @@
     "react-scripts": "3.3.0",
     "stylex": "codex-src/stylex.js",
     "use-graphql": "codex-src/use-graphql.js",
-    "use-methods": "^0.5.1"
+    "use-methods": "^0.5.1",
+    "uuid": "^3.3.3"
   },
   "scripts": {
     "lint": "yarn eslint --ignore-pattern=build .",
