@@ -29,8 +29,9 @@ class VDOM {
 	read(pos1 = 0, pos2 = this.data.length) { // Arguments can be omitted.
 		return this.data.slice(pos1, pos2)
 	}
-	// `write` writes to the VDOM.
-	write(data, pos1, pos2) {
+	// `_writeRange` is a convenience method that generates
+	// the node and offset ranges for `write`.
+	_writeRange(pos1, pos2) {
 
 		// Start node and offset:
 		let pos = pos1
@@ -70,6 +71,13 @@ class VDOM {
 			node: [node1, node2 + 1],
 			offset: [offset1, offset2 + 1],
 		}
+		return range
+
+	}
+	// `write` writes to the VDOM.
+	write(data, pos1, pos2) {
+
+		const { node, offset } = this._writeRange(pos1, pos2)
 
 		const newData = this.data.slice(0, pos1) + data + this.data.slice(pos2)
 		const newNodes = []
@@ -77,8 +85,8 @@ class VDOM {
 		// Start node; must have one or more nodes:
 		const nodes = parse(data)
 		newNodes.push({
-			key: this.nodes[range.node[0]].key,
-			data: this.nodes[range.node[0]].data.slice(0, range.offset[0]) + nodes[0].data,
+			key: this.nodes[node[0]].key,
+			data: this.nodes[node[0]].data.slice(0, offset[0]) + nodes[0].data,
 		})
 
 		// Intermediary nodes; must have three or more nodes:
@@ -88,8 +96,8 @@ class VDOM {
 		// End node; must have two or more nodes:
 		if (nodes.length > 1) {
 			newNodes.push({
-				key: this.nodes[range.node[1]].key,
-				data: nodes.slice(-1)[0].data + this.nodes[range.node[1]].data.slice(range.offset[1]),
+				key: this.nodes[node[1]].key,
+				data: nodes.slice(-1)[0].data + this.nodes[node[1]].data.slice(offset[1]),
 			})
 		}
 
@@ -97,6 +105,7 @@ class VDOM {
 			data: newData,
 			nodes: newNodes,
 		})
+
 	}
 
 }
