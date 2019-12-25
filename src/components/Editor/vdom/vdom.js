@@ -10,8 +10,10 @@ function parse(data) {
 }
 
 class VDOM {
-	constructor(data) {
-		const nodes = parse(data)
+	constructor(data, nodes = []) {
+		if (!nodes.length) {
+			nodes = parse(data)
+		}
 		Object.assign(this, {
 			data,  // The data.
 			nodes, // The discrete, keyed nodes.
@@ -72,6 +74,11 @@ class VDOM {
 	}
 	// `write` writes to the VDOM.
 	write(data, pos1, pos2) {
+		// // Fast pass: (hard reset)
+		// if (!pos1 && pos2 === this.data.length) {
+		// 	return new VDOM(data)
+		// }
+
 		const { node, offset } = this._writeRange(pos1, pos2)
 
 		const newData = this.data.slice(0, pos1) + data + this.data.slice(pos2)
@@ -95,10 +102,31 @@ class VDOM {
 			})
 		}
 
-		Object.assign(this, {
-			data: newData,
-			nodes: newNodes,
-		})
+		// // End node; must have two or more nodes:
+		// if (nodes.length > 1) {
+		// 	// console.log(this.nodes)
+		// 	let nthKey = uuidv4()
+		// 	if (node[1] < this.nodes.length) {
+		// 		nthKey = this.nodes[node[1]].key
+		// 	}
+		// 	let nthData = ""
+		// 	if (node[1] < this.nodes.length) {
+		// 		nthData = this.nodes[node[1]].data.slice(offset[1])
+		// 	}
+		// 	newNodes.push({
+		// 		key: nthKey,
+		// 		data: nthData,
+		// 	})
+		// }
+
+		return new VDOM(newData, newNodes)
+
+		// return { ...this, data: newData, nodes: newNodes }
+		//
+		// Object.assign(this, {
+		// 	data: newData,
+		// 	nodes: newNodes,
+		// })
 	}
 
 }

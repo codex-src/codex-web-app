@@ -1,6 +1,7 @@
 import ascii from "./ascii"
 import React from "react"
 import stylex from "stylex"
+import useMethods from "use-methods"
 import vdom from "./vdom"
 
 const H1 = props => <h1 style={stylex.parse("fw:700 fs:19")}>{props.children}</h1>
@@ -175,13 +176,51 @@ function parse(body) {
 	return Components
 }
 
-const body = new vdom.VDOM("# hello, world!")
-const Components = parse(body)
+const initialState = {
+	pos1:       0,
+	pos2:       0,
+	body:       new vdom.VDOM("foo\nbar\nbaz"),
+	Components: [],
+}
 
-const TestEditor = props => (
-	<article>
-		{Components}
-	</article>
-)
+const reducer = state => ({
+	select(pos1, pos2) {
+		if (pos1 < pos2) {
+			Object.assign(state, { pos1, pos2 })
+		} else {
+			Object.assign(state, { pos1: pos2, pos2: pos1 })
+		}
+	},
+	setState(data, pos1, pos2) {
+		state.body = state.body.write(data, pos1, pos2)
+		this.render()
+	},
+	render() {
+		state.Components = parse(state.body)
+	},
+})
+
+function TestEditor(props) {
+	const ref = React.useRef()
+
+	const [state, dispatch] = useMethods(reducer, initialState)
+
+	return (
+		<div>
+			<textarea
+				ref={ref}
+				style={stylex.parse("p:24 block w:max h:192 b:gray-50 br:8")}
+				value={state.body.data}
+				onSelect={e => dispatch.select(ref.current.selectionStart, ref.current.selectionEnd)}
+				onChange={e => dispatch.setState(e.nativeEvent.data, state.pos1, state.pos2)}
+				autoFocus
+			/>
+			<div style={stylex.parse("h:16")} />
+			<article>
+				{state.Components}
+			</article>
+		</div>
+	)
+}
 
 export default TestEditor
