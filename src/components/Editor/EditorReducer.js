@@ -164,6 +164,8 @@ const reducer = state => ({
 		state.history.push({ data, pos1, pos2 })
 		state.historyIndex++
 	},
+	// FIXME: Should reset `didCorrectPos` when
+	// `historyIndex === 1`.
 	opUndo() {
 		if (!state.historyIndex) {
 			state.didCorrectPos = false
