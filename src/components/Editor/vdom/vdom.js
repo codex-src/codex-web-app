@@ -32,51 +32,50 @@ class VDOM {
 	// `_writeRange` is a convenience method that generates
 	// the node and offset ranges for `write`.
 	_writeRange(pos1, pos2) {
+		let node = [0, 0]
+		let offset = [0, 0]
 
 		// Start node and offset:
 		let pos = pos1
-		let node1 = 0
-		let offset1 = 0
-		while (node1 < this.nodes.length) {
-			if (pos - this.nodes[node1].data.length <= 0) {
+		while (node[0] < this.nodes.length) {
+			if (pos - this.nodes[node[0]].data.length <= 0) {
 				// Offset from the start:
-				offset1 = pos
+				offset[0] = pos
 				break
 			}
-			pos -= this.nodes[node1].data.length
-			if (node1 + 1 < this.nodes[node1].data.length) {
+			pos -= this.nodes[node[0]].data.length
+			if (node[0] + 1 < this.nodes[node[0]].data.length) {
 				pos--
 			}
-			node1++
+			node[0]++
 		}
 
 		// End node and offset:
 		pos = pos2 - pos1
-		let node2 = node1
-		let offset2 = 0
-		while (node2 < this.nodes.length) {
-			if (pos - this.nodes[node2].data.length <= 0) {
+		node[1] = node[0] // Shortcut.
+		while (node[1] < this.nodes.length) {
+			if (pos - this.nodes[node[1]].data.length <= 0) {
 				// Offset from the end:
-				offset2 = pos - this.nodes[node2].data.length
+				offset[1] = pos - this.nodes[node[1]].data.length
 				break
 			}
-			pos -= this.nodes[node2].data.length
-			if (node2 + 1 < this.nodes[node2].data.length) {
+			pos -= this.nodes[node[1]].data.length
+			if (node[1] + 1 < this.nodes[node[1]].data.length) {
 				pos--
 			}
-			node2++
+			node[1]++
 		}
 
+		// NOTE: Offset range ends to be one-based instead of
+		// zero-based.
 		const range = {
-			node: [node1, node2 + 1],
-			offset: [offset1, offset2 + 1],
+			node: [node[0], node[1] + 1],
+			offset: [offset[0], offset[1] + 1],
 		}
 		return range
-
 	}
 	// `write` writes to the VDOM.
 	write(data, pos1, pos2) {
-
 		const { node, offset } = this._writeRange(pos1, pos2)
 
 		const newData = this.data.slice(0, pos1) + data + this.data.slice(pos2)
@@ -88,7 +87,6 @@ class VDOM {
 			key: this.nodes[node[0]].key,
 			data: this.nodes[node[0]].data.slice(0, offset[0]) + nodes[0].data,
 		})
-
 		// Intermediary nodes; must have three or more nodes:
 		if (nodes.length > 2) {
 			newNodes.push(...nodes.slice(1, -1))
@@ -105,7 +103,6 @@ class VDOM {
 			data: newData,
 			nodes: newNodes,
 		})
-
 	}
 
 }
