@@ -8,19 +8,13 @@ import vdom from "./vdom"
 const Syntax = ({ style, ...props }) => (
 	<React.Fragment>
 		{props.start && (
-			<span style={{
-				...stylex.parse("c:blue-a400"),
-				...style,
-			}}>
+			<span style={{ ...stylex.parse("c:blue-a400"), ...style }}>
 				{props.start}
 			</span>
 		)}
 		{props.children}
 		{props.end && (
-			<span style={{
-				...stylex.parse("c:blue-a400"),
-				...style,
-			}}>
+			<span style={{ ...stylex.parse("c:blue-a400"), ...style }}>
 				{props.end}
 			</span>
 		)}
@@ -59,40 +53,28 @@ const Blockquote = props => (
 	</blockquote>
 )
 
-// FIXME?
-// FIXME: `white-space`.
 const CodeLine = props => (
-	<code style={stylex.parse("p:16 block b:gray-100 br:8")}>
-		<p style={{ ...stylex.parse("fs:16 lh:125%"), fontFamily: "Monaco" }}>
+	<pre style={{ ...stylex.parse("p:16 block b:gray-100 br:4 overflow -x:scroll"), border: "1px solid hsl(var(--gray-200))" }}>
+		<code style={{ ...stylex.parse("pre"), tabSize: 2, font: "16px/1.25 'Monaco'" }}>
 			<Syntax start="```" end="```">
 				{props.children}
 			</Syntax>
-		</p>
-	</code>
+		</code>
+	</pre>
 )
 
-// Compound component.
+// For a multiline code block implementation, refer to
+// https://codepen.io/zaydek/pen/PowjgOg
 //
-// FIXME: Refactor.
-// FIXME: `white-space`.
+// NOTE: Uses an `end` property for debugging purposes.
 const CodeBlock = props => (
-	<code style={stylex.parse("p:16 block b:gray-100 br:8")}>
-		<ul>
-			{props.children.map((each, index) => (
-				<li key={each.key} style={{ ...stylex.parse("fs:16 lh:125%"), fontFamily: "Monaco" }}>
-					<Syntax start={!index && "```" + each.data} end={index + 1 === props.children.length && "```"}>
-						{index > 0 && (
-							each.data || (
-								index > 0 && index + 1 < props.children.length && (
-									<br />
-								)
-							)
-						)}
-					</Syntax>
-				</li>
-			))}
-		</ul>
-	</code>
+	<pre style={{ ...stylex.parse("p:16 block b:gray-100 br:4 overflow -x:scroll"), border: "1px solid hsl(var(--gray-200))" }}>
+		<code style={{ ...stylex.parse("pre"), tabSize: 2, font: "16px/1.25 'Monaco'" }}>
+			<Syntax start={props.start} end={props.end}>
+				{props.children}
+			</Syntax>
+		</code>
+	</pre>
 )
 
 const Break = props => (
@@ -132,15 +114,18 @@ function isCodeBlockEnd(data) {
 //
 // TODO: We could have `parse` and `parseStrict` parsers for
 // parsing loose or strict (GFM) markdown.
+//
+/* eslint-disable no-case-declarations */
 function parse(body) {
 	const Components = []
 	let index = 0
 	while (index < body.nodes.length) {
-		const { key, data } = body.nodes[index]
-		/* eslint-disable no-case-declarations */
+		const {
+			key,  // The current node’s key (UUID).
+			data, // The current node’s plain text data
+		} = body.nodes[index]
 		switch (true) {
 
-		// <Paragraph> (fast pass):
 		case (
 			!data.length || (
 				data.length &&
@@ -156,7 +141,6 @@ function parse(body) {
 			))
 			break
 
-		// <H1-H6>:
 		case (
 			(data.length >= 2 && data.slice(0, 2) === ("# ")) ||
 			(data.length >= 3 && data.slice(0, 3) === ("## ")) ||
@@ -176,7 +160,6 @@ function parse(body) {
 			))
 			break
 
-		// <Comment>:
 		case data.length >= 3 && data.slice(0, 3) === "// ":
 			Components.push((
 				<Comment key={key}>
@@ -187,7 +170,6 @@ function parse(body) {
 			))
 			break
 
-		// <Blockquote>:
 		case isBlockquote(data):
 			const bquoteStart = index
 			index++
@@ -213,24 +195,21 @@ function parse(body) {
 			index--
 			break
 
-		// <CodeLine>:
 		case (
 			data.length >= 6 && (
 				data.slice(0, 3) === "```" &&
 				data.slice(-3) === "```"
 			)
 		):
-			// FIXME
 			Components.push((
 				<CodeLine key={key}>
-					{data.slice(3, -3) // || (
-						// <br />
-					/* ) */ }
+					{data.slice(3, -3) || (
+						<br />
+					)}
 				</CodeLine>
 			))
 			break
 
-		// <CodeBlock>:
 		case data.length >= 3 && data.slice(0, 3) === "```":
 			const cblockStart = index
 			index++
@@ -243,8 +222,7 @@ function parse(body) {
 				index++
 			}
 			index++
-			// Guard unterminated code block:
-			if (!cblockDidTerminate) {
+			if (!cblockDidTerminate) { // Unterminated code block.
 				Components.push((
 					<Paragraph key={key}>
 						{data || (
@@ -257,13 +235,13 @@ function parse(body) {
 			}
 			const cblockNodes = body.nodes.slice(cblockStart, index)
 			Components.push((
-				<CodeBlock key={key}>
-					{cblockNodes.map((each, index) => (
-						{
-							...each,
-							data: !index || index + 1 === cblockNodes.length ? each.data.slice(3) : each.data,
+				<CodeBlock key={key} start={data} end="```">
+					{cblockNodes.map((each, index) => {
+						if (!index || index + 1 === cblockNodes.length) {
+							return ""
 						}
-					))}
+						return each.data
+					}).join("\n")}
 				</CodeBlock>
 			))
 			// NOTE: Decrement because `index` will be auto-
@@ -271,7 +249,6 @@ function parse(body) {
 			index--
 			break
 
-		// <Break>:
 		case (
 			data.length === 3 && (
 				data === "***" ||
@@ -287,7 +264,6 @@ function parse(body) {
 			))
 			break
 
-		// <Paragraph>:
 		default:
 			Components.push((
 				<Paragraph key={key}>
@@ -299,16 +275,16 @@ function parse(body) {
 			break
 
 		}
-		/* eslint-enable no-case-declarations */
 		index++
 	}
 	return Components
 }
+/* eslint-enable no-case-declarations */
 
 const initialState = {
 	pos1:       0,
 	pos2:       0,
-	body:       new vdom.VDOM("hello, world!\n\n> asdasdasd\n\n```asdasd```\n\n```\n\nasdasd\n\n```"),
+	body:       new vdom.VDOM("# hello, world!\n\nhello, world!\n\n```go\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n fmt.Println(\"hello, world!\")\n}\n```\n\nhello, world!\n"),
 	Components: [],
 }
 
@@ -358,14 +334,16 @@ function TestEditor(props) {
 
 	return (
 		<div>
-			<textarea
-				ref={ref}
-				style={{ ...stylex.parse("p:16 block w:max h:256 b:gray-100 br:8"), fontFamily: "Monaco" }}
-				value={state.body.data}
-				onSelect={e => dispatch.select(ref.current.selectionStart, ref.current.selectionEnd)}
-				onChange={e => dispatch.setState(e.nativeEvent, state.pos1, state.pos2)}
-				autoFocus
-			/>
+			<CodeBlock>
+				<textarea
+					ref={ref}
+					style={stylex.parse("block w:max h:256")}
+					value={state.body.data}
+					onSelect={e => dispatch.select(ref.current.selectionStart, ref.current.selectionEnd)}
+					onChange={e => dispatch.setState(e.nativeEvent, state.pos1, state.pos2)}
+					autoFocus
+				/>
+			</CodeBlock>
 			<div style={stylex.parse("h:57")} />
 			<article>
 				{state.Components}
