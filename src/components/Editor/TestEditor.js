@@ -79,7 +79,7 @@ const CodeBlock = props => (
 
 const Break = props => (
 	<p style={stylex.parse("fs:19 c:gray")}>
-		<Syntax start="---" />
+		<Syntax start={props.start} />
 	</p>
 )
 
@@ -125,7 +125,6 @@ function parse(body) {
 			data, // The current node’s plain text data
 		} = body.nodes[index]
 		switch (true) {
-
 		case (
 			!data.length || (
 				data.length &&
@@ -140,7 +139,6 @@ function parse(body) {
 				</Paragraph>
 			))
 			break
-
 		case (
 			(data.length >= 2 && data.slice(0, 2) === ("# ")) ||
 			(data.length >= 3 && data.slice(0, 3) === ("## ")) ||
@@ -159,7 +157,6 @@ function parse(body) {
 				</ComponentHeader>
 			))
 			break
-
 		case data.length >= 3 && data.slice(0, 3) === "// ":
 			Components.push((
 				<Comment key={key}>
@@ -169,7 +166,6 @@ function parse(body) {
 				</Comment>
 			))
 			break
-
 		case isBlockquote(data):
 			const bquoteStart = index
 			index++
@@ -194,22 +190,21 @@ function parse(body) {
 			// incremented.
 			index--
 			break
-
 		case (
 			data.length >= 6 && (
 				data.slice(0, 3) === "```" &&
 				data.slice(-3) === "```"
 			)
 		):
+			// FIXME: `<br />`?
 			Components.push((
 				<CodeLine key={key}>
-					{data.slice(3, -3) || (
-						<br />
-					)}
+					{data.slice(3, -3) // || (
+						// <br />
+					/* ) */ }
 				</CodeLine>
 			))
 			break
-
 		case data.length >= 3 && data.slice(0, 3) === "```":
 			const cblockStart = index
 			index++
@@ -248,22 +243,14 @@ function parse(body) {
 			// incremented.
 			index--
 			break
-
 		case (
 			data.length === 3 && (
 				data === "***" ||
 				data === "---"
 			)
 		):
-			Components.push((
-				<Break key={key}>
-					{data || (
-						<br />
-					)}
-				</Break>
-			))
+			Components.push(<Break key={key} start={data} />)
 			break
-
 		default:
 			Components.push((
 				<Paragraph key={key}>
@@ -273,7 +260,6 @@ function parse(body) {
 				</Paragraph>
 			))
 			break
-
 		}
 		index++
 	}
@@ -290,11 +276,18 @@ const initialState = {
 
 const reducer = state => ({
 	select(pos1, pos2) {
-		if (pos1 < pos2) {
-			Object.assign(state, { pos1, pos2 })
-		} else {
-			Object.assign(state, { pos1: pos2, pos2: pos1 })
+		if (pos1 > pos2) {
+			[pos1, pos2] = [pos2, pos1]
 		}
+
+		if (pos1 > state.body.data.length) {
+			pos1 = state.body.data.length
+		}
+		if (pos2 > state.body.data.length) {
+			pos2 = state.body.data.length
+		}
+
+		Object.assign(state, { pos1, pos2 })
 	},
 	setState({ inputType, data }, pos1, pos2) {
 		switch (inputType) {
