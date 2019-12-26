@@ -4,7 +4,7 @@ import stylex from "stylex"
 import useMethods from "use-methods"
 import vdom from "./vdom"
 
-// FIXME: Pre-parse styles.
+// TODO: Pre-parse styles.
 const Syntax = ({ style, ...props }) => (
 	<React.Fragment>
 		{props.start && (
@@ -60,6 +60,7 @@ const Blockquote = props => (
 )
 
 // FIXME?
+// FIXME: `white-space`.
 const CodeLine = props => (
 	<code style={stylex.parse("p:16 block b:gray-100 br:8")}>
 		<p style={{ ...stylex.parse("fs:16 lh:125%"), fontFamily: "Monaco" }}>
@@ -71,15 +72,20 @@ const CodeLine = props => (
 )
 
 // Compound component.
+//
+// FIXME: Refactor.
+// FIXME: `white-space`.
 const CodeBlock = props => (
 	<code style={stylex.parse("p:16 block b:gray-100 br:8")}>
 		<ul>
 			{props.children.map((each, index) => (
 				<li key={each.key} style={{ ...stylex.parse("fs:16 lh:125%"), fontFamily: "Monaco" }}>
-					<Syntax start={!index && "```"} end={index + 1 === props.children.length && "```"}>
-						{each.data || (
-							index > 0 && index + 1 < props.children.length && (
-								<br />
+					<Syntax start={!index && "```" + each.data} end={index + 1 === props.children.length && "```"}>
+						{index > 0 && (
+							each.data || (
+								index > 0 && index + 1 < props.children.length && (
+									<br />
+								)
 							)
 						)}
 					</Syntax>
@@ -104,7 +110,7 @@ const Paragraph = props => (
 // Convenience function.
 function isBlockquote(data) {
 	const ok = (
-		(data.length === 1 && data[0] === ">") || // Empty.
+		(data.length === 1 && data[0] === ">") ||
 		(data.length >= 2 && data.slice(0, 2) === "> ")
 	)
 	return ok
