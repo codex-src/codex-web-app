@@ -23,6 +23,7 @@
   "scripts": {
     "lint": "yarn eslint --ignore-pattern=build .",
     "start": "react-scripts start",
+    "test-once": "yarn test --watchAll=false",
     "test": "react-scripts test",
     "build": "react-scripts build",
     "eject": "react-scripts eject"
