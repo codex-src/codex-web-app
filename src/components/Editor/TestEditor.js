@@ -4,30 +4,89 @@ import stylex from "stylex"
 import useMethods from "use-methods"
 import vdom from "./vdom"
 
-const H1 = props => <h1 style={stylex.parse("fw:700 fs:19")}>{props.children}</h1>
-const H2 = props => <h2 style={stylex.parse("fw:700 fs:19")}>{props.children}</h2>
-const H3 = props => <h3 style={stylex.parse("fw:700 fs:19")}>{props.children}</h3>
-const H4 = props => <h4 style={stylex.parse("fw:700 fs:19")}>{props.children}</h4>
-const H5 = props => <h5 style={stylex.parse("fw:700 fs:19")}>{props.children}</h5>
-const H6 = props => <h6 style={stylex.parse("fw:700 fs:19")}>{props.children}</h6>
+// FIXME: Pre-parse styles.
+const Syntax = ({ style, ...props }) => (
+	<React.Fragment>
+		{props.start && (
+			<span style={{
+				...stylex.parse("c:blue-a400"),
+				...style,
+			}}>
+				{props.start}
+			</span>
+		)}
+		{props.children}
+		{props.end && (
+			<span style={{
+				...stylex.parse("c:blue-a400"),
+				...style,
+			}}>
+				{props.end}
+			</span>
+		)}
+	</React.Fragment>
+)
+
+const H1 = props => <h1 style={stylex.parse("fw:700 fs:19")}><Syntax start="#&nbsp;">{props.children}</Syntax></h1>
+const H2 = props => <h2 style={stylex.parse("fw:700 fs:19")}><Syntax start="##&nbsp;">{props.children}</Syntax></h2>
+const H3 = props => <h3 style={stylex.parse("fw:700 fs:19")}><Syntax start="###&nbsp;">{props.children}</Syntax></h3>
+const H4 = props => <h4 style={stylex.parse("fw:700 fs:19")}><Syntax start="####&nbsp;">{props.children}</Syntax></h4>
+const H5 = props => <h5 style={stylex.parse("fw:700 fs:19")}><Syntax start="#####&nbsp;">{props.children}</Syntax></h5>
+const H6 = props => <h6 style={stylex.parse("fw:700 fs:19")}><Syntax start="######&nbsp;">{props.children}</Syntax></h6>
 
 const Comment = props => (
 	<p style={stylex.parse("fs:19 c:gray")}>
-		{props.children}
+		<Syntax style={stylex.parse("c:gray")} start="//&nbsp;">
+			{props.children}
+		</Syntax>
 	</p>
 )
 
+const Blockquote = props => (
+	<blockquote>
+		<ul>
+			{props.children.map(each => (
+				<li key={each.key} style={stylex.parse("fs:19")}>
+					<Syntax start=">&nbsp;">
+						{each.data}
+					</Syntax>
+				</li>
+			))}
+		</ul>
+	</blockquote>
+)
+
+// FIXME?
 const CodeLine = props => (
-	<pre style={stylex.parse("p:16 b:gray-100 br:8")}>
+	<code style={stylex.parse("p:16 block b:gray-100 br:8")}>
 		<p style={{ ...stylex.parse("fs:16 lh:125%"), fontFamily: "Monaco" }}>
-			{props.children}
+			<Syntax start="```" end="```">
+				{props.children}
+			</Syntax>
 		</p>
-	</pre>
+	</code>
+)
+
+// FIXME?
+const CodeBlock = props => (
+	// console.log(props) || (
+		<code style={stylex.parse("p:16 block b:gray-100 br:8")}>
+			<ul>
+				{props.children.map((each, index) => (
+					<li style={{ ...stylex.parse("fs:16 lh:125%"), fontFamily: "Monaco" }}>
+						<Syntax start={!index && "```"} end={index + 1 === props.children.length && "```"}>
+							{each.data}
+						</Syntax>
+					</li>
+				))}
+			</ul>
+		</code>
+	// )
 )
 
 const Break = props => (
 	<p style={stylex.parse("fs:19 c:gray")}>
-		{props.children}
+		<Syntax start="---" />
 	</p>
 )
 
@@ -37,12 +96,23 @@ const Paragraph = props => (
 	</p>
 )
 
+// Convenience function.
+function isBlockquote(data) {
+	const ok = (
+		(data.length === 1 && data[0] === ">") || // Empty.
+		(data.length >= 2 && data.slice(0, 2) === "> ")
+	)
+	return ok
+}
+
 // TODO:
 //
 // <CodeBlock>
 // <UnorderedList>
 // <OrderedList>
 //
+// TODO: We could have `parse` and `parseStrict` parsers for
+// parsing loose or strict (GFM) markdown.
 function parse(body) {
 	const Components = []
 	let index = 0
@@ -50,8 +120,13 @@ function parse(body) {
 		const { key, data } = body.nodes[index]
 		switch (true) {
 
-		// <Paragraph>: (fast pass)
-		case !data.length || (data.length && ascii.isAlphanum(data[0])):
+		// <Paragraph> (fast pass):
+		case (
+			!data.length || (
+				data.length &&
+				ascii.isAlphanum(data[0])
+			)
+		):
 			Components.push((
 				<Paragraph key={key}>
 					{data || (
@@ -70,81 +145,133 @@ function parse(body) {
 			(data.length >= 6 && data.slice(0, 6) === ("##### ")) ||
 			(data.length >= 7 && data.slice(0, 7) === ("###### "))
 		):
-			/* eslint-disable-next-line no-case-declarations */
-			const Component = [H1, H2, H3, H4, H5, H6][data.indexOf(" ") - 1]
+			/* eslint-disable no-case-declarations */
+			const indexHeader = data.indexOf("# ")
+			const ComponentHeader = [H1, H2, H3, H4, H5, H6][indexHeader]
+			/* eslint-enable no-case-declarations */
 			Components.push((
-				<Component key={key}>
-					{data || (
+				<ComponentHeader key={key}>
+					{data.slice(indexHeader + 2) || (
 						<br />
 					)}
-				</Component>
+				</ComponentHeader>
 			))
 			break
 
-		// <Comment>
+		// <Comment>:
 		case data.length >= 3 && data.slice(0, 3) === "// ":
 			Components.push((
 				<Comment key={key}>
-					{data || (
+					{data.slice(3) || (
 						<br />
 					)}
 				</Comment>
 			))
 			break
 
-			// // <Blockquote>
-			// case data.length >= 2 && data.slice(0, 2) === "> ":
-			// 	// let next = index + 1
-			// 	let start = index
-			// 	while (index < body.nodes.length) {
-			// 		if (body.nodes[index].data < 2 || body.nodes[index].data !== "> ") {
-			// 			break
-			// 		}
-			// 		index++
-			// 	}
-			// 	Components.push(
-			// 		...body.nodes.slice(start, index + 1).map(each => (
-			// 			<Blockquote key={each.key}>
-			// 				{each.data}
-			// 			</Blockquote>
-			// 		)),
-			// 	)
-			// 	index += next - index
-			// 	break
-
-		// <CodeLine>
-		case (
-			data.length >= 6 && (
-				data.slice(0, 3) === "```" &&
-				data.slice(-3) === "```"
-			)
-		):
+		// <Blockquote>:
+		case isBlockquote(data):
+			/* eslint-disable-next-line no-case-declarations */
+			const startBlockquote = index
+			index++ // Skip the first block.
+			while (index < body.nodes.length) {
+				if (!isBlockquote(body.nodes[index].data)) {
+					break
+				}
+				index++
+			}
 			Components.push((
-				<CodeLine key={key}>
-					{data || (
-						<br />
-					)}
-				</CodeLine>
+				<Blockquote key={key}>
+					{body.nodes.slice(startBlockquote, index).map(each => (
+						{ ...each, data: each.data.slice(2) } || (
+							<br />
+						)
+					))}
+				</Blockquote>
 			))
+			// NOTE: Decrement because `index` will be auto-
+			// incremented.
+			index--
 			break
 
-			// // <CodeBlock>
-			// case (
-			// 	data.length >= 3 && (
-			// 		data.slice(0, 3) === "```" &&
-			// 		index + 1 < body.nodes.length && body.nodes[index] // data.slice(-3) === "```"
-			// 	)
-			// ):
-			// 	Components.push(
-			// 		<CodeBlock key={key}>
-			// 			{data || (
-			// 				<br />
-			// 			)}
-			// 		</CodeBlock>
-			// 	)
-			// 	break
+		// // <CodeLine>:
+		// case (
+		// 	data.length >= 6 && (
+		// 		data.slice(0, 3) === "```" &&
+		// 		data.slice(-3) === "```"
+		// 	)
+		// ):
+		// 	Components.push((
+		// 		<CodeLine key={key}>
+		// 			{data.slice(3, -3) || (
+		// 				<br />
+		// 			)}
+		// 		</CodeLine>
+		// 	))
+		// 	break
 
-		// <Break>
+		// // <CodeBlock>:
+		// case data.length >= 3 && data.slice(0, 3) === "```":
+		// 	/* eslint-disable no-case-declarations */
+		// 	const startCodeBlock = index
+		// 	index++ // Skip the first block.
+		// 	while (index < body.nodes.length) {
+		// 		if (body.nodes[index].data.length === 3 && body.nodes[index].data.slice(-3) === "```") {
+		// 			break
+		// 		}
+		// 		index++
+		// 	}
+		// 	// Guard unterminated code block:
+		// 	if (index === body.nodes.length) {
+		// 		index = startCodeBlock
+		// 		Components.push(
+		// 			<Paragraph key={key}>
+		// 				{data || (
+		// 					<br />
+		// 				)}
+		// 			</Paragraph>
+		// 		)
+		// 		break
+		// 	}
+		// 	Components.push((
+		// 		<CodeBlock key={key}>
+		// 			{body.nodes.slice(startCodeBlock, index).map((each, index) => (
+		// 				{ ...each, data: !index || index + 1 === body.nodes.length ? each.data.slice(3) : each.data } || (
+		// 					<br />
+		// 				)
+		// 			))}
+		// 		</CodeBlock>
+		// 	))
+		// 	// NOTE: Decrement because `index` will be auto-
+		// 	// incremented.
+		// 	index--
+		// 	break
+
+		// // <Blockquote>:
+		// case isBlockquote(data):
+		// 	const start = index
+		// 	index++ // Skip the first block.
+		// 	while (index < body.nodes.length) {
+		// 		if (!isBlockquote(body.nodes[index].data)) {
+		// 			break
+		// 		}
+		// 		index++
+		// 	}
+		// 	Components.push((
+		// 		<Blockquote key={key}>
+		// 			{body.nodes.slice(start, index).map(each => (
+		// 				{ ...each, data: each.data.slice(2) } || (
+		// 					<br />
+		// 				)
+		// 			))}
+		// 		</Blockquote>
+		// 	))
+		// 	// NOTE: Decrement because `index` will be auto-
+		// 	// incremented.
+		// 	index--
+		// 	break
+
+		// <Break>:
 		case (
 			data.length === 3 && (
 				data === "***" ||

@@ -90,6 +90,7 @@ class VDOM {
 			pos1 >= 0 && pos2 >= pos1 && pos2 <= this.data.length,
 			`vdom: \`write\` out of bounds: \`${0} <= ${pos1} <= ${pos2} <= ${this.data.length}\`.`,
 		)
+		// Fast pass:
 		if (!pos1 && pos2 === this.data.length) {
 			return new VDOM(data)
 		}
