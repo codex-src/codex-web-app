@@ -23,10 +23,13 @@ const initialState = {
 	Components: [], // The editor’s rendered components.
 }
 
+// TODO:
+//
 // const reducer = state => ({
-// 	...writeReducer,
-// 	...stateReducer,
+// 	...reducerA,
+// 	...reducerB,
 // })
+//
 const reducer = state => ({
 
 	opFocus() {
@@ -61,6 +64,10 @@ const reducer = state => ({
 		// // increment `shouldRenderComponents`.
 		// state.shouldRenderComponents += inputType !== "onKeyPress"
 		state.shouldRenderComponents++
+	},
+
+	opTab() {
+		this.opWrite("onKeyDown", "\t")
 	},
 
 	delete(lengthL, lengthR) {
