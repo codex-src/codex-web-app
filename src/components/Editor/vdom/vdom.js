@@ -1,7 +1,8 @@
+import invariant from "invariant"
 import uuidv4 from "uuid/v4"
 
-// `parse` parses data into discrete, keyed nodes.
-function parse(data) {
+// `parseVDOMNodes` parses plain text data into VDOM nodes.
+function parseVDOMNodes(data) {
 	const nodes = data.split("\n").map(data => ({
 		key: uuidv4(),
 		data,
@@ -9,126 +10,118 @@ function parse(data) {
 	return nodes
 }
 
+// A `VDOM` represents a VDOM for plain text data;
+// paragraphs are parsed into VDOM nodes. A VDOM node is a
+// universally unique paragraph.
 class VDOM {
-	constructor(data, nodes = []) {
-		if (!nodes.length) {
-			nodes = parse(data)
+	// NOTE: `_sharedNodes` is for internal use; nodes are
+	// shared between VDOMs — keys are unchanged.
+	constructor(data, _sharedNodes = []) {
+		const nodes = []
+		if (!_sharedNodes.length) {
+			nodes.push(...parseVDOMNodes(data))
+		} else {
+			nodes.push(...[..._sharedNodes])
 		}
 		Object.assign(this, {
-			data,  // The data.
-			nodes, // The discrete, keyed nodes.
+			data,  // The plain text data.
+			nodes, // The VDOM nodes.
 		})
 	}
-	// `read` reads the VDOM.
-	read(pos1 = 0, pos2 = this.data.length) { // Arguments can be omitted.
-		// Fast pass:
-		if (!pos1 && pos2 === this.data.length) {
-			return this.data
+	// `_affectedRange` computes the affected range for a
+	// selection.
+	_affectedRange(pos1, pos2) {
+		// Compute start range:
+		const start = {
+			node: 0,
+			offset: 0,
 		}
-		return this.data.slice(pos1, pos2)
-	}
-	// `_writeRange` is a convenience method that generates
-	// the node and offset ranges for `write`.
-	_writeRange(pos1, pos2) {
-		const node = [0, 0]
-		const offset = [0, 0]
-
-		// Start node and offset:
-		let pos = pos1
-		while (node[0] < this.nodes.length) {
-			if (pos - this.nodes[node[0]].data.length <= 0) {
-				// Offset from the start:
-				offset[0] = pos
+		while (start.node < this.nodes.length) {
+			if (pos1 - this.nodes[start.node].data.length <= 0) {
+				start.offset = pos1
 				break
 			}
-			pos -= this.nodes[node[0]].data.length
-			if (node[0] + 1 < this.nodes[node[0]].data.length) {
-				pos--
+			pos1 -= this.nodes[start.node].data.length
+			if (start.node + 1 < this.nodes.length) {
+				pos1--
 			}
-			node[0]++
+			start.node++
 		}
-
-		// End node and offset:
-		pos = pos2 - pos1
-		node[1] = node[0] // Shortcut.
-		while (node[1] < this.nodes.length) {
-			if (pos - this.nodes[node[1]].data.length <= 0) {
-				// Offset from the end:
-				offset[1] = pos - this.nodes[node[1]].data.length
+		// Compute end range:
+		const end = {
+			node: 0,
+			offset: 0,
+		}
+		while (end.node < this.nodes.length) {
+			if (pos2 - this.nodes[end.node].data.length <= 0) {
+				end.offset = pos2
 				break
 			}
-			pos -= this.nodes[node[1]].data.length
-			if (node[1] + 1 < this.nodes[node[1]].data.length) {
-				pos--
+			pos2 -= this.nodes[end.node].data.length
+			if (end.node + 1 < this.nodes.length) {
+				pos2--
 			}
-			node[1]++
+			end.node++
 		}
-
-		// NOTE: Offset range ends to be one-based instead of
-		// zero-based.
-		const range = {
-			node: [node[0], node[1] + 1],
-			offset: [offset[0], offset[1] + 1],
-		}
-		return range
+		return { start, end }
 	}
-	// `write` writes to the VDOM.
+	// `_mergeStartNode` creates a new start node, merged at
+	// the end.
+	_mergeStartNode(start, node) {
+		const newNode = { ...this.nodes[start.node] }
+		newNode.data = newNode.data.slice(0, start.offset) + node.data
+		return newNode
+	}
+	// `_mergedEndNode` creates a new end node, merged at the
+	// start.
+	//
+	// NOTE: `_mergeEndNode` must create a new UUID.
+	_mergeEndNode(end, node) {
+		const newNode = {
+			...this.nodes[end.node],
+			key: uuidv4(),
+		}
+		newNode.data = node.data + newNode.data.slice(end.offset)
+		return newNode
+	}
+	// `write` writes plain text data at a selection.
 	write(data, pos1, pos2) {
-		// // Fast pass: (hard reset)
-		// if (!pos1 && pos2 === this.data.length) {
-		// 	return new VDOM(data)
-		// }
-
-		const { node, offset } = this._writeRange(pos1, pos2)
-
+		invariant(
+			pos1 >= 0 && pos2 >= pos1 && pos2 <= this.data.length,
+			`vdom: \`write\` out of bounds: \`${0} <= ${pos1} <= ${pos2} <= ${this.data.length}\`.`,
+		)
+		if (!pos1 && pos2 === this.data.length) {
+			return new VDOM(data)
+		}
+		// Sorted by order of use.
+		const { start, end } = this._affectedRange(pos1, pos2) // The affected range.
+		const newNodes = []                                    // The new nodes.
+		const parsedNodes = parseVDOMNodes(data)               // The parsed nodes from the plain text data.
+		// Nodes before start:
+		if (start.node > 0) {
+			newNodes.push(...[...this.nodes.slice(0, start.node)])
+		}
+		// Start node:
+		const mergedStartNode = this._mergeStartNode(start, parsedNodes[0])
+		newNodes.push(mergedStartNode)
+		// Intermediary nodes; must be three or more:
+		if (parsedNodes.length > 2) {
+			newNodes.push(...[...parsedNodes.slice(1, -1)])
+		}
+		// End node:
+		if (parsedNodes.length === 1) {
+			mergedStartNode.data += this.nodes[end.node].data.slice(end.offset)
+		} else { // Must be two or more nodes.
+			const mergedEndNode = this._mergeEndNode(end, parsedNodes.slice(-1)[0])
+			newNodes.push(mergedEndNode)
+		}
+		// Nodes after end:
+		if (end.node + 1 < this.nodes.length) {
+			newNodes.push(...[...this.nodes.slice(end.node + 1)])
+		}
 		const newData = this.data.slice(0, pos1) + data + this.data.slice(pos2)
-		const newNodes = []
-
-		// Start node; must have one or more nodes:
-		const nodes = parse(data)
-		newNodes.push({
-			key: this.nodes[node[0]].key,
-			data: this.nodes[node[0]].data.slice(0, offset[0]) + nodes[0].data,
-		})
-		// Intermediary nodes; must have three or more nodes:
-		if (nodes.length > 2) {
-			newNodes.push(...nodes.slice(1, -1))
-		}
-		// End node; must have two or more nodes:
-		if (nodes.length > 1) {
-			newNodes.push({
-				key: this.nodes[node[1]].key,
-				data: nodes.slice(-1)[0].data + this.nodes[node[1]].data.slice(offset[1]),
-			})
-		}
-
-		// // End node; must have two or more nodes:
-		// if (nodes.length > 1) {
-		// 	// console.log(this.nodes)
-		// 	let nthKey = uuidv4()
-		// 	if (node[1] < this.nodes.length) {
-		// 		nthKey = this.nodes[node[1]].key
-		// 	}
-		// 	let nthData = ""
-		// 	if (node[1] < this.nodes.length) {
-		// 		nthData = this.nodes[node[1]].data.slice(offset[1])
-		// 	}
-		// 	newNodes.push({
-		// 		key: nthKey,
-		// 		data: nthData,
-		// 	})
-		// }
-
 		return new VDOM(newData, newNodes)
-
-		// return { ...this, data: newData, nodes: newNodes }
-		//
-		// Object.assign(this, {
-		// 	data: newData,
-		// 	nodes: newNodes,
-		// })
 	}
-
 }
 
 export default VDOM

@@ -18,8 +18,8 @@ const Comment = props => (
 )
 
 const CodeLine = props => (
-	<pre style={stylex.parse("p:16 b:gray br:8")}>
-		<p style={stylex.parse("fs:16 lh:125%")}>
+	<pre style={stylex.parse("p:16 b:gray-100 br:8")}>
+		<p style={{ ...stylex.parse("fs:16 lh:125%"), fontFamily: "Monaco" }}>
 			{props.children}
 		</p>
 	</pre>
@@ -70,6 +70,7 @@ function parse(body) {
 			(data.length >= 6 && data.slice(0, 6) === ("##### ")) ||
 			(data.length >= 7 && data.slice(0, 7) === ("###### "))
 		):
+			/* eslint-disable-next-line no-case-declarations */
 			const Component = [H1, H2, H3, H4, H5, H6][data.indexOf(" ") - 1]
 			Components.push((
 				<Component key={key}>
@@ -179,7 +180,7 @@ function parse(body) {
 const initialState = {
 	pos1:       0,
 	pos2:       0,
-	body:       new vdom.VDOM("foo\nbar\nbaz"),
+	body:       new vdom.VDOM("hello, world!"),
 	Components: [],
 }
 
@@ -191,28 +192,50 @@ const reducer = state => ({
 			Object.assign(state, { pos1: pos2, pos2: pos1 })
 		}
 	},
-	setState(data, pos1, pos2) {
-		state.body = state.body.write(data, pos1, pos2)
-		this.render()
+	setState({ inputType, data }, pos1, pos2) {
+		switch (inputType) {
+		case "insertText":
+			state.body = state.body.write(data, pos1, pos2)
+			this.render()
+			break
+		case "deleteContentBackward":
+			if (pos1 === pos2) {
+				pos1 -= pos1 > 0
+			}
+			state.body = state.body.write("", pos1, pos2)
+			this.render()
+			break
+		case "insertLineBreak":
+			state.body = state.body.write("\n", pos1, pos2)
+			this.render()
+			break
+		default:
+			// No-op.
+			break
+		}
 	},
 	render() {
 		state.Components = parse(state.body)
 	},
 })
 
+function init(state) {
+	return { ...state, Components: parse(state.body) }
+}
+
 function TestEditor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState)
+	const [state, dispatch] = useMethods(reducer, initialState, init)
 
 	return (
 		<div>
 			<textarea
 				ref={ref}
-				style={stylex.parse("p:24 block w:max h:192 b:gray-50 br:8")}
+				style={{ ...stylex.parse("p:16 block w:max h:192 b:gray-100 br:8"), fontFamily: "Monaco" }}
 				value={state.body.data}
 				onSelect={e => dispatch.select(ref.current.selectionStart, ref.current.selectionEnd)}
-				onChange={e => dispatch.setState(e.nativeEvent.data, state.pos1, state.pos2)}
+				onChange={e => dispatch.setState(e.nativeEvent, state.pos1, state.pos2)}
 				autoFocus
 			/>
 			<div style={stylex.parse("h:16")} />
