@@ -42,13 +42,16 @@ const Comment = props => (
 	</p>
 )
 
+// Compound component.
 const Blockquote = props => (
 	<blockquote>
 		<ul>
 			{props.children.map(each => (
 				<li key={each.key} style={stylex.parse("fs:19")}>
 					<Syntax start=">&nbsp;">
-						{each.data}
+						{each.data || (
+							<br />
+						)}
 					</Syntax>
 				</li>
 			))}
@@ -67,21 +70,23 @@ const CodeLine = props => (
 	</code>
 )
 
-// FIXME?
+// Compound component.
 const CodeBlock = props => (
-	// console.log(props) || (
-		<code style={stylex.parse("p:16 block b:gray-100 br:8")}>
-			<ul>
-				{props.children.map((each, index) => (
-					<li style={{ ...stylex.parse("fs:16 lh:125%"), fontFamily: "Monaco" }}>
-						<Syntax start={!index && "```"} end={index + 1 === props.children.length && "```"}>
-							{each.data}
-						</Syntax>
-					</li>
-				))}
-			</ul>
-		</code>
-	// )
+	<code style={stylex.parse("p:16 block b:gray-100 br:8")}>
+		<ul>
+			{props.children.map((each, index) => (
+				<li key={each.key} style={{ ...stylex.parse("fs:16 lh:125%"), fontFamily: "Monaco" }}>
+					<Syntax start={!index && "```"} end={index + 1 === props.children.length && "```"}>
+						{each.data || (
+							index > 0 && index + 1 < props.children.length && (
+								<br />
+							)
+						)}
+					</Syntax>
+				</li>
+			))}
+		</ul>
+	</code>
 )
 
 const Break = props => (
@@ -105,9 +110,17 @@ function isBlockquote(data) {
 	return ok
 }
 
+// Convenience function.
+function isCodeBlockEnd(data) {
+	const ok = (
+		data.length === 3 &&
+		data === "```"
+	)
+	return ok
+}
+
 // TODO:
 //
-// <CodeBlock>
 // <UnorderedList>
 // <OrderedList>
 //
@@ -118,6 +131,7 @@ function parse(body) {
 	let index = 0
 	while (index < body.nodes.length) {
 		const { key, data } = body.nodes[index]
+		/* eslint-disable no-case-declarations */
 		switch (true) {
 
 		// <Paragraph> (fast pass):
@@ -145,10 +159,8 @@ function parse(body) {
 			(data.length >= 6 && data.slice(0, 6) === ("##### ")) ||
 			(data.length >= 7 && data.slice(0, 7) === ("###### "))
 		):
-			/* eslint-disable no-case-declarations */
 			const indexHeader = data.indexOf("# ")
 			const ComponentHeader = [H1, H2, H3, H4, H5, H6][indexHeader]
-			/* eslint-enable no-case-declarations */
 			Components.push((
 				<ComponentHeader key={key}>
 					{data.slice(indexHeader + 2) || (
@@ -171,21 +183,22 @@ function parse(body) {
 
 		// <Blockquote>:
 		case isBlockquote(data):
-			/* eslint-disable-next-line no-case-declarations */
-			const startBlockquote = index
-			index++ // Skip the first block.
+			const bquoteStart = index
+			index++
 			while (index < body.nodes.length) {
 				if (!isBlockquote(body.nodes[index].data)) {
 					break
 				}
 				index++
 			}
+			const bquoteNodes = body.nodes.slice(bquoteStart, index)
 			Components.push((
 				<Blockquote key={key}>
-					{body.nodes.slice(startBlockquote, index).map(each => (
-						{ ...each, data: each.data.slice(2) } || (
-							<br />
-						)
+					{bquoteNodes.map(each => (
+						{
+							...each,
+							data: each.data.slice(2),
+						}
 					))}
 				</Blockquote>
 			))
@@ -194,82 +207,63 @@ function parse(body) {
 			index--
 			break
 
-		// // <CodeLine>:
-		// case (
-		// 	data.length >= 6 && (
-		// 		data.slice(0, 3) === "```" &&
-		// 		data.slice(-3) === "```"
-		// 	)
-		// ):
-		// 	Components.push((
-		// 		<CodeLine key={key}>
-		// 			{data.slice(3, -3) || (
-		// 				<br />
-		// 			)}
-		// 		</CodeLine>
-		// 	))
-		// 	break
+		// <CodeLine>:
+		case (
+			data.length >= 6 && (
+				data.slice(0, 3) === "```" &&
+				data.slice(-3) === "```"
+			)
+		):
+			// FIXME
+			Components.push((
+				<CodeLine key={key}>
+					{data.slice(3, -3) // || (
+						// <br />
+					/* ) */ }
+				</CodeLine>
+			))
+			break
 
-		// // <CodeBlock>:
-		// case data.length >= 3 && data.slice(0, 3) === "```":
-		// 	/* eslint-disable no-case-declarations */
-		// 	const startCodeBlock = index
-		// 	index++ // Skip the first block.
-		// 	while (index < body.nodes.length) {
-		// 		if (body.nodes[index].data.length === 3 && body.nodes[index].data.slice(-3) === "```") {
-		// 			break
-		// 		}
-		// 		index++
-		// 	}
-		// 	// Guard unterminated code block:
-		// 	if (index === body.nodes.length) {
-		// 		index = startCodeBlock
-		// 		Components.push(
-		// 			<Paragraph key={key}>
-		// 				{data || (
-		// 					<br />
-		// 				)}
-		// 			</Paragraph>
-		// 		)
-		// 		break
-		// 	}
-		// 	Components.push((
-		// 		<CodeBlock key={key}>
-		// 			{body.nodes.slice(startCodeBlock, index).map((each, index) => (
-		// 				{ ...each, data: !index || index + 1 === body.nodes.length ? each.data.slice(3) : each.data } || (
-		// 					<br />
-		// 				)
-		// 			))}
-		// 		</CodeBlock>
-		// 	))
-		// 	// NOTE: Decrement because `index` will be auto-
-		// 	// incremented.
-		// 	index--
-		// 	break
-
-		// // <Blockquote>:
-		// case isBlockquote(data):
-		// 	const start = index
-		// 	index++ // Skip the first block.
-		// 	while (index < body.nodes.length) {
-		// 		if (!isBlockquote(body.nodes[index].data)) {
-		// 			break
-		// 		}
-		// 		index++
-		// 	}
-		// 	Components.push((
-		// 		<Blockquote key={key}>
-		// 			{body.nodes.slice(start, index).map(each => (
-		// 				{ ...each, data: each.data.slice(2) } || (
-		// 					<br />
-		// 				)
-		// 			))}
-		// 		</Blockquote>
-		// 	))
-		// 	// NOTE: Decrement because `index` will be auto-
-		// 	// incremented.
-		// 	index--
-		// 	break
+		// <CodeBlock>:
+		case data.length >= 3 && data.slice(0, 3) === "```":
+			const cblockStart = index
+			index++
+			let cblockDidTerminate = false
+			while (index < body.nodes.length) {
+				if (isCodeBlockEnd(body.nodes[index].data)) {
+					cblockDidTerminate = true
+					break
+				}
+				index++
+			}
+			index++
+			// Guard unterminated code block:
+			if (!cblockDidTerminate) {
+				Components.push((
+					<Paragraph key={key}>
+						{data || (
+							<br />
+						)}
+					</Paragraph>
+				))
+				index = cblockStart
+				break
+			}
+			const cblockNodes = body.nodes.slice(cblockStart, index)
+			Components.push((
+				<CodeBlock key={key}>
+					{cblockNodes.map((each, index) => (
+						{
+							...each,
+							data: !index || index + 1 === cblockNodes.length ? each.data.slice(3) : each.data,
+						}
+					))}
+				</CodeBlock>
+			))
+			// NOTE: Decrement because `index` will be auto-
+			// incremented.
+			index--
+			break
 
 		// <Break>:
 		case (
@@ -299,6 +293,7 @@ function parse(body) {
 			break
 
 		}
+		/* eslint-enable no-case-declarations */
 		index++
 	}
 	return Components
@@ -307,7 +302,7 @@ function parse(body) {
 const initialState = {
 	pos1:       0,
 	pos2:       0,
-	body:       new vdom.VDOM("hello, world!"),
+	body:       new vdom.VDOM("hello, world!\n\n> asdasdasd\n\n```asdasd```\n\n```\n\nasdasd\n\n```"),
 	Components: [],
 }
 
@@ -359,13 +354,13 @@ function TestEditor(props) {
 		<div>
 			<textarea
 				ref={ref}
-				style={{ ...stylex.parse("p:16 block w:max h:192 b:gray-100 br:8"), fontFamily: "Monaco" }}
+				style={{ ...stylex.parse("p:16 block w:max h:256 b:gray-100 br:8"), fontFamily: "Monaco" }}
 				value={state.body.data}
 				onSelect={e => dispatch.select(ref.current.selectionStart, ref.current.selectionEnd)}
 				onChange={e => dispatch.setState(e.nativeEvent, state.pos1, state.pos2)}
 				autoFocus
 			/>
-			<div style={stylex.parse("h:16")} />
+			<div style={stylex.parse("h:57")} />
 			<article>
 				{state.Components}
 			</article>
