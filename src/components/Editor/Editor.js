@@ -53,7 +53,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 			}
 			const id = setInterval(dispatch.storeUndo, 1e3)
 			return () => {
-				// Let the last undo be stored:
+				// Wait for the last undo to cycle:
 				setTimeout(() => {
 					clearInterval(id)
 				}, 1e3)

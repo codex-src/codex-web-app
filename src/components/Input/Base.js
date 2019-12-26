@@ -3,7 +3,7 @@ import stylex from "stylex"
 
 // https://stripe.com/docs/payments/checkout
 export const boxShadow = {
-	boxShadow: "0 0 0 1px #E0E0E0, 0 2px 4px rgba(0, 0, 0, 0.07), 0 1px 1.5px rgba(0, 0, 0, 0.05)",
+	boxShadow: "0px 0px 0px 1px #E0E0E0, 0px 2px 4px rgba(0, 0, 0, 0.07), 0px 1px 1.5px rgba(0, 0, 0, 0.05)",
 }
 
 export const Input = stylex.Styleable(props => (

@@ -18,7 +18,7 @@ const Text = stylex.Styleable(props => (
 
 // NOTE: `CTAButton` doesn’t use `flex -r -y:center`.
 const CTAButton = stylex.Styleable(props => (
-	<div style={{ ...stylex.parse("p:12 br:2"), boxShadow: "inset 0 0 0 1px hsla(var(--blue-a400), 0.5)" }} {...props}>
+	<div style={{ ...stylex.parse("p:12 br:2"), boxShadow: "inset 0px 0px 0px 1px hsla(var(--blue-a400), 0.5)" }} {...props}>
 		{props.children}
 	</div>
 ))

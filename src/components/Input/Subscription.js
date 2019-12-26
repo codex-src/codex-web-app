@@ -16,7 +16,7 @@ const Subtext = stylex.Styleable(props => (
 ))
 
 const Discount = stylex.Styleable(props => (
-	<span style={{ ...stylex.parse("p-x:4 p-y:6 inline-flex -r :center br:2"), background: "hsla(var(--green-a700), 0.05)", boxShadow: "inset 0 0 0 0.5px hsl(var(--green-a700), 0.25)" }} {...props}>
+	<span style={{ ...stylex.parse("p-x:4 p-y:6 inline-flex -r :center br:2"), background: "hsla(var(--green-a700), 0.05)", boxShadow: "inset 0px 0px 0px 0.5px hsl(var(--green-a700), 0.25)" }} {...props}>
 		<span style={stylex.parse("fw:700 fs:10.5 ls:5% lh:100% c:green-a700")}>
 			{props.children}
 		</span>

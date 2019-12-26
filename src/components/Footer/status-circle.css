@@ -3,6 +3,6 @@
 }
 
 @keyframes pulse {
-	 0% { box-shadow: 0 0 0 0   hsla(var(--current-color), 1); }
-	33% { box-shadow: 0 0 0 6px hsla(var(--current-color), 0); }
+	 0% { box-shadow: 0px 0px 0px 0px hsla(var(--current-color), 1); }
+	33% { box-shadow: 0px 0px 0px 6px hsla(var(--current-color), 0); }
 }

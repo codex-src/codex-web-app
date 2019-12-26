@@ -11,7 +11,7 @@ const Text = stylex.Styleable(props => (
 ))
 
 const Response = stylex.Styleable(props => (
-	<div style={{ ...stylex.parse("p-x:16 p-y:12 br:6"), background: "hsla(var(--current-color), 0.1)", boxShadow: "inset 0 0 0 0.5px hsl(var(--current-color), 0.25)" }}>
+	<div style={{ ...stylex.parse("p-x:16 p-y:12 br:6"), background: "hsla(var(--current-color), 0.1)", boxShadow: "inset 0px 0px 0px 0.5px hsl(var(--current-color), 0.25)" }}>
 		<Text style={stylex.parse("pre-wrap c:current-color")}>
 			{props.children}
 		</Text>
