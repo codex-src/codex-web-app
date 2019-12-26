@@ -4,35 +4,57 @@ import stylex from "stylex"
 import useMethods from "use-methods"
 import vdom from "./vdom"
 
+// // `CodexNode` sets `data-codex-node={uuid}`.
+// const CodexNode = render => extendedProps => {
+// 	const element = render(extendedProps)
+// 	const {
+// 		props: {
+// 			children: {
+// 				_owner: {
+// 					key: uuid, // Don’t try this at home…
+// 				},
+// 			},
+// 		},
+// 	} = element
+// 	const newRender = React.cloneElement(element, { "data-codex-node": uuid, ...element.props })
+// 	return newRender
+// }
+
+const Syntax = stylex.Styleable(props => (
+	<span style={stylex.parse("c:blue-a400")}>
+		{props.children}
+	</span>
+))
+
 // TODO: Pre-parse styles.
-const Syntax = ({ style, ...props }) => (
+const Markdown = ({ style, ...props }) => (
 	<React.Fragment>
 		{props.start && (
-			<span style={{ ...stylex.parse("c:blue-a400"), ...style }}>
+			<Syntax {...style}>
 				{props.start}
-			</span>
+			</Syntax>
 		)}
 		{props.children}
 		{props.end && (
-			<span style={{ ...stylex.parse("c:blue-a400"), ...style }}>
+			<Syntax {...style}>
 				{props.end}
-			</span>
+			</Syntax>
 		)}
 	</React.Fragment>
 )
 
-const H1 = props => <h1 style={stylex.parse("fw:700 fs:19")}><Syntax start="#&nbsp;">{props.children}</Syntax></h1>
-const H2 = props => <h2 style={stylex.parse("fw:700 fs:19")}><Syntax start="##&nbsp;">{props.children}</Syntax></h2>
-const H3 = props => <h3 style={stylex.parse("fw:700 fs:19")}><Syntax start="###&nbsp;">{props.children}</Syntax></h3>
-const H4 = props => <h4 style={stylex.parse("fw:700 fs:19")}><Syntax start="####&nbsp;">{props.children}</Syntax></h4>
-const H5 = props => <h5 style={stylex.parse("fw:700 fs:19")}><Syntax start="#####&nbsp;">{props.children}</Syntax></h5>
-const H6 = props => <h6 style={stylex.parse("fw:700 fs:19")}><Syntax start="######&nbsp;">{props.children}</Syntax></h6>
+const H1 = props => <h1 style={stylex.parse("fw:700 fs:19")}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
+const H2 = props => <h2 style={stylex.parse("fw:700 fs:19")}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
+const H3 = props => <h3 style={stylex.parse("fw:700 fs:19")}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
+const H4 = props => <h4 style={stylex.parse("fw:700 fs:19")}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
+const H5 = props => <h5 style={stylex.parse("fw:700 fs:19")}><Markdown start="#####&nbsp;">{props.children}</Markdown></h5>
+const H6 = props => <h6 style={stylex.parse("fw:700 fs:19")}><Markdown start="######&nbsp;">{props.children}</Markdown></h6>
 
 const Comment = props => (
 	<p style={stylex.parse("fs:19 c:gray")}>
-		<Syntax style={stylex.parse("c:gray")} start="//&nbsp;">
+		<Markdown style={stylex.parse("c:gray")} start="//">
 			{props.children}
-		</Syntax>
+		</Markdown>
 	</p>
 )
 
@@ -42,44 +64,33 @@ const Blockquote = props => (
 		<ul>
 			{props.children.map(each => (
 				<li key={each.key} style={stylex.parse("fs:19")}>
-					<Syntax start=">&nbsp;">
+					<Markdown start=">&nbsp;">
 						{each.data || (
 							<br />
 						)}
-					</Syntax>
+					</Markdown>
 				</li>
 			))}
 		</ul>
 	</blockquote>
 )
 
-const CodeLine = props => (
-	<pre style={{ ...stylex.parse("p:16 block b:gray-100 br:4 overflow -x:scroll"), border: "1px solid hsl(var(--gray-200))" }}>
-		<code style={{ ...stylex.parse("pre"), tabSize: 2, font: "16px/1.25 'Monaco'" }}>
-			<Syntax start="```" end="```">
-				{props.children}
-			</Syntax>
-		</code>
-	</pre>
-)
-
-// For a multiline code block implementation, refer to
-// https://codepen.io/zaydek/pen/PowjgOg
-//
-// NOTE: Uses an `end` property for debugging purposes.
+// NOTE (1): For a multiline implementation, refer to
+// https://cdpn.io/PowjgOg.
+// NOTE (2): `end` property is for debugging.
 const CodeBlock = props => (
-	<pre style={{ ...stylex.parse("p:16 block b:gray-100 br:4 overflow -x:scroll"), border: "1px solid hsl(var(--gray-200))" }}>
+	<pre style={{ ...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:gray-100 br:2 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }}>
 		<code style={{ ...stylex.parse("pre"), tabSize: 2, font: "16px/1.25 'Monaco'" }}>
-			<Syntax start={props.start} end={props.end}>
+			<Markdown start={props.start} end={props.end}>
 				{props.children}
-			</Syntax>
+			</Markdown>
 		</code>
 	</pre>
 )
 
 const Break = props => (
 	<p style={stylex.parse("fs:19 c:gray")}>
-		<Syntax start={props.start} />
+		<Markdown start={props.start} />
 	</p>
 )
 
@@ -147,20 +158,20 @@ function parse(body) {
 			(data.length >= 6 && data.slice(0, 6) === ("##### ")) ||
 			(data.length >= 7 && data.slice(0, 7) === ("###### "))
 		):
-			const indexHeader = data.indexOf("# ")
-			const ComponentHeader = [H1, H2, H3, H4, H5, H6][indexHeader]
+			const headerIndex = data.indexOf("# ")
+			const HeaderComponent = [H1, H2, H3, H4, H5, H6][headerIndex] // Must start with an uppercase character.
 			Components.push((
-				<ComponentHeader key={key}>
-					{data.slice(indexHeader + 2) || (
+				<HeaderComponent key={key}>
+					{data.slice(headerIndex + 2) || (
 						<br />
 					)}
-				</ComponentHeader>
+				</HeaderComponent>
 			))
 			break
-		case data.length >= 3 && data.slice(0, 3) === "// ":
+		case data.length >= 2 && data.slice(0, 2) === "//":
 			Components.push((
 				<Comment key={key}>
-					{data.slice(3) || (
+					{data.slice(2) || (
 						<br />
 					)}
 				</Comment>
@@ -198,11 +209,11 @@ function parse(body) {
 		):
 			// FIXME: `<br />`?
 			Components.push((
-				<CodeLine key={key}>
+				<CodeBlock key={key} start="```" end="```">
 					{data.slice(3, -3) // || (
 						// <br />
 					/* ) */ }
-				</CodeLine>
+				</CodeBlock>
 			))
 			break
 		case data.length >= 3 && data.slice(0, 3) === "```":
@@ -279,14 +290,9 @@ const reducer = state => ({
 		if (pos1 > pos2) {
 			[pos1, pos2] = [pos2, pos1]
 		}
-
-		if (pos1 > state.body.data.length) {
-			pos1 = state.body.data.length
-		}
-		if (pos2 > state.body.data.length) {
-			pos2 = state.body.data.length
-		}
-
+		// Guard underflow and overflow:
+		pos1 = Math.max(0, Math.min(pos1, state.body.data.length))
+		pos2 = Math.max(0, Math.min(pos2, state.body.data.length))
 		Object.assign(state, { pos1, pos2 })
 	},
 	setState({ inputType, data }, pos1, pos2) {
@@ -337,7 +343,7 @@ function TestEditor(props) {
 					autoFocus
 				/>
 			</CodeBlock>
-			<div style={stylex.parse("h:57")} />
+			<div style={stylex.parse("h:32")} />
 			<article>
 				{state.Components}
 			</article>
