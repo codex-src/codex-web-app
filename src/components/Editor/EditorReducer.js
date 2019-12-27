@@ -2,15 +2,16 @@ import * as Components from "./Components"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
 import utf8 from "./utf8"
+import vdom from "./vdom"
 
 const initialState = {
 	isFocused:     false,                // Is the editor focused?
-	data:          "",                   // The editor’s plain text data. FIXME: Use an array of blocks.
-	didCorrectPos: false,                // Did correct the editor’s first `pos1.pos` and `pos2.pos`?
-	pos1:          traverseDOM.newPos(), // The editor’s VDOM cursor start position.
-	pos2:          traverseDOM.newPos(), // The editor’s VDOM cursor end position.
-	history:       [],                   // The editor’s history (and future) state stack.
-	historyIndex:  -1,                   // The editor’s history (and future) state stack index.
+	body:          new vdom.VDOM(""),    // The VDOM body.
+	pos1:          traverseDOM.newPos(), // The VDOM cursor start.
+	pos2:          traverseDOM.newPos(), // The VDOM cursor end.
+	didCorrectPos: false,                // Did correct the VDOM cursor start and end?
+	history:       [],                   // The history (and future) state stack.
+	historyIndex:  -1,                   // The history (and future) state stack index.
 
 	// `shouldRenderComponents` hints whether the editor’s
 	// components should be rerendered.
@@ -20,16 +21,9 @@ const initialState = {
 	// positions should be rerendered.
 	shouldRenderPos: 0,
 
-	Components: [], // The editor’s rendered components.
+	Components: [], // The rendered components.
 }
 
-// TODO:
-//
-// const reducer = state => ({
-// 	...reducerA,
-// 	...reducerB,
-// })
-//
 const reducer = state => ({
 
 	opFocus() {
@@ -39,13 +33,11 @@ const reducer = state => ({
 		state.isFocused = false
 	},
 
-	setState(data, pos1, pos2) {
-		if (pos1.pos < pos2.pos) {
-			Object.assign(state, { data, pos1, pos2 })
-		} else {
-			// Reverse order:
-			Object.assign(state, { data, pos1: pos2, pos2: pos1 })
+	setState(body, pos1, pos2) {
+		if (pos1 > pos2) {
+			[pos1, pos2] = [pos2, pos1]
 		}
+		Object.assign(state, { body, pos1, pos2 })
 	},
 	collapse() {
 		state.pos2 = { ...state.pos1 }
@@ -57,8 +49,8 @@ const reducer = state => ({
 			state.didCorrectPos = true
 		}
 		this.prune()
-		state.data = state.data.slice(0, state.pos1.pos) + data + state.data.slice(state.pos2.pos)
-		state.pos1.pos += data.length // Breaks `pos1`.
+		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
+		state.pos1.pos += data.length
 		this.collapse()
 		// // NOTE: To opt-in to native rendering, conditionally
 		// // increment `shouldRenderComponents`.
@@ -72,13 +64,13 @@ const reducer = state => ({
 
 	delete(lengthL, lengthR) {
 		// Guard the current node:
-		if ((!state.pos1.pos && lengthL) || (state.pos2.pos === state.data.length && lengthR)) {
+		if ((!state.pos1.pos && lengthL) || (state.pos2.pos === state.body.data.length && lengthR)) {
 			// No-op.
 			return
 		}
 		this.prune()
-		state.data = state.data.slice(0, state.pos1.pos - lengthL) + state.data.slice(state.pos2.pos + lengthR)
-		state.pos1.pos -= lengthL // Breaks `pos1`.
+		state.body = state.body.write("", state.pos1.pos - lengthL, state.pos2.pos + lengthR)
+		state.pos1.pos -= lengthL
 		this.collapse()
 		state.shouldRenderComponents++
 	},
@@ -87,7 +79,7 @@ const reducer = state => ({
 			this.delete(0, 0)
 			return
 		}
-		const { length } = utf8.prevChar(state.data, state.pos1.pos)
+		const { length } = utf8.prevChar(state.body.data, state.pos1.pos)
 		this.delete(length, 0)
 	},
 	opBackspaceWord() {
@@ -98,7 +90,7 @@ const reducer = state => ({
 		// Iterate spaces:
 		let index = state.pos1.pos
 		while (index) {
-			const char = utf8.prevChar(state.data, index)
+			const char = utf8.prevChar(state.body.data, index)
 			if (!utf8.isHWhiteSpace(char)) {
 				break
 			}
@@ -106,7 +98,7 @@ const reducer = state => ({
 		}
 		// Iterate non-word characters:
 		while (index) {
-			const char = utf8.prevChar(state.data, index)
+			const char = utf8.prevChar(state.body.data, index)
 			if (utf8.isAlphanum(char) || utf8.isVWhiteSpace(char)) {
 				break
 			}
@@ -114,13 +106,13 @@ const reducer = state => ({
 		}
 		// Iterate word characters:
 		while (index) {
-			const char = utf8.prevChar(state.data, index)
+			const char = utf8.prevChar(state.body.data, index)
 			if (!utf8.isAlphanum(char)) {
 				break
 			}
 			index -= char.length
 		}
-		// NOTE: Must delete at least one character.
+		// NOTE: Must delete at least one Unicode character.
 		const length = state.pos1.pos - index
 		if (!length) {
 			this.opBackspace()
@@ -135,13 +127,13 @@ const reducer = state => ({
 		}
 		let index = state.pos1.pos
 		while (index) {
-			const char = utf8.prevChar(state.data, index)
+			const char = utf8.prevChar(state.body.data, index)
 			if (utf8.isVWhiteSpace(char)) {
 				break
 			}
 			index -= char.length
 		}
-		// NOTE: Must delete at least one character.
+		// NOTE: Must delete at least one Unicode character.
 		const length = state.pos1.pos - index
 		if (!length) {
 			this.opBackspace()
@@ -154,7 +146,7 @@ const reducer = state => ({
 			this.delete(0, 0)
 			return
 		}
-		const { length } = utf8.nextChar(state.data, state.pos1.pos)
+		const { length } = utf8.nextChar(state.body.data, state.pos1.pos)
 		this.delete(0, length)
 	},
 	opDeleteWord() {
@@ -163,24 +155,24 @@ const reducer = state => ({
 
 	storeUndo() {
 		const undo = state.history[state.historyIndex]
-		if (undo.data.length === state.data.length && undo.data === state.data) {
+		if (undo.body.data.length === state.body.data.length && undo.body.data === state.body.data) {
 			// No-op.
 			return
 		}
-		const { data, pos1, pos2 } = state
-		state.history.push({ data, pos1, pos2 })
+		const { body, pos1, pos2 } = state
+		state.history.push({ body, pos1, pos2 })
 		state.historyIndex++
 	},
-	// FIXME: Should reset `didCorrectPos` when
-	// `historyIndex === 1`.
 	opUndo() {
 		if (!state.historyIndex) {
 			state.didCorrectPos = false
 			return
-		}
+		} //else if (state.historyIndex === 1) {
+		// 	state.didCorrectPos = false
+		// }
 		state.historyIndex--
-		const { data, pos1, pos2 } = state.history[state.historyIndex]
-		Object.assign(state, { data, pos1, pos2 })
+		const { body, pos1, pos2 } = state.history[state.historyIndex]
+		Object.assign(state, { body, pos1, pos2 })
 		state.shouldRenderComponents++
 	},
 	opRedo() {
@@ -189,8 +181,8 @@ const reducer = state => ({
 			return
 		}
 		state.historyIndex++
-		const { data, pos1, pos2 } = state.history[state.historyIndex]
-		Object.assign(state, { data, pos1, pos2 })
+		const { body, pos1, pos2 } = state.history[state.historyIndex]
+		Object.assign(state, { body, pos1, pos2 })
 		state.shouldRenderComponents++
 	},
 	prune() {
@@ -198,25 +190,36 @@ const reducer = state => ({
 	},
 
 	render() {
-		state.Components = Components.parse(state.data)
+		state.Components = Components.parse(state.body)
 		state.shouldRenderPos++
 	},
 
 })
 
-function init(state) {
-	const { data, pos1, pos2 } = state
+// NOTE: `init` is a higher-order function that returns a
+// function that initializes the state. This prevents
+// `new VDOM` from creating a new VDOM per render.
+const init = data => state => {
+	const body = new vdom.VDOM(data)
+	const { pos1, pos2 } = state
 	const newState = {
 		...state,
-		history: [{ data, pos1, pos2 }],
+		body,
+		history: [
+			{
+				body, // The initial VDOM body.
+				pos1, // The initial VDOM cursor start.
+				pos2, // The initial VDOM cursor end.
+			},
+		],
 		historyIndex: 0,
-		Components: Components.parse(data),
+		Components: Components.parse(body),
 	}
 	return newState
 }
 
 function useEditor(data = "") {
-	return useMethods(reducer, { ...initialState, data }, init)
+	return useMethods(reducer, initialState, init(data))
 }
 
 export default useEditor

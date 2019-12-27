@@ -3,8 +3,8 @@ import stringify from "./stringify"
 import stylex from "stylex"
 
 const tabs = {
-	MozTabSize: 2, // Firefox.
-	tabSize: 2,    // etc.
+	MozTabSize: 2,
+	tabSize:    2,
 }
 
 const DebugEditor = props => (
@@ -12,7 +12,7 @@ const DebugEditor = props => (
 		<p style={{ ...stylex.parse("fs:12 lh:125%"), ...tabs, fontFamily: "'Monaco'" }}>
 			{stringify({
 				...props.state,
-				history: props.state.history.map(history => history.data),
+				history: props.state.history.map(history => history.body.data),
 			})}
 		</p>
 	</pre>

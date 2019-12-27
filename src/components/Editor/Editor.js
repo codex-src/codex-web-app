@@ -114,7 +114,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 								pos2 = traverseDOM.computePosFromNode(ref.current, focusNode, focusOffset)
 							}
-							dispatch.setState(state.data, pos1, pos2)
+							dispatch.setState(state.body, pos1, pos2)
 						},
 
 						onKeyPress: e => {
@@ -180,7 +180,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 								// No-op.
 								return
 							}
-							const cutData = state.data.slice(state.pos1.pos, state.pos2.pos)
+							const cutData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
 							e.clipboardData.setData("text/plain", cutData)
 							dispatch.opWrite("onCut", "")
 						},
@@ -191,7 +191,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 								// No-op.
 								return
 							}
-							const copyData = state.data.slice(state.pos1.pos, state.pos2.pos)
+							const copyData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
 							e.clipboardData.setData("text/plain", copyData)
 						},
 
