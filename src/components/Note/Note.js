@@ -12,7 +12,7 @@ import stylex from "stylex"
 // <div style={stylex.parse("h:16")} />
 
 function Note(props) {
-	const [state, dispatch] = Editor.useEditor("Hello, 😀 world!")
+	const [state, dispatch] = Editor.useEditor("Hello, world! 😀")
 
 	return (
 		<div style={stylex.parse("flex -r -x:center")}>
@@ -20,7 +20,7 @@ function Note(props) {
 				<Editor.Editor
 					state={state} dispatch={dispatch}
 					nav={80} mainInsetTop={80} mainInsetBottom={80} footer={80}
-					// scrollPastEnd
+					scrollPastEnd
 				/>
 			</div>
 		</div>

@@ -62,11 +62,11 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 		[state.isFocused],
 	)
 
-	// Feature: `scrollPastEnd`.
+	// Feature scroll past end:
 	let scrollPastEnd = {}
 	if (props.scrollPastEnd) {
 		scrollPastEnd = {
-			paddingBottom: `calc(100vh - ${
+			height: `calc(100vh - ${
 				(props.nav || 0) +
 				(props.mainInsetTop || 0) +
 				(props.mainInsetBottom || 0) +
@@ -192,8 +192,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 								return
 							}
 							const copyData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-							// console.log(`^${copyData}$`)
-							console.log(state.pos1.pos, state.pos2.pos)
 							e.clipboardData.setData("text/plain", copyData)
 						},
 
@@ -214,8 +212,8 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 					state.Components,
 				)}
 			</Provider>
-			<div style={stylex.parse("h:28")} />
-			<DebugEditor state={state} />
+			{/* <div style={stylex.parse("h:28")} /> */}
+			{/* <DebugEditor state={state} /> */}
 		</ErrorBoundary>
 	)
 })
