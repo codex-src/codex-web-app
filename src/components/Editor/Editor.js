@@ -118,6 +118,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						},
 
 						onKeyPress: e => {
+							// console.log("onKeyPress", { ...e })
 							e.preventDefault()
 							let data = e.key
 							if (e.key === "Enter") {
@@ -166,14 +167,23 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							}
 						},
 
-						// onCompositionEnd: e => {
-						// 	const data = traverseDOM.innerText(ref.current)
-						// 	dispatch.setState(data, state.pos1, state.pos2)
-						// },
+						onCompositionEnd: e => {
+							let { node } = traverseDOM.computeNodeFromPos(ref.current, state.pos1.pos)
+							while (!traverseDOM.isBlockNode(node)) {
+								node = node.parentNode
+							}
+							console.log(node)
 
-						onInput: e => {
-							console.log({ ...e })
+							// // console.log(e.data)
+							// // dispatch.opWrite("onCompositionEnd", e.data)
+							// const data = traverseDOM.innerText(ref.current)
+							// console.log(`^${data.split("\n").join("\\n")}$`)
+							// dispatch.setState(data, state.pos1, state.pos2)
 						},
+
+						// onInput: e => {
+						// 	// ...
+						// },
 
 						onCut: e => {
 							e.preventDefault()
