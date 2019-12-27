@@ -1,3 +1,9 @@
 import * as traverseDOM from "./traverseDOM"
+import * as types from "./types"
 
-export default traverseDOM
+const exports = {
+	...traverseDOM,
+	...types,
+}
+
+export default exports
