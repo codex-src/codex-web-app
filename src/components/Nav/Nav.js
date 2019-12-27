@@ -120,8 +120,8 @@ function Nav(props) {
 					{/* LHS */}
 					<NavList>
 						<NavItem to="/">
-							<div style={stylex.parse("wh:24 b:gray-200 br:max")} />
-							<div style={stylex.parse("w:12")} />
+							{/* <div style={stylex.parse("wh:24 b:gray-200 br:max")} /> */}
+							{/* <div style={stylex.parse("w:12")} /> */}
 							<CodexLogo style={stylex.parse("w:80 h:20")} />
 						</NavItem>
 					</NavList>
