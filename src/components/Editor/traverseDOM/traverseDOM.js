@@ -128,20 +128,21 @@ export function computeNodeFromPos(root, pos) {
 	return node
 }
 
-// export function innerText(node) {
-// 	let data = ""
-// 	const recurse = start => {
-// 		for (const each of start.childNodes) {
-// 			if (isTextNode(each)) {
-// 				data += nodeValue(each)
-// 			} else {
-// 				recurse(each)
-// 				if (isBlockNode(each) && each.nextSibling) {
-// 					data += "\n"
-// 				}
-// 			}
-// 		}
-// 	}
-// 	recurse(node)
-// 	return data
-// }
+// `innerText` reads recursively from a node.
+export function innerText(node) {
+	let data = ""
+	const recurse = start => {
+		for (const each of start.childNodes) {
+			if (isTextNode(each)) {
+				data += nodeValue(each)
+			} else {
+				recurse(each)
+				if (isBlockNode(each) && each.nextSibling) {
+					data += "\n"
+				}
+			}
+		}
+	}
+	recurse(node)
+	return data
+}

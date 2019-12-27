@@ -166,7 +166,14 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							}
 						},
 
-						// TODO: Add `onInput` and composition events.
+						// onCompositionEnd: e => {
+						// 	const data = traverseDOM.innerText(ref.current)
+						// 	dispatch.setState(data, state.pos1, state.pos2)
+						// },
+
+						onInput: e => {
+							console.log({ ...e })
+						},
 
 						onCut: e => {
 							e.preventDefault()
@@ -206,8 +213,8 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 					state.Components,
 				)}
 			</Provider>
-			{/* {<div style={stylex.parse("h:28")} />} */}
-			{/* {<DebugEditor state={state} />} */}
+			<div style={stylex.parse("h:28")} />
+			<DebugEditor state={state} />
 		</ErrorBoundary>
 	)
 })
