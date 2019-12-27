@@ -93,7 +93,7 @@ const AuthNav = props => (
 		</NavItem>
 		<NavItem to="/preferences">
 			<Text>
-				<Icon icon={Feather.Sliders} />
+				<Icon icon={Feather.Settings} />
 				&nbsp;
 				Preferences
 			</Text>
