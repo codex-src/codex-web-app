@@ -1,0 +1,37 @@
+/* http://cdpn.io/yLyoVao */
+a {
+	color:           inherit;
+	text-decoration: none;
+}
+
+button {
+	padding:         0;
+	font:            inherit;
+	letter-spacing:  inherit;
+	color:           inherit;
+	border:          none;
+}
+
+input {
+	padding:         0;
+	font:            inherit;
+	letter-spacing:  inherit;
+	color:           inherit;
+	border:          none;
+}
+input::placeholder {
+	color: hsl(var(--gray, 0, 0%, 50%));
+}
+
+textarea {
+	padding:         0;
+	vertical-align:  middle;
+	font:            inherit;
+	letter-spacing:  inherit;
+	color:           inherit;
+	border:          none;
+	resize:          none;
+}
+textarea::placeholder {
+	color: hsl(var(--gray, 0, 0%, 50%));
+}

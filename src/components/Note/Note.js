@@ -1,6 +1,5 @@
 import Editor from "components/Editor"
 import React from "react"
-import stylex from "stylex"
 
 // import Headers from "components/Headers"
 //
