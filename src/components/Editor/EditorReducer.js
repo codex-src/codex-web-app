@@ -34,7 +34,7 @@ const reducer = state => ({
 	},
 
 	setState(body, pos1, pos2) {
-		if (pos1 > pos2) {
+		if (pos1.pos > pos2.pos) {
 			[pos1, pos2] = [pos2, pos1]
 		}
 		Object.assign(state, { body, pos1, pos2 })

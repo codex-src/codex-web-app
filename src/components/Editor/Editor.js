@@ -192,6 +192,8 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 								return
 							}
 							const copyData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+							// console.log(`^${copyData}$`)
+							console.log(state.pos1.pos, state.pos2.pos)
 							e.clipboardData.setData("text/plain", copyData)
 						},
 
