@@ -1,3 +1,4 @@
+/* https://github.com/jonathantneal/system-font-css */
 html {
-	font: 1rem/1.5 BlinkMacSystemFont, system-ui, -apple-system, sans-serif;
+	font: 1rem/1.5 system-ui;
 }
