@@ -24,15 +24,15 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-const H1 = props => <h1 style={stylex.parse("fw:700 fs:19")}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
-const H2 = props => <h2 style={stylex.parse("fw:700 fs:19")}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
-const H3 = props => <h3 style={stylex.parse("fw:700 fs:19")}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
-const H4 = props => <h4 style={stylex.parse("fw:700 fs:19")}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
-const H5 = props => <h5 style={stylex.parse("fw:700 fs:19")}><Markdown start="#####&nbsp;">{props.children}</Markdown></h5>
-const H6 = props => <h6 style={stylex.parse("fw:700 fs:19")}><Markdown start="######&nbsp;">{props.children}</Markdown></h6>
+const H1 = props => <h1 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
+const H2 = props => <h2 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
+const H3 = props => <h3 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
+const H4 = props => <h4 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
+const H5 = props => <h5 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="#####&nbsp;">{props.children}</Markdown></h5>
+const H6 = props => <h6 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="######&nbsp;">{props.children}</Markdown></h6>
 
 const Comment = props => (
-	<p style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+	<p id={props.hash} style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
 		<Markdown style={stylex.parse("c:gray")} start="//">
 			{props.children}
 		</Markdown>
@@ -41,7 +41,7 @@ const Comment = props => (
 
 // Compound component.
 const Blockquote = props => (
-	<blockquote>
+	<blockquote id={props.hash}>
 		<ul>
 			{props.children.map(each => (
 				<li key={each.key} style={stylex.parse("fs:19")}>
@@ -60,7 +60,7 @@ const Blockquote = props => (
 // https://cdpn.io/PowjgOg.
 // NOTE (2): `end` property is for debugging.
 const CodeBlock = props => (
-	<pre style={{ ...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:gray-50 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false}>
+	<pre id={props.hash} style={{ ...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:gray-50 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false}>
 		<code style={{ ...stylex.parse("pre"), MozTabSize: 2, tabSize: 2, font: "16px/1.375 'Monaco'" }}>
 			<Markdown style={stylex.parse("c:gray")} start={props.start} end={props.end}>
 				{props.children}
@@ -70,13 +70,13 @@ const CodeBlock = props => (
 )
 
 const Paragraph = props => (
-	<p style={stylex.parse("fs:19")}>
+	<p id={props.hash} style={stylex.parse("fs:19")}>
 		{props.children}
 	</p>
 )
 
 const Break = props => (
-	<p style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+	<p id={props.hash} style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
 		<Markdown start={props.start} />
 	</p>
 )
@@ -127,7 +127,7 @@ export function parse(body) {
 	let index = 0
 	while (index < body.nodes.length) {
 		const {
-			key,  // The current node’s key (UUID).
+			key,  // The current node’s key (hash).
 			data, // The current node’s plain text data
 		} = body.nodes[index]
 		switch (true) {
@@ -138,7 +138,7 @@ export function parse(body) {
 			)
 		):
 			Components.push((
-				<Paragraph key={key}>
+				<Paragraph key={key} hash={key}>
 					{data || (
 						<br />
 					)}
@@ -156,7 +156,7 @@ export function parse(body) {
 			const headerIndex = data.indexOf("# ")
 			const HeaderComponent = [H1, H2, H3, H4, H5, H6][headerIndex] // Must start with an uppercase character.
 			Components.push((
-				<HeaderComponent key={key}>
+				<HeaderComponent key={key} hash={key}>
 					{data.slice(headerIndex + 2) || (
 						<br />
 					)}
@@ -165,7 +165,7 @@ export function parse(body) {
 			break
 		case data.length >= 2 && data.slice(0, 2) === "//":
 			Components.push((
-				<Comment key={key}>
+				<Comment key={key} hash={key}>
 					{data.slice(2) || (
 						<br />
 					)}
@@ -183,7 +183,7 @@ export function parse(body) {
 			}
 			const bquoteNodes = body.nodes.slice(bquoteStart, index)
 			Components.push((
-				<Blockquote key={key}>
+				<Blockquote key={key} hash={key}>
 					{bquoteNodes.map(each => (
 						{
 							...each,
@@ -203,7 +203,7 @@ export function parse(body) {
 			)
 		):
 			Components.push((
-				<CodeBlock key={key} start="```" end="```">
+				<CodeBlock key={key} hash={key} start="```" end="```">
 					{data.slice(3, -3) // || (
 						// <br />
 					/* ) */ }
@@ -224,7 +224,7 @@ export function parse(body) {
 			index++
 			if (!cblockDidTerminate) { // Unterminated code block.
 				Components.push((
-					<Paragraph key={key}>
+					<Paragraph key={key} hash={key}>
 						{data || (
 							<br />
 						)}
@@ -235,7 +235,7 @@ export function parse(body) {
 			}
 			const cblockNodes = body.nodes.slice(cblockStart, index)
 			Components.push((
-				<CodeBlock key={key} start={data} end="```">
+				<CodeBlock key={key} hash={key} start={data} end="```">
 					{cblockNodes.map((each, index) => {
 						if (!index || index + 1 === cblockNodes.length) {
 							return ""
@@ -254,11 +254,11 @@ export function parse(body) {
 				data === "---"
 			)
 		):
-			Components.push(<Break key={key} start={data} />)
+			Components.push(<Break key={key} hash={key} start={data} />)
 			break
 		default:
 			Components.push((
-				<Paragraph key={key}>
+				<Paragraph key={key} hash={key}>
 					{data || (
 						<br />
 					)}

@@ -16,7 +16,7 @@ function Note(props) {
 
 	return (
 		<div style={stylex.parse("flex -r -x:center")}>
-			<div style={stylex.parse("w:768")}>
+			<div style={stylex.parse("w:896")}>
 				<Editor.Editor
 					state={state} dispatch={dispatch}
 					nav={80} mainInsetTop={80} mainInsetBottom={80} footer={80}

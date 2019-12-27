@@ -18,7 +18,7 @@ const initialState = {
 	shouldRenderComponents: 0,
 
 	// `shouldRenderPos` hints whether the editor’s cursor
-	// positions should be rerendered.
+	// should be rerendered.
 	shouldRenderPos: 0,
 
 	Components: [], // The rendered components.

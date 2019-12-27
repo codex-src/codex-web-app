@@ -1,10 +1,15 @@
 import invariant from "invariant"
-import uuidv4 from "uuid/v4"
+// import uuidv4 from "uuid/v4"
+
+// `generateKey` generates a new 7-byte hash.
+function generateKey() {
+	return Math.random().toString(16).slice(2, 9)
+}
 
 // `parseVDOMNodes` parses plain text data into VDOM nodes.
 function parseVDOMNodes(data) {
 	const nodes = data.split("\n").map(data => ({
-		key: uuidv4(),
+		key: generateKey(),
 		data,
 	}))
 	return nodes
@@ -79,7 +84,7 @@ class VDOM {
 	_mergeEndNode(end, node) {
 		const newNode = {
 			...this.nodes[end.node],
-			key: uuidv4(),
+			key: generateKey(),
 		}
 		newNode.data = node.data + newNode.data.slice(end.offset)
 		return newNode
