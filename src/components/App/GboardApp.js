@@ -16,7 +16,7 @@ import stylex from "stylex"
 // />
 
 // function GboardApp(props) {
-// 	// const [state, setState] = React.useState("Hello, world!") // Editor.useEditor("Hello, 😀 world!")
+// 	// const [state, setState] = React.useState("Hello, world!") // Editor.useEditor("Hello, world!")
 // 	//
 // 	// React.useEffect(() => {
 // 	// 	console.log(state)

@@ -1,4 +1,4 @@
-// import App from "./App"
-import GboardApp from "./GboardApp"
+// import GboardApp from "./GboardApp"
+import App from "./App"
 
-export default GboardApp // App
+export default App // GboardApp
