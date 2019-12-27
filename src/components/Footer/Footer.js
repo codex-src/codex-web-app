@@ -73,11 +73,11 @@ const Footer = props => (
 						Systems
 					</Text>
 				</FooterItem>
-				<FooterItem to="/api">
-					<Text>
-						API
-					</Text>
-				</FooterItem>
+				{/* <FooterItem to="/api"> */}
+				{/* 	<Text> */}
+				{/* 		API */}
+				{/* 	</Text> */}
+				{/* </FooterItem> */}
 				<FooterItem to="https://github.com/codex-src">
 					<Text>
 						Open source
