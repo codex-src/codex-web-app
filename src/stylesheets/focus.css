@@ -3,15 +3,17 @@ button,
 input,
 .StripeElement {
 	outline: none;
-	transition: box-shadow 0.08s ease-in, color 0.08s ease-in;
+	transition:
+		color 0.08s ease-in,
+		box-shadow 0.08s ease-in;
 }
 
 button:focus,
 input:focus,
 .StripeElement--focus {
 	box-shadow:
-		0 0 0 1px rgba(50, 151, 211, 0.3),
-		0 1px 1px rgba(0, 0, 0, 0.07),
-		0 0 0 4px rgba(50, 151, 211, 0.3)
+		0px 0px 0px 1px rgba(50, 151, 211, 0.3),
+		0px 1px 1px rgba(0, 0, 0, 0.07),
+		0px 0px 0px 4px rgba(50, 151, 211, 0.3)
 			!important;
 }

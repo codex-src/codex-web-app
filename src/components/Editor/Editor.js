@@ -6,6 +6,8 @@ import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 
+import "./editor.css"
+
 export const Context = React.createContext()
 
 export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
@@ -93,8 +95,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
 						style: {
 							...scrollPastEnd,
-							whiteSpace: "pre-wrap",
-							overflowWrap: "break-word",
 							...translateZ,
 						},
 
