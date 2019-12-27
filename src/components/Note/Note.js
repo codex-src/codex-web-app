@@ -11,6 +11,16 @@ import stylex from "stylex"
 // </header>
 // <div style={stylex.parse("h:16")} />
 
+// <div style={stylex.parse("flex -r -x:center")}>
+// 	<div style={stylex.parse("w:896")}>
+// 		<Editor.Editor
+// 			state={state} dispatch={dispatch}
+// 			nav={80} mainInsetTop={80} mainInsetBottom={80} footer={80}
+// 			scrollPastEnd
+// 		/>
+// 	</div>
+// </div>
+
 function Note(props) {
 	const [state, dispatch] = Editor.useEditor("Hello, world! 😀")
 
@@ -20,16 +30,6 @@ function Note(props) {
 			nav={80} mainInsetTop={80} mainInsetBottom={80} footer={80}
 			scrollPastEnd
 		/>
-
-		// <div style={stylex.parse("flex -r -x:center")}>
-		// 	<div style={stylex.parse("w:896")}>
-		// 		<Editor.Editor
-		// 			state={state} dispatch={dispatch}
-		// 			nav={80} mainInsetTop={80} mainInsetBottom={80} footer={80}
-		// 			scrollPastEnd
-		// 		/>
-		// 	</div>
-		// </div>
 	)
 }
 
