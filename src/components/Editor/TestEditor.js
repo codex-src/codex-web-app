@@ -4,7 +4,7 @@ import stylex from "stylex"
 import useMethods from "use-methods"
 import vdom from "./vdom"
 
-// // `CodexNode` sets `data-codex-node={uuid}`.
+// // <node data-codex-node="...">
 // const CodexNode = render => extendedProps => {
 // 	const element = render(extendedProps)
 // 	const {
@@ -26,17 +26,16 @@ const Syntax = stylex.Styleable(props => (
 	</span>
 ))
 
-// TODO: Pre-parse styles.
 const Markdown = ({ style, ...props }) => (
 	<React.Fragment>
 		{props.start && (
-			<Syntax {...style}>
+			<Syntax style={style}>
 				{props.start}
 			</Syntax>
 		)}
 		{props.children}
 		{props.end && (
-			<Syntax {...style}>
+			<Syntax style={style}>
 				{props.end}
 			</Syntax>
 		)}
@@ -79,9 +78,9 @@ const Blockquote = props => (
 // https://cdpn.io/PowjgOg.
 // NOTE (2): `end` property is for debugging.
 const CodeBlock = props => (
-	<pre style={{ ...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:gray-100 br:2 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }}>
-		<code style={{ ...stylex.parse("pre"), tabSize: 2, font: "16px/1.25 'Monaco'" }}>
-			<Markdown start={props.start} end={props.end}>
+	<pre style={{ ...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:gray-50 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }}>
+		<code style={{ ...stylex.parse("pre"), MozTabSize: 2, tabSize: 2, font: "16px/1.375 'Monaco'" }} spellCheck={false}>
+			<Markdown style={stylex.parse("c:gray")} start={props.start} end={props.end}>
 				{props.children}
 			</Markdown>
 		</code>
@@ -207,7 +206,6 @@ function parse(body) {
 				data.slice(-3) === "```"
 			)
 		):
-			// FIXME: `<br />`?
 			Components.push((
 				<CodeBlock key={key} start="```" end="```">
 					{data.slice(3, -3) // || (
