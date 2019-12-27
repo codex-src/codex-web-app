@@ -7,7 +7,7 @@ import User from "components/User"
 import { ReactComponent as CodexLogo } from "assets/codex.svg"
 
 const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
-	<Icon style={stylex.parse("wh:15 c:blue-a400")} />
+	<Icon style={stylex.parse("wh:15 middle c:blue-a400")} />
 ))
 
 const Text = stylex.Styleable(props => (
@@ -24,13 +24,13 @@ const CTAButton = stylex.Styleable(props => (
 ))
 
 const NavItem = stylex.Unstyleable(props => (
-	<Router.Link style={stylex.parse("p-x:12 flex -r -y:center h:max")} {...props}>
+	<Router.Link style={stylex.parse("p-x:8 flex -r -y:center h:max")} {...props}>
 		{props.children}
 	</Router.Link>
 ))
 
 const NavList = stylex.Unstyleable(props => (
-	<div style={stylex.parse("m-x:-12 flex -r")}>
+	<div style={stylex.parse("m-x:-8 flex -r")}>
 		{props.children}
 	</div>
 ))
@@ -39,36 +39,36 @@ const UnauthNav = props => (
 	<NavList>
 		<NavItem to="/our-story">
 			<Icon icon={Feather.MapPin} />
-			<div style={stylex.parse("w:6")} />
 			<Text>
+				&nbsp;
 				Our story
 			</Text>
 		</NavItem>
 		<NavItem to="/features">
-			<Icon icon={Feather.Package} />
-			<div style={stylex.parse("w:6")} />
 			<Text>
+				<Icon icon={Feather.Package} />
+				&nbsp;
 				Features
 			</Text>
 		</NavItem>
 		<NavItem to="/pricing">
-			<Icon icon={Feather.Tag} />
-			<div style={stylex.parse("w:6")} />
 			<Text>
+				<Icon icon={Feather.Tag} />
+				&nbsp;
 				Pricing
 			</Text>
 		</NavItem>
 		<NavItem to="/sign-in">
-			<Icon icon={Feather.LogIn} />
-			<div style={stylex.parse("w:6")} />
 			<Text>
+				<Icon icon={Feather.LogIn} />
+				&nbsp;
 				Login
 			</Text>
 		</NavItem>
 		<NavItem to="/sign-up">
 			<CTAButton>
 				<Text style={stylex.parse("c:blue-a400")}>
-					Sign up now
+					Sign up
 				</Text>
 			</CTAButton>
 		</NavItem>
@@ -78,30 +78,30 @@ const UnauthNav = props => (
 const AuthNav = props => (
 	<NavList>
 		<NavItem to="/new">
-			<Icon icon={Feather.Plus} />
-			<div style={stylex.parse("w:6")} />
 			<Text>
+				<Icon icon={Feather.Edit} />
+				&nbsp;
 				New note
 			</Text>
 		</NavItem>
 		<NavItem to="/notes">
-			<Icon icon={Feather.Book} />
-			<div style={stylex.parse("w:6")} />
 			<Text>
+				<Icon icon={Feather.Layers} />
+				&nbsp;
 				My notes
 			</Text>
 		</NavItem>
 		<NavItem to="/preferences">
-			<Icon icon={Feather.Sliders} />
-			<div style={stylex.parse("w:6")} />
 			<Text>
+				<Icon icon={Feather.Sliders} />
+				&nbsp;
 				Preferences
 			</Text>
 		</NavItem>
 		<NavItem to="/account">
-			<Icon icon={Feather.Lock} />
-			<div style={stylex.parse("w:6")} />
 			<Text>
+				<Icon icon={Feather.Lock} />
+				&nbsp;
 				Account
 			</Text>
 		</NavItem>
