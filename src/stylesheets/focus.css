@@ -1,6 +1,7 @@
-/* https://stripe.com/docs/payments/checkout */
+/* https://cdpn.io/WNbEoYE */
 button,
 input,
+textarea,
 .StripeElement {
 	outline: none;
 	transition:
@@ -10,6 +11,7 @@ input,
 
 button:focus,
 input:focus,
+textarea:focus,
 .StripeElement--focus {
 	box-shadow:
 		0px 0px 0px 1px rgba(50, 151, 211, 0.3),

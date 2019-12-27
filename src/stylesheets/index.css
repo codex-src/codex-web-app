@@ -1,7 +1,3 @@
 html {
-	font: 1rem/1.5
-		"BlinkMacSystemFont", /* Chrome  */
-		"system-ui",          /* Safari  */
-		"-apple-system",      /* Firefox */
-		"sans-serif";         /* etc.    */
+	font: 1rem/1.5 BlinkMacSystemFont, system-ui, -apple-system, sans-serif;
 }
