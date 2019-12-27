@@ -62,11 +62,12 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 		[state.isFocused],
 	)
 
-	// Feature scroll past end:
+	// Scroll past end:
 	let scrollPastEnd = {}
 	if (props.scrollPastEnd) {
 		scrollPastEnd = {
-			height: `calc(100vh - ${
+			paddingBottom: `calc(100vh - ${
+				Math.floor(19 * 1.5) + // Reuse `buffer` from `shouldRenderPos`.
 				(props.nav || 0) +
 				(props.mainInsetTop || 0) +
 				(props.mainInsetBottom || 0) +
