@@ -69,7 +69,7 @@ const Footer = props => (
 				<FooterItem to="/systems">
 					<Text>
 						<StatusCircle.Info />
-						{" \u00a0"}
+						&nbsp;
 						Systems
 					</Text>
 				</FooterItem>
@@ -96,6 +96,11 @@ const Footer = props => (
 				<FooterItem to="/support">
 					<Text>
 						Support
+					</Text>
+				</FooterItem>
+				<FooterItem to="/feedback">
+					<Text>
+						Feedback
 					</Text>
 				</FooterItem>
 			</FooterList>
