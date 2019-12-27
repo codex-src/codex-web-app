@@ -2,25 +2,6 @@ html {
 	font: 1rem/1.5
 		"BlinkMacSystemFont", /* Chrome  */
 		"system-ui",          /* Safari  */
-		"-apple-system";      /* Firefox */
+		"-apple-system",      /* Firefox */
+		"sans-serif";         /* etc.    */
 }
-
-/*
- * // https://cdpn.io/zaydek/debug/qBEqJaa/PNkvYKyZnVqA
- * const fontSizes = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
- * for (const fontSize of fontSizes) {
- * 	const em = (1 - fontSize / 16) / 20
- * 	console.log(`[style*="font-size: ${fontSize}px"] { letter-spacing: ${em}em; }`)
- * }
- */
-[style*="font-size: 10px"]:not([style*="font-family"]) { letter-spacing:   0.01875em; }
-[style*="font-size: 11px"]:not([style*="font-family"]) { letter-spacing:  0.015625em; }
-[style*="font-size: 12px"]:not([style*="font-family"]) { letter-spacing:    0.0125em; }
-[style*="font-size: 13px"]:not([style*="font-family"]) { letter-spacing:  0.009375em; }
-[style*="font-size: 14px"]:not([style*="font-family"]) { letter-spacing:   0.00625em; }
-[style*="font-size: 15px"]:not([style*="font-family"]) { letter-spacing:  0.003125em; }
-[style*="font-size: 16px"]:not([style*="font-family"]) { letter-spacing:         0em; }
-[style*="font-size: 17px"]:not([style*="font-family"]) { letter-spacing: -0.003125em; }
-[style*="font-size: 18px"]:not([style*="font-family"]) { letter-spacing:  -0.00625em; }
-[style*="font-size: 19px"]:not([style*="font-family"]) { letter-spacing: -0.009375em; }
-[style*="font-size: 20px"]:not([style*="font-family"]) { letter-spacing:   -0.0125em; }
