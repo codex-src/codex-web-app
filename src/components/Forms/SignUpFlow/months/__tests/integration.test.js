@@ -1,6 +1,6 @@
 import getMonth from "../months"
 
-test("integration", () => {
+test("getMonth", () => {
 	expect(getMonth(0)).toBe("January")
 	expect(getMonth(1)).toBe("February")
 	expect(getMonth(2)).toBe("March")
