@@ -25,7 +25,6 @@ export function password(password) {
 	return ok
 }
 
-// export function passcode(passcode) {
-export function integers(integers) {
-	return /^\d+$/.test(integers)
+export function numbers(numbers) {
+	return /^\d+$/.test(numbers)
 }

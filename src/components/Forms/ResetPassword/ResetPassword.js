@@ -35,10 +35,10 @@ function ResetPassword(props) {
 		} else if (!test.username(username)) {
 			dispatch.setWarn("Username needs to be a combo of:\n\n- a-z, A-Z\n- 0-9\n- _\n\n(And start with a-z, A-Z, or _)")
 			return
-		} else if (passcode.length !== 4 || !test.integers(passcode)) {
+		} else if (passcode.length !== 4 || !test.numbers(passcode)) {
 			dispatch.setWarn("Passcode needs to be 4 numbers.")
 			return
-		} else if (lastFour.length !== 4 || !test.integers(lastFour)) {
+		} else if (lastFour.length !== 4 || !test.numbers(lastFour)) {
 			dispatch.setWarn("Last four needs to be 4 numbers.")
 			return
 		} else if (newPassword.length < 8) {

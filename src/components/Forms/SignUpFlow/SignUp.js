@@ -30,13 +30,13 @@ function SignUp({ state, dispatch, ...props }) {
 		} else if (!test.password(password)) {
 			dispatch.setWarn("Password needs to be a combo of:\n\n- a-z\n- A-Z\n- 0-9\n\n(Spaces are allowed)")
 			return
-		} else if (passcode.length !== 4 || !test.integers(passcode)) {
+		} else if (passcode.length !== 4 || !test.numbers(passcode)) {
 			dispatch.setWarn("Passcode needs to be 4 numbers.")
 			return
 		}
 		// Test username:
 		const { errors, data } = await testUsernameTaken({ username })
-		if (data && data.testUsernameTaken) { // Guard `data`.
+		if (data && data.testUsernameTaken) {
 			dispatch.setWarn(`Username ${username} is taken.`)
 			return
 		} else if (errors) {
