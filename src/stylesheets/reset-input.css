@@ -6,6 +6,7 @@ a {
 
 button {
 	padding:         0;
+	text-align:      inherit;
 	font:            inherit;
 	letter-spacing:  inherit;
 	color:           inherit;
