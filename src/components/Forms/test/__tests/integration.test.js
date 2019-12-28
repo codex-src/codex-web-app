@@ -11,6 +11,9 @@ test("email address", () => {
 	expect(_test.emailAddress("a.a.a+b@c.c.c")).toBe(true)
 	expect(_test.emailAddress("a.a.a+b+b@c.c.c")).toBe(true)
 	expect(_test.emailAddress("a.a.a+b+b+b@c.c.c")).toBe(true)
+	expect(_test.emailAddress("a.a.a+b+b+b-d@c.c.c")).toBe(true)
+	expect(_test.emailAddress("a.a.a+b+b+b-d-d@c.c.c")).toBe(true)
+	expect(_test.emailAddress("a.a.a+b+b+b-d-d-d@c.c.c")).toBe(true)
 })
 
 test("username", () => {
