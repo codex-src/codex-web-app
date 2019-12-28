@@ -38,30 +38,30 @@ const NavList = stylex.Unstyleable(props => (
 const UnauthNav = props => (
 	<NavList>
 		<NavItem to="/our-story">
-			<Icon icon={Feather.MapPin} />
 			<Text>
-				&nbsp;
+				{/* <Icon icon={Feather.MapPin} /> */}
+				{/* &nbsp; */}
 				Our story
 			</Text>
 		</NavItem>
 		<NavItem to="/features">
 			<Text>
-				<Icon icon={Feather.Package} />
-				&nbsp;
+				{/* <Icon icon={Feather.Package} /> */}
+				{/* &nbsp; */}
 				Features
 			</Text>
 		</NavItem>
 		<NavItem to="/pricing">
 			<Text>
-				<Icon icon={Feather.Tag} />
-				&nbsp;
+				{/* <Icon icon={Feather.Tag} /> */}
+				{/* &nbsp; */}
 				Pricing
 			</Text>
 		</NavItem>
 		<NavItem to="/sign-in">
 			<Text>
-				<Icon icon={Feather.LogIn} />
-				&nbsp;
+				{/* <Icon icon={Feather.LogIn} /> */}
+				{/* &nbsp; */}
 				Login
 			</Text>
 		</NavItem>
