@@ -1,3 +1,4 @@
+import * as Router from "react-router-dom"
 import DebugCSS from "components/DebugCSS"
 import fetchGraphQL from "./fetchGraphQL"
 import Footer from "components/Footer"
@@ -7,12 +8,13 @@ import Nav from "components/Nav"
 import Note from "components/Note"
 import PageNotFound from "./PageNotFound"
 import React from "react"
-import Router from "components/Router"
 import stylex from "stylex"
 import User from "components/User"
 
+const keyCodeBackslash = 220
+
 const AppContainer = props => (
-	<DebugCSS keyCode={220}>
+	<DebugCSS keyCode={keyCodeBackslash}>
 		<div style={stylex.parse("flex -c -y:between h:max")}>
 			<div style={stylex.parse("b:white")}>
 				<Nav />

@@ -1,13 +1,11 @@
 import * as Router from "react-router-dom"
 import React from "react"
 
-// `Link` is a higher-order component that switches between:
+// <RouterLink to="/..."> -> <Router.Link to="...">
+// <RouterLink to="...">  -> <a href="...">
+// <RouterLink>           -> <div>
 //
-// <Link to="/..."> -> <Router.Link to="...">
-// <Link to="...">  -> <a href="...">
-// <Link>           -> <div>
-//
-function Link({ to, ...props }) {
+function RouterLink({ to, ...props }) {
 	let Wrapper = null
 	switch (true) {
 	case !to:
@@ -31,4 +29,4 @@ function Link({ to, ...props }) {
 	)
 }
 
-export default Link
+export default RouterLink

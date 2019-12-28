@@ -1,5 +1,4 @@
 import invariant from "invariant"
-// import uuidv4 from "uuid/v4"
 
 // `generateKey` generates a new 7-byte hash.
 function generateKey() {

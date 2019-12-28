@@ -1,3 +1,1 @@
-import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
-
-export default scrollIntoViewIfNeeded
+export { default } from "./scrollIntoViewIfNeeded"

@@ -9,7 +9,7 @@ function focusDOMRect() {
 		if (!selection.anchorNode.getBoundingClientRect) {
 			return null
 		}
-		// Return the anchor node as a fallback:
+		// Return the anchor nodeL
 		return selection.anchorNode.getBoundingClientRect()
 	}
 	return domRects[0]

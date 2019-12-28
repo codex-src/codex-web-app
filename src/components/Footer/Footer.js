@@ -1,7 +1,7 @@
 import * as Feather from "react-feather"
 import * as StatusCircle from "./StatusCircle"
 import React from "react"
-import Router from "components/Router"
+import RouterLink from "components/RouterLink"
 import stylex from "stylex"
 
 import { ReactComponent as CodexLogo } from "assets/codex.svg"
@@ -23,9 +23,9 @@ const Text = stylex.Styleable(props => (
 // ))
 
 const FooterItem = stylex.Unstyleable(props => (
-	<Router.Link style={stylex.parse("p-x:8 flex -r -y:center h:max")} {...props}>
+	<RouterLink style={stylex.parse("p-x:8 flex -r -y:center h:max")} {...props}>
 		{props.children}
-	</Router.Link>
+	</RouterLink>
 ))
 
 const FooterList = stylex.Unstyleable(props => (

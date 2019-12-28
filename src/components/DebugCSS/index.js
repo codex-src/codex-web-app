@@ -1,3 +1,1 @@
-import DebugCSS from "./DebugCSS"
-
-export default DebugCSS
+export { default } from "./DebugCSS"

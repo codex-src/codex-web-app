@@ -1,10 +1,10 @@
 import * as ContextReducer from "./ContextReducer"
+import * as Router from "react-router-dom"
 import Errors from "components/Errors"
 import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
 import invariant from "invariant"
 import React from "react"
-import Router from "components/Router"
 import useMethods from "use-methods"
 
 export const Context = React.createContext()

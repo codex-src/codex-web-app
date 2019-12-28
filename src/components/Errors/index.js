@@ -1,3 +1,7 @@
 import * as Errors from "./Errors"
 
-export default Errors
+const exports = {
+	...Errors,
+}
+
+export default exports

@@ -1,6 +1,6 @@
 import * as Base from "./Base"
+import * as Router from "react-router-dom"
 import React from "react"
-import Router from "components/Router"
 import stylex from "stylex"
 
 export const Submit = stylex.Unstyleable(({ fetching, children, ...props }) => (

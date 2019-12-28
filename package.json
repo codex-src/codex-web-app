@@ -15,11 +15,10 @@
     "react-feather": "^2.0.3",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.0",
-    "stylex": "codex-src/stylex.js",
+    "stylex": "https://github.com/codex-src/stylex.js",
     "system-font-css": "^2.0.2",
     "use-graphql": "codex-src/use-graphql.js",
-    "use-methods": "^0.5.1",
-    "uuid": "^3.3.3"
+    "use-methods": "^0.5.1"
   },
   "scripts": {
     "lint": "yarn eslint --ignore-pattern=build .",

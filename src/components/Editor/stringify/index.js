@@ -1,3 +1,1 @@
-import stringify from "./stringify"
-
-export default stringify
+export { default } from "./stringify"

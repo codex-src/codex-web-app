@@ -1,3 +1,1 @@
-import SignUpFlow from "./SignUpFlow"
-
-export default SignUpFlow
+export { default } from "./SignUpFlow"

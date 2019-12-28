@@ -1,6 +1,6 @@
 import * as Feather from "react-feather"
 import React from "react"
-import Router from "components/Router"
+import RouterLink from "components/RouterLink"
 import stylex from "stylex"
 import User from "components/User"
 
@@ -24,9 +24,9 @@ const CTAButton = stylex.Styleable(props => (
 ))
 
 const NavItem = stylex.Unstyleable(props => (
-	<Router.Link style={stylex.parse("p-x:8 flex -r -y:center h:max")} {...props}>
+	<RouterLink style={stylex.parse("p-x:8 flex -r -y:center h:max")} {...props}>
 		{props.children}
-	</Router.Link>
+	</RouterLink>
 ))
 
 const NavList = stylex.Unstyleable(props => (
@@ -112,8 +112,7 @@ function Nav(props) {
 	const [state] = React.useContext(User.Context)
 
 	return (
-		// NOTE: Use `z:1` because of `translate-z`.
-		<nav style={stylex.parse("sticky -x -t z:1 b:white")}>
+		<nav style={stylex.parse("sticky -x -t z:1 b:white -a:90%")}>
 			<div style={stylex.parse("p-x:32 flex -r -x:center")}>
 				<div style={stylex.parse("flex -r -x:between w:1024 h:80")}>
 
