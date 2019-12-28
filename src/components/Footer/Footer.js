@@ -85,14 +85,13 @@ const Footer = props => (
 						<Icon icon={Feather.ExternalLink} />
 					</Text>
 				</FooterItem>
-				{/* FIXME: Change URL. */}
-				<FooterItem to="https://twitter.com/@username_ZAYDEK">
-					<Text>
-						Twitter
-						&nbsp;
-						<Icon icon={Feather.ExternalLink} />
-					</Text>
-				</FooterItem>
+				{/* <FooterItem to="https://twitter.com/@username_ZAYDEK"> */}
+				{/* 	<Text> */}
+				{/* 		Twitter */}
+				{/* 		&nbsp; */}
+				{/* 		<Icon icon={Feather.ExternalLink} /> */}
+				{/* 	</Text> */}
+				{/* </FooterItem> */}
 				<FooterItem to="/support">
 					<Text>
 						Support

@@ -19,5 +19,5 @@ export const Keychain = stylex.Styleable(props => (
 ))
 
 export const StripeCard = stylex.Styleable(props => (
-	<div id="card-element" style={{ ...stylex.parse("p-x:16 p-y:14.4075 h:48 br:6"), ...Base.boxShadow, cursor: "text" }} {...props} />
+	<div id="card-element" style={{ ...stylex.parse("p-x:16 p-y:14.4075 br:6"), ...Base.boxShadow, cursor: "text" }} {...props} />
 ))

@@ -120,7 +120,7 @@ function ResetPassword(props) {
 					)}
 
 					<Input.Submit style={stylex.parse("m-t:40 m-b:16")} fetching={fetching}>
-						Sign in
+						Reset password
 					</Input.Submit>
 
 					{state.warn && (
