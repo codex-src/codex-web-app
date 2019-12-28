@@ -1,9 +1,9 @@
-import * as Context from "./Context"
 import * as Routes from "./Routes"
+import * as User from "./User"
 
 const exports = {
-	...Context,
 	...Routes,
+	...User,
 }
 
 export default exports

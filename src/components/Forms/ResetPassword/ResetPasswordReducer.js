@@ -1,4 +1,6 @@
-export const initialState = {
+import useMethods from "use-methods"
+
+const initialState = {
 	username:    "",
 	passcode:    "",
 	lastFour:    "",
@@ -7,7 +9,7 @@ export const initialState = {
 	warn:        "",
 }
 
-export const reducer = state => ({
+const reducer = state => ({
 	setUsername(username) {
 		state.warn = ""
 		state.username = username
@@ -31,3 +33,7 @@ export const reducer = state => ({
 		state.warn = warn
 	},
 })
+
+const useResetPassword = () => useMethods(reducer, initialState)
+
+export default useResetPassword

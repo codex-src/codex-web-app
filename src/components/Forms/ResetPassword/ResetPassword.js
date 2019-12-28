@@ -1,4 +1,3 @@
-import * as ResetPasswordReducer from "./ResetPasswordReducer"
 import Errors from "components/Errors"
 import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
@@ -10,13 +9,13 @@ import Overlay from "components/Overlay"
 import React from "react"
 import stylex from "stylex"
 import test from "../test"
-import useMethods from "use-methods"
 import User from "components/User"
+import useResetPassword from "./ResetPasswordReducer"
 
 function ResetPassword(props) {
 	const [, { login }] = React.useContext(User.Context)
 
-	const [state, dispatch] = useMethods(ResetPasswordReducer.reducer, ResetPasswordReducer.initialState)
+	const [state, dispatch] = useResetPassword()
 
 	const [{ fetching }, resetPassword] = GraphQL.useLazyMutation(`
 		mutation ResetPassword($username: String!, $keychain: String!, $newPassword: String!) {

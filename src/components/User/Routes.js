@@ -1,5 +1,5 @@
-import * as Context from "./Context"
 import * as Router from "react-router-dom"
+import * as User from "./User"
 import CodexTitle from "components/CodexTitle"
 import React from "react"
 
@@ -13,9 +13,8 @@ export const Route = ({ title, ...props }) => (
 
 // `UnprotectedRoute` redirects an authenticated user.
 export function UnprotectedRoute(props) {
-	const [state] = React.useContext(Context.Context)
+	const [state] = React.useContext(User.Context)
 
-	// Guard if the user is authenticated:
 	if (state.isAuth) {
 		return <Router.Redirect to="/" />
 	}
@@ -24,9 +23,8 @@ export function UnprotectedRoute(props) {
 
 // `ProtectedRoute` redirects an unauthenticated user.
 export function ProtectedRoute(props) {
-	const [state] = React.useContext(Context.Context)
+	const [state] = React.useContext(User.Context)
 
-	// Guard if the user is unauthenticated:
 	if (!state.isAuth) {
 		return <Router.Redirect to="/sign-in" />
 	}

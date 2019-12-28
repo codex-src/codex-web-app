@@ -1,9 +1,8 @@
-import * as SignUpBillingReducer from "./SignUpBillingReducer"
-import * as SignUpReducer from "./SignUpReducer"
 import React from "react"
 import SignUp from "./SignUp"
 import SignUpBilling from "./SignUpBilling"
-import useMethods from "use-methods"
+import useSignUp from "./SignUpReducer"
+import useSignUpBilling from "./SignUpBillingReducer"
 
 // <Overlay>
 // 	{!state1.complete ? (
@@ -14,8 +13,8 @@ import useMethods from "use-methods"
 // </Overlay>
 
 function SignUpFlow(props) {
-	const [state1, dispatch1] = useMethods(SignUpReducer.reducer, SignUpReducer.initialState)
-	const [state2, dispatch2] = useMethods(SignUpBillingReducer.reducer, SignUpBillingReducer.initialState)
+	const [state1, dispatch1] = useSignUp()
+	const [state2, dispatch2] = useSignUpBilling()
 
 	if (!state1.complete) {
 		return <SignUp state={state1} dispatch={dispatch1} />

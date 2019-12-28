@@ -1,4 +1,3 @@
-import * as SignInReducer from "./SignInReducer"
 import Errors from "components/Errors"
 import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
@@ -10,13 +9,13 @@ import Overlay from "components/Overlay"
 import React from "react"
 import stylex from "stylex"
 import test from "../test"
-import useMethods from "use-methods"
 import User from "components/User"
+import useSignIn from "./SignInReducer"
 
 function SignIn(props) {
 	const [, { login }] = React.useContext(User.Context)
 
-	const [state, dispatch] = useMethods(SignInReducer.reducer, SignInReducer.initialState)
+	const [state, dispatch] = useSignIn()
 
 	const [{ fetching }, createSession] = GraphQL.useLazyMutation(`
 		mutation CreateSession($username: String!, $password: String!) {

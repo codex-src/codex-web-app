@@ -196,8 +196,7 @@ const reducer = state => ({
 
 })
 
-// NOTE: `init` is a higher-order function that returns a
-// function that initializes the state. This prevents
+// NOTE: `init` is a higher-order function that prevents
 // `new VDOM` from creating a new VDOM per render.
 const init = data => state => {
 	const body = new vdom.VDOM(data)
@@ -205,21 +204,13 @@ const init = data => state => {
 	const newState = {
 		...state,
 		body,
-		history: [
-			{
-				body, // The initial VDOM body.
-				pos1, // The initial VDOM cursor start.
-				pos2, // The initial VDOM cursor end.
-			},
-		],
+		history: [{ body, pos1, pos2 }],
 		historyIndex: 0,
 		Components: Components.parse(body),
 	}
 	return newState
 }
 
-function useEditor(data = "") {
-	return useMethods(reducer, initialState, init(data))
-}
+const useEditor = (data = "") => useMethods(reducer, initialState, init(data))
 
 export default useEditor

@@ -1,11 +1,10 @@
-import * as ContextReducer from "./ContextReducer"
 import * as Router from "react-router-dom"
 import Errors from "components/Errors"
 import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
 import invariant from "invariant"
 import React from "react"
-import useMethods from "use-methods"
+import useUser from "./UserReducer"
 
 export const Context = React.createContext()
 
@@ -44,7 +43,7 @@ function Fetcher(props) {
 }
 
 export function Provider(props) {
-	const [state, dispatch] = useMethods(ContextReducer.reducer, ContextReducer.initialState)
+	const [state, dispatch] = useUser()
 
 	const { Provider } = Context
 	return (

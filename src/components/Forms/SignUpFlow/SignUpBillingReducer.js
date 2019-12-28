@@ -1,19 +1,7 @@
-const months = [
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
-]
+import months from "./months"
+import useMethods from "use-methods"
 
-export const initialState = {
+const initialState = {
 	chargeMonth: -1,
 	nextMo:      { year: "(loading…)", month: "(loading…)", day: "(loading…)" },
 	nextYr:      { year: "(loading…)", month: "(loading…)", day: "(loading…)" },
@@ -22,7 +10,7 @@ export const initialState = {
 	fetching:    false,
 }
 
-export const reducer = state => ({
+const reducer = state => ({
 	setNextMo(payload) {
 		state.nextMo = { ...payload }
 	},
@@ -49,3 +37,7 @@ export const reducer = state => ({
 		state.fetching = fetching
 	},
 })
+
+const useSignUpBilling = () => useMethods(reducer, initialState)
+
+export default useSignUpBilling

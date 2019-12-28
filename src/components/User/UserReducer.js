@@ -1,4 +1,6 @@
-export const initialState = {
+import useMethods from "use-methods"
+
+const initialState = {
 	isAuth:    false, // Is the user authenticated?
 	userID:    "",    // The user’s ID.
 	createdAt: "",    // The user’s created at date.
@@ -6,7 +8,7 @@ export const initialState = {
 	username:  "",    // The user’s username.
 }
 
-export const reducer = state => ({
+const reducer = state => ({
 	login(payload) {
 		Object.assign(state, {
 			isAuth: true,
@@ -19,3 +21,7 @@ export const reducer = state => ({
 		})
 	},
 })
+
+const useUser = () => useMethods(reducer, initialState)
+
+export default useUser

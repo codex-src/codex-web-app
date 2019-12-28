@@ -1,4 +1,6 @@
-export const initialState = {
+import useMethods from "use-methods"
+
+const initialState = {
 	username: "",
 	password: "",
 	passcode: "",
@@ -8,7 +10,7 @@ export const initialState = {
 	complete: false,
 }
 
-export const reducer = state => ({
+const reducer = state => ({
 	setUsername(username) {
 		state.warn = ""
 		state.username = username
@@ -34,3 +36,7 @@ export const reducer = state => ({
 		state.complete = complete
 	},
 })
+
+const useSignUp = () => useMethods(reducer, initialState)
+
+export default useSignUp
