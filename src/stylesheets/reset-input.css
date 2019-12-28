@@ -9,6 +9,7 @@ button {
 	font:            inherit;
 	letter-spacing:  inherit;
 	color:           inherit;
+	background:      none;
 	border:          none;
 }
 
@@ -17,6 +18,7 @@ input {
 	font:            inherit;
 	letter-spacing:  inherit;
 	color:           inherit;
+	background:      none;
 	border:          none;
 }
 input::placeholder {
@@ -29,6 +31,7 @@ textarea {
 	font:            inherit;
 	letter-spacing:  inherit;
 	color:           inherit;
+	background:      none;
 	border:          none;
 	resize:          none;
 }
