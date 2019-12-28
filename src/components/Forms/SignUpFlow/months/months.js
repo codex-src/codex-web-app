@@ -1,3 +1,5 @@
+import invariant from "invariant"
+
 const months = [
 	"January",
 	"February",
@@ -13,4 +15,12 @@ const months = [
 	"December",
 ]
 
-export default months
+function getMonth(month) {
+	invariant(
+		month >= 0 && month < months.length,
+		`months: Out of bounds: \`${0} <= ${month} < ${months.length}\`.`,
+	)
+	return months[month]
+}
+
+export default getMonth

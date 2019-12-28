@@ -20,12 +20,12 @@ const reducer = state => ({
 	setChargeMo() {
 		state.warn = ""
 		state.chargeMonth = 1
-		state.info = `You will be charged $8 today and then on ${months[state.nextMo.month]} ${state.nextMo.day}.`
+		state.info = `You will be charged $8 today and then on ${months.getMonth(state.nextMo.month)} ${state.nextMo.day}.`
 	},
 	setChargeYr() {
 		state.warn = ""
 		state.chargeMonth = 0
-		state.info = `You will be charged $80 today and then on ${months[state.nextYr.month]} ${state.nextYr.day}, ${state.nextYr.year}.`
+		state.info = `You will be charged $80 today and then on ${months.getMonth(state.nextYr.month)} ${state.nextYr.day}, ${state.nextYr.year}.`
 	},
 	setInfo(info) {
 		state.info = info
