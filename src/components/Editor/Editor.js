@@ -95,6 +95,7 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
 						style: {
 							...scrollPastEnd,
+							// caretColor: "hsl(var(--blue-a400))",
 							...translateZ,
 						},
 
