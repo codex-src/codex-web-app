@@ -113,8 +113,8 @@ function Nav(props) {
 
 	return (
 		// NOTE: Use `z:1` because of `translate-z`.
-		<nav style={stylex.parse("sticky -x -t z:1")}>
-			<div style={stylex.parse("p-x:32 flex -r -x:center b:white")}>
+		<nav style={stylex.parse("sticky -x -t z:1 b:white")}>
+			<div style={stylex.parse("p-x:32 flex -r -x:center")}>
 				<div style={stylex.parse("flex -r -x:between w:1024 h:80")}>
 
 					{/* LHS */}
