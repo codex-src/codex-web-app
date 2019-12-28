@@ -1,5 +1,5 @@
 // ^                                  - start
-//   [\w-](?:\.?[\w-]+?)*             - alphanum
+//   \w(?:\.?[\w-]+?)*                - alphanum
 //   (?:\+(?:[\w-](?:\.?[\w-]+?)*)?)* - (+(alphanum)?)*
 //   @                                - @
 //   \w(?:\.?\w+?)*                   - alphanum
@@ -9,7 +9,7 @@
 //
 // start alphanum (+(alphanum)?)* @ alphanum . alphanum end
 export function emailAddress(emailAddress) {
-	return /^[\w-](?:\.?[\w-]+?)*(?:\+(?:[\w-](?:\.?[\w-]+?)*)?)*@\w(?:\.?\w+?)*\.\w(?:\.?\w+?)*$/.test(emailAddress)
+	return /^\w(?:\.?[\w-]+?)*(?:\+(?:[\w-](?:\.?[\w-]+?)*)?)*@\w(?:\.?\w+?)*\.\w(?:\.?\w+?)*$/.test(emailAddress)
 }
 
 export function username(username) {
