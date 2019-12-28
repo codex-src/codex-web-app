@@ -24,12 +24,19 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-const H1 = props => <h1 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
-const H2 = props => <h2 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
-const H3 = props => <h3 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
-const H4 = props => <h4 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
-const H5 = props => <h5 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="#####&nbsp;">{props.children}</Markdown></h5>
-const H6 = props => <h6 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="######&nbsp;">{props.children}</Markdown></h6>
+// const H1 = props => <h1 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
+// const H2 = props => <h2 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
+// const H3 = props => <h3 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
+// const H4 = props => <h4 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
+// const H5 = props => <h5 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="#####&nbsp;">{props.children}</Markdown></h5>
+// const H6 = props => <h6 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="######&nbsp;">{props.children}</Markdown></h6>
+
+const H1 = props => <h1 id={props.hash} style={stylex.parse("fw:700 fs:32")}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
+const H2 = props => <h2 id={props.hash} style={stylex.parse("fw:700 fs:28")}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
+const H3 = props => <h3 id={props.hash} style={stylex.parse("fw:700 fs:24")}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
+const H4 = props => <h4 id={props.hash} style={stylex.parse("fw:700 fs:24")}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
+const H5 = props => <h5 id={props.hash} style={stylex.parse("fw:700 fs:22")}><Markdown start="#####&nbsp;">{props.children}</Markdown></h5>
+const H6 = props => <h6 id={props.hash} style={stylex.parse("fw:700 fs:20")}><Markdown start="######&nbsp;">{props.children}</Markdown></h6>
 
 const Comment = props => (
 	<p id={props.hash} style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
