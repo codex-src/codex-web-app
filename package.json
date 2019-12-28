@@ -23,8 +23,9 @@
   "scripts": {
     "lint": "yarn eslint --ignore-pattern=build .",
     "start": "react-scripts start",
-    "test-once": "yarn test --watchAll=false",
+    "start-build": "PORT=3000 serve -s build",
     "test": "react-scripts test",
+    "test-once": "yarn test --watchAll=false",
     "build": "react-scripts build",
     "eject": "react-scripts eject"
   },
