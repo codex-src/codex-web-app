@@ -1,6 +1,9 @@
 import React from "react"
 import stylex from "stylex"
 
+const infoCSSVar = { "--current-color": "var(--blue-a400)" }
+const warnCSSVar = { "--current-color": "var(--red)" }
+
 const Text = stylex.Styleable(props => (
 	<p style={stylex.parse("fw:500 fs:14")} {...props}>
 		{props.children}
@@ -16,13 +19,13 @@ const Response = stylex.Styleable(props => (
 ))
 
 export const Info = stylex.Unstyleable(props => (
-	<Response style={{ "--current-color": "var(--blue-a400)" }}>
+	<Response style={infoCSSVar}>
 		{props.children}
 	</Response>
 ))
 
 export const Warn = stylex.Unstyleable(props => (
-	<Response style={{ "--current-color": "var(--red)" }}>
+	<Response style={warnCSSVar}>
 		{props.children}
 	</Response>
 ))
