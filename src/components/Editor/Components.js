@@ -2,11 +2,24 @@ import ascii from "./ascii"
 import React from "react"
 import stylex from "stylex"
 
+/*
+ * Syntax
+ */
+
+const syntaxStyle = {
+	...stylex.parse("c:blue-a400"),
+	// display: "none",
+}
+
 const Syntax = stylex.Styleable(props => (
-	<span style={stylex.parse("c:blue-a400")}>
+	<span style={syntaxStyle}>
 		{props.children}
 	</span>
 ))
+
+/*
+ * Markdown
+ */
 
 const Markdown = ({ style, ...props }) => (
 	<React.Fragment>
@@ -24,34 +37,54 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-// const H1 = props => <h1 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
-// const H2 = props => <h2 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
-// const H3 = props => <h3 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
-// const H4 = props => <h4 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
-// const H5 = props => <h5 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="#####&nbsp;">{props.children}</Markdown></h5>
-// const H6 = props => <h6 id={props.hash} style={stylex.parse("fw:700 fs:19")}><Markdown start="######&nbsp;">{props.children}</Markdown></h6>
+/*
+ * H1-H6
+ */
 
-const H1 = props => <h1 id={props.hash} style={stylex.parse("fw:700 fs:32")}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
-const H2 = props => <h2 id={props.hash} style={stylex.parse("fw:700 fs:28")}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
-const H3 = props => <h3 id={props.hash} style={stylex.parse("fw:700 fs:24")}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
-const H4 = props => <h4 id={props.hash} style={stylex.parse("fw:700 fs:24")}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
-const H5 = props => <h5 id={props.hash} style={stylex.parse("fw:700 fs:22")}><Markdown start="#####&nbsp;">{props.children}</Markdown></h5>
-const H6 = props => <h6 id={props.hash} style={stylex.parse("fw:700 fs:20")}><Markdown start="######&nbsp;">{props.children}</Markdown></h6>
+const h1Style = stylex.parse("fw:700 fs:32.0000 lh:137.5%") // fs:19
+const h2Style = stylex.parse("fw:700 fs:28.8000 lh:137.5%") // fs:19
+const h3Style = stylex.parse("fw:700 fs:25.9200 lh:137.5%") // fs:19
+const h4Style = stylex.parse("fw:700 fs:23.3280 lh:137.5%") // fs:19
+const h5Style = stylex.parse("fw:700 fs:20.9952 lh:137.5%") // fs:19
+const h6Style = stylex.parse("fw:700 fs:18.8957 lh:137.5%") // fs:19
+
+const h5MarkdownStyle = stylex.parse("c:gray")
+const h6MarkdownStyle = stylex.parse("c:gray")
+
+const H1 = props => <h1 id={props.hash} style={h1Style}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
+const H2 = props => <h2 id={props.hash} style={h2Style}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
+const H3 = props => <h3 id={props.hash} style={h3Style}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
+const H4 = props => <h4 id={props.hash} style={h4Style}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
+const H5 = props => <h5 id={props.hash} style={h5Style}><Markdown style={h5MarkdownStyle} start="#####&nbsp;">{props.children}</Markdown></h5>
+const H6 = props => <h6 id={props.hash} style={h6Style}><Markdown style={h6MarkdownStyle} start="######&nbsp;">{props.children}</Markdown></h6>
+
+/*
+ * Comment
+ */
+
+const commentStyle = stylex.parse("fs:19 c:gray")
+const commentMarkdownStyle = stylex.parse("c:gray")
 
 const Comment = props => (
-	<p id={props.hash} style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
-		<Markdown style={stylex.parse("c:gray")} start="//">
+	<p id={props.hash} style={commentStyle} spellCheck={false}>
+		<Markdown style={commentMarkdownStyle} start="//">
 			{props.children}
 		</Markdown>
 	</p>
 )
+
+/*
+ * Blockquote
+ */
+
+const blockquoteListStyle = stylex.parse("fs:19")
 
 // Compound component.
 const Blockquote = props => (
 	<blockquote id={props.hash}>
 		<ul>
 			{props.children.map(each => (
-				<li key={each.key} style={stylex.parse("fs:19")}>
+				<li key={each.key} style={blockquoteListStyle}>
 					<Markdown start=">">
 						{each.data || (
 							<br />
@@ -63,27 +96,57 @@ const Blockquote = props => (
 	</blockquote>
 )
 
+/*
+ * Code
+ */
+
+const codeBlockPreStyle = {
+	...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:gray-50 overflow -x:scroll"),
+	boxShadow: "0px 0px 1px hsl(var(--gray))",
+}
+
+const codeBlockCodeStyle = {
+	...stylex.parse("pre"),
+	// MozTabSize: 2,
+	tabSize: 2,
+	font: "15.2px/1.375 'Monaco'",
+}
+
+const codeBlockMarkdownStyle = stylex.parse("c:gray")
+
 // NOTE (1): For a multiline implementation, refer to
 // https://cdpn.io/PowjgOg.
 // NOTE (2): `end` property is for debugging.
 const CodeBlock = props => (
-	<pre id={props.hash} style={{ ...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:gray-50 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false}>
-		<code style={{ ...stylex.parse("pre"), MozTabSize: 2, tabSize: 2, font: "16px/1.375 'Monaco'" }}>
-			<Markdown style={stylex.parse("c:gray")} start={props.start} end={props.end}>
+	<pre id={props.hash} style={codeBlockPreStyle} spellCheck={false}>
+		<code style={codeBlockCodeStyle}>
+			<Markdown style={codeBlockMarkdownStyle} start={props.start} end={props.end}>
 				{props.children}
 			</Markdown>
 		</code>
 	</pre>
 )
 
+/*
+ * Paragraph
+ */
+
+const paragraphStyle = stylex.parse("fs:19")
+
 const Paragraph = props => (
-	<p id={props.hash} style={stylex.parse("fs:19")}>
+	<p id={props.hash} style={paragraphStyle}>
 		{props.children}
 	</p>
 )
 
+/*
+ * Break
+ */
+
+const breakStyle = stylex.parse("fs:19 c:gray")
+
 const Break = props => (
-	<p id={props.hash} style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+	<p id={props.hash} style={breakStyle} spellCheck={false}>
 		<Markdown start={props.start} />
 	</p>
 )
