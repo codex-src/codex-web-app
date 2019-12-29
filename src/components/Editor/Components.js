@@ -42,12 +42,12 @@ const Markdown = ({ style, ...props }) => (
  */
 
 // FIXME: Add `m-t:28` in read-only mode.
-const h1Style = stylex.parse("fw:700 fs:19") // fs:28.0000 lh:137.5%") // 28 * 0.925 ** 5
-const h2Style = stylex.parse("fw:700 fs:19") // fs:25.9000 lh:137.5%")
-const h3Style = stylex.parse("fw:700 fs:19") // fs:23.9575 lh:137.5%")
-const h4Style = stylex.parse("fw:700 fs:19") // fs:22.1607 lh:137.5%")
-const h5Style = stylex.parse("fw:700 fs:19") // fs:20.4986 lh:137.5%")
-const h6Style = stylex.parse("fw:700 fs:19") // fs:18.9612 lh:137.5%")
+const h1Style = stylex.parse("fw:700 fs:19") // fs:28.0000 lh:137.5% // 28 * 0.925 ** 5
+const h2Style = stylex.parse("fw:700 fs:19") // fs:25.9000 lh:137.5%
+const h3Style = stylex.parse("fw:700 fs:19") // fs:23.9575 lh:137.5%
+const h4Style = stylex.parse("fw:700 fs:19") // fs:22.1607 lh:137.5%
+const h5Style = stylex.parse("fw:700 fs:19") // fs:20.4986 lh:137.5%
+const h6Style = stylex.parse("fw:700 fs:19") // fs:18.9612 lh:137.5%
 
 const h5MarkdownStyle = stylex.parse("c:gray")
 const h6MarkdownStyle = stylex.parse("c:gray")
