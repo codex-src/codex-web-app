@@ -24,7 +24,6 @@ function countDuration(state) {
 	return { count, desc: "minute" }
 }
 
-// TODO: Add test suite.
 function compute(state) {
 	const count = {
 		lines:      countLines(state),
