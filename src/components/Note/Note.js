@@ -61,7 +61,9 @@ function Note(props) {
 	return (
 		<Editor.Editor
 			state={state} dispatch={dispatch}
-			nav={80} mainInsetTop={80} mainInsetBottom={80} footer={80}
+			nav={80}
+			mainInsetTop={80}
+			mainInsetBottom={80}
 			scrollPastEnd
 		/>
 	)

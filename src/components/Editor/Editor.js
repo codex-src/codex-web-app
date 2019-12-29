@@ -68,12 +68,12 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 	let scrollPastEnd = {}
 	if (props.scrollPastEnd) {
 		scrollPastEnd = {
+			// paddingBottom: "100vh",
 			paddingBottom: `calc(100vh - ${
 				Math.floor(19 * 1.5) + // Reuse `buffer` from `shouldRenderPos`.
 				(props.nav || 0) +
 				(props.mainInsetTop || 0) +
-				(props.mainInsetBottom || 0) +
-				(props.footer || 0)
+				(props.mainInsetBottom || 0)
 			}px)`,
 		}
 	}
