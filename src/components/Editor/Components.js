@@ -51,7 +51,15 @@ const h6Style = stylex.parse("fw:700 fs:18.8957 lh:137.5%") // fs:19
 const h5MarkdownStyle = stylex.parse("c:gray")
 const h6MarkdownStyle = stylex.parse("c:gray")
 
-const H1 = props => <h1 id={props.hash} style={h1Style}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
+const H1 = props => (
+	<h1 id={props.hash} style={h1Style}>
+		<Markdown start="#&nbsp;">
+			{props.children}
+		</Markdown>
+	</h1>
+)
+
+// const H1 = props => <h1 id={props.hash} style={h1Style}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
 const H2 = props => <h2 id={props.hash} style={h2Style}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
 const H3 = props => <h3 id={props.hash} style={h3Style}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
 const H4 = props => <h4 id={props.hash} style={h4Style}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
@@ -85,9 +93,12 @@ const Blockquote = props => (
 		<ul>
 			{props.children.map(each => (
 				<li key={each.key} style={blockquoteListStyle}>
-					<Markdown start=">">
+					{/* NOTE: `&nbsp;` doesn’t work using `{}` syntax. */}
+					<Markdown start={each.isEmpty ? ">" : ">\u00a0"}>
 						{each.data || (
-							<br />
+							each.isEmpty && (
+								<br />
+							)
 						)}
 					</Markdown>
 				</li>
@@ -166,19 +177,10 @@ export const types = {
 }
 
 // Convenience function.
-function isBlockquote(data) {
+function isBlockquote(data, hasNextSibling) {
 	const ok = (
-		(data.length === 1 && data[0] === ">") ||
+		(data.length === 1 && data === ">" && hasNextSibling) ||
 		(data.length >= 2 && data.slice(0, 2) === "> ")
-	)
-	return ok
-}
-
-// Convenience function.
-function isCodeBlockEnd(data) {
-	const ok = (
-		data.length === 3 &&
-		data === "```"
 	)
 	return ok
 }
@@ -242,11 +244,12 @@ export function parse(body) {
 				</Comment>
 			))
 			break
-		case isBlockquote(data):
+
+		case isBlockquote(data, index + 1 < body.nodes.length):
 			const bquoteStart = index
 			index++
 			while (index < body.nodes.length) {
-				if (!isBlockquote(body.nodes[index].data)) {
+				if (!isBlockquote(body.nodes[index].data, index + 1 < body.nodes.length)) {
 					break
 				}
 				index++
@@ -257,7 +260,8 @@ export function parse(body) {
 					{bquoteNodes.map(each => (
 						{
 							...each,
-							data: each.data.slice(1),
+							isEmpty: each.data.length === 1 && each.data === ">",
+							data: each.data.slice(2),
 						}
 					))}
 				</Blockquote>
@@ -285,7 +289,7 @@ export function parse(body) {
 			index++
 			let cblockDidTerminate = false
 			while (index < body.nodes.length) {
-				if (isCodeBlockEnd(body.nodes[index].data)) {
+				if (body.nodes[index].data.length === 3 && body.nodes[index].data === "```") {
 					cblockDidTerminate = true
 					break
 				}
