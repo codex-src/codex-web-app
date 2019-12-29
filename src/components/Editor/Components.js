@@ -143,12 +143,12 @@ const Blockquote = props => (
 // )
 
 const codeBlockPreStyle = {
-	...stylex.parse("m-x:-24 p-x:24 p-y:16 block overflow -x:scroll"),
+	...stylex.parse("m-x:-24 p-y:16 block overflow -x:scroll"),
 	boxShadow: "0px 0px 1px hsl(var(--gray))",
 }
 
 const codeBlockCodeStyle = {
-	...stylex.parse("pre lh:137.5%"),
+	...stylex.parse("p-x:24 pre lh:137.5%"),
 	MozTabSize: 2,
 	tabSize: 2,
 	fontFamily: "Monaco",
