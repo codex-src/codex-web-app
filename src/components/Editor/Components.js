@@ -107,7 +107,7 @@ const codeBlockPreStyle = {
 
 const codeBlockCodeStyle = {
 	...stylex.parse("pre"),
-	// MozTabSize: 2,
+	MozTabSize: 2,
 	tabSize: 2,
 	font: "15.2px/1.375 'Monaco'",
 }
