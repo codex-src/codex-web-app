@@ -177,53 +177,22 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
 						onCut: e => {
 							e.preventDefault()
-							const { pos1, pos2 } = state
-							if (pos1.pos === pos2.pos) {
-								const hasSibling = pos1.index + 1 < state.body.nodes.length
-								pos1.pos += -pos1.offset
-								pos2.pos += -pos1.offset + state.body.nodes[pos1.index].data.length + hasSibling
-							}
-							const cutData = state.body.data.slice(pos1.pos, pos2.pos)
-							e.clipboardData.setData("text/plain", cutData)
-							dispatch.opWrite("onCut", "", pos1, pos2)
-						},
-
-						// onCopy: e => {
-						// 	e.preventDefault()
-						// 	const { pos1, pos2 } = state
-						// 	if (pos1.pos === pos2.pos) {
-						// 		// const hasSibling = pos1.index + 1 < state.body.nodes.length
-						// 		pos1.pos += -pos1.offset
-						// 		pos2.pos += -pos1.offset + state.body.nodes[pos1.index].data.length // + hasSibling
-						// 	}
-						// 	const copyData = `${state.body.data.slice(pos1.pos, pos2.pos)}\n`
-						// 	e.clipboardData.setData("text/plain", copyData)
-						// },
-
-						// onCopy: e => {
-						// 	e.preventDefault()
-						// 	const { pos1, pos2 } = state
-						// 	if (pos1.pos === pos2.pos) {
-						// 		// const hasSibling = pos1.index + 1 < state.body.nodes.length
-						// 		pos1.pos += -pos1.offset
-						// 		pos2.pos += -pos1.offset + state.body.nodes[pos1.index].data.length // + hasSibling
-						// 	}
-						// 	let copyData = state.body.data.slice(pos1.pos, pos2.pos)
-						// 	if (pos1.pos === pos2.pos) {
-						// 		copyData += "\n"
-						// 	}
-						// 	e.clipboardData.setData("text/plain", copyData)
-						// },
-
-						// FIXME
-						onCopy: e => {
-							e.preventDefault()
-							const { pos1, pos2 } = state
-							if (pos1.pos === pos2.pos) {
+							if (state.pos1.pos === state.pos2.pos) {
 								// No-op.
 								return
 							}
-							const copyData = state.body.data.slice(pos1.pos, pos2.pos)
+							const cutData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+							e.clipboardData.setData("text/plain", cutData)
+							dispatch.opWrite("onCut", "")
+						},
+
+						onCopy: e => {
+							e.preventDefault()
+							if (state.pos1.pos === state.pos2.pos) {
+								// No-op.
+								return
+							}
+							const copyData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
 							e.clipboardData.setData("text/plain", copyData)
 						},
 

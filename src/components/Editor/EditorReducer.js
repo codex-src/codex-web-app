@@ -40,10 +40,7 @@ const reducer = state => ({
 	collapse() {
 		state.pos2 = { ...state.pos1 }
 	},
-	opWrite(inputType, data, pos1 = state.pos1, pos2 = state.pos2) {
-		if (pos1.pos !== state.pos1.pos || pos2.pos !== state.pos2.pos) {
-			this.setState(state.body, pos1, pos2)
-		}
+	opWrite(inputType, data) {
 		if (!state.didCorrectPos) {
 			state.history[0].pos1.pos = state.pos1.pos
 			state.history[0].pos2.pos = state.pos2.pos
@@ -61,7 +58,6 @@ const reducer = state => ({
 	opTab() {
 		this.opWrite("onKeyDown", "\t")
 	},
-
 	delete(lengthL, lengthR) {
 		// Guard the current node:
 		if ((!state.pos1.pos && lengthL) || (state.pos2.pos === state.body.data.length && lengthR)) {
