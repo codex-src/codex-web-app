@@ -191,11 +191,13 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 
 						onCopy: e => {
 							e.preventDefault()
-							if (state.pos1.pos === state.pos2.pos) {
-								// No-op.
-								return
+							const { pos1, pos2 } = state
+							if (pos1.pos === pos2.pos) {
+								// const hasSibling = pos1.index + 1 < state.body.nodes.length
+								pos1.pos += -pos1.offset
+								pos2.pos += -pos1.offset + state.body.nodes[pos1.index].data.length  // + hasSibling
 							}
-							const copyData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+							const copyData = state.body.data.slice(pos1.pos, pos2.pos) + "\n"
 							e.clipboardData.setData("text/plain", copyData)
 						},
 
