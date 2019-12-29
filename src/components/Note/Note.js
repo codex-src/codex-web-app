@@ -50,7 +50,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 function Note(props) {
 	const [state, dispatch] = Editor.useEditor(data)
 
-	// Nav
 	React.useLayoutEffect(() => {
 		const nav = document.querySelector("nav")
 		const { position } = nav.style
@@ -60,7 +59,6 @@ function Note(props) {
 		}
 	}, [])
 
-	// Footer
 	React.useLayoutEffect(() => {
 		const footer = document.querySelector("footer")
 		const { display } = footer.style
@@ -70,11 +68,19 @@ function Note(props) {
 		}
 	}, [])
 
-	// FIXME: Use context.
 	return (
 		<React.Fragment>
-			<Editor.Editor state={state} dispatch={dispatch} mainInsetTop={80} mainInsetBottom={80} scrollPastEnd />
-			<StatusBar state={state} dispatch={dispatch} />
+			<Editor.Editor
+				state={state}
+				dispatch={dispatch}
+				mainInsetTop={80}
+				mainInsetBottom={80}
+				scrollPastEnd
+			/>
+			<StatusBar
+				state={state}
+				dispatch={dispatch}
+			/>
 		</React.Fragment>
 	)
 }

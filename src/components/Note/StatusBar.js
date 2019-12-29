@@ -55,12 +55,11 @@ const Text = stylex.Styleable(props => (
 	</p>
 ))
 
-// FIXME: `React.useContext`?
 function StatusBar({ state, dispatch, ...props }) {
 	const mx = metrics.compute(state)
 
 	return (
-		<div style={{ ...stylex.parse("fixed -x -b b:gray-100 z:1 no-pointer-events"), boxShadow: "0px -1px hsl(var(--gray-200))" }}>
+		<aside style={{ ...stylex.parse("fixed -x -b b:gray-100 z:1 no-pointer-events"), boxShadow: "0px -1px hsl(var(--gray-200))" }}>
 			<div style={stylex.parse("p-x:24 flex -r -x:center")}>
 				<div style={stylex.parse("flex -r -x:between w:1024 h:32")}>
 
@@ -84,7 +83,7 @@ function StatusBar({ state, dispatch, ...props }) {
 
 				</div>
 			</div>
-		</div>
+		</aside>
 	)
 }
 
