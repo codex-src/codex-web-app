@@ -20,16 +20,16 @@ function formatPlural({ count, desc }) {
 
 // `computeLHS` computes the selection string or the
 // insertion point string.
-function computeLHS({ lines, characters, columns }) {
-	// Compute selection:
-	if (characters.count) {
-		if (lines < 2) {
-			return `Selected ${formatCommas(characters)}`
+function computeLHS({ line, column, selectedLines, selectedCharacters }) {
+	// Compute selection string:
+	if (selectedCharacters.count) {
+		if (selectedLines.count < 2) {
+			return `Selected ${formatPlural(selectedCharacters)}`
 		}
-		return `Selected ${formatPlural(lines)}, ${formatPlural(characters)}`
+		return `Selected ${formatPlural(selectedLines)}, ${formatPlural(selectedCharacters)}`
 	}
-	// Compute insertion point:
-	return `Line ${formatCommas(lines)}, column ${formatCommas(columns)}`
+	// Compute insertion point string:
+	return `Line ${formatCommas(line)}, column ${formatCommas(column)}`
 }
 
 // `computeRHS` computes the rounded up word count and
@@ -57,29 +57,29 @@ const Text = stylex.Styleable(props => (
 
 // FIXME: `React.useContext`?
 function StatusBar({ state, dispatch, ...props }) {
-	const m = metrics.compute(state)
+	const mx = metrics.compute(state)
 
 	return (
 		<div style={{ ...stylex.parse("fixed -x -b b:gray-100 z:1 no-pointer-events"), boxShadow: "0px -1px hsl(var(--gray-200))" }}>
 			<div style={stylex.parse("p-x:24 flex -r -x:center")}>
-				<div style={stylex.parse("p-y:10 flex -r -x:between w:1024")}>
+				<div style={stylex.parse("flex -r -x:between w:1024 h:32")}>
 
 					{/* LHS */}
 					<div style={stylex.parse("flex -r -y:center")}>
 						<Icon icon={Feather.Scissors} />
 						<div style={stylex.parse("w:6.25")} />
 						<Text>
-							{computeLHS(m)}
+							{computeLHS(mx)}
 						</Text>
 					</div>
 
 					{/* RHS */}
 					<div style={stylex.parse("flex -r -y:center")}>
 						<Text>
-							{computeRHS(m)}
+							{computeRHS(mx)}
 						</Text>
 						<div style={stylex.parse("w:6.25")} />
-						<Icon icon={Feather.Clock} />
+						<Icon icon={Feather.Bookmark} />
 					</div>
 
 				</div>
