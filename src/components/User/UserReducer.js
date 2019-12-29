@@ -2,10 +2,10 @@ import useMethods from "use-methods"
 
 const initialState = {
 	isAuth:    false, // Is the user authenticated?
-	userID:    "",    // The user’s ID.
-	createdAt: "",    // The user’s created at date.
-	updatedAt: "",    // The user’s updated at date.
-	username:  "",    // The user’s username.
+	userID:    "",    // The ID.
+	createdAt: "",    // The created at date.
+	updatedAt: "",    // The updated at date.
+	username:  "",    // The username.
 }
 
 const reducer = state => ({

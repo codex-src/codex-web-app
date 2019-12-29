@@ -25,14 +25,12 @@ const initialState = {
 }
 
 const reducer = state => ({
-
 	opFocus() {
 		state.isFocused = true
 	},
 	opBlur() {
 		state.isFocused = false
 	},
-
 	setState(body, pos1, pos2) {
 		if (pos1.pos > pos2.pos) {
 			[pos1, pos2] = [pos2, pos1]
@@ -60,7 +58,6 @@ const reducer = state => ({
 		// state.shouldRenderComponents += inputType !== "onKeyPress"
 		state.shouldRenderComponents++
 	},
-
 	opTab() {
 		this.opWrite("onKeyDown", "\t")
 	},
@@ -155,7 +152,6 @@ const reducer = state => ({
 	opDeleteWord() {
 		// TODO
 	},
-
 	storeUndo() {
 		const undo = state.history[state.historyIndex]
 		if (undo.body.data.length === state.body.data.length && undo.body.data === state.body.data) {
@@ -191,12 +187,10 @@ const reducer = state => ({
 	prune() {
 		state.history.splice(state.historyIndex + 1)
 	},
-
 	render() {
 		state.Components = Components.parse(state.body)
 		state.shouldRenderPos++
 	},
-
 })
 
 // NOTE: `init` is a higher-order function that prevents

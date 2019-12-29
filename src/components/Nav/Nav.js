@@ -6,6 +6,8 @@ import User from "components/User"
 
 import { ReactComponent as CodexLogo } from "assets/codex.svg"
 
+import "./nav.css"
+
 const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
 	<Icon style={stylex.parse("wh:15 middle c:blue-a400")} />
 ))
@@ -80,29 +82,37 @@ const AuthNav = props => (
 		<NavItem to="/new">
 			<Text>
 				<Icon icon={Feather.Edit} />
-				&nbsp;
-				New note
+				<span className="hide-mobile">
+					&nbsp;
+					New note
+				</span>
 			</Text>
 		</NavItem>
 		<NavItem to="/notes">
 			<Text>
 				<Icon icon={Feather.Layers} />
-				&nbsp;
-				My notes
+				<span className="hide-mobile">
+					&nbsp;
+					My notes
+				</span>
 			</Text>
 		</NavItem>
 		<NavItem to="/preferences">
 			<Text>
 				<Icon icon={Feather.Settings} />
-				&nbsp;
-				Preferences
+				<span className="hide-mobile">
+					&nbsp;
+					Preferences
+				</span>
 			</Text>
 		</NavItem>
 		<NavItem to="/account">
 			<Text>
 				<Icon icon={Feather.Lock} />
-				&nbsp;
-				Account
+				<span className="hide-mobile">
+					&nbsp;
+					Account
+				</span>
 			</Text>
 		</NavItem>
 	</NavList>

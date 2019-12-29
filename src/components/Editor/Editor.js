@@ -1,4 +1,4 @@
-import DebugEditor from "./DebugEditor"
+// import DebugEditor from "./DebugEditor"
 import detect from "./detect"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"

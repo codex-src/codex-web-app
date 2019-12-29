@@ -94,6 +94,17 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 function Note(props) {
 	const [state, dispatch] = Editor.useEditor(data)
 
+	React.useLayoutEffect(() => {
+		// Hide the footer:
+		const footer = document.querySelector("footer")
+		const { display } = footer.style
+		footer.style.display = "none"
+		return () => {
+			// Un-hide the footer:
+			footer.style.display = display
+		}
+	}, [])
+
 	return (
 		<Editor.Editor
 			state={state}
@@ -101,7 +112,7 @@ function Note(props) {
 			nav={80}
 			mainInsetTop={80}
 			mainInsetBottom={80}
-			// scrollPastEnd
+			scrollPastEnd
 		/>
 	)
 }
