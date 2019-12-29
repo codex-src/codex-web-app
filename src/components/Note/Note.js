@@ -1,6 +1,6 @@
 import Editor from "components/Editor"
 import React from "react"
-import StatusBars from "./StatusBars"
+import StatusBar from "./StatusBar"
 
 // import Headers from "components/Headers"
 //
@@ -74,7 +74,7 @@ function Note(props) {
 	return (
 		<React.Fragment>
 			<Editor.Editor state={state} dispatch={dispatch} mainInsetTop={80} mainInsetBottom={80} scrollPastEnd />
-			<StatusBars state={state} dispatch={dispatch} />
+			<StatusBar state={state} dispatch={dispatch} />
 		</React.Fragment>
 	)
 }
