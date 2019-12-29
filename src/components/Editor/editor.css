@@ -1,6 +1,6 @@
 article {
 	white-space:   pre-wrap;
-	caret-color:   hsl(var(--black, 0, 0%, 0%));
+	caret-color:   hsl(var(--black));
 	outline:       none;
 	overflow-wrap: break-word;
 }
