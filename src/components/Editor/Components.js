@@ -179,7 +179,7 @@ export const types = {
 // Convenience function.
 function isBlockquote(data, hasNextSibling) {
 	const ok = (
-		(data.length === 1 && data === ">" && hasNextSibling) ||
+		(data.length === 1 && data === ">" && hasNextSibling) || // Empty syntax.
 		(data.length >= 2 && data.slice(0, 2) === "> ")
 	)
 	return ok
@@ -192,8 +192,6 @@ function isBlockquote(data, hasNextSibling) {
 //
 // TODO: We could have `parse` and `parseStrict` parsers for
 // parsing loose or strict (GFM) markdown.
-//
-/* eslint-disable no-case-declarations */
 export function parse(body) {
 	const Components = []
 	let index = 0
@@ -202,6 +200,7 @@ export function parse(body) {
 			key,  // The current node’s key (hash).
 			data, // The current node’s plain text data
 		} = body.nodes[index]
+		/* eslint-disable no-case-declarations */
 		switch (true) {
 		case (
 			!data.length || (
@@ -342,6 +341,6 @@ export function parse(body) {
 		}
 		index++
 	}
+	/* eslint-enable no-case-declarations */
 	return Components
 }
-/* eslint-enable no-case-declarations */
