@@ -62,7 +62,7 @@ function ResetPassword(props) {
 
 	return (
 		<Overlay>
-			<div style={stylex.parse("p-x:32 p-y:128 flex -r -x:center")}>
+			<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
 				<form style={stylex.parse("w:320")} onSubmit={asyncHandleSubmit}>
 
 					<header style={stylex.parse("m-b:40")}>

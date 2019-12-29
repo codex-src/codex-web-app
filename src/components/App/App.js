@@ -18,7 +18,7 @@ const AppContainer = props => (
 		<div style={stylex.parse("flex -c -y:between h:max")}>
 			<div style={stylex.parse("b:white")}>
 				<Nav />
-				<main style={stylex.parse("p-x:32 p-y:80 flex -r -x:center")}>
+				<main style={stylex.parse("p-x:24 p-y:80 flex -r -x:center")}>
 					<div style={stylex.parse("w:1024 no-min-w")}>
 						{props.children}
 					</div>

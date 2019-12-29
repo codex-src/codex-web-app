@@ -51,15 +51,15 @@ const h6Style = stylex.parse("fw:700 fs:18.8957 lh:137.5%") // fs:19
 const h5MarkdownStyle = stylex.parse("c:gray")
 const h6MarkdownStyle = stylex.parse("c:gray")
 
-const H1 = props => (
-	<h1 id={props.hash} style={h1Style}>
-		<Markdown start="#&nbsp;">
-			{props.children}
-		</Markdown>
-	</h1>
-)
+// const H1 = props => (
+// 	<h1 id={props.hash} style={h1Style}>
+// 		<Markdown start="#&nbsp;">
+// 			{props.children}
+// 		</Markdown>
+// 	</h1>
+// )
 
-// const H1 = props => <h1 id={props.hash} style={h1Style}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
+const H1 = props => <h1 id={props.hash} style={h1Style}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
 const H2 = props => <h2 id={props.hash} style={h2Style}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
 const H3 = props => <h3 id={props.hash} style={h3Style}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
 const H4 = props => <h4 id={props.hash} style={h4Style}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
@@ -85,16 +85,21 @@ const Comment = props => (
  * Blockquote
  */
 
+const blockquoteStyle = {
+	...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:blue-a400 -a:2.5%"),
+	boxShadow: "0px 0px 1px hsla(var(--blue-a400), 0.5)",
+}
+
 const blockquoteListStyle = stylex.parse("fs:19")
 
 // Compound component.
 const Blockquote = props => (
-	<blockquote id={props.hash}>
+	<blockquote id={props.hash} style={blockquoteStyle}>
 		<ul>
 			{props.children.map(each => (
 				<li key={each.key} style={blockquoteListStyle}>
 					{/* NOTE: `&nbsp;` doesn’t work using `{}` syntax. */}
-					<Markdown start={each.isEmpty ? ">" : ">\u00a0"}>
+					<Markdown style={stylex.parse("m-r:4")} start={each.isEmpty ? ">" : ">\u00a0"}>
 						{each.data || (
 							each.isEmpty && (
 								<br />

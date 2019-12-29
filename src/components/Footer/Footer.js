@@ -61,7 +61,7 @@ const FooterList = stylex.Unstyleable(props => (
 // }, [shouldSetBackdrop])
 
 const Footer = props => (
-	<footer style={stylex.parse("p-x:32 flex -r -x:center b:gray-900")}>
+	<footer style={stylex.parse("p-x:24 flex -r -x:center b:gray-900")}>
 		<div style={stylex.parse("flex -r -x:between w:1024 h:80")}>
 
 			{/* LHS */}

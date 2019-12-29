@@ -113,7 +113,7 @@ function Nav(props) {
 
 	return (
 		<nav style={stylex.parse("sticky -x -t z:1 b:white -a:95%")}>
-			<div style={stylex.parse("p-x:32 flex -r -x:center")}>
+			<div style={stylex.parse("p-x:24 flex -r -x:center")}>
 				<div style={stylex.parse("flex -r -x:between w:1024 h:80")}>
 
 					{/* LHS */}
