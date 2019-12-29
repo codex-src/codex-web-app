@@ -41,12 +41,12 @@ const Markdown = ({ style, ...props }) => (
  * H1-H6
  */
 
-const h1Style = stylex.parse("fw:700 fs:32.0000 lh:137.5%") // fs:19
-const h2Style = stylex.parse("fw:700 fs:28.8000 lh:137.5%") // fs:19
-const h3Style = stylex.parse("fw:700 fs:25.9200 lh:137.5%") // fs:19
-const h4Style = stylex.parse("fw:700 fs:23.3280 lh:137.5%") // fs:19
-const h5Style = stylex.parse("fw:700 fs:20.9952 lh:137.5%") // fs:19
-const h6Style = stylex.parse("fw:700 fs:18.8957 lh:137.5%") // fs:19
+const h1Style = stylex.parse("fw:700 fs:28 lh:137.5%") // fs:19
+const h2Style = stylex.parse("fw:700 fs:26 lh:137.5%") // fs:19
+const h3Style = stylex.parse("fw:700 fs:24 lh:137.5%") // fs:19
+const h4Style = stylex.parse("fw:700 fs:22 lh:137.5%") // fs:19
+const h5Style = stylex.parse("fw:700 fs:20 lh:137.5%") // fs:19
+const h6Style = stylex.parse("fw:700 fs:19 lh:137.5%") // fs:19
 
 const h5MarkdownStyle = stylex.parse("c:gray")
 const h6MarkdownStyle = stylex.parse("c:gray")
@@ -86,8 +86,8 @@ const Comment = props => (
  */
 
 const blockquoteStyle = {
-	...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:blue-a400 -a:2.5%"),
-	boxShadow: "0px 0px 1px hsla(var(--blue-a400), 0.5)",
+	...stylex.parse("m-x:-24 p-x:24 p-y:16 b:gray-50"),
+	boxShadow: "0px 0px 1px hsl(var(--gray))",
 }
 
 const blockquoteListStyle = stylex.parse("fs:19")
@@ -122,13 +122,13 @@ const codeBlockPreStyle = {
 }
 
 const codeBlockCodeStyle = {
-	...stylex.parse("pre"),
+	...stylex.parse("pre lh:137.5%"),
 	MozTabSize: 2,
 	tabSize: 2,
-	font: "15.2px/1.375 'Monaco'",
+	fontFamily: "Monaco",
 }
 
-const codeBlockMarkdownStyle = stylex.parse("c:gray")
+// const codeBlockMarkdownStyle = stylex.parse("c:gray")
 
 // NOTE (1): For a multiline implementation, refer to
 // https://cdpn.io/PowjgOg.
@@ -136,7 +136,7 @@ const codeBlockMarkdownStyle = stylex.parse("c:gray")
 const CodeBlock = props => (
 	<pre id={props.hash} style={codeBlockPreStyle} spellCheck={false}>
 		<code style={codeBlockCodeStyle}>
-			<Markdown style={codeBlockMarkdownStyle} start={props.start} end={props.end}>
+			<Markdown start={props.start} end={props.end}>
 				{props.children}
 			</Markdown>
 		</code>
