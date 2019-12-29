@@ -94,22 +94,31 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 function Note(props) {
 	const [state, dispatch] = Editor.useEditor(data)
 
+	// Nav
 	React.useLayoutEffect(() => {
-		// Hide the footer:
+		const nav = document.querySelector("nav")
+		const { position } = nav.style
+		nav.style.position = ""
+		return () => {
+			nav.style.position = position
+		}
+	}, [])
+
+	// Footer
+	React.useLayoutEffect(() => {
 		const footer = document.querySelector("footer")
 		const { display } = footer.style
 		footer.style.display = "none"
 		return () => {
-			// Un-hide the footer:
 			footer.style.display = display
 		}
 	}, [])
 
 	return (
+		// nav={80}
 		<Editor.Editor
 			state={state}
 			dispatch={dispatch}
-			nav={80}
 			mainInsetTop={80}
 			mainInsetBottom={80}
 			scrollPastEnd
