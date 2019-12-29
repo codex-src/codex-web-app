@@ -118,7 +118,7 @@ const Blockquote = props => (
  */
 
 // const codeBlockPreStyle = {
-// 	...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:gray-50 overflow -x:scroll"),
+// 	...stylex.parse("m-x:-24 p-x:24 p-y:16 b:gray-50 overflow -x:scroll"),
 // 	boxShadow: "0px 0px 1px hsl(var(--gray))",
 // }
 //
@@ -143,12 +143,13 @@ const Blockquote = props => (
 // )
 
 const codeBlockPreStyle = {
-	...stylex.parse("m-x:-24 p-y:16 block overflow -x:scroll"),
+	...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"),
 	boxShadow: "0px 0px 1px hsl(var(--gray))",
 }
 
+// NOTE: `p-x` needs to be on `code`.
 const codeBlockCodeStyle = {
-	...stylex.parse("p-x:24 pre lh:137.5%"),
+	...stylex.parse("p-x:24 lh:137.5%"),
 	MozTabSize: 2,
 	tabSize: 2,
 	fontFamily: "Monaco",
