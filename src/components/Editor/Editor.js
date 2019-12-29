@@ -180,14 +180,13 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 							e.preventDefault()
 							const { pos1, pos2 } = state
 							if (pos1.pos === pos2.pos) {
-								// const hasSibling = pos1.index + 1 < state.body.nodes.length
-								console.log(state.pos1.index, state.body.nodes.length, state.Components.length)
-								// pos1.pos += -pos1.offset
-								// pos2.pos += -pos1.offset + state.body.nodes[pos1.index].data.length // + hasSibling
+								const hasSibling = pos1.index + 1 < state.body.nodes.length
+								pos1.pos += -pos1.offset
+								pos2.pos += -pos1.offset + state.body.nodes[pos1.index].data.length + hasSibling
 							}
-							// const cutData = state.body.data.slice(pos1.pos, pos2.pos)
-							// e.clipboardData.setData("text/plain", cutData)
-							// dispatch.opWrite("onCut", "", pos1, pos2)
+							const cutData = state.body.data.slice(pos1.pos, pos2.pos)
+							e.clipboardData.setData("text/plain", cutData)
+							dispatch.opWrite("onCut", "", pos1, pos2)
 						},
 
 						onCopy: e => {
