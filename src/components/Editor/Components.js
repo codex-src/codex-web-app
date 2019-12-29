@@ -86,21 +86,21 @@ const Comment = props => (
  * Blockquote
  */
 
-const blockquoteStyle = {
-	...stylex.parse("m-x:-24 p-x:24 p-y:16"),
-	boxShadow: "0px 0px 1px hsl(var(--gray))",
-}
+// const blockquoteStyle = {
+// 	...stylex.parse("m-x:-24 p-x:24 p-y:16"),
+// 	boxShadow: "0px 0px 1px hsl(var(--gray))",
+// }
 
 const blockquoteListStyle = stylex.parse("fs:19")
 
 // Compound component.
 const Blockquote = props => (
-	<blockquote id={props.hash} style={blockquoteStyle}>
+	<blockquote id={props.hash}>
 		<ul>
 			{props.children.map(each => (
 				<li key={each.key} style={blockquoteListStyle}>
 					{/* NOTE: `&nbsp;` doesn’t work using `{}` syntax. */}
-					<Markdown style={stylex.parse("m-r:4")} start={each.isEmpty ? ">" : ">\u00a0"}>
+					<Markdown start={each.isEmpty ? ">" : ">\u00a0"}>
 						{each.data || (
 							each.isEmpty && (
 								<br />
