@@ -25,7 +25,7 @@ function computeWords(state) {
 
 // TODO: Add hours?
 function computeDuration(state) {
-	const count = Math.ceil(state.body.data.length / 6 / 200) // 200: WPM.
+	const count = Math.ceil(state.body.data.length / 6 / 200)
 	return { count, desc: "minute" }
 }
 
