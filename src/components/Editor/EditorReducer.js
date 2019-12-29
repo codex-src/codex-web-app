@@ -42,7 +42,10 @@ const reducer = state => ({
 	collapse() {
 		state.pos2 = { ...state.pos1 }
 	},
-	opWrite(inputType, data) {
+	opWrite(inputType, data, pos1 = state.pos1, pos2 = state.pos2) {
+		if (pos1.pos !== state.pos1.pos || pos2.pos !== state.pos2.pos) {
+			this.setState(state.body, pos1, pos2)
+		}
 		if (!state.didCorrectPos) {
 			state.history[0].pos1.pos = state.pos1.pos
 			state.history[0].pos2.pos = state.pos2.pos

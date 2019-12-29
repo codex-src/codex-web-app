@@ -41,11 +41,12 @@ const Markdown = ({ style, ...props }) => (
  * H1-H6
  */
 
+// FIXME: Add `m-t:28` in read-only mode.
 const h1Style = stylex.parse("fw:700 fs:28 lh:137.5%") // fs:19
 const h2Style = stylex.parse("fw:700 fs:26 lh:137.5%") // fs:19
 const h3Style = stylex.parse("fw:700 fs:24 lh:137.5%") // fs:19
 const h4Style = stylex.parse("fw:700 fs:22 lh:137.5%") // fs:19
-const h5Style = stylex.parse("fw:700 fs:20 lh:137.5%") // fs:19
+const h5Style = stylex.parse("fw:700 fs:19 lh:137.5%") // fs:19
 const h6Style = stylex.parse("fw:700 fs:19 lh:137.5%") // fs:19
 
 const h5MarkdownStyle = stylex.parse("c:gray")
@@ -86,7 +87,7 @@ const Comment = props => (
  */
 
 const blockquoteStyle = {
-	...stylex.parse("m-x:-24 p-x:24 p-y:16 b:gray-50"),
+	...stylex.parse("m-x:-24 p-x:24 p-y:16"),
 	boxShadow: "0px 0px 1px hsl(var(--gray))",
 }
 
@@ -116,8 +117,33 @@ const Blockquote = props => (
  * Code
  */
 
+// const codeBlockPreStyle = {
+// 	...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:gray-50 overflow -x:scroll"),
+// 	boxShadow: "0px 0px 1px hsl(var(--gray))",
+// }
+//
+// const codeBlockCodeStyle = {
+// 	...stylex.parse("pre lh:137.5%"),
+// 	MozTabSize: 2,
+// 	tabSize: 2,
+// 	fontFamily: "Monaco",
+// }
+//
+// // NOTE (1): For a multiline implementation, refer to
+// // https://cdpn.io/PowjgOg.
+// // NOTE (2): `end` property is for debugging.
+// const CodeBlock = props => (
+// 	<pre id={props.hash} style={codeBlockPreStyle} spellCheck={false}>
+// 		<code style={codeBlockCodeStyle}>
+// 			<Markdown start={props.start} end={props.end}>
+// 				{props.children}
+// 			</Markdown>
+// 		</code>
+// 	</pre>
+// )
+
 const codeBlockPreStyle = {
-	...stylex.parse("m-x:-24 p-x:24 p-y:16 block b:gray-50 overflow -x:scroll"),
+	...stylex.parse("m-x:-24 p-x:24 p-y:16 block overflow -x:scroll"),
 	boxShadow: "0px 0px 1px hsl(var(--gray))",
 }
 
@@ -128,18 +154,27 @@ const codeBlockCodeStyle = {
 	fontFamily: "Monaco",
 }
 
-// const codeBlockMarkdownStyle = stylex.parse("c:gray")
-
-// NOTE (1): For a multiline implementation, refer to
-// https://cdpn.io/PowjgOg.
-// NOTE (2): `end` property is for debugging.
+// Compound component.
 const CodeBlock = props => (
 	<pre id={props.hash} style={codeBlockPreStyle} spellCheck={false}>
-		<code style={codeBlockCodeStyle}>
-			<Markdown start={props.start} end={props.end}>
-				{props.children}
-			</Markdown>
-		</code>
+		<ul>
+			{props.children.map((each, index) => (
+				<li key={each.key}>
+					<code style={codeBlockCodeStyle}>
+						<Markdown
+							start={!index && props.start}
+							end={index + 1 === props.children.length && props.end}
+						>
+							{each.data || (
+								index > 0 && index + 1 < props.children.length && (
+									<br />
+								)
+							)}
+						</Markdown>
+					</code>
+				</li>
+			))}
+		</ul>
 	</pre>
 )
 
@@ -282,9 +317,12 @@ export function parse(body) {
 		):
 			Components.push((
 				<CodeBlock key={key} hash={key} start="```" end="```">
-					{data.slice(3, -3) // || (
-						// <br />
-					/* ) */ }
+					{[
+						{
+							...body.nodes[index],
+							data: data.slice(3, -3),
+						},
+					]}
 				</CodeBlock>
 			))
 			break
@@ -314,12 +352,21 @@ export function parse(body) {
 			const cblockNodes = body.nodes.slice(cblockStart, index)
 			Components.push((
 				<CodeBlock key={key} hash={key} start={data} end="```">
-					{cblockNodes.map((each, index) => {
-						if (!index || index + 1 === cblockNodes.length) {
-							return ""
+					{cblockNodes.map((each, index) => (
+						{
+							...each,
+							data: !index || index + 1 === cblockNodes.length
+								? ""
+								: each.data,
 						}
-						return each.data
-					}).join("\n")}
+					))}
+
+					{/* {cblockNodes.map((each, index) => { */}
+					{/* 	if (!index || index + 1 === cblockNodes.length) { */}
+					{/* 		return "" */}
+					{/* 	} */}
+					{/* 	return each.data */}
+					{/* }).join("\n")} */}
 				</CodeBlock>
 			))
 			// NOTE: Decrement because `index` will be auto-
