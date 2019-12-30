@@ -32,9 +32,9 @@ class VDOM {
 			nodes, // The VDOM nodes.
 		})
 	}
-	// `_affectedRange` computes the affected range for a
+	// `affectedRange` computes the affected range for a
 	// selection.
-	_affectedRange(pos1, pos2) {
+	affectedRange(pos1, pos2) {
 		// Compute start range:
 		const start = {
 			node: 0,
@@ -79,7 +79,7 @@ class VDOM {
 	// `_mergedEndNode` creates a new end node, merged at the
 	// start.
 	//
-	// NOTE: `_mergeEndNode` must create a new UUID.
+	// NOTE: `_mergeEndNode` must generate a new key.
 	_mergeEndNode(end, node) {
 		const newNode = {
 			...this.nodes[end.node],
@@ -101,7 +101,7 @@ class VDOM {
 		// }
 
 		// Sorted by order of use.
-		const { start, end } = this._affectedRange(pos1, pos2) // The affected range.
+		const { start, end } = this.affectedRange(pos1, pos2) // The affected range.
 		const newNodes = []                                    // The new nodes.
 		const parsedNodes = parseVDOMNodes(data)               // The parsed nodes from the plain text data.
 		// Nodes before start:
