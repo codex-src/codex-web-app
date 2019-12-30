@@ -1,5 +1,4 @@
 // import detect from "./detect"
-import * as Components from "./Components"
 import DebugEditor from "./DebugEditor"
 import ErrorBoundary from "./ErrorBoundary"
 import invariant from "invariant"
@@ -8,7 +7,6 @@ import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 import useTestEditor from "./TestEditorReducer"
-import vdom from "./vdom"
 
 import "./editor.css"
 
@@ -104,6 +102,19 @@ Hello, world!`)
 					// 	console.log("onInput")
 					// },
 
+					onKeyPress: e => {
+						e.preventDefault()
+						let data = e.key
+						if (e.key === "Enter") {
+							data = "\n"
+						}
+						dispatch.opWrite("onKeyPress", data)
+					},
+
+					// onKeyDown: e => {
+					// 	console.log("onKeyDown", { ...e })
+					// },
+
 					onCompositionEnd: e => {
 						if (!e.data) {
 							// No-op.
@@ -115,14 +126,30 @@ Hello, world!`)
 						dispatch.opCompose(data)
 					},
 
-					// onInput: e => {
-					// 	// deleteContentBackward
-					// 	// deleteWordBackward
-					// 	// deleteSoftLineBackward
-					// 	// deleteContentForward
-					// 	// deleteWordForward
-					// 	console.log(e.nativeEvent.inputType)
-					// },
+					// console.log(e.nativeEvent.inputType)
+					onInput: e => {
+						// if (!e.nativeEvent || !e.nativeEvent.inputType) {
+						// 	return
+						// }
+						switch (e.nativeEvent.inputType) {
+						case "deleteContentBackward":
+							dispatch.opBackspace()
+							return
+						case "deleteWordBackward":
+							dispatch.opBackspaceWord()
+							return
+						case "deleteSoftLineBackward":
+							dispatch.opBackspaceLine()
+							return
+						case "deleteContentForward":
+							dispatch.opDelete()
+							return
+						default:
+							// No-op.
+							return
+						}
+
+					},
 
 				},
 				state.Components,
