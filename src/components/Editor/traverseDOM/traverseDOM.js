@@ -1,8 +1,8 @@
 import * as types from "./types"
 import nodeMethods from "./nodeMethods"
 
-// `computePosFromNode` computes a VDOM cursor position from
-// a root node, node, and offset.
+// `computePosFromNode` computes a VDOM cursor from a root
+// node, node, and offset.
 export function computePosFromNode(rootNode, node, textOffset) {
 	// Iterate to the innermost node:
 	const pos = types.newPos()
@@ -50,7 +50,7 @@ export function computePosFromNode(rootNode, node, textOffset) {
 }
 
 // `computeNodeFromPos` computes the node (node and offset)
-// for a VDOM cursor position.
+// for a VDOM cursor.
 export function computeNodeFromPos(rootNode, pos) {
 	const node = types.newNode()
 	const recurse = startNode => {
