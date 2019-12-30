@@ -16,7 +16,7 @@ function parseVDOMNodes(data) {
 
 // A `VDOM` represents a VDOM for plain text data;
 // paragraphs are parsed into VDOM nodes. A VDOM node is a
-// universally unique paragraph.
+// document-unique paragraph.
 class VDOM {
 	// NOTE: `_sharedNodes` is for internal use; nodes are
 	// shared between VDOMs — keys are unchanged.
