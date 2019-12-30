@@ -19,6 +19,14 @@ Hello, world!
 
 Hello, world!`)
 
+	const [inSync, setInSync] = React.useState(true)
+
+	React.useEffect(() => {
+		const vdom = state.body.data
+		const dom = traverseDOM.innerText(ref.current)
+		setInSync(vdom.length === dom.length && vdom === dom)
+	}, [state.Components])
+
 	// Render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -61,6 +69,13 @@ Hello, world!`)
 
 	return (
 		<ErrorBoundary>
+			<div style={stylex.parse("absolute -r -t")}>
+				<div style={stylex.parse("p-x:24 p-t:32")}>
+					<p style={stylex.parse("fs:19 lh:100%")}>
+						{inSync ? "✅" : "❌"}
+					</p>
+				</div>
+			</div>
 			{React.createElement(
 				"article",
 				{
@@ -126,11 +141,7 @@ Hello, world!`)
 						dispatch.opCompose(data)
 					},
 
-					// console.log(e.nativeEvent.inputType)
 					onInput: e => {
-						// if (!e.nativeEvent || !e.nativeEvent.inputType) {
-						// 	return
-						// }
 						switch (e.nativeEvent.inputType) {
 						case "deleteContentBackward":
 							dispatch.opBackspace()
@@ -148,7 +159,6 @@ Hello, world!`)
 							// No-op.
 							return
 						}
-
 					},
 
 				},
