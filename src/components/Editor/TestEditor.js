@@ -2,11 +2,13 @@
 import * as Components from "./Components"
 import DebugEditor from "./DebugEditor"
 import ErrorBoundary from "./ErrorBoundary"
+import invariant from "invariant"
 import React from "react"
 import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 import useTestEditor from "./TestEditorReducer"
+import vdom from "./vdom"
 
 import "./editor.css"
 
@@ -100,17 +102,14 @@ Hello, world!`)
 
 					onCompositionEnd: e => {
 						console.log("onCompositionEnd")
-						const { start, end } = state.body.affectedRange(state.pos1.pos, state.pos2.pos)
-						// computeAffectedDOMRange
-						// console.log(traverseDOM.innerText(ref.current))
 
-						// const parsedComponents = Components.parse(state.body.nodes.slice(start.node, end.node - start.node + 1))
-						// console.log(parsedComponents)
-
-						// Pseudo:
-						// 1. Compute the affected range.
-						// 2. Reparse the affected nodes; read from the DOM.
-						// FIXME: Unterminated or terminated code blocks.
+						let { anchorNode, focusNode } = document.getSelection()
+						const start = ascendToVDOMNode(anchorNode)
+						let end = start
+						if (focusNode !== anchorNode) {
+							end = ascendToVDOMNode(focusNode)
+						}
+						console.log(traverseDOM.innerText(start))
 					},
 					onInput: e => {
 						// // deleteContentBackward
@@ -130,10 +129,16 @@ Hello, world!`)
 	)
 })
 
-// `computeAffectedDOMRange` computes the affected DOM range
-// from a root node and a VDOM node range.
-function computeAffectedDOMRange(rootNode, range) {
-	console.log(rootNode)
+// TODO: Move to `traverseDOM` package.
+function ascendToVDOMNode(node) {
+	while (!traverseDOM.isVDOMNode(node)) {
+		invariant(
+			node.parentNode,
+			"ascendToVDOMNode: Cannot recursively ascend; `node` does not have a parent node.",
+		)
+		node = node.parentNode
+	}
+	return node
 }
 
 export default TestEditor
