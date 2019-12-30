@@ -59,6 +59,7 @@ const TestEditor = stylex.Unstyleable(props => {
 			{React.createElement(
 				"article",
 				{
+
 					ref,
 
 					style: translateZ,
@@ -116,40 +117,6 @@ const TestEditor = stylex.Unstyleable(props => {
 					// 	// ...
 					// },
 
-					onCut: e => {
-						e.preventDefault()
-						if (state.pos1.pos === state.pos2.pos) {
-							// No-op.
-							return
-						}
-						const cutData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-						e.clipboardData.setData("text/plain", cutData)
-						dispatch.opWrite("onCut", "")
-					},
-
-					onCopy: e => {
-						e.preventDefault()
-						if (state.pos1.pos === state.pos2.pos) {
-							// No-op.
-							return
-						}
-						const copyData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-						e.clipboardData.setData("text/plain", copyData)
-					},
-
-					onPaste: e => {
-						e.preventDefault()
-						const pasteData = e.clipboardData.getData("text/plain")
-						if (!pasteData) {
-							// No-op.
-							return
-						}
-						dispatch.opWrite("onPaste", pasteData)
-					},
-
-					// TODO
-					onDragStart: e => e.preventDefault(),
-					onDragEnd:   e => e.preventDefault(),
 				},
 				state.Components,
 			)}
