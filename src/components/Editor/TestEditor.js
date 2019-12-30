@@ -1,5 +1,5 @@
-// import DebugEditor from "./DebugEditor"
-import detect from "./detect"
+// import detect from "./detect"
+import DebugEditor from "./DebugEditor"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
 import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
@@ -12,7 +12,11 @@ import "./editor.css"
 const TestEditor = stylex.Unstyleable(props => {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useTestEditor("Hello, world!")
+	const [state, dispatch] = useTestEditor(`# Hello, world!
+
+Hello, world!
+
+Hello, world!`)
 
 	// Render components:
 	React.useLayoutEffect(
@@ -84,45 +88,92 @@ const TestEditor = stylex.Unstyleable(props => {
 						dispatch.setState(state.body, pos1, pos2)
 					},
 
-					onKeyPress: e => {
-						e.preventDefault()
-						let data = e.key
-						if (e.key === "Enter") {
-							data = "\n"
-						}
-						dispatch.opWrite("onKeyPress", data)
-					},
+					// onKeyPress: e => {
+					// 	e.preventDefault()
+					// 	let data = e.key
+					// 	if (e.key === "Enter") {
+					// 		data = "\n"
+					// 	}
+					// 	dispatch.opWrite("onKeyPress", data)
+					// },
 
+					// onKeyDown: e => {
+					// 	console.log("onKeyDown", { ...e })
+					// 	// switch (true) {
+					// 	// case detect.isTab(e):
+					// 	// 	e.preventDefault()
+					// 	// 	dispatch.opTab()
+					// 	// 	return
+					// 	// case detect.isBackspace(e): // Not working.
+					// 	// 	console.log("isBackspace")
+					// 	// 	e.preventDefault()
+					// 	// 	dispatch.opBackspace()
+					// 	// 	return
+					// 	// default:
+					// 	// 	// No-op.
+					// 	// 	return
+					// 	// }
+					// },
+
+					// // NOTE: `onKeyPress` fires for enter events
+					// // (`onKeyDown` does not).
+					// onKeyPress: e => {
+					// 	console.log("onKeyPress")
+					// },
+					// // // NOTE: `onKeyDown` fires a no-op event:
+					// // //
+					// // // const e = {
+					// // //   key: "Unidentified",
+					// // //   keyCode: 229,
+					// // // }
+					// // //
+					// // onKeyDown: e => {
+					// // 	console.log("onKeyDown")
+					// // },
+
+					// onKeyPress: e => {
+					// 	console.log("onKeyPress")
+					// },
 					onKeyDown: e => {
-						switch (true) {
-						case detect.isTab(e):
-							e.preventDefault()
-							dispatch.opTab()
-							return
-						case detect.isBackspace(e):
-							e.preventDefault()
-							dispatch.opBackspace()
-							return
-						default:
+						// const pos1 = { ...state.pos1 }
+						// const pos2 = { ...state.pos2 }
+						// pos1.pos += -pos1.offset
+						// pos2.pos += -pos2.offset + state.body.nodes[pos2.index].data.length
+						// console.log(pos1.pos, pos2.pos)
+					},
+					// onCompositionStart: e => {
+					// 	console.log("onCompositionStart")
+					// },
+					// onCompositionStart: e => {
+					// 	console.log("onCompositionStart")
+					// },
+					onCompositionEnd: e => {
+						// console.log("onCompositionEnd")
+						if (!e.data) {
 							// No-op.
 							return
 						}
+						const range = state.body._affectedRange(state.pos1.pos, state.pos2.pos)
+						// console.log(state.Components)
+						// traverseDOM.innerText(...)
+
+						// console.log(Math.random().toString(36).slice(2, 6),
+						// 	state.pos1.index, state.pos2.index - state.pos1.index)
 					},
-
-					// onCompositionEnd: e => {
-					// 	// ...
-					// },
-
 					// onInput: e => {
-					// 	// ...
+					// 	// deleteContentBackward
+					// 	// deleteWordBackward
+					// 	// deleteSoftLineBackward
+					// 	// deleteContentForward
+					// 	// deleteWordForward
+					// 	console.log(e.nativeEvent.inputType)
 					// },
 
 				},
 				state.Components,
 			)}
-			{/* <div style={stylex.parse("h:28")} /> */}
-			{/* <div style={stylex.parse("h:28")} /> */}
-			{/* <DebugEditor state={state} /> */}
+			<div style={stylex.parse("h:28")} />
+			<DebugEditor state={state} />
 		</ErrorBoundary>
 	)
 })

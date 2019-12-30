@@ -1,25 +1,26 @@
-import ascii from "./ascii"
 import React from "react"
 import stylex from "stylex"
 
-/*
- * Syntax
- */
-
-const syntaxStyle = {
-	...stylex.parse("c:blue-a400"),
-	// display: "none",
-}
+// // Don’t try this at home…
+// const VDOMNode = render => props => {
+// 	const element = render(props)
+// 	const { props: { children: { _owner: { key: id, } } } } = element
+// 	const newRender = React.cloneElement(
+// 		element,
+// 		{
+// 			id,
+// 			"data-vdom-node": id,
+// 			...element.props,
+// 		},
+// 	)
+// 	return newRender
+// }
 
 const Syntax = stylex.Styleable(props => (
-	<span style={syntaxStyle}>
+	<span style={stylex.parse("c:blue-a400")}>
 		{props.children}
 	</span>
 ))
-
-/*
- * Markdown
- */
 
 const Markdown = ({ style, ...props }) => (
 	<React.Fragment>
@@ -37,72 +38,50 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-/*
- * H1-H6
- */
+const headersSyntax = {
+	"# ":      "h1",
+	"## ":     "h2",
+	"### ":    "h3",
+	"#### ":   "h4",
+	"##### ":  "h5",
+	"###### ": "h6",
+}
 
 // FIXME: Add `m-t:28` in read-only mode.
-const h1Style = stylex.parse("fw:700 fs:19") // fs:28.0000 lh:137.5% // 28 * 0.925 ** 5
-const h2Style = stylex.parse("fw:700 fs:19") // fs:25.9000 lh:137.5%
-const h3Style = stylex.parse("fw:700 fs:19") // fs:23.9575 lh:137.5%
-const h4Style = stylex.parse("fw:700 fs:19") // fs:22.1607 lh:137.5%
-const h5Style = stylex.parse("fw:700 fs:19") // fs:20.4986 lh:137.5%
-const h6Style = stylex.parse("fw:700 fs:19") // fs:18.9612 lh:137.5%
+const Header = props => {
+	const TagName = headersSyntax[props.start]
 
-const h5MarkdownStyle = stylex.parse("c:gray")
-const h6MarkdownStyle = stylex.parse("c:gray")
+	let isPrimary = true
+	if (TagName === "h5" || TagName === "h6") {
+		isPrimary = false
+	}
 
-// const H1 = props => (
-// 	<h1 id={props.hash} style={h1Style}>
-// 		<Markdown start="#&nbsp;">
-// 			{props.children}
-// 		</Markdown>
-// 	</h1>
-// )
-
-const H1 = props => <h1 id={props.hash} style={h1Style}><Markdown start="#&nbsp;">{props.children}</Markdown></h1>
-const H2 = props => <h2 id={props.hash} style={h2Style}><Markdown start="##&nbsp;">{props.children}</Markdown></h2>
-const H3 = props => <h3 id={props.hash} style={h3Style}><Markdown start="###&nbsp;">{props.children}</Markdown></h3>
-const H4 = props => <h4 id={props.hash} style={h4Style}><Markdown start="####&nbsp;">{props.children}</Markdown></h4>
-const H5 = props => <h5 id={props.hash} style={h5Style}><Markdown style={h5MarkdownStyle} start="#####&nbsp;">{props.children}</Markdown></h5>
-const H6 = props => <h6 id={props.hash} style={h6Style}><Markdown style={h6MarkdownStyle} start="######&nbsp;">{props.children}</Markdown></h6>
-
-/*
- * Comment
- */
-
-const commentStyle = stylex.parse("fs:19 c:gray")
-const commentMarkdownStyle = stylex.parse("c:gray")
+	return (
+		<TagName id={props.id} style={{ ...stylex.parse("fw:700 fs:19") }} data-vdom-node>
+			<Markdown style={!isPrimary && stylex.parse("c:gray")} start={props.start.replace(" ", "\u00a0")}>
+				{props.children}
+			</Markdown>
+		</TagName>
+	)
+}
 
 const Comment = props => (
-	<p id={props.hash} style={commentStyle} spellCheck={false}>
-		<Markdown style={commentMarkdownStyle} start="//">
+	<p id={props.id} style={stylex.parse("fs:19 c:gray")} spellCheck={false} data-vdom-node>
+		<Markdown style={stylex.parse("c:gray")} start="//">
 			{props.children}
 		</Markdown>
 	</p>
 )
 
-/*
- * Blockquote
- */
-
-// const blockquoteStyle = {
-// 	...stylex.parse("m-x:-24 p-x:24 p-y:16"),
-// 	boxShadow: "0px 0px 1px hsl(var(--gray))",
-// }
-
-const blockquoteListStyle = stylex.parse("fs:19")
-
 // Compound component.
 const Blockquote = props => (
-	<blockquote id={props.hash}>
+	<blockquote data-vdom-node>
 		<ul>
 			{props.children.map(each => (
-				<li key={each.key} style={blockquoteListStyle}>
-					{/* NOTE: `&nbsp;` doesn’t work using `{}` syntax. */}
-					<Markdown start={each.isEmpty ? ">" : ">\u00a0"}>
+				<li key={each.key} id={props.id} style={stylex.parse("fs:19")} data-vdom-node>
+					<Markdown start={each.isNewline ? ">" : ">\u00a0"}>
 						{each.data || (
-							each.isEmpty && (
+							each.isNewline && (
 								<br />
 							)
 						)}
@@ -113,55 +92,15 @@ const Blockquote = props => (
 	</blockquote>
 )
 
-/*
- * Code
- */
-
-// const codeBlockPreStyle = {
-// 	...stylex.parse("m-x:-24 p-x:24 p-y:16 b:gray-50 overflow -x:scroll"),
-// 	boxShadow: "0px 0px 1px hsl(var(--gray))",
-// }
-//
-// const codeBlockCodeStyle = {
-// 	...stylex.parse("pre lh:137.5%"),
-// 	MozTabSize: 2,
-// 	tabSize: 2,
-// 	fontFamily: "Monaco",
-// }
-//
-// // NOTE (1): For a multiline implementation, refer to
-// // https://cdpn.io/PowjgOg.
-// // NOTE (2): `end` property is for debugging.
-// const CodeBlock = props => (
-// 	<pre id={props.hash} style={codeBlockPreStyle} spellCheck={false}>
-// 		<code style={codeBlockCodeStyle}>
-// 			<Markdown start={props.start} end={props.end}>
-// 				{props.children}
-// 			</Markdown>
-// 		</code>
-// 	</pre>
-// )
-
-const codeBlockPreStyle = {
-	...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"),
-	boxShadow: "0px 0px 1px hsl(var(--gray))",
-}
-
-// NOTE: `p-x` needs to be on `code`.
-const codeBlockCodeStyle = {
-	...stylex.parse("p-x:24 lh:137.5%"),
-	MozTabSize: 2,
-	tabSize: 2,
-	fontFamily: "Monaco",
-}
-
 // Compound component.
+//
+// http://cdpn.io/PowjgOg
 const CodeBlock = props => (
-	<pre id={props.hash} style={codeBlockPreStyle} spellCheck={false}>
+	<pre style={{ ...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false} data-vdom-node>
 		<ul>
 			{props.children.map((each, index) => (
-				<li key={each.key}>
-					<code style={codeBlockCodeStyle}>
+				<li key={each.key} id={props.id} data-vdom-node>
+					<code style={{ ...stylex.parse("p-x:24"), MozTabSize: 2, tabSize: 2, font: "16px/1.375 Monaco" }}>
 						<Markdown
 							start={!index && props.start}
 							end={index + 1 === props.children.length && props.end}
@@ -179,41 +118,20 @@ const CodeBlock = props => (
 	</pre>
 )
 
-/*
- * Paragraph
- */
-
-const paragraphStyle = stylex.parse("fs:19")
-
 const Paragraph = props => (
-	<p id={props.hash} style={paragraphStyle}>
+	<p id={props.id} style={stylex.parse("fs:19")} data-vdom-node>
 		{props.children}
 	</p>
 )
 
-/*
- * Break
- */
-
-const breakStyle = stylex.parse("fs:19 c:gray")
-
-// <div id={props.hash} style={stylex.parse("flex -r -y:center h:28")}>
-// 	<div style={stylex.parse("w:max h:2 b:gray-200")} />
-// </div>
-
 const Break = props => (
-	<p id={props.hash} style={breakStyle} spellCheck={false}>
+	<p id={props.id} style={stylex.parse("fs:19 c:gray")} spellCheck={false} data-vdom-node>
 		<Markdown start={props.start} />
 	</p>
 )
 
 export const types = {
-	[H1.name]:         "H1",
-	[H2.name]:         "H2",
-	[H3.name]:         "H3",
-	[H4.name]:         "H4",
-	[H5.name]:         "H5",
-	[H6.name]:         "H6",
+	[Header.name]:     "Header",
 	[Comment.name]:    "Comment",
 	[Blockquote.name]: "Blockquote",
 	[CodeBlock.name]:  "CodeBlock",
@@ -230,13 +148,6 @@ function isBlockquote(data, hasNextSibling) {
 	return ok
 }
 
-// TODO:
-//
-// <UnorderedList>
-// <OrderedList>
-//
-// TODO: We could have `parse` and `parseStrict` parsers for
-// parsing loose or strict (GFM) markdown.
 export function parse(body) {
 	const Components = []
 	let index = 0
@@ -248,20 +159,6 @@ export function parse(body) {
 		/* eslint-disable no-case-declarations */
 		switch (true) {
 		case (
-			!data.length || (
-				data.length &&
-				ascii.isAlphanum(data[0])
-			)
-		):
-			Components.push((
-				<Paragraph key={key} hash={key}>
-					{data || (
-						<br />
-					)}
-				</Paragraph>
-			))
-			break
-		case (
 			(data.length >= 2 && data.slice(0, 2) === ("# ")) ||
 			(data.length >= 3 && data.slice(0, 3) === ("## ")) ||
 			(data.length >= 4 && data.slice(0, 4) === ("### ")) ||
@@ -270,25 +167,24 @@ export function parse(body) {
 			(data.length >= 7 && data.slice(0, 7) === ("###### "))
 		):
 			const headerIndex = data.indexOf("# ")
-			const HeaderComponent = [H1, H2, H3, H4, H5, H6][headerIndex] // Must start with an uppercase character.
+			const headerStart = data.slice(0, headerIndex + 2)
 			Components.push((
-				<HeaderComponent key={key} hash={key}>
+				<Header key={key} id={key} start={headerStart}>
 					{data.slice(headerIndex + 2) || (
 						<br />
 					)}
-				</HeaderComponent>
+				</Header>
 			))
 			break
 		case data.length >= 2 && data.slice(0, 2) === "//":
 			Components.push((
-				<Comment key={key} hash={key}>
+				<Comment key={key} id={key}>
 					{data.slice(2) || (
 						<br />
 					)}
 				</Comment>
 			))
 			break
-
 		case isBlockquote(data, index + 1 < body.nodes.length):
 			const bquoteStart = index
 			index++
@@ -300,11 +196,11 @@ export function parse(body) {
 			}
 			const bquoteNodes = body.nodes.slice(bquoteStart, index)
 			Components.push((
-				<Blockquote key={key} hash={key}>
+				<Blockquote key={key} id={key}>
 					{bquoteNodes.map(each => (
 						{
 							...each,
-							isEmpty: each.data.length === 1 && each.data === ">",
+							isNewline: each.data.length === 1 && each.data === ">",
 							data: each.data.slice(2),
 						}
 					))}
@@ -321,7 +217,7 @@ export function parse(body) {
 			)
 		):
 			Components.push((
-				<CodeBlock key={key} hash={key} start="```" end="```">
+				<CodeBlock key={key} id={key} start="```" end="```">
 					{[
 						{
 							...body.nodes[index],
@@ -345,7 +241,7 @@ export function parse(body) {
 			index++
 			if (!cblockDidTerminate) { // Unterminated code block.
 				Components.push((
-					<Paragraph key={key} hash={key}>
+					<Paragraph key={key} id={key}>
 						{data || (
 							<br />
 						)}
@@ -356,7 +252,7 @@ export function parse(body) {
 			}
 			const cblockNodes = body.nodes.slice(cblockStart, index)
 			Components.push((
-				<CodeBlock key={key} hash={key} start={data} end="```">
+				<CodeBlock key={key} id={key} start={data} end="```">
 					{cblockNodes.map((each, index) => (
 						{
 							...each,
@@ -365,13 +261,6 @@ export function parse(body) {
 								: each.data,
 						}
 					))}
-
-					{/* {cblockNodes.map((each, index) => { */}
-					{/* 	if (!index || index + 1 === cblockNodes.length) { */}
-					{/* 		return "" */}
-					{/* 	} */}
-					{/* 	return each.data */}
-					{/* }).join("\n")} */}
 				</CodeBlock>
 			))
 			// NOTE: Decrement because `index` will be auto-
@@ -384,11 +273,11 @@ export function parse(body) {
 				data === "---"
 			)
 		):
-			Components.push(<Break key={key} hash={key} start={data} />)
+			Components.push(<Break key={key} id={key} start={data} />)
 			break
 		default:
 			Components.push((
-				<Paragraph key={key} hash={key}>
+				<Paragraph key={key} id={key}>
 					{data || (
 						<br />
 					)}

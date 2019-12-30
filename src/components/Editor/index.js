@@ -1,9 +1,9 @@
-// import * as Editor from "./Editor"
-import TestEditor from "./TestEditor"
+// import TestEditor from "./TestEditor"
+import * as Editor from "./Editor"
 import useEditor from "./EditorReducer"
 
 const exports = {
-	Editor: TestEditor, // Editor.Editor,
+	Editor: Editor.Editor, // TestEditor,
 	useEditor,
 }
 
