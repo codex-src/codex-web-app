@@ -1,14 +1,14 @@
-import * as TestComponents from "./TestComponents"
+import * as Components from "./Components"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
 import utf8 from "./utf8"
 import vdom from "./vdom"
 
 const initialState = {
-	isFocused:     false,                // Is the editor focused?
-	body:          new vdom.VDOM(""),    // The VDOM body.
-	pos1:          traverseDOM.newPos(), // The VDOM cursor start.
-	pos2:          traverseDOM.newPos(), // The VDOM cursor end.
+	isFocused: false,                // Is the editor focused?
+	body:      new vdom.VDOM(""),    // The VDOM body.
+	pos1:      traverseDOM.newPos(), // The VDOM cursor start.
+	pos2:      traverseDOM.newPos(), // The VDOM cursor end.
 
 	// `shouldRenderComponents` hints whether the editor’s
 	// components should be rerendered.
@@ -69,7 +69,7 @@ const reducer = state => ({
 		this.delete(length, 0)
 	},
 	render() {
-		state.Components = TestComponents.parse(state.body)
+		state.Components = Components.parse(state.body)
 		state.shouldRenderPos++
 	},
 })
@@ -81,7 +81,7 @@ const init = data => state => {
 	const newState = {
 		...state,
 		body,
-		Components: TestComponents.parse(body),
+		Components: Components.parse(body),
 	}
 	return newState
 }

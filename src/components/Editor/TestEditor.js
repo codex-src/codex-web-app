@@ -1,4 +1,5 @@
 // import detect from "./detect"
+import * as Components from "./Components"
 import DebugEditor from "./DebugEditor"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
@@ -97,77 +98,28 @@ Hello, world!`)
 					// 	dispatch.opWrite("onKeyPress", data)
 					// },
 
-					// onKeyDown: e => {
-					// 	console.log("onKeyDown", { ...e })
-					// 	// switch (true) {
-					// 	// case detect.isTab(e):
-					// 	// 	e.preventDefault()
-					// 	// 	dispatch.opTab()
-					// 	// 	return
-					// 	// case detect.isBackspace(e): // Not working.
-					// 	// 	console.log("isBackspace")
-					// 	// 	e.preventDefault()
-					// 	// 	dispatch.opBackspace()
-					// 	// 	return
-					// 	// default:
-					// 	// 	// No-op.
-					// 	// 	return
-					// 	// }
-					// },
-
-					// // NOTE: `onKeyPress` fires for enter events
-					// // (`onKeyDown` does not).
-					// onKeyPress: e => {
-					// 	console.log("onKeyPress")
-					// },
-					// // // NOTE: `onKeyDown` fires a no-op event:
-					// // //
-					// // // const e = {
-					// // //   key: "Unidentified",
-					// // //   keyCode: 229,
-					// // // }
-					// // //
-					// // onKeyDown: e => {
-					// // 	console.log("onKeyDown")
-					// // },
-
-					// onKeyPress: e => {
-					// 	console.log("onKeyPress")
-					// },
-					onKeyDown: e => {
-						// const pos1 = { ...state.pos1 }
-						// const pos2 = { ...state.pos2 }
-						// pos1.pos += -pos1.offset
-						// pos2.pos += -pos2.offset + state.body.nodes[pos2.index].data.length
-						// console.log(pos1.pos, pos2.pos)
-					},
-					// onCompositionStart: e => {
-					// 	console.log("onCompositionStart")
-					// },
-					// onCompositionStart: e => {
-					// 	console.log("onCompositionStart")
-					// },
 					onCompositionEnd: e => {
-						// console.log("onCompositionEnd")
-						if (!e.data) {
-							// No-op.
-							return
-						}
-						const range = state.body._affectedRange(state.pos1.pos, state.pos2.pos)
-						// console.log(state.Components)
-						// traverseDOM.innerText(...)
+						console.log("onCompositionEnd")
+						const { start, end } = state.body.affectedRange(state.pos1.pos, state.pos2.pos)
+						// computeAffectedDOMRange
+						// console.log(traverseDOM.innerText(ref.current))
 
-						// console.log(Math.random().toString(36).slice(2, 6),
-						// 	state.pos1.index, state.pos2.index - state.pos1.index)
+						// const parsedComponents = Components.parse(state.body.nodes.slice(start.node, end.node - start.node + 1))
+						// console.log(parsedComponents)
+
+						// Pseudo:
+						// 1. Compute the affected range.
+						// 2. Reparse the affected nodes; read from the DOM.
+						// FIXME: Unterminated or terminated code blocks.
 					},
-					// onInput: e => {
-					// 	// deleteContentBackward
-					// 	// deleteWordBackward
-					// 	// deleteSoftLineBackward
-					// 	// deleteContentForward
-					// 	// deleteWordForward
-					// 	console.log(e.nativeEvent.inputType)
-					// },
+					onInput: e => {
+						// // deleteContentBackward
+						// // deleteWordBackward
+						// // deleteSoftLineBackward
+						// // deleteContentForward
+						// // deleteWordForward
+						// console.log(e.nativeEvent.inputType)
+					},
 
 				},
 				state.Components,
@@ -177,5 +129,11 @@ Hello, world!`)
 		</ErrorBoundary>
 	)
 })
+
+// `computeAffectedDOMRange` computes the affected DOM range
+// from a root node and a VDOM node range.
+function computeAffectedDOMRange(rootNode, range) {
+	console.log(rootNode)
+}
 
 export default TestEditor

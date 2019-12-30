@@ -32,9 +32,9 @@ class VDOM {
 			nodes, // The VDOM nodes.
 		})
 	}
-	// `affectedRange` computes the affected range for a
+	// `_affectedRange` computes the affected range for a
 	// selection.
-	affectedRange(pos1, pos2) {
+	_affectedRange(pos1, pos2) {
 		// Compute start range:
 		const start = {
 			node: 0,
@@ -101,7 +101,7 @@ class VDOM {
 		// }
 
 		// Sorted by order of use.
-		const { start, end } = this.affectedRange(pos1, pos2) // The affected range.
+		const { start, end } = this._affectedRange(pos1, pos2) // The affected range.
 		const newNodes = []                                    // The new nodes.
 		const parsedNodes = parseVDOMNodes(data)               // The parsed nodes from the plain text data.
 		// Nodes before start:
