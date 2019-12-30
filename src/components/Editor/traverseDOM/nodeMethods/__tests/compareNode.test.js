@@ -1,15 +1,20 @@
-import * as compare from "../compare"
+import * as compareNode from "../compareNode"
 import React from "react"
 import ReactDOMServer from "react-dom/server"
 
 test("isBreakOrTextNode (br)", () => {
 	const br = document.createElement("br")
-	expect(compare.isBreakOrTextNode(br)).toBe(true)
+	expect(compareNode.isBreakOrTextNode(br)).toBe(true)
 })
 
 test("isBreakOrTextNode (text node)", () => {
 	const textNode = document.createTextNode("Hello, world!")
-	expect(compare.isBreakOrTextNode(textNode)).toBe(true)
+	expect(compareNode.isBreakOrTextNode(textNode)).toBe(true)
+})
+
+test("isVDOMNode (text node)", () => {
+	const textNode = document.createTextNode("Hello, world!")
+	expect(compareNode.isVDOMNode(textNode)).toBe(false)
 })
 
 test("isVDOMNode (p)", () => {
@@ -29,7 +34,7 @@ test("isVDOMNode (p)", () => {
 	const parser = new DOMParser()
 	const dom = parser.parseFromString(ReactDOMServer.renderToStaticMarkup(root), "text/html")
 	const p = dom.querySelector("p")
-	expect(compare.isVDOMNode(p)).toBe(true)
+	expect(compareNode.isVDOMNode(p)).toBe(true)
 })
 
 // NOTE: `ul` and `li` are assigned `data-vdom-node` because
@@ -57,6 +62,6 @@ test("isVDOMNode (ul)", () => {
 	const dom = parser.parseFromString(ReactDOMServer.renderToStaticMarkup(root), "text/html")
 	const ul = dom.querySelector("ul")
 	const li = dom.querySelector("li")
-	expect(compare.isVDOMNode(ul)).toBe(true)
-	expect(compare.isVDOMNode(li)).toBe(true)
+	expect(compareNode.isVDOMNode(ul)).toBe(true)
+	expect(compareNode.isVDOMNode(li)).toBe(true)
 })

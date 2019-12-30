@@ -1,9 +1,9 @@
-import * as compare from "./compare"
-import * as read from "./read"
+import * as compareNode from "./compareNode"
+import * as readNode from "./readNode"
 
 const exports = {
-	...compare,
-	...read,
+	...compareNode,
+	...readNode,
 }
 
 export default exports

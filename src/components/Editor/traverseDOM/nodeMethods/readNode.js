@@ -1,11 +1,11 @@
-import * as compare from "./compare"
+import * as compareNode from "./compareNode"
 
 // `nodeValue` and `innerText` mock the browser functions
 // based on the needs of `traverseDOM`.
 
 // `nodeValue` reads a node’s text data.
 export function nodeValue(node) {
-	if (!compare.isBreakOrTextNode(node)) {
+	if (!compareNode.isBreakOrTextNode(node)) {
 		return ""
 	}
 	// Guard break node:
@@ -14,14 +14,18 @@ export function nodeValue(node) {
 
 // `innerText` recursively reads a root node’s text data.
 export function innerText(rootNode) {
+	// Guard break or text nodes:
+	if (compareNode.isBreakOrTextNode(rootNode)) {
+		return nodeValue(rootNode)
+	}
 	let data = ""
 	const recurse = start => {
 		for (const currentNode of start.childNodes) {
-			if (compare.isBreakOrTextNode(currentNode)) {
+			if (compareNode.isBreakOrTextNode(currentNode)) {
 				data += nodeValue(currentNode)
 			} else {
 				recurse(currentNode)
-				if (compare.isVDOMNode(currentNode) && currentNode.nextSibling) {
+				if (compareNode.isVDOMNode(currentNode) && currentNode.nextSibling) {
 					data += "\n"
 				}
 			}
