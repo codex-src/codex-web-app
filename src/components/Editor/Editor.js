@@ -8,6 +8,7 @@ import traverseDOM from "./traverseDOM"
 
 import "./editor.css"
 
+// FIXME?
 export const Context = React.createContext()
 
 export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
