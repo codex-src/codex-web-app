@@ -21,14 +21,17 @@ Hello, world!`)
 
 	const [inSync, setInSync] = React.useState(true)
 
-	React.useEffect(() => {
-		const vdom = state.body.data
-		const dom = traverseDOM.innerText(ref.current)
-		if (vdom.length !== dom.length || vdom !== dom) {
-			console.log({ dom })
-		}
-		setInSync(vdom.length === dom.length && vdom === dom)
-	}, [state.Components])
+	React.useEffect(
+		React.useCallback(() => {
+			const vdom = state.body.data
+			const dom = traverseDOM.innerText(ref.current)
+			if (vdom.length !== dom.length || vdom !== dom) {
+				console.log({ dom })
+			}
+			setInSync(vdom.length === dom.length && vdom === dom)
+		}, [state]),
+		[state.Components],
+	)
 
 	// Render components:
 	React.useLayoutEffect(
