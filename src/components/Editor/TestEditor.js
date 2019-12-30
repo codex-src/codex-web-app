@@ -10,6 +10,11 @@ import useTestEditor from "./TestEditorReducer"
 
 import "./editor.css"
 
+const deleteContentBackward = "deleteContentBackward"
+const deleteWordBackward = "deleteWordBackward"
+const deleteSoftLineBackward = "deleteSoftLineBackward"
+const deleteContentForward = "deleteContentForward"
+
 const TestEditor = stylex.Unstyleable(props => {
 	const ref = React.useRef()
 
@@ -160,16 +165,16 @@ Hello, world!`)
 
 					onInput: e => {
 						switch (e.nativeEvent.inputType) {
-						case "deleteContentBackward":
+						case deleteContentBackward:
 							dispatch.opBackspace()
 							return
-						case "deleteWordBackward":
-							dispatch.opBackspaceWord()
-							return
-						case "deleteSoftLineBackward":
-							dispatch.opBackspaceLine()
-							return
-						case "deleteContentForward":
+						// case deleteWordBackward:
+						// 	dispatch.opBackspaceWord()
+						// 	return
+						// case deleteSoftLineBackward:
+						// 	dispatch.opBackspaceLine()
+						// 	return
+						case deleteContentForward:
 							dispatch.opDelete()
 							return
 						default:

@@ -84,14 +84,20 @@ const reducer = state => ({
 		const { length } = utf8.prevChar(state.body.data, state.pos1.pos)
 		this.delete(length, 0)
 	},
+	opDelete() {
+		if (state.pos1.pos !== state.pos2.pos) {
+			this.delete(0, 0)
+			return
+		}
+		const { length } = utf8.nextChar(state.body.data, state.pos1.pos)
+		this.delete(0, length)
+	},
 	render() {
 		state.Components = Components.parse(state.body)
 		state.shouldRenderPos++
 	},
 })
 
-// NOTE: `init` is a higher-order function that prevents
-// `new VDOM` from creating a new VDOM per render.
 const init = data => state => {
 	const body = state.body.write(data, 0, state.body.data.length)
 	const newState = {
