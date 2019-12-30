@@ -10,11 +10,6 @@ import useTestEditor from "./TestEditorReducer"
 
 import "./editor.css"
 
-const deleteContentBackward = "deleteContentBackward"
-const deleteWordBackward = "deleteWordBackward"
-const deleteSoftLineBackward = "deleteSoftLineBackward"
-const deleteContentForward = "deleteContentForward"
-
 const TestEditor = stylex.Unstyleable(props => {
 	const ref = React.useRef()
 
@@ -142,6 +137,7 @@ Hello, world!`)
 					// },
 
 					onCompositionUpdate: e => {
+						// console.log("onCompositionUpdate", { ...e })
 						if (!e.data) {
 							// No-op.
 							return
@@ -153,6 +149,7 @@ Hello, world!`)
 					},
 
 					onCompositionEnd: e => {
+						// console.log("onCompositionEnd", { ...e })
 						if (!e.data) {
 							// No-op.
 							return
@@ -164,17 +161,26 @@ Hello, world!`)
 					},
 
 					onInput: e => {
+						// console.log("onInput", { ...e })
 						switch (e.nativeEvent.inputType) {
-						case deleteContentBackward:
+						case "insertReplacementText":
+							// TODO
+							const { anchorNode, anchorOffset } = document.getSelection()
+							const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+							const data = traverseDOM.innerText(anchorVDOMNode)
+							const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+							dispatch.opOverwrite(data, pos)
+							return
+						case "deleteContentBackward":
 							dispatch.opBackspace()
 							return
-						// case deleteWordBackward:
+						// case "deleteWordBackward":
 						// 	dispatch.opBackspaceWord()
 						// 	return
-						// case deleteSoftLineBackward:
+						// case "deleteSoftLineBackward":
 						// 	dispatch.opBackspaceLine()
 						// 	return
-						case deleteContentForward:
+						case "deleteContentForward":
 							dispatch.opDelete()
 							return
 						default:

@@ -34,13 +34,13 @@ const reducer = state => ({
 		}
 		Object.assign(state, { body, pos1, pos2 })
 	},
-	collapse() {
+	_collapse() {
 		state.pos2 = { ...state.pos1 }
 	},
 	opWrite(inputType, data) {
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
 		state.pos1.pos += data.length
-		this.collapse()
+		this._collapse()
 		// // NOTE: To opt-in to native rendering, conditionally
 		// // increment `shouldRenderComponents`.
 		// state.shouldRenderComponents += inputType !== "onKeyPress"
@@ -51,6 +51,7 @@ const reducer = state => ({
 		const pos1 = state.pos1.pos - state.pos1.offset
 		const pos2 = state.pos1.pos - state.pos1.offset + state.body.nodes[state.pos1.index].data.length
 		state.body = state.body.write(data, pos1, pos2)
+		// this._collapse()
 		// state.shouldRenderComponents++
 	},
 	opCompose(data, eventData) {
@@ -59,13 +60,23 @@ const reducer = state => ({
 		const pos2 = state.pos1.pos - state.pos1.offset + state.body.nodes[state.pos1.index].data.length
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1.pos += eventData.slice(-1) === " "
-		this.collapse()
+		this._collapse()
+		state.shouldRenderComponents++
+	},
+	// FIXME: `opInsert` or `opInsertFromSpellcheck?`
+	opOverwrite(data, pos) {
+		// Compute the start and end of the affected VDOM nodes:
+		const pos1 = state.pos1.pos - state.pos1.offset
+		const pos2 = state.pos1.pos - state.pos1.offset + state.body.nodes[state.pos1.index].data.length
+		state.body = state.body.write(data, pos1, pos2)
+		state.pos1 = pos
+		this._collapse()
 		state.shouldRenderComponents++
 	},
 	opTab() {
 		this.opWrite("onKeyDown", "\t")
 	},
-	delete(lengthL, lengthR) {
+	_delete(lengthL, lengthR) {
 		// Guard the current node:
 		if ((!state.pos1.pos && lengthL) || (state.pos2.pos === state.body.data.length && lengthR)) {
 			// No-op.
@@ -73,24 +84,24 @@ const reducer = state => ({
 		}
 		state.body = state.body.write("", state.pos1.pos - lengthL, state.pos2.pos + lengthR)
 		state.pos1.pos -= lengthL
-		this.collapse()
+		this._collapse()
 		state.shouldRenderComponents++
 	},
 	opBackspace() {
 		if (state.pos1.pos !== state.pos2.pos) {
-			this.delete(0, 0)
+			this._delete(0, 0)
 			return
 		}
 		const { length } = utf8.prevChar(state.body.data, state.pos1.pos)
-		this.delete(length, 0)
+		this._delete(length, 0)
 	},
 	opDelete() {
 		if (state.pos1.pos !== state.pos2.pos) {
-			this.delete(0, 0)
+			this._delete(0, 0)
 			return
 		}
 		const { length } = utf8.nextChar(state.body.data, state.pos1.pos)
-		this.delete(0, length)
+		this._delete(0, length)
 	},
 	render() {
 		state.Components = Components.parse(state.body)
