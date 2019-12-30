@@ -24,6 +24,9 @@ Hello, world!`)
 	React.useEffect(() => {
 		const vdom = state.body.data
 		const dom = traverseDOM.innerText(ref.current)
+		if (vdom.length !== dom.length || vdom !== dom) {
+			console.log({ dom })
+		}
 		setInSync(vdom.length === dom.length && vdom === dom)
 	}, [state.Components])
 
@@ -129,6 +132,17 @@ Hello, world!`)
 					// onKeyDown: e => {
 					// 	console.log("onKeyDown", { ...e })
 					// },
+
+					onCompositionUpdate: e => {
+						if (!e.data) {
+							// No-op.
+							return
+						}
+						const { anchorNode } = document.getSelection()
+						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+						const data = traverseDOM.innerText(anchorVDOMNode)
+						dispatch.opPrecompose(data)
+					},
 
 					onCompositionEnd: e => {
 						if (!e.data) {

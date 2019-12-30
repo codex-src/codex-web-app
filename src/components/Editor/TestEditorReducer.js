@@ -46,13 +46,18 @@ const reducer = state => ({
 		// state.shouldRenderComponents += inputType !== "onKeyPress"
 		state.shouldRenderComponents++
 	},
+	opPrecompose(data) {
+		// Compute the start and end of the affected VDOM nodes:
+		const pos1 = state.pos1.pos - state.pos1.offset
+		const pos2 = state.pos1.pos - state.pos1.offset + state.body.nodes[state.pos1.index].data.length
+		state.body = state.body.write(data, pos1, pos2)
+		// state.shouldRenderComponents++
+	},
 	opCompose(data) {
 		// Compute the start and end of the affected VDOM nodes:
 		const pos1 = state.pos1.pos - state.pos1.offset
 		const pos2 = state.pos1.pos - state.pos1.offset + state.body.nodes[state.pos1.index].data.length
 		state.body = state.body.write(data, pos1, pos2)
-		// state.pos1.pos += data.length // NOTE: VDOM cursor is unchanged.
-		// this.collapse()
 		state.shouldRenderComponents++
 	},
 	opTab() {
