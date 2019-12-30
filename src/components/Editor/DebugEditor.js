@@ -11,9 +11,9 @@ const DebugEditor = props => (
 			{/* })} */}
 			{/* {stringify(props.state)} */}
 			{stringify({
-				body: props.state.body,
-				pos1: props.state.pos1,
-				pos2: props.state.pos2,
+				data: props.state.body.data,
+				pos1: props.state.pos1.pos,
+				pos2: props.state.pos2.pos,
 			})}
 		</p>
 	</pre>

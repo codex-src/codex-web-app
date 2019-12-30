@@ -53,11 +53,13 @@ const reducer = state => ({
 		state.body = state.body.write(data, pos1, pos2)
 		// state.shouldRenderComponents++
 	},
-	opCompose(data) {
+	opCompose(data, eventData) {
 		// Compute the start and end of the affected VDOM nodes:
 		const pos1 = state.pos1.pos - state.pos1.offset
 		const pos2 = state.pos1.pos - state.pos1.offset + state.body.nodes[state.pos1.index].data.length
 		state.body = state.body.write(data, pos1, pos2)
+		state.pos1.pos += eventData.slice(-1) === " "
+		this.collapse()
 		state.shouldRenderComponents++
 	},
 	opTab() {

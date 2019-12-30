@@ -155,7 +155,7 @@ Hello, world!`)
 						const { anchorNode } = document.getSelection()
 						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
 						const data = traverseDOM.innerText(anchorVDOMNode)
-						dispatch.opCompose(data)
+						dispatch.opCompose(data, e.data)
 					},
 
 					onInput: e => {
