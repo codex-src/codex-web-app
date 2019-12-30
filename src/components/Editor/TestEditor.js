@@ -1,5 +1,5 @@
-// import detect from "./detect"
 import DebugEditor from "./DebugEditor"
+import detect from "./detect"
 import ErrorBoundary from "./ErrorBoundary"
 import invariant from "invariant"
 import React from "react"
@@ -132,9 +132,46 @@ Hello, world!`)
 						dispatch.opWrite("onKeyPress", data)
 					},
 
-					// onKeyDown: e => {
-					// 	console.log("onKeyDown", { ...e })
-					// },
+					onKeyDown: e => {
+						// console.log("onKeyDown", { ...e })
+						switch (true) {
+						case detect.isTab(e):
+							e.preventDefault()
+							dispatch.opTab()
+							return
+						case detect.isBackspace(e):
+							e.preventDefault()
+							dispatch.opBackspace()
+							return
+						// case detect.isBackspaceWord(e):
+						// 	e.preventDefault()
+						// 	dispatch.opBackspaceWord()
+						// 	return
+						// case detect.isBackspaceLine(e):
+						// 	e.preventDefault()
+						// 	dispatch.opBackspaceLine()
+						// 	return
+						case detect.isDelete(e):
+							e.preventDefault()
+							dispatch.opDelete()
+							return
+						// case detect.isDeleteWord(e):
+						// 	e.preventDefault()
+						// 	dispatch.opDeleteWord()
+						// 	return
+						// case detect.isUndo(e):
+						// 	e.preventDefault()
+						// 	dispatch.opUndo()
+						// 	return
+						// case detect.isRedo(e):
+						// 	e.preventDefault()
+						// 	dispatch.opRedo()
+						// 	return
+						default:
+							// No-op.
+							return
+						}
+					},
 
 					onCompositionUpdate: e => {
 						// console.log("onCompositionUpdate", { ...e })
