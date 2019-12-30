@@ -8,8 +8,8 @@ export function nodeValue(node) {
 	if (!compareNode.isBreakOrTextNode(node)) {
 		return ""
 	}
-	// Guard break node:
-	return node.nodeValue || ""
+	// Convert non-breaking spaces to spaces:
+	return (node.nodeValue || "").replace("\u00a0", " ")
 }
 
 // `innerText` recursively reads a root node’s text data.

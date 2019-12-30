@@ -156,6 +156,12 @@ export function parse(body) {
 			key,  // The current node’s key (hash).
 			data, // The current node’s plain text data
 		} = body.nodes[index]
+
+		// console.log(data.length >= 2, data.slice(0, 2) === "# ")
+		if (data) {
+			console.log({ syntax: data.slice(0, 2) })
+		}
+
 		/* eslint-disable no-case-declarations */
 		switch (true) {
 		case (

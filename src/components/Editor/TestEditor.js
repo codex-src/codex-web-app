@@ -92,33 +92,37 @@ Hello, world!`)
 					},
 
 					// onKeyPress: e => {
-					// 	e.preventDefault()
-					// 	let data = e.key
-					// 	if (e.key === "Enter") {
-					// 		data = "\n"
-					// 	}
-					// 	dispatch.opWrite("onKeyPress", data)
+					// 	console.log("onKeyPress")
+					// },
+					// onKeyDown: e => {
+					// 	console.log("onKeyDown")
+					// },
+					// onCompositionEnd: e => {
+					// 	console.log("onCompositionEnd")
+					// },
+					// onInput: e => {
+					// 	console.log("onInput")
 					// },
 
 					onCompositionEnd: e => {
-						console.log("onCompositionEnd")
-
-						let { anchorNode, focusNode } = document.getSelection()
-						const start = ascendToVDOMNode(anchorNode)
-						let end = start
-						if (focusNode !== anchorNode) {
-							end = ascendToVDOMNode(focusNode)
+						if (!e.data) {
+							// No-op.
+							return
 						}
-						console.log(traverseDOM.innerText(start))
+						const { anchorNode } = document.getSelection()
+						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+						const data = traverseDOM.innerText(anchorVDOMNode)
+						dispatch.opCompose(data)
 					},
-					onInput: e => {
-						// // deleteContentBackward
-						// // deleteWordBackward
-						// // deleteSoftLineBackward
-						// // deleteContentForward
-						// // deleteWordForward
-						// console.log(e.nativeEvent.inputType)
-					},
+
+					// onInput: e => {
+					// 	// deleteContentBackward
+					// 	// deleteWordBackward
+					// 	// deleteSoftLineBackward
+					// 	// deleteContentForward
+					// 	// deleteWordForward
+					// 	console.log(e.nativeEvent.inputType)
+					// },
 
 				},
 				state.Components,
@@ -129,12 +133,15 @@ Hello, world!`)
 	)
 })
 
+// `recurseToVDOMNode` recursivel ascends to the nearest
+// VDOM node.
+//
 // TODO: Move to `traverseDOM` package.
-function ascendToVDOMNode(node) {
+function recurseToVDOMNode(node) {
 	while (!traverseDOM.isVDOMNode(node)) {
 		invariant(
 			node.parentNode,
-			"ascendToVDOMNode: Cannot recursively ascend; `node` does not have a parent node.",
+			"recurseToVDOMNode: Cannot recursively ascend; `node` does not have a parent node.",
 		)
 		node = node.parentNode
 	}
