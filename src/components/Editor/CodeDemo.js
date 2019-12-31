@@ -4,20 +4,22 @@ import ReactDOM from "react-dom"
 
 import "./code-demo.css"
 
-function isBreakNode(node) {
-	const ok = (
-		node.nodeType === Node.ELEMENT_NODE &&
-		node.nodeName === "BR"
-	)
-	return ok
-}
-
 // `isBreakOrTextNode` returns whether a node is a break
 // node or a text node.
 function isBreakOrTextNode(node) {
 	const ok = (
 		(node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") ||
 		node.nodeType === Node.TEXT_NODE
+	)
+	return ok
+}
+
+// `isBlockDOMNode` returns whether a node is a block DOM
+// node.
+function isBlockDOMNode(node) {
+	const ok = (
+		node.nodeType === Node.ELEMENT_NODE &&
+		node.hasAttribute("data-vdom-node")
 	)
 	return ok
 }
@@ -29,7 +31,8 @@ export function nodeValue(node) {
 		return ""
 	}
 	// Convert non-breaking spaces:
-	return (node.nodeValue || "").replace("\u00a0", " ")
+	const value = node.nodeValue || "" // Guard break node.
+	return value.replace("\u00a0", " ")
 }
 
 // `innerText` mocks the browser function; recursively reads
@@ -38,12 +41,12 @@ function innerText(rootNode) {
 	let value = ""
 	const recurse = startNode => {
 		for (const currentNode of startNode.childNodes) {
-			const nested = currentNode.parentNode !== rootNode
-			if (nested && isBreakOrTextNode(currentNode)) {
+			// const nested = currentNode.parentNode !== rootNode
+			if (isBreakOrTextNode(currentNode)) {
 				value += nodeValue(currentNode)
 			} else {
 				recurse(currentNode)
-				if (!nested && currentNode.nodeType === Node.ELEMENT_NODE &&
+				if (isBlockDOMNode(currentNode) &&
 						currentNode.nextElementSibling) {
 					value += "\n"
 				}
@@ -57,13 +60,12 @@ function innerText(rootNode) {
 // `computeVDOMPos` computes the VDOM cursor.
 function computeVDOMPos(rootNode, node, offset) {
 	let pos = 0
-	if (node && !isBreakNode(node) && node.nodeType === Node.ELEMENT_NODE) {
-		return computeVDOMPos(rootNode, node.childNodes[offset], 0)
+	while (node.childNodes.length) {
+		node = node.childNodes[0]
 	}
 	const recurse = startNode => {
 		for (const currentNode of startNode.childNodes) {
-			const nested = currentNode.parentNode !== rootNode
-			if (nested && isBreakOrTextNode(currentNode)) {
+			if (isBreakOrTextNode(currentNode)) {
 				if (currentNode === node) {
 					return true
 				}
@@ -71,7 +73,7 @@ function computeVDOMPos(rootNode, node, offset) {
 			} else {
 				if (recurse(currentNode)) {
 					return true
-				} else if (!nested && currentNode.nodeType === Node.ELEMENT_NODE &&
+				} else if (isBlockDOMNode(currentNode) &&
 						currentNode.nextElementSibling) {
 					pos += 1
 				}
@@ -117,15 +119,12 @@ function computeDOMPos(rootNode, pos) {
 	return node
 }
 
-/*
- * editor
- */
 class Editor {
 	constructor(selector, value) {
-		const el = document.querySelector(selector)
+		const rootNode = document.querySelector(selector)
 
 		Object.assign(this, {
-			el,       // The element.
+			rootNode, // The element.
 			value,    // The plain text data.
 			pos1:  0, // The cursor start.
 			pos2:  0, // The cursor end.
@@ -135,7 +134,7 @@ class Editor {
 		this.mount()
 	}
 	mount() {
-		this.el.addEventListener("keydown", e => {
+		this.rootNode.addEventListener("keydown", e => {
 			if (e.key !== "Tab") {
 				// No-op.
 				return
@@ -143,7 +142,7 @@ class Editor {
 			e.preventDefault()
 			document.execCommand("insertText", false, "\t")
 		})
-		this.el.addEventListener("keydown", e => {
+		this.rootNode.addEventListener("keydown", e => {
 			if (!e.shiftKey || e.key !== "Enter") {
 				// No-op.
 				return
@@ -151,20 +150,19 @@ class Editor {
 			e.preventDefault()
 			document.execCommand("insertText", false, "\n")
 		})
-		this.el.addEventListener("input", e => {
+		this.rootNode.addEventListener("input", e => {
 			if (e.inputType === "insertCompositionText") {
 				// No-op.
 				return
 			}
 			// this.stack.splice(this.index + 1)
 			this.update()
-			const { value, pos1, pos2 } = this
-			if (!value.length) {
-				this.setValue("\n") // The insertion point node.
+			if (!this.value.length) {
+				this.setValue("\n")
 				return
 			}
-			if (pos1 === pos2 && pos2 === value.length) {
-				window.scrollTo(0, this.el.scrollHeight)
+			if (this.pos1 === this.pos2 && this.pos2 === this.value.length) {
+				window.scrollTo(0, this.rootNode.scrollHeight)
 			}
 			this.render()
 		})
@@ -173,26 +171,26 @@ class Editor {
 	 * value
 	 */
 	getValue() {
-		this.value = innerText(this.el)
+		this.value = innerText(this.rootNode)
 	}
 	setValue(value) {
 		if (value !== undefined) {
 			this.value = value
 		}
 		let node = null
-		while ((node = this.el.lastChild)) {
+		while ((node = this.rootNode.lastChild)) {
 			node.remove()
 		}
 		const parsedGo = parse(lex(this.value))
-		this.el.appendChild(parsedGo)
+		this.rootNode.appendChild(parsedGo)
 	}
 	/*
 	 * pos
 	 */
 	getPos() {
 		const selection = document.getSelection()
-		this.pos1 = computeVDOMPos(this.el, selection.anchorNode, selection.anchorOffset)
-		this.pos2 = computeVDOMPos(this.el, selection.focusNode, selection.focusOffset)
+		this.pos1 = computeVDOMPos(this.rootNode, selection.anchorNode, selection.anchorOffset)
+		this.pos2 = computeVDOMPos(this.rootNode, selection.focusNode, selection.focusOffset)
 	}
 	setPos(pos1, pos2) {
 		if (pos1 !== undefined && pos2 !== undefined) {
@@ -200,8 +198,8 @@ class Editor {
 			this.pos2 = pos2
 		}
 		const selection = document.getSelection()
-		const node1 = computeDOMPos(this.el, this.pos1)
-		const node2 = computeDOMPos(this.el, this.pos2)
+		const node1 = computeDOMPos(this.rootNode, this.pos1)
+		const node2 = computeDOMPos(this.rootNode, this.pos2)
 		const range = document.createRange()
 		range.setStart(node1.node, node1.offset)
 		range.setEnd(node2.node, node2.offset)
