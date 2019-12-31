@@ -10,7 +10,7 @@ const DebugEditor = props => (
 				data: props.state.body.data,
 				pos1: props.state.pos1.pos,
 				pos2: props.state.pos2.pos,
-				history: props.state.history.map(history => history.body.data),
+				// history: props.state.history.map(history => history.body.data),
 			})}
 		</p>
 	</pre>

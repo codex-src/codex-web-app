@@ -13,12 +13,30 @@ import "./editor.css"
 const TestEditor = stylex.Unstyleable(props => {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useTestEditor(`# Hello, world!
+	const [state, dispatch] = useTestEditor(`# Hello, world!`)
+//
+// Hello, world!
+//
+// Hello, world!`)
 
-Hello, world!
+	// Start undo process (on focus):
+	React.useEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				return
+			}
+			const id = setInterval(dispatch.storeUndo, 1e3)
+			return () => {
+				// Wait for the last undo to cycle:
+				setTimeout(() => {
+					clearInterval(id)
+				}, 1e3)
+			}
+		}, [dispatch, state]),
+		[state.isFocused],
+	)
 
-Hello, world!`)
-
+	// Should rerender components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -30,6 +48,7 @@ Hello, world!`)
 		[state.shouldRenderComponents],
 	)
 
+	// Should rerender cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -51,16 +70,16 @@ Hello, world!`)
 		[state.shouldRenderPos],
 	)
 
-	const [inSync, setInSync] = React.useState(true)
-
 	React.useEffect(
 		React.useCallback(() => {
 			const vdom = state.body.data
 			const dom = traverseDOM.innerText(ref.current)
-			if (vdom.length !== dom.length || vdom !== dom) {
-				console.log({ dom })
+			const isSynchronized = vdom.length === dom.length && vdom === dom
+			if (isSynchronized) {
+				// No-op.
+				return
 			}
-			setInSync(vdom.length === dom.length && vdom === dom)
+			console.warn(vdom, dom)
 		}, [state]),
 		[state.Components],
 	)
@@ -72,17 +91,17 @@ Hello, world!`)
 
 	return (
 		<ErrorBoundary>
-			<div style={stylex.parse("absolute -l -t")}>
-				<div style={stylex.parse("p:8")}>
-					{inSync ? (
-						// OK:
-						<div style={stylex.parse("wh:12 b:green-a400 br:max")} />
-					) : (
-						// Not OK:
-						<div style={stylex.parse("wh:12 b:red br:max")} />
-					)}
-				</div>
-			</div>
+			{/* <div style={stylex.parse("absolute -l -t")}> */}
+			{/* 	<div style={stylex.parse("p:8")}> */}
+			{/* 		{inSync ? ( */}
+			{/* 			// OK: */}
+			{/* 			<div style={stylex.parse("wh:12 b:green-a400 br:max")} /> */}
+			{/* 		) : ( */}
+			{/* 			// Not OK: */}
+			{/* 			<div style={stylex.parse("wh:12 b:red br:max")} /> */}
+			{/* 		)} */}
+			{/* 	</div> */}
+			{/* </div> */}
 			{React.createElement(
 				"article",
 				{
@@ -111,52 +130,56 @@ Hello, world!`)
 						dispatch.setState(state.body, pos1, pos2)
 					},
 
-					// onKeyPress: e => {
-					// 	e.preventDefault()
-					// 	let data = e.key
-					// 	if (e.key === "Enter") {
-					// 		data = "\n"
-					// 	}
-					// 	dispatch.opWrite("onKeyPress", data)
-					// },
+					onKeyPress: e => {
+						e.preventDefault()
+						let data = e.key
+						if (e.key === "Enter") {
+							data = "\n"
+						}
+						dispatch.opWrite("onKeyPress", data)
+					},
 
-					// onKeyDown: e => {
-					// 	switch (true) {
-					// 	case detect.isTab(e):
-					// 		e.preventDefault()
-					// 		dispatch.opTab()
-					// 		return
-					// 	case detect.isBackspace(e):
-					// 		e.preventDefault()
-					// 		dispatch.opBackspace()
-					// 		return
-					// 	// case detect.isBackspaceWord(e):
-					// 	// 	e.preventDefault()
-					// 	// 	dispatch.opBackspaceWord()
-					// 	// 	return
-					// 	// case detect.isBackspaceLine(e):
-					// 	// 	e.preventDefault()
-					// 	// 	dispatch.opBackspaceLine()
-					// 	// 	return
-					// 	case detect.isDelete(e):
-					// 		e.preventDefault()
-					// 		dispatch.opDelete()
-					// 		return
-					// 	case detect.isUndo(e):
-					// 		e.preventDefault()
-					// 		dispatch.opUndo()
-					// 		return
-					// 	case detect.isRedo(e):
-					// 		e.preventDefault()
-					// 		dispatch.opRedo()
-					// 		return
-					// 	default:
-					// 		// No-op.
-					// 		return
-					// 	}
-					// },
+					onKeyDown: e => {
+						switch (true) {
+						case detect.isTab(e):
+							e.preventDefault()
+							dispatch.opTab()
+							return
+						case detect.isBackspace(e):
+							e.preventDefault()
+							dispatch.opBackspace()
+							return
+						case detect.isBackspaceWord(e):
+							e.preventDefault()
+							// console.log("Ignored an event.")
+							return
+						case detect.isBackspaceLine(e):
+							e.preventDefault()
+							// console.log("Ignored an event.")
+							return
+						case detect.isDelete(e):
+							e.preventDefault()
+							dispatch.opDelete()
+							return
+						case detect.isDeleteWord(e):
+							e.preventDefault()
+							// console.log("Ignored an event.")
+							return
+						case detect.isUndo(e):
+							e.preventDefault()
+							dispatch.opUndo()
+							return
+						case detect.isRedo(e):
+							e.preventDefault()
+							dispatch.opRedo()
+							return
+						default:
+							// No-op.
+							return
+						}
+					},
 
-					// onCompositionUpdate: e => { // Assumes no selection.
+					// onCompositionUpdate: e => {
 					// 	if (!e.data) {
 					// 		// No-op.
 					// 		return
@@ -167,21 +190,21 @@ Hello, world!`)
 					// 	dispatch.opPrecompose(data)
 					// },
 
-					// onCompositionEnd: e => { // Assumes no selection.
-					// 	if (!e.data) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const { anchorNode } = document.getSelection()
-					// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-					// 	const data = traverseDOM.innerText(anchorVDOMNode)
-					// 	dispatch.opCompose(data, e.data)
-					// },
+					onCompositionEnd: e => {
+						if (!e.data) {
+							// No-op.
+							return
+						}
+						const { anchorNode } = document.getSelection()
+						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+						const data = traverseDOM.innerText(anchorVDOMNode)
+						dispatch.opCompose(data, e.data)
+					},
 
 					onInput: e => {
-						switch (e.nativeEvent.inputType) {
-						// case "insertReplacementText": // Assumes a selection.
-						// 	// TODO
+						// switch (e.nativeEvent.inputType) {
+						// case "insertReplacementText":
+						// 	// FIXME
 						// 	const { anchorNode, anchorOffset } = document.getSelection()
 						// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
 						// 	const data = traverseDOM.innerText(anchorVDOMNode)
@@ -200,16 +223,47 @@ Hello, world!`)
 						// case "deleteContentForward":
 						// 	dispatch.opDelete()
 						// 	return
-						case "historyUndo":
-							dispatch.opUndo()
-							return
-						case "historyRedo":
-							dispatch.opRedo()
-							return
-						default:
+						// case "historyUndo":
+						// 	dispatch.opUndo()
+						// 	return
+						// case "historyRedo":
+						// 	dispatch.opRedo()
+						// 	return
+						// default:
+						// 	// No-op.
+						// 	return
+						// }
+					},
+
+					onCut: e => {
+						e.preventDefault()
+						if (state.pos1.pos === state.pos2.pos) {
 							// No-op.
 							return
 						}
+						const cutData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", cutData)
+						dispatch.opWrite("onCut", "")
+					},
+
+					onCopy: e => {
+						e.preventDefault()
+						if (state.pos1.pos === state.pos2.pos) {
+							// No-op.
+							return
+						}
+						const copyData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", copyData)
+					},
+
+					onPaste: e => {
+						e.preventDefault()
+						const pasteData = e.clipboardData.getData("text/plain")
+						if (!pasteData) {
+							// No-op.
+							return
+						}
+						dispatch.opWrite("onPaste", pasteData)
 					},
 
 				},

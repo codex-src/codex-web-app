@@ -100,7 +100,7 @@ const CodeBlock = props => (
 		<ul>
 			{props.children.map((each, index) => (
 				<li key={each.key} id={props.id} data-vdom-node>
-					<code style={{ ...stylex.parse("p-x:24"), MozTabSize: 2, tabSize: 2, font: "16px/1.375 Monaco" }}>
+					<code style={{ ...stylex.parse("p-x:24"), MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }}>
 						<Markdown
 							start={!index && props.start}
 							end={index + 1 === props.children.length && props.end}

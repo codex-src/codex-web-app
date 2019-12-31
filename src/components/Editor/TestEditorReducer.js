@@ -91,7 +91,7 @@ const reducer = state => ({
 			// No-op.
 			return
 		}
-		this.prune()
+		this._prune()
 		state.body = state.body.write("", state.pos1.pos - lengthL, state.pos2.pos + lengthR)
 		state.pos1.pos -= lengthL
 		this._collapse()
