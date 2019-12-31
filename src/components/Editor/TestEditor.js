@@ -1,12 +1,12 @@
-// import diff from "./diff"
-import invariant from "invariant"
+import DebugEditor from "./DebugEditor"
+import detect from "./detect"
+import diff from "./diff"
+import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
-import ReactDOM from "react-dom"
 import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
-import utf8 from "./utf8"
-import vdom from "./vdom"
+import useTestEditor from "./TestEditorReducer"
 
 import "./editor.css"
 
@@ -38,259 +38,304 @@ import "./editor.css"
 	}
 })()
 
-function DebugEditor(props) {
-	const [state, setState] = React.useState({
-		...CodexEditor.state,
-		rootNode: undefined,
-		touchedNodes: undefined,
-	})
+const TestEditor = stylex.Unstyleable(props => {
+	const ref = React.useRef()
 
-	React.useEffect(() => {
-		const intervalID = setInterval(() => {
-			const _state = {
-				...CodexEditor.state,
-				rootNode: undefined,
-				touchedNodes: undefined,
+	const [state, dispatch] = useTestEditor("# Hello, world!")
+	//
+	// Hello, world!
+	//
+	// Hello, world!`)
+
+	// Start undo process (on focus):
+	React.useEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				return
 			}
-			setState(_state)
-		}, 1e3)
-		return () => {
-			clearInterval(intervalID)
-		}
-	}, [])
-
-	return (
-		<pre style={stylex.parse("overflow -x:scroll")}>
-			<p style={{ ...stylex.parse("fs:12 lh:125%"), MozTabSize: 2, tabSize: 2, fontFamily: "Monaco" }}>
-				{JSON.stringify(state, null, "\t")}
-			</p>
-		</pre>
+			const id = setInterval(dispatch.storeUndo, 1e3)
+			return () => {
+				// Wait for the last undo to cycle:
+				setTimeout(() => {
+					clearInterval(id)
+				}, 1e3)
+			}
+		}, [dispatch, state]),
+		[state.isFocused],
 	)
-}
 
-const Paragraph = props => (
-	<p data-vdom-node={props._key}>
-		{props.children}
-	</p>
-)
-
-class Editor {
-	constructor({ selector, initialValue }) {
-		initialValue = initialValue || "" // Zero value.
-
-		this.state = {
-			isMounted: false,                  // Is the editor mounted?
-			selector,                          // The DOM selector.
-			initialValue,                      // The initial plain text data value.
-			rootNode:  null,                   // The DOM root node; see `mount`.
-			isFocused: false,                  // Is the editor focused?
-			body: new vdom.VDOM(initialValue), // The VDOM body.
-			pos1: traverseDOM.newPos(),        // The VDOM cursor start.
-			pos2: traverseDOM.newPos(),        // The VDOM cursor end.
-			// touchedNodes: [],
-		}
-		// this.mount()
-		// -> this.init()
-		//    -> this.renderComponents()
-		//       -> this.renderCursor()
-		this.mount()
-	}
-	// Mount the editor once the DOM is ready:
-	mount() {
-		document.addEventListener("DOMContentLoaded", e => {
-			const rootNode = document.querySelector(this.state.selector)
-			invariant(
-				rootNode && rootNode.nodeType && rootNode.nodeType === Node.ELEMENT_NODE,
-				"FIXME",
-			)
-			rootNode.setAttribute("contenteditable", true)
-			rootNode.setAttribute("spellcheck", true)
-			Object.assign(this.state, {
-				isMounted: true,
-				rootNode,
-			})
-			this.init()
-		}, false)
-	}
-	// Initialize the editor once mounted:
-	init() {
-		this.state.rootNode.addEventListener("focus", e => {
-			this.state.isFocused = true
-		}, false)
-		this.state.rootNode.addEventListener("blur", e => {
-			this.state.isFocused = false
-		}, false)
-		document.addEventListener("selectionchange", e => {
-			if (!this.state.isFocused) {
+	// Should rerender components:
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
 				// No-op.
 				return
 			}
-			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-			const pos1 = traverseDOM.computePosFromNode(this.state.rootNode, anchorNode, anchorOffset)
-			let pos2 = { ...pos1 }
-			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-				pos2 = traverseDOM.computePosFromNode(this.state.rootNode, focusNode, focusOffset)
+			dispatch.render()
+		}, [dispatch, state]),
+		[state.shouldRenderComponents],
+	)
+
+	// Should rerender cursor:
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				// No-op.
+				return
 			}
-			Object.assign(this.state, { pos1, pos2 })
-		})
+			const range = document.createRange()
+			const { node, offset } = traverseDOM.computeNodeFromPos(ref.current, state.pos1.pos, state.pos2.pos)
+			range.setStart(node, offset)
+			range.collapse()
+			const selection = document.getSelection()
+			selection.removeAllRanges()
+			selection.addRange(range)
+			// NOTE (1): Use `Math.floor` to mimic Chrome.
+			// NOTE (2): Use `... - 1` to prevent jumping.
+			const buffer = Math.floor(19 * 1.5) - 1
+			scrollIntoViewIfNeeded({ top: (props.nav || 0) + buffer, bottom: buffer })
+		}, [props, state]),
+		[state.shouldRenderPos],
+	)
 
-		// const { anchorNode } = document.getSelection()
-		// const domNode = traverseDOM.ascendToVDOMNode(anchorNode)
-		// const key = domNode.attributes["data-vdom-node"].value
-		// const vdomNode = this.state.body.nodes.filter(each => each.key === key)[0]
-		// const { pos1, pos2 } = this.state.body._affectedRangeNode(vdomNode.key)
-		// this.state.body = this.state.body.write(traverseDOM.innerText(domNode), pos1, pos2)
-
-		// const { anchorNode, anchorOffset } = document.getSelection()
-		// const currentNode = traverseDOM.ascendToVDOMNode(anchorNode)
-		// const data = traverseDOM.innerText(currentNode)
-		// const pos = traverseDOM.computePosFromNode(this.state.rootNode, anchorNode, anchorOffset)
-		// this.opOverwrite(data, pos)
-
-		this.state.rootNode.addEventListener("input", e => {
-			console.log(e.inputType)
-			if (e.inputType === "insertCompositionText" || e.inputType === "insertText") {
-				const { anchorNode } = document.getSelection()
-				const domNode = traverseDOM.ascendToVDOMNode(anchorNode)
-				const key = domNode.attributes["data-vdom-node"].value
-				const vdomNode = this.state.body.nodes.filter(each => each.key === key)[0]
-				const { pos1, pos2 } = this.state.body._affectedRangeNode(vdomNode.key)
-				this.state.body = this.state.body.write(traverseDOM.innerText(domNode), pos1, pos2)
-				if (e.inputType === "insertText") {
-					this.renderComponents()
-				}
+	React.useEffect(
+		React.useCallback(() => {
+			const vdom = state.body.data
+			const dom = traverseDOM.innerText(ref.current)
+			const isSynchronized = vdom.length === dom.length && vdom === dom
+			if (isSynchronized) {
+				// No-op.
 				return
-			} else if (e.inputType === "insertParagraph") {
-				const { anchorNode } = document.getSelection()
-				anchorNode.remove()
-				this._write("insertParagraph", "\n")
-				this.renderComponents()
-				return
-			} // else if (e.inputType === "deleteContentBackward") {
-			// 	this.opBackspace()
-			// 	this.renderComponents()
-			// 	return
-			// } else if (e.inputType === "deleteContentForward") {
-			// 	this.opDelete()
-			// 	this.renderComponents()
-			// 	return
-			// }
-		}, false)
-		this.renderComponents()
-	}
-	_computeAffectedVDOMNodeRange() {
-		const pos1 = this.state.pos1.pos - this.state.pos1.offset
-		const pos2 = this.state.pos1.pos - this.state.pos1.offset + this.state.body.nodes[this.state.pos1.index].data.length
-		return { pos1, pos2 }
-	}
-	_collapse() {
-		this.state.pos2 = { ...this.state.pos1 }
-	}
-	_write(inputType, data) {
-		this.state.body = this.state.body.write(data, this.state.pos1.pos, this.state.pos2.pos)
-		this.state.pos1.pos += data.length
-		this._collapse()
-	}
-	_delete(lengthL, lengthR) {
-		// Guard the current node:
-		if ((!this.state.pos1.pos && lengthL) || (this.state.pos2.pos === this.state.body.data.length && lengthR)) {
-			// No-op.
-			return
-		}
-		this.state.body = this.state.body.write("", this.state.pos1.pos - lengthL, this.state.pos2.pos + lengthR)
-		this.state.pos1.pos -= lengthL
-		this._collapse()
-	}
-	opBackspace() {
-		if (this.state.pos1.pos !== this.state.pos2.pos) {
-			this._delete(0, 0)
-			return
-		}
-		const { length } = utf8.prevChar(this.state.body.data, this.state.pos1.pos)
-		this._delete(length, 0)
-	}
-	opDelete() {
-		if (this.state.pos1.pos !== this.state.pos2.pos) {
-			this._delete(0, 0)
-			return
-		}
-		const { length } = utf8.nextChar(this.state.body.data, this.state.pos1.pos)
-		this._delete(0, length)
-	}
-	renderComponents() {
+			}
+			console.log("Force rerender.")
+			dispatch.render()
+		}, [state]),
+		[state.Components],
+	)
 
-		// if (value != undefined) {
-		// 	this.value = value
-		// }
-		// let node = null
-		// while ((node = this.el.lastChild)) {
-		// 	node.remove()
-		// }
-		// this.el.appendChild(parse_go(this.value))
-		// set_url_value(this.value)
-
-		// Preserve the cursor:
-		if (this.state.isFocused) {
-			const { anchorNode, anchorOffset } = document.getSelection()
-			this.state.pos1 = traverseDOM.computePosFromNode(this.state.rootNode, anchorNode, anchorOffset)
-			this._collapse()
-		}
-		const components = []
-		let index = 0
-		while (index < this.state.body.nodes.length) {
-			const { key, data } = this.state.body.nodes[index]
-			components.push((
-				<Paragraph key={key} _key={key}>
-					{data || (
-						<br />
-					)}
-				</Paragraph>
-			))
-			index++
-		}
-		const fragment = document.createDocumentFragment()
-		ReactDOM.render(components, fragment)
-		let node = null
-		while ((node = this.state.rootNode.lastChild)) {
-			node.remove()
-		}
-		this.state.rootNode.appendChild(fragment)
-		if (this.state.isFocused) {
-			this.renderCursor()
-		}
+	let translateZ = {}
+	if (state.isFocused) {
+		translateZ = { transform: "translateZ(0px)" }
 	}
-	renderCursor() {
-		// if (!state.isFocused) {
-		// 	// No-op.
-		// 	return
-		// }
-		const range = document.createRange()
-		const { node, offset } = traverseDOM.computeNodeFromPos(this.state.rootNode, this.state.pos1.pos, this.state.pos2.pos)
-		range.setStart(node, offset)
-		range.collapse()
-		const selection = document.getSelection()
-		selection.removeAllRanges()
-		selection.addRange(range)
-		// NOTE (1): Use `Math.floor` to mimic Chrome.
-		// NOTE (2): Use `... - 1` to prevent jumping.
-		const buffer = Math.floor(19 * 1.5) - 1
-		scrollIntoViewIfNeeded({ top: buffer, bottom: buffer })
-	}
-}
 
-const CodexEditor = new Editor({
-	selector: "[data-codex-editor]",
-	initialValue: `Hello, world!
+	return (
+		<ErrorBoundary>
+			{React.createElement(
+				"article",
+				{
+					ref,
 
-Hello, world!`,
+					style: translateZ,
+
+					contentEditable: true,
+					suppressContentEditableWarning: true,
+
+					onFocus: dispatch.opFocus,
+					onBlur:  dispatch.opBlur,
+
+					onSelect: e => {
+						const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+						if (anchorNode === ref.current || focusNode === ref.current) {
+							// No-op.
+							return
+						}
+						const pos1 = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+						let pos2 = { ...pos1 }
+						if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+							pos2 = traverseDOM.computePosFromNode(ref.current, focusNode, focusOffset)
+						}
+						dispatch.setState(state.body, pos1, pos2)
+					},
+
+					// onKeyPress: e => {
+					// 	e.preventDefault()
+					// 	let data = e.key
+					// 	if (e.key === "Enter") {
+					// 		data = "\n"
+					// 	}
+					// 	dispatch.opWrite("onKeyPress", data)
+					// },
+
+					// onKeyDown: e => {
+					// 	switch (true) {
+					// 	case detect.isTab(e):
+					// 		e.preventDefault()
+					// 		dispatch.opTab()
+					// 		return
+					// 	case detect.isBackspace(e):
+					// 		e.preventDefault()
+					// 		dispatch.opBackspace()
+					// 		return
+					// 	case detect.isBackspaceWord(e):
+					// 		e.preventDefault()
+					// 		console.log("Backspace word is not yet supported.")
+					// 		return
+					// 	case detect.isBackspaceLine(e):
+					// 		e.preventDefault()
+					// 		console.log("Backspace line is not yet supported.")
+					// 		return
+					// 	case detect.isDelete(e):
+					// 		e.preventDefault()
+					// 		dispatch.opDelete()
+					// 		return
+					// 	case detect.isDeleteWord(e):
+					// 		e.preventDefault()
+					// 		console.log("Delete word is not yet supported.")
+					// 		return
+					// 	case detect.isUndo(e):
+					// 		e.preventDefault()
+					// 		dispatch.opUndo()
+					// 		return
+					// 	case detect.isRedo(e):
+					// 		e.preventDefault()
+					// 		dispatch.opRedo()
+					// 		return
+					// 	default:
+					// 		// No-op.
+					// 		return
+					// 	}
+					// },
+
+					// onCompositionStart: e => {
+					// 	console.log("onCompositionStart")
+					// },
+
+					// onCompositionUpdate: e => {
+					// 	// console.log("onCompositionUpdate", { ...e })
+					// 	if (!e.data) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const { anchorNode, anchorOffset } = document.getSelection()
+					// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+					// 	const data = traverseDOM.innerText(anchorVDOMNode)
+					// 	const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+					// 	dispatch.opCompose(data, pos, false)
+					// },
+
+					// onCompositionEnd: e => {
+					// 	// console.log("onCompositionEnd", { ...e })
+					// 	if (!e.data) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const { anchorNode, anchorOffset } = document.getSelection()
+					// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+					// 	const data = traverseDOM.innerText(anchorVDOMNode)
+					// 	const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+					// 	dispatch.opCompose(data, pos, true)
+					// },
+
+					onInput: e => {
+						const { anchorNode } = document.getSelection()
+						const domNode = traverseDOM.ascendToVDOMNode(anchorNode)
+						const key = domNode.attributes["data-vdom-node"].value
+						const vdomNode = state.body.nodes.filter(each => each.key === key)[0]
+						const { pos1, pos2 } = state.body._affectedRangeNode(vdomNode.key)
+						dispatch.onInput(traverseDOM.innerText(domNode), pos1, pos2)
+
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+						// const data = traverseDOM.innerText(anchorVDOMNode)
+						// const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+						// dispatch.opCompose(data, pos, true)
+					},
+
+					// onInput: e => {
+					// 	// console.log("onInput", { ...e })
+					// 	switch (e.nativeEvent.inputType) {
+					// 	case "insertText":
+					// 		// dispatch.opWrite("onInput", e.nativeEvent.data)
+					// 		const { anchorNode, anchorOffset } = document.getSelection()
+					// 		const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+					// 		const data = traverseDOM.innerText(anchorVDOMNode)
+					// 		const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+					// 		dispatch.opCompose(data, pos, true)
+					// 		return
+					// 	case "insertReplacementText":
+					// 		// const { anchorNode, anchorOffset } = document.getSelection()
+					// 		// const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+					// 		// const data = traverseDOM.innerText(anchorVDOMNode)
+					// 		// const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+					// 		// dispatch.opOverwrite(data, pos)
+					// 		return
+					// 	case "deleteContentBackward":
+					// 		console.log("deleteContentBackward")
+					// 		dispatch.opBackspace()
+					// 		return
+					// 	case "deleteWordBackward":
+					// 		dispatch.opBackspaceWord()
+					// 		return
+					// 	case "deleteSoftLineBackward":
+					// 		dispatch.opBackspaceLine()
+					// 		return
+					// 	case "deleteContentForward":
+					// 		dispatch.opDelete()
+					// 		return
+					// 	case "historyUndo":
+					// 		dispatch.opUndo()
+					// 		return
+					// 	case "historyRedo":
+					// 		dispatch.opRedo()
+					// 		return
+					// 	default:
+					// 		// No-op.
+					// 		return
+					// 	}
+					// },
+
+					onCut: e => {
+						e.preventDefault()
+						if (state.pos1.pos === state.pos2.pos) {
+							// No-op.
+							return
+						}
+						const cutData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", cutData)
+						dispatch.opWrite("onCut", "")
+					},
+
+					onCopy: e => {
+						e.preventDefault()
+						if (state.pos1.pos === state.pos2.pos) {
+							// No-op.
+							return
+						}
+						const copyData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", copyData)
+					},
+
+					onPaste: e => {
+						e.preventDefault()
+						const pasteData = e.clipboardData.getData("text/plain")
+						if (!pasteData) {
+							// No-op.
+							return
+						}
+						dispatch.opWrite("onPaste", pasteData)
+					},
+				},
+				state.Components,
+			)}
+			<div style={stylex.parse("h:28")} />
+			<DebugEditor state={state} />
+		</ErrorBoundary>
+	)
 })
 
-const _Editor = props => (
-	<div>
-		<article data-codex-editor />
-		<div style={stylex.parse("h:28")} />
-		<DebugEditor />
-	</div>
-)
+// `recurseToVDOMNode` recursivel ascends to the nearest
+// VDOM node.
+//
+// TODO: Move to `traverseDOM` package.
+function recurseToVDOMNode(node) {
+	while (!traverseDOM.isVDOMNode(node)) {
+		// invariant(
+		// 	node.parentNode,
+		// 	"recurseToVDOMNode: Cannot recursively ascend; `node` does not have a parent node.",
+		// )
+		node = node.parentNode
+	}
+	return node
+}
 
-export default _Editor
+export default TestEditor

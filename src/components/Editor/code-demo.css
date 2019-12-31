@@ -1,0 +1,37 @@
+@import "https://fonts.googleapis.com/css?family=Source+Code+Pro:500,600";
+
+[contenteditable="true"] {
+	-webkit-user-modify: read-write;
+	        user-modify: read-write;
+}
+
+:root {
+	/*-webkit-font-smoothing: antialiased;*/
+	font: 500 0.875rem/1.375 "Source Code Pro", monospace;
+	color: hsl(0, 0%, 37.5%); /* about #666 */
+	caret-color: hsl(200, 100%, 62.5%);
+}
+
+::selection {
+	background: #49E1;
+}
+
+/*-webkit-box-decoration-break: clone;*/
+/*box-decoration-break: clone;*/
+.uns { padding: 0 0.000rem; color: #666F; background: #6660; border-radius: 0.00em; transition: 0.125s ease-in-out; }
+.com { padding: 0 0.000rem; color: #999F; background: #9990; border-radius: 0.00em; transition: 0.125s ease-in-out; }
+.key { padding: 0 0.000rem; color: #D00F; background: #D000; border-radius: 0.00em; transition: 0.125s ease-in-out; }
+.num { padding: 0 0.000rem; color: #F90F; background: #F900; border-radius: 0.00em; transition: 0.125s ease-in-out; }
+.str { padding: 0 0.375rem; color: #0B0F; background: #0B01; border-radius: 0.25em; transition: 0.125s ease-in-out; }
+.pun { padding: 0 0.000rem; color: #999F; background: #6660; border-radius: 0.00em; transition: 0.125s ease-in-out; }
+.fun { padding: 0 0.000rem; color: #49EF; background: #49E0; border-radius: 0.00em; transition: 0.125s ease-in-out; }
+
+.obscure .uns { padding: 0 0.000rem; color: #6660; background: #666E; border-radius: 0.0625rem; }
+.obscure .com { padding: 0 0.000rem; color: #9990; background: #999E; border-radius: 0.0625rem; }
+.obscure .key { padding: 0 0.000rem; color: #D000; background: #D00E; border-radius: 0.0625rem; }
+.obscure .num { padding: 0 0.000rem; color: #F900; background: #F90E; border-radius: 0.0625rem; }
+.obscure .str { padding: 0 0.375rem; color: #0B00; background: #0B0E; border-radius: 0.0625rem; }
+.obscure .pun { padding: 0 0.000rem; color: #9990; background: #999E; border-radius: 0.0625rem; }
+.obscure .fun { padding: 0 0.000rem; color: #49E0; background: #49EE; border-radius: 0.0625rem; }
+
+code { margin: 1px 0; display: block; min-height: 1em; white-space: pre; tab-size: 2; }
