@@ -40,6 +40,7 @@ function DebugEditor(props) {
 	const [state, setState] = React.useState({
 		...CodexEditor.state,
 		rootNode: undefined,
+		touchedNodes: undefined,
 	})
 
 	React.useEffect(() => {
@@ -47,6 +48,7 @@ function DebugEditor(props) {
 			const _state = {
 				...CodexEditor.state,
 				rootNode: undefined,
+				touchedNodes: undefined,
 			}
 			setState(_state)
 		}, 1e3)
@@ -65,7 +67,7 @@ function DebugEditor(props) {
 }
 
 const Paragraph = props => (
-	<p data-vdom-node>
+	<p data-vdom-node={props._key}>
 		{props.children}
 	</p>
 )
@@ -83,6 +85,7 @@ class Editor {
 			body: new vdom.VDOM(initialValue), // The VDOM body.
 			pos1: traverseDOM.newPos(),        // The VDOM cursor start.
 			pos2: traverseDOM.newPos(),        // The VDOM cursor end.
+			// touchedNodes: [],
 		}
 		// this.mount()
 		// -> this.init()
@@ -120,6 +123,7 @@ class Editor {
 				// No-op.
 				return
 			}
+			console.log("selectionchange")
 			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
 			const pos1 = traverseDOM.computePosFromNode(this.state.rootNode, anchorNode, anchorOffset)
 			let pos2 = { ...pos1 }
@@ -128,31 +132,41 @@ class Editor {
 			}
 			Object.assign(this.state, { pos1, pos2 })
 		})
-		this.state.rootNode.addEventListener("compositionstart", e => {
-			// console.log("compositionstart")
-		}, false)
+		// this.state.rootNode.addEventListener("compositionstart", e => {
+		// 	// ...
+		// }, false)
 		this.state.rootNode.addEventListener("compositionupdate", e => {
-			// console.log("compositionupdate")
+			console.log("compositionupdate", e)
+			// const { anchorNode } = document.getSelection()
+			// const domNode = traverseDOM.ascendToVDOMNode(anchorNode)
+			// const key = domNode.attributes["data-vdom-node"].value
+			// const vdomNode = this.state.body.nodes.filter(each => each.key === key)[0]
+			// const { pos1, pos2 } = this.state.body._affectedRangeNode(vdomNode.key)
+			// this.state.body = this.state.body.write(traverseDOM.innerText(domNode), pos1, pos2)
+			// // this.renderComponents()
 		}, false)
 		this.state.rootNode.addEventListener("compositionend", e => {
-				console.log("compositionend")
-			// const { anchorNode, anchorOffset } = document.getSelection()
-			// const currentNode = traverseDOM.ascendToVDOMNode(anchorNode)
-			// const data = traverseDOM.innerText(currentNode)
-			// const pos = traverseDOM.computePosFromNode(this.state.rootNode, anchorNode, anchorOffset)
-			// this.opOverwrite(data, pos)
-		}, false)
+			console.log("compositionend", e)
+			// const { anchorNode } = document.getSelection()
+			// const domNode = traverseDOM.ascendToVDOMNode(anchorNode)
+			// const key = domNode.attributes["data-vdom-node"].value
+			// const vdomNode = this.state.body.nodes.filter(each => each.key === key)[0]
+			// const { pos1, pos2 } = this.state.body._affectedRangeNode(vdomNode.key)
+			// this.state.body = this.state.body.write(traverseDOM.innerText(domNode), pos1, pos2)
+			// this.renderComponents()
+		}, /* false */)
 		this.state.rootNode.addEventListener("input", e => {
-			if (e.inputType === "insertText") {
-				// console.log("insertText")
-				const { anchorNode, anchorOffset } = document.getSelection()
-				const currentNode = traverseDOM.ascendToVDOMNode(anchorNode)
-				const data = traverseDOM.innerText(currentNode)
-				const pos = traverseDOM.computePosFromNode(this.state.rootNode, anchorNode, anchorOffset)
-				console.log(data, pos)
-				this.opOverwrite(data, pos)
-				return
-			}
+			console.log("input")
+			// if (e.inputType === "insertText") {
+			// 	const { anchorNode } = document.getSelection()
+			// 	const domNode = traverseDOM.ascendToVDOMNode(anchorNode)
+			// 	const key = domNode.attributes["data-vdom-node"].value
+			// 	const vdomNode = this.state.body.nodes.filter(each => each.key === key)[0]
+			// 	const { pos1, pos2 } = this.state.body._affectedRangeNode(vdomNode.key)
+			// 	this.state.body = this.state.body.write(traverseDOM.innerText(domNode), pos1, pos2)
+			// 	this.renderComponents()
+			// 	return
+			// }
 		}, false)
 		this.renderComponents()
 	}
@@ -170,21 +184,31 @@ class Editor {
 	// 	this._collapse()
 	// 	// this.renderComponents()
 	// }
-	// `opOverwrite` overwrites the current node.
-	opOverwrite(data, pos) {
-		const { pos1, pos2 } = this._computeAffectedVDOMNodeRange()
-		this.state.body = this.state.body.write(data, pos1, pos2)
-		this.state.pos1 = pos
-		this._collapse()
-		this.renderComponents()
-	}
+	// // `opOverwrite` overwrites the current node.
+	// opOverwrite(data, pos, shouldRerender) {
+	// 	const { pos1, pos2 } = this._computeAffectedVDOMNodeRange()
+	// 	this.state.body = this.state.body.write(data, pos1, pos2)
+	// 	this.state.pos1 = pos
+	// 	this._collapse()
+	// 	if (!shouldRerender) {
+	// 		// No-op.
+	// 		return
+	// 	}
+	// 	this.renderComponents()
+	// }
 	renderComponents() {
+		// Preserve the cursor:
+		if (this.state.isFocused) {
+			const { anchorNode, anchorOffset } = document.getSelection()
+			this.state.pos1 = traverseDOM.computePosFromNode(this.state.rootNode, anchorNode, anchorOffset)
+			this._collapse()
+		}
 		const components = []
 		let index = 0
 		while (index < this.state.body.nodes.length) {
 			const { key, data } = this.state.body.nodes[index]
 			components.push((
-				<Paragraph key={key}>
+				<Paragraph key={key} _key={key}>
 					{data || (
 						<br />
 					)}
@@ -216,9 +240,9 @@ class Editor {
 
 const CodexEditor = new Editor({
 	selector: "[data-codex-editor]",
-	initialValue: `Hello, world!
+	initialValue: `aa
 
-Hello, world!`,
+cc`,
 })
 
 const _Editor = props => (

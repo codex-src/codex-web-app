@@ -27,14 +27,40 @@ class VDOM {
 		} else {
 			nodes.push(...[..._sharedNodes])
 		}
+		// // FIXME
+		// this.state = {
+		// 	data,  // The plain text data.
+		// 	nodes, // The VDOM nodes.
+		// }
 		Object.assign(this, {
 			data,  // The plain text data.
 			nodes, // The VDOM nodes.
 		})
 	}
-	// `_affectedRange` computes the affected range for a
-	// selection.
-	_affectedRange(pos1, pos2) {
+	// `_affectedRangeNode` computes the affected range for
+	// a key e.g. node.
+	_affectedRangeNode(key) {
+		const offset = {
+			pos1: 0,
+			pos2: 0,
+		}
+		let index = 0
+		while (index < this.nodes.length) {
+			if (key === this.nodes[index].key) {
+				offset.pos2 = offset.pos1 + this.nodes[index].data.length
+				break
+			}
+			offset.pos1 += this.nodes[index].data.length
+			if (index + 1 < this.nodes.length) {
+				offset.pos1++
+			}
+			index++
+		}
+		return offset
+	}
+	// `_affectedRangeSelection` computes the affected range for
+	// a selection.
+	_affectedRangeSelection(pos1, pos2) {
 		// Compute start range:
 		const start = {
 			node: 0,
@@ -101,9 +127,9 @@ class VDOM {
 		// }
 
 		// Sorted by order of use.
-		const { start, end } = this._affectedRange(pos1, pos2) // The affected range.
-		const newNodes = []                                    // The new nodes.
-		const parsedNodes = parseVDOMNodes(data)               // The parsed nodes from the plain text data.
+		const { start, end } = this._affectedRangeSelection(pos1, pos2) // The affected range.
+		const newNodes = []                                             // The new nodes.
+		const parsedNodes = parseVDOMNodes(data)                        // The parsed nodes from the plain text data.
 		// Nodes before start:
 		if (start.node > 0) {
 			newNodes.push(...[...this.nodes.slice(0, start.node)])
