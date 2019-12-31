@@ -1,5 +1,6 @@
 import DebugEditor from "./DebugEditor"
 import detect from "./detect"
+import diff_match_patch from "./diff"
 import ErrorBoundary from "./ErrorBoundary"
 import invariant from "invariant"
 import React from "react"
@@ -13,11 +14,11 @@ import "./editor.css"
 const TestEditor = stylex.Unstyleable(props => {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useTestEditor(`# Hello, world!`)
-//
-// Hello, world!
-//
-// Hello, world!`)
+	const [state, dispatch] = useTestEditor("# Hello, world!")
+	//
+	// Hello, world!
+	//
+	// Hello, world!`)
 
 	// Start undo process (on focus):
 	React.useEffect(
@@ -72,14 +73,18 @@ const TestEditor = stylex.Unstyleable(props => {
 
 	React.useEffect(
 		React.useCallback(() => {
-			const vdom = state.body.data
+			const vdom = state.body.data // + "\n"
 			const dom = traverseDOM.innerText(ref.current)
 			const isSynchronized = vdom.length === dom.length && vdom === dom
 			if (isSynchronized) {
 				// No-op.
 				return
 			}
-			console.warn(vdom, dom)
+			// https://git.io/JeA2A
+			const dmp = new diff_match_patch()
+			const diff = dmp.diff_main(vdom, dom)
+			dmp.diff_cleanupSemantic(diff)
+			console.warn({ diff: diff[1][1] })
 		}, [state]),
 		[state.Components],
 	)

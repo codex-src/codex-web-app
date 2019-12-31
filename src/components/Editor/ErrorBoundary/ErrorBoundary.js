@@ -19,7 +19,7 @@ class ErrorBoundary extends React.Component {
 		return (
 			<React.Fragment>
 				{this.state.didError && (
-					<div style={stylex.parse("absolute -x -y b:black -a:10%")}>
+					<div style={stylex.parse("absolute -x -y b:black -a:10% z:max")}>
 						<div style={stylex.parse("m-t:-80 flex -r :center h:max")}>
 							<div style={stylex.parse("p:24 p-y:20 flex -r :center w:384 b:white br:8")}>
 								<div>
