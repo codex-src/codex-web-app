@@ -1,6 +1,14 @@
 import * as types from "./types"
 import nodeMethods from "./nodeMethods"
 
+// `ascendToVDOMNode` ascends to the nearest VDOM node.
+export function ascendToVDOMNode(node) {
+	while (!nodeMethods.isVDOMNode(node)) { // Assumes parent node.
+		node = node.parentNode
+	}
+	return node
+}
+
 // `computePosFromNode` computes a VDOM cursor from a root
 // node, node, and offset.
 export function computePosFromNode(rootNode, node, textOffset) {
