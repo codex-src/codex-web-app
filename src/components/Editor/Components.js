@@ -95,6 +95,8 @@ const Blockquote = props => (
 // Compound component.
 //
 // http://cdpn.io/PowjgOg
+//
+// NOTE: `box-shadow` does not use `inset`.
 const CodeBlock = props => (
 	<pre style={{ ...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false} data-vdom-node>
 		<ul>

@@ -151,11 +151,11 @@ const TestEditor = stylex.Unstyleable(props => {
 							return
 						case detect.isBackspaceWord(e):
 							e.preventDefault()
-							// console.log("Ignored an event.")
+							console.log("Backspace word is not yet supported.")
 							return
 						case detect.isBackspaceLine(e):
 							e.preventDefault()
-							// console.log("Ignored an event.")
+							console.log("Backspace line is not yet supported.")
 							return
 						case detect.isDelete(e):
 							e.preventDefault()
@@ -163,7 +163,7 @@ const TestEditor = stylex.Unstyleable(props => {
 							return
 						case detect.isDeleteWord(e):
 							e.preventDefault()
-							// console.log("Ignored an event.")
+							console.log("Delete word is not yet supported.")
 							return
 						case detect.isUndo(e):
 							e.preventDefault()
@@ -202,37 +202,38 @@ const TestEditor = stylex.Unstyleable(props => {
 					},
 
 					onInput: e => {
-						// switch (e.nativeEvent.inputType) {
-						// case "insertReplacementText":
-						// 	// FIXME
-						// 	const { anchorNode, anchorOffset } = document.getSelection()
-						// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-						// 	const data = traverseDOM.innerText(anchorVDOMNode)
-						// 	const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
-						// 	dispatch.opOverwrite(data, pos)
-						// 	return
-						// case "deleteContentBackward":
-						// 	dispatch.opBackspace()
-						// 	return
-						// case "deleteWordBackward":
-						// 	dispatch.opBackspaceWord()
-						// 	return
-						// case "deleteSoftLineBackward":
-						// 	dispatch.opBackspaceLine()
-						// 	return
-						// case "deleteContentForward":
-						// 	dispatch.opDelete()
-						// 	return
-						// case "historyUndo":
-						// 	dispatch.opUndo()
-						// 	return
-						// case "historyRedo":
-						// 	dispatch.opRedo()
-						// 	return
-						// default:
-						// 	// No-op.
-						// 	return
-						// }
+						switch (e.nativeEvent.inputType) {
+						case "insertReplacementText":
+							console.log("Spellcheck replacement is not yet supported. Please refresh the page.")
+							return
+							// const { anchorNode, anchorOffset } = document.getSelection()
+							// const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+							// const data = traverseDOM.innerText(anchorVDOMNode)
+							// const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+							// dispatch.opOverwrite(data, pos)
+							// return
+						case "deleteContentBackward":
+							dispatch.opBackspace()
+							return
+						case "deleteWordBackward":
+							dispatch.opBackspaceWord()
+							return
+						case "deleteSoftLineBackward":
+							dispatch.opBackspaceLine()
+							return
+						case "deleteContentForward":
+							dispatch.opDelete()
+							return
+						case "historyUndo":
+							dispatch.opUndo()
+							return
+						case "historyRedo":
+							dispatch.opRedo()
+							return
+						default:
+							// No-op.
+							return
+						}
 					},
 
 					onCut: e => {
