@@ -72,7 +72,7 @@ const TestEditor = stylex.Unstyleable(props => {
 
 	React.useEffect(
 		React.useCallback(() => {
-			const vdom = state.body.data + "\n"
+			const vdom = state.body.data
 			const dom = traverseDOM.innerText(ref.current)
 			const isSynchronized = vdom.length === dom.length && vdom === dom
 			if (isSynchronized) {
