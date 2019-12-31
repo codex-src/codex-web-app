@@ -19,21 +19,6 @@ Hello, world!
 
 Hello, world!`)
 
-	const [inSync, setInSync] = React.useState(true)
-
-	React.useEffect(
-		React.useCallback(() => {
-			const vdom = state.body.data
-			const dom = traverseDOM.innerText(ref.current)
-			if (vdom.length !== dom.length || vdom !== dom) {
-				console.log({ dom })
-			}
-			setInSync(vdom.length === dom.length && vdom === dom)
-		}, [state]),
-		[state.Components],
-	)
-
-	// Render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -45,7 +30,6 @@ Hello, world!`)
 		[state.shouldRenderComponents],
 	)
 
-	// Render cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -67,7 +51,20 @@ Hello, world!`)
 		[state.shouldRenderPos],
 	)
 
-	// GPU optimization:
+	const [inSync, setInSync] = React.useState(true)
+
+	React.useEffect(
+		React.useCallback(() => {
+			const vdom = state.body.data
+			const dom = traverseDOM.innerText(ref.current)
+			if (vdom.length !== dom.length || vdom !== dom) {
+				console.log({ dom })
+			}
+			setInSync(vdom.length === dom.length && vdom === dom)
+		}, [state]),
+		[state.Components],
+	)
+
 	let translateZ = {}
 	if (state.isFocused) {
 		translateZ = { transform: "translateZ(0px)" }
@@ -75,11 +72,15 @@ Hello, world!`)
 
 	return (
 		<ErrorBoundary>
-			<div style={stylex.parse("absolute -r -t")}>
-				<div style={stylex.parse("p-x:24 p-t:32")}>
-					<p style={stylex.parse("fs:19 lh:100%")}>
-						{inSync ? "✅" : "❌"}
-					</p>
+			<div style={stylex.parse("absolute -l -t")}>
+				<div style={stylex.parse("p:8")}>
+					{inSync ? (
+						// OK:
+						<div style={stylex.parse("wh:12 b:green-a400 br:max")} />
+					) : (
+						// Not OK:
+						<div style={stylex.parse("wh:12 b:red br:max")} />
+					)}
 				</div>
 			</div>
 			{React.createElement(
@@ -111,114 +112,99 @@ Hello, world!`)
 					},
 
 					// onKeyPress: e => {
-					// 	console.log("onKeyPress")
+					// 	e.preventDefault()
+					// 	let data = e.key
+					// 	if (e.key === "Enter") {
+					// 		data = "\n"
+					// 	}
+					// 	dispatch.opWrite("onKeyPress", data)
 					// },
+
 					// onKeyDown: e => {
-					// 	console.log("onKeyDown")
+					// 	switch (true) {
+					// 	case detect.isTab(e):
+					// 		e.preventDefault()
+					// 		dispatch.opTab()
+					// 		return
+					// 	case detect.isBackspace(e):
+					// 		e.preventDefault()
+					// 		dispatch.opBackspace()
+					// 		return
+					// 	// case detect.isBackspaceWord(e):
+					// 	// 	e.preventDefault()
+					// 	// 	dispatch.opBackspaceWord()
+					// 	// 	return
+					// 	// case detect.isBackspaceLine(e):
+					// 	// 	e.preventDefault()
+					// 	// 	dispatch.opBackspaceLine()
+					// 	// 	return
+					// 	case detect.isDelete(e):
+					// 		e.preventDefault()
+					// 		dispatch.opDelete()
+					// 		return
+					// 	case detect.isUndo(e):
+					// 		e.preventDefault()
+					// 		dispatch.opUndo()
+					// 		return
+					// 	case detect.isRedo(e):
+					// 		e.preventDefault()
+					// 		dispatch.opRedo()
+					// 		return
+					// 	default:
+					// 		// No-op.
+					// 		return
+					// 	}
 					// },
-					// onCompositionEnd: e => {
-					// 	console.log("onCompositionEnd")
+
+					// onCompositionUpdate: e => { // Assumes no selection.
+					// 	if (!e.data) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const { anchorNode } = document.getSelection()
+					// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+					// 	const data = traverseDOM.innerText(anchorVDOMNode)
+					// 	dispatch.opPrecompose(data)
 					// },
-					// onInput: e => {
-					// 	console.log("onInput")
+
+					// onCompositionEnd: e => { // Assumes no selection.
+					// 	if (!e.data) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const { anchorNode } = document.getSelection()
+					// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+					// 	const data = traverseDOM.innerText(anchorVDOMNode)
+					// 	dispatch.opCompose(data, e.data)
 					// },
-
-					onKeyPress: e => {
-						e.preventDefault()
-						let data = e.key
-						if (e.key === "Enter") {
-							data = "\n"
-						}
-						dispatch.opWrite("onKeyPress", data)
-					},
-
-					onKeyDown: e => {
-						// console.log("onKeyDown", { ...e })
-						switch (true) {
-						case detect.isTab(e):
-							e.preventDefault()
-							dispatch.opTab()
-							return
-						case detect.isBackspace(e):
-							e.preventDefault()
-							dispatch.opBackspace()
-							return
-						// case detect.isBackspaceWord(e):
-						// 	e.preventDefault()
-						// 	dispatch.opBackspaceWord()
-						// 	return
-						// case detect.isBackspaceLine(e):
-						// 	e.preventDefault()
-						// 	dispatch.opBackspaceLine()
-						// 	return
-						case detect.isDelete(e):
-							e.preventDefault()
-							dispatch.opDelete()
-							return
-						// case detect.isDeleteWord(e):
-						// 	e.preventDefault()
-						// 	dispatch.opDeleteWord()
-						// 	return
-						// case detect.isUndo(e):
-						// 	e.preventDefault()
-						// 	dispatch.opUndo()
-						// 	return
-						// case detect.isRedo(e):
-						// 	e.preventDefault()
-						// 	dispatch.opRedo()
-						// 	return
-						default:
-							// No-op.
-							return
-						}
-					},
-
-					onCompositionUpdate: e => {
-						// console.log("onCompositionUpdate", { ...e })
-						if (!e.data) {
-							// No-op.
-							return
-						}
-						const { anchorNode } = document.getSelection()
-						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-						const data = traverseDOM.innerText(anchorVDOMNode)
-						dispatch.opPrecompose(data)
-					},
-
-					onCompositionEnd: e => {
-						// console.log("onCompositionEnd", { ...e })
-						if (!e.data) {
-							// No-op.
-							return
-						}
-						const { anchorNode } = document.getSelection()
-						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-						const data = traverseDOM.innerText(anchorVDOMNode)
-						dispatch.opCompose(data, e.data)
-					},
 
 					onInput: e => {
-						// console.log("onInput", { ...e })
 						switch (e.nativeEvent.inputType) {
-						case "insertReplacementText":
-							// TODO
-							const { anchorNode, anchorOffset } = document.getSelection()
-							const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-							const data = traverseDOM.innerText(anchorVDOMNode)
-							const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
-							dispatch.opOverwrite(data, pos)
-							return
-						case "deleteContentBackward":
-							dispatch.opBackspace()
-							return
+						// case "insertReplacementText": // Assumes a selection.
+						// 	// TODO
+						// 	const { anchorNode, anchorOffset } = document.getSelection()
+						// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+						// 	const data = traverseDOM.innerText(anchorVDOMNode)
+						// 	const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+						// 	dispatch.opOverwrite(data, pos)
+						// 	return
+						// case "deleteContentBackward":
+						// 	dispatch.opBackspace()
+						// 	return
 						// case "deleteWordBackward":
 						// 	dispatch.opBackspaceWord()
 						// 	return
 						// case "deleteSoftLineBackward":
 						// 	dispatch.opBackspaceLine()
 						// 	return
-						case "deleteContentForward":
-							dispatch.opDelete()
+						// case "deleteContentForward":
+						// 	dispatch.opDelete()
+						// 	return
+						case "historyUndo":
+							dispatch.opUndo()
+							return
+						case "historyRedo":
+							dispatch.opRedo()
 							return
 						default:
 							// No-op.

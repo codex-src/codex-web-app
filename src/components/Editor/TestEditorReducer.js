@@ -5,10 +5,13 @@ import utf8 from "./utf8"
 import vdom from "./vdom"
 
 const initialState = {
-	isFocused: false,                // Is the editor focused?
-	body:      new vdom.VDOM(""),    // The VDOM body.
-	pos1:      traverseDOM.newPos(), // The VDOM cursor start.
-	pos2:      traverseDOM.newPos(), // The VDOM cursor end.
+	isFocused:     false,                // Is the editor focused?
+	body:          new vdom.VDOM(""),    // The VDOM body.
+	pos1:          traverseDOM.newPos(), // The VDOM cursor start.
+	pos2:          traverseDOM.newPos(), // The VDOM cursor end.
+	didCorrectPos: false,                // Did correct the VDOM cursor start and end?
+	history:       [],                   // The history (and future) state stack.
+	historyIndex:  -1,                   // The history (and future) state stack index.
 
 	// `shouldRenderComponents` hints whether the editor’s
 	// components should be rerendered.
@@ -38,6 +41,12 @@ const reducer = state => ({
 		state.pos2 = { ...state.pos1 }
 	},
 	opWrite(inputType, data) {
+		if (!state.didCorrectPos) {
+			state.history[0].pos1.pos = state.pos1.pos
+			state.history[0].pos2.pos = state.pos2.pos
+			state.didCorrectPos = true
+		}
+		this._prune()
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
 		state.pos1.pos += data.length
 		this._collapse()
@@ -82,6 +91,7 @@ const reducer = state => ({
 			// No-op.
 			return
 		}
+		this.prune()
 		state.body = state.body.write("", state.pos1.pos - lengthL, state.pos2.pos + lengthR)
 		state.pos1.pos -= lengthL
 		this._collapse()
@@ -103,6 +113,39 @@ const reducer = state => ({
 		const { length } = utf8.nextChar(state.body.data, state.pos1.pos)
 		this._delete(0, length)
 	},
+	storeUndo() {
+		const undo = state.history[state.historyIndex]
+		if (undo.body.data.length === state.body.data.length && undo.body.data === state.body.data) {
+			// No-op.
+			return
+		}
+		const { body, pos1, pos2 } = state
+		state.history.push({ body, pos1, pos2 })
+		state.historyIndex++
+	},
+	opUndo() {
+		if (!state.historyIndex) {
+			state.didCorrectPos = false
+			return
+		}
+		state.historyIndex--
+		const { body, pos1, pos2 } = state.history[state.historyIndex]
+		Object.assign(state, { body, pos1, pos2 })
+		state.shouldRenderComponents++
+	},
+	opRedo() {
+		if (state.historyIndex + 1 === state.history.length) {
+			// No-op.
+			return
+		}
+		state.historyIndex++
+		const { body, pos1, pos2 } = state.history[state.historyIndex]
+		Object.assign(state, { body, pos1, pos2 })
+		state.shouldRenderComponents++
+	},
+	_prune() {
+		state.history.splice(state.historyIndex + 1)
+	},
 	render() {
 		state.Components = Components.parse(state.body)
 		state.shouldRenderPos++
@@ -110,10 +153,13 @@ const reducer = state => ({
 })
 
 const init = data => state => {
-	const body = state.body.write(data, 0, state.body.data.length)
+	let { body, pos1, pos2 } = state
+	body = body.write(data, 0, state.body.data.length)
 	const newState = {
 		...state,
 		body,
+		history: [{ body, pos1, pos2 }],
+		historyIndex: 0,
 		Components: Components.parse(body),
 	}
 	return newState
