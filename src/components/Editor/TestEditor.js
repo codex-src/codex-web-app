@@ -1,5 +1,5 @@
-// import detect from "./detect"
 import DebugEditor from "./DebugEditor"
+import detect from "./detect"
 import diff from "./diff"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
@@ -12,28 +12,29 @@ import "./editor.css"
 
 // https://github.com/facebook/react/issues/11538#issuecomment-417504600
 ;(function() {
-	if (typeof Node === "function" && Node.prototype) {
-		const originalRemoveChild = Node.prototype.removeChild
-		Node.prototype.removeChild = function(child) {
-			if (child.parentNode !== this) {
-				if (console) {
-					console.error("Cannot remove a child from a different parent", child, this)
-				}
-				return child
+	if (typeof Node !== "function" || !Node.prototype) {
+		// No-op.
+		return
+	}
+	const originalRemoveChild = Node.prototype.removeChild
+	Node.prototype.removeChild = function(child) {
+		if (child.parentNode !== this) {
+			if (console) {
+				console.error("Cannot remove a child from a different parent", child, this)
 			}
-			return originalRemoveChild.apply(this, arguments)
+			return child
 		}
-
-		const originalInsertBefore = Node.prototype.insertBefore
-		Node.prototype.insertBefore = function(newNode, referenceNode) {
-			if (referenceNode && referenceNode.parentNode !== this) {
-				if (console) {
-					console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
-				}
-				return newNode
+		return originalRemoveChild.apply(this, arguments)
+	}
+	const originalInsertBefore = Node.prototype.insertBefore
+	Node.prototype.insertBefore = function(newNode, referenceNode) {
+		if (referenceNode && referenceNode.parentNode !== this) {
+			if (console) {
+				console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
 			}
-			return originalInsertBefore.apply(this, arguments)
+			return newNode
 		}
+		return originalInsertBefore.apply(this, arguments)
 	}
 })()
 
@@ -106,8 +107,8 @@ const TestEditor = stylex.Unstyleable(props => {
 				// No-op.
 				return
 			}
-			const diffs = new diff.Diff(vdom, dom)
-			console.warn("VDOM and DOM are not synchronized; refresh recommended", diffs)
+			console.log("Force rerender.")
+			dispatch.render()
 		}, [state]),
 		[state.Components],
 	)
@@ -156,37 +157,41 @@ const TestEditor = stylex.Unstyleable(props => {
 					// },
 
 					// onKeyDown: e => {
-					// 	if (detect.isTab(e)) {
+					// 	switch (true) {
+					// 	case detect.isTab(e):
 					// 		e.preventDefault()
 					// 		dispatch.opTab()
 					// 		return
-					// 	} else if (detect.isBackspace(e)) {
+					// 	case detect.isBackspace(e):
 					// 		e.preventDefault()
 					// 		dispatch.opBackspace()
 					// 		return
-					// 	} else if (detect.isBackspaceWord(e)) {
+					// 	case detect.isBackspaceWord(e):
 					// 		e.preventDefault()
 					// 		console.log("Backspace word is not yet supported.")
 					// 		return
-					// 	} else if (detect.isBackspaceLine(e)) {
+					// 	case detect.isBackspaceLine(e):
 					// 		e.preventDefault()
 					// 		console.log("Backspace line is not yet supported.")
 					// 		return
-					// 	} else if (detect.isDelete(e)) {
+					// 	case detect.isDelete(e):
 					// 		e.preventDefault()
 					// 		dispatch.opDelete()
 					// 		return
-					// 	} else if (detect.isDeleteWord(e)) {
+					// 	case detect.isDeleteWord(e):
 					// 		e.preventDefault()
 					// 		console.log("Delete word is not yet supported.")
 					// 		return
-					// 	} else if (detect.isUndo(e)) {
+					// 	case detect.isUndo(e):
 					// 		e.preventDefault()
 					// 		dispatch.opUndo()
 					// 		return
-					// 	} else if (detect.isRedo(e)) {
+					// 	case detect.isRedo(e):
 					// 		e.preventDefault()
 					// 		dispatch.opRedo()
+					// 		return
+					// 	default:
+					// 		// No-op.
 					// 		return
 					// 	}
 					// },
@@ -196,10 +201,11 @@ const TestEditor = stylex.Unstyleable(props => {
 					// },
 
 					// onCompositionUpdate: e => {
-					// 	// if (!e.data) {
-					// 	// 	// No-op.
-					// 	// 	return
-					// 	// }
+					// 	// console.log("onCompositionUpdate", { ...e })
+					// 	if (!e.data) {
+					// 		// No-op.
+					// 		return
+					// 	}
 					// 	const { anchorNode, anchorOffset } = document.getSelection()
 					// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
 					// 	const data = traverseDOM.innerText(anchorVDOMNode)
@@ -208,10 +214,11 @@ const TestEditor = stylex.Unstyleable(props => {
 					// },
 
 					// onCompositionEnd: e => {
-					// 	// if (!e.data) {
-					// 	// 	// No-op.
-					// 	// 	return
-					// 	// }
+					// 	// console.log("onCompositionEnd", { ...e })
+					// 	if (!e.data) {
+					// 		// No-op.
+					// 		return
+					// 	}
 					// 	const { anchorNode, anchorOffset } = document.getSelection()
 					// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
 					// 	const data = traverseDOM.innerText(anchorVDOMNode)
@@ -220,49 +227,55 @@ const TestEditor = stylex.Unstyleable(props => {
 					// },
 
 					onInput: e => {
-						// console.log("onInput", { ...e })
-						if (e.nativeEvent.inputType === "insertText") {
-							// dispatch.opWrite("onInput", e.nativeEvent.data)
-							const { anchorNode, anchorOffset } = document.getSelection()
-							const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-							const data = traverseDOM.innerText(anchorVDOMNode)
-							const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
-							dispatch.opCompose(data, pos, true)
-							return
-						} else if (e.nativeEvent.inputType === "insertCompositionText") {
-							const { anchorNode, anchorOffset } = document.getSelection()
-							const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-							const data = traverseDOM.innerText(anchorVDOMNode)
-							const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
-							dispatch.opCompose(data, pos, false)
-							return
-						// } else if (e.nativeEvent.inputType === "insertReplacementText") {
-						// 	// const { anchorNode, anchorOffset } = document.getSelection()
-						// 	// const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-						// 	// const data = traverseDOM.innerText(anchorVDOMNode)
-						// 	// const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
-						// 	// dispatch.opOverwrite(data, pos)
-						// 	return
-						} else if (e.nativeEvent.inputType === "deleteContentBackward") {
-							dispatch.opBackspace()
-							return
-						} else if (e.nativeEvent.inputType === "deleteWordBackward") {
-							dispatch.opBackspaceWord()
-							return
-						} else if (e.nativeEvent.inputType === "deleteSoftLineBackward") {
-							dispatch.opBackspaceLine()
-							return
-						} else if (e.nativeEvent.inputType === "deleteContentForward") {
-							dispatch.opDelete()
-							return
-						} else if (e.nativeEvent.inputType === "historyUndo") {
-							dispatch.opUndo()
-							return
-						} else if (e.nativeEvent.inputType === "historyRedo") {
-							dispatch.opRedo()
-							return
-						}
+						const { anchorNode, anchorOffset } = document.getSelection()
+						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+						const data = traverseDOM.innerText(anchorVDOMNode)
+						const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+						dispatch.opCompose(data, pos, true)
 					},
+
+					// onInput: e => {
+					// 	// console.log("onInput", { ...e })
+					// 	switch (e.nativeEvent.inputType) {
+					// 	case "insertText":
+					// 		// dispatch.opWrite("onInput", e.nativeEvent.data)
+					// 		const { anchorNode, anchorOffset } = document.getSelection()
+					// 		const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+					// 		const data = traverseDOM.innerText(anchorVDOMNode)
+					// 		const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+					// 		dispatch.opCompose(data, pos, true)
+					// 		return
+					// 	case "insertReplacementText":
+					// 		// const { anchorNode, anchorOffset } = document.getSelection()
+					// 		// const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+					// 		// const data = traverseDOM.innerText(anchorVDOMNode)
+					// 		// const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+					// 		// dispatch.opOverwrite(data, pos)
+					// 		return
+					// 	case "deleteContentBackward":
+					// 		console.log("deleteContentBackward")
+					// 		dispatch.opBackspace()
+					// 		return
+					// 	case "deleteWordBackward":
+					// 		dispatch.opBackspaceWord()
+					// 		return
+					// 	case "deleteSoftLineBackward":
+					// 		dispatch.opBackspaceLine()
+					// 		return
+					// 	case "deleteContentForward":
+					// 		dispatch.opDelete()
+					// 		return
+					// 	case "historyUndo":
+					// 		dispatch.opUndo()
+					// 		return
+					// 	case "historyRedo":
+					// 		dispatch.opRedo()
+					// 		return
+					// 	default:
+					// 		// No-op.
+					// 		return
+					// 	}
+					// },
 
 					onCut: e => {
 						e.preventDefault()
