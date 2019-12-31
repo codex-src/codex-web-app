@@ -168,39 +168,39 @@ const TestEditor = stylex.Unstyleable(props => {
 						}
 					},
 
-					// onCompositionUpdate: e => {
-					// 	if (!e.data) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const { anchorNode } = document.getSelection()
-					// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-					// 	const data = traverseDOM.innerText(anchorVDOMNode)
-					// 	dispatch.opPrecompose(data)
-					// },
+					onCompositionUpdate: e => {
+						if (!e.data) {
+							// No-op.
+							return
+						}
+						const { anchorNode, anchorOffset } = document.getSelection()
+						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+						const data = traverseDOM.innerText(anchorVDOMNode)
+						const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+						dispatch.opCompose(data, pos, false)
+					},
 
 					onCompositionEnd: e => {
 						if (!e.data) {
 							// No-op.
 							return
 						}
-						const { anchorNode } = document.getSelection()
+						const { anchorNode, anchorOffset } = document.getSelection()
 						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
 						const data = traverseDOM.innerText(anchorVDOMNode)
-						dispatch.opCompose(data, e.data)
+						const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+						dispatch.opCompose(data, pos, true)
 					},
 
 					onInput: e => {
 						switch (e.nativeEvent.inputType) {
 						case "insertReplacementText":
-							console.log("Spellcheck replacement is not yet supported. Please refresh the page.")
-							return
 							// const { anchorNode, anchorOffset } = document.getSelection()
 							// const anchorVDOMNode = recurseToVDOMNode(anchorNode)
 							// const data = traverseDOM.innerText(anchorVDOMNode)
 							// const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
 							// dispatch.opOverwrite(data, pos)
-							// return
+							return
 						case "deleteContentBackward":
 							dispatch.opBackspace()
 							return

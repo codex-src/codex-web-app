@@ -55,22 +55,22 @@ const reducer = state => ({
 		// state.shouldRenderComponents += inputType !== "onKeyPress"
 		state.shouldRenderComponents++
 	},
-	opPrecompose(data) {
-		// Compute the start and end of the affected VDOM nodes:
+	// opPrecompose(data, eventData) {
+	// 	// Compute the affected VDOM range:
+	// 	const pos1 = state.pos1.pos - state.pos1.offset
+	// 	const pos2 = state.pos1.pos - state.pos1.offset + state.body.nodes[state.pos1.index].data.length
+	// 	state.body = state.body.write(data, pos1, pos2)
+	// 	// this._collapse()
+	// 	// state.shouldRenderComponents++
+	// },
+	opCompose(data, posFromDOM, shouldRenderComponents) {
+		// Compute the affected VDOM range:
 		const pos1 = state.pos1.pos - state.pos1.offset
 		const pos2 = state.pos1.pos - state.pos1.offset + state.body.nodes[state.pos1.index].data.length
 		state.body = state.body.write(data, pos1, pos2)
-		// this._collapse()
-		// state.shouldRenderComponents++
-	},
-	opCompose(data, eventData) {
-		// Compute the start and end of the affected VDOM nodes:
-		const pos1 = state.pos1.pos - state.pos1.offset
-		const pos2 = state.pos1.pos - state.pos1.offset + state.body.nodes[state.pos1.index].data.length
-		state.body = state.body.write(data, pos1, pos2)
-		state.pos1.pos += eventData.slice(-1) === " "
+		state.pos1 = posFromDOM
 		this._collapse()
-		state.shouldRenderComponents++
+		state.shouldRenderComponents += shouldRenderComponents
 	},
 	// FIXME: `opInsert` or `opInsertFromSpellcheck?`
 	opOverwrite(data, pos) {
