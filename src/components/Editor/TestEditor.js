@@ -1,5 +1,5 @@
+// import detect from "./detect"
 import DebugEditor from "./DebugEditor"
-import detect from "./detect"
 import diff from "./diff"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
@@ -9,6 +9,33 @@ import traverseDOM from "./traverseDOM"
 import useTestEditor from "./TestEditorReducer"
 
 import "./editor.css"
+
+// https://github.com/facebook/react/issues/11538#issuecomment-417504600
+;(function() {
+	if (typeof Node === "function" && Node.prototype) {
+		const originalRemoveChild = Node.prototype.removeChild
+		Node.prototype.removeChild = function(child) {
+			if (child.parentNode !== this) {
+				if (console) {
+					console.error("Cannot remove a child from a different parent", child, this)
+				}
+				return child
+			}
+			return originalRemoveChild.apply(this, arguments)
+		}
+
+		const originalInsertBefore = Node.prototype.insertBefore
+		Node.prototype.insertBefore = function(newNode, referenceNode) {
+			if (referenceNode && referenceNode.parentNode !== this) {
+				if (console) {
+					console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
+				}
+				return newNode
+			}
+			return originalInsertBefore.apply(this, arguments)
+		}
+	}
+})()
 
 const TestEditor = stylex.Unstyleable(props => {
 	const ref = React.useRef()
@@ -80,7 +107,7 @@ const TestEditor = stylex.Unstyleable(props => {
 				return
 			}
 			const diffs = new diff.Diff(vdom, dom)
-			console.warn("VDOM and DOM are out of sync:", diffs)
+			console.warn("VDOM and DOM are not synchronized; refresh recommended", diffs)
 		}, [state]),
 		[state.Components],
 	)
@@ -119,108 +146,120 @@ const TestEditor = stylex.Unstyleable(props => {
 						dispatch.setState(state.body, pos1, pos2)
 					},
 
-					onKeyPress: e => {
-						e.preventDefault()
-						let data = e.key
-						if (e.key === "Enter") {
-							data = "\n"
-						}
-						dispatch.opWrite("onKeyPress", data)
-					},
+					// onKeyPress: e => {
+					// 	e.preventDefault()
+					// 	let data = e.key
+					// 	if (e.key === "Enter") {
+					// 		data = "\n"
+					// 	}
+					// 	dispatch.opWrite("onKeyPress", data)
+					// },
 
-					onKeyDown: e => {
-						switch (true) {
-						case detect.isTab(e):
-							e.preventDefault()
-							dispatch.opTab()
-							return
-						case detect.isBackspace(e):
-							e.preventDefault()
-							dispatch.opBackspace()
-							return
-						case detect.isBackspaceWord(e):
-							e.preventDefault()
-							console.log("Backspace word is not yet supported.")
-							return
-						case detect.isBackspaceLine(e):
-							e.preventDefault()
-							console.log("Backspace line is not yet supported.")
-							return
-						case detect.isDelete(e):
-							e.preventDefault()
-							dispatch.opDelete()
-							return
-						case detect.isDeleteWord(e):
-							e.preventDefault()
-							console.log("Delete word is not yet supported.")
-							return
-						case detect.isUndo(e):
-							e.preventDefault()
-							dispatch.opUndo()
-							return
-						case detect.isRedo(e):
-							e.preventDefault()
-							dispatch.opRedo()
-							return
-						default:
-							// No-op.
-							return
-						}
-					},
+					// onKeyDown: e => {
+					// 	if (detect.isTab(e)) {
+					// 		e.preventDefault()
+					// 		dispatch.opTab()
+					// 		return
+					// 	} else if (detect.isBackspace(e)) {
+					// 		e.preventDefault()
+					// 		dispatch.opBackspace()
+					// 		return
+					// 	} else if (detect.isBackspaceWord(e)) {
+					// 		e.preventDefault()
+					// 		console.log("Backspace word is not yet supported.")
+					// 		return
+					// 	} else if (detect.isBackspaceLine(e)) {
+					// 		e.preventDefault()
+					// 		console.log("Backspace line is not yet supported.")
+					// 		return
+					// 	} else if (detect.isDelete(e)) {
+					// 		e.preventDefault()
+					// 		dispatch.opDelete()
+					// 		return
+					// 	} else if (detect.isDeleteWord(e)) {
+					// 		e.preventDefault()
+					// 		console.log("Delete word is not yet supported.")
+					// 		return
+					// 	} else if (detect.isUndo(e)) {
+					// 		e.preventDefault()
+					// 		dispatch.opUndo()
+					// 		return
+					// 	} else if (detect.isRedo(e)) {
+					// 		e.preventDefault()
+					// 		dispatch.opRedo()
+					// 		return
+					// 	}
+					// },
 
-					onCompositionUpdate: e => {
-						if (!e.data) {
-							// No-op.
-							return
-						}
-						const { anchorNode, anchorOffset } = document.getSelection()
-						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-						const data = traverseDOM.innerText(anchorVDOMNode)
-						const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
-						dispatch.opCompose(data, pos, false)
-					},
+					// onCompositionStart: e => {
+					// 	console.log("onCompositionStart")
+					// },
 
-					onCompositionEnd: e => {
-						if (!e.data) {
-							// No-op.
-							return
-						}
-						const { anchorNode, anchorOffset } = document.getSelection()
-						const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-						const data = traverseDOM.innerText(anchorVDOMNode)
-						const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
-						dispatch.opCompose(data, pos, true)
-					},
+					// onCompositionUpdate: e => {
+					// 	// if (!e.data) {
+					// 	// 	// No-op.
+					// 	// 	return
+					// 	// }
+					// 	const { anchorNode, anchorOffset } = document.getSelection()
+					// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+					// 	const data = traverseDOM.innerText(anchorVDOMNode)
+					// 	const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+					// 	dispatch.opCompose(data, pos, false)
+					// },
+
+					// onCompositionEnd: e => {
+					// 	// if (!e.data) {
+					// 	// 	// No-op.
+					// 	// 	return
+					// 	// }
+					// 	const { anchorNode, anchorOffset } = document.getSelection()
+					// 	const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+					// 	const data = traverseDOM.innerText(anchorVDOMNode)
+					// 	const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+					// 	dispatch.opCompose(data, pos, true)
+					// },
 
 					onInput: e => {
-						switch (e.nativeEvent.inputType) {
-						case "insertReplacementText":
-							// const { anchorNode, anchorOffset } = document.getSelection()
-							// const anchorVDOMNode = recurseToVDOMNode(anchorNode)
-							// const data = traverseDOM.innerText(anchorVDOMNode)
-							// const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
-							// dispatch.opOverwrite(data, pos)
+						// console.log("onInput", { ...e })
+						if (e.nativeEvent.inputType === "insertText") {
+							// dispatch.opWrite("onInput", e.nativeEvent.data)
+							const { anchorNode, anchorOffset } = document.getSelection()
+							const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+							const data = traverseDOM.innerText(anchorVDOMNode)
+							const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+							dispatch.opCompose(data, pos, true)
 							return
-						case "deleteContentBackward":
+						} else if (e.nativeEvent.inputType === "insertCompositionText") {
+							const { anchorNode, anchorOffset } = document.getSelection()
+							const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+							const data = traverseDOM.innerText(anchorVDOMNode)
+							const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+							dispatch.opCompose(data, pos, false)
+							return
+						// } else if (e.nativeEvent.inputType === "insertReplacementText") {
+						// 	// const { anchorNode, anchorOffset } = document.getSelection()
+						// 	// const anchorVDOMNode = recurseToVDOMNode(anchorNode)
+						// 	// const data = traverseDOM.innerText(anchorVDOMNode)
+						// 	// const pos = traverseDOM.computePosFromNode(ref.current, anchorNode, anchorOffset)
+						// 	// dispatch.opOverwrite(data, pos)
+						// 	return
+						} else if (e.nativeEvent.inputType === "deleteContentBackward") {
 							dispatch.opBackspace()
 							return
-						case "deleteWordBackward":
+						} else if (e.nativeEvent.inputType === "deleteWordBackward") {
 							dispatch.opBackspaceWord()
 							return
-						case "deleteSoftLineBackward":
+						} else if (e.nativeEvent.inputType === "deleteSoftLineBackward") {
 							dispatch.opBackspaceLine()
 							return
-						case "deleteContentForward":
+						} else if (e.nativeEvent.inputType === "deleteContentForward") {
 							dispatch.opDelete()
 							return
-						case "historyUndo":
+						} else if (e.nativeEvent.inputType === "historyUndo") {
 							dispatch.opUndo()
 							return
-						case "historyRedo":
+						} else if (e.nativeEvent.inputType === "historyRedo") {
 							dispatch.opRedo()
-							return
-						default:
-							// No-op.
 							return
 						}
 					},
