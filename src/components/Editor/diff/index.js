@@ -1,2 +1,7 @@
-import diff_match_patch from "./diff.min.js"
-export default diff_match_patch
+import Diff from "./diff"
+
+const exports = {
+	Diff,
+}
+
+export default exports

@@ -1,8 +1,7 @@
 import DebugEditor from "./DebugEditor"
 import detect from "./detect"
-import diff_match_patch from "./diff"
+import diff from "./diff"
 import ErrorBoundary from "./ErrorBoundary"
-import invariant from "invariant"
 import React from "react"
 import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import stylex from "stylex"
@@ -73,18 +72,15 @@ const TestEditor = stylex.Unstyleable(props => {
 
 	React.useEffect(
 		React.useCallback(() => {
-			const vdom = state.body.data // + "\n"
+			const vdom = state.body.data + "\n"
 			const dom = traverseDOM.innerText(ref.current)
 			const isSynchronized = vdom.length === dom.length && vdom === dom
 			if (isSynchronized) {
 				// No-op.
 				return
 			}
-			// https://git.io/JeA2A
-			const dmp = new diff_match_patch()
-			const diff = dmp.diff_main(vdom, dom)
-			dmp.diff_cleanupSemantic(diff)
-			console.warn({ diff: diff[1][1] })
+			const diffs = new diff.Diff(vdom, dom)
+			console.warn("VDOM and DOM are out of sync:", diffs)
 		}, [state]),
 		[state.Components],
 	)
@@ -96,21 +92,9 @@ const TestEditor = stylex.Unstyleable(props => {
 
 	return (
 		<ErrorBoundary>
-			{/* <div style={stylex.parse("absolute -l -t")}> */}
-			{/* 	<div style={stylex.parse("p:8")}> */}
-			{/* 		{inSync ? ( */}
-			{/* 			// OK: */}
-			{/* 			<div style={stylex.parse("wh:12 b:green-a400 br:max")} /> */}
-			{/* 		) : ( */}
-			{/* 			// Not OK: */}
-			{/* 			<div style={stylex.parse("wh:12 b:red br:max")} /> */}
-			{/* 		)} */}
-			{/* 	</div> */}
-			{/* </div> */}
 			{React.createElement(
 				"article",
 				{
-
 					ref,
 
 					style: translateZ,
@@ -271,7 +255,6 @@ const TestEditor = stylex.Unstyleable(props => {
 						}
 						dispatch.opWrite("onPaste", pasteData)
 					},
-
 				},
 				state.Components,
 			)}
@@ -287,10 +270,10 @@ const TestEditor = stylex.Unstyleable(props => {
 // TODO: Move to `traverseDOM` package.
 function recurseToVDOMNode(node) {
 	while (!traverseDOM.isVDOMNode(node)) {
-		invariant(
-			node.parentNode,
-			"recurseToVDOMNode: Cannot recursively ascend; `node` does not have a parent node.",
-		)
+		// invariant(
+		// 	node.parentNode,
+		// 	"recurseToVDOMNode: Cannot recursively ascend; `node` does not have a parent node.",
+		// )
 		node = node.parentNode
 	}
 	return node

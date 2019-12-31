@@ -210,7 +210,6 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 						// TODO
 						onDragStart: e => e.preventDefault(),
 						onDragEnd:   e => e.preventDefault(),
-
 					},
 					state.Components,
 				)}
