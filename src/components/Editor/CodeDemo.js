@@ -175,6 +175,7 @@ class Editor {
 			}
 			this.render()
 		})
+		// First render (no cursor):
 		this.renderDOMComponents()
 	}
 	updateVDOMValue() {
@@ -494,27 +495,6 @@ const CodeBlock = props => (
 	// </ul>
 )
 
-// const CodeBlock = props => (
-// 	props.children.map((line, index) => (
-// 		<code key={index} data-vdom-node>
-// 			{/* Empty: */}
-// 			{!line.length && (
-// 				<br />
-// 			)}
-// 			{/* Non-empty: */}
-// 			{line.map((item, index) => (
-// 				!item.token ? (
-// 					item.value
-// 				) : (
-// 					<span key={index} className={item.token}>
-// 						{item.value}
-// 					</span>
-// 				)
-// 			))}
-// 		</code>
-// 	))
-// )
-
 function DebugEditor(props) {
 	const [state, setState] = React.useState({
 		...editor,
@@ -557,10 +537,7 @@ function DebugEditor(props) {
 
 const EditorComponent = props => (
 	<div>
-		<article
-			style={{ MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }}
-			data-vdom-root
-		/>
+		<article data-vdom-root />
 		<div style={stylex.parse("h:28")} />
 		<DebugEditor />
 	</div>

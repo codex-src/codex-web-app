@@ -1,19 +1,18 @@
-/* @import "https://fonts.googleapis.com/css?family=Source+Code+Pro:500,600"; */
-/*  */
-/* :root { */
-/* 	font: 500 0.875rem/1.375 "Source Code Pro", monospace; */
-/* 	color: hsl(0, 0%, 37.5%); */
-/* 	caret-color: hsl(200, 100%, 62.5%); */
-/* } */
+@import "https://fonts.googleapis.com/css?family=Source+Code+Pro:500,600";
 
 article {
 	white-space:   pre-wrap;
 	-moz-tab-size: 2;
 	tab-size:      2;
-	font:          15px/1.375 Monaco !important;
-	caret-color:   hsl(var(--black));
+	font :         15px/1.375 "Source Code Pro", "Monaco";
+	color:         #666F;
+	caret-color:   hsl(var(--blue-a400));
 	outline:       none;
 	overflow-wrap: break-word;
+}
+
+::selection {
+	background: #4499EE1F;
 }
 
 .uns { padding: 0px 0px; color: #666F; background: #6660; border-radius: 0px; }
@@ -23,5 +22,3 @@ article {
 .str { padding: 0px 4px; color: #0B0F; background: #0B01; border-radius: 4px; }
 .pun { padding: 0px 0px; color: #999F; background: #6660; border-radius: 0px; }
 .fun { padding: 0px 0px; color: #49EF; background: #49E0; border-radius: 0px; }
-
-code { margin: 1px 0px; display: block; min-height: 1em; white-space: pre; }
