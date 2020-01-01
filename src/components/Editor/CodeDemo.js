@@ -1,6 +1,6 @@
-// import stylex from "stylex"
 import React from "react"
 import ReactDOM from "react-dom"
+import stylex from "stylex"
 
 import "./code-demo.css"
 
@@ -30,9 +30,9 @@ export function nodeValue(node) {
 	if (!isBreakOrTextNode(node)) {
 		return ""
 	}
-	// Convert non-breaking spaces:
-	const value = node.nodeValue || "" // Guard break node.
-	return value.replace("\u00a0", " ")
+	// (1) Guard break node:
+	// (2) Convert non-breaking spaces:
+	return (node.nodeValue || "").replace("\u00a0", " ")
 }
 
 // `innerText` mocks the browser function; recursively reads
@@ -41,7 +41,6 @@ function innerText(rootNode) {
 	let value = ""
 	const recurse = startNode => {
 		for (const currentNode of startNode.childNodes) {
-			// const nested = currentNode.parentNode !== rootNode
 			if (isBreakOrTextNode(currentNode)) {
 				value += nodeValue(currentNode)
 			} else {
@@ -57,7 +56,8 @@ function innerText(rootNode) {
 	return value
 }
 
-// `computeVDOMPos` computes the VDOM cursor.
+// `computeVDOMPos` computes the VDOM cursor from a DOM
+// cursor.
 function computeVDOMPos(rootNode, node, offset) {
 	let pos = 0
 	while (node.childNodes.length) {
@@ -85,7 +85,8 @@ function computeVDOMPos(rootNode, node, offset) {
 	return pos + offset
 }
 
-// `computeDOMPos` computes the DOM cursor.
+// `computeDOMPos` computes the DOM cursor from a VDOM
+// cursor.
 function computeDOMPos(rootNode, pos) {
 	const node = {
 		node: rootNode,
@@ -93,8 +94,7 @@ function computeDOMPos(rootNode, pos) {
 	}
 	const recurse = startNode => {
 		for (const currentNode of startNode.childNodes) {
-			const nested = currentNode.parentNode !== rootNode
-			if (nested && isBreakOrTextNode(currentNode)) {
+			if (isBreakOrTextNode(currentNode)) {
 				const { length } = nodeValue(currentNode)
 				if (pos - length <= 0) {
 					Object.assign(node, {
@@ -107,7 +107,7 @@ function computeDOMPos(rootNode, pos) {
 			} else {
 				if (recurse(currentNode)) {
 					return true
-				} else if (!nested && currentNode.nodeType === Node.ELEMENT_NODE &&
+				} else if (isBlockDOMNode(currentNode) &&
 						currentNode.nextElementSibling) {
 					pos -= 1
 				}
@@ -120,20 +120,24 @@ function computeDOMPos(rootNode, pos) {
 }
 
 class Editor {
-	constructor(selector, value) {
-		const rootNode = document.querySelector(selector)
-
+	constructor(selector, initialValue = "") {
 		Object.assign(this, {
-			rootNode, // The element.
-			value,    // The plain text data.
-			pos1:  0, // The cursor start.
-			pos2:  0, // The cursor end.
+			selector,            // The DOM selector.
+			initialValue,        // The initial plain text value.
+			rootNode: null,      // The element.
+			value: initialValue, // The plain text value.
+			pos1:  0,            // The cursor start.
+			pos2:  0,            // The cursor end.
 		})
-
-		this.setValue() // E.g. render?
 		this.mount()
 	}
 	mount() {
+		document.addEventListener("DOMContentLoaded", e => {
+			this.rootNode = document.querySelector(this.selector)
+			this.init()
+		}, false)
+	}
+	init() {
 		this.rootNode.addEventListener("keydown", e => {
 			if (e.key !== "Tab") {
 				// No-op.
@@ -166,6 +170,7 @@ class Editor {
 			}
 			this.render()
 		})
+		this.setValue() // E.g. render?
 	}
 	/*
 	 * value
@@ -232,17 +237,17 @@ const Token = {
 class Lexer {
 	constructor(value) {
 		Object.assign(this, {
-			value,
-			x1:    0,
-			x2:    0,
-			width: 0,
-			lines: [[]],
+			value,       // The plain text value.
+			x1:    0,    // The selection start.
+			x2:    0,    // The selection end.
+			width: 0,    // The width of the current character.
+			lines: [[]], // The parsed multiline output.
 		})
 	}
 	next() {
 		if (this.x2 === this.value.length) {
 			this.width = 0
-			return undefined // E.g. EOF.
+			return undefined // EOF
 		}
 		const ch = this.value[this.x2]
 		this.width = 1
@@ -279,21 +284,12 @@ class Lexer {
 		this.x1 = this.x2
 	}
 	accept(str) {
-		// const ch = this.next()
-		// if (str.includes(ch)) {
-		// 	return true
-		// }
-		// this.backup()
-		// return false
-
-		const nextCh = this.next()
-		const ok = str.includes(nextCh)
+		const next = this.next()
+		const ok = str.includes(next)
 		if (!ok) {
 			this.backup()
 		}
 		return ok
-
-		// return str.includes(this.next()) || !!this.backup()
 	}
 	accept_run(str) {
 		while (this.accept(str)) {
@@ -406,7 +402,6 @@ function lex(value) {
 				break
 			}
 			lexer.accept_run(" \t")
-			// token = Token.UNS
 			break
 			// Keyword or function:
 		case (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z") || ch === "_":
@@ -476,6 +471,26 @@ function lex(value) {
 	return lexer.lines
 }
 
+// const CodeBlock = props => (
+// 	<ul data-vdom-node>
+// 		{props.children.map((line, index) => (
+// 			<li key={index} data-vdom-node>
+// 				{!line.length ? (
+// 					<br />
+// 				) : (
+// 					line.map((item, index) => (
+// 						<span key={index} className={item.token}>
+// 							{item.value || (
+// 								<br />
+// 							)}
+// 						</span>
+// 					))
+// 				)}
+// 			</li>
+// 		))}
+// 	</ul>
+// )
+
 function parse(lines) {
 	const CodeBlock = props => ((
 		props.children.map((line, index) => (
@@ -503,25 +518,54 @@ function parse(lines) {
 	return fragment
 }
 
+// NOTE: Obscure DOM nodes because of circular reference.
+function DebugEditor(props) {
+	const [state, setState] = React.useState({
+		...editor,
+		rootNode: undefined,
+	})
+
+	React.useEffect(() => {
+		const id = setInterval(() => {
+			setState({
+				...editor,
+				rootNode: undefined,
+			})
+		}, 1e3)
+		return () => {
+			clearInterval(id)
+		}
+	}, [])
+
+	return (
+		<pre style={stylex.parse("overflow -x:scroll")}>
+			<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
+				{JSON.stringify(state, null, "\t")}
+			</p>
+		</pre>
+	)
+}
+
 const EditorComponent = props => (
-	<article
-		style={{ MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }}
-		contentEditable
-		suppressContentEditableWarning
-		spellCheck={false} // FIXME: Remove.
-		data-vdom-root
-	>
-		<code>
-			{/* Placeholder: */}
-			<span className="com">
-				{"// hello, world!"}
-			</span>
-		</code>
-	</article>
+	<div>
+		<article
+			style={{ MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }}
+			contentEditable
+			suppressContentEditableWarning
+			spellCheck={false} // FIXME: Remove.
+			data-vdom-root
+		>
+			<code>
+				<span className="com">
+					{"// hello, world!"}
+				</span>
+			</code>
+		</article>
+		<div style={stylex.parse("h:28")} />
+		<DebugEditor />
+	</div>
 )
 
-document.addEventListener("DOMContentLoaded", () => {
-	new Editor("[data-vdom-root]", "package main\n\nimport \"fmt\"\n\nfunc main() {\n	fmt.Println(\"hello, world!\")\n}")
-})
+const editor = new Editor("[data-vdom-root]", "package main\n\nimport \"fmt\"\n\nfunc main() {\n	fmt.Println(\"hello, world!\")\n}")
 
 export default EditorComponent
