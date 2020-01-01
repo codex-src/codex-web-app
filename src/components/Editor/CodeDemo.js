@@ -386,7 +386,7 @@ function lex(value) {
 
 // Compound component.
 const Code = props => (
-	<pre style={stylex.parse("overflow -x:scroll")} data-vdom-node>
+	<pre style={stylex.parse("overflow -x:scroll")} spellCheck={false} data-vdom-node>
 		{!props.children.length && (
 			props.children
 		)}
@@ -490,6 +490,20 @@ func main() {
 	fmt.Println("hello, world!")
 }`)
 
+	const [initialComponents, setInitialComponents] = React.useState()
+
+	React.useEffect(
+		React.useCallback(() => {
+			setInitialComponents(<Code>{lex(state.initialValue)}</Code>)
+		}, [state]),
+		[],
+	)
+
+	let translateZ = {}
+	if (state.isFocused) {
+		translateZ = { transform: "translateZ(0px)" }
+	}
+
 	return (
 		<div>
 			{React.createElement(
@@ -497,12 +511,28 @@ func main() {
 				{
 					ref,
 
+					style: translateZ,
+
 					contentEditable: true,
 					suppressContentEditableWarning: true,
-					spellCheck: false, // FIXME?
+					spellCheck: false,
 
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
+
+					onSelect: e => {
+						const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+						// if (anchorNode === ref.current || focusNode === ref.current) {
+						// 	// No-op.
+						// 	return
+						// }
+						const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						let pos2 = { ...pos1 }
+						if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+							pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
+						}
+						dispatch.setState(state.value, pos1, pos2)
+					},
 
 					onKeyDown: e => {
 						if (e.key === "Tab") {
@@ -578,10 +608,41 @@ func main() {
 						selection.addRange(range)
 					},
 
+					// onCut: e => {
+					// 	e.preventDefault()
+					// 	if (state.pos1.pos === state.pos2.pos) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const cutData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+					// 	e.clipboardData.setData("text/plain", cutData)
+					// 	dispatch.opWrite("onCut", "")
+					// },
+
+					// onCopy: e => {
+					// 	e.preventDefault()
+					// 	if (state.pos1.pos === state.pos2.pos) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const copyData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+					// 	e.clipboardData.setData("text/plain", copyData)
+					// },
+
+					// onPaste: e => {
+					// 	e.preventDefault()
+					// 	const pasteData = e.clipboardData.getData("text/plain")
+					// 	if (!pasteData) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	dispatch.opWrite("onPaste", pasteData)
+					// },
+
 					onDragStart: e => e.preventDefault(),
 					onDragEnd:   e => e.preventDefault(),
 				},
-				<Code>{lex(state.initialValue)}</Code>
+				initialComponents,
 			)}
 			<div style={stylex.parse("h:28")} />
 			<DebugEditor state={state} />
