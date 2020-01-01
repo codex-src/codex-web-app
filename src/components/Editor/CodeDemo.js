@@ -530,6 +530,82 @@ func main() {
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
 
+					// NOTE: If we target `selectionchange` instead,
+					// we can know in advance of each input event the
+					// selection range. Then we can do a postmortem on
+					// the affected keys and rerender.
+					//
+					// Querying `input.nativeEvent.inputType` yields
+					// a semantic description of the input event. This
+					// can be used to provide hints to the rerender
+					// phase as to how to rerender.
+					//
+					// - deleteContentBackward
+					// - deleteContentForward
+					// - deleteSoftLineBackward
+					// - deleteWordBackward
+					// - historyRedo
+					// - historyUndo
+					// - insertCompositionText
+					// - insertParagraph
+					// - insertReplacementText
+					// - insertText
+					// - cut?
+					// - copy?
+					// - paste?
+					// - emoji?
+					//
+					// `selectionchange` need only remember the
+					// current selection range; input event can only
+					// affect a contiguous block of nodes.
+					//
+					// Storing references to the selection of
+					// (potentially) affected DOM nodes per selection
+					// change would provide rich information without
+					// needing to compute DOM nodes.
+					//
+					// Code block syntax needs to be able to possibly
+					// extend the affected DOM node range. When code
+					// block syntax is introduced, the document can be
+					// sniffed top-to-bottom for code blocks.
+					//
+					// The `vdom` package could be extended (e.g.
+					// `vdom2`) to store a reference to its rendered
+					// DOM node counterpart. If stored to a map, this
+					// could make lookup linear based on referential
+					// equality.
+					//
+					// In theory, all non-idempotent input operations
+					// commit one of the following rererender
+					// strategies:
+					//
+					// - Add a node (e.g. paragraph)
+					// - Delete a node (e.g. backspace, forward delete)
+					// - Overwrite a node (no selection)
+					// - Overwrite a block of nodes (selectino)
+					//
+					// All truly preventable events, e.g. cut, copy,
+					// paste, undo, redo, can benefit from React-based
+					// reconciliation, rather than imperative
+					// patching. For these events, we can just as
+					// easily overwrite `initialComponents` or
+					// similar.
+					//
+					// TODO: Is undo on iOS and Android preventable?
+					// Also check cut, copy, paste, etc. If not, defer
+					// to patching strategy.
+					//
+					// If key metadata is stored in the history state
+					// stack, then a hard flush may not be needed. For
+					// example, if the `vdom2` package stores last
+					// modified at metadata or similar, this can be
+					// queried for more efficient patching.
+					//
+					// Backspace, delete, etc. methods should not
+					// leverage React-based reconciliation due to
+					// Unicode handling.
+					//
+					// TODO: Test `selectionchange` coverage.
 					onSelect: e => {
 						const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
 						// if (anchorNode === ref.current || focusNode === ref.current) {
@@ -584,6 +660,8 @@ func main() {
 					},
 
 					onInput: e => {
+						// console.log({ ...e })
+
 						const value = innerText(ref.current)
 
 						const {
