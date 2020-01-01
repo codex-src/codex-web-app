@@ -1,13 +1,8 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import stylex from "stylex"
-import useMethods from "use-methods"
 
 import "./code-demo.css"
-
-/*
- *
- */
 
 // `isBreakOrTextNode` returns whether a node is a break
 // node or a text node.
@@ -122,9 +117,123 @@ function computeDOMCursor(rootNode, pos) {
 	return node
 }
 
-/*
- *
- */
+class Editor {
+	constructor({ selector, initialValue }) {
+		initialValue = initialValue || ""
+
+		Object.assign(this, {
+			selector,            // The DOM selector.
+			initialValue,        // The initial plain text value.
+			rootNode: null,      // The element.
+			isFocused: false,    // Is the editor focused?
+			value: initialValue, // The plain text value.
+			pos1: 0,             // The cursor start.
+			pos2: 0,             // The cursor end.
+		})
+		this.mount()
+	}
+	mount() {
+		document.addEventListener("DOMContentLoaded", e => {
+			this.rootNode = document.querySelector(this.selector)
+			this.rootNode.setAttribute("contenteditable", true)
+			this.rootNode.setAttribute("spellcheck", false)
+			this.init()
+		}, false)
+	}
+	init() {
+		this.rootNode.addEventListener("focus", e => {
+			this.isFocused = true
+		})
+		this.rootNode.addEventListener("blur", e => {
+			this.isFocused = false
+		})
+		this.rootNode.addEventListener("keydown", e => {
+			if (e.key !== "Tab") {
+				// No-op.
+				return
+			}
+			e.preventDefault()
+			document.execCommand("insertText", false, "\t")
+		})
+		this.rootNode.addEventListener("keydown", e => {
+			if (!e.shiftKey || e.key !== "Enter") {
+				// No-op.
+				return
+			}
+			e.preventDefault()
+			document.execCommand("insertText", false, "\n")
+		})
+		this.rootNode.addEventListener("input", e => {
+			if (e.inputType === "insertCompositionText") {
+				this.updateVDOMValue()
+				return
+			}
+			this.update()
+			if (!this.value.length) {
+				this.renderDOMComponents("\n")
+				return
+			}
+			this.render()
+		})
+		// First render (no cursor):
+		this.renderDOMComponents()
+	}
+	updateVDOMValue() {
+		this.value = innerText(this.rootNode)
+	}
+	renderDOMComponents(value) {
+		if (value !== undefined) {
+			this.value = value
+		}
+		let node = null
+		while ((node = this.rootNode.lastChild)) {
+			node.remove()
+		}
+		const lines = lex(this.value)
+		const fragment = document.createDocumentFragment()
+		ReactDOM.render(<CodeBlock>{lines}</CodeBlock>, fragment)
+		this.rootNode.appendChild(fragment)
+	}
+	updateVDOMCursor() {
+		const selection = document.getSelection()
+		this.pos1 = computeVDOMCursor(this.rootNode, selection.anchorNode, selection.anchorOffset)
+		this.pos2 = computeVDOMCursor(this.rootNode, selection.focusNode, selection.focusOffset)
+	}
+	renderDOMCursor(pos1, pos2) {
+		if (pos1 !== undefined && pos2 !== undefined) {
+			this.pos1 = pos1
+			this.pos2 = pos2
+		}
+		const selection = document.getSelection()
+		const node1 = computeDOMCursor(this.rootNode, this.pos1)
+		const node2 = computeDOMCursor(this.rootNode, this.pos2)
+		const range = document.createRange()
+		range.setStart(node1.node, node1.offset)
+		range.setEnd(node2.node, node2.offset)
+		selection.removeAllRanges()
+		selection.addRange(range)
+	}
+	// `update` updates the VDOM from the DOM.
+	update() {
+		this.updateVDOMValue()
+		this.updateVDOMCursor()
+	}
+	// `render` renders the components and cursor.
+	render(value, pos1, pos2) {
+		this.renderDOMComponents(value)
+		this.renderDOMCursor(pos1, pos2)
+	}
+}
+
+const Token = {
+	UNS: "uns", // Unset (not whitespace).
+	COM: "com", // Comment.
+	KEY: "key", // Keyword.
+	NUM: "num", // Number.
+	STR: "str", // String.
+	PUN: "pun", // Punctuation.
+	FUN: "fun", // Function.
+}
 
 class Lexer {
 	constructor(value) {
@@ -188,16 +297,6 @@ class Lexer {
 			// No-op.
 		}
 	}
-}
-
-const Token = {
-	UNS: "uns", // Unset (whitespace does not use a token).
-	COM: "com", // Comment.
-	KEY: "key", // Keyword.
-	NUM: "num", // Number.
-	STR: "str", // String.
-	PUN: "pun", // Punctuation.
-	FUN: "fun", // Function.
 }
 
 const keywords = {
@@ -373,10 +472,6 @@ function lex(value) {
 	return lexer.lines
 }
 
-/*
- *
- */
-
 const CodeBlock = props => (
 	<pre style={stylex.parse("overflow -x:scroll")} data-vdom-node>
 		{props.children.map((line, index) => (
@@ -400,197 +495,57 @@ const CodeBlock = props => (
 	</pre>
 )
 
-/*
- *
- */
+function DebugEditor(props) {
+	const [state, setState] = React.useState({
+		...editor,
+		selector: undefined,
+		rootNode: undefined,
+		currentPos1: 0,
+		currentPos2: 0,
+	})
 
-const initialState = {
-	rootNode: null,   // DELETEME
-	initialValue: "", // The initial plain text vlaue.
-	value: "",        // The VDOM value.
-	isFocused: false, // Is the editor focused?
-	pos1: 0,          // The VDOM cursor start.
-	pos2: 0,          // The VDOM cursor end.
-
-	shouldRender: 0,
-}
-
-const reducer = state => ({
-	setRootNode(rootNode) { // DELETEME
-		state.rootNode = rootNode
-		state.shouldRender++
-	},
-	focus() {
-		state.isFocused = true
-	},
-	blur() {
-		state.isFocused = false
-	},
-	updateVDOMValue() {
-		state.value = innerText(state.rootNode)
-	},
-	_renderDOMComponents(value) {
-		if (value !== undefined) {
-			state.value = value
+	React.useEffect(() => {
+		const id = setInterval(() => {
+			let pos1 = 0
+			let pos2 = 0
+			if (editor.isFocused) {
+				const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+				pos1 = computeVDOMCursor(editor.rootNode, anchorNode, anchorOffset)
+				pos2 = computeVDOMCursor(editor.rootNode, focusNode, focusOffset)
+			}
+			setState({
+				...editor,
+				selector: undefined,
+				rootNode: undefined,
+				currentPos1: pos1,
+				currentPos2: pos2,
+			})
+		}, 500)
+		return () => {
+			clearInterval(id)
 		}
-		state.shouldRender++
-	},
-	renderDOMComponents(value) {
-		if (value !== undefined) {
-			state.value = value
-		}
-		let node = null
-		while ((node = state.rootNode.lastChild)) {
-			node.remove()
-		}
-		const lines = lex(state.value)
-		const fragment = document.createDocumentFragment()
-		ReactDOM.render(<CodeBlock>{lines}</CodeBlock>, fragment)
-		state.rootNode.appendChild(fragment)
-	},
-	updateVDOMCursor() {
-		const selection = document.getSelection()
-		state.pos1 = computeVDOMCursor(state.rootNode, selection.anchorNode, selection.anchorOffset)
-		state.pos2 = computeVDOMCursor(state.rootNode, selection.focusNode, selection.focusOffset)
-	},
-	renderDOMCursor(pos1, pos2) {
-		if (pos1 !== undefined && pos2 !== undefined) {
-			state.pos1 = pos1
-			state.pos2 = pos2
-		}
-		const selection = document.getSelection()
-		const node1 = computeDOMCursor(state.rootNode, state.pos1)
-		const node2 = computeDOMCursor(state.rootNode, state.pos2)
-		const range = document.createRange()
-		range.setStart(node1.node, node1.offset)
-		range.setEnd(node2.node, node2.offset)
-		selection.removeAllRanges()
-		selection.addRange(range)
-	},
-	// `update` updates the VDOM from the DOM.
-	update() {
-		state.updateVDOMValue()
-		state.updateVDOMCursor()
-	},
-	// `render` renders the components and cursor.
-	render(value, pos1, pos2) {
-		state.renderDOMComponents(value)
-		state.renderDOMCursor(pos1, pos2)
-	},
-})
-
-const init = initialValue => initialState => {
-	const state = {
-		...initialState,
-		initialValue,
-		value: initialValue,
-	}
-	return state
-}
-
-function useEditor(initialValue) {
-	return useMethods(reducer, initialState, init(initialValue))
-}
-
-/*
- *
- */
-
-const DebugEditor = props => (
-	<pre style={stylex.parse("overflow -x:scroll")}>
-		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
-			{JSON.stringify(
-				{
-					...props.state,
-					rootNode: "[DOMNode]", // undefined,
-				},
-				null,
-				"\t",
-			)}
-		</p>
-	</pre>
-)
-
-// let pos1 = 0
-// let pos2 = 0
-// if (editor.isFocused) {
-// 	const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-// 	pos1 = computeVDOMCursor(editor.rootNode, anchorNode, anchorOffset)
-// 	pos2 = computeVDOMCursor(editor.rootNode, focusNode, focusOffset)
-// }
-
-const Strong = props => (
-	<strong>
-		{props.children}
-	</strong>
-)
-
-
-function Editor(props) {
-	const ref = React.useRef()
+	}, [])
 
 	return (
-		<div className="debug-css">
-			{React.createElement(
-				"article",
-				{
-					ref,
-
-					contentEditable: true,
-					suppressContentEditableWarning: true,
-					spellCheck: false, // FIXME?
-
-					// onFocus: dispatch.focus,
-					// onBlur:  dispatch.blur,
-
-					onKeyDown: e => {
-						if (e.key === "Tab") {
-							e.preventDefault()
-							document.execCommand("insertText", false, "\t")
-							return
-						// FIXME: Use `detect`?
-						} else if (e.shiftKey && e.key === "Enter") {
-							e.preventDefault()
-							document.execCommand("insertText", false, "\n")
-							return
-						}
-					},
-
-					// NOTE: React hooks appear to no-op DOM methods.
-					onInput: e => {
-						if (e.nativeEvent.inputType === "insertCompositionText") {
-							// this.updateVDOMValue()
-							return
-						}
-						const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-						const value = innerText(ref.current)
-						const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						const pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
-
-						while (ref.current.lastChild) {
-							ref.current.lastChild.remove()
-						}
-
-						const lines = lex(value)
-						const fragment = document.createDocumentFragment()
-						ReactDOM.render(<CodeBlock>{lines}</CodeBlock>, fragment)
-						ref.current.appendChild(fragment)
-
-						const selection = document.getSelection()
-						const range = document.createRange()
-						const { node, offset } = computeDOMCursor(ref.current, pos1)
-						range.setStart(node, offset)
-						range.collapse()
-						selection.removeAllRanges()
-						selection.addRange(range)
-					},
-
-				},
-			)}
-			<div style={stylex.parse("h:28")} />
-			<DebugEditor state={state} />
-		</div>
+		<pre style={stylex.parse("overflow -x:scroll")}>
+			<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
+				{JSON.stringify(state, null, "\t")}
+			</p>
+		</pre>
 	)
 }
 
-export default Editor
+const EditorComponent = props => (
+	<div>
+		<article data-vdom-root />
+		<div style={stylex.parse("h:28")} />
+		<DebugEditor />
+	</div>
+)
+
+const editor = new Editor({
+	selector: "[data-vdom-root]",
+	initialValue: "package main\n\nimport \"fmt\"\n\nfunc main() {\n	fmt.Println(\"hello, world!\")\n}",
+})
+
+export default EditorComponent
