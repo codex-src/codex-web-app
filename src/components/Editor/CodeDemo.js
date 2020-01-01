@@ -432,7 +432,7 @@ const reducer = state => ({
 		state.isFocused = false
 	},
 	setState(value, pos1, pos2) {
-		if (pos1.pos > pos2.pos) {
+		if (pos1 > pos2) {
 			[pos1, pos2] = [pos2, pos1]
 		}
 		Object.assign(state, { value, pos1, pos2 })
@@ -499,9 +499,11 @@ func main() {
 		[],
 	)
 
-	let translateZ = {}
+	const translateZ = {}
 	if (state.isFocused) {
-		translateZ = { transform: "translateZ(0px)" }
+		Object.assign(translateZ, {
+			transform: "translateZ(0px)",
+		})
 	}
 
 	return (
@@ -527,7 +529,7 @@ func main() {
 						// 	return
 						// }
 						const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						let pos2 = { ...pos1 }
+						let pos2 = pos1
 						if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 							pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
 						}
@@ -608,36 +610,36 @@ func main() {
 						selection.addRange(range)
 					},
 
-					// onCut: e => {
-					// 	e.preventDefault()
-					// 	if (state.pos1.pos === state.pos2.pos) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const cutData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-					// 	e.clipboardData.setData("text/plain", cutData)
-					// 	dispatch.opWrite("onCut", "")
-					// },
+					onCut: e => {
+						e.preventDefault()
+						if (state.pos1 === state.pos2) {
+							// No-op.
+							return
+						}
+						const cutValue = state.value.slice(state.pos1, state.pos2)
+						e.clipboardData.setData("text/plain", cutValue)
+						document.execCommand("insertText", false, "")
+					},
 
-					// onCopy: e => {
-					// 	e.preventDefault()
-					// 	if (state.pos1.pos === state.pos2.pos) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const copyData = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-					// 	e.clipboardData.setData("text/plain", copyData)
-					// },
+					onCopy: e => {
+						e.preventDefault()
+						if (state.pos1 === state.pos2) {
+							// No-op.
+							return
+						}
+						const copyvalue = state.value.slice(state.pos1, state.pos2)
+						e.clipboardData.setData("text/plain", copyvalue)
+					},
 
-					// onPaste: e => {
-					// 	e.preventDefault()
-					// 	const pasteData = e.clipboardData.getData("text/plain")
-					// 	if (!pasteData) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	dispatch.opWrite("onPaste", pasteData)
-					// },
+					onPaste: e => {
+						e.preventDefault()
+						const pasteValue = e.clipboardData.getData("text/plain")
+						if (!pasteValue) {
+							// No-op.
+							return
+						}
+						document.execCommand("insertText", false, pasteValue)
+					},
 
 					onDragStart: e => e.preventDefault(),
 					onDragEnd:   e => e.preventDefault(),
