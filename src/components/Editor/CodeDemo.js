@@ -560,6 +560,26 @@ func main() {
 						} else if (detect.isRedo(e)) {
 							e.preventDefault()
 							return
+						} else {
+							// // TODO: Ignore idempotent keys.
+							// let { anchorNode, focusNode } = document.getSelection()
+							// const sameNode = anchorNode === focusNode
+							// while (ref.current.contains(anchorNode)) {
+							// 	if (anchorNode.hasAttribute && anchorNode.hasAttribute("data-vdom-node")) {
+							// 		break
+							// 	}
+							// 	anchorNode = anchorNode.parentNode
+							// }
+							// focusNode = anchorNode
+							// if (!sameNode) {
+							// 	while (ref.current.contains(focusNode)) {
+							// 		if (focusNode.hasAttribute && focusNode.hasAttribute("data-vdom-node")) {
+							// 			break
+							// 		}
+							// 		focusNode = focusNode.parentNode
+							// 	}
+							// }
+							// console.log(anchorNode, focusNode)
 						}
 					},
 
