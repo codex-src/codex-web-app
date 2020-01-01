@@ -472,36 +472,8 @@ function lex(value) {
 	return lexer.lines
 }
 
-// // Compound component.
-// //
-// // http://cdpn.io/PowjgOg
-// //
-// // NOTE: `box-shadow` does not use `inset`.
-// const CodeBlock = props => (
-// 	<pre style={{ ...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false} data-vdom-node>
-// 		<ul>
-// 			{props.children.map((each, index) => (
-// 				<li key={each.key} id={props.id} data-vdom-node>
-// 					<code style={{ ...stylex.parse("p-x:24"), MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }}>
-// 						<Markdown
-// 							start={!index && props.start}
-// 							end={index + 1 === props.children.length && props.end}
-// 						>
-// 							{each.data || (
-// 								index > 0 && index + 1 < props.children.length && (
-// 									<br />
-// 								)
-// 							)}
-// 						</Markdown>
-// 					</code>
-// 				</li>
-// 			))}
-// 		</ul>
-// 	</pre>
-// )
-
 const CodeBlock = props => (
-	<pre data-vdom-node>
+	<pre style={stylex.parse("overflow -x:scroll")} data-vdom-node>
 		{props.children.map((line, index) => (
 			<code key={index} style={stylex.parse("block")} data-vdom-node>
 				{/* Empty: */}
