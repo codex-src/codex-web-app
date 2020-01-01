@@ -5,8 +5,8 @@ article {
 	-moz-tab-size: 2;
 	tab-size:      2;
 	font :         15px/1.375 "Source Code Pro", "Monaco";
-	color:         #666F;
-	caret-color:   hsl(var(--blue-a400));
+	color:         #666;
+	caret-color:   #000;
 	outline:       none;
 	overflow-wrap: break-word;
 }
@@ -15,10 +15,10 @@ article {
 	background: #4499EE1F;
 }
 
-.uns { padding: 0px 0px; color: #666F; background: #6660; border-radius: 0px; }
-.com { padding: 0px 0px; color: #999F; background: #9990; border-radius: 0px; }
-.key { padding: 0px 0px; color: #D00F; background: #D000; border-radius: 0px; }
-.num { padding: 0px 0px; color: #F90F; background: #F900; border-radius: 0px; }
-.str { padding: 0px 4px; color: #0B0F; background: #0B01; border-radius: 4px; }
-.pun { padding: 0px 0px; color: #999F; background: #6660; border-radius: 0px; }
-.fun { padding: 0px 0px; color: #49EF; background: #49E0; border-radius: 0px; }
+.uns { padding: 0px 0px; color: #666; background: #6660; border-radius: 0px; }
+.com { padding: 0px 0px; color: #999; background: #9990; border-radius: 0px; }
+.key { padding: 0px 0px; color: #D00; background: #D000; border-radius: 0px; }
+.num { padding: 0px 0px; color: #F90; background: #F900; border-radius: 0px; }
+.str { padding: 0px 4px; color: #0B0; background: #0B01; border-radius: 4px; }
+.pun { padding: 0px 0px; color: #999; background: #6660; border-radius: 0px; }
+.fun { padding: 0px 0px; color: #49E; background: #49E0; border-radius: 0px; }
