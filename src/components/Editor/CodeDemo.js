@@ -526,7 +526,7 @@ const CodeBlock = props => (
 function DebugEditor(props) {
 	const [state, setState] = React.useState({
 		...editor,
-		selection: undefined,
+		selector: undefined,
 		rootNode: undefined,
 		currentPos1: 0,
 		currentPos2: 0,
@@ -543,7 +543,7 @@ function DebugEditor(props) {
 			}
 			setState({
 				...editor,
-		selection: undefined,
+				selector: undefined,
 				rootNode: undefined,
 				currentPos1: pos1,
 				currentPos2: pos2,
