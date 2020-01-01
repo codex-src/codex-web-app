@@ -506,6 +506,14 @@ func main() {
 		})
 	}
 
+	// TODO:
+	//
+	// - Undo
+	// - Redo
+	// - vdom
+	// - traverseDOM
+	// - Optimizations
+	//
 	return (
 		<div>
 			{React.createElement(
