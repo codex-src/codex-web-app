@@ -526,6 +526,21 @@ const Strong = props => (
 )
 
 
+// This component intentionally breaks some of React’s rules
+// and best practices. This is because such a
+// `contenteditable` element needs to be treated and handled
+// as a truly uncontrolled component.
+//
+// React is still leveraged for everything except diffing
+// the DOM. This editor works in principle by examining the
+// result of `input` events and imperatively replacing --
+// not mutating -- the affected DOM nodes.
+//
+// This editor is inspired by the idea that an interactive
+// WYSIWYG editor for the web needs to just work and work on
+// every available modern platform and environment
+// without compromise.
+//
 function Editor(props) {
 	const ref = React.useRef()
 
@@ -587,8 +602,8 @@ function Editor(props) {
 
 				},
 			)}
-			<div style={stylex.parse("h:28")} />
-			<DebugEditor state={state} />
+			{/* <div style={stylex.parse("h:28")} /> */}
+			{/* <DebugEditor state={state} /> */}
 		</div>
 	)
 }
