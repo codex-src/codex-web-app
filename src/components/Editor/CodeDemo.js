@@ -1,3 +1,4 @@
+import detect from "./detect"
 import React from "react"
 import ReactDOM from "react-dom"
 import stylex from "stylex"
@@ -267,7 +268,13 @@ const keywords = {
 	recover:     true,
 }
 
-function parse(value) {
+// if (!this.value.length) {
+// 	this.renderDOMComponents("\n")
+// 	return
+// }
+
+// https://www.youtube.com/watch?v=HxaD_trXwRE
+function lex(value) {
 	const lexer = new Lexer(value)
 	let ch = ""
 	while ((ch = lexer.next())) {
@@ -298,7 +305,7 @@ function parse(value) {
 			break
 			// Whitespace:
 		case ch === " " || ch === "\t" || ch === "\n":
-			if (lexer.x2 > 1 && ch === "\n") {
+			if (/* lexer.x2 > 1 && */ ch === "\n") { // FIXME?
 				lexer.lines.push([])
 				lexer.ignore()
 				break
@@ -377,26 +384,31 @@ function parse(value) {
  *
  */
 
+// Compound component.
 const Code = props => (
 	<pre style={stylex.parse("overflow -x:scroll")} data-vdom-node>
-		{props.children.map((line, index) => (
-			<code key={index} style={stylex.parse("block")} data-vdom-node>
-				{/* Empty: */}
-				{!line.length && (
-					<br />
-				)}
-				{/* Non-empty: */}
-				{line.map((item, index) => (
-					!item.token ? (
-						item.value
-					) : (
-						<span key={index} className={item.token}>
-							{item.value}
-						</span>
-					)
-				))}
-			</code>
-		))}
+		{!props.children.length && (
+			props.children
+		)}
+
+		{props.children.length > 0 && (
+			props.children.map((line, index) => (
+				<code key={index} style={stylex.parse("block")} data-vdom-node>
+					{!line.length && (
+						<br />
+					)}
+
+					{line.map((item, index) => (
+						!item.token ? (
+							item.value
+						) : (
+							<span key={index} className={item.token}>
+								{item.value}
+							</span>
+						)
+					))}
+				</code>
+			)))}
 	</pre>
 )
 
@@ -419,7 +431,12 @@ const reducer = state => ({
 	blur() {
 		state.isFocused = false
 	},
-	// ...
+	setState(value, pos1, pos2) {
+		if (pos1.pos > pos2.pos) {
+			[pos1, pos2] = [pos2, pos1]
+		}
+		Object.assign(state, { value, pos1, pos2 })
+	},
 })
 
 const init = initialValue => initialState => {
@@ -499,18 +516,24 @@ func main() {
 							e.preventDefault()
 							document.execCommand("insertText", false, "\t")
 							return
-						// FIXME: Use `detect`?
+						// FIXME: Add new `detect` method?
 						} else if (e.shiftKey && e.key === "Enter") {
 							e.preventDefault()
 							document.execCommand("insertText", false, "\n")
+							return
+						} else if (detect.isUndo(e)) {
+							e.preventDefault()
+							return
+						} else if (detect.isRedo(e)) {
+							e.preventDefault()
 							return
 						}
 					},
 
 					// NOTE: The `shouldComponentsRender` pattern does
 					// note work because React hooks appear to no-op
-					// DOM methods e.g. `element.appendChild`.
-					// Therefore, hooks are not used to mutate the
+					// DOM methods such as `element.appendChild`.
+					// Therefore, hooks are not used to rerender the
 					// DOM.
 					onInput: e => {
 						const value = innerText(ref.current)
@@ -525,15 +548,16 @@ func main() {
 						const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 						const pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
 
-						// Guard composition events, e.g.:
+						dispatch.setState(value, pos1, pos2)
+
+						// Guard composition events:
 						//
 						// - onCompositionStart
 						// - onCompositionUpdate
 						// - onCompositionEnd
 						//
 						if (e.nativeEvent.inputType === "insertCompositionText") {
-							dispatch.setState(value, pos1, pos2)
-							// Don’t rerender.
+							// No-op.
 							return
 						}
 
@@ -547,7 +571,7 @@ func main() {
 						//
 						// NOTE: `ReactDOM.render` is not strictly
 						// necessary.
-						const parsed = parse(value) // Parses Go.
+						const parsed = lex(value) // Lexes Go.
 						const fragment = document.createDocumentFragment()
 						ReactDOM.render(<Code>{parsed}</Code>, fragment)
 						ref.current.appendChild(fragment)
@@ -565,8 +589,11 @@ func main() {
 						selection.removeAllRanges()
 						selection.addRange(range)
 					},
-
 				},
+				// FIXME: Zero value.
+				<Code>
+					<br />
+				</Code>,
 			)}
 			<div style={stylex.parse("h:28")} />
 			<DebugEditor state={state} />
