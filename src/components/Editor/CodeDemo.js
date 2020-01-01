@@ -267,7 +267,7 @@ const keywords = {
 	recover:     true,
 }
 
-function lex(value) {
+function parse(value) {
 	const lexer = new Lexer(value)
 	let ch = ""
 	while ((ch = lexer.next())) {
@@ -377,7 +377,7 @@ function lex(value) {
  *
  */
 
-const CodeBlock = props => (
+const Code = props => (
 	<pre style={stylex.parse("overflow -x:scroll")} data-vdom-node>
 		{props.children.map((line, index) => (
 			<code key={index} style={stylex.parse("block")} data-vdom-node>
@@ -405,78 +405,21 @@ const CodeBlock = props => (
  */
 
 const initialState = {
-	rootNode: null,   // DELETEME
 	initialValue: "", // The initial plain text vlaue.
 	value: "",        // The VDOM value.
 	isFocused: false, // Is the editor focused?
 	pos1: 0,          // The VDOM cursor start.
 	pos2: 0,          // The VDOM cursor end.
-
-	shouldRender: 0,
 }
 
 const reducer = state => ({
-	setRootNode(rootNode) { // DELETEME
-		state.rootNode = rootNode
-		state.shouldRender++
-	},
 	focus() {
 		state.isFocused = true
 	},
 	blur() {
 		state.isFocused = false
 	},
-	updateVDOMValue() {
-		state.value = innerText(state.rootNode)
-	},
-	_renderDOMComponents(value) {
-		if (value !== undefined) {
-			state.value = value
-		}
-		state.shouldRender++
-	},
-	renderDOMComponents(value) {
-		if (value !== undefined) {
-			state.value = value
-		}
-		let node = null
-		while ((node = state.rootNode.lastChild)) {
-			node.remove()
-		}
-		const lines = lex(state.value)
-		const fragment = document.createDocumentFragment()
-		ReactDOM.render(<CodeBlock>{lines}</CodeBlock>, fragment)
-		state.rootNode.appendChild(fragment)
-	},
-	updateVDOMCursor() {
-		const selection = document.getSelection()
-		state.pos1 = computeVDOMCursor(state.rootNode, selection.anchorNode, selection.anchorOffset)
-		state.pos2 = computeVDOMCursor(state.rootNode, selection.focusNode, selection.focusOffset)
-	},
-	renderDOMCursor(pos1, pos2) {
-		if (pos1 !== undefined && pos2 !== undefined) {
-			state.pos1 = pos1
-			state.pos2 = pos2
-		}
-		const selection = document.getSelection()
-		const node1 = computeDOMCursor(state.rootNode, state.pos1)
-		const node2 = computeDOMCursor(state.rootNode, state.pos2)
-		const range = document.createRange()
-		range.setStart(node1.node, node1.offset)
-		range.setEnd(node2.node, node2.offset)
-		selection.removeAllRanges()
-		selection.addRange(range)
-	},
-	// `update` updates the VDOM from the DOM.
-	update() {
-		state.updateVDOMValue()
-		state.updateVDOMCursor()
-	},
-	// `render` renders the components and cursor.
-	render(value, pos1, pos2) {
-		state.renderDOMComponents(value)
-		state.renderDOMCursor(pos1, pos2)
-	},
+	// ...
 })
 
 const init = initialValue => initialState => {
@@ -511,21 +454,6 @@ const DebugEditor = props => (
 	</pre>
 )
 
-// let pos1 = 0
-// let pos2 = 0
-// if (editor.isFocused) {
-// 	const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-// 	pos1 = computeVDOMCursor(editor.rootNode, anchorNode, anchorOffset)
-// 	pos2 = computeVDOMCursor(editor.rootNode, focusNode, focusOffset)
-// }
-
-const Strong = props => (
-	<strong>
-		{props.children}
-	</strong>
-)
-
-
 // This component intentionally breaks some of React’s rules
 // and best practices. This is because such a
 // `contenteditable` element needs to be treated and handled
@@ -544,6 +472,14 @@ const Strong = props => (
 function Editor(props) {
 	const ref = React.useRef()
 
+	const [state, dispatch] = useEditor(`package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("hello, world!")
+}`)
+
 	return (
 		<div className="debug-css">
 			{React.createElement(
@@ -555,8 +491,8 @@ function Editor(props) {
 					suppressContentEditableWarning: true,
 					spellCheck: false, // FIXME?
 
-					// onFocus: dispatch.focus,
-					// onBlur:  dispatch.blur,
+					onFocus: dispatch.focus,
+					onBlur:  dispatch.blur,
 
 					onKeyDown: e => {
 						if (e.key === "Tab") {
@@ -571,30 +507,60 @@ function Editor(props) {
 						}
 					},
 
-					// NOTE: React hooks appear to no-op DOM methods.
+					// NOTE: The `shouldComponentsRender` pattern does
+					// note work because React hooks appear to no-op
+					// DOM methods e.g. `element.appendChild`.
+					// Therefore, hooks are not used to mutate the
+					// DOM.
 					onInput: e => {
-						if (e.nativeEvent.inputType === "insertCompositionText") {
-							// this.updateVDOMValue()
-							return
-						}
-						const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
 						const value = innerText(ref.current)
+
+						const {
+							anchorNode,   // The cursor start node.
+							anchorOffset, // The cursor start node offset.
+							focusNode,    // The cursor end node.
+							focusOffset,  // The cursor end node offset.
+						} = document.getSelection()
+
 						const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 						const pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
 
-						while (ref.current.lastChild) {
-							ref.current.lastChild.remove()
+						// Guard composition events, e.g.:
+						//
+						// - onCompositionStart
+						// - onCompositionUpdate
+						// - onCompositionEnd
+						//
+						if (e.nativeEvent.inputType === "insertCompositionText") {
+							dispatch.setState(value, pos1, pos2)
+							// Don’t rerender.
+							return
 						}
 
-						const lines = lex(value)
+						// TODO: Heavily optimize.
+						let node = null
+						while ((node = ref.current.lastChild)) {
+							node.remove()
+						}
+
+						// Reparse the affected DOM nodes:
+						//
+						// NOTE: `ReactDOM.render` is not strictly
+						// necessary.
+						const parsed = parse(value) // Parses Go.
 						const fragment = document.createDocumentFragment()
-						ReactDOM.render(<CodeBlock>{lines}</CodeBlock>, fragment)
+						ReactDOM.render(<Code>{parsed}</Code>, fragment)
 						ref.current.appendChild(fragment)
 
+						// Reset the cursor:
+						//
+						// NOTE: Assumes no selection because of the
+						// nature of `input` events -- this thinking may
+						// be flawed.
 						const selection = document.getSelection()
 						const range = document.createRange()
-						const { node, offset } = computeDOMCursor(ref.current, pos1)
-						range.setStart(node, offset)
+						const { node: _node, offset } = computeDOMCursor(ref.current, pos1)
+						range.setStart(_node, offset)
 						range.collapse()
 						selection.removeAllRanges()
 						selection.addRange(range)
@@ -602,8 +568,8 @@ function Editor(props) {
 
 				},
 			)}
-			{/* <div style={stylex.parse("h:28")} /> */}
-			{/* <DebugEditor state={state} /> */}
+			<div style={stylex.parse("h:28")} />
+			<DebugEditor state={state} />
 		</div>
 	)
 }

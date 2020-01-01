@@ -4,10 +4,10 @@ import React from "react"
 // code (from a key down event) were pressed.
 function detectCtrlKeyCode(e, keyCode) {
 	const ok = (
-		e.ctrlKey &&
-		!e.altKey &&
-		!e.metaKey &&
-		e.keyCode === keyCode
+		e.ctrlKey &&          // Accept.
+		!e.altKey &&          // Negate.
+		!e.metaKey &&         // Negate.
+		e.keyCode === keyCode // Accept.
 	)
 	return ok
 }
@@ -21,7 +21,6 @@ function DebugCSS(props) {
 			e.preventDefault()
 			document.body.classList.toggle("debug-css")
 		}
-		// document.body.classList.toggle("debug-css")
 		document.addEventListener("keydown", handleKeyDown)
 		return () => {
 			document.removeEventListener("keydown", handleKeyDown)
