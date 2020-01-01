@@ -577,10 +577,11 @@ func main() {
 						selection.removeAllRanges()
 						selection.addRange(range)
 					},
+
+					onDragStart: e => e.preventDefault(),
+					onDragEnd:   e => e.preventDefault(),
 				},
-				<Code>
-					{lex(state.initialValue)}
-				</Code>
+				<Code>{lex(state.initialValue)}</Code>
 			)}
 			<div style={stylex.parse("h:28")} />
 			<DebugEditor state={state} />

@@ -9,7 +9,6 @@ article {
 }
 
 code {
-	/* white-space:   pre; */
 	-moz-tab-size: 2;
 	tab-size:      2;
 	font:          15px/1.375 "Source Code Pro", "Monaco";
