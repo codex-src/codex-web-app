@@ -491,7 +491,7 @@ func main() {
 }`)
 
 	return (
-		<div className="debug-css">
+		<div>
 			{React.createElement(
 				"article",
 				{

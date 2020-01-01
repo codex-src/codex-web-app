@@ -2,13 +2,17 @@
 
 article {
 	white-space:   pre-wrap;
-	-moz-tab-size: 2;
-	tab-size:      2;
-	font :         15px/1.375 "Source Code Pro", "Monaco";
-	color:         #666;
-	caret-color:   #000;
+	font:          19px/1.5 "system-ui";
+	caret-color:   hsl(var(--black));
 	outline:       none;
 	overflow-wrap: break-word;
+}
+
+code {
+	/* white-space:   pre; */
+	-moz-tab-size: 2;
+	tab-size:      2;
+	font:          15px/1.375 "Source Code Pro", "Monaco";
 }
 
 ::selection {
