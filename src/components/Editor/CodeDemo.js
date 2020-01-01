@@ -24,19 +24,17 @@ function isBlockDOMNode(node) {
 	return ok
 }
 
-// `nodeValue` mocks the browser function; reads from a
-// break or text node.
+// `nodeValue` mocks the browser function.
 export function nodeValue(node) {
 	if (!isBreakOrTextNode(node)) {
 		return ""
 	}
 	// (1) Guard break node:
 	// (2) Convert non-breaking spaces:
-	return (node.nodeValue || "").replace("\u00a0", " ")
+	return (node.nodeValue || "" /* 1 */).replace("\u00a0", " ") // 2
 }
 
-// `innerText` mocks the browser function; recursively reads
-// from a root node.
+// `innerText` mocks the browser function.
 function innerText(rootNode) {
 	let value = ""
 	const compute = startNode => {
@@ -120,7 +118,9 @@ function computeDOMCursor(rootNode, pos) {
 }
 
 class Editor {
-	constructor(selector, initialValue = "") {
+	constructor({ selector, initialValue }) {
+		initialValue = initialValue || ""
+
 		Object.assign(this, {
 			selector,            // The DOM selector.
 			initialValue,        // The initial plain text value.
@@ -135,6 +135,8 @@ class Editor {
 	mount() {
 		document.addEventListener("DOMContentLoaded", e => {
 			this.rootNode = document.querySelector(this.selector)
+			this.rootNode.setAttribute("contenteditable", true)
+			this.rootNode.setAttribute("spellcheck", false)
 			this.init()
 		}, false)
 	}
@@ -163,7 +165,7 @@ class Editor {
 		})
 		this.rootNode.addEventListener("input", e => {
 			if (e.inputType === "insertCompositionText") {
-				// No-op.
+				this.updateVDOMValue()
 				return
 			}
 			this.update()
@@ -186,7 +188,10 @@ class Editor {
 		while ((node = this.rootNode.lastChild)) {
 			node.remove()
 		}
-		this.rootNode.appendChild(parse(lex(this.value)))
+		const lines = lex(this.value)
+		const fragment = document.createDocumentFragment()
+		ReactDOM.render(<CodeBlock>{lines}</CodeBlock>, fragment)
+		this.rootNode.appendChild(fragment)
 	}
 	updateVDOMCursor() {
 		const selection = document.getSelection()
@@ -466,54 +471,54 @@ function lex(value) {
 	return lexer.lines
 }
 
-// const CodeBlock = props => (
-// 	<ul data-vdom-node>
-// 		{props.children.map((line, index) => (
-// 			<li key={index} data-vdom-node>
-// 				{!line.length && (
-// 					<br />
-// 				)}
-// 				{line.map((item, index) => (
-// 					<span key={index} className={item.token}>
-// 						{item.value}
-// 					</span>
-// 				))}
-// 			</li>
-// 		))}
-// 	</ul>
-// )
-
-function parse(lines) {
-	const CodeBlock = props => ((
-		props.children.map((line, index) => (
-			<code key={index} data-vdom-node>
+const CodeBlock = props => (
+	// <ul data-vdom-node>
+		/* { */ props.children.map((line, index) => (
+			<li key={index} data-vdom-node>
+				{/* Empty: */}
 				{!line.length && (
 					<br />
 				)}
-
+				{/* Non-empty: */}
 				{line.map((item, index) => (
 					!item.token ? (
 						item.value
 					) : (
 						<span key={index} className={item.token}>
-							{item.value || (
-								<br />
-							)}
+							{item.value}
 						</span>
 					)
 				))}
-			</code>
-		))
-	))
-	const fragment = document.createDocumentFragment()
-	ReactDOM.render(<CodeBlock>{lines}</CodeBlock>, fragment)
-	return fragment
-}
+			</li>
+		)) // }
+	// </ul>
+)
 
-// NOTE: Obscure DOM nodes because of circular reference.
+// const CodeBlock = props => (
+// 	props.children.map((line, index) => (
+// 		<code key={index} data-vdom-node>
+// 			{/* Empty: */}
+// 			{!line.length && (
+// 				<br />
+// 			)}
+// 			{/* Non-empty: */}
+// 			{line.map((item, index) => (
+// 				!item.token ? (
+// 					item.value
+// 				) : (
+// 					<span key={index} className={item.token}>
+// 						{item.value}
+// 					</span>
+// 				)
+// 			))}
+// 		</code>
+// 	))
+// )
+
 function DebugEditor(props) {
 	const [state, setState] = React.useState({
 		...editor,
+		selection: undefined,
 		rootNode: undefined,
 		currentPos1: 0,
 		currentPos2: 0,
@@ -530,6 +535,7 @@ function DebugEditor(props) {
 			}
 			setState({
 				...editor,
+		selection: undefined,
 				rootNode: undefined,
 				currentPos1: pos1,
 				currentPos2: pos2,
@@ -553,22 +559,16 @@ const EditorComponent = props => (
 	<div>
 		<article
 			style={{ MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }}
-			contentEditable
-			suppressContentEditableWarning
-			spellCheck={false} // FIXME: Remove.
 			data-vdom-root
-		>
-			<code>
-				<span className="com">
-					{"// hello, world!"}
-				</span>
-			</code>
-		</article>
+		/>
 		<div style={stylex.parse("h:28")} />
 		<DebugEditor />
 	</div>
 )
 
-const editor = new Editor("[data-vdom-root]", "package main\n\nimport \"fmt\"\n\nfunc main() {\n	fmt.Println(\"hello, world!\")\n}")
+const editor = new Editor({
+	selector: "[data-vdom-root]",
+	initialValue: "package main\n\nimport \"fmt\"\n\nfunc main() {\n	fmt.Println(\"hello, world!\")\n}",
+})
 
 export default EditorComponent
