@@ -459,14 +459,7 @@ function useEditor(initialValue) {
 const DebugEditor = props => (
 	<pre style={stylex.parse("overflow -x:scroll")}>
 		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
-			{JSON.stringify(
-				{
-					...props.state,
-					rootNode: "[DOMNode]", // undefined,
-				},
-				null,
-				"\t",
-			)}
+			{JSON.stringify(props.state, null, "\t")}
 		</p>
 	</pre>
 )
@@ -530,11 +523,6 @@ func main() {
 						}
 					},
 
-					// NOTE: The `shouldComponentsRender` pattern does
-					// note work because React hooks appear to no-op
-					// DOM methods such as `element.appendChild`.
-					// Therefore, hooks are not used to rerender the
-					// DOM.
 					onInput: e => {
 						const value = innerText(ref.current)
 
@@ -571,7 +559,7 @@ func main() {
 						//
 						// NOTE: `ReactDOM.render` is not strictly
 						// necessary.
-						const parsed = lex(value) // Lexes Go.
+						const parsed = lex(value)
 						const fragment = document.createDocumentFragment()
 						ReactDOM.render(<Code>{parsed}</Code>, fragment)
 						ref.current.appendChild(fragment)
@@ -590,10 +578,9 @@ func main() {
 						selection.addRange(range)
 					},
 				},
-				// FIXME: Zero value.
 				<Code>
-					<br />
-				</Code>,
+					{lex(state.initialValue)}
+				</Code>
 			)}
 			<div style={stylex.parse("h:28")} />
 			<DebugEditor state={state} />
