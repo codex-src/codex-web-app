@@ -39,31 +39,31 @@ export function nodeValue(node) {
 // from a root node.
 function innerText(rootNode) {
 	let value = ""
-	const recurse = startNode => {
+	const compute = startNode => {
 		for (const currentNode of startNode.childNodes) {
 			if (isBreakOrTextNode(currentNode)) {
 				value += nodeValue(currentNode)
 			} else {
-				recurse(currentNode)
+				compute(currentNode)
 				if (isBlockDOMNode(currentNode) &&
-						currentNode.nextElementSibling) {
+						currentNode.nextSibling) {
 					value += "\n"
 				}
 			}
 		}
 	}
-	recurse(rootNode)
+	compute(rootNode)
 	return value
 }
 
-// `computeVDOMPos` computes the VDOM cursor from a DOM
+// `computeVDOMCursor` computes the VDOM cursor from a DOM
 // cursor.
-function computeVDOMPos(rootNode, node, offset) {
+function computeVDOMCursor(rootNode, node, offset) {
 	let pos = 0
 	while (node.childNodes.length) {
 		node = node.childNodes[0]
 	}
-	const recurse = startNode => {
+	const compute = startNode => {
 		for (const currentNode of startNode.childNodes) {
 			if (isBreakOrTextNode(currentNode)) {
 				if (currentNode === node) {
@@ -71,28 +71,28 @@ function computeVDOMPos(rootNode, node, offset) {
 				}
 				pos += nodeValue(currentNode).length
 			} else {
-				if (recurse(currentNode)) {
+				if (compute(currentNode)) {
 					return true
 				} else if (isBlockDOMNode(currentNode) &&
-						currentNode.nextElementSibling) {
+						currentNode.nextSibling) {
 					pos += 1
 				}
 			}
 		}
 		return false
 	}
-	recurse(rootNode)
+	compute(rootNode)
 	return pos + offset
 }
 
-// `computeDOMPos` computes the DOM cursor from a VDOM
+// `computeDOMCursor` computes the DOM cursor from a VDOM
 // cursor.
-function computeDOMPos(rootNode, pos) {
+function computeDOMCursor(rootNode, pos) {
 	const node = {
 		node: rootNode,
 		offset: 0,
 	}
-	const recurse = startNode => {
+	const compute = startNode => {
 		for (const currentNode of startNode.childNodes) {
 			if (isBreakOrTextNode(currentNode)) {
 				const { length } = nodeValue(currentNode)
@@ -105,17 +105,17 @@ function computeDOMPos(rootNode, pos) {
 				}
 				pos -= length
 			} else {
-				if (recurse(currentNode)) {
+				if (compute(currentNode)) {
 					return true
 				} else if (isBlockDOMNode(currentNode) &&
-						currentNode.nextElementSibling) {
+						currentNode.nextSibling) {
 					pos -= 1
 				}
 			}
 		}
 		return false
 	}
-	recurse(rootNode)
+	compute(rootNode)
 	return node
 }
 
@@ -125,9 +125,10 @@ class Editor {
 			selector,            // The DOM selector.
 			initialValue,        // The initial plain text value.
 			rootNode: null,      // The element.
+			isFocused: false,    // Is the editor focused?
 			value: initialValue, // The plain text value.
-			pos1:  0,            // The cursor start.
-			pos2:  0,            // The cursor end.
+			pos1: 0,             // The cursor start.
+			pos2: 0,             // The cursor end.
 		})
 		this.mount()
 	}
@@ -138,6 +139,12 @@ class Editor {
 		}, false)
 	}
 	init() {
+		this.rootNode.addEventListener("focus", e => {
+			this.isFocused = true
+		})
+		this.rootNode.addEventListener("blur", e => {
+			this.isFocused = false
+		})
 		this.rootNode.addEventListener("keydown", e => {
 			if (e.key !== "Tab") {
 				// No-op.
@@ -159,26 +166,19 @@ class Editor {
 				// No-op.
 				return
 			}
-			// this.stack.splice(this.index + 1)
 			this.update()
 			if (!this.value.length) {
-				this.setValue("\n")
+				this.renderDOMComponents("\n")
 				return
-			}
-			if (this.pos1 === this.pos2 && this.pos2 === this.value.length) {
-				window.scrollTo(0, this.rootNode.scrollHeight)
 			}
 			this.render()
 		})
-		this.setValue() // E.g. render?
+		this.renderDOMComponents()
 	}
-	/*
-	 * value
-	 */
-	getValue() {
+	updateVDOMValue() {
 		this.value = innerText(this.rootNode)
 	}
-	setValue(value) {
+	renderDOMComponents(value) {
 		if (value !== undefined) {
 			this.value = value
 		}
@@ -186,41 +186,36 @@ class Editor {
 		while ((node = this.rootNode.lastChild)) {
 			node.remove()
 		}
-		const parsedGo = parse(lex(this.value))
-		this.rootNode.appendChild(parsedGo)
+		this.rootNode.appendChild(parse(lex(this.value)))
 	}
-	/*
-	 * pos
-	 */
-	getPos() {
+	updateVDOMCursor() {
 		const selection = document.getSelection()
-		this.pos1 = computeVDOMPos(this.rootNode, selection.anchorNode, selection.anchorOffset)
-		this.pos2 = computeVDOMPos(this.rootNode, selection.focusNode, selection.focusOffset)
+		this.pos1 = computeVDOMCursor(this.rootNode, selection.anchorNode, selection.anchorOffset)
+		this.pos2 = computeVDOMCursor(this.rootNode, selection.focusNode, selection.focusOffset)
 	}
-	setPos(pos1, pos2) {
+	renderDOMCursor(pos1, pos2) {
 		if (pos1 !== undefined && pos2 !== undefined) {
 			this.pos1 = pos1
 			this.pos2 = pos2
 		}
 		const selection = document.getSelection()
-		const node1 = computeDOMPos(this.rootNode, this.pos1)
-		const node2 = computeDOMPos(this.rootNode, this.pos2)
+		const node1 = computeDOMCursor(this.rootNode, this.pos1)
+		const node2 = computeDOMCursor(this.rootNode, this.pos2)
 		const range = document.createRange()
 		range.setStart(node1.node, node1.offset)
 		range.setEnd(node2.node, node2.offset)
 		selection.removeAllRanges()
 		selection.addRange(range)
 	}
-	/*
-	 * state
-	 */
+	// `update` updates the VDOM from the DOM.
 	update() {
-		this.getValue()
-		this.getPos()
+		this.updateVDOMValue()
+		this.updateVDOMCursor()
 	}
+	// `render` renders the components and cursor.
 	render(value, pos1, pos2) {
-		this.setValue(value)
-		this.setPos(pos1, pos2)
+		this.renderDOMComponents(value)
+		this.renderDOMCursor(pos1, pos2)
 	}
 }
 
@@ -475,17 +470,14 @@ function lex(value) {
 // 	<ul data-vdom-node>
 // 		{props.children.map((line, index) => (
 // 			<li key={index} data-vdom-node>
-// 				{!line.length ? (
+// 				{!line.length && (
 // 					<br />
-// 				) : (
-// 					line.map((item, index) => (
-// 						<span key={index} className={item.token}>
-// 							{item.value || (
-// 								<br />
-// 							)}
-// 						</span>
-// 					))
 // 				)}
+// 				{line.map((item, index) => (
+// 					<span key={index} className={item.token}>
+// 						{item.value}
+// 					</span>
+// 				))}
 // 			</li>
 // 		))}
 // 	</ul>
@@ -523,15 +515,26 @@ function DebugEditor(props) {
 	const [state, setState] = React.useState({
 		...editor,
 		rootNode: undefined,
+		currentPos1: 0,
+		currentPos2: 0,
 	})
 
 	React.useEffect(() => {
 		const id = setInterval(() => {
+			let pos1 = 0
+			let pos2 = 0
+			if (editor.isFocused) {
+				const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+				pos1 = computeVDOMCursor(editor.rootNode, anchorNode, anchorOffset)
+				pos2 = computeVDOMCursor(editor.rootNode, focusNode, focusOffset)
+			}
 			setState({
 				...editor,
 				rootNode: undefined,
+				currentPos1: pos1,
+				currentPos2: pos2,
 			})
-		}, 1e3)
+		}, 500)
 		return () => {
 			clearInterval(id)
 		}
