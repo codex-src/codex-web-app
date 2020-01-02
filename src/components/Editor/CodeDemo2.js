@@ -5,6 +5,7 @@ import ReactDOM from "react-dom"
 import stylex from "stylex"
 import useMethods from "use-methods"
 import utf8 from "./utf8"
+import vdom from "./vdom"
 
 import "./code-demo.css"
 
@@ -419,6 +420,7 @@ const initialState = {
 	isFocused: false, // Is the editor focused?
 	pos1: 0,          // The VDOM cursor start.
 	pos2: 0,          // The VDOM cursor end.
+	Components: []    // The rendered React components.
 }
 
 const reducer = state => ({
@@ -427,12 +429,6 @@ const reducer = state => ({
 	},
 	blur() {
 		state.isFocused = false
-	},
-	setVDOMCursor(pos1, pos2) {
-		if (pos1 > pos2) {
-			[pos1, pos2] = [pos2, pos1]
-		}
-		Object.assign(state, { pos1, pos2 })
 	},
 	setState(value, pos1, pos2) {
 		if (pos1 > pos2) {
@@ -485,26 +481,9 @@ func main() {
 		[],
 	)
 
-	// // TODO: Ignore idempotent keys.
-	// let { anchorNode, focusNode } = document.getSelection()
-	// const sameNode = anchorNode === focusNode
-	// while (root.current.contains(anchorNode)) {
-	// 	if (anchorNode.hasAttribute && anchorNode.hasAttribute("data-vdom-node")) {
-	// 		break
-	// 	}
-	// 	anchorNode = anchorNode.parentNode
-	// }
-	// focusNode = anchorNode
-	// if (!sameNode) {
-	// 	while (root.current.contains(focusNode)) {
-	// 		if (focusNode.hasAttribute && focusNode.hasAttribute("data-vdom-node")) {
-	// 			break
-	// 		}
-	// 		focusNode = focusNode.parentNode
-	// 	}
-	// }
-	// console.log(anchorNode, focusNode)
-
+	// TODO: Optimization: can copy a reference to the last
+	// anchor node, etc. Could potentially reuse
+	// `domNodeRange`.
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.isFocused) {
@@ -519,24 +498,22 @@ func main() {
 				pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
 			}
 			dispatch.setVDOMCursor(pos1, pos2)
-			// Compute DOM node range:
-			domNodeRange.current = []
+			// Compute DOM node range (reset):
+			domNodeRange.current = {
+				ref: null,                                   // A reference to the start node.
+				fragment: document.createDocumentFragment(), // The unchanged DOM nodes.
+			}
 			const startNode = ascendToBlockDOMNode(pos1 <= pos2 ? anchorNode : focusNode)
 			let endNode = startNode
 			if (anchorNode !== focusNode) {
 				endNode = ascendToBlockDOMNode(pos1 > pos2 ? anchorNode : focusNode) // Reverse order.
 			}
 			let node = startNode
-			domNodeRange.current.push({
-				ref: node,
-				copy: node.cloneNode(true),
-			})
+			domNodeRange.current.ref = node
+			domNodeRange.current.fragment.appendChild(node.cloneNode(true))
 			while (node !== endNode) {
 				node = node.nextSibling // Assumes `node.nextSibling`.
-				domNodeRange.current.push({
-					ref: node,
-					copy: node.cloneNode(true),
-				})
+				domNodeRange.current.fragment.appendChild(node.cloneNode(true))
 			}
 			// console.log(domNodeRange.current)
 		}
@@ -593,78 +570,32 @@ func main() {
 					},
 
 					onInput: e => {
-						invariant(
-							domNodeRange.current.length > 0,
-							"FIXME",
-						)
 						// Read the DOM:
-						console.log(innerText(domNodeRange.current[0].ref))
+						console.log(innerText(domNodeRange.current.ref))
+
 						// Update the VDOM:
 						// ...
 
 						// Restore the DOM (sync to React):
 						const { anchorNode } = document.getSelection()
 						const startNode = ascendToBlockDOMNode(anchorNode)
-						console.log(startNode)
-						// console.log(domNodeRange.current)
+						startNode.replaceWith(domNodeRange.current.fragment)
 
-						// Render the VDOM:
+						// Render the VDOM components:
 						// ...
 
-						// const _domNodeRange = domNodeRange.current
-						//
-						// // No selection strategy:
-						// if (_domNodeRange.length === 1) {
-						// 	const startNode = _domNodeRange[0]
-						// 	console.log(innerText(startNode.ref))
-						// // Selection strategy:
-						// } else {
-						// 	// Read the first node and conditionally read
-						// 	// the last node.
-						// 	const startNode = _domNodeRange[0]
-						// 	console.log(innerText(startNode.ref))
-						// 	const endNode = _domNodeRange[_domNodeRange.length - 1]
-						// 	if (endNode.ref !== startNode.ref) {
-						// 		console.log(innerText(endNode.ref))
-						// 	}
-						// }
+						// Render the VDOM cursor:
+						const selection = document.getSelection()
+						const range = document.createRange()
+						const { node, offset } = computeDOMCursor(ref.current, state.pos1)
+						range.setStart(node, offset)
+						range.collapse()
+						selection.removeAllRanges()
+						selection.addRange(range)
 					},
 
-					// onCut: e => {
-					// 	e.preventDefault()
-					// 	if (state.pos1 === state.pos2) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const cutValue = state.value.slice(state.pos1, state.pos2)
-					// 	e.clipboardData.setData("text/plain", cutValue)
-					// 	// document.execCommand("insertText", false, "") // FIXME
-					// 	// ...
-					// },
-					//
-					// onCopy: e => {
-					// 	e.preventDefault()
-					// 	if (state.pos1 === state.pos2) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const copyValue = state.value.slice(state.pos1, state.pos2)
-					// 	e.clipboardData.setData("text/plain", copyValue)
-					// },
-					//
-					// onPaste: e => {
-					// 	e.preventDefault()
-					// 	const pasteValue = e.clipboardData.getData("text/plain")
-					// 	if (!pasteValue) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	// document.execCommand("insertText", false, pasteValue) // FIXME
-					// 	// ...
-					// },
-
-					onDragStart: e => e.preventDefault(),
-					onDrop:      e => e.preventDefault(),
+					// onDragStart: e => e.preventDefault(),
+					// onDrop:      e => e.preventDefault(),
 				},
 				firstRender,
 			)}
