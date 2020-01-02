@@ -347,10 +347,14 @@ function Editor(props) {
 
 	const domNodeRange = React.useRef()
 
-	const [state, dispatch] = useEditor(`Hello, world!
-Hello, world!
-Hello, world!
-Hello, world!`)
+	const [state, dispatch] = useEditor(`To be,
+Or not to be,
+That is the question`)
+
+	// 	const [state, dispatch] = useEditor(`Hello, world!
+	// Hello, world!
+	// Hello, world!
+	// Hello, world!`)
 
 	// TODO: Optimization: Can copy a reference to the last
 	// anchor node, etc. Could potentially reuse
@@ -372,7 +376,8 @@ Hello, world!`)
 			// Compute DOM node range (reset):
 			domNodeRange.current = {
 				ref: null,                                   // A reference to the start node.
-				fragment: document.createDocumentFragment(), // The unchanged DOM nodes.
+				cloneNode: null,                             // A copy of the start node.
+				fragment: document.createDocumentFragment(), // The unchanged DOM node range.
 			}
 			const startNode = traverseDOM.ascendToBlockDOMNode(pos1.pos <= pos2.pos ? anchorNode : focusNode)
 			let endNode = startNode
@@ -386,7 +391,7 @@ Hello, world!`)
 				node = node.nextSibling // Assumes `node.nextSibling`.
 				domNodeRange.current.fragment.appendChild(node.cloneNode(true))
 			}
-			// console.log(domNodeRange.current)
+			// console.log(traverseDOM.innerText(domNodeRange.current.fragment.childNodes[0]))
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -441,10 +446,13 @@ Hello, world!`)
 					},
 
 					onInput: e => {
-						// console.log(state.pos1, state.pos2)
+						// Read the DOM:
+						const clean = traverseDOM.innerText(domNodeRange.current.fragment.childNodes[0])
+						const dirty = traverseDOM.innerText(domNodeRange.current.ref)
 
-						// // Read the DOM:
-						// const read = innerText(domNodeRange.current.ref)
+						let [pos1, pos2] = [state.pos1.pos, state.pos1.pos]
+						pos1 += -state.pos1.offset
+						pos2 += -state.pos1.offset + dirty.length
 
 						// Restore the DOM (sync to React):
 						const { anchorNode } = document.getSelection()
