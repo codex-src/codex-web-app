@@ -3,6 +3,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import stylex from "stylex"
 import useMethods from "use-methods"
+import utf8 from "./utf8"
 
 import "./code-demo.css"
 
@@ -386,7 +387,7 @@ function lex(value) {
 
 // Compound component.
 const Code = props => (
-	<pre style={stylex.parse("overflow -x:scroll")} spellCheck={false} data-vdom-node>
+	<pre style={stylex.parse("overflow -x:scroll")} /* spellCheck={false} */ data-vdom-node>
 		{!props.children.length && (
 			props.children
 		)}
@@ -430,6 +431,12 @@ const reducer = state => ({
 	},
 	blur() {
 		state.isFocused = false
+	},
+	setVDOMCursor(pos1, pos2) {
+		if (pos1 > pos2) {
+			[pos1, pos2] = [pos2, pos1]
+		}
+		Object.assign(state, { pos1, pos2 })
 	},
 	setState(value, pos1, pos2) {
 		if (pos1 > pos2) {
@@ -490,15 +497,44 @@ func main() {
 	fmt.Println("hello, world!")
 }`)
 
-	const [initialComponents, setInitialComponents] = React.useState()
+	const [firstRender, setFirstRender] = React.useState()
 
+	// First render:
 	React.useEffect(
 		React.useCallback(() => {
-			setInitialComponents(<Code>{lex(state.initialValue)}</Code>)
+			setFirstRender(<Code>{lex(state.initialValue)}</Code>)
 		}, [state]),
 		[],
 	)
 
+	// Polyfill for `onSelectionChange`:
+	//
+	// TODO: Use keys instead of `pos1` and `pos2`.
+	React.useLayoutEffect(() => {
+		// console.log("mounting") // DELETEME
+		const onSelectionChange = e => {
+			if (!state.isFocused) {
+				// No-op.
+				return
+			}
+			// console.log("selectionchange") // DELETEME
+			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+			const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+			let pos2 = pos1
+			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+				pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
+			}
+			// console.log(state.value.slice(pos1, pos2)) // DELETEME
+			dispatch.setVDOMCursor(pos1, pos2)
+		}
+		document.addEventListener("selectionchange", onSelectionChange)
+		return () => {
+			// console.log("unmounting") // DELETEME
+			document.removeEventListener("selectionchange", onSelectionChange)
+		}
+	}, [state, dispatch])
+
+	// GPU optimization:
 	const translateZ = {}
 	if (state.isFocused) {
 		Object.assign(translateZ, {
@@ -525,7 +561,7 @@ func main() {
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
-					spellCheck: false,
+					// spellCheck: false,
 
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
@@ -589,7 +625,7 @@ func main() {
 					// paste, undo, redo, can benefit from React-based
 					// reconciliation, rather than imperative
 					// patching. For these events, we can just as
-					// easily overwrite `initialComponents` or
+					// easily overwrite `firstRender` or
 					// similar.
 					//
 					// TODO: Is undo on iOS and Android preventable?
@@ -606,20 +642,21 @@ func main() {
 					// leverage React-based reconciliation due to
 					// Unicode handling.
 					//
-					// TODO: Test `selectionchange` coverage.
-					onSelect: e => {
-						const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-						// if (anchorNode === ref.current || focusNode === ref.current) {
-						// 	// No-op.
-						// 	return
-						// }
-						const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						let pos2 = pos1
-						if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-							pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
-						}
-						dispatch.setState(state.value, pos1, pos2)
-					},
+					// TODO - DONE: Test `selectionchange` coverage.
+
+					// onSelect: e => {
+					// 	const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+					// 	// if (anchorNode === ref.current || focusNode === ref.current) {
+					// 	// 	// No-op.
+					// 	// 	return
+					// 	// }
+					// 	const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+					// 	let pos2 = pos1
+					// 	if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+					// 		pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
+					// 	}
+					// 	dispatch.setState(state.value, pos1, pos2)
+					// },
 
 					onKeyDown: e => {
 						if (e.key === "Tab") {
@@ -637,31 +674,31 @@ func main() {
 						} else if (detect.isRedo(e)) {
 							e.preventDefault()
 							return
-						} else {
-							// // TODO: Ignore idempotent keys.
-							// let { anchorNode, focusNode } = document.getSelection()
-							// const sameNode = anchorNode === focusNode
-							// while (ref.current.contains(anchorNode)) {
-							// 	if (anchorNode.hasAttribute && anchorNode.hasAttribute("data-vdom-node")) {
-							// 		break
-							// 	}
-							// 	anchorNode = anchorNode.parentNode
-							// }
-							// focusNode = anchorNode
-							// if (!sameNode) {
-							// 	while (ref.current.contains(focusNode)) {
-							// 		if (focusNode.hasAttribute && focusNode.hasAttribute("data-vdom-node")) {
-							// 			break
-							// 		}
-							// 		focusNode = focusNode.parentNode
-							// 	}
-							// }
-							// console.log(anchorNode, focusNode)
 						}
 					},
 
+					// // TODO: Ignore idempotent keys.
+					// let { anchorNode, focusNode } = document.getSelection()
+					// const sameNode = anchorNode === focusNode
+					// while (ref.current.contains(anchorNode)) {
+					// 	if (anchorNode.hasAttribute && anchorNode.hasAttribute("data-vdom-node")) {
+					// 		break
+					// 	}
+					// 	anchorNode = anchorNode.parentNode
+					// }
+					// focusNode = anchorNode
+					// if (!sameNode) {
+					// 	while (ref.current.contains(focusNode)) {
+					// 		if (focusNode.hasAttribute && focusNode.hasAttribute("data-vdom-node")) {
+					// 			break
+					// 		}
+					// 		focusNode = focusNode.parentNode
+					// 	}
+					// }
+					// console.log(anchorNode, focusNode)
+
 					onInput: e => {
-						// console.log({ ...e })
+						// console.log({ data: e.nativeEvent.data })
 
 						const value = innerText(ref.current)
 
@@ -683,7 +720,7 @@ func main() {
 						// - onCompositionUpdate
 						// - onCompositionEnd
 						//
-						if (e.nativeEvent.inputType === "insertCompositionText") {
+						if ((e.nativeEvent.data && utf8.isAlphanum(e.nativeEvent.data)) || e.nativeEvent.inputType === "insertCompositionText") {
 							// No-op.
 							return
 						}
@@ -751,7 +788,7 @@ func main() {
 					onDragStart: e => e.preventDefault(),
 					onDragEnd:   e => e.preventDefault(),
 				},
-				initialComponents,
+				firstRender,
 			)}
 			<div style={stylex.parse("h:28")} />
 			<DebugEditor state={state} />
