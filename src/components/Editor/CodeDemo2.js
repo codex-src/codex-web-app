@@ -1,13 +1,10 @@
 import detect from "./detect"
-import invariant from "invariant"
 import React from "react"
-import ReactDOM from "react-dom"
 import stylex from "stylex"
 import useMethods from "use-methods"
-import utf8 from "./utf8"
 import vdom from "./vdom"
 
-import "./code-demo.css"
+import "./editor.css"
 
 // `isBreakOrTextNode` returns whether a node is a break
 // node or a text node.
@@ -131,296 +128,296 @@ function computeDOMCursor(rootNode, pos) {
 	return node
 }
 
-class Lexer {
-	constructor(value) {
-		Object.assign(this, {
-			value,       // The plain text value.
-			x1:    0,    // The selection start.
-			x2:    0,    // The selection end.
-			width: 0,    // The width of the current character.
-			lines: [[]], // The parsed multiline output.
-		})
-	}
-	next() {
-		if (this.x2 === this.value.length) {
-			this.width = 0
-			return undefined // EOF
-		}
-		const ch = this.value[this.x2]
-		this.width = 1
-		this.x2 += this.width
-		return ch
-	}
-	peek() {
-		const ch = this.next()
-		this.backup()
-		return ch
-	}
-	backup() {
-		this.x2 -= this.width
-	}
-	emit(token) {
-		const nth = this.lines.length - 1
-		this.lines[nth].push({
-			token,
-			value: this.focus(),
-		})
-		this.ignore()
-	}
-	emit_line(token) {
-		this.backup()
-		this.emit(token)
-		this.lines.push([])
-		this.next()
-		this.ignore()
-	}
-	focus() {
-		return this.value.slice(this.x1, this.x2)
-	}
-	ignore() {
-		this.x1 = this.x2
-	}
-	accept(str) {
-		const next = this.next()
-		const ok = str.includes(next)
-		if (!ok) {
-			this.backup()
-		}
-		return ok
-	}
-	accept_run(str) {
-		while (this.accept(str)) {
-			// No-op.
-		}
-	}
-}
-
-const Token = {
-	UNS: "uns", // Unset (whitespace does not use a token).
-	COM: "com", // Comment.
-	KEY: "key", // Keyword.
-	NUM: "num", // Number.
-	STR: "str", // String.
-	PUN: "pun", // Punctuation.
-	FUN: "fun", // Function.
-}
-
-const keywords = {
-	break:       true,
-	default:     true,
-	func:        true,
-	interface:   true,
-	select:      true,
-	case:        true,
-	defer:       true,
-	go:          true,
-	map:         true,
-	struct:      true,
-	chan:        true,
-	else:        true,
-	goto:        true,
-	package:     true,
-	switch:      true,
-	const:       true,
-	fallthrough: true,
-	if:          true,
-	range:       true,
-	type:        true,
-	continue:    true,
-	for:         true,
-	import:      true,
-	return:      true,
-	var:         true,
-	bool:        true,
-	byte:        true,
-	complex64:   true,
-	complex128:  true,
-	error:       true,
-	float32:     true,
-	float64:     true,
-	int:         true,
-	int8:        true,
-	int16:       true,
-	int32:       true,
-	int64:       true,
-	rune:        true,
-	string:      true,
-	uint:        true,
-	uint8:       true,
-	uint16:      true,
-	uint32:      true,
-	uint64:      true,
-	uintptr:     true,
-	true:        true,
-	false:       true,
-	iota:        true,
-	nil:         true,
-	append:      true,
-	cap:         true,
-	close:       true,
-	complex:     true,
-	copy:        true,
-	delete:      true,
-	imag:        true,
-	len:         true,
-	make:        true,
-	new:         true,
-	panic:       true,
-	print:       true,
-	println:     true,
-	real:        true,
-	recover:     true,
-}
-
-// if (!this.value.length) {
-// 	this.renderDOMComponents("\n")
-// 	return
+// class Lexer {
+// 	constructor(value) {
+// 		Object.assign(this, {
+// 			value,       // The plain text value.
+// 			x1:    0,    // The selection start.
+// 			x2:    0,    // The selection end.
+// 			width: 0,    // The width of the current character.
+// 			lines: [[]], // The parsed multiline output.
+// 		})
+// 	}
+// 	next() {
+// 		if (this.x2 === this.value.length) {
+// 			this.width = 0
+// 			return undefined // EOF
+// 		}
+// 		const ch = this.value[this.x2]
+// 		this.width = 1
+// 		this.x2 += this.width
+// 		return ch
+// 	}
+// 	peek() {
+// 		const ch = this.next()
+// 		this.backup()
+// 		return ch
+// 	}
+// 	backup() {
+// 		this.x2 -= this.width
+// 	}
+// 	emit(token) {
+// 		const nth = this.lines.length - 1
+// 		this.lines[nth].push({
+// 			token,
+// 			value: this.focus(),
+// 		})
+// 		this.ignore()
+// 	}
+// 	emit_line(token) {
+// 		this.backup()
+// 		this.emit(token)
+// 		this.lines.push([])
+// 		this.next()
+// 		this.ignore()
+// 	}
+// 	focus() {
+// 		return this.value.slice(this.x1, this.x2)
+// 	}
+// 	ignore() {
+// 		this.x1 = this.x2
+// 	}
+// 	accept(str) {
+// 		const next = this.next()
+// 		const ok = str.includes(next)
+// 		if (!ok) {
+// 			this.backup()
+// 		}
+// 		return ok
+// 	}
+// 	accept_run(str) {
+// 		while (this.accept(str)) {
+// 			// No-op.
+// 		}
+// 	}
 // }
-
-// https://www.youtube.com/watch?v=HxaD_trXwRE
-function lex(value) {
-	const lexer = new Lexer(value)
-	let ch = ""
-	while ((ch = lexer.next())) {
-		let token = 0
-		switch (true) {
-		// Comment:
-		case ch === "/" && (lexer.peek() === "/" || lexer.peek() === "*"):
-			ch = lexer.next()
-			if (ch === "/") {
-				while ((ch = lexer.next())) {
-					if (ch === "\n") {
-						lexer.backup()
-						break
-					}
-				}
-			} else if (ch === "*") {
-				while ((ch = lexer.next())) {
-					if (ch === "*" && lexer.peek() === "/") {
-						lexer.next()
-						break
-					} else if (ch === "\n") {
-						lexer.emit_line(Token.COM)
-						// Don't break.
-					}
-				}
-			}
-			token = Token.COM
-			break
-		// Whitespace:
-		case ch === " " || ch === "\t" || ch === "\n":
-			if (/* lexer.x2 > 1 && */ ch === "\n") { // FIXME?
-				lexer.lines.push([])
-				lexer.ignore()
-				break
-			}
-			lexer.accept_run(" \t")
-			break
-		// Keyword or function:
-		case (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z") || ch === "_":
-			lexer.accept_run("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789")
-			if (keywords[lexer.focus()]) {
-				token = Token.KEY
-				break
-			}
-			const { x2 } = lexer
-			lexer.accept_run(" ")
-			if (lexer.peek() === "(") {
-				token = Token.FUN
-			}
-			lexer.x2 = x2
-			token = token || Token.UNS
-			break
-		// String:
-		case ch === "'" || ch === "\"" || ch === "`":
-			const quote = ch
-			while ((ch = lexer.next())) {
-				if (quote !== "`" && ch === "\\" && lexer.peek() === quote) {
-					lexer.next()
-				} else if (quote === "`" && ch === "\n") {
-					lexer.emit_line(Token.STR)
-					// don't break
-				} else if (ch === quote || ch === "\n") { // break opportunities
-					if (ch === "\n") {
-						lexer.backup()
-					}
-					break
-				}
-			}
-			token = Token.STR
-			break
- 		// Number:
-		case ch >= "0" && ch <= "9":
-			let base = "0123456789"
-			if (lexer.accept("0") && lexer.accept("xX")) {
-				base += "abcdefABCDEF"
-			}
-			lexer.accept_run(base)
-			lexer.accept(".") && lexer.accept_run(base)
-			lexer.accept("eE") && lexer.accept("-+") && lexer.accept_run("0123456789")
-			lexer.accept("i")
-			token = Token.NUM
-			break
-		// Punctuation:
-		case "!%&()*+,-./:;<=>[]^{|}".includes(ch):
-			lexer.accept_run("!%&()*+,-./:;<=>[]^{|}")
-			token = Token.PUN
-			break
-		// Non-whitespace:
-		default:
-			while ((ch = lexer.next())) {
-				if (ch === " " || ch === "\t" || ch === "\n") {
-					lexer.backup()
-					break
-				}
-			}
-			token = Token.UNS
-			break
-		}
-		if (lexer.x1 < lexer.x2) {
-			lexer.emit(token)
-		}
-	}
-	return lexer.lines
-}
-
-// Compound component.
 //
-// spellCheck={false}
-const Code = props => (
-	<pre style={stylex.parse("overflow -x:scroll")} data-vdom-node>
-		{!props.children.length && (
-			props.children
-		)}
-
-		{props.children.length > 0 && (
-			props.children.map((line, index) => (
-				<code key={index} style={stylex.parse("block")} data-vdom-node>
-					{!line.length && (
-						<br />
-					)}
-
-					{line.map((item, index) => (
-						!item.token ? (
-							item.value
-						) : (
-							<span key={index} className={item.token}>
-								{item.value}
-							</span>
-						)
-					))}
-				</code>
-			)))}
-	</pre>
-)
+// const Token = {
+// 	UNS: "uns", // Unset (whitespace does not use a token).
+// 	COM: "com", // Comment.
+// 	KEY: "key", // Keyword.
+// 	NUM: "num", // Number.
+// 	STR: "str", // String.
+// 	PUN: "pun", // Punctuation.
+// 	FUN: "fun", // Function.
+// }
+//
+// const keywords = {
+// 	break:       true,
+// 	default:     true,
+// 	func:        true,
+// 	interface:   true,
+// 	select:      true,
+// 	case:        true,
+// 	defer:       true,
+// 	go:          true,
+// 	map:         true,
+// 	struct:      true,
+// 	chan:        true,
+// 	else:        true,
+// 	goto:        true,
+// 	package:     true,
+// 	switch:      true,
+// 	const:       true,
+// 	fallthrough: true,
+// 	if:          true,
+// 	range:       true,
+// 	type:        true,
+// 	continue:    true,
+// 	for:         true,
+// 	import:      true,
+// 	return:      true,
+// 	var:         true,
+// 	bool:        true,
+// 	byte:        true,
+// 	complex64:   true,
+// 	complex128:  true,
+// 	error:       true,
+// 	float32:     true,
+// 	float64:     true,
+// 	int:         true,
+// 	int8:        true,
+// 	int16:       true,
+// 	int32:       true,
+// 	int64:       true,
+// 	rune:        true,
+// 	string:      true,
+// 	uint:        true,
+// 	uint8:       true,
+// 	uint16:      true,
+// 	uint32:      true,
+// 	uint64:      true,
+// 	uintptr:     true,
+// 	true:        true,
+// 	false:       true,
+// 	iota:        true,
+// 	nil:         true,
+// 	append:      true,
+// 	cap:         true,
+// 	close:       true,
+// 	complex:     true,
+// 	copy:        true,
+// 	delete:      true,
+// 	imag:        true,
+// 	len:         true,
+// 	make:        true,
+// 	new:         true,
+// 	panic:       true,
+// 	print:       true,
+// 	println:     true,
+// 	real:        true,
+// 	recover:     true,
+// }
+//
+// // if (!this.value.length) {
+// // 	this.renderDOMComponents("\n")
+// // 	return
+// // }
+//
+// // https://www.youtube.com/watch?v=HxaD_trXwRE
+// function lex(value) {
+// 	const lexer = new Lexer(value)
+// 	let ch = ""
+// 	while ((ch = lexer.next())) {
+// 		let token = 0
+// 		switch (true) {
+// 		// Comment:
+// 		case ch === "/" && (lexer.peek() === "/" || lexer.peek() === "*"):
+// 			ch = lexer.next()
+// 			if (ch === "/") {
+// 				while ((ch = lexer.next())) {
+// 					if (ch === "\n") {
+// 						lexer.backup()
+// 						break
+// 					}
+// 				}
+// 			} else if (ch === "*") {
+// 				while ((ch = lexer.next())) {
+// 					if (ch === "*" && lexer.peek() === "/") {
+// 						lexer.next()
+// 						break
+// 					} else if (ch === "\n") {
+// 						lexer.emit_line(Token.COM)
+// 						// Don't break.
+// 					}
+// 				}
+// 			}
+// 			token = Token.COM
+// 			break
+// 		// Whitespace:
+// 		case ch === " " || ch === "\t" || ch === "\n":
+// 			if (/* lexer.x2 > 1 && */ ch === "\n") { // FIXME?
+// 				lexer.lines.push([])
+// 				lexer.ignore()
+// 				break
+// 			}
+// 			lexer.accept_run(" \t")
+// 			break
+// 		// Keyword or function:
+// 		case (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z") || ch === "_":
+// 			lexer.accept_run("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789")
+// 			if (keywords[lexer.focus()]) {
+// 				token = Token.KEY
+// 				break
+// 			}
+// 			const { x2 } = lexer
+// 			lexer.accept_run(" ")
+// 			if (lexer.peek() === "(") {
+// 				token = Token.FUN
+// 			}
+// 			lexer.x2 = x2
+// 			token = token || Token.UNS
+// 			break
+// 		// String:
+// 		case ch === "'" || ch === "\"" || ch === "`":
+// 			const quote = ch
+// 			while ((ch = lexer.next())) {
+// 				if (quote !== "`" && ch === "\\" && lexer.peek() === quote) {
+// 					lexer.next()
+// 				} else if (quote === "`" && ch === "\n") {
+// 					lexer.emit_line(Token.STR)
+// 					// don't break
+// 				} else if (ch === quote || ch === "\n") { // break opportunities
+// 					if (ch === "\n") {
+// 						lexer.backup()
+// 					}
+// 					break
+// 				}
+// 			}
+// 			token = Token.STR
+// 			break
+//  		// Number:
+// 		case ch >= "0" && ch <= "9":
+// 			let base = "0123456789"
+// 			if (lexer.accept("0") && lexer.accept("xX")) {
+// 				base += "abcdefABCDEF"
+// 			}
+// 			lexer.accept_run(base)
+// 			lexer.accept(".") && lexer.accept_run(base)
+// 			lexer.accept("eE") && lexer.accept("-+") && lexer.accept_run("0123456789")
+// 			lexer.accept("i")
+// 			token = Token.NUM
+// 			break
+// 		// Punctuation:
+// 		case "!%&()*+,-./:;<=>[]^{|}".includes(ch):
+// 			lexer.accept_run("!%&()*+,-./:;<=>[]^{|}")
+// 			token = Token.PUN
+// 			break
+// 		// Non-whitespace:
+// 		default:
+// 			while ((ch = lexer.next())) {
+// 				if (ch === " " || ch === "\t" || ch === "\n") {
+// 					lexer.backup()
+// 					break
+// 				}
+// 			}
+// 			token = Token.UNS
+// 			break
+// 		}
+// 		if (lexer.x1 < lexer.x2) {
+// 			lexer.emit(token)
+// 		}
+// 	}
+// 	return lexer.lines
+// }
+//
+// // Compound component.
+// //
+// // spellCheck={false}
+// const Code = props => (
+// 	<pre style={stylex.parse("overflow -x:scroll")} data-vdom-node>
+// 		{!props.children.length && (
+// 			props.children
+// 		)}
+//
+// 		{props.children.length > 0 && (
+// 			props.children.map((line, index) => (
+// 				<code key={index} style={stylex.parse("block")} data-vdom-node>
+// 					{!line.length && (
+// 						<br />
+// 					)}
+//
+// 					{line.map((item, index) => (
+// 						!item.token ? (
+// 							item.value
+// 						) : (
+// 							<span key={index} className={item.token}>
+// 								{item.value}
+// 							</span>
+// 						)
+// 					))}
+// 				</code>
+// 			)))}
+// 	</pre>
+// )
 
 const initialState = {
-	initialValue: "", // The initial plain text vlaue.
-	value: "",        // The VDOM value.
-	isFocused: false, // Is the editor focused?
-	pos1: 0,          // The VDOM cursor start.
-	pos2: 0,          // The VDOM cursor end.
-	Components: []    // The rendered React components.
+	initialValue: "",        // The initial plain text vlaue.
+	body: new vdom.VDOM(""), // The VDOM body.
+	isFocused: false,        // Is the editor focused?
+	pos1: 0,                 // The VDOM cursor start.
+	pos2: 0,                 // The VDOM cursor end.
+	// Components: [],       // The rendered React components.
 }
 
 const reducer = state => ({
@@ -430,11 +427,11 @@ const reducer = state => ({
 	blur() {
 		state.isFocused = false
 	},
-	setState(value, pos1, pos2) {
+	setState(body, pos1, pos2) {
 		if (pos1 > pos2) {
 			[pos1, pos2] = [pos2, pos1]
 		}
-		Object.assign(state, { value, pos1, pos2 })
+		Object.assign(state, { body, pos1, pos2 })
 	},
 })
 
@@ -442,7 +439,7 @@ const init = initialValue => initialState => {
 	const state = {
 		...initialState,
 		initialValue,
-		value: initialValue,
+		body: initialState.body.write(initialValue, 0, 0),
 	}
 	return state
 }
@@ -450,6 +447,14 @@ const init = initialValue => initialState => {
 function useEditor(initialValue) {
 	return useMethods(reducer, initialState, init(initialValue))
 }
+
+const Paragraph = props => (
+	<p data-vdom-node={props._key}>
+		{props.children || (
+			<br />
+		)}
+	</p>
+)
 
 const DebugEditor = props => (
 	<pre style={stylex.parse("overflow -x:scroll")}>
@@ -464,24 +469,12 @@ function Editor(props) {
 
 	const domNodeRange = React.useRef()
 
-	const [state, dispatch] = useEditor(`package main
+	const [state, dispatch] = useEditor(`Hello, world!
+Hello, world!
+Hello, world!
+Hello, world!`)
 
-import "fmt"
-
-func main() {
-	fmt.Println("hello, world!")
-}`)
-
-	const [firstRender, setFirstRender] = React.useState()
-
-	React.useEffect(
-		React.useCallback(() => {
-			setFirstRender(<Code>{lex(state.initialValue)}</Code>)
-		}, [state]),
-		[],
-	)
-
-	// TODO: Optimization: can copy a reference to the last
+	// TODO: Optimization: Can copy a reference to the last
 	// anchor node, etc. Could potentially reuse
 	// `domNodeRange`.
 	React.useLayoutEffect(() => {
@@ -491,13 +484,13 @@ func main() {
 				return
 			}
 			// Compute VDOM cursors:
-			let { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
 			const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = pos1
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 				pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
 			}
-			dispatch.setVDOMCursor(pos1, pos2)
+			dispatch.setState(state.body, pos1, pos2)
 			// Compute DOM node range (reset):
 			domNodeRange.current = {
 				ref: null,                                   // A reference to the start node.
@@ -570,21 +563,20 @@ func main() {
 					},
 
 					onInput: e => {
-						// Read the DOM:
-						console.log(innerText(domNodeRange.current.ref))
+						// console.log(state.pos1, state.pos2)
 
-						// Update the VDOM:
-						// ...
+						// // Read the DOM:
+						// const read = innerText(domNodeRange.current.ref)
 
 						// Restore the DOM (sync to React):
 						const { anchorNode } = document.getSelection()
 						const startNode = ascendToBlockDOMNode(anchorNode)
 						startNode.replaceWith(domNodeRange.current.fragment)
 
-						// Render the VDOM components:
+						// Update the VDOM:
 						// ...
 
-						// Render the VDOM cursor:
+						// Correct the cursor:
 						const selection = document.getSelection()
 						const range = document.createRange()
 						const { node, offset } = computeDOMCursor(ref.current, state.pos1)
@@ -597,7 +589,11 @@ func main() {
 					// onDragStart: e => e.preventDefault(),
 					// onDrop:      e => e.preventDefault(),
 				},
-				firstRender,
+				state.body.nodes.map(each => (
+					<Paragraph key={each.key} _key={each.key}>
+						{each.data}
+					</Paragraph>
+				)),
 			)}
 			<div style={stylex.parse("h:28")} />
 			<DebugEditor state={state} />
