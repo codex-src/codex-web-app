@@ -488,7 +488,7 @@ const DebugEditor = props => (
 //
 function Editor(props) {
 	const root = React.useRef() // The root DOM node.
-	const drop = React.useRef() // The drop data.
+	const drop = React.useRef() // The drag-and-drop data.
 
 	const [state, dispatch] = useEditor(`package main
 
@@ -782,7 +782,7 @@ func main() {
 					// 			pos2: state.pos2,
 					// 		},
 					// 		end: {
-					// 			pos: 0, // Unset; assumes no selection.
+					// 			pos: 0, // Unknown.
 					// 		},
 					// 	}
 					// 	// ...
