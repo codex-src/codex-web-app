@@ -452,7 +452,9 @@ That is the question`)
 
 						let [pos1, pos2] = [state.pos1.pos, state.pos1.pos]
 						pos1 += -state.pos1.offset
-						pos2 += -state.pos1.offset + dirty.length
+						pos2 += -state.pos1.offset + clean.length
+
+						console.log({ dirty, pos1, pos2 })
 
 						// Restore the DOM (sync to React):
 						const { anchorNode } = document.getSelection()
