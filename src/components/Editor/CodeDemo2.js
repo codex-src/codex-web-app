@@ -452,24 +452,6 @@ That is the question`)
 				pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
 			}
 			dispatch.setState(state.body, pos1, pos2)
-			// Compute DOM node range (reset):
-			domNodeRange.current = {
-				ref: null,                                   // A reference to the start node.
-				fragment: document.createDocumentFragment(), // The unchanged DOM node range.
-
-			}
-			const startNode = traverseDOM.ascendToBlockDOMNode(pos1.pos <= pos2.pos ? anchorNode : focusNode)
-			let endNode = startNode
-			if (anchorNode !== focusNode) {
-				endNode = traverseDOM.ascendToBlockDOMNode(pos1.pos > pos2.pos ? anchorNode : focusNode) // Reverse order.
-			}
-			let node = startNode
-			domNodeRange.current.ref = node
-			domNodeRange.current.fragment.appendChild(node.cloneNode(true))
-			while (node !== endNode) {
-				node = node.nextSibling // Assumes `node.nextSibling`.
-				domNodeRange.current.fragment.appendChild(node.cloneNode(true))
-			}
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -504,26 +486,54 @@ That is the question`)
 					onKeyDown: e => {
 						if (e.key === "Tab") {
 							e.preventDefault()
-							// document.execCommand("insertText", false, "\t") // FIXME
-							// ...
 							return
 						} else if (e.shiftKey && e.key === "Enter") { // FIXME: Use `detect`?
 							e.preventDefault()
-							// document.execCommand("insertText", false, "\n") // FIXME
-							// ...
 							return
 						} else if (detect.isUndo(e)) {
 							e.preventDefault()
-							// ...
 							return
 						} else if (detect.isRedo(e)) {
 							e.preventDefault()
-							// ...
 							return
+						}
+						// Compute VDOM cursors:
+						const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+						if (anchorNode === ref.current || focusNode === ref.current) {
+							// No-op.
+							return
+						}
+						const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						let pos2 = { ...pos1 }
+						if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+							pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
+						}
+						dispatch.setState(state.body, pos1, pos2)
+						// Compute DOM node range (reset):
+						domNodeRange.current = {
+							ref: null,                                   // A reference to the start node.
+							fragment: document.createDocumentFragment(), // The unchanged DOM node range.
+						}
+						const startNode = traverseDOM.ascendToBlockDOMNode(pos1.pos <= pos2.pos ? anchorNode : focusNode)
+						let endNode = startNode
+						if (anchorNode !== focusNode) {
+							endNode = traverseDOM.ascendToBlockDOMNode(pos1.pos > pos2.pos ? anchorNode : focusNode) // Reverse order.
+						}
+						let node = startNode
+						domNodeRange.current.ref = node
+						domNodeRange.current.fragment.appendChild(node.cloneNode(true))
+						while (node !== endNode) {
+							node = node.nextSibling // Assumes `node.nextSibling`.
+							domNodeRange.current.fragment.appendChild(node.cloneNode(true))
 						}
 					},
 
 					onInput: e => {
+						if (e.nativeEvent.inputType === "historyUndo") {
+							// No-op.
+							return
+						}
+
 						// Read the DOM and the cursor:
 						//
 						// DOM:
@@ -537,9 +547,8 @@ That is the question`)
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
-						// // Restore the DOM (sync for React):
-						// const startNode = traverseDOM.ascendToBlockDOMNode(anchorNode)
-						// startNode.replaceWith(domNodeRange.current.fragment)
+						// Don’t try this at home…
+						document.execCommand("undo", false, null)
 
 						// Update the VDOM:
 						dispatch.insertRange(dirty, pos1, pos2, resetPos)
