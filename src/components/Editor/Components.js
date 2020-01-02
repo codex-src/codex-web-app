@@ -132,14 +132,14 @@ const Break = props => (
 	</p>
 )
 
-export const types = {
-	[Header.name]:     "Header",
-	[Comment.name]:    "Comment",
-	[Blockquote.name]: "Blockquote",
-	[CodeBlock.name]:  "CodeBlock",
-	[Paragraph.name]:  "Paragraph",
-	[Break.name]:      "Break",
-}
+// export const types = {
+// 	[Header.name]:     "Header",
+// 	[Comment.name]:    "Comment",
+// 	[Blockquote.name]: "Blockquote",
+// 	[CodeBlock.name]:  "CodeBlock",
+// 	[Paragraph.name]:  "Paragraph",
+// 	[Break.name]:      "Break",
+// }
 
 // Convenience function.
 function isBlockquote(data, hasNextSibling) {
@@ -150,7 +150,7 @@ function isBlockquote(data, hasNextSibling) {
 	return ok
 }
 
-export function parse(body) {
+function parse(body) {
 	const Components = []
 	let index = 0
 	while (index < body.nodes.length) {
@@ -292,3 +292,5 @@ export function parse(body) {
 	/* eslint-enable no-case-declarations */
 	return Components
 }
+
+export default parse

@@ -1,4 +1,5 @@
 import detect from "./detect"
+import parse from "./Components"
 import React from "react"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
@@ -290,16 +291,16 @@ import "./editor.css"
 // 	</pre>
 // )
 
-function parse(body) {
-	const components = body.nodes.map(each => (
-		<Paragraph key={each.key} _key={each.key}>
-			{each.data || (
-				<br />
-			)}
-		</Paragraph>
-	))
-	return components
-}
+// function parse(body) {
+// 	const components = body.nodes.map(each => (
+// 		<Paragraph key={each.key} _key={each.key}>
+// 			{each.data || (
+// 				<br />
+// 			)}
+// 		</Paragraph>
+// 	))
+// 	return components
+// }
 
 const initialState = {
 	initialValue: "",                   // The initial plain text vlaue.
@@ -360,13 +361,13 @@ function useEditor(initialValue) {
 	return useMethods(reducer, initialState, init(initialValue))
 }
 
-const Paragraph = props => (
-	<p data-vdom-node={props._key}>
-		{props.children || (
-			<br />
-		)}
-	</p>
-)
+// const Paragraph = props => (
+// 	<p data-vdom-node={props._key}>
+// 		{props.children || (
+// 			<br />
+// 		)}
+// 	</p>
+// )
 
 const DebugEditor = props => (
 	<pre style={stylex.parse("overflow -x:scroll")}>
