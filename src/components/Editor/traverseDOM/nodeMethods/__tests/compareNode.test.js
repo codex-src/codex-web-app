@@ -12,12 +12,12 @@ test("isBreakOrTextNode (text node)", () => {
 	expect(compareNode.isBreakOrTextNode(textNode)).toBe(true)
 })
 
-test("isVDOMNode (text node)", () => {
+test("isBlockDOMNode (text node)", () => {
 	const textNode = document.createTextNode("Hello, world!")
-	expect(compareNode.isVDOMNode(textNode)).toBe(false)
+	expect(compareNode.isBlockDOMNode(textNode)).toBe(false)
 })
 
-test("isVDOMNode (p)", () => {
+test("isBlockDOMNode (p)", () => {
 	const root = (
 		<div id="root">
 			<article>
@@ -34,13 +34,13 @@ test("isVDOMNode (p)", () => {
 	const parser = new DOMParser()
 	const dom = parser.parseFromString(ReactDOMServer.renderToStaticMarkup(root), "text/html")
 	const p = dom.querySelector("p")
-	expect(compareNode.isVDOMNode(p)).toBe(true)
+	expect(compareNode.isBlockDOMNode(p)).toBe(true)
 })
 
 // NOTE: `ul` and `li` are assigned `data-vdom-node` because
 // `li` does not have a next sibling; the line break is
 // provided by `ul`.
-test("isVDOMNode (ul)", () => {
+test("isBlockDOMNode (ul)", () => {
 	const root = (
 		<div id="root">
 			<article>
@@ -62,6 +62,6 @@ test("isVDOMNode (ul)", () => {
 	const dom = parser.parseFromString(ReactDOMServer.renderToStaticMarkup(root), "text/html")
 	const ul = dom.querySelector("ul")
 	const li = dom.querySelector("li")
-	expect(compareNode.isVDOMNode(ul)).toBe(true)
-	expect(compareNode.isVDOMNode(li)).toBe(true)
+	expect(compareNode.isBlockDOMNode(ul)).toBe(true)
+	expect(compareNode.isBlockDOMNode(li)).toBe(true)
 })

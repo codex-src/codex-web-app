@@ -1,36 +1,35 @@
 import * as compareNode from "./compareNode"
 
-// `nodeValue` and `innerText` mock the browser functions
-// based on the needs of `traverseDOM`.
-
-// `nodeValue` reads a node’s text data.
+// `nodeValue` mocks the browser function.
 export function nodeValue(node) {
 	if (!compareNode.isBreakOrTextNode(node)) {
 		return ""
 	}
-	// Convert non-breaking spaces to spaces:
-	return (node.nodeValue || "").replace("\u00a0", " ")
+	// (1) Guard break node:
+	// (2) Convert non-breaking spaces to spaces:
+	const data = node.nodeValue || ""  // 1
+	return data.replace("\u00a0", " ") // 2
 }
 
-// `innerText` recursively reads a root node’s text data.
+// `innerText` mocks the browser function.
 export function innerText(rootNode) {
-	// Guard break or text nodes:
 	if (compareNode.isBreakOrTextNode(rootNode)) {
 		return nodeValue(rootNode)
 	}
 	let data = ""
-	const recurse = start => {
-		for (const currentNode of start.childNodes) {
+	const compute = startNode => {
+		for (const currentNode of startNode.childNodes) {
 			if (compareNode.isBreakOrTextNode(currentNode)) {
 				data += nodeValue(currentNode)
 			} else {
-				recurse(currentNode)
-				if (compareNode.isVDOMNode(currentNode) && currentNode.nextSibling) {
+				compute(currentNode)
+				if (compareNode.isBlockDOMNode(currentNode) &&
+						currentNode.nextSibling) { // Assumes `node.nextSibling`.
 					data += "\n"
 				}
 			}
 		}
 	}
-	recurse(rootNode)
+	compute(rootNode)
 	return data
 }

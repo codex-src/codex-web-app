@@ -1,132 +1,11 @@
 import detect from "./detect"
 import React from "react"
 import stylex from "stylex"
+import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
 import vdom from "./vdom"
 
 import "./editor.css"
-
-// `isBreakOrTextNode` returns whether a node is a break
-// node or a text node.
-function isBreakOrTextNode(node) {
-	const ok = (
-		(node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") ||
-		node.nodeType === Node.TEXT_NODE
-	)
-	return ok
-}
-
-// `isBlockDOMNode` returns whether a node is a block DOM
-// node.
-function isBlockDOMNode(node) {
-	const ok = (
-		node.nodeType === Node.ELEMENT_NODE &&
-		node.hasAttribute("data-vdom-node")
-	)
-	return ok
-}
-
-// `nodeValue` mocks the browser function.
-export function nodeValue(node) {
-	if (!isBreakOrTextNode(node)) {
-		return ""
-	}
-	// (1) Guard break node:
-	// (2) Convert non-breaking spaces:
-	return (node.nodeValue || "" /* 1 */).replace("\u00a0", " ") // 2
-}
-
-// `ascendToBlockDOMNode` ascends to the nearest block DOM
-// node.
-function ascendToBlockDOMNode(node) {
-	while (!isBlockDOMNode(node)) {
-		node = node.parentNode // Assumes `node.parentNode`.
-	}
-	return node
-}
-
-// `innerText` mocks the browser function.
-function innerText(rootNode) {
-	let value = ""
-	const compute = startNode => {
-		for (const currentNode of startNode.childNodes) {
-			if (isBreakOrTextNode(currentNode)) {
-				value += nodeValue(currentNode)
-			} else {
-				compute(currentNode)
-				if (isBlockDOMNode(currentNode) &&
-						currentNode.nextSibling) {
-					value += "\n"
-				}
-			}
-		}
-	}
-	compute(rootNode)
-	return value
-}
-
-// `computeVDOMCursor` computes the VDOM cursor from a DOM
-// cursor.
-function computeVDOMCursor(rootNode, node, offset) {
-	let pos = 0
-	while (node.childNodes.length) {
-		node = node.childNodes[0]
-	}
-	const compute = startNode => {
-		for (const currentNode of startNode.childNodes) {
-			if (isBreakOrTextNode(currentNode)) {
-				if (currentNode === node) {
-					return true
-				}
-				pos += nodeValue(currentNode).length
-			} else {
-				if (compute(currentNode)) {
-					return true
-				} else if (isBlockDOMNode(currentNode) &&
-						currentNode.nextSibling) {
-					pos += 1
-				}
-			}
-		}
-		return false
-	}
-	compute(rootNode)
-	return pos + offset
-}
-
-// `computeDOMCursor` computes the DOM cursor from a VDOM
-// cursor.
-function computeDOMCursor(rootNode, pos) {
-	const node = {
-		node: rootNode,
-		offset: 0,
-	}
-	const compute = startNode => {
-		for (const currentNode of startNode.childNodes) {
-			if (isBreakOrTextNode(currentNode)) {
-				const { length } = nodeValue(currentNode)
-				if (pos - length <= 0) {
-					Object.assign(node, {
-						node: currentNode,
-						offset: pos,
-					})
-					return true
-				}
-				pos -= length
-			} else {
-				if (compute(currentNode)) {
-					return true
-				} else if (isBlockDOMNode(currentNode) &&
-						currentNode.nextSibling) {
-					pos -= 1
-				}
-			}
-		}
-		return false
-	}
-	compute(rootNode)
-	return node
-}
 
 // class Lexer {
 // 	constructor(value) {
@@ -412,12 +291,11 @@ function computeDOMCursor(rootNode, pos) {
 // )
 
 const initialState = {
-	initialValue: "",        // The initial plain text vlaue.
-	body: new vdom.VDOM(""), // The VDOM body.
-	isFocused: false,        // Is the editor focused?
-	pos1: 0,                 // The VDOM cursor start.
-	pos2: 0,                 // The VDOM cursor end.
-	// Components: [],       // The rendered React components.
+	initialValue: "",                   // The initial plain text vlaue.
+	body: new vdom.VDOM(""),            // The VDOM body.
+	isFocused: false,                   // Is the editor focused?
+	pos1: new traverseDOM.VDOMCursor(), // The VDOM cursor start.
+	pos2: new traverseDOM.VDOMCursor(), // The VDOM cursor end.
 }
 
 const reducer = state => ({
@@ -428,7 +306,7 @@ const reducer = state => ({
 		state.isFocused = false
 	},
 	setState(body, pos1, pos2) {
-		if (pos1 > pos2) {
+		if (pos1.pos > pos2.pos) {
 			[pos1, pos2] = [pos2, pos1]
 		}
 		Object.assign(state, { body, pos1, pos2 })
@@ -485,10 +363,10 @@ Hello, world!`)
 			}
 			// Compute VDOM cursors:
 			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-			const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-			let pos2 = pos1
+			const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+			let pos2 = { ...pos1 }
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-				pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
+				pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
 			}
 			dispatch.setState(state.body, pos1, pos2)
 			// Compute DOM node range (reset):
@@ -496,10 +374,10 @@ Hello, world!`)
 				ref: null,                                   // A reference to the start node.
 				fragment: document.createDocumentFragment(), // The unchanged DOM nodes.
 			}
-			const startNode = ascendToBlockDOMNode(pos1 <= pos2 ? anchorNode : focusNode)
+			const startNode = traverseDOM.ascendToBlockDOMNode(pos1.pos <= pos2.pos ? anchorNode : focusNode)
 			let endNode = startNode
 			if (anchorNode !== focusNode) {
-				endNode = ascendToBlockDOMNode(pos1 > pos2 ? anchorNode : focusNode) // Reverse order.
+				endNode = traverseDOM.ascendToBlockDOMNode(pos1.pos > pos2.pos ? anchorNode : focusNode) // Reverse order.
 			}
 			let node = startNode
 			domNodeRange.current.ref = node
@@ -570,7 +448,7 @@ Hello, world!`)
 
 						// Restore the DOM (sync to React):
 						const { anchorNode } = document.getSelection()
-						const startNode = ascendToBlockDOMNode(anchorNode)
+						const startNode = traverseDOM.ascendToBlockDOMNode(anchorNode)
 						startNode.replaceWith(domNodeRange.current.fragment)
 
 						// Update the VDOM:
@@ -579,7 +457,7 @@ Hello, world!`)
 						// Correct the cursor:
 						const selection = document.getSelection()
 						const range = document.createRange()
-						const { node, offset } = computeDOMCursor(ref.current, state.pos1)
+						const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
 						range.setStart(node, offset)
 						range.collapse()
 						selection.removeAllRanges()

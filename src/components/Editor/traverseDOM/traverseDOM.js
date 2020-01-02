@@ -1,19 +1,20 @@
 import * as types from "./types"
 import nodeMethods from "./nodeMethods"
 
-// `ascendToVDOMNode` ascends to the nearest VDOM node.
-export function ascendToVDOMNode(node) {
-	while (!nodeMethods.isVDOMNode(node)) { // Assumes parent node.
-		node = node.parentNode
+// `ascendToBlockDOMNode` ascends to the closest block DOM
+// node.
+export function ascendToBlockDOMNode(node) {
+	while (!nodeMethods.isBlockDOMNode(node)) {
+		node = node.parentNode // Assumes `node.parentNode`.
 	}
 	return node
 }
 
-// `computePosFromNode` computes a VDOM cursor from a root
-// node, node, and offset.
-export function computePosFromNode(rootNode, node, textOffset) {
+// `computeVDOMCursor` computes a VDOM cursor from a DOM
+// cursor.
+export function computeVDOMCursor(rootNode, node, textOffset) {
 	// Iterate to the innermost node:
-	const pos = types.newPos()
+	const pos = new types.VDOMCursor()
 	while (node.childNodes && node.childNodes.length) {
 		node = node.childNodes[textOffset] // ??
 		textOffset = 0
@@ -42,7 +43,8 @@ export function computePosFromNode(rootNode, node, textOffset) {
 					return true
 				}
 				// If not the last node, increment one paragraph:
-				if (nodeMethods.isVDOMNode(currentNode) && currentNode.nextSibling) {
+				if (nodeMethods.isBlockDOMNode(currentNode) &&
+						currentNode.nextSibling) { // Assumes `node.nextSibling`.
 					Object.assign(pos, {
 						index: pos.index + 1,
 						offset: 0,
@@ -57,31 +59,32 @@ export function computePosFromNode(rootNode, node, textOffset) {
 	return pos
 }
 
-// `computeNodeFromPos` computes the node (node and offset)
-// for a VDOM cursor.
-export function computeNodeFromPos(rootNode, pos) {
-	const node = types.newNode()
+// `computeDOMCursor` computes a DOM cursor from a VDOM
+// cursor.
+export function computeDOMCursor(rootNode, { ...pos }) {
+	const node = new types.DOMCursor()
 	const recurse = startNode => {
 		for (const currentNode of startNode.childNodes) {
 			if (nodeMethods.isBreakOrTextNode(currentNode)) {
 				// If found, compute the node and offset:
 				const { length } = nodeMethods.nodeValue(currentNode)
-				if (pos - length <= 0) { // && currentNode.nodeName !== "INPUT") { // TODO
+				if (pos.pos - length <= 0) {
 					Object.assign(node, {
 						node: currentNode,
-						offset: pos,
+						offset: pos.pos,
 					})
 					return true
 				}
-				pos -= length
+				pos.pos -= length
 			} else {
 				// If found recursing the current node, return:
 				if (recurse(currentNode)) {
 					return true
 				}
 				// If not the last node, decrement one paragraph:
-				if (nodeMethods.isVDOMNode(currentNode) && currentNode.nextSibling) {
-					pos--
+				if (nodeMethods.isBlockDOMNode(currentNode) &&
+						currentNode.nextSibling) { // Assumes `node.nextSibling`.
+					pos.pos--
 				}
 			}
 		}
