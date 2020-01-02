@@ -771,8 +771,11 @@ func main() {
 					onDragStart: e => e.preventDefault(),
 					onDrop:      e => e.preventDefault(),
 
-					// // const dragValue = state.value.slice(state.pos1, state.pos2)
-					// // e.dataTransfer.setData("text", dragValue)
+					// const dragValue = state.value.slice(state.pos1, state.pos2)
+					// e.dataTransfer.setData("text", dragValue)
+					// // ...
+					// const dragValue = e.dataTransfer.getData("text")
+					//
 					// onDragStart: e => {
 					// 	// e.preventDefault()
 					// 	drop.current = {
@@ -789,8 +792,6 @@ func main() {
 					// },
 					//
 					// // https://github.com/facebook/draft-js/blob/master/src/component/handlers/drag/DraftEditorDragHandler.js
-					// //
-					// // const dragValue = e.dataTransfer.getData("text")
 					// onDrop: e => {
 					// 	e.preventDefault()
 					// 	// Compute the DOM node and offset:
