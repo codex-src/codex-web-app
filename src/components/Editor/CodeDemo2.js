@@ -470,7 +470,6 @@ That is the question`)
 				node = node.nextSibling // Assumes `node.nextSibling`.
 				domNodeRange.current.fragment.appendChild(node.cloneNode(true))
 			}
-			// console.log(traverseDOM.innerText(domNodeRange.current.fragment.childNodes[0]))
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
