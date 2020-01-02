@@ -487,7 +487,8 @@ const DebugEditor = props => (
 // without compromise.
 //
 function Editor(props) {
-	const ref = React.useRef()
+	const root = React.useRef() // The root DOM node.
+	const drop = React.useRef() // The drop data.
 
 	const [state, dispatch] = useEditor(`package main
 
@@ -511,28 +512,44 @@ func main() {
 	//
 	// TODO: Use keys instead of `pos1` and `pos2`.
 	React.useLayoutEffect(() => {
-		// console.log("mounting") // DELETEME
 		const onSelectionChange = e => {
 			if (!state.isFocused) {
 				// No-op.
 				return
 			}
-			// console.log("selectionchange") // DELETEME
 			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-			const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+			const pos1 = computeVDOMCursor(root.current, anchorNode, anchorOffset)
 			let pos2 = pos1
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-				pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
+				pos2 = computeVDOMCursor(root.current, focusNode, focusOffset)
 			}
-			// console.log(state.value.slice(pos1, pos2)) // DELETEME
 			dispatch.setVDOMCursor(pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
-			// console.log("unmounting") // DELETEME
 			document.removeEventListener("selectionchange", onSelectionChange)
 		}
 	}, [state, dispatch])
+
+	// // TODO: Ignore idempotent keys.
+	// let { anchorNode, focusNode } = document.getSelection()
+	// const sameNode = anchorNode === focusNode
+	// while (root.current.contains(anchorNode)) {
+	// 	if (anchorNode.hasAttribute && anchorNode.hasAttribute("data-vdom-node")) {
+	// 		break
+	// 	}
+	// 	anchorNode = anchorNode.parentNode
+	// }
+	// focusNode = anchorNode
+	// if (!sameNode) {
+	// 	while (root.current.contains(focusNode)) {
+	// 		if (focusNode.hasAttribute && focusNode.hasAttribute("data-vdom-node")) {
+	// 			break
+	// 		}
+	// 		focusNode = focusNode.parentNode
+	// 	}
+	// }
+	// console.log(anchorNode, focusNode)
 
 	// GPU optimization:
 	const translateZ = {}
@@ -555,13 +572,13 @@ func main() {
 			{React.createElement(
 				"article",
 				{
-					ref,
+					ref: root,
 
 					style: translateZ,
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
-					// spellCheck: false,
+					spellCheck: false,
 
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
@@ -643,21 +660,6 @@ func main() {
 					// Unicode handling.
 					//
 					// TODO - DONE: Test `selectionchange` coverage.
-
-					// onSelect: e => {
-					// 	const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-					// 	// if (anchorNode === ref.current || focusNode === ref.current) {
-					// 	// 	// No-op.
-					// 	// 	return
-					// 	// }
-					// 	const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-					// 	let pos2 = pos1
-					// 	if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-					// 		pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
-					// 	}
-					// 	dispatch.setState(state.value, pos1, pos2)
-					// },
-
 					onKeyDown: e => {
 						if (e.key === "Tab") {
 							e.preventDefault()
@@ -677,30 +679,13 @@ func main() {
 						}
 					},
 
-					// // TODO: Ignore idempotent keys.
-					// let { anchorNode, focusNode } = document.getSelection()
-					// const sameNode = anchorNode === focusNode
-					// while (ref.current.contains(anchorNode)) {
-					// 	if (anchorNode.hasAttribute && anchorNode.hasAttribute("data-vdom-node")) {
-					// 		break
-					// 	}
-					// 	anchorNode = anchorNode.parentNode
-					// }
-					// focusNode = anchorNode
-					// if (!sameNode) {
-					// 	while (ref.current.contains(focusNode)) {
-					// 		if (focusNode.hasAttribute && focusNode.hasAttribute("data-vdom-node")) {
-					// 			break
-					// 		}
-					// 		focusNode = focusNode.parentNode
-					// 	}
-					// }
-					// console.log(anchorNode, focusNode)
-
 					onInput: e => {
-						// console.log({ data: e.nativeEvent.data })
+						// console.log({ inputType: e.nativeEvent.inputType, data: e.nativeEvent.data })
 
-						const value = innerText(ref.current)
+						const value = innerText(root.current)
+						// if (e.nativeEvent.inputType === "insertFromDrop") {
+						// 	value = drop.current
+						// }
 
 						const {
 							anchorNode,   // The cursor start node.
@@ -709,10 +694,15 @@ func main() {
 							focusOffset,  // The cursor end node offset.
 						} = document.getSelection()
 
-						const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						const pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
+						const pos1 = computeVDOMCursor(root.current, anchorNode, anchorOffset)
+						const pos2 = computeVDOMCursor(root.current, focusNode, focusOffset)
 
 						dispatch.setState(value, pos1, pos2)
+
+						if (e.nativeEvent.inputType === "deleteByDrag" || e.nativeEvent.inputType === "insertFromDrop") {
+							// No-op.
+							return
+						}
 
 						// Guard composition events:
 						//
@@ -720,34 +710,27 @@ func main() {
 						// - onCompositionUpdate
 						// - onCompositionEnd
 						//
-						if ((e.nativeEvent.data && utf8.isAlphanum(e.nativeEvent.data)) || e.nativeEvent.inputType === "insertCompositionText") {
+						if (/* (e.nativeEvent.data && utf8.isAlphanum(e.nativeEvent.data)) || */ e.nativeEvent.inputType === "insertCompositionText") {
 							// No-op.
 							return
 						}
 
 						// TODO: Heavily optimize.
 						let node = null
-						while ((node = ref.current.lastChild)) {
+						while ((node = root.current.lastChild)) {
 							node.remove()
 						}
 
-						// Reparse the affected DOM nodes:
-						//
-						// NOTE: `ReactDOM.render` is not strictly
-						// necessary.
+						// Reparse and append the affected DOM nodes:
 						const parsed = lex(value)
 						const fragment = document.createDocumentFragment()
 						ReactDOM.render(<Code>{parsed}</Code>, fragment)
-						ref.current.appendChild(fragment)
+						root.current.appendChild(fragment)
 
-						// Reset the cursor:
-						//
-						// NOTE: Assumes no selection because of the
-						// nature of `input` events -- this thinking may
-						// be flawed.
+						// Correct the cursor:
 						const selection = document.getSelection()
 						const range = document.createRange()
-						const { node: _node, offset } = computeDOMCursor(ref.current, pos1)
+						const { node: _node, offset } = computeDOMCursor(root.current, pos1)
 						range.setStart(_node, offset)
 						range.collapse()
 						selection.removeAllRanges()
@@ -771,8 +754,8 @@ func main() {
 							// No-op.
 							return
 						}
-						const copyvalue = state.value.slice(state.pos1, state.pos2)
-						e.clipboardData.setData("text/plain", copyvalue)
+						const copyValue = state.value.slice(state.pos1, state.pos2)
+						e.clipboardData.setData("text/plain", copyValue)
 					},
 
 					onPaste: e => {
@@ -786,7 +769,47 @@ func main() {
 					},
 
 					onDragStart: e => e.preventDefault(),
-					onDragEnd:   e => e.preventDefault(),
+					onDrop:      e => e.preventDefault(),
+
+					// // const dragValue = state.value.slice(state.pos1, state.pos2)
+					// // e.dataTransfer.setData("text", dragValue)
+					// onDragStart: e => {
+					// 	// e.preventDefault()
+					// 	drop.current = {
+					// 		value: state.value.slice(state.pos1, state.pos2),
+					// 		start: {
+					// 			pos1: state.pos1,
+					// 			pos2: state.pos2,
+					// 		},
+					// 		end: {
+					// 			pos: 0, // Unset; assumes no selection.
+					// 		},
+					// 	}
+					// 	// ...
+					// },
+					//
+					// // https://github.com/facebook/draft-js/blob/master/src/component/handlers/drag/DraftEditorDragHandler.js
+					// //
+					// // const dragValue = e.dataTransfer.getData("text")
+					// onDrop: e => {
+					// 	e.preventDefault()
+					// 	// Compute the DOM node and offset:
+					// 	const {
+					// 		startContainer: node, // The computed anchor node.
+					// 		startOffset: offset,  // The computed anchor node offset.
+					// 	} = document.caretRangeFromPoint(e.nativeEvent.x, e.nativeEvent.y)
+					// 	// Compute the VDOM cursor:
+					// 	const pos = computeVDOMCursor(root.current, node, offset)
+					// 	Object.assign(drop.current, {
+					// 		end: {
+					// 			pos,
+					// 		},
+					// 	})
+					// 	// console.log(pos)
+					// 	setTimeout(() => {
+					// 		pos.current = {}
+					// 	}, 0)
+					// },
 				},
 				firstRender,
 			)}
