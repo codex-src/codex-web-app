@@ -528,6 +528,8 @@ That is the question`)
 						}
 					},
 
+					// FIXME / TODO: Add a paragraph.
+					// FIXME / TODO: Delete a paragraph (backwards, forwards).
 					onInput: e => {
 						if (e.nativeEvent.inputType === "historyUndo") {
 							// No-op.
