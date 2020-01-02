@@ -1,4 +1,5 @@
 import detect from "./detect"
+import invariant from "invariant"
 import React from "react"
 import ReactDOM from "react-dom"
 import stylex from "stylex"
@@ -6,10 +7,6 @@ import useMethods from "use-methods"
 import utf8 from "./utf8"
 
 import "./code-demo.css"
-
-/*
- *
- */
 
 // `isBreakOrTextNode` returns whether a node is a break
 // node or a text node.
@@ -39,6 +36,15 @@ export function nodeValue(node) {
 	// (1) Guard break node:
 	// (2) Convert non-breaking spaces:
 	return (node.nodeValue || "" /* 1 */).replace("\u00a0", " ") // 2
+}
+
+// `ascendToBlockDOMNode` ascends to the nearest block DOM
+// node.
+function ascendToBlockDOMNode(node) {
+	while (!isBlockDOMNode(node)) {
+		node = node.parentNode // Assumes `node.parentNode`.
+	}
+	return node
 }
 
 // `innerText` mocks the browser function.
@@ -123,10 +129,6 @@ function computeDOMCursor(rootNode, pos) {
 	compute(rootNode)
 	return node
 }
-
-/*
- *
- */
 
 class Lexer {
 	constructor(value) {
@@ -304,7 +306,7 @@ function lex(value) {
 			}
 			token = Token.COM
 			break
-			// Whitespace:
+		// Whitespace:
 		case ch === " " || ch === "\t" || ch === "\n":
 			if (/* lexer.x2 > 1 && */ ch === "\n") { // FIXME?
 				lexer.lines.push([])
@@ -313,7 +315,7 @@ function lex(value) {
 			}
 			lexer.accept_run(" \t")
 			break
-			// Keyword or function:
+		// Keyword or function:
 		case (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z") || ch === "_":
 			lexer.accept_run("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789")
 			if (keywords[lexer.focus()]) {
@@ -328,7 +330,7 @@ function lex(value) {
 			lexer.x2 = x2
 			token = token || Token.UNS
 			break
-			// String:
+		// String:
 		case ch === "'" || ch === "\"" || ch === "`":
 			const quote = ch
 			while ((ch = lexer.next())) {
@@ -346,7 +348,7 @@ function lex(value) {
 			}
 			token = Token.STR
 			break
- 			// Number:
+ 		// Number:
 		case ch >= "0" && ch <= "9":
 			let base = "0123456789"
 			if (lexer.accept("0") && lexer.accept("xX")) {
@@ -358,12 +360,12 @@ function lex(value) {
 			lexer.accept("i")
 			token = Token.NUM
 			break
-			// Punctuation:
+		// Punctuation:
 		case "!%&()*+,-./:;<=>[]^{|}".includes(ch):
 			lexer.accept_run("!%&()*+,-./:;<=>[]^{|}")
 			token = Token.PUN
 			break
-			// Non-whitespace:
+		// Non-whitespace:
 		default:
 			while ((ch = lexer.next())) {
 				if (ch === " " || ch === "\t" || ch === "\n") {
@@ -381,13 +383,11 @@ function lex(value) {
 	return lexer.lines
 }
 
-/*
- *
- */
-
 // Compound component.
+//
+// spellCheck={false}
 const Code = props => (
-	<pre style={stylex.parse("overflow -x:scroll")} /* spellCheck={false} */ data-vdom-node>
+	<pre style={stylex.parse("overflow -x:scroll")} data-vdom-node>
 		{!props.children.length && (
 			props.children
 		)}
@@ -412,10 +412,6 @@ const Code = props => (
 			)))}
 	</pre>
 )
-
-/*
- *
- */
 
 const initialState = {
 	initialValue: "", // The initial plain text vlaue.
@@ -459,10 +455,6 @@ function useEditor(initialValue) {
 	return useMethods(reducer, initialState, init(initialValue))
 }
 
-/*
- *
- */
-
 const DebugEditor = props => (
 	<pre style={stylex.parse("overflow -x:scroll")}>
 		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
@@ -471,24 +463,10 @@ const DebugEditor = props => (
 	</pre>
 )
 
-// This component intentionally breaks some of React’s rules
-// and best practices. This is because such a
-// `contenteditable` element needs to be treated and handled
-// as a truly uncontrolled component.
-//
-// React is still leveraged for everything except diffing
-// the DOM. This editor works in principle by examining the
-// result of `input` events and imperatively replacing --
-// not mutating -- the affected DOM nodes.
-//
-// This editor is inspired by the idea that an interactive
-// WYSIWYG editor for the web needs to just work and work on
-// every available modern platform and environment
-// without compromise.
-//
 function Editor(props) {
-	const root = React.useRef() // The root DOM node.
-	// const drop = React.useRef() // The drag-and-drop data.
+	const ref = React.useRef()
+
+	const domNodeRange = React.useRef()
 
 	const [state, dispatch] = useEditor(`package main
 
@@ -506,29 +484,6 @@ func main() {
 		}, [state]),
 		[],
 	)
-
-	// Polyfill for `onSelectionChange`:
-	//
-	// TODO: Use keys instead of `pos1` and `pos2`.
-	React.useLayoutEffect(() => {
-		const onSelectionChange = e => {
-			if (!state.isFocused) {
-				// No-op.
-				return
-			}
-			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-			const pos1 = computeVDOMCursor(root.current, anchorNode, anchorOffset)
-			let pos2 = pos1
-			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-				pos2 = computeVDOMCursor(root.current, focusNode, focusOffset)
-			}
-			dispatch.setVDOMCursor(pos1, pos2)
-		}
-		document.addEventListener("selectionchange", onSelectionChange)
-		return () => {
-			document.removeEventListener("selectionchange", onSelectionChange)
-		}
-	}, [state, dispatch])
 
 	// // TODO: Ignore idempotent keys.
 	// let { anchorNode, focusNode } = document.getSelection()
@@ -550,6 +505,47 @@ func main() {
 	// }
 	// console.log(anchorNode, focusNode)
 
+	React.useLayoutEffect(() => {
+		const onSelectionChange = e => {
+			if (!state.isFocused) {
+				// No-op.
+				return
+			}
+			// Compute VDOM cursors:
+			let { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+			const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+			let pos2 = pos1
+			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+				pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
+			}
+			dispatch.setVDOMCursor(pos1, pos2)
+			// Compute DOM node range:
+			domNodeRange.current = []
+			const startNode = ascendToBlockDOMNode(pos1 <= pos2 ? anchorNode : focusNode)
+			let endNode = startNode
+			if (anchorNode !== focusNode) {
+				endNode = ascendToBlockDOMNode(pos1 > pos2 ? anchorNode : focusNode) // Reverse order.
+			}
+			let node = startNode
+			domNodeRange.current.push({
+				ref: node,
+				copy: node.cloneNode(true),
+			})
+			while (node !== endNode) {
+				node = node.nextSibling // Assumes `node.nextSibling`.
+				domNodeRange.current.push({
+					ref: node,
+					copy: node.cloneNode(true),
+				})
+			}
+			// console.log(domNodeRange.current)
+		}
+		document.addEventListener("selectionchange", onSelectionChange)
+		return () => {
+			document.removeEventListener("selectionchange", onSelectionChange)
+		}
+	}, [state, dispatch])
+
 	// GPU optimization:
 	const translateZ = {}
 	if (state.isFocused) {
@@ -558,20 +554,12 @@ func main() {
 		})
 	}
 
-	// TODO:
-	//
-	// - Undo
-	// - Redo
-	// - vdom
-	// - traverseDOM
-	// - Optimizations
-	//
 	return (
 		<div>
 			{React.createElement(
 				"article",
 				{
-					ref: root,
+					ref,
 
 					style: translateZ,
 
@@ -582,236 +570,101 @@ func main() {
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
 
-					// NOTE: If we target `selectionchange` instead,
-					// we can know in advance of each input event the
-					// selection range. Then we can do a postmortem on
-					// the affected keys and rerender.
-					//
-					// Querying `input.nativeEvent.inputType` yields
-					// a semantic description of the input event. This
-					// can be used to provide hints to the rerender
-					// phase as to how to rerender.
-					//
-					// - deleteContentBackward
-					// - deleteContentForward
-					// - deleteSoftLineBackward
-					// - deleteWordBackward
-					// - historyRedo
-					// - historyUndo
-					// - insertCompositionText
-					// - insertParagraph
-					// - insertReplacementText
-					// - insertText
-					// - cut?
-					// - copy?
-					// - paste?
-					// - emoji?
-					//
-					// `selectionchange` need only remember the
-					// current selection range; input event can only
-					// affect a contiguous block of nodes.
-					//
-					// Storing references to the selection of
-					// (potentially) affected DOM nodes per selection
-					// change would provide rich information without
-					// needing to compute DOM nodes.
-					//
-					// Code block syntax needs to be able to possibly
-					// extend the affected DOM node range. When code
-					// block syntax is introduced, the document can be
-					// sniffed top-to-bottom for code blocks.
-					//
-					// The `vdom` package could be extended (e.g.
-					// `vdom2`) to store a reference to its rendered
-					// DOM node counterpart. If stored to a map, this
-					// could make lookup linear based on referential
-					// equality.
-					//
-					// In theory, all non-idempotent input operations
-					// commit one of the following rererender
-					// strategies:
-					//
-					// - Add a node (e.g. paragraph)
-					// - Delete a node (e.g. backspace, forward delete)
-					// - Insert a node?
-					// - Overwrite a block of nodes (selection)
-					// - Overwrite a node (no selection)
-					//
-					// All truly preventable events, e.g. cut, copy,
-					// paste, undo, redo, can benefit from React-based
-					// reconciliation, rather than imperative
-					// patching. For these events, we can just as
-					// easily overwrite `firstRender` or
-					// similar.
-					//
-					// TODO: Is undo on iOS and Android preventable?
-					// Also check cut, copy, paste, etc. If not, defer
-					// to patching strategy.
-					//
-					// If key metadata is stored in the history state
-					// stack, then a hard flush may not be needed. For
-					// example, if the `vdom2` package stores last
-					// modified at metadata or similar, this can be
-					// queried for more efficient patching.
-					//
-					// Backspace, delete, etc. methods should not
-					// leverage React-based reconciliation due to
-					// Unicode handling.
-					//
-					// TODO - DONE: Test `selectionchange` coverage.
 					onKeyDown: e => {
 						if (e.key === "Tab") {
 							e.preventDefault()
-							document.execCommand("insertText", false, "\t")
+							// document.execCommand("insertText", false, "\t") // FIXME
+							// ...
 							return
-						// FIXME: Add new `detect` method?
-						} else if (e.shiftKey && e.key === "Enter") {
+						} else if (e.shiftKey && e.key === "Enter") { // FIXME: Use `detect`?
 							e.preventDefault()
-							document.execCommand("insertText", false, "\n")
+							// document.execCommand("insertText", false, "\n") // FIXME
+							// ...
 							return
 						} else if (detect.isUndo(e)) {
 							e.preventDefault()
+							// ...
 							return
 						} else if (detect.isRedo(e)) {
 							e.preventDefault()
+							// ...
 							return
 						}
 					},
 
 					onInput: e => {
-						const value = innerText(root.current)
+						invariant(
+							domNodeRange.current.length > 0,
+							"FIXME",
+						)
+						// Read the DOM:
+						console.log(innerText(domNodeRange.current[0].ref))
+						// Update the VDOM:
+						// ...
 
-						const {
-							anchorNode,   // The cursor start node.
-							anchorOffset, // The cursor start node offset.
-							focusNode,    // The cursor end node.
-							focusOffset,  // The cursor end node offset.
-						} = document.getSelection()
+						// Restore the DOM (sync to React):
+						const { anchorNode } = document.getSelection()
+						const startNode = ascendToBlockDOMNode(anchorNode)
+						console.log(startNode)
+						// console.log(domNodeRange.current)
 
-						const pos1 = computeVDOMCursor(root.current, anchorNode, anchorOffset)
-						const pos2 = computeVDOMCursor(root.current, focusNode, focusOffset)
+						// Render the VDOM:
+						// ...
 
-						dispatch.setState(value, pos1, pos2)
-
-						// if (
-						// 	e.nativeEvent.inputType === "deleteByDrag" ||
-						// 	e.nativeEvent.inputType === "insertFromDrop"
-						// ) {
-						// 	// No-op.
-						// 	return
+						// const _domNodeRange = domNodeRange.current
+						//
+						// // No selection strategy:
+						// if (_domNodeRange.length === 1) {
+						// 	const startNode = _domNodeRange[0]
+						// 	console.log(innerText(startNode.ref))
+						// // Selection strategy:
+						// } else {
+						// 	// Read the first node and conditionally read
+						// 	// the last node.
+						// 	const startNode = _domNodeRange[0]
+						// 	console.log(innerText(startNode.ref))
+						// 	const endNode = _domNodeRange[_domNodeRange.length - 1]
+						// 	if (endNode.ref !== startNode.ref) {
+						// 		console.log(innerText(endNode.ref))
+						// 	}
 						// }
-
-						// Guard composition events:
-						//
-						// - onCompositionStart
-						// - onCompositionUpdate
-						// - onCompositionEnd
-						//
-						// Ignore non-syntax:
-						if (
-							(e.nativeEvent.data && utf8.isAlphanum(e.nativeEvent.data)) ||
-							e.nativeEvent.inputType === "insertCompositionText"
-						) {
-							// No-op.
-							return
-						}
-
-						// TODO: Heavily optimize.
-						let node = null
-						while ((node = root.current.lastChild)) {
-							node.remove()
-						}
-
-						// Reparse and append the affected DOM nodes:
-						const parsed = lex(value)
-						const fragment = document.createDocumentFragment()
-						ReactDOM.render(<Code>{parsed}</Code>, fragment)
-						root.current.appendChild(fragment)
-
-						// Correct the cursor:
-						const selection = document.getSelection()
-						const range = document.createRange()
-						const { node: _node, offset } = computeDOMCursor(root.current, pos1)
-						range.setStart(_node, offset)
-						range.collapse()
-						selection.removeAllRanges()
-						selection.addRange(range)
 					},
 
-					onCut: e => {
-						e.preventDefault()
-						if (state.pos1 === state.pos2) {
-							// No-op.
-							return
-						}
-						const cutValue = state.value.slice(state.pos1, state.pos2)
-						e.clipboardData.setData("text/plain", cutValue)
-						document.execCommand("insertText", false, "")
-					},
-
-					onCopy: e => {
-						e.preventDefault()
-						if (state.pos1 === state.pos2) {
-							// No-op.
-							return
-						}
-						const copyValue = state.value.slice(state.pos1, state.pos2)
-						e.clipboardData.setData("text/plain", copyValue)
-					},
-
-					onPaste: e => {
-						e.preventDefault()
-						const pasteValue = e.clipboardData.getData("text/plain")
-						if (!pasteValue) {
-							// No-op.
-							return
-						}
-						document.execCommand("insertText", false, pasteValue)
-					},
-
-					onDragStart: e => e.preventDefault(),
-					onDrop:      e => e.preventDefault(),
-
-					// const dragValue = state.value.slice(state.pos1, state.pos2)
-					// e.dataTransfer.setData("text", dragValue)
-					// // ...
-					// const dragValue = e.dataTransfer.getData("text")
-					//
-					// onDragStart: e => {
-					// 	// e.preventDefault()
-					// 	drop.current = {
-					// 		value: state.value.slice(state.pos1, state.pos2),
-					// 		start: {
-					// 			pos1: state.pos1,
-					// 			pos2: state.pos2,
-					// 		},
-					// 		end: {
-					// 			pos: 0, // Unknown.
-					// 		},
+					// onCut: e => {
+					// 	e.preventDefault()
+					// 	if (state.pos1 === state.pos2) {
+					// 		// No-op.
+					// 		return
 					// 	}
+					// 	const cutValue = state.value.slice(state.pos1, state.pos2)
+					// 	e.clipboardData.setData("text/plain", cutValue)
+					// 	// document.execCommand("insertText", false, "") // FIXME
 					// 	// ...
 					// },
 					//
-					// // https://github.com/facebook/draft-js/blob/master/src/component/handlers/drag/DraftEditorDragHandler.js
-					// onDrop: e => {
+					// onCopy: e => {
 					// 	e.preventDefault()
-					// 	// Compute the DOM node and offset:
-					// 	const {
-					// 		startContainer: node, // The computed anchor node.
-					// 		startOffset: offset,  // The computed anchor node offset.
-					// 	} = document.caretRangeFromPoint(e.nativeEvent.x, e.nativeEvent.y)
-					// 	// Compute the VDOM cursor:
-					// 	const pos = computeVDOMCursor(root.current, node, offset)
-					// 	Object.assign(drop.current, {
-					// 		end: {
-					// 			pos,
-					// 		},
-					// 	})
-					// 	// console.log(pos)
-					// 	setTimeout(() => {
-					// 		pos.current = {}
-					// 	}, 0)
+					// 	if (state.pos1 === state.pos2) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const copyValue = state.value.slice(state.pos1, state.pos2)
+					// 	e.clipboardData.setData("text/plain", copyValue)
 					// },
+					//
+					// onPaste: e => {
+					// 	e.preventDefault()
+					// 	const pasteValue = e.clipboardData.getData("text/plain")
+					// 	if (!pasteValue) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	// document.execCommand("insertText", false, pasteValue) // FIXME
+					// 	// ...
+					// },
+
+					onDragStart: e => e.preventDefault(),
+					onDrop:      e => e.preventDefault(),
 				},
 				firstRender,
 			)}
