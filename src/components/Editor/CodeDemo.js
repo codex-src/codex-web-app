@@ -581,8 +581,9 @@ func main() {
 					//
 					// - Add a node (e.g. paragraph)
 					// - Delete a node (e.g. backspace, forward delete)
+					// - Insert a node?
+					// - Overwrite a block of nodes (selection)
 					// - Overwrite a node (no selection)
-					// - Overwrite a block of nodes (selectino)
 					//
 					// All truly preventable events, e.g. cut, copy,
 					// paste, undo, redo, can benefit from React-based
