@@ -290,12 +290,28 @@ import "./editor.css"
 // 	</pre>
 // )
 
+function parse(body) {
+	const components = body.nodes.map(each => (
+		<Paragraph key={each.key} _key={each.key}>
+			{each.data || (
+				<br />
+			)}
+		</Paragraph>
+	))
+	return components
+}
+
 const initialState = {
 	initialValue: "",                   // The initial plain text vlaue.
 	body: new vdom.VDOM(""),            // The VDOM body.
 	isFocused: false,                   // Is the editor focused?
 	pos1: new traverseDOM.VDOMCursor(), // The VDOM cursor start.
 	pos2: new traverseDOM.VDOMCursor(), // The VDOM cursor end.
+
+	shouldRenderComponents: 0,
+	shouldRenderCursor: 0,
+
+	Components: [], // The React-rendered components.
 }
 
 const reducer = state => ({
@@ -311,13 +327,31 @@ const reducer = state => ({
 		}
 		Object.assign(state, { body, pos1, pos2 })
 	},
+	// `collapse` collapses the cursor to the start cursor.
+	collapse() {
+		state.pos2 = { ...state.pos1 }
+	},
+	// `insertRange` inserts plain text data at a cursor range
+	// then resets the cursor.
+	insertRange(data, pos1, pos2, resetPos) {
+		state.body = state.body.write(data, pos1, pos2)
+		state.pos1 = resetPos
+		this.collapse()
+		state.shouldRenderComponents++
+	},
+	render() {
+		state.Components = parse(state.body)
+		state.shouldRenderCursor++
+	},
 })
 
 const init = initialValue => initialState => {
+	const body = initialState.body.write(initialValue, 0, 0)
 	const state = {
 		...initialState,
 		initialValue,
-		body: initialState.body.write(initialValue, 0, 0),
+		body,
+		Components: parse(body),
 	}
 	return state
 }
@@ -337,7 +371,14 @@ const Paragraph = props => (
 const DebugEditor = props => (
 	<pre style={stylex.parse("overflow -x:scroll")}>
 		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
-			{JSON.stringify(props.state, null, "\t")}
+			{JSON.stringify(
+				{
+					...props.state,
+					Components: undefined,
+				},
+				null,
+				"\t",
+			)}
 		</p>
 	</pre>
 )
@@ -356,9 +397,42 @@ That is the question`)
 	// Hello, world!
 	// Hello, world!`)
 
+	// Should render components:
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				// No-op.
+				return
+			}
+			dispatch.render()
+		}, [state, dispatch]),
+		[state.shouldRenderComponents],
+	)
+
+	// Should render cursor:
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				// No-op.
+				return
+			}
+			const selection = document.getSelection()
+			const range = document.createRange()
+			const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
+			range.setStart(node, offset)
+			range.collapse()
+			selection.removeAllRanges()
+			selection.addRange(range)
+		}, [state /* , dispatch */]),
+		[state.shouldRenderCursor],
+	)
+
 	// TODO: Optimization: Can copy a reference to the last
 	// anchor node, etc. Could potentially reuse
 	// `domNodeRange`.
+	//
+	// TODO: Optimization: Can commit references to fragment
+	// on `keydown` event.
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.isFocused) {
@@ -367,6 +441,10 @@ That is the question`)
 			}
 			// Compute VDOM cursors:
 			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+			if (anchorNode === ref.current || focusNode === ref.current) {
+				// No-op.
+				return
+			}
 			const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = { ...pos1 }
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
@@ -376,8 +454,8 @@ That is the question`)
 			// Compute DOM node range (reset):
 			domNodeRange.current = {
 				ref: null,                                   // A reference to the start node.
-				cloneNode: null,                             // A copy of the start node.
 				fragment: document.createDocumentFragment(), // The unchanged DOM node range.
+
 			}
 			const startNode = traverseDOM.ascendToBlockDOMNode(pos1.pos <= pos2.pos ? anchorNode : focusNode)
 			let endNode = startNode
@@ -446,42 +524,31 @@ That is the question`)
 					},
 
 					onInput: e => {
-						// Read the DOM:
-						const clean = traverseDOM.innerText(domNodeRange.current.fragment.childNodes[0])
+						// Read the DOM and the cursor:
+						//
+						// DOM:
 						const dirty = traverseDOM.innerText(domNodeRange.current.ref)
-
+						const clean = traverseDOM.innerText(domNodeRange.current.fragment)
 						let [pos1, pos2] = [state.pos1.pos, state.pos1.pos]
 						pos1 += -state.pos1.offset
 						pos2 += -state.pos1.offset + clean.length
+						//
+						// Cursor:
+						const { anchorNode, anchorOffset } = document.getSelection()
+						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
-						console.log({ dirty, pos1, pos2 })
-
-						// Restore the DOM (sync to React):
-						const { anchorNode } = document.getSelection()
-						const startNode = traverseDOM.ascendToBlockDOMNode(anchorNode)
-						startNode.replaceWith(domNodeRange.current.fragment)
+						// // Restore the DOM (sync for React):
+						// const startNode = traverseDOM.ascendToBlockDOMNode(anchorNode)
+						// startNode.replaceWith(domNodeRange.current.fragment)
 
 						// Update the VDOM:
-						// ...
-
-						// Correct the cursor:
-						const selection = document.getSelection()
-						const range = document.createRange()
-						const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
-						range.setStart(node, offset)
-						range.collapse()
-						selection.removeAllRanges()
-						selection.addRange(range)
+						dispatch.insertRange(dirty, pos1, pos2, resetPos)
 					},
 
 					// onDragStart: e => e.preventDefault(),
 					// onDrop:      e => e.preventDefault(),
 				},
-				state.body.nodes.map(each => (
-					<Paragraph key={each.key} _key={each.key}>
-						{each.data}
-					</Paragraph>
-				)),
+				state.Components,
 			)}
 			<div style={stylex.parse("h:28")} />
 			<DebugEditor state={state} />
