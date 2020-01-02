@@ -53,6 +53,9 @@ const reducer = state => ({
 		// // NOTE: To opt-in to native rendering, conditionally
 		// // increment `shouldRenderComponents`.
 		// state.shouldRenderComponents += inputType !== "onKeyPress"
+
+		// const utf8Data = [...data]
+		// state.shouldRenderComponents += utf8Data.length === 1 ?? !utf8.isAlphanum(utf8Data[0]) // FIXME: ??
 		state.shouldRenderComponents++
 	},
 	opTab() {

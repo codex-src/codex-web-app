@@ -1,11 +1,10 @@
 // import * as Editor from "./Editor"
-// import TestEditor from "./TestEditor"
-import CodeDemo from "./CodeDemo"
-import useEditor from "./EditorReducer"
+// import useEditor from "./EditorReducer"
+import Editor from "./CodeDemo"
 
 const exports = {
-	Editor: CodeDemo, // TestEditor, // Editor.Editor,
-	useEditor,
+	Editor, // Editor.Editor,
+	// useEditor,
 }
 
 export default exports

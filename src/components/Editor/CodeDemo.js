@@ -488,7 +488,7 @@ const DebugEditor = props => (
 //
 function Editor(props) {
 	const root = React.useRef() // The root DOM node.
-	const drop = React.useRef() // The drag-and-drop data.
+	// const drop = React.useRef() // The drag-and-drop data.
 
 	const [state, dispatch] = useEditor(`package main
 
@@ -500,7 +500,6 @@ func main() {
 
 	const [firstRender, setFirstRender] = React.useState()
 
-	// First render:
 	React.useEffect(
 		React.useCallback(() => {
 			setFirstRender(<Code>{lex(state.initialValue)}</Code>)
@@ -578,7 +577,7 @@ func main() {
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
-					spellCheck: false,
+					spellCheck: false, // DELETEME
 
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
@@ -680,12 +679,7 @@ func main() {
 					},
 
 					onInput: e => {
-						// console.log({ inputType: e.nativeEvent.inputType, data: e.nativeEvent.data })
-
 						const value = innerText(root.current)
-						// if (e.nativeEvent.inputType === "insertFromDrop") {
-						// 	value = drop.current
-						// }
 
 						const {
 							anchorNode,   // The cursor start node.
@@ -699,10 +693,13 @@ func main() {
 
 						dispatch.setState(value, pos1, pos2)
 
-						if (e.nativeEvent.inputType === "deleteByDrag" || e.nativeEvent.inputType === "insertFromDrop") {
-							// No-op.
-							return
-						}
+						// if (
+						// 	e.nativeEvent.inputType === "deleteByDrag" ||
+						// 	e.nativeEvent.inputType === "insertFromDrop"
+						// ) {
+						// 	// No-op.
+						// 	return
+						// }
 
 						// Guard composition events:
 						//
@@ -710,7 +707,11 @@ func main() {
 						// - onCompositionUpdate
 						// - onCompositionEnd
 						//
-						if (/* (e.nativeEvent.data && utf8.isAlphanum(e.nativeEvent.data)) || */ e.nativeEvent.inputType === "insertCompositionText") {
+						// Ignore non-syntax:
+						if (
+							(e.nativeEvent.data && utf8.isAlphanum(e.nativeEvent.data)) ||
+							e.nativeEvent.inputType === "insertCompositionText"
+						) {
 							// No-op.
 							return
 						}

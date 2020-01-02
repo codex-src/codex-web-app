@@ -1,18 +1,53 @@
-// import DebugEditor from "./DebugEditor"
+import DebugEditor from "./DebugEditor"
 import detect from "./detect"
 import ErrorBoundary from "./ErrorBoundary"
 import React from "react"
 import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
+import useEditor from "./EditorReducer"
 
 import "./editor.css"
 
 // FIXME?
 export const Context = React.createContext()
 
-export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
+export const Editor = props => {
 	const ref = React.useRef()
+
+	const [state, dispatch] = useEditor(`# Hello, world!
+
+Hello, world!
+
+\`\`\`
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("hello, world!")
+}
+\`\`\`
+
+Hello, world!
+
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+>
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Hello, world!
+
+\`\`\`
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("hello, world!")
+}
+\`\`\`
+
+Hello, world!`)
 
 	// Render components:
 	React.useLayoutEffect(
@@ -214,8 +249,8 @@ export const Editor = stylex.Unstyleable(({ state, dispatch, ...props }) => {
 					state.Components,
 				)}
 			</Provider>
-			{/* <div style={stylex.parse("h:28")} /> */}
-			{/* <DebugEditor state={state} /> */}
+			<div style={stylex.parse("h:28")} />
+			<DebugEditor state={state} />
 		</ErrorBoundary>
 	)
-})
+}
