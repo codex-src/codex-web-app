@@ -138,42 +138,29 @@ hello`)
 	//
 	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
-	const [initialRender, setInitialRender] = React.useState()
-
-	React.useEffect(
-		React.useCallback(() => {
-			setInitialRender(parse(state.body))
-		}, [state]),
-		[],
-	)
-
 	// Should render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			if (!state.isFocused) {
-				// No-op.
-				return
-			}
+			// if (!state.isFocused) {
+			// 	// No-op.
+			// 	return
+			// }
 			dispatch.render()
-		}, [state, dispatch]),
+		}, [dispatch]),
 		[state.shouldRenderComponents],
 	)
 
 	// Should render cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
+			// editor.current.replaceWith(shadow.current.cloneNode(true))
+			;[...editor.current.childNodes].map(each => each.remove())
+			;[...shadow.current.childNodes].map(each => editor.current.appendChild(each.cloneNode(true)))
+
 			if (!state.isFocused) {
 				// No-op.
 				return
 			}
-			;[...editor.current.childNodes].map(each => each.remove())
-			;[...shadow.current.childNodes].map(each => editor.current.appendChild(each.cloneNode(true)))
-
-			// editor.current.append(shadow.currnet.cloenNOde)
-
-			// [...editor.current.childNodes].map(each => each.remove())
-			// editor.current.appendChild(shadow.current.cloneNode(true).childNodes)
-			// editor.current.replaceWith(shadow.current.cloneNode(true))
 			const selection = document.getSelection()
 			const range = document.createRange()
 			const { node, offset } = traverseDOM.computeDOMCursor(editor.current, state.pos1)
@@ -198,7 +185,6 @@ hello`)
 				// No-op.
 				return
 			}
-			// Guard redundant:
 			const {
 				anchorNode:   node1,
 				focusNode:    node2,
@@ -214,7 +200,6 @@ hello`)
 				// No-op.
 				return
 			}
-			console.log({ editor: editor.current, node1, offs1 })
 			const pos1 = traverseDOM.computeVDOMCursor(editor.current, node1, offs1)
 			let pos2 = { ...pos1 }
 			if (node2 !== node1 || offs2 !== offs1) {
@@ -318,7 +303,6 @@ hello`)
 					// onDragStart: e => e.preventDefault(),
 					// onDrop:      e => e.preventDefault(),
 				},
-				initialRender,
 			)}
 			<aside ref={shadow} style={{ display: "none" }}>
 				{state.Components}
