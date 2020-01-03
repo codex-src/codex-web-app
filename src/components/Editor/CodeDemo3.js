@@ -93,8 +93,10 @@ const DebugEditor = props => (
 )
 
 function Editor(props) {
-	const editor = React.useRef()
-	const shadow = React.useRef()
+	const dst = React.useRef()
+	const src = React.useRef()
+
+	const keyDownStartNode = React.useRef()
 
 	const [state, dispatch] = useEditor(`hello
 
@@ -153,9 +155,10 @@ hello`)
 	// Should render cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			// editor.current.replaceWith(shadow.current.cloneNode(true))
-			;[...editor.current.childNodes].map(each => each.remove())
-			;[...shadow.current.childNodes].map(each => editor.current.appendChild(each.cloneNode(true)))
+			// TODO: Heavily optimize.
+			// dst.current.replaceWith(src.current.cloneNode(true))
+			;[...dst.current.childNodes].map(each => each.remove())
+			;[...src.current.childNodes].map(each => dst.current.appendChild(each.cloneNode(true)))
 
 			if (!state.isFocused) {
 				// No-op.
@@ -163,7 +166,7 @@ hello`)
 			}
 			const selection = document.getSelection()
 			const range = document.createRange()
-			const { node, offset } = traverseDOM.computeDOMCursor(editor.current, state.pos1)
+			const { node, offset } = traverseDOM.computeDOMCursor(dst.current, state.pos1)
 			range.setStart(node, offset)
 			range.collapse()
 			selection.removeAllRanges()
@@ -200,10 +203,10 @@ hello`)
 				// No-op.
 				return
 			}
-			const pos1 = traverseDOM.computeVDOMCursor(editor.current, node1, offs1)
+			const pos1 = traverseDOM.computeVDOMCursor(dst.current, node1, offs1)
 			let pos2 = { ...pos1 }
 			if (node2 !== node1 || offs2 !== offs1) {
-				pos2 = traverseDOM.computeVDOMCursor(editor.current, node2, offs2)
+				pos2 = traverseDOM.computeVDOMCursor(dst.current, node2, offs2)
 			}
 			dispatch.setState(state.body, pos1, pos2)
 			selectionchange.current = { node1, node2, offs1, offs2 }
@@ -219,7 +222,7 @@ hello`)
 			{React.createElement(
 				"article",
 				{
-					ref: editor,
+					ref: dst,
 
 					style: {
 						transform: state.isFocused && "translateZ(0px)",
@@ -249,23 +252,41 @@ hello`)
 							// TODO
 							return
 						}
+						// Compute the start node:
+						//
+						// TODO: Setup for `isBackspaceHeuristic` and
+						// `isDeleteHeuristic`.
+						const anchorNode = traverseDOM.computeDOMCursor(dst.current, state.pos1).node
+						const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
+						keyDownStartNode.current = startNode
 					},
 
 					onInput: e => {
+						// console.log(e.nativeEvent.inputType)
+
 						// const pos1 = state.pos1.pos - state.pos1.offset
 						// const pos2 = state.pos2.pos + state.pos2.offsetRemainder
 
 						// Optimization: Can case greedy `data` and
 						// `pos` range and implement `greedyWrite`.
-						const data = traverseDOM.innerText(editor.current)
+						const data = traverseDOM.innerText(dst.current)
 
 						const { anchorNode, anchorOffset } = document.getSelection()
-						const pos1 = traverseDOM.computeVDOMCursor(editor.current, anchorNode, anchorOffset)
+						const pos1 = traverseDOM.computeVDOMCursor(dst.current, anchorNode, anchorOffset)
+
+						const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
+						const isParagraphHeuristic = startNode !== keyDownStartNode.current
+						if (isParagraphHeuristic) {
+							dispatch.write(true, "\n")
+							return
+						}
+
+						// TODO: Should render if the last character is
+						// markdown syntax
 						const shouldRender = (
 							(!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
-						// console.log(shouldRender)
 						dispatch.rewrite(shouldRender, data, pos1, pos1)
 					},
 
@@ -304,7 +325,7 @@ hello`)
 					// onDrop:      e => e.preventDefault(),
 				},
 			)}
-			<aside ref={shadow} style={{ display: "none" }}>
+			<aside ref={src} style={{ display: "none" }}>
 				{state.Components}
 			</aside>
 			<div style={stylex.parse("h:28")} />
