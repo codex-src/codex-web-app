@@ -413,9 +413,17 @@ const DebugEditor = props => (
 function Editor(props) {
 	const ref = React.useRef()
 
-	const domNodeRange = React.useRef()
+	const affected = React.useRef()
 
-	const [state, dispatch] = useEditor("hello\n\nhello")
+	const [state, dispatch] = useEditor(`foo
+
+bar
+
+baz
+
+qux
+
+quux`)
 
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
@@ -452,8 +460,7 @@ function Editor(props) {
 	)
 
 	// TODO: Optimization: Can copy a reference to the last
-	// anchor node, etc. Could potentially reuse
-	// `domNodeRange`.
+	// anchor node, etc.
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.isFocused) {
@@ -529,59 +536,69 @@ function Editor(props) {
 							pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
 						}
 						dispatch.setState(state.body, pos1, pos2)
-						// Compute the start and end block DOM nodes:
-						const startBlockDOMNode = traverseDOM.ascendToBlockDOMNode(ref.current, pos1.pos <= pos2.pos ? anchorNode : focusNode)
-						let endBlockDOMNode = startBlockDOMNode
+						// Compute the start and end DOM nodes:
+						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, pos1.pos <= pos2.pos ? anchorNode : focusNode)
+						let endNode = startNode
 						if (anchorNode !== focusNode) {
-							endBlockDOMNode = traverseDOM.ascendToBlockDOMNode(ref.current, pos1.pos <= pos2.pos ? focusNode : anchorNode) // Reverse order.
+							endNode = traverseDOM.ascendToBlockDOMNode(ref.current, pos1.pos > pos2.pos ? anchorNode : focusNode) // Reverse order.
 						}
-						// Eagerly sorted the VDOM cursors:
-						const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
-						const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
-						// Compute the greedy VDOM cursor start and end:
-						const greedyPos1 = sortedPos1.pos - sortedPos1.offset
-						const greedyPos2 = sortedPos2.pos - sortedPos2.offset + traverseDOM.innerText(endBlockDOMNode).length
-						// FIXME: `data-vdom-node` is ambiguous; we need
-						// to disambiguate compound component nodes.
-						domNodeRange.current = {
-							domNodeRef: startBlockDOMNode, // A reference to the block DOM node start.
-							greedyPos1,                    // The greedy VDOM cursor start.
-							greedyPos2,                    // The greedy VDOM cursor end.
-							innerHTML: ref.current.innerHTML,
+						// Create and append the affected DOM nodes:
+						let node = startNode
+						let { nextSibling } = node // Create a reference to the next DOM node.
+						affected.current = document.createDocumentFragment()
+						affected.current.appendChild(node)
+						while (node !== endNode) {
+							node = nextSibling
+							nextSibling = node.nextSibling // Update the reference.
+							affected.current.appendChild(node)
 						}
-					},
-
-					onCompositionStart: e => {
-						console.log("b")
+						nextSibling.parentNode.insertBefore(affected.current.cloneNode(true), nextSibling)
+						// Correct the cursor:
+						const selection = document.getSelection()
+						const range = document.createRange()
+						const {
+							node: _anchorNode,
+							offset: _anchorOffset,
+						} = traverseDOM.computeDOMCursor(ref.current, pos1)
+						const {
+							node: _focusNode,
+							offset: _focusOffset,
+						} = traverseDOM.computeDOMCursor(ref.current, pos2) // Reverse order.
+						range.setStart(_anchorNode, _anchorOffset)
+						// // NOTE: `range.setEnd` does not work when `pos2.pos > pos1.pos`.
+						// range.setEnd(_focusNode, _focusOffset)
+						selection.removeAllRanges()
+						selection.addRange(range)
+						selection.extend(_focusNode, _focusOffset)
 					},
 
 					onInput: e => {
-						const { nativeEvent: { inputType } } = e
-						// Guard error: `We don't execute
-						// document.execCommand() this time, because it
-						// is called recursively.`
-						if (inputType === "historyUndo") {
-							// No-op.
-							return
-						}
-						const { domNodeRef, greedyPos1, greedyPos2, innerHTML } = domNodeRange.current
-						const { anchorNode, anchorOffset } = document.getSelection()
-						// Guard paragraph:
-						const heuristicNewNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode) !== domNodeRef
-						if (heuristicNewNode || (inputType === "insertParagraph" || inputType === "insertLineBreak")) {
-							resetDOMToReactAwareState()
-							dispatch.write("\n")
-							return
-						}
-						// Read the mutated DOM node and cursor:
-						const data = traverseDOM.innerText(domNodeRef)
-						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// Reset the DOM (sync for React):
-						if (inputType !== "insertCompositionText") {
-							resetDOMToReactAwareState()
-						}
-						// Update VDOM:
-						dispatch.writeGreedy(inputType, data, [greedyPos1, greedyPos2], resetPos)
+						// TODO: Enter on a line.
+						// TODO: Backspace on a line.
+						// TODO: Delete on a line.
+
+						// Restore the DOM (sync for React):
+						const { anchorNode } = document.getSelection()
+						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
+						startNode.replaceWith(affected.current)
+						// Correct the cursor:
+						const selection = document.getSelection()
+						const range = document.createRange()
+						const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1) // Assumes `state.pos1` e.g. `anchorNode`.
+						range.setStart(node, offset)
+						range.collapse()
+						selection.removeAllRanges()
+						selection.addRange(range)
+
+						// // Guard error: `We don't execute
+						// // document.execCommand() this time, because it
+						// // is called recursively.`
+						// if (inputType === "historyUndo") {
+						// 	// No-op.
+						// 	return
+						// }
+						// // Update VDOM:
+						// dispatch.writeGreedy(inputType, data, [greedyPos1, greedyPos2], resetPos)
 					},
 
 					// onDragStart: e => e.preventDefault(),
@@ -589,24 +606,10 @@ function Editor(props) {
 				},
 				state.Components,
 			)}
-			{/* <div style={stylex.parse("h:28")} /> */}
-			{/* <DebugEditor state={state} /> */}
+			<div style={stylex.parse("h:28")} />
+			<DebugEditor state={state} />
 		</div>
 	)
-}
-
-// `resetDOMToReactAwareState` resets the DOM to the known
-// React-aware state. Simply replacing the mutated DOM node
-// with a fragment of cloned DOM ndoes does not work, most
-// likely due to issues with referential equality.
-//
-// TODO: In theory, we can explicitly track the number of
-// React-unaware DOM mutations and reset accordingly.
-function resetDOMToReactAwareState() {
-	// Don’t try this at home…
-	document.execCommand("undo", false, null)
-	document.execCommand("undo", false, null)
-	document.execCommand("undo", false, null)
 }
 
 export default Editor
