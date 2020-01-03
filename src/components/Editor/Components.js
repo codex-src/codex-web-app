@@ -293,7 +293,12 @@ function parse(body) {
 		index++
 	}
 	/* eslint-enable no-case-declarations */
-	return Components
+	return (
+		// Compound component.
+		<div style={{ outline: "none" }} contentEditable suppressContentEditableWarning>
+			{Components}
+		</div>
+	)
 }
 
 export default parse
