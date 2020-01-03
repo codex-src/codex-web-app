@@ -387,7 +387,7 @@ function parse(value) {
 
 // Compound component.
 const Code = props => (
-	<div contentEditable suppressContentEditableWarning>
+	<div style={{ outline: "none" }} contentEditable suppressContentEditableWarning>
 
 		<pre style={stylex.parse("overflow -x:scroll")} spellCheck={false} data-vdom-node>
 			{!props.children.length && (
@@ -432,8 +432,6 @@ const initialState = {
 	shouldRenderCursor: 0,
 
 	components: [],
-
-	// reactDOM: document.createElement("div"),
 }
 
 const reducer = state => ({
@@ -505,8 +503,8 @@ const DebugEditor = props => (
 )
 
 function Editor(props) {
-	const ref = React.useRef()
-	const ref2 = React.useRef()
+	const dst = React.useRef()
+	const src = React.useRef()
 
 	const [state, dispatch] = useEditor(`package main
 
@@ -544,7 +542,9 @@ func main() {
 				// No-op.
 				return
 			}
-			ref.current.childNodes[0].replaceWith(ref2.current.childNodes[0].cloneNode(true))
+			// Optimization: Use a checksum or updated at
+			// timestamp.
+			dst.current.childNodes[0].replaceWith(src.current.childNodes[0].cloneNode(true))
 		}, [state]),
 		[state.components],
 	)
@@ -558,8 +558,8 @@ func main() {
 			}
 			const selection = document.getSelection()
 			const range = document.createRange()
-			const { node: _node, offset } = computeDOMCursor(ref.current, state.pos1)
-			range.setStart(_node, offset)
+			const { node, offset } = computeDOMCursor(dst.current, state.pos1)
+			range.setStart(node, offset)
 			range.collapse()
 			selection.removeAllRanges()
 			selection.addRange(range)
@@ -591,10 +591,10 @@ func main() {
 				// No-op.
 				return
 			}
-			const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+			const pos1 = computeVDOMCursor(dst.current, anchorNode, anchorOffset)
 			let pos2 = pos1
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-				pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
+				pos2 = computeVDOMCursor(dst.current, focusNode, focusOffset)
 			}
 			dispatch.setState(state.value, pos1, pos2)
 			Object.assign(selectionchange.current, {
@@ -615,7 +615,7 @@ func main() {
 			{React.createElement(
 				"article",
 				{
-					ref,
+					ref: dst,
 
 					style: {
 						transform: state.isFocused && "translateZ(0px)",
@@ -645,12 +645,15 @@ func main() {
 					},
 
 					onInput: e => {
+						// const pos1 = state.pos1.pos - state.pos1.offset
+						// const pos2 = state.pos2.pos + state.pos2.offsetRemainder
+
 						// Optimization: Can case greedy `data` and
 						// `pos` range and implement `greedyWrite`.
-						const value = innerText(ref.current)
+						const value = innerText(dst.current)
 
 						const { anchorNode, anchorOffset } = document.getSelection()
-						const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						const pos1 = computeVDOMCursor(dst.current, anchorNode, anchorOffset)
 						const shouldRender = (
 							(!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
@@ -694,11 +697,11 @@ func main() {
 				},
 				initialRender,
 			)}
-			<div ref={ref2} style={{ display: "none" }}>
+			<aside ref={src} style={{ display: "none" }}>
 				{state.components}
-			</div>
-			<div style={stylex.parse("h:28")} />
-			<DebugEditor state={state} />
+			</aside>
+			{/* <div style={stylex.parse("h:28")} /> */}
+			{/* <DebugEditor state={state} /> */}
 		</div>
 	)
 }
