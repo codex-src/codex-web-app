@@ -476,7 +476,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 					onKeyDown: e => {
 						if (domRange.current && domRange.current.undo) {
-							domRange.current.undo()
+							const { anchorNode } = document.getSelection()
+							const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
+							// console.log(startNode, domRange.current.ref)
+							// domRange.current.undo()
 						}
 
 						if (e.key === "Tab") {
@@ -507,6 +510,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						let node = startNode
 						let { nextSibling } = node // Keep a reference to the next node.
 						domRange.current = {
+							ref: null,
 							target: document.createDocumentFragment(),
 							pos1: 0,
 							pos2: 0,
@@ -523,7 +527,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							parentNode = ref.current
 						}
 						const newNodes = domRange.current.target.cloneNode(true)
-						const newAnchorNode = newNodes.childNodes[0] // Takes precedence.
+						domRange.current.ref = newNodes.childNodes[0] // Takes precedence.
 						parentNode.insertBefore(newNodes, nextSibling)
 
 						domRange.current.pos1 = state.pos1.pos - state.pos1.offset
@@ -531,8 +535,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						// console.log(domRange.current)
 
 						domRange.current.undo = () => {
-							newAnchorNode.replaceWith(domRange.current.target)
-							domRange.current.undo = null // This tape will self-destruct in five seconds…
+							domRange.ref.replaceWith(domRange.current.target)
+							domRange.current = {} // null // This tape will self-destruct in five seconds…
 						}
 
 						// Correct the cursor:
@@ -556,7 +560,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 						// Reset the DOM (sync for React):
 						// if (inputType !== "insertCompositionText") {
-							domRange.current.undo()
+							// domRange.current.undo()
 						// }
 						// Update the VDOM:
 						dispatch.greedyWrite(inputType, data, domRange.current.pos1, domRange.current.pos2, resetPos)
@@ -578,7 +582,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						// 	return
 						// }
 						// // Read the mutated DOM node:
-						// const { startNode, pos1, pos2 } = domNodeRange.current
+						// const { startNode, pos1, pos2 } = domRange.current
 						// const data = traverseDOM.innerText(startNode)
 						// // Read the DOM cursor:
 						// const { anchorNode, anchorOffset } = document.getSelection()
