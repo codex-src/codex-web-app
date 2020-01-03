@@ -96,7 +96,8 @@ function Editor(props) {
 	const dst = React.useRef()
 	const src = React.useRef()
 
-	const keyDownStartNode = React.useRef()
+	// Heuristics for paragraph, backspace, and delete:
+	const heuristics = React.useRef()
 
 	const [state, dispatch] = useEditor(`hello
 
@@ -257,8 +258,13 @@ hello`)
 						// TODO: Setup for `isBackspaceHeuristic` and
 						// `isDeleteHeuristic`.
 						const anchorNode = traverseDOM.computeDOMCursor(dst.current, state.pos1).node
-						const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
-						keyDownStartNode.current = startNode
+						const node = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
+						const { previousSibling, nextSibling } = node
+						heuristics.current = {
+							previousSibling, // Heuristic for backspace.
+							node,            // Heuristic for paragraph.
+							nextSibling,     // Heuristic for delete.
+						}
 					},
 
 					onInput: e => {
@@ -275,7 +281,7 @@ hello`)
 						const pos1 = traverseDOM.computeVDOMCursor(dst.current, anchorNode, anchorOffset)
 
 						const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
-						const isParagraphHeuristic = startNode !== keyDownStartNode.current
+						const isParagraphHeuristic = startNode !== heuristics.current.node
 						if (isParagraphHeuristic) {
 							dispatch.write(true, "\n")
 							return
