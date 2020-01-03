@@ -341,11 +341,11 @@ const reducer = state => ({
 		// state.shouldRenderComponents += inputType !== "onKeyPress"
 		state.shouldRenderComponents++
 	},
-	writeGreedy(data, greedy, resetPos) {
+	writeGreedy(inputType, data, greedy, resetPos) {
 		state.body = state.body.write(data, greedy[0], greedy[1])
 		state.pos1 = resetPos
 		this.collapse()
-		state.shouldRenderComponents++
+		state.shouldRenderComponents += inputType !== "insertCompositionText"
 	},
 	render() {
 		state.Components = parse(state.body)
@@ -383,14 +383,43 @@ const DebugEditor = props => (
 	</pre>
 )
 
+// https://github.com/facebook/react/issues/11538#issuecomment-417504600
+;(function() {
+	if (typeof Node === "function" && Node.prototype) {
+		const originalRemoveChild = Node.prototype.removeChild
+		Node.prototype.removeChild = function(child) {
+			if (child.parentNode !== this) {
+				if (console) {
+					console.error("Cannot remove a child from a different parent", child, this)
+				}
+				return child
+			}
+			return originalRemoveChild.apply(this, arguments)
+		}
+
+		const originalInsertBefore = Node.prototype.insertBefore
+		Node.prototype.insertBefore = function(newNode, referenceNode) {
+			if (referenceNode && referenceNode.parentNode !== this) {
+				if (console) {
+					console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
+				}
+				return newNode
+			}
+			return originalInsertBefore.apply(this, arguments)
+		}
+	}
+})()
+
 function Editor(props) {
 	const ref = React.useRef()
 
 	const domNodeRange = React.useRef()
 
-	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+	const [state, dispatch] = useEditor("hello\n\nhello")
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render components:
 	React.useLayoutEffect(
@@ -521,35 +550,34 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						}
 					},
 
+					// console.log(inputType, { ...e })
 					onInput: e => {
 						const { nativeEvent: { inputType } } = e
-
+						// Guard error: `We don't execute
+						// document.execCommand() this time, because it
+						// is called recursively.`
 						if (inputType === "historyUndo") {
 							// No-op.
 							return
 						}
-
-						// insertParagraph
-						// deleteContentBackward
-						// deleteContentForward
-						// console.log(inputType)
-
+						const { domNodeRef, greedyPos1, greedyPos2 } = domNodeRange.current
+						const { anchorNode, anchorOffset } = document.getSelection()
 						// Guard paragraph:
-						if (inputType === "insertParagraph" || inputType === "insertLineBreak") {
-							document.execCommand("undo", false, null)
+						const hueristicNewNode = traverseDOM.ascendToBlockDOMNode(anchorNode) !== domNodeRef
+						if (hueristicNewNode || (inputType === "insertParagraph" || inputType === "insertLineBreak")) {
+							resetDOMToReactAwareState()
 							dispatch.write("\n")
 							return
 						}
-						// Read the mutated DOM node:
-						const { domNodeRef, greedyPos1, greedyPos2 } = domNodeRange.current
+						// Read the mutated DOM node and cursor:
 						const data = traverseDOM.innerText(domNodeRef)
-						// Read the DOM cursor:
-						const { anchorNode, anchorOffset } = document.getSelection()
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 						// Reset the DOM (sync for React):
-						document.execCommand("undo", false, null) // Don’t try this at home…
+						if (inputType !== "insertCompositionText") {
+							resetDOMToReactAwareState()
+						}
 						// Update VDOM:
-						dispatch.writeGreedy(data, [greedyPos1, greedyPos2], resetPos)
+						dispatch.writeGreedy(inputType, data, [greedyPos1, greedyPos2], resetPos)
 					},
 
 					// onDragStart: e => e.preventDefault(),
@@ -561,6 +589,20 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			<DebugEditor state={state} />
 		</div>
 	)
+}
+
+// `resetDOMToReactAwareState` resets the DOM to the known
+// React-aware state. Simply replacing the mutated DOM node
+// with a fragment of cloned DOM ndoes does not work, most
+// likely due to issues with referential equality.
+//
+// TODO: In theory, we can explicitly track the number of
+// React-unaware DOM mutations and reset accordingly.
+function resetDOMToReactAwareState() {
+	// Don’t try this at home…
+	document.execCommand("undo", false, null)
+	document.execCommand("undo", false, null)
+	document.execCommand("undo", false, null)
 }
 
 export default Editor
