@@ -332,9 +332,16 @@ const reducer = state => ({
 	collapse() {
 		state.pos2 = { ...state.pos1 }
 	},
-	// `insertRange` inserts plain text data at a cursor range
-	// then resets the cursor.
-	insertRange(data, greedy, resetPos) {
+	write(data) {
+		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
+		state.pos1.pos += data.length
+		this.collapse()
+		// // NOTE: To opt-in to native rendering, conditionally
+		// // increment `shouldRenderComponents`.
+		// state.shouldRenderComponents += inputType !== "onKeyPress"
+		state.shouldRenderComponents++
+	},
+	writeGreedy(data, greedy, resetPos) {
 		state.body = state.body.write(data, greedy[0], greedy[1])
 		state.pos1 = resetPos
 		this.collapse()
@@ -472,10 +479,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							e.preventDefault()
 							// TODO
 							return
-						} else if (e.shiftKey && e.key === "Enter") { // FIXME: Add a detector?
-							e.preventDefault()
-							// TODO
-							return
 						} else if (detect.isUndo(e)) {
 							e.preventDefault()
 							// TODO
@@ -518,26 +521,35 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						}
 					},
 
-					// TODO: Paragraph operations.
 					onInput: e => {
-						if (e.nativeEvent.inputType === "historyUndo") {
+						const { nativeEvent: { inputType } } = e
+
+						if (inputType === "historyUndo") {
 							// No-op.
 							return
 						}
 
+						// insertParagraph
+						// deleteContentBackward
+						// deleteContentForward
+						// console.log(inputType)
+
+						// Guard paragraph:
+						if (inputType === "insertParagraph" || inputType === "insertLineBreak") {
+							document.execCommand("undo", false, null)
+							dispatch.write("\n")
+							return
+						}
 						// Read the mutated DOM node:
 						const { domNodeRef, greedyPos1, greedyPos2 } = domNodeRange.current
 						const data = traverseDOM.innerText(domNodeRef)
-
 						// Read the DOM cursor:
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-
 						// Reset the DOM (sync for React):
 						document.execCommand("undo", false, null) // Don’t try this at home…
-
 						// Update VDOM:
-						dispatch.insertRange(data, [greedyPos1, greedyPos2], resetPos)
+						dispatch.writeGreedy(data, [greedyPos1, greedyPos2], resetPos)
 					},
 
 					// onDragStart: e => e.preventDefault(),
