@@ -1,9 +1,40 @@
+import React from "react"
+import ReactDOM from "react-dom"
+
+// `isBreakNode` returns whether a node is a break node.
+function isBreakNode(node) {
+	const ok = (
+		node.nodeType === Node.ELEMENT_NODE &&
+		node.nodeName === "BR"
+	)
+	return ok
+}
+
 // `isBreakOrTextNode` returns whether a node is a break
 // node or a text node.
 export function isBreakOrTextNode(node) {
 	const ok = (
-		(node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") || // Assumes `node.nodeType`.
+		isBreakNode(node) ||
 		node.nodeType === Node.TEXT_NODE
+	)
+	return ok
+}
+
+function componentToDOMNode(Component) {
+	const root = document.createElement("div")
+	ReactDOM.render(<Component />, root)
+	return root.childNodes[0]
+}
+
+const naked1 = componentToDOMNode(props => <div><br /></div>)
+const naked2 = componentToDOMNode(props => <p><br /></p>)
+
+// `isNakedBlockDOMNode` returns whether a node is a naked
+// block DOM node.
+export function isNakedBlockDOMNode(node) {
+	const ok = (
+		node.isEqualNode(naked1) ||
+		node.isEqualNode(naked2)
 	)
 	return ok
 }
@@ -12,8 +43,8 @@ export function isBreakOrTextNode(node) {
 // node.
 export function isBlockDOMNode(node) {
 	const ok = (
-		node.nodeType === Node.ELEMENT_NODE && // Assumes `node.nodeType`.
-		node.hasAttribute("data-vdom-node")
+		isNakedBlockDOMNode(node) ||
+		(node.nodeType === Node.ELEMENT_NODE && node.hasAttribute("data-vdom-node"))
 	)
 	return ok
 }
