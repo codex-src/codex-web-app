@@ -449,22 +449,27 @@ const reducer = state => ({
 		}
 		Object.assign(state, { value, pos1, pos2 })
 	},
+	collapse() {
+		state.pos2 = state.pos1
+	},
 	write(shouldRender, value, pos1, pos2) {
+		state.value = state.value.slice(0, pos1) + value + state.value.slice(pos2)
+		state.pos1 += value.length
+		this.collapse()
+		state.shouldRenderComponents += shouldRender
+	},
+	rewrite(shouldRender, value, pos1, pos2) {
 		Object.assign(state, {
 			value,
 			pos1,
 			pos2,
 		})
-
-		// state.value = value
-		// state.pos1 = pos1
-		// state.pos2 = pos2
 		state.shouldRenderComponents += shouldRender
 	},
 	render() {
 		state.components = <Code>{parse(state.value)}</Code>
 		state.shouldRenderCursor++
-	}
+	},
 })
 
 const init = initialValue => initialState => {
@@ -502,7 +507,6 @@ const DebugEditor = props => (
 function Editor(props) {
 	const ref = React.useRef()
 	const ref2 = React.useRef()
-
 
 	const [state, dispatch] = useEditor(`package main
 
@@ -563,33 +567,48 @@ func main() {
 		[state.shouldRenderCursor],
 	)
 
+	const selectionchange = React.useRef({
+		anchorNode:   null, // The cursor start DOM node.
+		anchorOffset: 0,    // The cursor start DOM node offset.
+		focusNode:    null, // The cursor end DOM node.
+		focusOffset:  0,    // The cursor end DOM node offset.
+	})
+
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.isFocused) {
 				// No-op.
 				return
 			}
+			// Guard redundant nodes:
 			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+			if (
+				anchorNode === selectionchange.current.anchorNode &&
+				anchorOffset === selectionchange.current.anchorOffset &&
+				focusNode === selectionchange.current.focusNode &&
+				focusOffset === selectionchange.current.focusOffset
+			) {
+				// No-op.
+				return
+			}
 			const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = pos1
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 				pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
 			}
 			dispatch.setState(state.value, pos1, pos2)
+			Object.assign(selectionchange.current, {
+				anchorNode,
+				anchorOffset,
+				focusNode,
+				focusOffset,
+			})
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
 			document.removeEventListener("selectionchange", onSelectionChange)
 		}
 	}, [state, dispatch])
-
-	// GPU optimization:
-	const translateZ = {}
-	if (state.isFocused) {
-		Object.assign(translateZ, {
-			transform: "translateZ(0px)",
-		})
-	}
 
 	return (
 		<div>
@@ -598,11 +617,9 @@ func main() {
 				{
 					ref,
 
-					style: translateZ,
-
-					contentEditable: true,
-					suppressContentEditableWarning: true,
-					spellCheck: false,
+					style: {
+						transform: state.isFocused && "translateZ(0px)",
+					},
 
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
@@ -610,106 +627,78 @@ func main() {
 					onKeyDown: e => {
 						if (e.key === "Tab") {
 							e.preventDefault()
-							// TODO
+							dispatch.write(true, "\t", state.pos1, state.pos2)
 							return
 						} else if (e.shiftKey && e.key === "Enter") { // Add new detector?
 							e.preventDefault()
-							// TODO
+							dispatch.write(true, "\n", state.pos1, state.pos2)
 							return
 						} else if (detect.isUndo(e)) {
 							e.preventDefault()
+							// TODO
 							return
 						} else if (detect.isRedo(e)) {
 							e.preventDefault()
+							// TODO
 							return
 						}
 					},
 
 					onInput: e => {
+						// Optimization: Can case greedy `data` and
+						// `pos` range and implement `greedyWrite`.
 						const value = innerText(ref.current)
 
-						const {
-							anchorNode,   // The cursor start node.
-							anchorOffset, // The cursor start node offset.
-							focusNode,    // The cursor end node.
-							focusOffset,  // The cursor end node offset.
-						} = document.getSelection()
-
+						const { anchorNode, anchorOffset } = document.getSelection()
 						const pos1 = computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						const pos2 = computeVDOMCursor(ref.current, focusNode, focusOffset)
-
 						const shouldRender = (
 							(!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
-
-						// console.log(shouldRender)
-						dispatch.write(shouldRender, value, pos1, pos2)
-
-						// // const shouldRender = (
-						// // 	(!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) &&
-						// // 	e.nativeEvent.inputType !== "insertCompositionText"
-						// // )
-						// //
-						// // if (!shouldRender) {
-						// // 	// No-op.
-						// // 	return
-						// // }
-						//
-						// const parsed = parse(value)
-						// // ReactDOM.render(<Code>{parsed}</Code>, state.reactDOM)
-						// ref.current.childNodes[0].remove()
-						// ref.current.appendChild(state.reactDOM.childNodes[0].cloneNode(true))
-						//
-						// // const parsed = parse(value)
-						// // ReactDOM.render(<Code>{parsed}</Code>, state.reactDOM)
-						// // console.log(state.reactDOM)
-						//
-						// // ref.current.childNodes[0].remove()
-						// // ref.current.appendChild(state.reactDOM.cloneNode(true))
+						dispatch.rewrite(shouldRender, value, pos1, pos1)
 					},
 
-					// onCut: e => {
-					// 	e.preventDefault()
-					// 	if (state.pos1 === state.pos2) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const cutValue = state.value.slice(state.pos1, state.pos2)
-					// 	e.clipboardData.setData("text/plain", cutValue)
-					// 	// FIXME
-					// },
-					//
-					// onCopy: e => {
-					// 	e.preventDefault()
-					// 	if (state.pos1 === state.pos2) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const copyValue = state.value.slice(state.pos1, state.pos2)
-					// 	e.clipboardData.setData("text/plain", copyValue)
-					// },
-					//
-					// onPaste: e => {
-					// 	e.preventDefault()
-					// 	const pasteValue = e.clipboardData.getData("text/plain")
-					// 	if (!pasteValue) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	// FIXME
-					// },
-					//
-					// onDragStart: e => e.preventDefault(),
-					// onDrop:      e => e.preventDefault(),
+					onCut: e => {
+						e.preventDefault()
+						if (state.pos1 === state.pos2) {
+							// No-op.
+							return
+						}
+						const value = state.value.slice(state.pos1, state.pos2)
+						e.clipboardData.setData("text/plain", value)
+						dispatch.write(true, "", state.pos1, state.pos2)
+					},
+
+					onCopy: e => {
+						e.preventDefault()
+						if (state.pos1 === state.pos2) {
+							// No-op.
+							return
+						}
+						const value = state.value.slice(state.pos1, state.pos2)
+						e.clipboardData.setData("text/plain", value)
+					},
+
+					onPaste: e => {
+						e.preventDefault()
+						const value = e.clipboardData.getData("text/plain")
+						if (!value) {
+							// No-op.
+							return
+						}
+						dispatch.write(true, value, state.pos1, state.pos2)
+					},
+
+					onDragStart: e => e.preventDefault(),
+					onDrop:      e => e.preventDefault(),
 				},
 				initialRender,
 			)}
 			<div ref={ref2} style={{ display: "none" }}>
 				{state.components}
 			</div>
-			{/* <div style={stylex.parse("h:28")} /> */}
-			{/* <DebugEditor state={state} /> */}
+			<div style={stylex.parse("h:28")} />
+			<DebugEditor state={state} />
 		</div>
 	)
 }
