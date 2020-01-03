@@ -1,20 +1,29 @@
 import React from "react"
 import stylex from "stylex"
 
-// // Don’t try this at home…
-// const VDOMNode = render => props => {
-// 	const element = render(props)
-// 	const { props: { children: { _owner: { key: id, } } } } = element
-// 	const newRender = React.cloneElement(
-// 		element,
-// 		{
-// 			id,
-// 			"data-vdom-node": id,
-// 			...element.props,
-// 		},
-// 	)
-// 	return newRender
+// export const types = {
+// 	[Header.name]:     "Header",
+// 	[Comment.name]:    "Comment",
+// 	[Blockquote.name]: "Blockquote",
+// 	[CodeBlock.name]:  "CodeBlock",
+// 	[Paragraph.name]:  "Paragraph",
+// 	[Break.name]:      "Break",
 // }
+
+// `Node` is a higher-order component that decorates a
+// render function.
+const Node = render => ({ reactKey, ...props }) => {
+	const element = render(props)
+	const newRender = React.cloneElement(
+		element,
+		{
+			"id": reactKey,
+			"data-vdom-node": true, // reactKey, // Redundant.
+			...element.props,
+		},
+	)
+	return newRender
+}
 
 const Syntax = stylex.Styleable(props => (
 	<span style={stylex.parse("c:blue-a400")}>
@@ -48,7 +57,7 @@ const headersSyntax = {
 }
 
 // FIXME: Add `m-t:28` in read-only mode.
-const Header = props => {
+const Header = Node(props => {
 	const TagName = headersSyntax[props.start]
 
 	let isPrimary = true
@@ -56,29 +65,32 @@ const Header = props => {
 		isPrimary = false
 	}
 
+	const start = `${props.start.slice(0, -1)}\u00a0`
 	return (
-		<TagName id={props.id} style={{ ...stylex.parse("fw:700 fs:19") }} data-vdom-node>
-			<Markdown style={!isPrimary && stylex.parse("c:gray")} start={props.start.replace(" ", "\u00a0")}>
+		<TagName style={stylex.parse("fw:700 fs:19")}>
+			<Markdown style={!isPrimary && stylex.parse("c:gray")} start={start}>
 				{props.children}
 			</Markdown>
 		</TagName>
 	)
-}
+})
 
-const Comment = props => (
-	<p id={props.id} style={stylex.parse("fs:19 c:gray")} spellCheck={false} data-vdom-node>
+const Comment = Node(props => (
+	<p style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
 		<Markdown style={stylex.parse("c:gray")} start="//">
 			{props.children}
 		</Markdown>
 	</p>
-)
+))
 
 // Compound component.
-const Blockquote = props => (
-	<blockquote data-vdom-node>
+//
+// TODO: Refactor item component.
+const Blockquote = Node(props => (
+	<blockquote>
 		<ul>
 			{props.children.map(each => (
-				<li key={each.key} id={props.id} style={stylex.parse("fs:19")} data-vdom-node>
+				<li key={each.key} id={each.key} style={stylex.parse("fs:19")} data-vdom-node>
 					<Markdown start={each.isNewline ? ">" : ">\u00a0"}>
 						{each.data || (
 							each.isNewline && (
@@ -90,18 +102,18 @@ const Blockquote = props => (
 			))}
 		</ul>
 	</blockquote>
-)
+))
 
 // Compound component.
 //
 // http://cdpn.io/PowjgOg
 //
-// NOTE: `box-shadow` does not use `inset`.
-const CodeBlock = props => (
-	<pre style={{ ...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false} data-vdom-node>
+// TODO: Refactor item component.
+const CodeBlock = Node(props => (
+	<pre style={{ ...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false}>
 		<ul>
 			{props.children.map((each, index) => (
-				<li key={each.key} id={props.id} data-vdom-node>
+				<li key={each.key} id={each.key} data-vdom-node>
 					<code style={{ ...stylex.parse("p-x:24"), MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }}>
 						<Markdown
 							start={!index && props.start}
@@ -118,28 +130,19 @@ const CodeBlock = props => (
 			))}
 		</ul>
 	</pre>
-)
+))
 
-const Paragraph = props => (
-	<p id={props.id} style={stylex.parse("fs:19")} data-vdom-node>
+const Paragraph = Node(props => (
+	<p style={stylex.parse("fs:19")}>
 		{props.children}
 	</p>
-)
+))
 
-const Break = props => (
-	<p id={props.id} style={stylex.parse("fs:19 c:gray")} spellCheck={false} data-vdom-node>
+const Break = Node(props => (
+	<p style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
 		<Markdown start={props.start} />
 	</p>
-)
-
-// export const types = {
-// 	[Header.name]:     "Header",
-// 	[Comment.name]:    "Comment",
-// 	[Blockquote.name]: "Blockquote",
-// 	[CodeBlock.name]:  "CodeBlock",
-// 	[Paragraph.name]:  "Paragraph",
-// 	[Break.name]:      "Break",
-// }
+))
 
 // Convenience function.
 function isBlockquote(data, hasNextSibling) {
@@ -171,7 +174,7 @@ function parse(body) {
 			const headerIndex = data.indexOf("# ")
 			const headerStart = data.slice(0, headerIndex + 2)
 			Components.push((
-				<Header key={key} id={key} start={headerStart}>
+				<Header key={key} reactKey={key} start={headerStart}>
 					{data.slice(headerIndex + 2) || (
 						<br />
 					)}
@@ -180,7 +183,7 @@ function parse(body) {
 			break
 		case data.length >= 2 && data.slice(0, 2) === "//":
 			Components.push((
-				<Comment key={key} id={key}>
+				<Comment key={key} reactKey={key}>
 					{data.slice(2) || (
 						<br />
 					)}
@@ -198,7 +201,7 @@ function parse(body) {
 			}
 			const bquoteNodes = body.nodes.slice(bquoteStart, index)
 			Components.push((
-				<Blockquote key={key} id={key}>
+				<Blockquote key={key} reactKey={key}>
 					{bquoteNodes.map(each => (
 						{
 							...each,
@@ -219,7 +222,7 @@ function parse(body) {
 			)
 		):
 			Components.push((
-				<CodeBlock key={key} id={key} start="```" end="```">
+				<CodeBlock key={key} reactKey={key} start="```" end="```">
 					{[
 						{
 							...body.nodes[index],
@@ -243,7 +246,7 @@ function parse(body) {
 			index++
 			if (!cblockDidTerminate) { // Unterminated code block.
 				Components.push((
-					<Paragraph key={key} id={key}>
+					<Paragraph key={key} reactKey={key}>
 						{data || (
 							<br />
 						)}
@@ -254,7 +257,7 @@ function parse(body) {
 			}
 			const cblockNodes = body.nodes.slice(cblockStart, index)
 			Components.push((
-				<CodeBlock key={key} id={key} start={data} end="```">
+				<CodeBlock key={key} reactKey={key} start={data} end="```">
 					{cblockNodes.map((each, index) => (
 						{
 							...each,
@@ -275,11 +278,11 @@ function parse(body) {
 				data === "---"
 			)
 		):
-			Components.push(<Break key={key} id={key} start={data} />)
+			Components.push(<Break key={key} reactKey={key} start={data} />)
 			break
 		default:
 			Components.push((
-				<Paragraph key={key} id={key}>
+				<Paragraph key={key} reactKey={key}>
 					{data || (
 						<br />
 					)}

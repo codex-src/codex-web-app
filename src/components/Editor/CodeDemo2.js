@@ -334,8 +334,8 @@ const reducer = state => ({
 	},
 	// `insertRange` inserts plain text data at a cursor range
 	// then resets the cursor.
-	insertRange(data, pos1, pos2, resetPos) {
-		state.body = state.body.write(data, pos1, pos2)
+	insertRange(data, greedy, resetPos) {
+		state.body = state.body.write(data, greedy[0], greedy[1])
 		state.pos1 = resetPos
 		this.collapse()
 		state.shouldRenderComponents++
@@ -361,14 +361,6 @@ function useEditor(initialValue) {
 	return useMethods(reducer, initialState, init(initialValue))
 }
 
-// const Paragraph = props => (
-// 	<p data-vdom-node={props._key}>
-// 		{props.children || (
-// 			<br />
-// 		)}
-// 	</p>
-// )
-
 const DebugEditor = props => (
 	<pre style={stylex.parse("overflow -x:scroll")}>
 		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
@@ -389,14 +381,9 @@ function Editor(props) {
 
 	const domNodeRange = React.useRef()
 
-	const [state, dispatch] = useEditor(`To be,
-Or not to be,
-That is the question`)
+	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 
-	// 	const [state, dispatch] = useEditor(`Hello, world!
-	// Hello, world!
-	// Hello, world!
-	// Hello, world!`)
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render components:
 	React.useLayoutEffect(
@@ -424,16 +411,13 @@ That is the question`)
 			range.collapse()
 			selection.removeAllRanges()
 			selection.addRange(range)
-		}, [state /* , dispatch */]),
+		}, [state]),
 		[state.shouldRenderCursor],
 	)
 
 	// TODO: Optimization: Can copy a reference to the last
 	// anchor node, etc. Could potentially reuse
 	// `domNodeRange`.
-	//
-	// TODO: Optimization: Can commit references to fragment
-	// on `keydown` event.
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.isFocused) {
@@ -486,15 +470,19 @@ That is the question`)
 					onKeyDown: e => {
 						if (e.key === "Tab") {
 							e.preventDefault()
+							// TODO
 							return
-						} else if (e.shiftKey && e.key === "Enter") { // FIXME: Use `detect`?
+						} else if (e.shiftKey && e.key === "Enter") { // FIXME: Add a detector?
 							e.preventDefault()
+							// TODO
 							return
 						} else if (detect.isUndo(e)) {
 							e.preventDefault()
+							// TODO
 							return
 						} else if (detect.isRedo(e)) {
 							e.preventDefault()
+							// TODO
 							return
 						}
 						// Compute VDOM cursors:
@@ -509,51 +497,47 @@ That is the question`)
 							pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
 						}
 						dispatch.setState(state.body, pos1, pos2)
-						// Compute DOM node range (reset):
-						domNodeRange.current = {
-							ref: null,                                   // A reference to the start node.
-							fragment: document.createDocumentFragment(), // The unchanged DOM node range.
-						}
-						const startNode = traverseDOM.ascendToBlockDOMNode(pos1.pos <= pos2.pos ? anchorNode : focusNode)
-						let endNode = startNode
+						// Compute the start and end block DOM nodes:
+						const startBlockDOMNode = traverseDOM.ascendToBlockDOMNode(pos1.pos <= pos2.pos ? anchorNode : focusNode)
+						let endBlockDOMNode = startBlockDOMNode
 						if (anchorNode !== focusNode) {
-							endNode = traverseDOM.ascendToBlockDOMNode(pos1.pos > pos2.pos ? anchorNode : focusNode) // Reverse order.
+							endBlockDOMNode = traverseDOM.ascendToBlockDOMNode(pos1.pos <= pos2.pos ? focusNode : anchorNode) // Reverse order.
 						}
-						let node = startNode
-						domNodeRange.current.ref = node
-						domNodeRange.current.fragment.appendChild(node.cloneNode(true))
-						while (node !== endNode) {
-							node = node.nextSibling // Assumes `node.nextSibling`.
-							domNodeRange.current.fragment.appendChild(node.cloneNode(true))
+						// Eagerly sorted the VDOM cursors:
+						const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
+						const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
+						// Compute the greedy VDOM cursor start and end:
+						const greedyPos1 = sortedPos1.pos - sortedPos1.offset
+						const greedyPos2 = sortedPos2.pos - sortedPos2.offset + traverseDOM.innerText(endBlockDOMNode).length
+						// FIXME: `data-vdom-node` is ambiguous; we need
+						// to disambiguate compound component nodes.
+						domNodeRange.current = {
+							domNodeRef: startBlockDOMNode, // A reference to the block DOM node start.
+							greedyPos1,                    // The greedy VDOM cursor start.
+							greedyPos2,                    // The greedy VDOM cursor end.
 						}
 					},
 
-					// FIXME / TODO: Add a paragraph.
-					// FIXME / TODO: Delete a paragraph (backwards, forwards).
+					// TODO: Paragraph operations.
 					onInput: e => {
 						if (e.nativeEvent.inputType === "historyUndo") {
 							// No-op.
 							return
 						}
 
-						// Read the DOM and the cursor:
-						//
-						// DOM:
-						const dirty = traverseDOM.innerText(domNodeRange.current.ref)
-						const clean = traverseDOM.innerText(domNodeRange.current.fragment)
-						let [pos1, pos2] = [state.pos1.pos, state.pos1.pos]
-						pos1 += -state.pos1.offset
-						pos2 += -state.pos1.offset + clean.length
-						//
-						// Cursor:
+						// Read the mutated DOM node:
+						const { domNodeRef, greedyPos1, greedyPos2 } = domNodeRange.current
+						const data = traverseDOM.innerText(domNodeRef)
+
+						// Read the DOM cursor:
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
-						// Don’t try this at home…
-						document.execCommand("undo", false, null)
+						// Reset the DOM (sync for React):
+						document.execCommand("undo", false, null) // Don’t try this at home…
 
-						// Update the VDOM:
-						dispatch.insertRange(dirty, pos1, pos2, resetPos)
+						// Update VDOM:
+						dispatch.insertRange(data, [greedyPos1, greedyPos2], resetPos)
 					},
 
 					// onDragStart: e => e.preventDefault(),
