@@ -1,6 +1,7 @@
 import detect from "./detect"
 import parse from "./Components"
 import React from "react"
+import StatusBar from "../Note" // Temporary.
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
@@ -303,11 +304,11 @@ import "./editor.css"
 // }
 
 const initialState = {
-	initialValue: "",                   // The initial plain text vlaue.
-	body: new vdom.VDOM(""),            // The VDOM body.
-	isFocused: false,                   // Is the editor focused?
-	pos1: new traverseDOM.VDOMCursor(), // The VDOM cursor start.
-	pos2: new traverseDOM.VDOMCursor(), // The VDOM cursor end.
+	initialValue: "",                  // The initial plain text vlaue.
+	body: new vdom.VDOM(""),           // The VDOM body.
+	isFocused: false,                  // Is the editor focused?
+	pos1: traverseDOM.newVDOMCursor(), // The VDOM cursor start.
+	pos2: traverseDOM.newVDOMCursor(), // The VDOM cursor end.
 
 	shouldRenderComponents: 0,
 	shouldRenderCursor: 0,
@@ -332,20 +333,20 @@ const reducer = state => ({
 	collapse() {
 		state.pos2 = { ...state.pos1 }
 	},
-	write(data) {
-		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
-		state.pos1.pos += data.length
-		this.collapse()
-		// // NOTE: To opt-in to native rendering, conditionally
-		// // increment `shouldRenderComponents`.
-		// state.shouldRenderComponents += inputType !== "onKeyPress"
-		state.shouldRenderComponents++
-	},
-	writeGreedy(inputType, data, greedy, resetPos) {
-		state.body = state.body.write(data, greedy[0], greedy[1])
+	// write(data) {
+	// 	state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
+	// 	state.pos1.pos += data.length
+	// 	this.collapse()
+	// 	// // NOTE: To opt-in to native rendering, conditionally
+	// 	// // increment `shouldRenderComponents`.
+	// 	// state.shouldRenderComponents += inputType !== "onKeyPress"
+	// 	state.shouldRenderComponents++
+	// },
+	greedyWrite(data, pos1, pos2, resetPos) {
+		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = resetPos
 		this.collapse()
-		state.shouldRenderComponents += inputType !== "insertCompositionText"
+		state.shouldRenderComponents++
 	},
 	render() {
 		state.Components = parse(state.body)
@@ -416,20 +417,16 @@ function Editor(props) {
 	const affected = React.useRef()
 
 	const [state, dispatch] = useEditor(`foo
-
 bar
-
 baz
-
 qux
-
 quux`)
 
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
 	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
-	// Should render components:
+	// Render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -441,7 +438,7 @@ quux`)
 		[state.shouldRenderComponents],
 	)
 
-	// Should render cursor:
+	// Render cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -452,7 +449,7 @@ quux`)
 			const range = document.createRange()
 			const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
 			range.setStart(node, offset)
-			range.collapse()
+			range.collapse() // Assumes no selection.
 			selection.removeAllRanges()
 			selection.addRange(range)
 		}, [state]),
@@ -510,6 +507,49 @@ quux`)
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
 
+					onKeyPress: e => {
+						// Compute the start and end DOM nodes:
+						const anchorNode = traverseDOM.computeDOMCursor(ref.current, state.pos1).node
+						let focusNode = anchorNode
+						if (state.pos1.pos !== state.pos2.pos) {
+							focusNode = traverseDOM.computeDOMCursor(ref.current, state.pos2).node
+						}
+						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
+						let endNode = startNode
+						if (anchorNode !== focusNode) {
+							endNode = traverseDOM.ascendToBlockDOMNode(ref.current, focusNode)
+						}
+						// Append the affected DOM nodes:
+						let node = startNode
+						let { nextSibling } = node // Create a reference to the next DOM node.
+						affected.current = document.createDocumentFragment()
+						affected.current.appendChild(node)
+						while (node !== endNode) {
+							node = nextSibling
+							nextSibling = node.nextSibling // Update the reference.
+							affected.current.appendChild(node)
+						}
+						nextSibling.parentNode.insertBefore(affected.current.cloneNode(true), nextSibling) // FIXME
+						// Correct the cursor:
+						const selection = document.getSelection()
+						const range = document.createRange()
+						const {
+							node: _anchorNode,
+							offset: _anchorOffset,
+						} = traverseDOM.computeDOMCursor(ref.current, state.pos1)
+						const {
+							node: _focusNode,
+							offset: _focusOffset,
+						} = traverseDOM.computeDOMCursor(ref.current, state.pos2)
+						range.setStart(_anchorNode, _anchorOffset)
+						// // NOTE: `range.setEnd` does not work when
+						// // `pos2.pos > pos1.pos`.
+						// range.setEnd(_focusNode, _focusOffset)
+						selection.removeAllRanges()
+						selection.addRange(range)
+						selection.extend(_focusNode, _focusOffset)
+					},
+
 					onKeyDown: e => {
 						if (e.key === "Tab") {
 							e.preventDefault()
@@ -524,81 +564,22 @@ quux`)
 							// TODO
 							return
 						}
-						// Compute VDOM cursors:
-						const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-						if (anchorNode === ref.current || focusNode === ref.current) {
-							// No-op.
-							return
-						}
-						const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						let pos2 = { ...pos1 }
-						if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-							pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
-						}
-						dispatch.setState(state.body, pos1, pos2)
-						// Compute the start and end DOM nodes:
-						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, pos1.pos <= pos2.pos ? anchorNode : focusNode)
-						let endNode = startNode
-						if (anchorNode !== focusNode) {
-							endNode = traverseDOM.ascendToBlockDOMNode(ref.current, pos1.pos > pos2.pos ? anchorNode : focusNode) // Reverse order.
-						}
-						// Create and append the affected DOM nodes:
-						let node = startNode
-						let { nextSibling } = node // Create a reference to the next DOM node.
-						affected.current = document.createDocumentFragment()
-						affected.current.appendChild(node)
-						while (node !== endNode) {
-							node = nextSibling
-							nextSibling = node.nextSibling // Update the reference.
-							affected.current.appendChild(node)
-						}
-						nextSibling.parentNode.insertBefore(affected.current.cloneNode(true), nextSibling)
-						// Correct the cursor:
-						const selection = document.getSelection()
-						const range = document.createRange()
-						const {
-							node: _anchorNode,
-							offset: _anchorOffset,
-						} = traverseDOM.computeDOMCursor(ref.current, pos1)
-						const {
-							node: _focusNode,
-							offset: _focusOffset,
-						} = traverseDOM.computeDOMCursor(ref.current, pos2) // Reverse order.
-						range.setStart(_anchorNode, _anchorOffset)
-						// // NOTE: `range.setEnd` does not work when `pos2.pos > pos1.pos`.
-						// range.setEnd(_focusNode, _focusOffset)
-						selection.removeAllRanges()
-						selection.addRange(range)
-						selection.extend(_focusNode, _focusOffset)
 					},
 
+					// TODO: Can use heuristics to detect enter,
+					// backspace, or delete on a paragraph.
 					onInput: e => {
-						// TODO: Enter on a line.
-						// TODO: Backspace on a line.
-						// TODO: Delete on a line.
-
-						// Restore the DOM (sync for React):
-						const { anchorNode } = document.getSelection()
+						// Read the mutated DOM node and cursor:
+						const { anchorNode, anchorOffset } = document.getSelection()
 						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
+						const data = traverseDOM.innerText(startNode)
+						const pos1 = state.pos1.pos - state.pos1.offset
+						const pos2 = state.pos2.pos + state.pos2.offsetRemainder
+						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// Reset the DOM to React-aware state:
 						startNode.replaceWith(affected.current)
-						// Correct the cursor:
-						const selection = document.getSelection()
-						const range = document.createRange()
-						const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1) // Assumes `state.pos1` e.g. `anchorNode`.
-						range.setStart(node, offset)
-						range.collapse()
-						selection.removeAllRanges()
-						selection.addRange(range)
-
-						// // Guard error: `We don't execute
-						// // document.execCommand() this time, because it
-						// // is called recursively.`
-						// if (inputType === "historyUndo") {
-						// 	// No-op.
-						// 	return
-						// }
-						// // Update VDOM:
-						// dispatch.writeGreedy(inputType, data, [greedyPos1, greedyPos2], resetPos)
+						// Update the VDOM (corrects the cursor):
+						dispatch.greedyWrite(data, pos1, pos2, resetPos)
 					},
 
 					// onDragStart: e => e.preventDefault(),
@@ -608,6 +589,10 @@ quux`)
 			)}
 			<div style={stylex.parse("h:28")} />
 			<DebugEditor state={state} />
+			<StatusBar
+				state={state}
+				dispatch={dispatch}
+			/>
 		</div>
 	)
 }

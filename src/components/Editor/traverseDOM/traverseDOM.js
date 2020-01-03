@@ -17,9 +17,9 @@ export function ascendToBlockDOMNode(rootNode, node) {
 // cursor.
 export function computeVDOMCursor(rootNode, node, textOffset) {
 	// Iterate to the innermost node:
-	const pos = new types.VDOMCursor()
+	const pos = types.newVDOMCursor()
 	while (node.childNodes && node.childNodes.length) {
-		node = node.childNodes[textOffset] // ??
+		node = node.childNodes[textOffset] // FIXME?
 		textOffset = 0
 	}
 	const recurse = startNode => {
@@ -28,9 +28,12 @@ export function computeVDOMCursor(rootNode, node, textOffset) {
 				// If found, compute the offset, text offset, and
 				// VDOM cursor:
 				if (currentNode === node) {
+					const blockDOMNode = ascendToBlockDOMNode(rootNode, currentNode) // New.
 					Object.assign(pos, {
 						offset: pos.offset + textOffset,
+						offsetRemainder: nodeMethods.innerText(blockDOMNode).length - (pos.offset + textOffset), // New.
 						textOffset,
+						textRemainder: nodeMethods.nodeValue(currentNode).length - textOffset, // New.
 						pos: pos.pos + textOffset,
 					})
 					return true
@@ -65,7 +68,7 @@ export function computeVDOMCursor(rootNode, node, textOffset) {
 // `computeDOMCursor` computes a DOM cursor from a VDOM
 // cursor.
 export function computeDOMCursor(rootNode, { ...pos }) {
-	const node = new types.DOMCursor()
+	const node = types.newDOMCursor()
 	const recurse = startNode => {
 		for (const currentNode of startNode.childNodes) {
 			if (nodeMethods.isBreakOrTextNode(currentNode)) {

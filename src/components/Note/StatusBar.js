@@ -61,7 +61,7 @@ function StatusBar({ state, dispatch, ...props }) {
 	return (
 		<aside style={{ ...stylex.parse("fixed -x -b b:gray-100 z:1 no-pointer-events"), boxShadow: "0px -1px hsl(var(--gray-200))" }}>
 			<div style={stylex.parse("p-x:24 flex -r -x:center")}>
-				<div style={stylex.parse("flex -r -x:between w:1024 h:32")}>
+				<div style={stylex.parse("flex -r -x:between w:1024 h:28")}>
 
 					{/* LHS */}
 					<div style={stylex.parse("flex -r -y:center")}>
@@ -78,7 +78,7 @@ function StatusBar({ state, dispatch, ...props }) {
 							{computeRHS(mx)}
 						</Text>
 						<div style={stylex.parse("w:6.25")} />
-						<Icon icon={Feather.Bookmark} />
+						<Icon icon={Feather.Search} />
 					</div>
 
 				</div>
