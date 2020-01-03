@@ -2,7 +2,7 @@
 // node or a text node.
 export function isBreakOrTextNode(node) {
 	const ok = (
-		(node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") ||
+		(node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") || // Assumes `node.nodeType`.
 		node.nodeType === Node.TEXT_NODE
 	)
 	return ok
@@ -12,7 +12,7 @@ export function isBreakOrTextNode(node) {
 // node.
 export function isBlockDOMNode(node) {
 	const ok = (
-		node.nodeType === Node.ELEMENT_NODE &&
+		node.nodeType === Node.ELEMENT_NODE && // Assumes `node.nodeType`.
 		node.hasAttribute("data-vdom-node")
 	)
 	return ok

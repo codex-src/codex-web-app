@@ -3,7 +3,10 @@ import nodeMethods from "./nodeMethods"
 
 // `ascendToBlockDOMNode` ascends to the closest block DOM
 // node.
-export function ascendToBlockDOMNode(node) {
+export function ascendToBlockDOMNode(rootNode, node) {
+	if (node.parentNode === rootNode) { // Assumes `node.parentNode`.
+		return node
+	}
 	while (!nodeMethods.isBlockDOMNode(node)) {
 		node = node.parentNode // Assumes `node.parentNode`.
 	}

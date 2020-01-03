@@ -417,6 +417,8 @@ function Editor(props) {
 
 	const [state, dispatch] = useEditor("hello\n\nhello")
 
+	const isComposing = React.useRef(false)
+
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
 	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
@@ -472,6 +474,30 @@ function Editor(props) {
 				pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
 			}
 			dispatch.setState(state.body, pos1, pos2)
+
+			// Compute the start and end block DOM nodes:
+			const startBlockDOMNode = traverseDOM.ascendToBlockDOMNode(ref.current, pos1.pos <= pos2.pos ? anchorNode : focusNode)
+			let endBlockDOMNode = startBlockDOMNode
+			if (anchorNode !== focusNode) {
+				endBlockDOMNode = traverseDOM.ascendToBlockDOMNode(ref.current, pos1.pos <= pos2.pos ? focusNode : anchorNode) // Reverse order.
+			}
+			// Eagerly sorted the VDOM cursors:
+			const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
+			const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
+			// Compute the greedy VDOM cursor start and end:
+			const greedyPos1 = sortedPos1.pos - sortedPos1.offset
+			const greedyPos2 = sortedPos2.pos - sortedPos2.offset + traverseDOM.innerText(endBlockDOMNode).length
+			// FIXME: `data-vdom-node` is ambiguous; we need
+			// to disambiguate compound component nodes.
+			domNodeRange.current = {
+				domNodeRef: startBlockDOMNode, // A reference to the block DOM node start.
+				greedyPos1,                    // The greedy VDOM cursor start.
+				greedyPos2,                    // The greedy VDOM cursor end.
+				innerHTML: ref.current.innerHTML,
+			}
+			// console.log({ ...e })
+			// console.log(domNodeRange.current.innerHTML)
+
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -518,36 +544,39 @@ function Editor(props) {
 							return
 						}
 						// Compute VDOM cursors:
-						const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-						if (anchorNode === ref.current || focusNode === ref.current) {
-							// No-op.
-							return
-						}
-						const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						let pos2 = { ...pos1 }
-						if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-							pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
-						}
-						dispatch.setState(state.body, pos1, pos2)
-						// Compute the start and end block DOM nodes:
-						const startBlockDOMNode = traverseDOM.ascendToBlockDOMNode(pos1.pos <= pos2.pos ? anchorNode : focusNode)
-						let endBlockDOMNode = startBlockDOMNode
-						if (anchorNode !== focusNode) {
-							endBlockDOMNode = traverseDOM.ascendToBlockDOMNode(pos1.pos <= pos2.pos ? focusNode : anchorNode) // Reverse order.
-						}
-						// Eagerly sorted the VDOM cursors:
-						const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
-						const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
-						// Compute the greedy VDOM cursor start and end:
-						const greedyPos1 = sortedPos1.pos - sortedPos1.offset
-						const greedyPos2 = sortedPos2.pos - sortedPos2.offset + traverseDOM.innerText(endBlockDOMNode).length
-						// FIXME: `data-vdom-node` is ambiguous; we need
-						// to disambiguate compound component nodes.
-						domNodeRange.current = {
-							domNodeRef: startBlockDOMNode, // A reference to the block DOM node start.
-							greedyPos1,                    // The greedy VDOM cursor start.
-							greedyPos2,                    // The greedy VDOM cursor end.
-						}
+						// const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+						// if (anchorNode === ref.current || focusNode === ref.current) {
+						// 	// No-op.
+						// 	return
+						// }
+						// const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// let pos2 = { ...pos1 }
+						// if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+						// 	pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
+						// }
+						// dispatch.setState(state.body, pos1, pos2)
+						// // Compute the start and end block DOM nodes:
+						// const startBlockDOMNode = traverseDOM.ascendToBlockDOMNode(ref.current, pos1.pos <= pos2.pos ? anchorNode : focusNode)
+						// let endBlockDOMNode = startBlockDOMNode
+						// if (anchorNode !== focusNode) {
+						// 	endBlockDOMNode = traverseDOM.ascendToBlockDOMNode(ref.current, pos1.pos <= pos2.pos ? focusNode : anchorNode) // Reverse order.
+						// }
+						// // Eagerly sorted the VDOM cursors:
+						// const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
+						// const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
+						// // Compute the greedy VDOM cursor start and end:
+						// const greedyPos1 = sortedPos1.pos - sortedPos1.offset
+						// const greedyPos2 = sortedPos2.pos - sortedPos2.offset + traverseDOM.innerText(endBlockDOMNode).length
+						// // FIXME: `data-vdom-node` is ambiguous; we need
+						// // to disambiguate compound component nodes.
+						// domNodeRange.current = {
+						// 	domNodeRef: startBlockDOMNode, // A reference to the block DOM node start.
+						// 	greedyPos1,                    // The greedy VDOM cursor start.
+						// 	greedyPos2,                    // The greedy VDOM cursor end.
+						// 	innerHTML: ref.current.innerHTML,
+						// }
+						// // console.log({ ...e })
+						// // console.log(domNodeRange.current.innerHTML)
 					},
 
 					// console.log(inputType, { ...e })
@@ -560,12 +589,21 @@ function Editor(props) {
 							// No-op.
 							return
 						}
-						const { domNodeRef, greedyPos1, greedyPos2 } = domNodeRange.current
+						const { domNodeRef, greedyPos1, greedyPos2, innerHTML } = domNodeRange.current
+						// console.log(innerHTML)
 						const { anchorNode, anchorOffset } = document.getSelection()
 						// Guard paragraph:
-						const hueristicNewNode = traverseDOM.ascendToBlockDOMNode(anchorNode) !== domNodeRef
-						if (hueristicNewNode || (inputType === "insertParagraph" || inputType === "insertLineBreak")) {
-							resetDOMToReactAwareState()
+						const heuristicNewNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode) !== domNodeRef
+						if (heuristicNewNode || (inputType === "insertParagraph" || inputType === "insertLineBreak")) {
+							// resetDOMToReactAwareState()
+							document.execCommand("undo", false, null)
+							let attempts = 0
+							// console.log(ref.current.innerHTML.length, innerHTML.length)
+							while (attempts < 5 && ref.current.innerHTML !== innerHTML) {
+								document.execCommand("undo", false, null)
+								attempts++
+							}
+							// console.log(attempts)
 							dispatch.write("\n")
 							return
 						}
@@ -574,7 +612,18 @@ function Editor(props) {
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 						// Reset the DOM (sync for React):
 						if (inputType !== "insertCompositionText") {
-							resetDOMToReactAwareState()
+							// resetDOMToReactAwareState()
+							// console.log(ref.current.innerHTML)
+							document.execCommand("undo", false, null)
+							// console.log(ref.current.innerHTML)
+							// console.log(innerHTML)
+							let attempts = 0
+							// console.log(ref.current.innerHTML.length, innerHTML.length)
+							while (attempts < 5 && ref.current.innerHTML !== innerHTML) {
+								document.execCommand("undo", false, null)
+								attempts++
+							}
+							// console.log(attempts)
 						}
 						// Update VDOM:
 						dispatch.writeGreedy(inputType, data, [greedyPos1, greedyPos2], resetPos)
@@ -585,8 +634,8 @@ function Editor(props) {
 				},
 				state.Components,
 			)}
-			<div style={stylex.parse("h:28")} />
-			<DebugEditor state={state} />
+			{/* <div style={stylex.parse("h:28")} /> */}
+			{/* <DebugEditor state={state} /> */}
 		</div>
 	)
 }
