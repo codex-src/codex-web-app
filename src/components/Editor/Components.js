@@ -104,17 +104,19 @@ const Blockquote = Node(props => (
 	</blockquote>
 ))
 
+const code = { MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }
+
 // Compound component.
 //
 // http://cdpn.io/PowjgOg
 //
 // TODO: Refactor item component.
 const CodeBlock = Node(props => (
-	<pre style={{ ...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"), boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false}>
+	<pre style={{ ...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"), ...code, boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false}>
 		<ul>
 			{props.children.map((each, index) => (
 				<li key={each.key} id={each.key} data-vdom-node>
-					<code style={{ ...stylex.parse("p-x:24"), MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }}>
+					<code style={{ ...stylex.parse("p-x:24"), ...code }}>
 						<Markdown
 							start={!index && props.start}
 							end={index + 1 === props.children.length && props.end}
