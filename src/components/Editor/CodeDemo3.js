@@ -46,6 +46,17 @@ const reducer = state => ({
 		this.collapse()
 		state.shouldRenderComponents += shouldRender
 	},
+	backspaceParagraph() {
+		if (!state.pos1.pos) {
+			// No-op.
+			return
+		}
+		state.body = state.body.write("", state.pos1.pos - 1, state.pos2.pos)
+		state.pos1.pos--
+		this.collapse()
+		state.shouldRenderComponents++
+	},
+
 	rewrite(shouldRender, data, pos1, pos2) {
 		state.body = state.body.write(data, 0, state.body.data.length)
 		state.pos1 = pos1 // FIXME
@@ -72,10 +83,6 @@ const init = initialValue => initialState => {
 function useEditor(initialValue) {
 	return useMethods(reducer, initialState, init(initialValue))
 }
-
-/*
- *
- */
 
 const DebugEditor = props => (
 	<pre style={stylex.parse("overflow -x:scroll")}>
@@ -259,11 +266,11 @@ hello`)
 						// `isDeleteHeuristic`.
 						const anchorNode = traverseDOM.computeDOMCursor(dst.current, state.pos1).node
 						const node = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
-						const { previousSibling, nextSibling } = node
+						const { previousSibling /* , nextSibling */ } = node
 						heuristics.current = {
 							previousSibling, // Heuristic for backspace.
 							node,            // Heuristic for paragraph.
-							nextSibling,     // Heuristic for delete.
+							// nextSibling,  // Heuristic for delete.
 						}
 					},
 
@@ -276,13 +283,16 @@ hello`)
 						// Optimization: Can case greedy `data` and
 						// `pos` range and implement `greedyWrite`.
 						const data = traverseDOM.innerText(dst.current)
-
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const pos1 = traverseDOM.computeVDOMCursor(dst.current, anchorNode, anchorOffset)
-
 						const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
-						const isParagraphHeuristic = startNode !== heuristics.current.node
-						if (isParagraphHeuristic) {
+
+						// Backspace (paragraph):
+						if (startNode === heuristics.current.previousSibling) {
+							dispatch.backspaceParagraph()
+							return
+						// Paragraph:
+						} else if (startNode !== heuristics.current.node) {
 							dispatch.write(true, "\n")
 							return
 						}
