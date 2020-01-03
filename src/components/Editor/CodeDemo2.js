@@ -307,6 +307,7 @@ const initialState = {
 	initialValue: "",                  // The initial plain text vlaue.
 	body: new vdom.VDOM(""),           // The VDOM body.
 	isFocused: false,                  // Is the editor focused?
+	posReversed: false,                // Are the VDOM cursors reversed?
 	pos1: traverseDOM.newVDOMCursor(), // The VDOM cursor start.
 	pos2: traverseDOM.newVDOMCursor(), // The VDOM cursor end.
 
@@ -324,24 +325,24 @@ const reducer = state => ({
 		state.isFocused = false
 	},
 	setState(body, pos1, pos2) {
-		if (pos1.pos > pos2.pos) {
+		const posReversed = pos1.pos > pos2.pos
+		if (posReversed) {
 			[pos1, pos2] = [pos2, pos1]
 		}
-		Object.assign(state, { body, pos1, pos2 })
+		Object.assign(state, { body, posReversed, pos1, pos2 })
 	},
-	// `collapse` collapses the cursor to the start cursor.
 	collapse() {
 		state.pos2 = { ...state.pos1 }
 	},
-	// write(data) {
-	// 	state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
-	// 	state.pos1.pos += data.length
-	// 	this.collapse()
-	// 	// // NOTE: To opt-in to native rendering, conditionally
-	// 	// // increment `shouldRenderComponents`.
-	// 	// state.shouldRenderComponents += inputType !== "onKeyPress"
-	// 	state.shouldRenderComponents++
-	// },
+	write(data) {
+		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
+		state.pos1.pos += data.length
+		this.collapse()
+		// // NOTE: To opt-in to native rendering, conditionally
+		// // increment `shouldRenderComponents`.
+		// state.shouldRenderComponents += inputType !== "onKeyPress"
+		state.shouldRenderComponents++
+	},
 	greedyWrite(data, pos1, pos2, resetPos) {
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = resetPos
@@ -384,49 +385,15 @@ const DebugEditor = props => (
 	</pre>
 )
 
-// https://github.com/facebook/react/issues/11538#issuecomment-417504600
-;(function() {
-	if (typeof Node === "function" && Node.prototype) {
-		const originalRemoveChild = Node.prototype.removeChild
-		Node.prototype.removeChild = function(child) {
-			if (child.parentNode !== this) {
-				if (console) {
-					console.error("Cannot remove a child from a different parent", child, this)
-				}
-				return child
-			}
-			return originalRemoveChild.apply(this, arguments)
-		}
-
-		const originalInsertBefore = Node.prototype.insertBefore
-		Node.prototype.insertBefore = function(newNode, referenceNode) {
-			if (referenceNode && referenceNode.parentNode !== this) {
-				if (console) {
-					console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
-				}
-				return newNode
-			}
-			return originalInsertBefore.apply(this, arguments)
-		}
-	}
-})()
-
 function Editor(props) {
 	const ref = React.useRef()
 
-	const affected = React.useRef()
+	const domRange = React.useRef()
 
-	const [state, dispatch] = useEditor(`foo
-bar
-baz
-qux
-quux`)
+	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
-	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
-
-	// Render components:
+	// Should render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -438,7 +405,7 @@ quux`)
 		[state.shouldRenderComponents],
 	)
 
-	// Render cursor:
+	// Should render cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -449,7 +416,7 @@ quux`)
 			const range = document.createRange()
 			const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
 			range.setStart(node, offset)
-			range.collapse() // Assumes no selection.
+			range.collapse()
 			selection.removeAllRanges()
 			selection.addRange(range)
 		}, [state]),
@@ -457,7 +424,7 @@ quux`)
 	)
 
 	// TODO: Optimization: Can copy a reference to the last
-	// anchor node, etc.
+	// anchor node, etc. Reuse `domRange`?
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.isFocused) {
@@ -507,50 +474,11 @@ quux`)
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
 
-					onKeyPress: e => {
-						// Compute the start and end DOM nodes:
-						const anchorNode = traverseDOM.computeDOMCursor(ref.current, state.pos1).node
-						let focusNode = anchorNode
-						if (state.pos1.pos !== state.pos2.pos) {
-							focusNode = traverseDOM.computeDOMCursor(ref.current, state.pos2).node
-						}
-						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
-						let endNode = startNode
-						if (anchorNode !== focusNode) {
-							endNode = traverseDOM.ascendToBlockDOMNode(ref.current, focusNode)
-						}
-						// Append the affected DOM nodes:
-						let node = startNode
-						let { nextSibling } = node // Create a reference to the next DOM node.
-						affected.current = document.createDocumentFragment()
-						affected.current.appendChild(node)
-						while (node !== endNode) {
-							node = nextSibling
-							nextSibling = node.nextSibling // Update the reference.
-							affected.current.appendChild(node)
-						}
-						nextSibling.parentNode.insertBefore(affected.current.cloneNode(true), nextSibling) // FIXME
-						// Correct the cursor:
-						const selection = document.getSelection()
-						const range = document.createRange()
-						const {
-							node: _anchorNode,
-							offset: _anchorOffset,
-						} = traverseDOM.computeDOMCursor(ref.current, state.pos1)
-						const {
-							node: _focusNode,
-							offset: _focusOffset,
-						} = traverseDOM.computeDOMCursor(ref.current, state.pos2)
-						range.setStart(_anchorNode, _anchorOffset)
-						// // NOTE: `range.setEnd` does not work when
-						// // `pos2.pos > pos1.pos`.
-						// range.setEnd(_focusNode, _focusOffset)
-						selection.removeAllRanges()
-						selection.addRange(range)
-						selection.extend(_focusNode, _focusOffset)
-					},
-
 					onKeyDown: e => {
+						if (domRange.current && domRange.current.undo) {
+							domRange.current.undo()
+						}
+
 						if (e.key === "Tab") {
 							e.preventDefault()
 							// TODO
@@ -564,22 +492,110 @@ quux`)
 							// TODO
 							return
 						}
+						// Compute the start and end DOM nodes:
+						const anchorNode = traverseDOM.computeDOMCursor(ref.current, state.pos1).node
+						let focusNode = anchorNode
+						if (state.pos2.pos !== state.pos1.pos) {
+							focusNode = traverseDOM.computeDOMCursor(ref.current, state.pos2).node
+						}
+						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
+						let endNode = startNode
+						if (focusNode !== anchorNode) { // Compares references.
+							endNode = traverseDOM.ascendToBlockDOMNode(ref.current, focusNode)
+						}
+						// Swap the target DOM nodes:
+						let node = startNode
+						let { nextSibling } = node // Keep a reference to the next node.
+						domRange.current = {
+							target: document.createDocumentFragment(),
+							pos1: 0,
+							pos2: 0,
+							undo: null,
+						}
+						domRange.current.target.appendChild(node)
+						while (node !== endNode) {
+							node = nextSibling
+							nextSibling = node.nextSibling
+							domRange.current.target.appendChild(node)
+						}
+						let parentNode = nextSibling && nextSibling.parentNode
+						if (!nextSibling) {
+							parentNode = ref.current
+						}
+						const newNodes = domRange.current.target.cloneNode(true)
+						const newAnchorNode = newNodes.childNodes[0] // Takes precedence.
+						parentNode.insertBefore(newNodes, nextSibling)
+
+						domRange.current.pos1 = state.pos1.pos - state.pos1.offset
+						domRange.current.pos2 = state.pos2.pos + state.pos2.offsetRemainder
+						// console.log(domRange.current)
+
+						domRange.current.undo = () => {
+							newAnchorNode.replaceWith(domRange.current.target)
+							domRange.current.undo = null // This tape will self-destruct in five seconds…
+						}
+
+						// Correct the cursor:
+						const selection = document.getSelection()
+						const range = document.createRange()
+						const node1 = traverseDOM.computeDOMCursor(ref.current, !state.posReversed ? state.pos1 : state.pos2)
+						const node2 = traverseDOM.computeDOMCursor(ref.current, !state.posReversed ? state.pos2 : state.pos1) // Reverse order.
+						range.setStart(node1.node, node1.offset)
+						selection.removeAllRanges()
+						selection.addRange(range)
+						selection.extend(node2.node, node2.offset)
 					},
 
-					// TODO: Can use heuristics to detect enter,
-					// backspace, or delete on a paragraph.
 					onInput: e => {
-						// Read the mutated DOM node and cursor:
+						// // Read the DOM cursor:
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// // Reset the DOM (sync for React):
+						// document.execCommand("undo", false, null) // Don’t try this at home…
+						// // Update VDOM:
+						// dispatch.greedyWrite(data, pos1, pos2, resetPos)
+
+						// invariant(
+						// 	domRangeReset.current,
+						// 	"FIXME",
+						// )
+
+						// Read the DOM:
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
 						const data = traverseDOM.innerText(startNode)
-						const pos1 = state.pos1.pos - state.pos1.offset
-						const pos2 = state.pos2.pos + state.pos2.offsetRemainder
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// Reset the DOM to React-aware state:
-						startNode.replaceWith(affected.current)
-						// Update the VDOM (corrects the cursor):
-						dispatch.greedyWrite(data, pos1, pos2, resetPos)
+						// Reset the DOM (sync for React):
+						domRange.current.undo()
+						// Update the VDOM:
+						dispatch.greedyWrite(data, domRange.current.pos1, domRange.current.pos2, resetPos)
+
+						// // Read the mutated DOM node and cursor:
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
+						// const data = traverseDOM.innerText(startNode)
+						// const pos1 = state.pos1.pos - state.pos1.offset
+						// const pos2 = state.pos2.pos + state.pos2.offsetRemainder
+						// const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// // Reset the DOM to React-aware state:
+						// startNode.replaceWith(affected.current)
+						// // Update the VDOM (corrects the cursor):
+						// dispatch.greedyWrite(data, pos1, pos2, resetPos)
+
+						// if (e.nativeEvent.inputType === "historyUndo") {
+						// 	// No-op.
+						// 	return
+						// }
+						// // Read the mutated DOM node:
+						// const { startNode, pos1, pos2 } = domNodeRange.current
+						// const data = traverseDOM.innerText(startNode)
+						// // Read the DOM cursor:
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// // Reset the DOM (sync for React):
+						// document.execCommand("undo", false, null) // Don’t try this at home…
+						// // Update VDOM:
+						// dispatch.greedyWrite(data, pos1, pos2, resetPos)
 					},
 
 					// onDragStart: e => e.preventDefault(),
