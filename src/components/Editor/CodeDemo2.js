@@ -343,11 +343,11 @@ const reducer = state => ({
 		// state.shouldRenderComponents += inputType !== "onKeyPress"
 		state.shouldRenderComponents++
 	},
-	greedyWrite(data, pos1, pos2, resetPos) {
+	greedyWrite(inputType, data, pos1, pos2, resetPos) {
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = resetPos
 		this.collapse()
-		state.shouldRenderComponents++
+		state.shouldRenderComponents += inputType !== "insertCompositionText"
 	},
 	render() {
 		state.Components = parse(state.body)
@@ -547,18 +547,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					},
 
 					onInput: e => {
-						// // Read the DOM cursor:
-						// const { anchorNode, anchorOffset } = document.getSelection()
-						// const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// // Reset the DOM (sync for React):
-						// document.execCommand("undo", false, null) // Don’t try this at home…
-						// // Update VDOM:
-						// dispatch.greedyWrite(data, pos1, pos2, resetPos)
-
-						// invariant(
-						// 	domRangeReset.current,
-						// 	"FIXME",
-						// )
+						const { nativeEvent: { inputType } } = e
 
 						// Read the DOM:
 						const { anchorNode, anchorOffset } = document.getSelection()
@@ -566,9 +555,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						const data = traverseDOM.innerText(startNode)
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 						// Reset the DOM (sync for React):
-						domRange.current.undo()
+						// if (inputType !== "insertCompositionText") {
+							domRange.current.undo()
+						// }
 						// Update the VDOM:
-						dispatch.greedyWrite(data, domRange.current.pos1, domRange.current.pos2, resetPos)
+						dispatch.greedyWrite(inputType, data, domRange.current.pos1, domRange.current.pos2, resetPos)
 
 						// // Read the mutated DOM node and cursor:
 						// const { anchorNode, anchorOffset } = document.getSelection()
