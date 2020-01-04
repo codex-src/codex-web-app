@@ -1,8 +1,8 @@
-import * as compareNode from "./compareNode"
+import * as compare from "./compare"
 
 // `nodeValue` mocks the browser function.
 export function nodeValue(node) {
-	if (!compareNode.isBreakOrTextNode(node)) {
+	if (!compare.isBreakOrTextNode(node)) {
 		return ""
 	}
 	// (1) Guard break node:
@@ -13,23 +13,23 @@ export function nodeValue(node) {
 
 // `innerText` mocks the browser function.
 export function innerText(rootNode) {
-	if (compareNode.isBreakOrTextNode(rootNode)) {
+	if (compare.isBreakOrTextNode(rootNode)) {
 		return nodeValue(rootNode)
 	}
 	let data = ""
-	const compute = startNode => {
+	const recurse = startNode => {
 		for (const currentNode of startNode.childNodes) {
-			if (compareNode.isBreakOrTextNode(currentNode)) {
+			if (compare.isBreakOrTextNode(currentNode)) {
 				data += nodeValue(currentNode)
 			} else {
-				compute(currentNode)
-				if (compareNode.isBlockDOMNode(currentNode) &&
-						currentNode.nextSibling) { // Assumes `node.nextSibling`.
+				recurse(currentNode)
+				if (compare.isBlockDOMNode(currentNode) &&
+						currentNode.nextSibling) {
 					data += "\n"
 				}
 			}
 		}
 	}
-	compute(rootNode)
+	recurse(rootNode)
 	return data
 }

@@ -1,14 +1,14 @@
 import * as types from "./types"
 import nodeMethods from "./nodeMethods"
 
-// `ascendToBlockDOMNode` ascends to the closest block DOM
-// node.
+// `ascendToBlockDOMNode` ascends to the nearest block DOM
+// node (or naked block DOM node).
 export function ascendToBlockDOMNode(rootNode, node) {
-	if (node.parentNode === rootNode) { // Assumes `node.parentNode`.
+	if (node.parentNode === rootNode) {
 		return node
 	}
 	while (!nodeMethods.isBlockDOMNode(node)) {
-		node = node.parentNode // Assumes `node.parentNode`.
+		node = node.parentNode
 	}
 	return node
 }
@@ -50,7 +50,7 @@ export function computeVDOMCursor(rootNode, node, textOffset) {
 				}
 				// If not the last node, increment one paragraph:
 				if (nodeMethods.isBlockDOMNode(currentNode) &&
-						currentNode.nextSibling) { // Assumes `node.nextSibling`.
+						currentNode.nextSibling) {
 					Object.assign(pos, {
 						index: pos.index + 1,
 						offset: 0,
@@ -89,7 +89,7 @@ export function computeDOMCursor(rootNode, { ...pos }) {
 				}
 				// If not the last node, decrement one paragraph:
 				if (nodeMethods.isBlockDOMNode(currentNode) &&
-						currentNode.nextSibling) { // Assumes `node.nextSibling`.
+						currentNode.nextSibling) {
 					pos.pos--
 				}
 			}
