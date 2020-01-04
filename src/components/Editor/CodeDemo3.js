@@ -347,7 +347,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						//
 						const heuristicNbsp = resetPos.offset - 2 >= 0 && greedyData[resetPos.offset - 2] === " "
 						const shouldRender = (
-							(!utf8.isAlphanum(ch) || heuristicNbsp) &&
+							(!utf8.isAlphanum(ch) || heuristicNbsp /* Not needed. */) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
 						dispatch.greedyWrite(shouldRender, greedyData, greedy.current.pos1, greedy.current.pos2, resetPos)
