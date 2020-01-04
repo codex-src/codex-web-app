@@ -168,6 +168,14 @@ const DebugEditor = props => (
 	</pre>
 )
 
+// NOTE: Reference components (not anonymous) appear to
+// render faster.
+//
+// https://twitter.com/dan_abramov/status/691306318204923905
+function Contents(props) {
+	return props.components
+}
+
 function Editor(props) {
 	const ref = React.useRef()
 
@@ -217,9 +225,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			const Components = parse(state.body)
 			perfParser.stop()
 			perfReactRenderer.start()
-			const State = props => Components
 			ReactDOM.render(
-				<State />,
+				<Contents components={Components} />,
 				state.renderDOMNode,
 				() => {
 					perfReactRenderer.stop()
