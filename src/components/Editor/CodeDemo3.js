@@ -3,6 +3,7 @@ import parse from "./Components"
 import React from "react"
 import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import StatusBar from "components/Note"
+import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
 import vdom from "./vdom"
@@ -60,11 +61,8 @@ const reducer = state => ({
 	tab() {
 		this.write(true, "\t")
 	},
-	enter() {
-		this.write(true, "\n")
-	},
 	backspaceLine() {
-		if (!state.pos1.pos || state.pos1.pos === state.body.data.length) { // Test rhs.
+		if (!state.pos1.pos) {
 			// No-op.
 			return
 		}
@@ -72,6 +70,18 @@ const reducer = state => ({
 		state.pos1.pos--
 		this.collapse()
 		state.shouldRenderComponents++
+	},
+	forwardBackspaceLine() {
+		if (state.pos1.pos === state.body.data.length) {
+			// No-op.
+			return
+		}
+		// NOTE: VDOM cursors are unchanged.
+		state.body = state.body.write("", state.pos1.pos, state.pos2.pos + 1)
+		state.shouldRenderComponents++
+	},
+	enter() {
+		this.write(true, "\n")
 	},
 	render() {
 		state.Components = parse(state.body)
@@ -94,62 +104,70 @@ function useEditor(initialValue) {
 	return useMethods(reducer, initialState, init(initialValue))
 }
 
-// const DebugEditor = props => (
-// 	<pre style={stylex.parse("overflow -x:scroll")}>
-// 		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
-// 			{JSON.stringify(
-// 				{
-// 					...props.state,
-// 					Components: undefined,
-// 				},
-// 				null,
-// 				"\t",
-// 			)}
-// 		</p>
-// 	</pre>
-// )
+const DebugEditor = props => (
+	<pre style={stylex.parse("overflow -x:scroll")}>
+		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
+			{JSON.stringify(
+				{
+					pos1: props.state.pos1,
+					pos2: props.state.pos2,
+				},
+				null,
+				"\t",
+			)}
+		</p>
+	</pre>
+)
 
 function Editor(props) {
 	const dst = React.useRef()
 	const src = React.useRef()
 
-	// const heuristics = React.useRef()
+	const [state, dispatch] = useEditor(`Hello, world!
 
-	const [state, dispatch] = useEditor(`# How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-## How to build a beautiful blog
-
-\`\`\`go
-package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("hello, world!")
-}
 \`\`\`
 
-### How to build a beautiful blog
 
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
->
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
->
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-#### How to build a beautiful blog
+\`\`\`
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Hello, world!`)
 
-##### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-###### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ## How to build a beautiful blog
+	//
+	// \`\`\`go
+	// package main
+	//
+	// import "fmt"
+	//
+	// func main() {
+	// 	fmt.Println("hello, world!")
+	// }
+	// \`\`\`
+	//
+	// ### How to build a beautiful blog
+	//
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	// >
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	// >
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// #### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ##### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ###### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render components:
 	React.useLayoutEffect(
@@ -270,29 +288,46 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						}
 					},
 
-					// console.log({ data, pos1, pos2, resetPos })
+					// state.pos1.index > resetPos.index
+					// state.pos1.index < resetPos.index
+					// console.log({ heuristicIsBackspaceLine, heuristicIsEnter })
 					onInput: e => {
+						// const { nativeEvent: { inputType } } = e
+						// console.log(inputType)
+
 						// Read the start node:
-						const { anchorNode } = document.getSelection()
+						const { anchorNode, anchorOffset } = document.getSelection()
 						const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
 						const data = traverseDOM.innerText(startNode)
 						// Compute the greedy VDOM cursors:
 						const pos1 = state.pos1.pos - state.pos1.offset
 						const pos2 = state.pos2.pos + state.pos2.offsetRemainder
 						// Compute the DOM cursor:
-						const { anchorOffset } = document.getSelection()
 						const resetPos = traverseDOM.computeVDOMCursor(dst.current, anchorNode, anchorOffset)
-						const heuristics = {
-							isBackspaceLine: state.pos1.index > resetPos.index,
-							isEnter: state.pos1.index < resetPos.index,
-						}
-						if (heuristics.isBackspaceLine) {
+
+						// Backspace on a paragraph:
+						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
+								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
+							console.log("Backspace on a paragraph")
+							dispatch.greedyWrite(true, data, pos1, pos2, resetPos)
 							dispatch.backspaceLine()
 							return
-						} else if (heuristics.isEnter) {
+						// Forward backspace on a paragraph:
+						} else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
+								(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
+							console.log("Forward backspace on a paragraph")
+							dispatch.greedyWrite(true, data, pos1, pos2, resetPos)
+							dispatch.forwardBackspaceLine()
+							return
+						// Paragraph:
+						} else if ((e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
+								state.pos1.pos === state.pos2.pos) {
+							console.log("Paragraph")
+							dispatch.greedyWrite(true, data, pos1, pos2, state.pos1) // Reuse `state.pos1`.
 							dispatch.enter()
 							return
 						}
+
 						const shouldRender = (
 							// (!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) && // Temporary fix.
 							e.nativeEvent.inputType !== "insertCompositionText"
@@ -336,18 +371,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					// onDrop:      e => e.preventDefault(),
 				},
 			)}
-			<aside ref={src} style={{ display: "none" }}>
+			<div ref={src} /* style={{ display: "none" }} */>
 				{state.Components}
-			</aside>
-			<StatusBar
-				state={state}
-				dispatch={dispatch}
-			/>
+			</div>
+			<div style={stylex.parse("h:28")} />
+			<DebugEditor state={state} />
+			<StatusBar state={state} dispatch={dispatch} />
 		</div>
 	)
 }
-
-// <div style={stylex.parse("h:28")} />
-// <DebugEditor state={state} />
 
 export default Editor
