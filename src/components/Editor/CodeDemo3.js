@@ -63,8 +63,9 @@ const reducer = state => ({
 		this.write(true, "\t")
 	},
 	backspaceLine() {
+		// Guard the root node:
 		if (!state.pos1.pos) {
-			// No-op.
+			state.shouldRenderComponents++
 			return
 		}
 		state.body = state.body.write("", state.pos1.pos - 1, state.pos2.pos)
@@ -73,11 +74,11 @@ const reducer = state => ({
 		state.shouldRenderComponents++
 	},
 	forwardBackspaceLine() {
+		// Guard the root node:
 		if (state.pos1.pos === state.body.data.length) {
-			// No-op.
+			state.shouldRenderComponents++
 			return
 		}
-		// NOTE: VDOM cursors are unchanged.
 		state.body = state.body.write("", state.pos1.pos, state.pos2.pos + 1)
 		state.shouldRenderComponents++
 	},
@@ -266,10 +267,6 @@ Hello, world!`)
 							e.preventDefault()
 							dispatch.tab()
 							return
-						// case e.key === "Enter":
-						// 	e.preventDefault()
-						// 	dispatch.enter()
-						// 	return
 						case cmd.isUndo(e):
 							e.preventDefault()
 							// TODO
@@ -280,11 +277,9 @@ Hello, world!`)
 							return
 						case cmd.isBold(e):
 							e.preventDefault()
-							// TODO
 							return
 						case cmd.isItalic(e):
 							e.preventDefault()
-							// TODO
 							return
 						default:
 							// No-op.
@@ -313,19 +308,16 @@ Hello, world!`)
 						// Backspace on a paragraph:
 						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
-							// console.log("Backspace on a paragraph")
 							dispatch.backspaceLine()
 							return
 						// Forward backspace on a paragraph:
 						} else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
-							// console.log("Forward backspace on a paragraph")
 							dispatch.forwardBackspaceLine()
 							return
 						// Paragraph:
 						} else if ((e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
 								state.pos1.pos === state.pos2.pos) {
-							// console.log("Paragraph")
 							dispatch.enter()
 							return
 						// Paragraph (edge case):
@@ -333,7 +325,6 @@ Hello, world!`)
 								(state.pos1.pos === state.pos2.pos) && !state.pos1.offsetRemainder &&
 								greedy.current.startNode !== startNode) { // New DOM node.
 							dispatch.greedyWrite(false, greedyData, greedy.current.pos1, greedy.current.pos2, state.pos1)
-							// console.log("Paragraph (edge case)")
 							dispatch.enter()
 							return
 						}
