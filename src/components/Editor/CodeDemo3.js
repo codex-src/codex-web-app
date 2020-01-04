@@ -259,13 +259,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			selection.addRange(range)
 			scrollIntoViewIfNeeded(0, 28)
 			perfDOMCursor.stop()
-			const ms = (
+			const dur = (
 				perfParser.result() +        // Duration of the component parser phase.
 				perfReactRenderer.result() + // Duration of the React renderer phase.
 				perfDOMRenderer.result() +   // Duration of the DOM renderer phase.
 				perfDOMCursor.result()       // Duration of the DOM cursor (to reset).
 			)
-			console.log(`parser=${perfParser.result()} react=${perfReactRenderer.result()} dom=${perfDOMRenderer.result()} cursor=${perfDOMCursor.result()} (${ms})`)
+			console.log(`parser=${perfParser.result()} react=${perfReactRenderer.result()} dom=${perfDOMRenderer.result()} cursor=${perfDOMCursor.result()} (${dur})`)
 		}, [state]),
 		[state.shouldRenderCursor],
 	)
@@ -399,9 +399,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							return
 						}
 
-						let ch = ""
+						let char = ""
 						if (e.nativeEvent.data) {
-							ch = utf8.nextChar(e.nativeEvent.data, 0) // UTF-8 character.
+							char = utf8.nextChar(e.nativeEvent.data, 0) // UTF-8 character.
 						}
 						//  # H|ello, world!
 						//   ^ &nbsp;
@@ -410,7 +410,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						//
 						const prevCharIsSpace = resetPos.offset - 2 >= 0 && greedy.current.data[resetPos.offset - 2] === " "
 						const shouldRender = (
-							(!utf8.isAlphanum(ch) || prevCharIsSpace) &&
+							(!utf8.isAlphanum(char) || prevCharIsSpace) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
 						dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, resetPos)
