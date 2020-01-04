@@ -297,9 +297,4 @@ function parse(body) {
 	return Components
 }
 
-// // Compound component.
-// <div style={{ outline: "none" }} contentEditable suppressContentEditableWarning>
-// 	{Components}
-// </div>
-
 export default parse
