@@ -1,4 +1,3 @@
-// import stylex from "stylex"
 import cmd from "./cmd"
 import parse from "./Components"
 import React from "react"
@@ -6,7 +5,6 @@ import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import StatusBar from "components/Note"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
-import utf8 from "./utf8"
 import vdom from "./vdom"
 
 import "./code-demo.css"
@@ -248,7 +246,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							e.preventDefault()
 							dispatch.write(true, "\t")
 							return
-						case e.shiftKey && e.key === "Enter": // Add new command?
+						case e.shiftKey && e.key === "Enter":
 							e.preventDefault()
 							dispatch.write(true, "\n")
 							return
@@ -304,8 +302,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							return
 						}
 
-						// TODO: Should render if the last character is
-						// markdown syntax
 						const shouldRender = (
 							// (!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) && // Temporary fix.
 							e.nativeEvent.inputType !== "insertCompositionText"
@@ -351,8 +347,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			<aside ref={src} style={{ display: "none" }}>
 				{state.Components}
 			</aside>
-			{/* <div style={stylex.parse("h:28")} /> */}
-			{/* <DebugEditor state={state} /> */}
 			<StatusBar
 				state={state}
 				dispatch={dispatch}
@@ -360,5 +354,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 		</div>
 	)
 }
+
+// <div style={stylex.parse("h:28")} />
+// <DebugEditor state={state} />
 
 export default Editor

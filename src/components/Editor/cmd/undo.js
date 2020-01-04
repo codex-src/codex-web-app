@@ -15,7 +15,7 @@ export function isUndo(e) {
 	return ok
 }
 
-// FIXME: Redo (yank).
+// TODO: Add support for redo (yank).
 export function isRedo(e) {
 	const ok = (
 		e.shiftKey &&

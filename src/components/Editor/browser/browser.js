@@ -3,10 +3,10 @@ function userAgentMatches(substr) {
 	return navigator.userAgent.indexOf(substr) !== -1
 }
 
-const browser = {
+const opts = {
 	isChrome:  userAgentMatches("Chrome"),
 	isFirefox: userAgentMatches("Firefox"),
 	isSafari:  userAgentMatches("Safari"),
 }
 
-export default browser
+export default opts

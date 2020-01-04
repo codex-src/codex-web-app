@@ -1,7 +1,7 @@
 import browser from "./browser"
 
 const exports = {
-	...browser, // Use spread.
+	...browser,
 }
 
 export default exports
