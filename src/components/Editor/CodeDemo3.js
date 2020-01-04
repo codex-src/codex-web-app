@@ -307,7 +307,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						// TODO: Should render if the last character is
 						// markdown syntax
 						const shouldRender = (
-							(!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) &&
+							// (!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) && // Temporary fix.
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
 						dispatch.rewrite(shouldRender, data, pos1, pos1)
