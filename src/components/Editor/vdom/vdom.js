@@ -1,14 +1,14 @@
 import invariant from "invariant"
 
-// `generateKey` generates a new 7-byte hash.
-function generateKey() {
+// `newKey` generates a new 7-byte hash.
+function newKey() {
 	return Math.random().toString(16).slice(2, 9)
 }
 
 // `parseVDOMNodes` parses plain text data into VDOM nodes.
 function parseVDOMNodes(data) {
 	const nodes = data.split("\n").map(data => ({
-		key: generateKey(),
+		key: newKey(),
 		data,
 	}))
 	return nodes
@@ -18,8 +18,8 @@ function parseVDOMNodes(data) {
 // paragraphs are parsed into VDOM nodes. A VDOM node is a
 // document-unique paragraph.
 class VDOM {
-	// NOTE: `_sharedNodes` is for internal use; nodes are
-	// shared between VDOMs — keys are unchanged.
+	// NOTE: `_sharedNodes`: nodes are shared between VDOMs --
+	// keys are unchanged.
 	constructor(data, _sharedNodes = []) {
 		const nodes = []
 		if (!_sharedNodes.length) {
@@ -27,18 +27,13 @@ class VDOM {
 		} else {
 			nodes.push(...[..._sharedNodes])
 		}
-		// // FIXME
-		// this.state = {
-		// 	data,  // The plain text data.
-		// 	nodes, // The VDOM nodes.
-		// }
 		Object.assign(this, {
 			data,  // The plain text data.
 			nodes, // The VDOM nodes.
 		})
 	}
 	// `_affectedRangeNode` computes the affected range for
-	// a key e.g. node.
+	// a key.
 	_affectedRangeNode(key) {
 		const offset = {
 			pos1: 0,
@@ -58,8 +53,8 @@ class VDOM {
 		}
 		return offset
 	}
-	// `_affectedRangeSelection` computes the affected range for
-	// a selection.
+	// `_affectedRangeSelection` computes the affected range
+	// for a selection.
 	_affectedRangeSelection(pos1, pos2) {
 		// Compute start range:
 		const start = {
@@ -109,7 +104,7 @@ class VDOM {
 	_mergeEndNode(end, node) {
 		const newNode = {
 			...this.nodes[end.node],
-			key: generateKey(),
+			key: newKey(),
 		}
 		newNode.data = node.data + newNode.data.slice(end.offset)
 		return newNode
