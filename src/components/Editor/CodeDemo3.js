@@ -113,7 +113,7 @@ function Editor(props) {
 	const dst = React.useRef()
 	const src = React.useRef()
 
-	const heuristics = React.useRef()
+	// const heuristics = React.useRef()
 
 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 
@@ -268,45 +268,36 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						default:
 							// No-op.
 						}
-						const anchorNode = traverseDOM.computeDOMCursor(dst.current, state.pos1).node
-						const node = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
-						const { previousSibling /* , nextSibling */ } = node
-						heuristics.current = {
-							previousSibling, // Heuristic for backspace.
-							node,            // Heuristic for paragraph.
-							// nextSibling,  // Heuristic for delete.
-						}
 					},
 
 					// console.log({ data, pos1, pos2, resetPos })
 					onInput: e => {
-						// // Read the start node:
-						// const { anchorNode } = document.getSelection()
-						// const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
-						// const data = traverseDOM.innerText(startNode)
-						// // Compute the greedy VDOM cursor start and end:
-						// const pos1 = state.pos1.pos - state.pos1.offset
-						// const pos2 = state.pos2.pos + state.pos2.offsetRemainder
-						// // Compute the DOM cursor:
-						// const { anchorOffset } = document.getSelection()
-						// const resetPos = traverseDOM.computeVDOMCursor(dst.current, anchorNode, anchorOffset)
-						// // Guard backspace (paragraph):
-						// if (startNode === heuristics.current.previousSibling) {
-						// 	console.log("a")
-						// 	dispatch.backspaceLine()
-						// 	return
-						// // Guard paragraph:
-						// } else if (startNode !== heuristics.current.node) {
-						// 	console.log("b")
-						// 	dispatch.enter()
-						// 	return
-						// }
-						// const shouldRender = (
-						// 	// (!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) && // Temporary fix.
-						// 	e.nativeEvent.inputType !== "insertCompositionText"
-						// )
-						// console.log("c")
-						// dispatch.greedyWrite(shouldRender, data, pos1, pos2, resetPos)
+						// Read the start node:
+						const { anchorNode } = document.getSelection()
+						const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
+						const data = traverseDOM.innerText(startNode)
+						// Compute the greedy VDOM cursors:
+						const pos1 = state.pos1.pos - state.pos1.offset
+						const pos2 = state.pos2.pos + state.pos2.offsetRemainder
+						// Compute the DOM cursor:
+						const { anchorOffset } = document.getSelection()
+						const resetPos = traverseDOM.computeVDOMCursor(dst.current, anchorNode, anchorOffset)
+						const heuristics = {
+							isBackspaceLine: state.pos1.index > resetPos.index,
+							isEnter: state.pos1.index < resetPos.index,
+						}
+						if (heuristics.isBackspaceLine) {
+							dispatch.backspaceLine()
+							return
+						} else if (heuristics.isEnter) {
+							dispatch.enter()
+							return
+						}
+						const shouldRender = (
+							// (!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) && // Temporary fix.
+							e.nativeEvent.inputType !== "insertCompositionText"
+						)
+						dispatch.greedyWrite(shouldRender, data, pos1, pos2, resetPos)
 					},
 
 					onCut: e => {
