@@ -340,10 +340,16 @@ Hello, world!`)
 
 						let ch = ""
 						if (e.nativeEvent.data) {
-							ch = utf8.nextChar(e.nativeEvent.data, 0) // UTF8 character.
+							ch = utf8.nextChar(e.nativeEvent.data, 0) // UTF-8 character.
 						}
 						// NOTE `traverseDOM.innerText` converts
 						// non-breaking spaces to spaces.
+						//
+						//  # H|ello, world!
+						//   ^ &nbsp;
+						// [0123]
+						//     ^ cursor
+						//
 						const heuristicNbsp = resetPos.offset - 2 >= 0 && greedyData[resetPos.offset - 2] === " "
 						const shouldRender = (
 							(!utf8.isAlphanum(ch) || heuristicNbsp) &&
