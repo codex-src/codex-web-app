@@ -62,7 +62,7 @@ const reducer = state => ({
 	tab() {
 		this.write(true, "\t")
 	},
-	backspaceLine() {
+	backspaceOnLine() {
 		// Guard the root node:
 		if (!state.pos1.pos) {
 			state.shouldRenderComponents++
@@ -73,7 +73,7 @@ const reducer = state => ({
 		this.collapse()
 		state.shouldRenderComponents++
 	},
-	forwardBackspaceLine() {
+	forwardBackspaceOnLine() {
 		// Guard the root node:
 		if (state.pos1.pos === state.body.data.length) {
 			state.shouldRenderComponents++
@@ -130,15 +130,7 @@ function Editor(props) {
 	const perfT1 = React.useRef()
 	const perfT2 = React.useRef()
 
-	const [state, dispatch] = useEditor(`Hello, world!
-
-\`\`\`
-
-
-
-\`\`\`
-
-Hello, world!`)
+	const [state, dispatch] = useEditor("")
 
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
@@ -192,7 +184,7 @@ Hello, world!`)
 			;[...dst.current.childNodes].map(each => each.remove())
 			dst.current.append(...src.current.cloneNode(true).childNodes)
 			perfT2.current = Date.now()
-			// console.log(`${perfT2.current - perfT1.current} ms`)
+			console.log(`${perfT2.current - perfT1.current} ms`)
 
 			if (!state.isFocused) {
 				// No-op.
@@ -263,6 +255,7 @@ Hello, world!`)
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
+					spellCheck: false,
 
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
@@ -303,8 +296,9 @@ Hello, world!`)
 						}
 					},
 
-					// console.log(e.nativeEvent.inputType)
 					onInput: e => {
+						// console.log(e.nativeEvent.inputType)
+
 						perfT1.current = Date.now()
 
 						// Compute the greedy data:
@@ -318,28 +312,26 @@ Hello, world!`)
 						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
 							// console.log("a")
-							dispatch.backspaceLine()
+							dispatch.backspaceOnLine()
 							return
 						// Forward backspace on a paragraph:
 						} else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
 							// console.log("b")
-							dispatch.forwardBackspaceLine()
+							dispatch.forwardBackspaceOnLine()
 							return
 						// Paragraph:
-						} else if ((e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
-								state.pos1.pos === state.pos2.pos) {
+						} else if (e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") {
 							// console.log("c")
 							dispatch.enter()
 							return
 						// Paragraph (edge case):
-						} else if ((e.nativeEvent.inputType === "insertText" || e.nativeEvent.inputType === "insertCompositionText") &&
-								state.pos1.pos === state.pos2.pos && /* !state.pos1.offsetRemainder && */
-								greedy.current.startNode !== startNode) { // New DOM node.
+						} else if ((e.nativeEvent.inputType === "insertText" || e.nativeEvent.inputType === "insertCompositionText" || e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
+								startNode !== greedy.current.startNode) { // New DOM node.
 							// console.log("d")
-							const concat = greedy.current.data + traverseDOM.innerText(startNode)
-							dispatch.greedyWrite(false, concat, greedy.current.pos1, greedy.current.pos2, state.pos1)
-							dispatch.enter()
+							const concat = greedy.current.data + "\n" + traverseDOM.innerText(startNode)
+							dispatch.greedyWrite(true, concat, greedy.current.pos1, greedy.current.pos2, resetPos)
+							// dispatch.enter()
 							return
 						}
 
@@ -347,17 +339,14 @@ Hello, world!`)
 						if (e.nativeEvent.data) {
 							ch = utf8.nextChar(e.nativeEvent.data, 0) // UTF-8 character.
 						}
-						// NOTE `traverseDOM.innerText` converts
-						// non-breaking spaces to spaces.
-						//
 						//  # H|ello, world!
 						//   ^ &nbsp;
 						// [0123]
 						//     ^ cursor
 						//
-						const heuristicNbsp = resetPos.offset - 2 >= 0 && greedy.current.data[resetPos.offset - 2] === " "
+						const prevCharIsSpace = resetPos.offset - 2 >= 0 && greedy.current.data[resetPos.offset - 2] === " "
 						const shouldRender = (
-							(!utf8.isAlphanum(ch) || heuristicNbsp /* Not needed. */) &&
+							(!utf8.isAlphanum(ch) || prevCharIsSpace) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
 						dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, resetPos)
@@ -399,11 +388,12 @@ Hello, world!`)
 					// onDrop:      e => e.preventDefault(),
 				},
 			)}
-			<div ref={src} style={{ display: "none" }}>
+			<div style={stylex.parse("h:28")} />
+			<div ref={src} style={stylex.parse("m-x:-24 p-x:24 p-y:32 b:gray-100")}>
 				{state.Components}
 			</div>
-			<div style={stylex.parse("h:28")} />
-			<DebugEditor state={state} />
+			{/* <div style={stylex.parse("h:28")} /> */}
+			{/* <DebugEditor state={state} /> */}
 			<StatusBar state={state} dispatch={dispatch} />
 		</div>
 	)
