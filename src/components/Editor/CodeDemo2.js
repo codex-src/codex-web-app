@@ -560,7 +560,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 						// Reset the DOM (sync for React):
 						// if (inputType !== "insertCompositionText") {
-							// domRange.current.undo()
+						// domRange.current.undo()
 						// }
 						// Update the VDOM:
 						dispatch.greedyWrite(inputType, data, domRange.current.pos1, domRange.current.pos2, resetPos)

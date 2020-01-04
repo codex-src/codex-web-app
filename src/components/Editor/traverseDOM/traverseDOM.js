@@ -25,8 +25,7 @@ export function computeVDOMCursor(rootNode, node, textOffset) {
 	const recurse = startNode => {
 		for (const currentNode of startNode.childNodes) {
 			if (nodeMethods.isBreakOrTextNode(currentNode)) {
-				// If found, compute the offset, text offset, and
-				// VDOM cursor:
+				// If found, compute the VDOM cursor:
 				if (currentNode === node) {
 					const blockDOMNode = ascendToBlockDOMNode(rootNode, currentNode) // New.
 					Object.assign(pos, {
@@ -47,10 +46,9 @@ export function computeVDOMCursor(rootNode, node, textOffset) {
 				// If found recursing the current node, return:
 				if (recurse(currentNode)) {
 					return true
-				}
-				// If not the last node, increment one paragraph:
-				if (nodeMethods.isBlockDOMNode(currentNode) &&
+				} else if (nodeMethods.isBlockDOMNode(currentNode) &&
 						currentNode.nextSibling) {
+					// Increment one paragraph:
 					Object.assign(pos, {
 						index: pos.index + 1,
 						offset: 0,
@@ -72,7 +70,7 @@ export function computeDOMCursor(rootNode, { ...pos }) {
 	const recurse = startNode => {
 		for (const currentNode of startNode.childNodes) {
 			if (nodeMethods.isBreakOrTextNode(currentNode)) {
-				// If found, compute the node and offset:
+				// If found, compute the DOM cursor:
 				const { length } = nodeMethods.nodeValue(currentNode)
 				if (pos.pos - length <= 0) {
 					Object.assign(node, {
@@ -86,10 +84,9 @@ export function computeDOMCursor(rootNode, { ...pos }) {
 				// If found recursing the current node, return:
 				if (recurse(currentNode)) {
 					return true
-				}
-				// If not the last node, decrement one paragraph:
-				if (nodeMethods.isBlockDOMNode(currentNode) &&
+				} else if (nodeMethods.isBlockDOMNode(currentNode) &&
 						currentNode.nextSibling) {
+					// Decrement one paragraph:
 					pos.pos--
 				}
 			}
