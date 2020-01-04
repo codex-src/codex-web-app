@@ -10,26 +10,28 @@ import stylex from "stylex"
 // 	[Break.name]:      "Break",
 // }
 
-// `Node` is a higher-order component that decorates a
-// render function.
-const Node = render => ({ reactKey, ...props }) => {
-	const element = render(props)
-	const newRender = React.cloneElement(
-		element,
-		{
-			"id": reactKey,
-			"data-vdom-node": true, // reactKey, // Redundant.
-			...element.props,
-		},
-	)
-	return newRender
-}
+// // `Node` is a higher-order component that decorates a
+// // render function.
+// const Node = render => ({ reactKey, ...props }) => {
+// 	const element = render(props)
+// 	const newRender = React.cloneElement(
+// 		element,
+// 		{
+// 			"id": reactKey,
+// 			"data-vdom-node": true, // reactKey, // Redundant.
+// 			...element.props,
+// 		},
+// 	)
+// 	return newRender
+// }
 
-const Syntax = stylex.Styleable(props => (
-	<span style={stylex.parse("c:blue-a400")}>
+const syntaxStyle = stylex.parse("c:blue-a400")
+
+const Syntax = ({ style, ...props }) => (
+	<span style={{ ...syntaxStyle, ...style }}>
 		{props.children}
 	</span>
-))
+)
 
 const Markdown = ({ style, ...props }) => (
 	<React.Fragment>
@@ -56,36 +58,40 @@ const headersSyntax = {
 	"###### ": "h6",
 }
 
+const headerStyle = stylex.parse("fw:700 fs:19")
+
 // FIXME: Add `m-t:28` in read-only mode.
-const Header = Node(props => {
+const Header = props => {
 	const TagName = headersSyntax[props.start]
 
-	const start = `${props.start.slice(0, -1)}\u00a0`
 	return (
-		<TagName style={stylex.parse("fw:700 fs:19")}>
-			<Markdown start={start}>
+		<TagName id={props.reactKey} style={headerStyle} data-vdom-node>
+			<Markdown start={`${props.start.slice(0, -1)}\u00a0`}>
 				{props.children}
 			</Markdown>
 		</TagName>
 	)
-})
+}
 
-const Comment = Node(props => (
-	<p style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
-		<Markdown style={stylex.parse("c:gray")} start="//">
+const commentStyle = stylex.parse("fs:19 c:gray")
+const commentMarkdownStyle = stylex.parse("c:gray")
+
+const Comment = props => (
+	<p id={props.reactKey} style={commentStyle} spellCheck={false} data-vdom-node>
+		<Markdown style={commentMarkdownStyle} start="//">
 			{props.children}
 		</Markdown>
 	</p>
-))
+)
+
+const blockquoteItemStyle = stylex.parse("fs:19")
 
 // Compound component.
-//
-// TODO: Refactor item component.
-const Blockquote = Node(props => (
-	<blockquote>
+const Blockquote = props => (
+	<blockquote id={props.reactKey} data-vdom-node>
 		<ul>
 			{props.children.map(each => (
-				<li key={each.key} id={each.key} style={stylex.parse("fs:19")} data-vdom-node>
+				<li key={each.key} id={each.key} style={blockquoteItemStyle} data-vdom-node>
 					<Markdown start={each.isNewline ? ">" : ">\u00a0"}>
 						{each.data || (
 							each.isNewline && (
@@ -97,7 +103,7 @@ const Blockquote = Node(props => (
 			))}
 		</ul>
 	</blockquote>
-))
+)
 
 const codeStyle = {
 	MozTabSize: 2,
@@ -119,10 +125,8 @@ const codeBlockItemCodeStyle = {
 // Compound component.
 //
 // http://cdpn.io/PowjgOg
-//
-// TODO: Refactor item component.
-const CodeBlock = Node(props => (
-	<pre style={codeBlockStyle} spellCheck={false}>
+const CodeBlock = props => (
+	<pre id={props.reactKey} style={codeBlockStyle} spellCheck={false} data-vdom-node>
 		<ul>
 			{props.children.map((each, index) => (
 				<li key={each.key} id={each.key} data-vdom-node>
@@ -142,19 +146,23 @@ const CodeBlock = Node(props => (
 			))}
 		</ul>
 	</pre>
-))
+)
 
-const Paragraph = Node(props => (
-	<p style={stylex.parse("fs:19")}>
+const paragraphStyle = stylex.parse("fs:19")
+
+const Paragraph = props => (
+	<p id={props.reactKey} style={paragraphStyle} data-vdom-node>
 		{props.children}
 	</p>
-))
+)
 
-const Break = Node(props => (
-	<p style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+const breakStyle = stylex.parse("fs:19 c:gray")
+
+const Break = props => (
+	<p id={props.reactKey} style={breakStyle} spellCheck={false} data-vdom-node>
 		<Markdown start={props.start} />
 	</p>
-))
+)
 
 // Convenience function.
 function isBlockquote(data, hasNextSibling) {
