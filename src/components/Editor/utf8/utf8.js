@@ -8,9 +8,6 @@
 //   MaxRune   = '\U0010FFFF' // Maximum valid Unicode code point.
 //   UTFMax    = 4            // maximum number of bytes of a UTF-8 encoded Unicode character.
 // )
-//
-// This package is Unicode and emoji-friendly but does not
-// cover skin tones and compound graphemes.
 
 // `count` counts the UTF-8 Unicode character length.
 export function count(str) {

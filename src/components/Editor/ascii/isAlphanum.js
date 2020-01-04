@@ -1,4 +1,8 @@
 function isAlphanum(char) {
+	// Guard empty character:
+	if (!char) {
+		return false
+	}
 	const ok = (
 		(char >= "a" && char <= "z") ||
 		(char >= "A" && char <= "Z") ||

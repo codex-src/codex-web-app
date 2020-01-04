@@ -338,8 +338,15 @@ Hello, world!`)
 							return
 						}
 
+						let ch = ""
+						if (e.nativeEvent.data) {
+							ch = utf8.nextChar(e.nativeEvent.data, 0) // UTF8 character.
+						}
+						// NOTE `traverseDOM.innerText` converts
+						// non-breaking spaces to spaces.
+						const heuristicNbsp = resetPos.offset - 2 >= 0 && greedyData[resetPos.offset - 2] === " "
 						const shouldRender = (
-							(!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) &&
+							(!utf8.isAlphanum(ch) || heuristicNbsp) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
 						dispatch.greedyWrite(shouldRender, greedyData, greedy.current.pos1, greedy.current.pos2, resetPos)
