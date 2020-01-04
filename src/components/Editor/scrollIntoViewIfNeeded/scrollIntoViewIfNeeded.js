@@ -1,32 +1,38 @@
-// `focusDOMRect` returns the focused `DOMRect`.
-function focusDOMRect() {
+// `getFocusedDOMRect` gets the focused `DOMRect`.
+function getFocusedDOMRect() {
 	const selection = document.getSelection()
 	if (!selection.anchorNode) {
+		// No-op.
 		return null
 	}
-	const domRects = selection.getRangeAt(0).getClientRects()
+	const domRects = selection.getRangeAt(0).getClientRects() // E.g. cursor.
 	if (!domRects.length) {
 		if (!selection.anchorNode.getBoundingClientRect) {
+			// No-op.
 			return null
 		}
-		// Return the anchor nodeL
+		// Return the anchor node:
 		return selection.anchorNode.getBoundingClientRect()
 	}
 	return domRects[0]
 }
 
 // `scrollIntoViewIfNeeded` mocks the WebKit function.
-//
-// FIXME: X-axis?
-function scrollIntoViewIfNeeded(buffer = { top: 0, bottom: 0 }) { // { left: 0, right: 0 }
-	const focus = focusDOMRect()
-	if (!focus) {
+function scrollIntoViewIfNeeded(offsetTop = 0, offsetBottom = 0) {
+	const domRect = getFocusedDOMRect()
+	if (!domRect) {
 		// No-op.
 		return
 	}
+	const top = (
+		window.scrollY +        // Top of the page.
+		(domRect.y - offsetTop) // Top of the `DOMRect`.
+	)
+	const bottom = (
+		(window.scrollY - window.innerHeight) +     // Bottom of the page.
+		(domRect.y + domRect.height + offsetBottom) // Bottom of the `DOMRect`.
+	)
 	let y = 0
-	const top = window.scrollY + focus.y - (buffer.top || 0)
-	const bottom = window.scrollY - window.innerHeight + focus.y + focus.height + (buffer.bottom || 0)
 	if (window.scrollY > top) {
 		y = top
 	} else if (window.scrollY < bottom) {

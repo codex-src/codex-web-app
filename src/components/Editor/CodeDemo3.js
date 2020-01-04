@@ -2,6 +2,7 @@
 import detect from "./detect"
 import parse from "./Components"
 import React from "react"
+import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import StatusBar from "components/Note"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
@@ -62,6 +63,7 @@ const reducer = state => ({
 		this.collapse()
 		state.shouldRenderComponents++
 	},
+	// DEPRECATE
 	rewrite(shouldRender, data, pos1, pos2) {
 		state.body = state.body.write(data, 0, state.body.data.length)
 		state.pos1 = pos1 // FIXME
@@ -108,7 +110,6 @@ function Editor(props) {
 	const dst = React.useRef()
 	const src = React.useRef()
 
-	// Heuristics for paragraph, backspace, and delete:
 	const heuristics = React.useRef()
 
 	// 	const [state, dispatch] = useEditor(`hello
@@ -165,9 +166,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			// TODO: Heavily optimize.
-			// dst.current.replaceWith(src.current.cloneNode(true))
-			;[...dst.current.childNodes].map(each => each.remove())
-			;[...src.current.childNodes].map(each => dst.current.appendChild(each.cloneNode(true)))
+			[...dst.current.childNodes].map(each => each.remove())
+			dst.current.append(...src.current.cloneNode(true).childNodes)
 
 			if (!state.isFocused) {
 				// No-op.
@@ -218,7 +218,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				pos2 = traverseDOM.computeVDOMCursor(dst.current, node2, offs2)
 			}
 			dispatch.setState(state.body, pos1, pos2)
-			selectionchange.current = { node1, node2, offs1, offs2 }
+			scrollIntoViewIfNeeded(0, 28) // 28: `StatusBar`.
+			selectionchange.current = { node1, node2, offs1, offs2 } // Cache.
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
