@@ -89,7 +89,7 @@ const reducer = state => ({
 		const perfT1 = Date.now()
 		state.Components = parse(state.body)
 		const perfT2 = Date.now()
-		console.log(`parse: ${perfT2 - perfT1} ms`)
+		perfParserMs = perfT2 - perfT1
 		state.shouldRenderCursor++
 	},
 })
@@ -123,6 +123,9 @@ const DebugEditor = props => (
 		</p>
 	</pre>
 )
+
+let perfParserMs = 0
+let perfRendererMs = 0
 
 function Editor(props) {
 	const dst = React.useRef()
@@ -186,10 +189,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			// TODO: Heavily optimize.
 			;[...dst.current.childNodes].map(each => each.remove())
 			dst.current.append(...src.current.cloneNode(true).childNodes)
+
 			perfT2.current = Date.now()
-			const ms = perfT2.current - perfT1.current
-			if (!isNaN(ms)) {
-				console.log(`Render: ${ms} ms`)
+			perfRendererMs = (perfT2.current | 0) - (perfT1.current | 0)
+			if (!isNaN(perfRendererMs)) {
+				console.log(`parser=${perfParserMs}ms renderer=${perfRendererMs}ms`)
 			}
 
 			if (!state.isFocused) {
