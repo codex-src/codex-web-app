@@ -123,6 +123,8 @@ function Editor(props) {
 	const dst = React.useRef()
 	const src = React.useRef()
 
+	const greedy = React.useRef()
+
 	const [state, dispatch] = useEditor(`Hello, world!
 
 \`\`\`
@@ -286,44 +288,51 @@ Hello, world!`)
 						default:
 							// No-op.
 						}
-					},
-
-					// state.pos1.index > resetPos.index
-					// state.pos1.index < resetPos.index
-					// console.log({ heuristicIsBackspaceLine, heuristicIsEnter })
-					onInput: e => {
-						// const { nativeEvent: { inputType } } = e
-						// console.log(inputType)
-
-						// Read the start node:
-						const { anchorNode, anchorOffset } = document.getSelection()
+						// Compute the start node:
+						const { node: anchorNode } = traverseDOM.computeDOMCursor(dst.current, state.pos1)
 						const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
-						const data = traverseDOM.innerText(startNode)
-						// Compute the greedy VDOM cursors:
+						// Compute the greedy VDOM cursor range:
 						const pos1 = state.pos1.pos - state.pos1.offset
 						const pos2 = state.pos2.pos + state.pos2.offsetRemainder
-						// Compute the DOM cursor:
+						greedy.current = {
+							startNode, // The greedy DOM node.
+							pos1,      // The greedy cursor start.
+							pos2,      // The greedy cursor end.
+						}
+					},
+
+					onInput: e => {
+						// Compute the greedy data:
+						const greedyData = traverseDOM.innerText(greedy.current.startNode)
+						// Compute the reset VDOM cursor:
+						const { anchorNode, anchorOffset } = document.getSelection()
+						const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
 						const resetPos = traverseDOM.computeVDOMCursor(dst.current, anchorNode, anchorOffset)
 
 						// Backspace on a paragraph:
 						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
-							console.log("Backspace on a paragraph")
-							dispatch.greedyWrite(true, data, pos1, pos2, resetPos)
+							console.log("backspaceLine")
 							dispatch.backspaceLine()
 							return
 						// Forward backspace on a paragraph:
 						} else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
-							console.log("Forward backspace on a paragraph")
-							dispatch.greedyWrite(true, data, pos1, pos2, resetPos)
+							console.log("forwardBackspaceLine")
 							dispatch.forwardBackspaceLine()
 							return
 						// Paragraph:
 						} else if ((e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
 								state.pos1.pos === state.pos2.pos) {
-							console.log("Paragraph")
-							dispatch.greedyWrite(true, data, pos1, pos2, state.pos1) // Reuse `state.pos1`.
+							console.log("enter")
+							dispatch.enter()
+							return
+						// Paragraph (edge case):
+						} else if (e.nativeEvent.inputType === "insertCompositionText" &&
+								(state.pos1.pos === state.pos2.pos) && !state.pos1.offsetRemainder &&
+								greedy.current.startNode !== startNode) { // New DOM node.
+							dispatch.greedyWrite(false, greedyData, greedy.current.pos1, greedy.current.pos2, state.pos1)
+							console.log("enter (edge case)")
 							dispatch.enter()
 							return
 						}
@@ -332,7 +341,46 @@ Hello, world!`)
 							// (!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) && // Temporary fix.
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
-						dispatch.greedyWrite(shouldRender, data, pos1, pos2, resetPos)
+						dispatch.greedyWrite(shouldRender, greedyData, greedy.current.pos1, greedy.current.pos2, resetPos)
+
+						// const { nativeEvent: { inputType } } = e
+						// console.log(inputType)
+						//
+						// // Read the start node:
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
+						// const data = traverseDOM.innerText(startNode)
+						// // Compute the greedy VDOM cursors:
+						// const pos1 = state.pos1.pos - state.pos1.offset
+						// const pos2 = state.pos2.pos + state.pos2.offsetRemainder
+						// // Compute the DOM cursor:
+						// const resetPos = traverseDOM.computeVDOMCursor(dst.current, anchorNode, anchorOffset)
+						//
+						// // Backspace on a paragraph:
+						// if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
+						// 		(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
+						// 	dispatch.greedyWrite(true, data, pos1, pos2, resetPos)
+						// 	dispatch.backspaceLine()
+						// 	return
+						// // Forward backspace on a paragraph:
+						// } else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
+						// 		(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
+						// 	dispatch.greedyWrite(true, data, pos1, pos2, resetPos)
+						// 	dispatch.forwardBackspaceLine()
+						// 	return
+						// // Paragraph:
+						// } else if ((e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
+						// 		state.pos1.pos === state.pos2.pos) {
+						// 	dispatch.greedyWrite(true, data, pos1, pos2, state.pos1) // Reuse `state.pos1`.
+						// 	dispatch.enter()
+						// 	return
+						// }
+						//
+						// const shouldRender = (
+						// 	// (!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) && // Temporary fix.
+						// 	e.nativeEvent.inputType !== "insertCompositionText"
+						// )
+						// dispatch.greedyWrite(shouldRender, data, pos1, pos2, resetPos)
 					},
 
 					onCut: e => {
@@ -371,7 +419,7 @@ Hello, world!`)
 					// onDrop:      e => e.preventDefault(),
 				},
 			)}
-			<div ref={src} /* style={{ display: "none" }} */>
+			<div ref={src} style={{ display: "none" }}>
 				{state.Components}
 			</div>
 			<div style={stylex.parse("h:28")} />
