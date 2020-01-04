@@ -257,6 +257,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			range.collapse()
 			selection.removeAllRanges()
 			selection.addRange(range)
+			scrollIntoViewIfNeeded(0, 28)
 			perfDOMCursor.stop()
 			const ms = (
 				perfParser.result() +        // Duration of the component parser phase.
@@ -303,9 +304,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				pos2 = traverseDOM.computeVDOMCursor(ref.current, node2, offs2)
 			}
 			dispatch.setState(state.body, pos1, pos2)
-			// // DEPRECATE? Doesn’t work as expected when there’s
-			// // a selection.
-			// scrollIntoViewIfNeeded(0, 28)
 			selectionchange.current = { node1, node2, offs1, offs2 }
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
