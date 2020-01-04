@@ -1,11 +1,9 @@
-import * as _delete from "./_delete"
-import * as backspace from "./backspace"
+import * as format from "./format"
 import * as tab from "./tab"
 import * as undo from "./undo"
 
 const exports = {
-	..._delete,
-	...backspace,
+	...format,
 	...tab,
 	...undo,
 }

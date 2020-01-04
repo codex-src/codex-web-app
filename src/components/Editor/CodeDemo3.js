@@ -1,5 +1,5 @@
 // import stylex from "stylex"
-import detect from "./detect"
+import cmd from "./cmd"
 import parse from "./Components"
 import React from "react"
 import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
@@ -243,27 +243,34 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					onBlur:  dispatch.blur,
 
 					onKeyDown: e => {
-						if (e.key === "Tab") {
+						switch (true) {
+						case e.key === "Tab":
 							e.preventDefault()
 							dispatch.write(true, "\t")
 							return
-						} else if (e.shiftKey && e.key === "Enter") { // Add new detector?
+						case e.shiftKey && e.key === "Enter": // Add new command?
 							e.preventDefault()
 							dispatch.write(true, "\n")
 							return
-						} else if (detect.isUndo(e)) {
+						case cmd.isUndo(e):
 							e.preventDefault()
 							// TODO
 							return
-						} else if (detect.isRedo(e)) {
+						case cmd.isRedo(e):
 							e.preventDefault()
 							// TODO
 							return
+						case cmd.isBold(e):
+							e.preventDefault()
+							// TODO
+							return
+						case cmd.isItalic(e):
+							e.preventDefault()
+							// TODO
+							return
+						default:
+							// No-op.
 						}
-						// Compute the start node:
-						//
-						// TODO: Setup for `isBackspaceHeuristic` and
-						// `isDeleteHeuristic`.
 						const anchorNode = traverseDOM.computeDOMCursor(dst.current, state.pos1).node
 						const node = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
 						const { previousSibling /* , nextSibling */ } = node
