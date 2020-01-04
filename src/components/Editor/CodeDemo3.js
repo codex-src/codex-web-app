@@ -45,14 +45,26 @@ const reducer = state => ({
 	// rerenders.
 	write(shouldRender, data) {
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
-		state.pos1.pos += data.length // Temporarily voids `pos1`.
+		state.pos1.pos += data.length
 		this.collapse()
 		state.shouldRenderComponents += shouldRender
 	},
-	// `backspace` deletes one character and assumes no
-	// selection.
-	backspace() {
-		if (!state.pos1.pos) {
+	// `greedyWrite` greedily writes plain text data and
+	// conditionally rerenders.
+	greedyWrite(shouldRender, data, pos1, pos2, resetPos) {
+		state.body = state.body.write(data, pos1, pos2)
+		state.pos1 = resetPos
+		this.collapse()
+		state.shouldRenderComponents += shouldRender
+	},
+	tab() {
+		this.write(true, "\t")
+	},
+	enter() {
+		this.write(true, "\n")
+	},
+	backspaceLine() {
+		if (!state.pos1.pos || state.pos1.pos === state.body.data.length) { // Test rhs.
 			// No-op.
 			return
 		}
@@ -60,13 +72,6 @@ const reducer = state => ({
 		state.pos1.pos--
 		this.collapse()
 		state.shouldRenderComponents++
-	},
-	// DEPRECATE
-	rewrite(shouldRender, data, pos1, pos2) {
-		state.body = state.body.write(data, 0, state.body.data.length)
-		state.pos1 = pos1 // FIXME
-		this.collapse()
-		state.shouldRenderComponents += shouldRender
 	},
 	render() {
 		state.Components = parse(state.body)
@@ -109,12 +114,6 @@ function Editor(props) {
 	const src = React.useRef()
 
 	const heuristics = React.useRef()
-
-	// 	const [state, dispatch] = useEditor(`hello
-	//
-	// hello
-	//
-	// hello`)
 
 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 
@@ -244,12 +243,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						switch (true) {
 						case e.key === "Tab":
 							e.preventDefault()
-							dispatch.write(true, "\t")
+							dispatch.tab()
 							return
-						case e.shiftKey && e.key === "Enter":
-							e.preventDefault()
-							dispatch.write(true, "\n")
-							return
+						// case e.key === "Enter":
+						// 	e.preventDefault()
+						// 	dispatch.enter()
+						// 	return
 						case cmd.isUndo(e):
 							e.preventDefault()
 							// TODO
@@ -279,34 +278,35 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						}
 					},
 
+					// console.log({ data, pos1, pos2, resetPos })
 					onInput: e => {
-						// console.log(e.nativeEvent.inputType)
-
+						// // Read the start node:
+						// const { anchorNode } = document.getSelection()
+						// const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
+						// const data = traverseDOM.innerText(startNode)
+						// // Compute the greedy VDOM cursor start and end:
 						// const pos1 = state.pos1.pos - state.pos1.offset
 						// const pos2 = state.pos2.pos + state.pos2.offsetRemainder
-
-						// Optimization: Can case greedy `data` and
-						// `pos` range and implement `greedyWrite`.
-						const data = traverseDOM.innerText(dst.current)
-						const { anchorNode, anchorOffset } = document.getSelection()
-						const pos1 = traverseDOM.computeVDOMCursor(dst.current, anchorNode, anchorOffset)
-						const startNode = traverseDOM.ascendToBlockDOMNode(dst.current, anchorNode)
-
-						// Backspace (paragraph):
-						if (startNode === heuristics.current.previousSibling) {
-							dispatch.backspace()
-							return
-						// Paragraph:
-						} else if (startNode !== heuristics.current.node) {
-							dispatch.write(true, "\n")
-							return
-						}
-
-						const shouldRender = (
-							// (!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) && // Temporary fix.
-							e.nativeEvent.inputType !== "insertCompositionText"
-						)
-						dispatch.rewrite(shouldRender, data, pos1, pos1)
+						// // Compute the DOM cursor:
+						// const { anchorOffset } = document.getSelection()
+						// const resetPos = traverseDOM.computeVDOMCursor(dst.current, anchorNode, anchorOffset)
+						// // Guard backspace (paragraph):
+						// if (startNode === heuristics.current.previousSibling) {
+						// 	console.log("a")
+						// 	dispatch.backspaceLine()
+						// 	return
+						// // Guard paragraph:
+						// } else if (startNode !== heuristics.current.node) {
+						// 	console.log("b")
+						// 	dispatch.enter()
+						// 	return
+						// }
+						// const shouldRender = (
+						// 	// (!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) && // Temporary fix.
+						// 	e.nativeEvent.inputType !== "insertCompositionText"
+						// )
+						// console.log("c")
+						// dispatch.greedyWrite(shouldRender, data, pos1, pos2, resetPos)
 					},
 
 					onCut: e => {
@@ -340,6 +340,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						dispatch.write(true, data)
 					},
 
+					// TODO: See `CodeDemo.js`.
 					// onDragStart: e => e.preventDefault(),
 					// onDrop:      e => e.preventDefault(),
 				},
