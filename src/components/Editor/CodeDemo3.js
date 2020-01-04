@@ -1,6 +1,7 @@
 import detect from "./detect"
 import parse from "./Components"
 import React from "react"
+import StatusBar from "components/Note"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
@@ -88,20 +89,20 @@ function useEditor(initialValue) {
 	return useMethods(reducer, initialState, init(initialValue))
 }
 
-const DebugEditor = props => (
-	<pre style={stylex.parse("overflow -x:scroll")}>
-		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
-			{JSON.stringify(
-				{
-					...props.state,
-					Components: undefined,
-				},
-				null,
-				"\t",
-			)}
-		</p>
-	</pre>
-)
+// const DebugEditor = props => (
+// 	<pre style={stylex.parse("overflow -x:scroll")}>
+// 		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
+// 			{JSON.stringify(
+// 				{
+// 					...props.state,
+// 					Components: undefined,
+// 				},
+// 				null,
+// 				"\t",
+// 			)}
+// 		</p>
+// 	</pre>
+// )
 
 function Editor(props) {
 	const dst = React.useRef()
@@ -155,10 +156,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 	// Should render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			// if (!state.isFocused) {
-			// 	// No-op.
-			// 	return
-			// }
 			dispatch.render()
 		}, [dispatch]),
 		[state.shouldRenderComponents],
@@ -236,9 +233,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				{
 					ref: dst,
 
-					style: {
-						transform: state.isFocused && "translateZ(0px)",
-					},
+					style: { transform: state.isFocused && "translateZ(0px)" },
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
@@ -348,8 +343,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			<aside ref={src} style={{ display: "none" }}>
 				{state.Components}
 			</aside>
-			<div style={stylex.parse("h:28")} />
-			<DebugEditor state={state} />
+			{/* <div style={stylex.parse("h:28")} /> */}
+			{/* <DebugEditor state={state} /> */}
+			<StatusBar
+				state={state}
+				dispatch={dispatch}
+			/>
 		</div>
 	)
 }

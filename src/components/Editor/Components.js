@@ -60,15 +60,10 @@ const headersSyntax = {
 const Header = Node(props => {
 	const TagName = headersSyntax[props.start]
 
-	let isPrimary = true
-	if (TagName === "h5" || TagName === "h6") {
-		isPrimary = false
-	}
-
 	const start = `${props.start.slice(0, -1)}\u00a0`
 	return (
 		<TagName style={stylex.parse("fw:700 fs:19")}>
-			<Markdown style={!isPrimary && stylex.parse("c:gray")} start={start}>
+			<Markdown start={start}>
 				{props.children}
 			</Markdown>
 		</TagName>
@@ -104,7 +99,11 @@ const Blockquote = Node(props => (
 	</blockquote>
 ))
 
-const code = { MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }
+const codeStyle = {
+	MozTabSize: 2,
+	tabSize: 2,
+	font: "15px/1.375 Monaco",
+}
 
 // Compound component.
 //
@@ -112,11 +111,11 @@ const code = { MozTabSize: 2, tabSize: 2, font: "15px/1.375 Monaco" }
 //
 // TODO: Refactor item component.
 const CodeBlock = Node(props => (
-	<pre style={{ ...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"), ...code, boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false}>
+	<pre style={{ ...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"), ...codeStyle, boxShadow: "0px 0px 1px hsl(var(--gray))" }} spellCheck={false}>
 		<ul>
 			{props.children.map((each, index) => (
 				<li key={each.key} id={each.key} data-vdom-node>
-					<code style={{ ...stylex.parse("p-x:24"), ...code }}>
+					<code style={{ ...stylex.parse("p-x:24"), ...codeStyle }}>
 						<Markdown
 							start={!index && props.start}
 							end={index + 1 === props.children.length && props.end}
