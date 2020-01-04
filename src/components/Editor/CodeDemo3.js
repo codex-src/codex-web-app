@@ -6,6 +6,7 @@ import StatusBar from "components/Note"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
+import utf8 from "./utf8"
 import vdom from "./vdom"
 
 import "./code-demo.css"
@@ -312,19 +313,19 @@ Hello, world!`)
 						// Backspace on a paragraph:
 						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
-							// console.log("backspaceLine")
+							// console.log("Backspace on a paragraph")
 							dispatch.backspaceLine()
 							return
 						// Forward backspace on a paragraph:
 						} else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
-							// console.log("forwardBackspaceLine")
+							// console.log("Forward backspace on a paragraph")
 							dispatch.forwardBackspaceLine()
 							return
 						// Paragraph:
 						} else if ((e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
 								state.pos1.pos === state.pos2.pos) {
-							// console.log("enter")
+							// console.log("Paragraph")
 							dispatch.enter()
 							return
 						// Paragraph (edge case):
@@ -332,13 +333,13 @@ Hello, world!`)
 								(state.pos1.pos === state.pos2.pos) && !state.pos1.offsetRemainder &&
 								greedy.current.startNode !== startNode) { // New DOM node.
 							dispatch.greedyWrite(false, greedyData, greedy.current.pos1, greedy.current.pos2, state.pos1)
-							// console.log("enter (edge case)")
+							// console.log("Paragraph (edge case)")
 							dispatch.enter()
 							return
 						}
 
 						const shouldRender = (
-							// (!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) && // Temporary fix.
+							(!e.nativeEvent.data || !utf8.isAlphanum(e.nativeEvent.data)) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
 						dispatch.greedyWrite(shouldRender, greedyData, greedy.current.pos1, greedy.current.pos2, resetPos)

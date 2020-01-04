@@ -4,7 +4,7 @@ import nodeMethods from "./nodeMethods"
 // `ascendToBlockDOMNode` ascends to the nearest block DOM
 // node (or naked block DOM node).
 export function ascendToBlockDOMNode(rootNode, node) {
-	if (node === rootNode || node.parentNode === rootNode) {
+	if (node.parentNode === rootNode) {
 		return node
 	}
 	while (!nodeMethods.isBlockDOMNode(node)) {
@@ -27,10 +27,10 @@ export function computeVDOMCursor(rootNode, node, textOffset) {
 			if (nodeMethods.isBreakOrTextNode(currentNode)) {
 				// If found, compute the VDOM cursor:
 				if (currentNode === node) {
-					const blockDOMNode = ascendToBlockDOMNode(rootNode, currentNode) // New.
+					const domNode = ascendToBlockDOMNode(rootNode, currentNode) // New.
 					Object.assign(pos, {
 						offset: pos.offset + textOffset,
-						offsetRemainder: nodeMethods.innerText(blockDOMNode).length - (pos.offset + textOffset), // New.
+						offsetRemainder: nodeMethods.innerText(domNode).length - (pos.offset + textOffset), // New.
 						textOffset,
 						textRemainder: nodeMethods.nodeValue(currentNode).length - textOffset, // New.
 						pos: pos.pos + textOffset,
