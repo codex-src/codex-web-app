@@ -2,59 +2,7 @@ import invariant from "invariant"
 
 // A `PerfTimer` represents a performance timer, measured in
 // milliseconds as per `Date.now()`.
-//
-// TODO: No-op in production.
 class PerfTimer {
-	// // DEPRECATE
-	// static minOf(...perfTimers) {
-	// 	invariant(
-	// 		perfTimers.length > 0,
-	// 		"PerfTimer: Aggregate function `PerfTimer.minOf(...)` expected one or more performance timers.",
-	// 	)
-	// 	let min = perfTimers[0].duration()
-	// 	for (const perfTimer of perfTimers) {
-	// 		if (perfTimer.duration() < min) {
-	// 			min = perfTimer.duration()
-	// 		}
-	// 	}
-	// 	return min
-	// }
-	// static maxOf(...perfTimers) {
-	// 	invariant(
-	// 		perfTimers.length > 0,
-	// 		"PerfTimer: Aggregate function `PerfTimer.maxOf(...)` expected one or more performance timers.",
-	// 	)
-	// 	let max = perfTimers[0].duration()
-	// 	for (const perfTimer of perfTimers) {
-	// 		if (perfTimer.duration() > max) {
-	// 			max = perfTimer.duration()
-	// 		}
-	// 	}
-	// 	return max
-	// }
-	// static avgOf(...perfTimers) {
-	// 	invariant(
-	// 		perfTimers.length > 0,
-	// 		"PerfTimer: Aggregate function `PerfTimer.avgOf(...)` expected one or more performance timers.",
-	// 	)
-	// 	let avg = 0
-	// 	for (const perfTimer of perfTimers) {
-	// 		avg += perfTimer.duration()
-	// 	}
-	// 	avg /= perfTimers.length
-	// 	return avg
-	// }
-	// static sumOf(...perfTimers) {
-	// 	invariant(
-	// 		perfTimers.length > 0,
-	// 		"PerfTimer: Aggregate function `PerfTimer.sumOf(...)` expected one or more performance timers.",
-	// 	)
-	// 	let sum = 0
-	// 	for (const perfTimer of perfTimers) {
-	// 		sum += perfTimer.duration()
-	// 	}
-	// 	return sum
-	// }
 	constructor() {
 		Object.assign(this, {
 			_state: {

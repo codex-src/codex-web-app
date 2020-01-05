@@ -90,7 +90,7 @@ const reducer = state => ({
 		this.collapse()
 		this.renderComponents(true)
 	},
-	forwardBackspaceOnLine() {
+	deleteOnLine() {
 		// Guard the root node:
 		if (state.pos1.pos === state.body.data.length) {
 			this.renderComponents(true)
@@ -248,13 +248,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				selection.addRange(range)
 				scrollIntoViewIfNeeded(0, 28)
 			})
-			const isoTime = new Date().toISOString().slice(11, -1)
 			const p = perfParser.duration()
 			const r = perfReactRenderer.duration()
 			const d = perfDOMRenderer.duration()
 			const c = perfDOMCursor.duration()
 			const ms = p + r + d + c
-			console.log(`%c${isoTime}: parser=${p} react=${r} dom=${d} cursor=${c} (${ms})`, newFPSStyleString(ms))
+			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${ms})`, newFPSStyleString(ms))
 		}, [state]),
 		[state.shouldRenderCursor],
 	)
@@ -362,23 +361,23 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
-						// Guard backspace on a paragraph:
+						// Backspace on a paragraph:
 						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
 							dispatch.backspaceOnLine()
 							return
-						// Guard forward backspace on a paragraph:
+						// Delete on a paragraph:
 						} else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
-							dispatch.forwardBackspaceOnLine()
+							dispatch.deleteOnLine()
 							return
-						// Guard paragraph:
+						// Enter:
 						} else if (e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") {
 							dispatch.enter()
 							return
-						// Guard paragraph (edge case):
+						// Enter (edge case):
 						} else if ((e.nativeEvent.inputType === "insertText" || e.nativeEvent.inputType === "insertCompositionText" || e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
-								startNode !== greedy.current.startNode) { // New DOM node.
+								startNode !== greedy.current.startNode) {
 							const concat = `${greedy.current.data}\n${traverseDOM.innerText(startNode)}`
 							dispatch.greedyWrite(true, concat, greedy.current.pos1, greedy.current.pos2, resetPos)
 							return
@@ -393,9 +392,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						// [0123]
 						//     ^ cursor
 						//
-						const prevCharIsSpace = resetPos.offset - 2 >= 0 && greedy.current.data[resetPos.offset - 2] === " "
+						const prevCharWasSpace = resetPos.offset - 2 >= 0 && greedy.current.data[resetPos.offset - 2] === " "
 						const shouldRender = (
-							(!utf8.isAlphanum(char) /* Can change to just markdown syntax. */ || prevCharIsSpace) &&
+							(!utf8.isAlphanum(char) /* Can change to just markdown syntax. */ || prevCharWasSpace) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
 						dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, resetPos)
