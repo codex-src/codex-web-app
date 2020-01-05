@@ -1,5 +1,6 @@
 import cmd from "./cmd"
 import computeCoordsScrollTo from "lib/computeCoordsScrollTo"
+import md from "lib/encoding/md"
 import parse from "./Components"
 import PerfTimer from "lib/PerfTimer"
 import React from "react"
@@ -8,7 +9,6 @@ import StatusBar from "components/Note"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
-import utf8 from "lib/encoding/utf8"
 import VDOM from "./VDOM"
 
 import "./code-demo.css"
@@ -223,6 +223,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						// TODO: Optimize.
 						;[...ref.current.childNodes].map(each => each.remove())
 						ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
+						// NOTE: Eagerly drop the selection for
+						// performance reasons.
+						//
+						// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+						const selection = document.getSelection()
+						selection.removeAllRanges()
 					})
 					dispatch.renderCursor()
 				},
@@ -244,14 +250,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
 				range.setStart(node, offset)
 				range.collapse()
-				selection.removeAllRanges()
+				// selection.removeAllRanges()
 				selection.addRange(range)
-				const { x, y } = computeCoordsScrollTo({ bottom: 28 })
-				if (x === -1 || y === -1) {
+				const { y } = computeCoordsScrollTo({ bottom: 28 })
+				if (y === -1) {
 					// No-op.
 					return
 				}
-				window.scrollTo(x, y)
+				window.scrollTo(0, y)
 			})
 			const p = perfParser.duration()
 			const r = perfReactRenderer.duration()
@@ -270,6 +276,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 		offs2: 0,    // The cursor end DOM node offset.
 	})
 
+	// https://developer.mozilla.org/en-US/docs/Web/API/Selection/setBaseAndExtent
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.isFocused) {
@@ -388,18 +395,21 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							return
 						}
 
-						let rune = ""
-						if (e.nativeEvent.data) {
-							rune = utf8.startRune(e.nativeEvent.data)
-						}
 						//  # H|ello, world!
-						//   ^ &nbsp;
+						//   ^
 						// [0123]
-						//     ^ cursor
+						//     ^
 						//
-						const prevCharWasSpace = resetPos.offset - 2 >= 0 && greedy.current.data[resetPos.offset - 2] === " "
+						let prevCharBeforeCursor = ""
+						if (resetPos.offset - 2 >= 0 && resetPos.offset - 2 < greedy.current.data.length) {
+							prevCharBeforeCursor = greedy.current.data[resetPos.offset - 2]
+						}
+						let currentChar = ""
+						if (e.nativeEvent.data) {
+							currentChar = e.nativeEvent.data[0]
+						}
 						const shouldRender = (
-							(!utf8.isAlphanum(rune) /* Can change to just markdown syntax. */ || prevCharWasSpace) &&
+							(md.isSyntax(prevCharBeforeCursor) || md.isSyntax(currentChar)) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
 						dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, resetPos)
@@ -486,7 +496,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			{/* <div ref={src} style={{ display: "none" }}> */}
 			{/*   {state.Components} */}
 			{/* </div> */}
-			<DebugEditor state={state} />
+			{/* <DebugEditor state={state} /> */}
 			<div style={stylex.parse("h:28")} />
 			<StatusBar state={state} dispatch={dispatch} />
 		</div>

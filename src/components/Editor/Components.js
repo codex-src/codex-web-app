@@ -18,7 +18,7 @@ const Node = render => ({ reactKey, ...props }) => {
 		element,
 		{
 			"id": reactKey,
-			"data-vdom-node": true,
+			"data-vdom-node": reactKey,
 			...element.props,
 		},
 	)
@@ -57,26 +57,23 @@ const headersSyntax = {
 }
 
 const Header = React.memo(Node(props => {
-		const TagName = headersSyntax[props.start]
-
-		return (
-			<TagName style={stylex.parse("fw:700 fs:19")}>
-				<Markdown start={props.start}>
-					{props.children}
-				</Markdown>
-			</TagName>
-		)
-	})
-)
-
-const Comment = React.memo(Node(props => (
-		<p style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
-			<Markdown style={stylex.parse("c:gray")} start="//">
+	const TagName = headersSyntax[props.start]
+	return (
+		<TagName style={stylex.parse("fw:700 fs:19")}>
+			<Markdown start={props.start}>
 				{props.children}
 			</Markdown>
-		</p>
+		</TagName>
 	)
-))
+}))
+
+const Comment = React.memo(Node(props => (
+	<p style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+		<Markdown style={stylex.parse("c:gray")} start="//">
+			{props.children}
+		</Markdown>
+	</p>
+)))
 
 // Compound component.
 const Blockquote = React.memo(Node(props => (

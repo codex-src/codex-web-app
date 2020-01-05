@@ -33,7 +33,7 @@ function computeCurrentBounds(domRect, offset) {
 // `computeCoordsScrollTo` computes the nearest x- and y-
 // axis coords for `window.scrollTo`.
 //
-// TODO: Test x-axis.
+// NOTE: X-axis expects `domNode.scrollTo`.
 function computeCoordsScrollTo(offset = { left: 0, right: 0, top: 0, bottom: 0 }) {
 	const domRect = computeCurrentDOMRect()
 	if (!domRect) {
@@ -41,13 +41,13 @@ function computeCoordsScrollTo(offset = { left: 0, right: 0, top: 0, bottom: 0 }
 	}
 	const bounds = computeCurrentBounds(domRect, offset)
 	const coords = {
-		x: 0, // The nearest x-axis point.
-		y: 0, // The nearest y-axis point.
+		x: -1, // The nearest x-axis point.
+		y: -1, // The nearest y-axis point.
 	}
-	if (window.scrollX > bounds.l) {
-		coords.x = bounds.l
-	} else if (window.scrollX < bounds.r) {
-		coords.x = bounds.r
+	if (window.scrollX > bounds.l) {        // Untested.
+		coords.x = bounds.l                   // Untested.
+	} else if (window.scrollX < bounds.r) { // Untested.
+		coords.x = bounds.r                   // Untested.
 	}
 	if (window.scrollY > bounds.t) {
 		coords.y = bounds.t
