@@ -20,7 +20,11 @@ test("text node", () => {
 })
 
 test("p", () => {
-	const Component = props => <p>Hello, world!</p>
+	const Component = props => (
+		<p>
+			Hello, world!
+		</p>
+	)
 	const rendered = RenderDOM(Component)
 	const parsedMarkup = ParseMarkupDOM(Component)
 	expect(rendered.isEqualNode(parsedMarkup)).toBe(true)
