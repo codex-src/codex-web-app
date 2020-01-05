@@ -1,14 +1,10 @@
+import id from "lib/random/id"
 import invariant from "invariant"
-
-// `newKey` generates a new 7-byte hash.
-function newKey() {
-	return Math.random().toString(16).slice(2, 9)
-}
 
 // `parseVDOMNodes` parses plain text data into VDOM nodes.
 function parseVDOMNodes(data) {
 	const nodes = data.split("\n").map(data => ({
-		key: newKey(),
+		key: id.newSevenByteHash(),
 		data,
 	}))
 	return nodes
@@ -104,7 +100,7 @@ class VDOM {
 	_mergeEndNode(end, node) {
 		const newNode = {
 			...this.nodes[end.node],
-			key: newKey(),
+			key: id.newSevenByteHash(),
 		}
 		newNode.data = node.data + newNode.data.slice(end.offset)
 		return newNode

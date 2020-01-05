@@ -1,4 +1,4 @@
-import { isAlphanum } from "../isAlphanum.js"
+import isAlphanum from "../isAlphanum.js"
 
 test("isAlphanum", () => {
 	expect(isAlphanum("")).toBe(false)
