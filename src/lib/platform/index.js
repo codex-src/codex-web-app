@@ -1,8 +1,8 @@
+import * as userAgent from "./userAgent"
 import isMetaOrCtrlKey from "./metaKey"
-import platform from "./platform"
 
 const exports = {
-	...platform,
+	...userAgent,
 	isMetaOrCtrlKey,
 }
 
