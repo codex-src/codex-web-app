@@ -2,7 +2,7 @@ import * as types from "./types"
 import nodeMethods from "./nodeMethods"
 
 // `ascendToBlockDOMNode` ascends to the nearest block DOM
-// node (or naked block DOM node).
+// node or empty block DOM node.
 export function ascendToBlockDOMNode(rootNode, node) {
 	if (node.parentNode === rootNode) {
 		return node
@@ -13,7 +13,7 @@ export function ascendToBlockDOMNode(rootNode, node) {
 	return node
 }
 
-// `computeVDOMCursor` computes a VDOM cursor from a DOM
+// `computeVDOMCursor` computes the VDOM cursor from a DOM
 // cursor.
 export function computeVDOMCursor(rootNode, node, textOffset) {
 	// Iterate to the innermost node:
@@ -63,7 +63,7 @@ export function computeVDOMCursor(rootNode, node, textOffset) {
 	return pos
 }
 
-// `computeDOMCursor` computes a DOM cursor from a VDOM
+// `computeDOMCursor` computes the DOM cursor from a VDOM
 // cursor.
 export function computeDOMCursor(rootNode, { ...pos }) {
 	const node = types.newDOMCursor()
