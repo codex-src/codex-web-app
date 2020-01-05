@@ -237,9 +237,19 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				selection.addRange(range)
 				scrollIntoViewIfNeeded(0, 28)
 			})
-			const sum = PerfTimer.durations(perfParser, perfReactRenderer, perfDOMRenderer, perfDOMCursor)
-			const timestamp = new Date().toISOString().split("T")[1]
-			console.log(`${timestamp}: parser=${perfParser.duration()} react=${perfReactRenderer.duration()} dom=${perfDOMRenderer.duration()} cursor=${perfDOMCursor.duration()} (${sum})`)
+			// 60 FPS:
+			const sum = PerfTimer.sumOf(perfParser, perfReactRenderer, perfDOMRenderer, perfDOMCursor)
+			const timestamp = new Date().toISOString().slice(11, -1)
+			const msg = `%c${timestamp}: parser=${perfParser.duration()} react=${perfReactRenderer.duration()} dom=${perfDOMRenderer.duration()} cursor=${perfDOMCursor.duration()} (${sum})`
+			if (sum < 16.67) {
+				console.log(msg, "color: lightgreen")
+			// 30 FPS:
+			} else if (sum >= 33.33) {
+				console.log(msg, "color: orange")
+			// 15 FPS:
+			} else if (sum >= 66.67) {
+				console.log(msg, "font-weight: 700; color: red")
+			}
 		}, [state]),
 		[state.shouldRenderCursor],
 	)
