@@ -3,7 +3,7 @@ async function fetchGraphQL(query, variables = {}) {
 	const res = await fetch("http://localhost:8000/graphql", {
 		method: "POST",
 		headers: { "Content-Type": "application/json"	},
-		credentials: "include", // Needed for CORS.
+		credentials: "include", // CORS.
 		body: JSON.stringify({
 			query,
 			variables,

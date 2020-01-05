@@ -1,2 +1,2 @@
-import * as Errors from "./Errors"
-export default Errors
+import * as exports from "./Errors"
+export default exports

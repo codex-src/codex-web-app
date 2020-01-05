@@ -1,2 +1,2 @@
-import * as Fragments from "./Fragments"
-export default Fragments
+import * as exports from "./Fragments"
+export default exports

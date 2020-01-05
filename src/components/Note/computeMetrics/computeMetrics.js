@@ -29,7 +29,7 @@ function computeDuration(state) {
 	return { count, desc: "minute" }
 }
 
-function compute(state) {
+function computeMetrics(state) {
 	const metrics = {
 		line:               computeLine(state),
 		column:             computeColumn(state),
@@ -41,4 +41,4 @@ function compute(state) {
 	return metrics
 }
 
-export default compute
+export default computeMetrics

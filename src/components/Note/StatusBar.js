@@ -1,6 +1,6 @@
 import * as Feather from "react-feather"
+import computeMetrics from "./computeMetrics"
 import React from "react"
-import stats from "./stats"
 import stylex from "stylex"
 
 /*
@@ -56,7 +56,7 @@ const Text = stylex.Styleable(props => (
 ))
 
 function StatusBar({ state, dispatch, ...props }) {
-	const st = stats.compute(state)
+	const metrics = computeMetrics(state)
 
 	return (
 		<aside style={{ ...stylex.parse("fixed -x -b b:gray-100 z:1 no-pointer-events"), boxShadow: "0px -1px hsl(var(--gray-200))" }}>
@@ -68,14 +68,14 @@ function StatusBar({ state, dispatch, ...props }) {
 						<Icon icon={Feather.Scissors} />
 						<div style={stylex.parse("w:6.25")} />
 						<Text>
-							{computeLHS(st)}
+							{computeLHS(metrics)}
 						</Text>
 					</div>
 
 					{/* RHS */}
 					<div style={stylex.parse("flex -r -y:center")}>
 						<Text>
-							{computeRHS(st)}
+							{computeRHS(metrics)}
 						</Text>
 						<div style={stylex.parse("w:6.25")} />
 						<Icon icon={Feather.Search} />

@@ -1,7 +1,7 @@
 import React from "react"
 import stylex from "stylex"
 
-// FIXME: Allow the user to copy the editor’s current state.
+// TODO: Add button to copy the uncorrupted state.
 class ErrorBoundary extends React.Component {
 	constructor(props) {
 		super(props)

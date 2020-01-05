@@ -1,3 +1,2 @@
-import * as Headers from "./Headers"
-
-export default Headers
+import * as exports from "./Headers"
+export default exports

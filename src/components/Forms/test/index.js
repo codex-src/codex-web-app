@@ -1,3 +1,2 @@
-import * as test from "./test.js"
-
-export default test
+import * as exports from "./test.js"
+export default exports

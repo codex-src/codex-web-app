@@ -19,7 +19,10 @@ function SignUpFlow(props) {
 	if (!state1.complete) {
 		return <SignUp state={state1} dispatch={dispatch1} />
 	}
-	const mergedState = { ...state1, ...state2 }
+	const mergedState = {
+		...state1, // The profile state.
+		...state2, // The billing state.
+	}
 	return <SignUpBilling state={mergedState} dispatch={dispatch2} />
 }
 
