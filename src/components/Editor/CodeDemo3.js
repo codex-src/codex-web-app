@@ -9,7 +9,7 @@ import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
 import utf8 from "./utf8"
-import vdom from "./vdom"
+import VDOM from "./vdom"
 
 import "./code-demo.css"
 
@@ -26,7 +26,7 @@ const initialState = {
 	renderDOMNode: document.createElement("div"),
 
 	initialValue: "",
-	body: new vdom.VDOM(""),
+	body: new VDOM(""),
 	isFocused: false,
 	posReversed: false,
 	pos1: traverseDOM.newVDOMCursor(),

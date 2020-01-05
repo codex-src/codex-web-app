@@ -16,21 +16,21 @@ const isAstralPlaneRegex = /\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C
 // encoded Unicode alphanumeric character.
 //
 // TODO: Add test suite.
-export function isAlphanum(ch) {
-	if (!ch) {
+export function isAlphanum(rune) {
+	if (!rune) {
 		return false
 	}
-	const codePoint = ch.codePointAt(0)
+	const codePoint = rune.codePointAt(0)
 	switch (true) {
 	// Text range (ASCII):
 	case codePoint >= 0x00000 && codePoint <= 0x00007f:
-		return text.isAlphanum(ch)
+		return text.isAlphanum(rune)
 	// Basic multilingual plane range:
 	case codePoint >= 0x00080 && codePoint <= 0x00ffff:
-		return isBasicMultilingualPlaneRegex.test(ch)
+		return isBasicMultilingualPlaneRegex.test(rune)
 	// Astral plane range:
 	case codePoint >= 0x10000 && codePoint <= 0x10ffff:
-		return isAstralPlaneRegex.test(ch)
+		return isAstralPlaneRegex.test(rune)
 	default:
 		// No-op.
 	}
