@@ -153,6 +153,17 @@ function Contents(props) {
 	return props.components
 }
 
+// `newFPSStyleString` returns a new frames per second CSS
+// string.
+function newFPSStyleString(ms) {
+	if (ms < 16.67) {
+		return "color: lightgreen;"
+	} else if (ms < 33.33) {
+		return "color: orange;"
+	}
+	return "color: red;"
+}
+
 function Editor(props) {
 	const ref = React.useRef()
 	const greedy = React.useRef()
@@ -237,19 +248,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				selection.addRange(range)
 				scrollIntoViewIfNeeded(0, 28)
 			})
-			// 60 FPS:
-			const sum = PerfTimer.sumOf(perfParser, perfReactRenderer, perfDOMRenderer, perfDOMCursor)
-			const timestamp = new Date().toISOString().slice(11, -1)
-			const msg = `%c${timestamp}: parser=${perfParser.duration()} react=${perfReactRenderer.duration()} dom=${perfDOMRenderer.duration()} cursor=${perfDOMCursor.duration()} (${sum})`
-			if (sum < 16.67) {
-				console.log(msg, "color: lightgreen")
-			// 30 FPS:
-			} else if (sum >= 33.33) {
-				console.log(msg, "color: orange")
-			// 15 FPS:
-			} else if (sum >= 66.67) {
-				console.log(msg, "font-weight: 700; color: red")
-			}
+			// Sorted by order of use.
+			const isoTime = new Date().toISOString().slice(11, -1)
+			const p = perfParser.duration()
+			const r = perfReactRenderer.duration()
+			const d = perfDOMRenderer.duration()
+			const c = perfDOMCursor.duration()
+			const ms = p + r + d + c
+			console.log(`%c${isoTime}: parser=${p} react=${r} dom=${d} cursor=${c} (${ms})`, newFPSStyleString(ms))
 		}, [state]),
 		[state.shouldRenderCursor],
 	)
@@ -305,7 +311,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 					style: {
 						...stylex.parse("p-b:28"),
-						transform: state.isFocused && "translateZ(0px)"
+						transform: state.isFocused && "translateZ(0px)",
 					},
 
 					contentEditable: true,
