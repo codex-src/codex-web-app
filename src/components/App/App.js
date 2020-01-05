@@ -4,6 +4,7 @@ import fetchGraphQL from "./fetchGraphQL"
 import Footer from "components/Footer"
 import Forms from "components/Forms"
 import GraphQL from "use-graphql"
+import id from "lib/random/id"
 import Nav from "components/Nav"
 import Note from "components/Note"
 import PageNotFound from "./PageNotFound"
@@ -93,9 +94,7 @@ const App = props => (
 						path="/new"
 						exact
 						title={"New note"}
-						// Use `render` instead of component
-						// because of `key`.
-						render={props => <Note key={Math.random().toString(16).slice(2, 6)} />}
+						render={props => <Note key={id.newFourByteHash()} />}
 					/>
 
 					<User.Route
