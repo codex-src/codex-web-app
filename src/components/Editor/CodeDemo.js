@@ -1,428 +1,45 @@
-import detect from "./detect"
+import cmd from "./cmd"
+import computeCoordsScrollTo from "lib/computeCoordsScrollTo"
+import parse from "./Components"
+import PerfTimer from "lib/PerfTimer"
 import React from "react"
 import ReactDOM from "react-dom"
+import StatusBar from "components/Note"
 import stylex from "stylex"
+import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
-import utf8 from "./utf8"
+import utf8 from "lib/encoding/utf8"
+import VDOM from "./VDOM"
 
 import "./code-demo.css"
 
-/*
- *
- */
-
-// `isBreakOrTextNode` returns whether a node is a break
-// node or a text node.
-function isBreakOrTextNode(node) {
-	const ok = (
-		(node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") ||
-		node.nodeType === Node.TEXT_NODE
-	)
-	return ok
-}
-
-// `isBlockDOMNode` returns whether a node is a block DOM
-// node.
-function isBlockDOMNode(node) {
-	const ok = (
-		node.nodeType === Node.ELEMENT_NODE &&
-		node.hasAttribute("data-vdom-node")
-	)
-	return ok
-}
-
-// `nodeValue` mocks the browser function.
-export function nodeValue(node) {
-	if (!isBreakOrTextNode(node)) {
-		return ""
-	}
-	// (1) Guard break node:
-	// (2) Convert non-breaking spaces:
-	return (node.nodeValue || "" /* 1 */).replace("\u00a0", " ") // 2
-}
-
-// `innerText` mocks the browser function.
-function innerText(rootNode) {
-	let value = ""
-	const compute = startNode => {
-		for (const currentNode of startNode.childNodes) {
-			if (isBreakOrTextNode(currentNode)) {
-				value += nodeValue(currentNode)
-			} else {
-				compute(currentNode)
-				if (isBlockDOMNode(currentNode) &&
-						currentNode.nextSibling) {
-					value += "\n"
-				}
-			}
-		}
-	}
-	compute(rootNode)
-	return value
-}
-
-// `computeVDOMCursor` computes the VDOM cursor from a DOM
-// cursor.
-function computeVDOMCursor(rootNode, node, offset) {
-	let pos = 0
-	while (node.childNodes.length) {
-		node = node.childNodes[0]
-	}
-	const compute = startNode => {
-		for (const currentNode of startNode.childNodes) {
-			if (isBreakOrTextNode(currentNode)) {
-				if (currentNode === node) {
-					return true
-				}
-				pos += nodeValue(currentNode).length
-			} else {
-				if (compute(currentNode)) {
-					return true
-				} else if (isBlockDOMNode(currentNode) &&
-						currentNode.nextSibling) {
-					pos += 1
-				}
-			}
-		}
-		return false
-	}
-	compute(rootNode)
-	return pos + offset
-}
-
-// `computeDOMCursor` computes the DOM cursor from a VDOM
-// cursor.
-function computeDOMCursor(rootNode, pos) {
-	const node = {
-		node: rootNode,
-		offset: 0,
-	}
-	const compute = startNode => {
-		for (const currentNode of startNode.childNodes) {
-			if (isBreakOrTextNode(currentNode)) {
-				const { length } = nodeValue(currentNode)
-				if (pos - length <= 0) {
-					Object.assign(node, {
-						node: currentNode,
-						offset: pos,
-					})
-					return true
-				}
-				pos -= length
-			} else {
-				if (compute(currentNode)) {
-					return true
-				} else if (isBlockDOMNode(currentNode) &&
-						currentNode.nextSibling) {
-					pos -= 1
-				}
-			}
-		}
-		return false
-	}
-	compute(rootNode)
-	return node
-}
-
-/*
- *
- */
-
-class Lexer {
-	constructor(value) {
-		Object.assign(this, {
-			value,       // The plain text value.
-			x1:    0,    // The selection start.
-			x2:    0,    // The selection end.
-			width: 0,    // The width of the current character.
-			lines: [[]], // The parsed multiline output.
-		})
-	}
-	next() {
-		if (this.x2 === this.value.length) {
-			this.width = 0
-			return undefined // EOF
-		}
-		const ch = this.value[this.x2]
-		this.width = 1
-		this.x2 += this.width
-		return ch
-	}
-	peek() {
-		const ch = this.next()
-		this.backup()
-		return ch
-	}
-	backup() {
-		this.x2 -= this.width
-	}
-	emit(token) {
-		const nth = this.lines.length - 1
-		this.lines[nth].push({
-			token,
-			value: this.focus(),
-		})
-		this.ignore()
-	}
-	emit_line(token) {
-		this.backup()
-		this.emit(token)
-		this.lines.push([])
-		this.next()
-		this.ignore()
-	}
-	focus() {
-		return this.value.slice(this.x1, this.x2)
-	}
-	ignore() {
-		this.x1 = this.x2
-	}
-	accept(str) {
-		const next = this.next()
-		const ok = str.includes(next)
-		if (!ok) {
-			this.backup()
-		}
-		return ok
-	}
-	accept_run(str) {
-		while (this.accept(str)) {
-			// No-op.
-		}
-	}
-}
-
-const Token = {
-	UNS: "uns", // Unset (whitespace does not use a token).
-	COM: "com", // Comment.
-	KEY: "key", // Keyword.
-	NUM: "num", // Number.
-	STR: "str", // String.
-	PUN: "pun", // Punctuation.
-	FUN: "fun", // Function.
-}
-
-const keywords = {
-	break:       true,
-	default:     true,
-	func:        true,
-	interface:   true,
-	select:      true,
-	case:        true,
-	defer:       true,
-	go:          true,
-	map:         true,
-	struct:      true,
-	chan:        true,
-	else:        true,
-	goto:        true,
-	package:     true,
-	switch:      true,
-	const:       true,
-	fallthrough: true,
-	if:          true,
-	range:       true,
-	type:        true,
-	continue:    true,
-	for:         true,
-	import:      true,
-	return:      true,
-	var:         true,
-	bool:        true,
-	byte:        true,
-	complex64:   true,
-	complex128:  true,
-	error:       true,
-	float32:     true,
-	float64:     true,
-	int:         true,
-	int8:        true,
-	int16:       true,
-	int32:       true,
-	int64:       true,
-	rune:        true,
-	string:      true,
-	uint:        true,
-	uint8:       true,
-	uint16:      true,
-	uint32:      true,
-	uint64:      true,
-	uintptr:     true,
-	true:        true,
-	false:       true,
-	iota:        true,
-	nil:         true,
-	append:      true,
-	cap:         true,
-	close:       true,
-	complex:     true,
-	copy:        true,
-	delete:      true,
-	imag:        true,
-	len:         true,
-	make:        true,
-	new:         true,
-	panic:       true,
-	print:       true,
-	println:     true,
-	real:        true,
-	recover:     true,
-}
-
-// if (!this.value.length) {
-// 	this.renderDOMComponents("\n")
-// 	return
-// }
-
-// https://www.youtube.com/watch?v=HxaD_trXwRE
-function lex(value) {
-	const lexer = new Lexer(value)
-	let ch = ""
-	while ((ch = lexer.next())) {
-		let token = 0
-		switch (true) {
-		// Comment:
-		case ch === "/" && (lexer.peek() === "/" || lexer.peek() === "*"):
-			ch = lexer.next()
-			if (ch === "/") {
-				while ((ch = lexer.next())) {
-					if (ch === "\n") {
-						lexer.backup()
-						break
-					}
-				}
-			} else if (ch === "*") {
-				while ((ch = lexer.next())) {
-					if (ch === "*" && lexer.peek() === "/") {
-						lexer.next()
-						break
-					} else if (ch === "\n") {
-						lexer.emit_line(Token.COM)
-						// Don't break.
-					}
-				}
-			}
-			token = Token.COM
-			break
-			// Whitespace:
-		case ch === " " || ch === "\t" || ch === "\n":
-			if (/* lexer.x2 > 1 && */ ch === "\n") { // FIXME?
-				lexer.lines.push([])
-				lexer.ignore()
-				break
-			}
-			lexer.accept_run(" \t")
-			break
-			// Keyword or function:
-		case (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z") || ch === "_":
-			lexer.accept_run("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789")
-			if (keywords[lexer.focus()]) {
-				token = Token.KEY
-				break
-			}
-			const { x2 } = lexer
-			lexer.accept_run(" ")
-			if (lexer.peek() === "(") {
-				token = Token.FUN
-			}
-			lexer.x2 = x2
-			token = token || Token.UNS
-			break
-			// String:
-		case ch === "'" || ch === "\"" || ch === "`":
-			const quote = ch
-			while ((ch = lexer.next())) {
-				if (quote !== "`" && ch === "\\" && lexer.peek() === quote) {
-					lexer.next()
-				} else if (quote === "`" && ch === "\n") {
-					lexer.emit_line(Token.STR)
-					// don't break
-				} else if (ch === quote || ch === "\n") { // break opportunities
-					if (ch === "\n") {
-						lexer.backup()
-					}
-					break
-				}
-			}
-			token = Token.STR
-			break
- 			// Number:
-		case ch >= "0" && ch <= "9":
-			let base = "0123456789"
-			if (lexer.accept("0") && lexer.accept("xX")) {
-				base += "abcdefABCDEF"
-			}
-			lexer.accept_run(base)
-			lexer.accept(".") && lexer.accept_run(base)
-			lexer.accept("eE") && lexer.accept("-+") && lexer.accept_run("0123456789")
-			lexer.accept("i")
-			token = Token.NUM
-			break
-			// Punctuation:
-		case "!%&()*+,-./:;<=>[]^{|}".includes(ch):
-			lexer.accept_run("!%&()*+,-./:;<=>[]^{|}")
-			token = Token.PUN
-			break
-			// Non-whitespace:
-		default:
-			while ((ch = lexer.next())) {
-				if (ch === " " || ch === "\t" || ch === "\n") {
-					lexer.backup()
-					break
-				}
-			}
-			token = Token.UNS
-			break
-		}
-		if (lexer.x1 < lexer.x2) {
-			lexer.emit(token)
-		}
-	}
-	return lexer.lines
-}
-
-/*
- *
- */
-
-// Compound component.
-const Code = props => (
-	<pre style={stylex.parse("overflow -x:scroll")} /* spellCheck={false} */ data-vdom-node>
-		{!props.children.length && (
-			props.children
-		)}
-
-		{props.children.length > 0 && (
-			props.children.map((line, index) => (
-				<code key={index} style={stylex.parse("block")} data-vdom-node>
-					{!line.length && (
-						<br />
-					)}
-
-					{line.map((item, index) => (
-						!item.token ? (
-							item.value
-						) : (
-							<span key={index} className={item.token}>
-								{item.value}
-							</span>
-						)
-					))}
-				</code>
-			)))}
-	</pre>
-)
-
-/*
- *
- */
+// TODO:
+//
+// - ComputeVDOMCursor
+// - ComputeDOMCursor
+const perfParser = new PerfTimer()        // Times the component parser phase.
+const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
+const perfDOMRenderer = new PerfTimer()   // Times the DOM renderer phase.
+const perfDOMCursor = new PerfTimer()     // Times the DOM cursor (to reset).
 
 const initialState = {
-	initialValue: "", // The initial plain text vlaue.
-	value: "",        // The VDOM value.
-	isFocused: false, // Is the editor focused?
-	pos1: 0,          // The VDOM cursor start.
-	pos2: 0,          // The VDOM cursor end.
+	renderDOMNode: document.createElement("div"),
+
+	initialValue: "",
+	body: new VDOM(""),
+	isFocused: false,
+	posReversed: false,
+	pos1: traverseDOM.newVDOMCursor(),
+	pos2: traverseDOM.newVDOMCursor(),
+
+	// `shouldRenderComponents` hints when to render React
+	// components.
+	shouldRenderComponents: 0,
+
+	// `shouldRenderPos` hints when to render the DOM cursor.
+	shouldRenderCursor: 0,
+
+	Components: [],
 }
 
 const reducer = state => ({
@@ -432,25 +49,78 @@ const reducer = state => ({
 	blur() {
 		state.isFocused = false
 	},
-	setVDOMCursor(pos1, pos2) {
-		if (pos1 > pos2) {
+	setState(body, pos1, pos2) {
+		const posReversed = pos1.pos > pos2.pos
+		if (posReversed) {
 			[pos1, pos2] = [pos2, pos1]
 		}
-		Object.assign(state, { pos1, pos2 })
+		Object.assign(state, { body, posReversed, pos1, pos2 })
 	},
-	setState(value, pos1, pos2) {
-		if (pos1 > pos2) {
-			[pos1, pos2] = [pos2, pos1]
+	// `collapse` collapses the cursors (to the start).
+	collapse() {
+		state.pos2 = { ...state.pos1 }
+	},
+	// `write` writes plain text data and conditionally
+	// rerenders.
+	write(shouldRender, data) {
+		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
+		state.pos1.pos += data.length
+		this.collapse()
+		this.renderComponents(shouldRender)
+	},
+	// `greedyWrite` greedily writes plain text data and
+	// conditionally rerenders.
+	greedyWrite(shouldRender, data, pos1, pos2, resetPos) {
+		state.body = state.body.write(data, pos1, pos2)
+		state.pos1 = resetPos
+		this.collapse()
+		this.renderComponents(shouldRender)
+	},
+	tab() {
+		this.write(true, "\t")
+	},
+	backspaceOnLine() {
+		// Guard the root node:
+		if (!state.pos1.pos) {
+			this.renderComponents(true)
+			return
 		}
-		Object.assign(state, { value, pos1, pos2 })
+		state.body = state.body.write("", state.pos1.pos - 1, state.pos2.pos)
+		state.pos1.pos--
+		this.collapse()
+		this.renderComponents(true)
+	},
+	deleteOnLine() {
+		// Guard the root node:
+		if (state.pos1.pos === state.body.data.length) {
+			this.renderComponents(true)
+			return
+		}
+		state.body = state.body.write("", state.pos1.pos, state.pos2.pos + 1)
+		this.renderComponents(true)
+	},
+	enter() {
+		this.write(true, "\n")
+	},
+	renderComponents(shouldRender) {
+		if (!shouldRender) {
+			// No-op.
+			return
+		}
+		state.shouldRenderComponents += shouldRender
+	},
+	renderCursor() {
+		state.shouldRenderCursor++
 	},
 })
 
 const init = initialValue => initialState => {
+	const body = initialState.body.write(initialValue, 0, initialState.body.data.length)
 	const state = {
 		...initialState,
 		initialValue,
-		value: initialValue,
+		body,
+		Components: parse(body),
 	}
 	return state
 }
@@ -459,70 +129,175 @@ function useEditor(initialValue) {
 	return useMethods(reducer, initialState, init(initialValue))
 }
 
-/*
- *
- */
-
 const DebugEditor = props => (
 	<pre style={stylex.parse("overflow -x:scroll")}>
 		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
-			{JSON.stringify(props.state, null, "\t")}
+			{JSON.stringify(
+				{
+					body: props.state.body,
+					pos1: props.state.pos1,
+					pos2: props.state.pos2,
+				},
+				null,
+				"\t",
+			)}
 		</p>
 	</pre>
 )
 
-// This component intentionally breaks some of React’s rules
-// and best practices. This is because such a
-// `contenteditable` element needs to be treated and handled
-// as a truly uncontrolled component.
+// NOTE: Reference components (not anonymous) appear to
+// render much faster.
 //
-// React is still leveraged for everything except diffing
-// the DOM. This editor works in principle by examining the
-// result of `input` events and imperatively replacing --
-// not mutating -- the affected DOM nodes.
-//
-// This editor is inspired by the idea that an interactive
-// WYSIWYG editor for the web needs to just work and work on
-// every available modern platform and environment
-// without compromise.
-//
-function Editor(props) {
-	const root = React.useRef() // The root DOM node.
-	// const drop = React.useRef() // The drag-and-drop data.
+// https://twitter.com/dan_abramov/status/691306318204923905
+function Contents(props) {
+	return props.components
+}
 
-	const [state, dispatch] = useEditor(`package main
+// `newFPSStyleString` returns a new frames per second CSS
+// string.
+function newFPSStyleString(ms) {
+	if (ms < 16.67) {
+		return "color: lightgreen;"
+	} else if (ms < 33.33) {
+		return "color: orange;"
+	}
+	return "color: red;"
+}
+
+function Editor(props) {
+	const ref = React.useRef()
+	const greedy = React.useRef()
+
+	// const [state, dispatch] = useEditor("")
+
+	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+## How to build a beautiful blog
+
+\`\`\`go
+package main
 
 import "fmt"
 
 func main() {
 	fmt.Println("hello, world!")
-}`)
+}
+\`\`\`
 
-	const [firstRender, setFirstRender] = React.useState()
+### How to build a beautiful blog
 
-	React.useEffect(
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+>
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+>
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+#### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+##### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+###### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+
+	// Should render components:
+	React.useLayoutEffect(
 		React.useCallback(() => {
-			setFirstRender(<Code>{lex(state.initialValue)}</Code>)
-		}, [state]),
-		[],
+			let Components = []
+			perfParser.on(() => {
+				Components = parse(state.body)
+			})
+			perfReactRenderer.restart()
+			ReactDOM.render(
+				<Contents components={Components} />,
+				state.renderDOMNode,
+				() => {
+					perfReactRenderer.stop()
+					perfDOMRenderer.on(() => {
+						// TODO: Optimize.
+						;[...ref.current.childNodes].map(each => each.remove())
+						ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
+					})
+					dispatch.renderCursor()
+				},
+			)
+		}, [state, dispatch]),
+		[state.shouldRenderComponents],
 	)
 
-	// Polyfill for `onSelectionChange`:
-	//
-	// TODO: Use keys instead of `pos1` and `pos2`.
+	// Should render DOM cursor:
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				// No-op.
+				return
+			}
+			perfDOMCursor.on(() => {
+				const selection = document.getSelection()
+				const range = document.createRange()
+				const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
+				range.setStart(node, offset)
+				range.collapse()
+				selection.removeAllRanges()
+				selection.addRange(range)
+				const { x, y } = computeCoordsScrollTo({ bottom: 28 })
+				if (x === -1 || y === -1) {
+					// No-op.
+					return
+				}
+				window.scrollTo(x, y)
+			})
+			const p = perfParser.duration()
+			const r = perfReactRenderer.duration()
+			const d = perfDOMRenderer.duration()
+			const c = perfDOMCursor.duration()
+			const ms = p + r + d + c
+			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${ms})`, newFPSStyleString(ms))
+		}, [state]),
+		[state.shouldRenderCursor],
+	)
+
+	const selectionChangeCache = React.useRef({
+		node1: null, // The cursor start DOM node.
+		node2: 0,    // The cursor start DOM node offset.
+		offs1: null, // The cursor end DOM node.
+		offs2: 0,    // The cursor end DOM node offset.
+	})
+
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.isFocused) {
 				// No-op.
 				return
 			}
-			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-			const pos1 = computeVDOMCursor(root.current, anchorNode, anchorOffset)
-			let pos2 = pos1
-			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-				pos2 = computeVDOMCursor(root.current, focusNode, focusOffset)
+			const {
+				anchorNode:   node1,
+				focusNode:    node2,
+				anchorOffset: offs1,
+				focusOffset:  offs2,
+			} = document.getSelection()
+			if (
+				node1 === selectionChangeCache.current.node1 &&
+				node2 === selectionChangeCache.current.node2 &&
+				offs1 === selectionChangeCache.current.offs1 &&
+				offs2 === selectionChangeCache.current.offs2
+			) {
+				// No-op.
+				return
 			}
-			dispatch.setVDOMCursor(pos1, pos2)
+			const pos1 = traverseDOM.computeVDOMCursor(ref.current, node1, offs1)
+			let pos2 = { ...pos1 }
+			if (node2 !== node1 || offs2 !== offs1) {
+				pos2 = traverseDOM.computeVDOMCursor(ref.current, node2, offs2)
+			}
+			dispatch.setState(state.body, pos1, pos2)
+			selectionChangeCache.current = { node1, node2, offs1, offs2 }
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -530,243 +305,135 @@ func main() {
 		}
 	}, [state, dispatch])
 
-	// // TODO: Ignore idempotent keys.
-	// let { anchorNode, focusNode } = document.getSelection()
-	// const sameNode = anchorNode === focusNode
-	// while (root.current.contains(anchorNode)) {
-	// 	if (anchorNode.hasAttribute && anchorNode.hasAttribute("data-vdom-node")) {
-	// 		break
-	// 	}
-	// 	anchorNode = anchorNode.parentNode
-	// }
-	// focusNode = anchorNode
-	// if (!sameNode) {
-	// 	while (root.current.contains(focusNode)) {
-	// 		if (focusNode.hasAttribute && focusNode.hasAttribute("data-vdom-node")) {
-	// 			break
-	// 		}
-	// 		focusNode = focusNode.parentNode
-	// 	}
-	// }
-	// console.log(anchorNode, focusNode)
-
-	// GPU optimization:
-	const translateZ = {}
-	if (state.isFocused) {
-		Object.assign(translateZ, {
-			transform: "translateZ(0px)",
-		})
-	}
-
-	// TODO:
-	//
-	// - Undo
-	// - Redo
-	// - vdom
-	// - traverseDOM
-	// - Optimizations
-	//
 	return (
 		<div>
 			{React.createElement(
 				"article",
 				{
-					ref: root,
+					ref,
 
-					style: translateZ,
+					style: { transform: state.isFocused && "translateZ(0px)" },
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
-					spellCheck: false, // DELETEME
+					spellCheck: false,
 
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
 
-					// NOTE: If we target `selectionchange` instead,
-					// we can know in advance of each input event the
-					// selection range. Then we can do a postmortem on
-					// the affected keys and rerender.
-					//
-					// Querying `input.nativeEvent.inputType` yields
-					// a semantic description of the input event. This
-					// can be used to provide hints to the rerender
-					// phase as to how to rerender.
-					//
-					// - deleteContentBackward
-					// - deleteContentForward
-					// - deleteSoftLineBackward
-					// - deleteWordBackward
-					// - historyRedo
-					// - historyUndo
-					// - insertCompositionText
-					// - insertParagraph
-					// - insertReplacementText
-					// - insertText
-					// - cut?
-					// - copy?
-					// - paste?
-					// - emoji?
-					//
-					// `selectionchange` need only remember the
-					// current selection range; input event can only
-					// affect a contiguous block of nodes.
-					//
-					// Storing references to the selection of
-					// (potentially) affected DOM nodes per selection
-					// change would provide rich information without
-					// needing to compute DOM nodes.
-					//
-					// Code block syntax needs to be able to possibly
-					// extend the affected DOM node range. When code
-					// block syntax is introduced, the document can be
-					// sniffed top-to-bottom for code blocks.
-					//
-					// The `vdom` package could be extended (e.g.
-					// `vdom2`) to store a reference to its rendered
-					// DOM node counterpart. If stored to a map, this
-					// could make lookup linear based on referential
-					// equality.
-					//
-					// In theory, all non-idempotent input operations
-					// commit one of the following rererender
-					// strategies:
-					//
-					// - Add a node (e.g. paragraph)
-					// - Delete a node (e.g. backspace, forward delete)
-					// - Insert a node?
-					// - Overwrite a block of nodes (selection)
-					// - Overwrite a node (no selection)
-					//
-					// All truly preventable events, e.g. cut, copy,
-					// paste, undo, redo, can benefit from React-based
-					// reconciliation, rather than imperative
-					// patching. For these events, we can just as
-					// easily overwrite `firstRender` or
-					// similar.
-					//
-					// TODO: Is undo on iOS and Android preventable?
-					// Also check cut, copy, paste, etc. If not, defer
-					// to patching strategy.
-					//
-					// If key metadata is stored in the history state
-					// stack, then a hard flush may not be needed. For
-					// example, if the `vdom2` package stores last
-					// modified at metadata or similar, this can be
-					// queried for more efficient patching.
-					//
-					// Backspace, delete, etc. methods should not
-					// leverage React-based reconciliation due to
-					// Unicode handling.
-					//
-					// TODO - DONE: Test `selectionchange` coverage.
 					onKeyDown: e => {
-						if (e.key === "Tab") {
+						switch (true) {
+						case e.key === "Tab":
 							e.preventDefault()
-							document.execCommand("insertText", false, "\t")
+							dispatch.tab()
 							return
-						// FIXME: Add new `detect` method?
-						} else if (e.shiftKey && e.key === "Enter") {
+						case cmd.isUndo(e):
 							e.preventDefault()
-							document.execCommand("insertText", false, "\n")
+							// TODO
 							return
-						} else if (detect.isUndo(e)) {
+						case cmd.isRedo(e):
+							e.preventDefault()
+							// TODO
+							return
+						case cmd.isBold(e):
 							e.preventDefault()
 							return
-						} else if (detect.isRedo(e)) {
+						case cmd.isItalic(e):
 							e.preventDefault()
 							return
+						default:
+							// No-op.
+						}
+						// Compute the pre-`input` start node:
+						const { node: anchorNode } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
+						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
+						// Compute the greedy VDOM cursor range:
+						const pos1 = state.pos1.pos - state.pos1.offset
+						const pos2 = state.pos2.pos + state.pos2.offsetRemainder
+						greedy.current = {
+							startNode, // The greedy DOM node.
+							pos1,      // The greedy cursor start.
+							pos2,      // The greedy cursor end.
 						}
 					},
 
 					onInput: e => {
-						const value = innerText(root.current)
+						// Compute the greedy data:
+						greedy.current.data = traverseDOM.innerText(greedy.current.startNode)
 
-						const {
-							anchorNode,   // The cursor start node.
-							anchorOffset, // The cursor start node offset.
-							focusNode,    // The cursor end node.
-							focusOffset,  // The cursor end node offset.
-						} = document.getSelection()
+						// Compute the VDOM cursor:
+						const { anchorNode, anchorOffset } = document.getSelection()
+						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
+						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
-						const pos1 = computeVDOMCursor(root.current, anchorNode, anchorOffset)
-						const pos2 = computeVDOMCursor(root.current, focusNode, focusOffset)
-
-						dispatch.setState(value, pos1, pos2)
-
-						// if (
-						// 	e.nativeEvent.inputType === "deleteByDrag" ||
-						// 	e.nativeEvent.inputType === "insertFromDrop"
-						// ) {
-						// 	// No-op.
-						// 	return
-						// }
-
-						// Guard composition events:
-						//
-						// - onCompositionStart
-						// - onCompositionUpdate
-						// - onCompositionEnd
-						//
-						// Ignore non-syntax:
-						if (
-							(e.nativeEvent.data && utf8.isAlphanum(e.nativeEvent.data)) ||
-							e.nativeEvent.inputType === "insertCompositionText"
-						) {
-							// No-op.
+						// Backspace on a paragraph:
+						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
+								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
+							dispatch.backspaceOnLine()
+							return
+						// Delete on a paragraph:
+						} else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
+								(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
+							dispatch.deleteOnLine()
+							return
+						// Enter:
+						} else if (e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") {
+							dispatch.enter()
+							return
+						// Enter (edge case):
+						} else if ((e.nativeEvent.inputType === "insertText" || e.nativeEvent.inputType === "insertCompositionText" || e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
+								startNode !== greedy.current.startNode) {
+							const concat = `${greedy.current.data}\n${traverseDOM.innerText(startNode)}`
+							dispatch.greedyWrite(true, concat, greedy.current.pos1, greedy.current.pos2, resetPos)
 							return
 						}
 
-						// TODO: Heavily optimize.
-						let node = null
-						while ((node = root.current.lastChild)) {
-							node.remove()
+						let rune = ""
+						if (e.nativeEvent.data) {
+							rune = utf8.startRune(e.nativeEvent.data)
 						}
-
-						// Reparse and append the affected DOM nodes:
-						const parsed = lex(value)
-						const fragment = document.createDocumentFragment()
-						ReactDOM.render(<Code>{parsed}</Code>, fragment)
-						root.current.appendChild(fragment)
-
-						// Correct the cursor:
-						const selection = document.getSelection()
-						const range = document.createRange()
-						const { node: _node, offset } = computeDOMCursor(root.current, pos1)
-						range.setStart(_node, offset)
-						range.collapse()
-						selection.removeAllRanges()
-						selection.addRange(range)
+						//  # H|ello, world!
+						//   ^ &nbsp;
+						// [0123]
+						//     ^ cursor
+						//
+						const prevCharWasSpace = resetPos.offset - 2 >= 0 && greedy.current.data[resetPos.offset - 2] === " "
+						const shouldRender = (
+							(!utf8.isAlphanum(rune) /* Can change to just markdown syntax. */ || prevCharWasSpace) &&
+							e.nativeEvent.inputType !== "insertCompositionText"
+						)
+						dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, resetPos)
 					},
 
 					onCut: e => {
 						e.preventDefault()
-						if (state.pos1 === state.pos2) {
+						if (state.pos1.pos === state.pos2.pos) {
 							// No-op.
 							return
 						}
-						const cutValue = state.value.slice(state.pos1, state.pos2)
-						e.clipboardData.setData("text/plain", cutValue)
-						document.execCommand("insertText", false, "")
+						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", data)
+						dispatch.write(true, "")
 					},
 
 					onCopy: e => {
 						e.preventDefault()
-						if (state.pos1 === state.pos2) {
+						if (state.pos1.pos === state.pos2.pos) {
 							// No-op.
 							return
 						}
-						const copyValue = state.value.slice(state.pos1, state.pos2)
-						e.clipboardData.setData("text/plain", copyValue)
+						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", data)
 					},
 
 					onPaste: e => {
 						e.preventDefault()
-						const pasteValue = e.clipboardData.getData("text/plain")
-						if (!pasteValue) {
+						const data = e.clipboardData.getData("text/plain")
+						if (!data) {
 							// No-op.
 							return
 						}
-						document.execCommand("insertText", false, pasteValue)
+						dispatch.write(true, data)
 					},
 
 					onDragStart: e => e.preventDefault(),
@@ -813,10 +480,15 @@ func main() {
 					// 	}, 0)
 					// },
 				},
-				firstRender,
 			)}
-			<div style={stylex.parse("h:28")} />
+			{/* <div style={stylex.parse("h:28")} /> */}
+			{/* style={stylex.parse("m-x:-24 p-x:24 p-y:32 b:gray-100")} */}
+			{/* <div ref={src} style={{ display: "none" }}> */}
+			{/*   {state.Components} */}
+			{/* </div> */}
 			<DebugEditor state={state} />
+			<div style={stylex.parse("h:28")} />
+			<StatusBar state={state} dispatch={dispatch} />
 		</div>
 	)
 }

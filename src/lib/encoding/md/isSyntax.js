@@ -26,7 +26,7 @@ export function isSyntax(ch) {
 		ch === "*" ||
 		ch === "!" ||
 		ch === "[" ||
- 		ch === "]" ||
+		ch === "]" ||
 		ch === "(" ||
 		ch === ")"
 	)
