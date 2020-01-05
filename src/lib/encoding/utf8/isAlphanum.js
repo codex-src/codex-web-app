@@ -16,7 +16,7 @@ const isAstralPlaneRegex = /\uD800[\uDC00-\uDC0B\uDC0D-\uDC26\uDC28-\uDC3A\uDC3C
 // encoded Unicode alphanumeric character.
 //
 // TODO: Add test suite.
-export function isAlphanum(rune) {
+function isAlphanum(rune) {
 	if (!rune) {
 		return false
 	}
@@ -36,3 +36,5 @@ export function isAlphanum(rune) {
 	}
 	return false
 }
+
+export default isAlphanum

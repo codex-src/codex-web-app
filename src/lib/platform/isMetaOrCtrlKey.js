@@ -1,4 +1,4 @@
-import { isMacOS } from "./platform"
+import { isMacOS } from "./userAgent"
 
 // `isMetaOrCtrlKey` returns whether a key down event
 // exclusively uses the command key (⌘) on macOS or the

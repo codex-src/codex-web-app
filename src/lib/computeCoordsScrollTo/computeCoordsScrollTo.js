@@ -18,13 +18,13 @@ function computeCurrentDOMRect() {
 }
 
 // `computeCurrentBounds` computes the current bounds.
-function computeCurrentBounds(offset) {
+function computeCurrentBounds(domRect, offset) {
 	/* eslint-disable */
 	const bounds = {
-		l:  window.scrollX + (domRect.x - offset.left),
-		t:  window.scrollY + (domRect.y - offset.top ),
-		r: (window.scrollX - window.innerWidth ) + (domRect.x + domRect.width  + offset.right ),
-		b: (window.scrollY - window.innerHeight) + (domRect.y + domRect.height + offset.bottom),
+		l:  window.scrollX + (domRect.x - (offset.left || 0)),
+		t:  window.scrollY + (domRect.y - (offset.top  || 0)),
+		r: (window.scrollX - window.innerWidth ) + (domRect.x + domRect.width  + (offset.right  || 0)),
+		b: (window.scrollY - window.innerHeight) + (domRect.y + domRect.height + (offset.bottom || 0)),
 	}
 	/* eslint-enable */
 	return bounds
@@ -37,10 +37,9 @@ function computeCurrentBounds(offset) {
 function computeCoordsScrollTo(offset = { left: 0, right: 0, top: 0, bottom: 0 }) {
 	const domRect = computeCurrentDOMRect()
 	if (!domRect) {
-		// No-op.
-		return
+		return { x: -1, y: -1 }
 	}
-	const bounds = computeCurrentBounds(offset)
+	const bounds = computeCurrentBounds(domRect, offset)
 	const coords = {
 		x: 0, // The nearest x-axis point.
 		y: 0, // The nearest y-axis point.

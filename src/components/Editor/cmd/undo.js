@@ -1,4 +1,4 @@
-import platform from "../platform"
+import platform from "lib/platform"
 
 const keyCodes = {
 	z: 90, // Undo and redo.

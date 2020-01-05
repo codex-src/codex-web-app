@@ -1,5 +1,5 @@
 import * as userAgent from "./userAgent"
-import isMetaOrCtrlKey from "./metaKey"
+import isMetaOrCtrlKey from "./isMetaOrCtrlKey"
 
 const exports = {
 	...userAgent,

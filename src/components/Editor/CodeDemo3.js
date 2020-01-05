@@ -1,15 +1,15 @@
 import cmd from "./cmd"
+import computeCoordsScrollTo from "lib/computeCoordsScrollTo"
 import parse from "./Components"
 import PerfTimer from "lib/PerfTimer"
 import React from "react"
 import ReactDOM from "react-dom"
-import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
 import StatusBar from "components/Note"
 import stylex from "stylex"
 import traverseDOM from "./traverseDOM"
 import useMethods from "use-methods"
-import utf8 from "./utf8"
-import VDOM from "./vdom"
+import utf8 from "lib/encoding/utf8"
+import VDOM from "./VDOM"
 
 import "./code-demo.css"
 
@@ -246,7 +246,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				range.collapse()
 				selection.removeAllRanges()
 				selection.addRange(range)
-				scrollIntoViewIfNeeded(0, 28)
+				const { x, y } = computeCoordsScrollTo({ bottom: 28 })
+				if (x === -1 || y === -1) {
+					// No-op.
+					return
+				}
+				window.scrollTo(x, y)
 			})
 			const p = perfParser.duration()
 			const r = perfReactRenderer.duration()
@@ -383,9 +388,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							return
 						}
 
-						let char = ""
+						let rune = ""
 						if (e.nativeEvent.data) {
-							char = utf8.nextChar(e.nativeEvent.data, 0) // UTF-8 character.
+							rune = utf8.startRune(e.nativeEvent.data)
 						}
 						//  # H|ello, world!
 						//   ^ &nbsp;
@@ -394,7 +399,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						//
 						const prevCharWasSpace = resetPos.offset - 2 >= 0 && greedy.current.data[resetPos.offset - 2] === " "
 						const shouldRender = (
-							(!utf8.isAlphanum(char) /* Can change to just markdown syntax. */ || prevCharWasSpace) &&
+							(!utf8.isAlphanum(rune) /* Can change to just markdown syntax. */ || prevCharWasSpace) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
 						dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, resetPos)

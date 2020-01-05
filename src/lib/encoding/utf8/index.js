@@ -1,9 +1,11 @@
-import * as isAlphanum from "./isAlphanum"
 import * as isWhiteSpace from "./isWhiteSpace"
+import * as rune from "./rune"
+import isAlphanum from "./isAlphanum"
 
 const exports = {
-	...isAlphanum,
 	...isWhiteSpace,
+	...rune,
+	isAlphanum,
 }
 
 export default exports

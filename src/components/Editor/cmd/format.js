@@ -1,4 +1,4 @@
-import platform from "../platform"
+import platform from "lib/platform"
 
 const keyCodeB = 66
 const keyCodeI = 73
