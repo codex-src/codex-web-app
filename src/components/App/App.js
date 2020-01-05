@@ -30,7 +30,7 @@ const AppContainer = props => (
 
 const client = new GraphQL.Client({ fetchGraphQL })
 
-const Providers = props => (
+const AppProviders = props => (
 	<GraphQL.Provider client={client}>
 		<User.Provider>
 			{props.children}
@@ -41,7 +41,7 @@ const Providers = props => (
 // TODO: Add home route.
 const App = props => (
 	<Router.BrowserRouter>
-		<Providers>
+		<AppProviders>
 			<AppContainer>
 				<Router.Switch>
 
@@ -105,7 +105,7 @@ const App = props => (
 
 				</Router.Switch>
 			</AppContainer>
-		</Providers>
+		</AppProviders>
 	</Router.BrowserRouter>
 )
 

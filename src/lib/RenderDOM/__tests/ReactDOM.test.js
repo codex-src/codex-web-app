@@ -14,9 +14,9 @@ function ParseMarkupDOM(Component) {
 
 test("text node", () => {
 	const Component = props => "Hello, world!"
-	const rendered = RenderDOM(Component)
-	const parsedMarkup = ParseMarkupDOM(Component)
-	expect(rendered.isEqualNode(parsedMarkup)).toBe(true)
+	const domNode = RenderDOM(Component)
+	const parsedDOMNode = ParseMarkupDOM(Component)
+	expect(domNode.isEqualNode(parsedDOMNode)).toBe(true)
 })
 
 test("p", () => {
@@ -25,9 +25,9 @@ test("p", () => {
 			Hello, world!
 		</p>
 	)
-	const rendered = RenderDOM(Component)
-	const parsedMarkup = ParseMarkupDOM(Component)
-	expect(rendered.isEqualNode(parsedMarkup)).toBe(true)
+	const domNode = RenderDOM(Component)
+	const parsedDOMNode = ParseMarkupDOM(Component)
+	expect(domNode.isEqualNode(parsedDOMNode)).toBe(true)
 })
 
 test("div", () => {
@@ -38,9 +38,9 @@ test("div", () => {
 			</p>
 		</div>
 	)
-	const rendered = RenderDOM(Component)
-	const parsedMarkup = ParseMarkupDOM(Component)
-	expect(rendered.isEqualNode(parsedMarkup)).toBe(true)
+	const domNode = RenderDOM(Component)
+	const parsedDOMNode = ParseMarkupDOM(Component)
+	expect(domNode.isEqualNode(parsedDOMNode)).toBe(true)
 })
 
 test("div#root", () => {
@@ -53,7 +53,7 @@ test("div#root", () => {
 			</div>
 		</div>
 	)
-	const rendered = RenderDOM(Component)
-	const parsedMarkup = ParseMarkupDOM(Component)
-	expect(rendered.isEqualNode(parsedMarkup)).toBe(true)
+	const domNode = RenderDOM(Component)
+	const parsedDOMNode = ParseMarkupDOM(Component)
+	expect(domNode.isEqualNode(parsedDOMNode)).toBe(true)
 })
