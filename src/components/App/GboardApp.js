@@ -6,7 +6,7 @@ import stylex from "stylex"
 const keyCodeBackslash = 220
 
 const GboardApp = props => (
-	<DebugCSS keyCode={keyCodeBackslash}>
+	<DebugCSS>
 		<div style={stylex.parse("p-x:24 p-y:32")}>
 			<Editor.Editor />
 		</div>

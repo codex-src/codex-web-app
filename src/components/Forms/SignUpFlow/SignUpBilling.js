@@ -28,8 +28,8 @@ function SignUpBilling({ state, dispatch, ...props }) {
 			;(async () => {
 				const { errors, data } = await GraphQL.fetchAsGraphQL(`
 					query NextSubscriptionDate {
-						nextMo: nextMonth { ...date }
-						nextYr: nextYear  { ...date }
+						nextMonth { ...date }
+						nextYear  { ...date }
 					}
 					${Fragments.date}
 				`)
@@ -37,8 +37,9 @@ function SignUpBilling({ state, dispatch, ...props }) {
 					invariant(false, errors.map(error => error.message).join(", "))
 					return
 				}
-				dispatch.setNextMo(data.nextMo)
-				dispatch.setNextYr(data.nextYr)
+				const { nextMonth, nextYear } = data
+				dispatch.setNextMonth(nextMonth.year, nextMonth.month, nextMonth.day)
+				dispatch.setNextYear(nextYear.year, nextYear.month, nextYear.day)
 			})()
 		}, [dispatch]),
 		[],
@@ -54,7 +55,7 @@ function SignUpBilling({ state, dispatch, ...props }) {
 		// Create token:
 		dispatch.setFetching(true)
 		const res1 = await createToken()
-		if (res1.error) { // Not a GraphQL error.
+		if (res1.error) { // Stripe error; not GraphQL.
 			invariant(false, res1.error.message)
 			dispatch.setFetching(false)
 			dispatch.setWarn(res1.error.message)
@@ -94,14 +95,14 @@ function SignUpBilling({ state, dispatch, ...props }) {
 								selected={state.chargeMonth === 1}
 								text="Charge me per month"
 								price="$8 per month"
-								onClick={dispatch.setChargeMo}
+								onClick={dispatch.setChargeMonth}
 							/>
 							<Input.SubscriptionOption
 								selected={state.chargeMonth === 0}
 								text="Charge me per year"
 								price="$80 per year"
 								discount="SAVE 20%"
-								onClick={dispatch.setChargeYr}
+								onClick={dispatch.setChargeYear}
 							/>
 						</Input.SubscriptionSelect>
 					</Input.Label>

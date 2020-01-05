@@ -6,7 +6,7 @@ const keyCodeBackslash = 220
 function isBackslash(e) {
 	const ok = (
 		platform.isMetaOrCtrlKey(e) &&
-		e.keyCode === 220
+		e.keyCode === keyCodeBackslash
 	)
 	return ok
 }

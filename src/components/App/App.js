@@ -11,10 +11,8 @@ import React from "react"
 import stylex from "stylex"
 import User from "components/User"
 
-const keyCodeBackslash = 220
-
 const AppContainer = props => (
-	<DebugCSS keyCode={keyCodeBackslash}>
+	<DebugCSS>
 		<div style={stylex.parse("flex -c -y:between h:max")}>
 			<div style={stylex.parse("b:white")}>
 				<Nav />

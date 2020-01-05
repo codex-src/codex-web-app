@@ -1,31 +1,41 @@
-import months from "./months"
+import time from "lib/time"
 import useMethods from "use-methods"
 
 const initialState = {
 	chargeMonth: -1,
-	nextMo:      { year: "(loading…)", month: "(loading…)", day: "(loading…)" },
-	nextYr:      { year: "(loading…)", month: "(loading…)", day: "(loading…)" },
+	nextMonth:   { year: "(loading…)", month: "(loading…)", day: "(loading…)" },
+	nextYear:    { year: "(loading…)", month: "(loading…)", day: "(loading…)" },
 	info:        "",
 	warn:        "",
 	fetching:    false,
 }
 
 const reducer = state => ({
-	setNextMo(payload) {
-		state.nextMo = { ...payload }
+	setNextMonth(year, month, day) {
+		state.nextMonth = {
+			year,  // The next month’s year.
+			month, // The next month’s month.
+			day,   // The next month’s dayy.
+		}
 	},
-	setNextYr(payload) {
-		state.nextYr = { ...payload }
+	setNextYear(year, month, day) {
+		state.nextYear = {
+			year,  // The next year’s year.
+			month, // The next year’s month.
+			day,   // The next year’s day.
+		}
 	},
-	setChargeMo() {
+	setChargeMonth() {
 		state.warn = ""
 		state.chargeMonth = 1
-		state.info = `You will be charged $8 today and then on ${months.getMonth(state.nextMo.month)} ${state.nextMo.day}.`
+		const { year, month, day } = state.nextMonth
+		state.info = `You will be charged $8 today and then on ${time.formatDate(year, month, day, false)}.`
 	},
-	setChargeYr() {
+	setChargeYear() {
 		state.warn = ""
 		state.chargeMonth = 0
-		state.info = `You will be charged $80 today and then on ${months.getMonth(state.nextYr.month)} ${state.nextYr.day}, ${state.nextYr.year}.`
+		const { year, month, day } = state.nextYear
+		state.info = `You will be charged $80 today and then on ${time.formatDate(year, month, day, true)}.`
 	},
 	setInfo(info) {
 		state.info = info

@@ -1,1 +1,1 @@
-export { default } from "./GboardApp" // "./App"
+export { default } from "./App" // "./GboardApp"
