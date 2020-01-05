@@ -1,5 +1,5 @@
 import React from "react"
-import RenderDOM from "components/RenderDOM"
+import RenderDOM from "lib/RenderDOM"
 import { innerText } from "../read"
 
 test("p", () => {

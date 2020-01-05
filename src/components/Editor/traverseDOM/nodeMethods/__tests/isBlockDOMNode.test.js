@@ -1,6 +1,6 @@
 import React from "react"
 import ReactDOMServer from "react-dom/server"
-import RenderDOM from "components/RenderDOM"
+import RenderDOM from "lib/RenderDOM"
 import { isBlockDOMNode } from "../compare"
 
 test("br", () => {

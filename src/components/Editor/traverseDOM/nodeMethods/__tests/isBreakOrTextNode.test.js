@@ -1,5 +1,5 @@
 import React from "react"
-import RenderDOM from "components/RenderDOM"
+import RenderDOM from "lib/RenderDOM"
 import { isBreakOrTextNode } from "../compare"
 
 test("br", () => {
