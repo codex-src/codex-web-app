@@ -38,7 +38,7 @@ class PerfTimer {
 	// `start` starts the timer.
 	start() {
 		invariant(
-			this._state.t1 === 0 && this._state.t2 === 0,
+			!this._state.t1 && !this._state.t2,
 			"PerfTimer: A performance timer cannot be started more than once.",
 		)
 		this._state.t1 = Date.now()
@@ -46,7 +46,7 @@ class PerfTimer {
 	// `stop` stops the timer.
 	stop() {
 		invariant(
-			this._state.t1 !== 0 && this._state.t2 === 0,
+			this._state.t1 && !this._state.t2,
 			"PerfTimer: A performance timer cannot be stopped more than once.",
 		)
 		this._state.t2 = Date.now()
