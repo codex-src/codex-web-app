@@ -1,12 +1,11 @@
-// `computeCurrentDOMRect` computes the current `DOMRect`.
+// `computeCurrentDOMRect` computes the current DOMRect.
 function computeCurrentDOMRect() {
 	const selection = document.getSelection()
 	if (!selection.anchorNode) {
 		// No-op.
 		return null
 	}
-	// Get the cursor `DOMRect`s:
-	const domRects = selection.getRangeAt(0).getClientRects()
+	const domRects = selection.getRangeAt(0).getClientRects() // E.g. cursor.
 	if (!domRects.length) {
 		if (!selection.anchorNode.getBoundingClientRect) {
 			// No-op.
