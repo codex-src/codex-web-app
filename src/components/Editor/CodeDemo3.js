@@ -1,5 +1,6 @@
 import cmd from "./cmd"
 import parse from "./Components"
+import PerfTimer from "lib/PerfTimer"
 import React from "react"
 import ReactDOM from "react-dom"
 import scrollIntoViewIfNeeded from "./scrollIntoViewIfNeeded"
@@ -12,39 +13,14 @@ import vdom from "./vdom"
 
 import "./code-demo.css"
 
-class PerfTimer {
-	constructor() {
-		Object.assign(this, {
-			state: {
-				t1: 0,
-				t2: 0,
-			},
-		})
-	}
-	// TODO: `reset`; prevent PerfTimer from starting again or
-	// stopping again, etc. before a reset.
-	start() {
-		this.state.t1 = Date.now()
-	}
-	stop() {
-		this.state.t2 = Date.now()
-	}
-	// TODO
-	// on(callback) {
-	// }
-	result() {
-		return this.state.t2 - this.state.t1
-	}
-}
-
 // TODO:
 //
 // - ComputeVDOMCursor
 // - ComputeDOMCursor
-const perfParser = new PerfTimer()
-const perfReactRenderer = new PerfTimer()
-const perfDOMRenderer = new PerfTimer()
-const perfDOMCursor = new PerfTimer()
+const perfParser = new PerfTimer()        // Times the component parser phase.
+const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
+const perfDOMRenderer = new PerfTimer()   // Times the DOM renderer phase.
+const perfDOMCursor = new PerfTimer()     // Times the DOM cursor (to reset).
 
 const initialState = {
 	renderDOMNode: document.createElement("div"),
@@ -139,7 +115,7 @@ const reducer = state => ({
 })
 
 const init = initialValue => initialState => {
-	const body = initialState.body.write(initialValue, 0, 0)
+	const body = initialState.body.write(initialValue, 0, initialState.body.data.length)
 	const state = {
 		...initialState,
 		initialValue,
@@ -170,7 +146,7 @@ const DebugEditor = props => (
 )
 
 // NOTE: Reference components (not anonymous) appear to
-// render faster.
+// render much faster.
 //
 // https://twitter.com/dan_abramov/status/691306318204923905
 function Contents(props) {
@@ -222,20 +198,21 @@ function Editor(props) {
 	// Should render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			perfParser.start()
-			const Components = parse(state.body)
-			perfParser.stop()
-			perfReactRenderer.start()
+			let Components = []
+			perfParser.on(() => {
+				Components = parse(state.body)
+			})
+			perfReactRenderer.restart()
 			ReactDOM.render(
 				<Contents components={Components} />,
 				state.renderDOMNode,
 				() => {
 					perfReactRenderer.stop()
-					// TODO: Heavily optimize.
-					perfDOMRenderer.start()
-					;[...ref.current.childNodes].map(each => each.remove())
-					ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
-					perfDOMRenderer.stop()
+					perfDOMRenderer.on(() => {
+						// TODO: Optimize.
+						;[...ref.current.childNodes].map(each => each.remove())
+						ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
+					})
 					dispatch.renderCursor()
 				},
 			)
@@ -250,23 +227,19 @@ function Editor(props) {
 				// No-op.
 				return
 			}
-			perfDOMCursor.start()
-			const selection = document.getSelection()
-			const range = document.createRange()
-			const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
-			range.setStart(node, offset)
-			range.collapse()
-			selection.removeAllRanges()
-			selection.addRange(range)
-			scrollIntoViewIfNeeded(0, 28)
-			perfDOMCursor.stop()
-			const dur = (
-				perfParser.result() +        // Duration of the component parser phase.
-				perfReactRenderer.result() + // Duration of the React renderer phase.
-				perfDOMRenderer.result() +   // Duration of the DOM renderer phase.
-				perfDOMCursor.result()       // Duration of the DOM cursor (to reset).
-			)
-			console.log(`parser=${perfParser.result()} react=${perfReactRenderer.result()} dom=${perfDOMRenderer.result()} cursor=${perfDOMCursor.result()} (${dur})`)
+			perfDOMCursor.on(() => {
+				const selection = document.getSelection()
+				const range = document.createRange()
+				const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
+				range.setStart(node, offset)
+				range.collapse()
+				selection.removeAllRanges()
+				selection.addRange(range)
+				scrollIntoViewIfNeeded(0, 28)
+			})
+			const sum = PerfTimer.durations(perfParser, perfReactRenderer, perfDOMRenderer, perfDOMCursor)
+			const timestamp = new Date().toISOString().split("T")[1]
+			console.log(`${timestamp}: parser=${perfParser.duration()} react=${perfReactRenderer.duration()} dom=${perfDOMRenderer.duration()} cursor=${perfDOMCursor.duration()} (${sum})`)
 		}, [state]),
 		[state.shouldRenderCursor],
 	)
@@ -411,7 +384,7 @@ function Editor(props) {
 						//
 						const prevCharIsSpace = resetPos.offset - 2 >= 0 && greedy.current.data[resetPos.offset - 2] === " "
 						const shouldRender = (
-							(!utf8.isAlphanum(char) || prevCharIsSpace) &&
+							(!utf8.isAlphanum(char) /* Can change to just markdown syntax. */ || prevCharIsSpace) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
 						dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, resetPos)
