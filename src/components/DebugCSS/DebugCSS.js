@@ -1,32 +1,34 @@
+import platform from "lib/platform"
 import React from "react"
 
-// `detectCtrlKeyCode` detects whether control and a key
-// code (from a key down event) were pressed.
-function detectCtrlKeyCode(e, keyCode) {
+const keyCodeBackslash = 220
+
+function isBackslash(e) {
 	const ok = (
-		e.ctrlKey &&          // Accept.
-		!e.altKey &&          // Negate.
-		!e.metaKey &&         // Negate.
-		e.keyCode === keyCode // Accept.
+		platform.isMetaOrCtrlKey(e) &&
+		e.keyCode === 220
 	)
 	return ok
 }
 
+// https://freecodecamp.org/news/88529aa5a6a3
 function DebugCSS(props) {
+	// https://github.com/facebook/react/issues/4244#issuecomment-116406998
+	const ref = React.useRef()
 	React.useEffect(() => {
 		const handleKeyDown = e => {
-			if (!detectCtrlKeyCode(e, props.keyCode)) {
+			if (!isBackslash(e)) {
 				return
 			}
 			e.preventDefault()
-			document.body.classList.toggle("debug-css")
+			ref.current.classList.toggle("debug-css")
 		}
 		document.addEventListener("keydown", handleKeyDown)
 		return () => {
 			document.removeEventListener("keydown", handleKeyDown)
 		}
-	}, [props.keyCode])
-	return props.children
+	}, [props])
+	return React.cloneElement(props.children, { ref })
 }
 
 export default DebugCSS
