@@ -206,7 +206,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
-	// Render components:
+	// Should render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			let Components = []
@@ -231,7 +231,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 		[state.shouldRenderComponents],
 	)
 
-	// Render cursor:
+	// Should render DOM cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -248,7 +248,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				selection.addRange(range)
 				scrollIntoViewIfNeeded(0, 28)
 			})
-			// Sorted by order of use.
 			const isoTime = new Date().toISOString().slice(11, -1)
 			const p = perfParser.duration()
 			const r = perfReactRenderer.duration()
@@ -260,7 +259,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 		[state.shouldRenderCursor],
 	)
 
-	const selectionchange = React.useRef({
+	const selectionChangeCache = React.useRef({
 		node1: null, // The cursor start DOM node.
 		node2: 0,    // The cursor start DOM node offset.
 		offs1: null, // The cursor end DOM node.
@@ -276,14 +275,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			const {
 				anchorNode:   node1,
 				focusNode:    node2,
-				anchorOffset: offs1, // Offset 1.
-				focusOffset:  offs2, // Offset 2.
+				anchorOffset: offs1,
+				focusOffset:  offs2,
 			} = document.getSelection()
 			if (
-				node1 === selectionchange.current.node1 &&
-				node2 === selectionchange.current.node2 &&
-				offs1 === selectionchange.current.offs1 &&
-				offs2 === selectionchange.current.offs2
+				node1 === selectionChangeCache.current.node1 &&
+				node2 === selectionChangeCache.current.node2 &&
+				offs1 === selectionChangeCache.current.offs1 &&
+				offs2 === selectionChangeCache.current.offs2
 			) {
 				// No-op.
 				return
@@ -294,7 +293,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				pos2 = traverseDOM.computeVDOMCursor(ref.current, node2, offs2)
 			}
 			dispatch.setState(state.body, pos1, pos2)
-			selectionchange.current = { node1, node2, offs1, offs2 }
+			selectionChangeCache.current = { node1, node2, offs1, offs2 }
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -309,10 +308,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				{
 					ref,
 
-					style: {
-						...stylex.parse("p-b:28"),
-						transform: state.isFocused && "translateZ(0px)",
-					},
+					style: { transform: state.isFocused && "translateZ(0px)" },
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
@@ -344,7 +340,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						default:
 							// No-op.
 						}
-						// Compute the start node:
+						// Compute the pre-`input` start node:
 						const { node: anchorNode } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
 						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
 						// Compute the greedy VDOM cursor range:
@@ -357,31 +353,30 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						}
 					},
 
-					// console.log(e.nativeEvent.inputType)
 					onInput: e => {
 						// Compute the greedy data:
 						greedy.current.data = traverseDOM.innerText(greedy.current.startNode)
 
-						// Compute the reset VDOM cursor:
+						// Compute the VDOM cursor:
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
 						const resetPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
-						// Backspace on a paragraph:
+						// Guard backspace on a paragraph:
 						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
 							dispatch.backspaceOnLine()
 							return
-							// Forward backspace on a paragraph:
+						// Guard forward backspace on a paragraph:
 						} else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
 							dispatch.forwardBackspaceOnLine()
 							return
-							// Paragraph:
+						// Guard paragraph:
 						} else if (e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") {
 							dispatch.enter()
 							return
-							// Paragraph (edge case):
+						// Guard paragraph (edge case):
 						} else if ((e.nativeEvent.inputType === "insertText" || e.nativeEvent.inputType === "insertCompositionText" || e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
 								startNode !== greedy.current.startNode) { // New DOM node.
 							const concat = `${greedy.current.data}\n${traverseDOM.innerText(startNode)}`
