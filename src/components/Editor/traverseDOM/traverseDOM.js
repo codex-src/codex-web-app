@@ -4,9 +4,9 @@ import nodeMethods from "./nodeMethods"
 // `ascendToBlockDOMNode` ascends to the nearest block DOM
 // node or empty block DOM node.
 export function ascendToBlockDOMNode(rootNode, node) {
-	if (node.parentNode === rootNode) {
-		return node
-	}
+	// if (node.parentNode === rootNode) {
+	// 	return node
+	// }
 	while (!nodeMethods.isBlockDOMNode(node)) {
 		node = node.parentNode
 	}

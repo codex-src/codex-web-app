@@ -18,7 +18,7 @@ const Node = render => ({ reactKey, ...props }) => {
 		element,
 		{
 			"id": reactKey,
-			"data-vdom-node": true, // reactKey, // Redundant.
+			"data-vdom-node": true,
 			...element.props,
 		},
 	)
@@ -26,7 +26,7 @@ const Node = render => ({ reactKey, ...props }) => {
 }
 
 const Syntax = stylex.Styleable(props => (
-	<span style={stylex.parse("c:blue-a400")}>
+	<span style={stylex.parse("pre c:blue-a400")}>
 		{props.children}
 	</span>
 ))
@@ -60,10 +60,9 @@ const headersSyntax = {
 const Header = Node(props => {
 	const TagName = headersSyntax[props.start]
 
-	const start = `${props.start.slice(0, -1)}\u00a0`
 	return (
 		<TagName style={stylex.parse("fw:700 fs:19")}>
-			<Markdown start={start}>
+			<Markdown start={props.start}>
 				{props.children}
 			</Markdown>
 		</TagName>
@@ -79,16 +78,14 @@ const Comment = Node(props => (
 ))
 
 // Compound component.
-//
-// TODO: Refactor item component.
 const Blockquote = Node(props => (
 	<blockquote>
 		<ul>
 			{props.children.map(each => (
 				<li key={each.key} id={each.key} style={stylex.parse("fs:19")} data-vdom-node>
-					<Markdown start={each.isNewline ? ">" : ">\u00a0"}>
+					<Markdown start={each.start}>
 						{each.data || (
-							each.isNewline && (
+							!(each.start + each.data) && (
 								<br />
 							)
 						)}
@@ -119,8 +116,6 @@ const codeBlockItemCodeStyle = {
 // Compound component.
 //
 // http://cdpn.io/PowjgOg
-//
-// TODO: Refactor item component.
 const CodeBlock = Node(props => (
 	<pre style={codeBlockStyle} spellCheck={false}>
 		<ul>
@@ -217,8 +212,8 @@ function parse(body) {
 					{bquoteNodes.map(each => (
 						{
 							...each,
-							isNewline: each.data.length === 1 && each.data === ">",
-							data: each.data.slice(2),
+							start: each.data.slice(0, 2),
+							data:  each.data.slice(2),
 						}
 					))}
 				</Blockquote>

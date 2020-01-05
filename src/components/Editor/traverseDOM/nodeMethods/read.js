@@ -5,10 +5,7 @@ export function nodeValue(node) {
 	if (!compare.isBreakOrTextNode(node)) {
 		return ""
 	}
-	// (1) Guard break node:
-	// (2) Convert non-breaking spaces to spaces:
-	const data = node.nodeValue || ""  // 1
-	return data.replace("\u00a0", " ") // 2
+	return node.nodeValue || "" // Break node.
 }
 
 // `innerText` mocks the browser function.
