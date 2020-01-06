@@ -1,4 +1,4 @@
-import * as Feather from "react-feather"
+// import * as Feather from "react-feather"
 import computeMetrics from "./computeMetrics"
 import React from "react"
 import stylex from "stylex"
@@ -65,8 +65,8 @@ function StatusBar({ state, dispatch, ...props }) {
 
 					{/* LHS */}
 					<div style={stylex.parse("flex -r -y:center")}>
-						<Icon icon={Feather.Scissors} />
-						<div style={stylex.parse("w:6.25")} />
+						{/* <Icon icon={Feather.Scissors} /> */}
+						{/* <div style={stylex.parse("w:6.25")} /> */}
 						<Text>
 							{computeLHS(metrics)}
 						</Text>
@@ -77,8 +77,8 @@ function StatusBar({ state, dispatch, ...props }) {
 						<Text>
 							{computeRHS(metrics)}
 						</Text>
-						<div style={stylex.parse("w:6.25")} />
-						<Icon icon={Feather.Search} />
+						{/* <div style={stylex.parse("w:6.25")} /> */}
+						{/* <Icon icon={Feather.Search} /> */}
 					</div>
 
 				</div>
