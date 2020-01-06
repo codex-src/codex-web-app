@@ -137,8 +137,8 @@ const DebugEditor = props => (
 			{JSON.stringify(
 				{
 					// body: props.state.body,
-					pos1: props.state.pos1,
-					pos2: props.state.pos2,
+					pos1: props.state.pos1.pos,
+					pos2: props.state.pos2.pos,
 				},
 				null,
 				"\t",
@@ -177,41 +177,41 @@ how are you
 
 `)
 
-// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
-//
-// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-//
-// ## How to build a beautiful blog
-//
-// \`\`\`go
-// package main
-//
-// import "fmt"
-//
-// func main() {
-// 	fmt.Println("hello, world!")
-// }
-// \`\`\`
-//
-// ### How to build a beautiful blog
-//
-// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-// >
-// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-// >
-// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-//
-// #### How to build a beautiful blog
-//
-// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-//
-// ##### How to build a beautiful blog
-//
-// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-//
-// ###### How to build a beautiful blog
-//
-// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ## How to build a beautiful blog
+	//
+	// \`\`\`go
+	// package main
+	//
+	// import "fmt"
+	//
+	// func main() {
+	// 	fmt.Println("hello, world!")
+	// }
+	// \`\`\`
+	//
+	// ### How to build a beautiful blog
+	//
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	// >
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	// >
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// #### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ##### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ###### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render components:
 	React.useLayoutEffect(
@@ -286,6 +286,7 @@ how are you
 	// https://developer.mozilla.org/en-US/docs/Web/API/Selection/setBaseAndExtent
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
+			console.log("onSelectionChange")
 			if (!state.isFocused) {
 				// No-op.
 				return
@@ -371,8 +372,9 @@ how are you
 						}
 					},
 
+					// console.log({ ...e })
 					onInput: e => {
-						// console.log({ ...e })
+						console.log("onInput")
 
 						// Compute the greedy data:
 						greedy.current.data = traverseDOM.innerText(greedy.current.startNode)
@@ -382,7 +384,7 @@ how are you
 						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
 						const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
-						console.log(`currentPos=${currentPos.pos} state.pos2=${state.pos2.pos}`)
+						// console.log(`currentPos=${currentPos.pos} state.pos2=${state.pos2.pos}`)
 
 						// Backspace on a paragraph:
 						//
@@ -410,25 +412,29 @@ how are you
 							return
 						}
 
-						//  # H|ello, world!
+						//  # Hello, world!
 						//   ^
-						// [0123]
-						//     ^
+						// [01234]
+						//     ^ DOM cursor
 						//
-						let prevCharBeforeCursor = ""
+						let wasPrevCharBeforeCursor = ""
 						if (currentPos.offset - 2 >= 0 && currentPos.offset - 2 < greedy.current.data.length) {
-							prevCharBeforeCursor = greedy.current.data[currentPos.offset - 2]
+							wasPrevCharBeforeCursor = greedy.current.data[currentPos.offset - 2]
 						}
 						let currentChar = ""
 						if (e.nativeEvent.data) {
 							currentChar = e.nativeEvent.data[0]
 						}
-						// FIXME: Should rerender on backspace, etc.
+						let wasNextCharAfterCursor = ""
+						if (currentPos.offset >= 0 && currentPos.offset < greedy.current.data.length) {
+							wasNextCharAfterCursor = greedy.current.data[currentPos.offset]
+						}
+						const heuristicInputAroundSyntax = currentPos.pos > state.pos2.pos && (md.isSyntax(wasPrevCharBeforeCursor) || md.isSyntax(currentChar) || md.isSyntax(wasNextCharAfterCursor))
+						const heuristicBackspaceOrDelete = currentPos.pos < state.pos2.pos
 						const shouldRender = (
-							(md.isSyntax(prevCharBeforeCursor) || md.isSyntax(currentChar) || currentPos.pos < state.pos2.pos) &&
+							(heuristicInputAroundSyntax || heuristicBackspaceOrDelete) &&
 							e.nativeEvent.inputType !== "insertCompositionText"
 						)
-						// const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
 						dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, currentPos)
 					},
 
