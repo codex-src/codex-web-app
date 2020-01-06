@@ -155,85 +155,92 @@ function Contents(props) {
 	return props.components
 }
 
-// // `newFPSStyleString` returns a new frames per second CSS
-// // inline-style string.
-// function newFPSStyleString(ms) {
-// 	if (ms < 16.67) {
-// 		return "color: lightgreen;"
-// 	} else if (ms < 33.33) {
-// 		return "color: orange;"
-// 	}
-// 	return "color: red;"
-// }
-
-// https://stackoverflow.com/a/39914235
-function sleep(forMs) {
-	return new Promise(resolve => setTimeout(resolve, forMs))
+// `newFPSStyleString` returns a new frames per second CSS
+// inline-style string.
+function newFPSStyleString(ms) {
+	if (ms < 16.67) {
+		return "color: lightgreen;"
+	} else if (ms < 33.33) {
+		return "color: orange;"
+	}
+	return "color: red;"
 }
+
+// // https://stackoverflow.com/a/39914235
+// function sleep(forMs) {
+// 	return new Promise(resolve => setTimeout(resolve, forMs))
+// }
 
 function Editor(props) {
 	const ref = React.useRef()
 	const greedy = React.useRef()
 
-	const [state, dispatch] = useEditor(`
-
-\`\`\`
-how are you
-\`\`\`
-
-`)
-
-	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+	// 	const [state, dispatch] = useEditor(`
 	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ## How to build a beautiful blog
-	//
-	// \`\`\`go
-	// package main
-	//
-	// import "fmt"
-	//
-	// func main() {
-	// 	fmt.Println("hello, world!")
-	// }
+	// \`\`\`
+	// hello
 	// \`\`\`
 	//
-	// ### How to build a beautiful blog
-	//
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	// >
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	// >
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// #### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ##### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ###### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+	// `)
+
+	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+## How to build a beautiful blog
+
+\`\`\`go
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("hello, world!")
+}
+\`\`\`
+
+### How to build a beautiful blog
+
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+>
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+>
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+#### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+##### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+###### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			// Eagerly drop range for performance reasons:
-			const selection = document.getSelection()
-			selection.removeAllRanges()
-
-			let Components = []
-			Components = parse(state.body)
+			const Components = []
+			perfParser.on(() => {
+				Components.push(...parse(state.body))
+			})
+			perfReactRenderer.restart()
 			ReactDOM.render(
 				<Contents components={Components} />,
 				state.renderDOMNode,
 				() => {
-					;[...ref.current.childNodes].map(each => each.remove())
-					ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
+					perfReactRenderer.stop()
+					// Eagerly drop range for performance reasons:
+					//
+					// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+					const selection = document.getSelection()
+					selection.removeAllRanges()
+					perfDOMRenderer.on(() => {
+						;[...ref.current.childNodes].map(each => each.remove())
+						ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
+					})
 					dispatch.renderCursor()
 				},
 			)
@@ -248,37 +255,32 @@ how are you
 				// No-op.
 				return
 			}
-
-			;(async () => {
-
-				// perfDOMCursor.on(() => {
+			perfDOMCursor.on(() => {
 				const selection = document.getSelection()
 				const range = document.createRange()
 				const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
 				range.setStart(node, offset)
 				range.collapse()
-				// (Range was dropped eagerly)
-				await sleep(0)
-				// console.log({ range })
-				// setTimeout(() => {
+				// (Range eagerly dropped)
 				selection.addRange(range)
+				// // TODO: Guard `backspaceOnLine` (Android):
+				// setTimeout(() => {
+				// 	selection.removeAllRanges()
+				// 	selection.addRange(range)
 				// }, 0)
-
-			})()
-
-			// const { y } = computeCoordsScrollTo({ bottom: 28 })
-			// if (y === -1) {
-			// 	// No-op.
-			// 	return
-			// }
-			// window.scrollTo(0, y)
-			// })
-			// const p = perfParser.duration()
-			// const r = perfReactRenderer.duration()
-			// const d = perfDOMRenderer.duration()
-			// const c = perfDOMCursor.duration()
-			// const ms = p + r + d + c
-			// console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${ms})`, newFPSStyleString(ms))
+				const { y } = computeCoordsScrollTo({ bottom: 28 })
+				if (y === -1) {
+					// No-op.
+					return
+				}
+				window.scrollTo(0, y)
+			})
+			const p = perfParser.duration()
+			const r = perfReactRenderer.duration()
+			const d = perfDOMRenderer.duration()
+			const c = perfDOMCursor.duration()
+			const ms = p + r + d + c
+			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${ms})`, newFPSStyleString(ms))
 		}, [state]),
 		[state.shouldRenderCursor],
 	)
@@ -342,25 +344,6 @@ how are you
 
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
-
-					// onSelect: e => {
-					// 	if (!state.isFocused) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
-					// 	if (!anchorNode || !focusNode) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-					// 	let pos2 = { ...pos1 }
-					// 	if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-					// 		pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
-					// 	}
-					// 	console.log(`onSelect: ${pos1.pos}`)
-					// 	dispatch.setState(state.body, pos1, pos2)
-					// },
 
 					onKeyDown: e => {
 						switch (true) {
