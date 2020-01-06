@@ -463,85 +463,85 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						// const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
 						// dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, currentPos)
 
-						const t1 = new PerfTimer()
-						const t2 = new PerfTimer()
+						// const t1 = new PerfTimer()
+						// const t2 = new PerfTimer()
+						//
+						// let data = ""
+						// t1.on(() => {
+						// 	data = traverseDOM.innerText(ref.current)
+						// })
+						// console.log(`traverseDOM.innerText=${t1.duration()}`)
+						//
+						// let pos = null
+						// t2.on(() => {
+						// 	const { anchorNode, anchorOffset } = document.getSelection()
+						// 	pos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// })
+						// console.log(`traverseDOM.computeVDOMCursor=${t2.duration()}`)
+						//
+						// const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
+						// dispatch.rewrite(shouldRender, data, pos)
 
-						let data = ""
-						t1.on(() => {
-							data = traverseDOM.innerText(ref.current)
-						})
-						console.log(`traverseDOM.innerText=${t1.duration()}`)
+						// perfRenderPass.restart()
 
-						let pos = null
-						t2.on(() => {
-							const { anchorNode, anchorOffset } = document.getSelection()
-							pos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						})
-						console.log(`traverseDOM.computeVDOMCursor=${t2.duration()}`)
+						// Compute the greedy data:
+						greedy.current.data = traverseDOM.innerText(greedy.current.startNode)
 
-						const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
-						dispatch.rewrite(shouldRender, data, pos)
+						// Compute the VDOM cursor:
+						const { anchorNode, anchorOffset } = document.getSelection()
+						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
+						const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
-						// // perfRenderPass.restart()
+						// Collapsed backspace on a paragraph:
+						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
+								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
+							dispatch.collapsedBackspaceOnLine()
+							return
+						// Collapsed delete on a paragraph:
+						} else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
+								(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
+							dispatch.collapsedDeleteOnLine()
+							return
+						// Enter:
+						} else if (e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") {
+							dispatch.enter()
+							return
+						// Enter (edge case):
+						} else if ((e.nativeEvent.inputType === "insertText" || e.nativeEvent.inputType === "insertCompositionText" || e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
+								startNode !== greedy.current.startNode) {
+							const concat = `${greedy.current.data}\n${traverseDOM.innerText(startNode)}`
+							dispatch.greedyWrite(true, concat, greedy.current.pos1, greedy.current.pos2, currentPos)
+							return
+						}
+
+						//  # Hello, world!
+						//   ^
+						// [01234]
+						//     ^ DOM cursor
 						//
-						// // Compute the greedy data:
-						// greedy.current.data = traverseDOM.innerText(greedy.current.startNode)
-						//
-						// // Compute the VDOM cursor:
-						// const { anchorNode, anchorOffset } = document.getSelection()
-						// const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
-						// const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						//
-						// // Collapsed backspace on a paragraph:
-						// if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
-						// 		(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
-						// 	dispatch.collapsedBackspaceOnLine()
-						// 	return
-						// // Collapsed delete on a paragraph:
-						// } else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
-						// 		(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
-						// 	dispatch.collapsedDeleteOnLine()
-						// 	return
-						// // Enter:
-						// } else if (e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") {
-						// 	dispatch.enter()
-						// 	return
-						// // Enter (edge case):
-						// } else if ((e.nativeEvent.inputType === "insertText" || e.nativeEvent.inputType === "insertCompositionText" || e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
-						// 		startNode !== greedy.current.startNode) {
-						// 	const concat = `${greedy.current.data}\n${traverseDOM.innerText(startNode)}`
-						// 	dispatch.greedyWrite(true, concat, greedy.current.pos1, greedy.current.pos2, currentPos)
-						// 	return
-						// }
-						//
-						// //  # Hello, world!
-						// //   ^
-						// // [01234]
-						// //     ^ DOM cursor
-						// //
-						// let wasPrevCharBeforeCursor = ""
-						// if (currentPos.offset - 2 >= 0 && currentPos.offset - 2 < greedy.current.data.length) {
-						// 	wasPrevCharBeforeCursor = greedy.current.data[currentPos.offset - 2]
-						// }
-						// let currentChar = ""
-						// if (e.nativeEvent.data) {
-						// 	currentChar = e.nativeEvent.data[0]
-						// }
-						// let wasNextCharAfterCursor = ""
-						// if (currentPos.offset >= 0 && currentPos.offset < greedy.current.data.length) {
-						// 	wasNextCharAfterCursor = greedy.current.data[currentPos.offset]
-						// }
-						// const heuristicInputAroundSyntax = currentPos.pos > state.pos2.pos && (md.isSyntax(wasPrevCharBeforeCursor) || md.isSyntax(currentChar) || md.isSyntax(wasNextCharAfterCursor))
-						// const heuristicBackspaceOrDelete = currentPos.pos < state.pos2.pos
-						// const shouldRender = (
-						// 	(heuristicInputAroundSyntax || heuristicBackspaceOrDelete) &&
-						// 	e.nativeEvent.inputType !== "insertCompositionText"
-						// )
-						// dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, currentPos)
-						//
-						// const pos1 = currentPos.pos - currentPos.offset
-						// const pos2 = currentPos.pos + currentPos.offsetRemainder
-						// greedy.current = { startNode, pos1, pos2 }
+						let wasPrevCharBeforeCursor = ""
+						if (currentPos.offset - 2 >= 0 && currentPos.offset - 2 < greedy.current.data.length) {
+							wasPrevCharBeforeCursor = greedy.current.data[currentPos.offset - 2]
+						}
+						let currentChar = ""
+						if (e.nativeEvent.data) {
+							currentChar = e.nativeEvent.data[0]
+						}
+						let wasNextCharAfterCursor = ""
+						if (currentPos.offset >= 0 && currentPos.offset < greedy.current.data.length) {
+							wasNextCharAfterCursor = greedy.current.data[currentPos.offset]
+						}
+						const heuristicInputAroundSyntax = currentPos.pos > state.pos2.pos && (md.isSyntax(wasPrevCharBeforeCursor) || md.isSyntax(currentChar) || md.isSyntax(wasNextCharAfterCursor))
+						const heuristicBackspaceOrDelete = currentPos.pos < state.pos2.pos
+						const shouldRender = (
+							(heuristicInputAroundSyntax || heuristicBackspaceOrDelete) &&
+							e.nativeEvent.inputType !== "insertCompositionText"
+						)
+						dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, currentPos)
+
+						const pos1 = currentPos.pos - currentPos.offset
+						const pos2 = currentPos.pos + currentPos.offsetRemainder
+						greedy.current = { startNode, pos1, pos2 }
 					},
 
 					onCut: e => {
