@@ -13,6 +13,13 @@ export function ascendToBlockDOMNode(rootNode, node) {
 	return node
 }
 
+export function ascendToGreedyDOMNode(rootNode, node) {
+	while (node.parentNode !== rootNode) {
+		node = node.parentNode
+	}
+	return node
+}
+
 // `computeVDOMCursor` computes the VDOM cursor from a DOM
 // cursor.
 export function computeVDOMCursor(rootNode, node, textOffset) {

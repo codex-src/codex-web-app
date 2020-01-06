@@ -1,5 +1,5 @@
 import cmd from "./cmd"
-// import md from "lib/encoding/md"
+import md from "lib/encoding/md"
 import parse from "./Components"
 import PerfTimer from "lib/PerfTimer"
 import React from "react"
@@ -166,13 +166,11 @@ const perfDOMCursor     = new PerfTimer() // Times the DOM cursor.
 
 function Editor(props) {
 	const ref = React.useRef()
-	// const greedy = React.useRef()
+	const greedy = React.useRef()
 
-	// 	const [state, dispatch] = useEditor(`\`\`\`
-	// \`\`\`
-	// 👩‍⚖️👩‍⚖️
-	// \`\`\`
-	// \`\`\``)
+	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+	// # How to build a beautiful blog
+	// # How to build a beautiful blog`)
 
 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 
@@ -215,7 +213,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 		React.useCallback(() => {
 			const Components = []
 			// perfParser.on(() => {
-				Components.push(...parse(state.body))
+			Components.push(...parse(state.body))
 			// })
 			// perfReactRenderer.restart()
 			ReactDOM.render(<Contents components={Components} />, state.renderDOMNode, () => {
@@ -226,9 +224,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				const selection = document.getSelection()
 				selection.removeAllRanges()
 				// perfDOMRenderer.on(() => {
-					// TODO
-					;[...ref.current.childNodes].map(each => each.remove())
-					ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
+				// TODO
+				;[...ref.current.childNodes].map(each => each.remove())
+				ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
 				// })
 				dispatch.renderCursor()
 			})
@@ -244,13 +242,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				return
 			}
 			// perfDOMCursor.on(() => {
-				const selection = document.getSelection()
-				const range = document.createRange()
-				const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
-				range.setStart(node, offset)
-				range.collapse()
-				// (Range eagerly dropped)
-				selection.addRange(range)
+			const selection = document.getSelection()
+			const range = document.createRange()
+			const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
+			range.setStart(node, offset)
+			range.collapse()
+			// (Range eagerly dropped)
+			selection.addRange(range)
 			// })
 			// perfRenderPass.stop()
 
@@ -301,22 +299,56 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			dispatch.select(state.body, pos1, pos2)
 			selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
 
-			// // Eagerly compute min and max VDOM cursors:
-			// const min = pos1.pos <= pos2.pos ? pos1 : pos2
-			// const max = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
+			//			// Sort the VDOM cursors:
+			//			const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
+			//			const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
 			//
-			// // Precompute the greedy start node and VDOM cursor
-			// // range:
-			// const node = pos1 === min ? anchorNode : focusNode
-			// const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, node)
-			// const gpos1 = min.pos - min.offset
-			// const gpos2 = max.pos + max.offsetRemainder
-			// greedy.current = {
-			// 	startNode,   // The greedy DOM node.
-			// 	pos1: gpos1, // The greedy cursor start.
-			// 	pos2: gpos2, // The greedy cursor end.
-			// }
-			// console.log(greedy.current)
+			//			// Compute the greedy start:
+			//			let greedyDOMStart = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode)
+			//			let greedyPos1 = sortedPos1.pos - sortedPos1.offset
+			//			const { previousSibling } = greedyDOMStart
+			//			if (previousSibling) {
+			//				greedyDOMStart = previousSibling
+			//				greedyPos1 -= `\n${traverseDOM.innerText(previousSibling)}`.length
+			//			}
+			//
+			//			// Compute the greedy end:
+			//			let greedyDOMEnd = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode) // Do not use reverse order.
+			//			let greedyPos2 = sortedPos2.pos + sortedPos2.offsetRemainder
+			//			const { nextSibling } = greedyDOMEnd
+			//			if (nextSibling) {
+			//				greedyDOMEnd = nextSibling
+			//				greedyPos2 += `\n${traverseDOM.innerText(nextSibling)}`.length
+			//			}
+			//
+			//			greedy.current = {
+			//				domStart: greedyDOMStart, // The greedy DOM node start.
+			//				domEnd:   greedyDOMEnd,   // The greedy DOM node end.
+			//				pos1:     greedyPos1,     // The greedy cursor start.
+			//				pos2:     greedyPos2,     // The greedy cursor end.
+			//			}
+			//
+			//			// console.log({
+			//			// 	domStart: greedy.current.domStart,
+			//			// 	domEnd:   greedy.current.domEnd,
+			//			// })
+
+			// Eagerly compute min and max VDOM cursors:
+			const min = pos1.pos <= pos2.pos ? pos1 : pos2
+			const max = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
+
+			// Precompute the greedy start node and VDOM cursor
+			// range:
+			const node = pos1 === min ? anchorNode : focusNode
+			const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, node)
+			const gpos1 = min.pos - min.offset
+			const gpos2 = max.pos + max.offsetRemainder
+			greedy.current = {
+				startNode,   // The greedy DOM node.
+				pos1: gpos1, // The greedy cursor start.
+				pos2: gpos2, // The greedy cursor end.
+			}
+			console.log(greedy.current)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -366,12 +398,75 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					},
 
 					onInput: e => {
-						// perfRenderPass.restart()
+						// let data = traverseDOM.innerText(greedy.current.domStart)
+						// let domNode = greedy.current.domStart
+						// while (domNode !== greedy.current.domEnd) {
+						// 	domNode = domNode.nextSibling
+						// 	data += `\n${traverseDOM.innerText(domNode)}`
+						// }
+						//
+						// console.log(data)
+						//
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						//
+						// const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
+						// dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, currentPos)
+						//
+						// // Compute the greedy start:
+						// let greedyDOMStart = traverseDOM.ascendToGreedyDOMNode(ref.current, anchorNode)
+						// let greedyPos1 = currentPos.pos - currentPos.offset
+						// const { previousSibling } = greedyDOMStart
+						// if (previousSibling) {
+						// 	greedyDOMStart = previousSibling
+						// 	greedyPos1 -= `\n${traverseDOM.innerText(previousSibling)}`.length
+						// }
+						//
+						// // Compute the greedy end:
+						// let greedyDOMEnd = traverseDOM.ascendToGreedyDOMNode(ref.current, anchorNode) // Do not use reverse order.
+						// let greedyPos2 = currentPos.pos + currentPos.offsetRemainder
+						// const { nextSibling } = greedyDOMEnd
+						// if (nextSibling) {
+						// 	greedyDOMEnd = nextSibling
+						// 	greedyPos2 += `\n${traverseDOM.innerText(nextSibling)}`.length
+						// }
+						//
+						// greedy.current = {
+						// 	domStart: greedyDOMStart, // The greedy DOM node start.
+						// 	domEnd:   greedyDOMEnd,   // The greedy DOM node end.
+						// 	pos1:     greedyPos1,     // The greedy cursor start.
+						// 	pos2:     greedyPos2,     // The greedy cursor end.
+						// }
+
+						// console.log({
+						// 	domStart: greedy.current.domStart,
+						// 	domEnd:   greedy.current.domEnd,
+						// })
+
+						// console.log({
+						// 	domStart: greedy.current.domStart,
+						// 	domEnd:   greedy.current.domEnd,
+						// })
+
+						// let data = traverseDOM.innerText(greedy.current.domStart)
+						// let domNode = greedy.current.domStart
+						// while (domNode !== greedy.current.domEnd) {
+						// 	const { nextSibling } = domNode
+						// 	console.log(nextSibling)
+						// 	data += `\n${traverseDOM.innerText(nextSibling)}`
+						// 	domNode = nextSibling
+						// }
+						//
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						//
+						// const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
+						// dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, currentPos)
 
 						const t1 = new PerfTimer()
 						const t2 = new PerfTimer()
 
-						let data =""
+						let data = ""
 						t1.on(() => {
 							data = traverseDOM.innerText(ref.current)
 						})
@@ -387,7 +482,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
 						dispatch.rewrite(shouldRender, data, pos)
 
-						// perfRenderPass.restart()
+						// // perfRenderPass.restart()
 						//
 						// // Compute the greedy data:
 						// greedy.current.data = traverseDOM.innerText(greedy.current.startNode)
