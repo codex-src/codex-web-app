@@ -173,48 +173,47 @@ function Editor(props) {
 	// Render mutex:
 	const renderInProgress = React.useRef(false)
 
+	// 	const [state, dispatch] = useEditor(`how
+	// are
+	// you
+	// doing
+	// today`)
 
-	const [state, dispatch] = useEditor(`how
-are
-you
-doing
-today`)
+	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 
-	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ## How to build a beautiful blog
-	//
-	// \`\`\`go
-	// package main
-	//
-	// import "fmt"
-	//
-	// func main() {
-	// 	fmt.Println("hello, world!")
-	// }
-	// \`\`\`
-	//
-	// ### How to build a beautiful blog
-	//
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	// >
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	// >
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// #### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ##### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ###### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+## How to build a beautiful blog
+
+\`\`\`go
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("hello, world!")
+}
+\`\`\`
+
+### How to build a beautiful blog
+
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+>
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+>
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+#### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+##### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+###### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render components:
 	React.useLayoutEffect(
@@ -348,7 +347,7 @@ today`)
 				domLength,
 			}
 
-			console.log(greedy.current)
+			// console.log(greedy.current)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -398,7 +397,52 @@ today`)
 					// },
 
 					onKeyDown: e => {
-						// console.log(Date.now(), "onKeyDown")
+						const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
+						const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+						let pos2 = { ...pos1 }
+						if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+							pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
+						}
+						// dispatch.select(state.body, pos1, pos2)
+						selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
+
+						// Sort the VDOM cursors:
+						const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
+						const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
+
+						// Compute the greedy DOM and cursor start (-1):
+						let domStart = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode)
+						let domStartPos = sortedPos1.pos - sortedPos1.offset
+						const { previousSibling } = domStart
+						if (previousSibling) {
+							domStart = previousSibling
+							domStartPos -= `\n${traverseDOM.innerText(domStart)}`.length
+						}
+
+						// Compute the greedy DOM and cursor end (+2):
+						let domEnd = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode) // Do not use reverse order.
+						let domEndPos = sortedPos2.pos + sortedPos2.offsetRemainder
+						let { nextSibling } = domEnd
+						if (nextSibling) {
+							domEnd = nextSibling
+							domEndPos += `\n${traverseDOM.innerText(domEnd)}`.length
+							nextSibling = domEnd.nextSibling
+							if (nextSibling) {
+								domEnd = nextSibling
+								domEndPos += `\n${traverseDOM.innerText(domEnd)}`.length
+							}
+						}
+
+						const arr = [...ref.current.childNodes]
+						const domLength = arr.indexOf(domEnd) - arr.indexOf(domStart) + 1
+
+						greedy.current = {
+							domStart,
+							domEnd,
+							pos1: domStartPos,
+							pos2: domEndPos,
+							domLength,
+						}
 					},
 					onKeyUp: e => {
 						// console.log(Date.now(), "onKeyUp")
@@ -420,29 +464,56 @@ today`)
 						// renderInProgress.current = true
 						// console.log("Render in progress")
 
-						// console.log(greedy.current)
-
-						const { domStart, domEnd, domLength } = greedy.current
-						// console.log(greedy.current)
-
 						let data = ""
-						let domNode = domStart
+						let domNode = greedy.current.domStart
 						while (domNode) {
-							data += (domNode === domStart ? "" : "\n") + traverseDOM.innerText(domNode)
+							data += (domNode === greedy.current.domStart ? "" : "\n") + traverseDOM.innerText(domNode)
 							// Use `domLength` to guard end node:
-							if (domLength > 2 && domNode === domEnd) {
+							if (greedy.current.domLength > 2 && domNode === greedy.current.domEnd) {
 								break
 							}
 							domNode = domNode.nextSibling
 						}
-
-						// console.log({ data, ...greedy.current })
 
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
 						// const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
 						dispatch.greedyWrite(true, data, greedy.current.pos1, greedy.current.pos2, currentPos)
+
+						// // Compute the greedy DOM and cursor start (-1):
+						// let domStart = traverseDOM.ascendToGreedyDOMNode(ref.current, anchorNode)
+						// let domStartPos = currentPos.pos - currentPos.offset
+						// const { previousSibling } = domStart
+						// if (previousSibling) {
+						// 	domStart = previousSibling
+						// 	domStartPos -= `\n${traverseDOM.innerText(domStart)}`.length
+						// }
+						//
+						// // Compute the greedy DOM and cursor end (+2):
+						// let domEnd = traverseDOM.ascendToGreedyDOMNode(ref.current, anchorNode)
+						// let domEndPos = currentPos.pos + currentPos.offsetRemainder
+						// let { nextSibling } = domEnd
+						// if (nextSibling) {
+						// 	domEnd = nextSibling
+						// 	domEndPos += `\n${traverseDOM.innerText(domEnd)}`.length
+						// 	nextSibling = domEnd.nextSibling
+						// 	if (nextSibling) {
+						// 		domEnd = nextSibling
+						// 		domEndPos += `\n${traverseDOM.innerText(domEnd)}`.length
+						// 	}
+						// }
+						//
+						// const arr = [...ref.current.childNodes]
+						// const domLength = arr.indexOf(domEnd) - arr.indexOf(domStart) + 1
+						//
+						// greedy.current = {
+						// 	domStart,
+						// 	domEnd,
+						// 	pos1: domStartPos,
+						// 	pos2: domEndPos,
+						// 	domLength,
+						// }
 					},
 
 					onCut: e => {
