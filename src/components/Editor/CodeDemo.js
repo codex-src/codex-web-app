@@ -164,8 +164,6 @@ const perfDOMRenderer   = new PerfTimer() // Times the DOM renderer phase.
 const perfDOMCursor     = new PerfTimer() // Times the DOM cursor.
 /* eslint-disable no-multi-spaces */
 
-const t1 = 0
-
 function Editor(props) {
 	const ref = React.useRef()
 	const greedy = React.useRef()
@@ -301,56 +299,39 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			dispatch.select(state.body, pos1, pos2)
 			selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
 
-			//			// Sort the VDOM cursors:
-			//			const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
-			//			const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
-			//
-			//			// Compute the greedy start:
-			//			let greedyDOMStart = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode)
-			//			let greedyPos1 = sortedPos1.pos - sortedPos1.offset
-			//			const { previousSibling } = greedyDOMStart
-			//			if (previousSibling) {
-			//				greedyDOMStart = previousSibling
-			//				greedyPos1 -= `\n${traverseDOM.innerText(previousSibling)}`.length
-			//			}
-			//
-			//			// Compute the greedy end:
-			//			let greedyDOMEnd = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode) // Do not use reverse order.
-			//			let greedyPos2 = sortedPos2.pos + sortedPos2.offsetRemainder
-			//			const { nextSibling } = greedyDOMEnd
-			//			if (nextSibling) {
-			//				greedyDOMEnd = nextSibling
-			//				greedyPos2 += `\n${traverseDOM.innerText(nextSibling)}`.length
-			//			}
-			//
-			//			greedy.current = {
-			//				domStart: greedyDOMStart, // The greedy DOM node start.
-			//				domEnd:   greedyDOMEnd,   // The greedy DOM node end.
-			//				pos1:     greedyPos1,     // The greedy cursor start.
-			//				pos2:     greedyPos2,     // The greedy cursor end.
-			//			}
-			//
-			//			// console.log({
-			//			// 	domStart: greedy.current.domStart,
-			//			// 	domEnd:   greedy.current.domEnd,
-			//			// })
+			// Sort the VDOM cursors:
+			const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
+			const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
 
-			// Eagerly compute min and max VDOM cursors:
-			const min = pos1.pos <= pos2.pos ? pos1 : pos2
-			const max = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
-
-			// Precompute the greedy start node and VDOM cursor
-			// range:
-			const node = pos1 === min ? anchorNode : focusNode
-			const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, node)
-			const gpos1 = min.pos - min.offset
-			const gpos2 = max.pos + max.offsetRemainder
-			greedy.current = {
-				startNode,   // The greedy DOM node.
-				pos1: gpos1, // The greedy cursor start.
-				pos2: gpos2, // The greedy cursor end.
+			// Compute the greedy DOM and cursor start:
+			let greedyDOMStart = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode)
+			let greedyPos1 = sortedPos1.pos - sortedPos1.offset
+			const { previousSibling } = greedyDOMStart
+			if (previousSibling) {
+				greedyDOMStart = previousSibling
+				greedyPos1 -= `\n${traverseDOM.innerText(previousSibling)}`.length
 			}
-			console.log(greedy.current)
+
+			// Compute the greedy DOM and cursor end:
+			let greedyDOMEnd = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode) // Do not use reverse order.
+			let greedyPos2 = sortedPos2.pos + sortedPos2.offsetRemainder
+			const { nextSibling } = greedyDOMEnd
+			if (nextSibling) {
+				greedyDOMEnd = nextSibling
+				greedyPos2 += `\n${traverseDOM.innerText(nextSibling)}`.length
+			}
+
+			greedy.current = {
+				domStart: greedyDOMStart, // The greedy DOM node start.
+				domEnd:   greedyDOMEnd,   // The greedy DOM node end.
+				pos1:     greedyPos1,     // The greedy DOM cursor start.
+				pos2:     greedyPos2,     // The greedy DOM cursor end.
+			}
+
+			console.log({
+				domStart: greedy.current.domStart,
+				domEnd:   greedy.current.domEnd,
+			})
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -400,9 +381,28 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					},
 
 					onInput: e => {
-						const t2 = Date.now()
-						console.log(t2 - t1)
-						t1 = Date.now()
+						const { domStart, domEnd } = greedy.current
+
+						let data = ""
+						let domNode = domStart
+						while (domNode) {
+							data += (domNode === domStart ? "" : "\n") + traverseDOM.innerText(domNode)
+							if (domNode === domEnd) {
+								break
+							}
+							domNode = domNode.nextSibling
+						}
+
+						const { anchorNode, anchorOffset } = document.getSelection()
+						const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+
+						const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
+						dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, currentPos)
+
+						// while (domNode !== domEnd) {
+						// 	domNodes.push(domNode)
+						// }
+
 
 						// let data = traverseDOM.innerText(greedy.current.domStart)
 						// let domNode = greedy.current.domStart
