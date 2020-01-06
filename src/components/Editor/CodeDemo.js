@@ -67,12 +67,12 @@ const reducer = state => ({
 		this.renderComponents(shouldRender)
 	},
 
-	rewrite(shouldRender, data, pos) {
-		state.body = state.body.write(data, 0, state.body.data.length)
-		state.pos1 = pos
-		this.collapse()
-		this.renderComponents(shouldRender)
-	},
+	// rewrite(shouldRender, data, pos) {
+	// 	state.body = state.body.write(data, 0, state.body.data.length)
+	// 	state.pos1 = pos
+	// 	this.collapse()
+	// 	this.renderComponents(shouldRender)
+	// },
 
 	tab() {
 		this.write(true, "\t")
@@ -121,22 +121,22 @@ function useEditor(initialValue) {
 	return useMethods(reducer, initialState, init(initialValue))
 }
 
-// const DebugEditor = props => (
-// 	<pre style={stylex.parse("overflow -x:scroll")}>
-// 		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
-// 			{JSON.stringify(
-// 				{
-// 					body: props.state.body,
-// 					// data: props.state.body.data,
-// 					pos1: props.state.pos1.pos,
-// 					pos2: props.state.pos2.pos,
-// 				},
-// 				null,
-// 				"\t",
-// 			)}
-// 		</p>
-// 	</pre>
-// )
+const DebugEditor = props => (
+	<pre style={stylex.parse("overflow -x:scroll")}>
+		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
+			{JSON.stringify(
+				{
+					body: props.state.body,
+					// data: props.state.body.data,
+					pos1: props.state.pos1.pos,
+					pos2: props.state.pos2.pos,
+				},
+				null,
+				"\t",
+			)}
+		</p>
+	</pre>
+)
 
 // NOTE: Reference-based components rerender much faster.
 //
@@ -168,45 +168,53 @@ function Editor(props) {
 	const ref = React.useRef()
 	const greedy = React.useRef()
 
+	// const renderMutex = React.useRef()
+
+	// Render mutex:
+	const renderInProgress = React.useRef(false)
+
+
+	const [state, dispatch] = useEditor(`how
+are
+you
+doing
+today`)
+
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
-	// # How to build a beautiful blog
-	// # How to build a beautiful blog`)
-
-	const [state, dispatch] = useEditor(`# How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-## How to build a beautiful blog
-
-\`\`\`go
-package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("hello, world!")
-}
-\`\`\`
-
-### How to build a beautiful blog
-
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
->
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
->
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-#### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-##### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-###### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ## How to build a beautiful blog
+	//
+	// \`\`\`go
+	// package main
+	//
+	// import "fmt"
+	//
+	// func main() {
+	// 	fmt.Println("hello, world!")
+	// }
+	// \`\`\`
+	//
+	// ### How to build a beautiful blog
+	//
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	// >
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	// >
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// #### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ##### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ###### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render components:
 	React.useLayoutEffect(
@@ -250,6 +258,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			// (Range eagerly dropped)
 			selection.addRange(range)
 			// })
+			renderInProgress.current = false
+			// console.log("Render done")
 			// perfRenderPass.stop()
 
 			// const p = perfParser.duration()
@@ -291,6 +301,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				return
 			}
 			/* eslint-enable no-multi-spaces */
+
 			const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = { ...pos1 }
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
@@ -303,35 +314,41 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
 			const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
 
-			// Compute the greedy DOM and cursor start:
-			let greedyDOMStart = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode)
-			let greedyPos1 = sortedPos1.pos - sortedPos1.offset
-			const { previousSibling } = greedyDOMStart
+			// Compute the greedy DOM and cursor start (-1):
+			let domStart = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode)
+			let domStartPos = sortedPos1.pos - sortedPos1.offset
+			const { previousSibling } = domStart
 			if (previousSibling) {
-				greedyDOMStart = previousSibling
-				greedyPos1 -= `\n${traverseDOM.innerText(previousSibling)}`.length
+				domStart = previousSibling
+				domStartPos -= `\n${traverseDOM.innerText(domStart)}`.length
 			}
 
-			// Compute the greedy DOM and cursor end:
-			let greedyDOMEnd = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode) // Do not use reverse order.
-			let greedyPos2 = sortedPos2.pos + sortedPos2.offsetRemainder
-			const { nextSibling } = greedyDOMEnd
+			// Compute the greedy DOM and cursor end (+2):
+			let domEnd = traverseDOM.ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode) // Do not use reverse order.
+			let domEndPos = sortedPos2.pos + sortedPos2.offsetRemainder
+			let { nextSibling } = domEnd
 			if (nextSibling) {
-				greedyDOMEnd = nextSibling
-				greedyPos2 += `\n${traverseDOM.innerText(nextSibling)}`.length
+				domEnd = nextSibling
+				domEndPos += `\n${traverseDOM.innerText(domEnd)}`.length
+				nextSibling = domEnd.nextSibling
+				if (nextSibling) {
+					domEnd = nextSibling
+					domEndPos += `\n${traverseDOM.innerText(domEnd)}`.length
+				}
 			}
+
+			const arr = [...ref.current.childNodes]
+			const domLength = arr.indexOf(domEnd) - arr.indexOf(domStart) + 1
 
 			greedy.current = {
-				domStart: greedyDOMStart, // The greedy DOM node start.
-				domEnd:   greedyDOMEnd,   // The greedy DOM node end.
-				pos1:     greedyPos1,     // The greedy DOM cursor start.
-				pos2:     greedyPos2,     // The greedy DOM cursor end.
+				domStart,
+				domEnd,
+				pos1: domStartPos,
+				pos2: domEndPos,
+				domLength,
 			}
 
-			console.log({
-				domStart: greedy.current.domStart,
-				domEnd:   greedy.current.domEnd,
-			})
+			console.log(greedy.current)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -355,199 +372,77 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
 
+					// onKeyDown: e => {
+					// 	switch (true) {
+					// 	case e.key === "Tab":
+					// 		e.preventDefault()
+					// 		dispatch.tab()
+					// 		return
+					// 	case cmd.isUndo(e):
+					// 		e.preventDefault()
+					// 		// TODO
+					// 		return
+					// 	case cmd.isRedo(e):
+					// 		e.preventDefault()
+					// 		// TODO
+					// 		return
+					// 	case cmd.isBold(e):
+					// 		e.preventDefault()
+					// 		return
+					// 	case cmd.isItalic(e):
+					// 		e.preventDefault()
+					// 		return
+					// 	default:
+					// 		// No-op.
+					// 	}
+					// },
+
 					onKeyDown: e => {
-						switch (true) {
-						case e.key === "Tab":
-							e.preventDefault()
-							dispatch.tab()
-							return
-						case cmd.isUndo(e):
-							e.preventDefault()
-							// TODO
-							return
-						case cmd.isRedo(e):
-							e.preventDefault()
-							// TODO
-							return
-						case cmd.isBold(e):
-							e.preventDefault()
-							return
-						case cmd.isItalic(e):
-							e.preventDefault()
-							return
-						default:
-							// No-op.
-						}
+						// console.log(Date.now(), "onKeyDown")
+					},
+					onKeyUp: e => {
+						// console.log(Date.now(), "onKeyUp")
 					},
 
+					// // NOTE: Idempotent on backspace and delete.
+					// onBeforeInput: e => {
+					// 	console.log({ pos1: state.pos1.pos, pos2: state.pos1.pos })
+					// },
+
 					onInput: e => {
-						const { domStart, domEnd } = greedy.current
+						// // console.log(!!renderInProgress.current)
+						// if (renderInProgress.current) {
+						// 	// No-op.
+						// 	console.log("No-op")
+						// 	return
+						// }
+						//
+						// renderInProgress.current = true
+						// console.log("Render in progress")
+
+						// console.log(greedy.current)
+
+						const { domStart, domEnd, domLength } = greedy.current
+						// console.log(greedy.current)
 
 						let data = ""
 						let domNode = domStart
 						while (domNode) {
 							data += (domNode === domStart ? "" : "\n") + traverseDOM.innerText(domNode)
-							if (domNode === domEnd) {
+							// Use `domLength` to guard end node:
+							if (domLength === 3 && domNode === domEnd) {
 								break
 							}
 							domNode = domNode.nextSibling
 						}
 
+						// console.log({ data, ...greedy.current })
+
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
-						const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
-						dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, currentPos)
-
-						// while (domNode !== domEnd) {
-						// 	domNodes.push(domNode)
-						// }
-
-
-						// let data = traverseDOM.innerText(greedy.current.domStart)
-						// let domNode = greedy.current.domStart
-						// while (domNode !== greedy.current.domEnd) {
-						// 	domNode = domNode.nextSibling
-						// 	data += `\n${traverseDOM.innerText(domNode)}`
-						// }
-						//
-						// console.log(data)
-						//
-						// const { anchorNode, anchorOffset } = document.getSelection()
-						// const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						//
 						// const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
-						// dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, currentPos)
-						//
-						// // Compute the greedy start:
-						// let greedyDOMStart = traverseDOM.ascendToGreedyDOMNode(ref.current, anchorNode)
-						// let greedyPos1 = currentPos.pos - currentPos.offset
-						// const { previousSibling } = greedyDOMStart
-						// if (previousSibling) {
-						// 	greedyDOMStart = previousSibling
-						// 	greedyPos1 -= `\n${traverseDOM.innerText(previousSibling)}`.length
-						// }
-						//
-						// // Compute the greedy end:
-						// let greedyDOMEnd = traverseDOM.ascendToGreedyDOMNode(ref.current, anchorNode) // Do not use reverse order.
-						// let greedyPos2 = currentPos.pos + currentPos.offsetRemainder
-						// const { nextSibling } = greedyDOMEnd
-						// if (nextSibling) {
-						// 	greedyDOMEnd = nextSibling
-						// 	greedyPos2 += `\n${traverseDOM.innerText(nextSibling)}`.length
-						// }
-						//
-						// greedy.current = {
-						// 	domStart: greedyDOMStart, // The greedy DOM node start.
-						// 	domEnd:   greedyDOMEnd,   // The greedy DOM node end.
-						// 	pos1:     greedyPos1,     // The greedy cursor start.
-						// 	pos2:     greedyPos2,     // The greedy cursor end.
-						// }
-
-						// console.log({
-						// 	domStart: greedy.current.domStart,
-						// 	domEnd:   greedy.current.domEnd,
-						// })
-
-						// console.log({
-						// 	domStart: greedy.current.domStart,
-						// 	domEnd:   greedy.current.domEnd,
-						// })
-
-						// let data = traverseDOM.innerText(greedy.current.domStart)
-						// let domNode = greedy.current.domStart
-						// while (domNode !== greedy.current.domEnd) {
-						// 	const { nextSibling } = domNode
-						// 	console.log(nextSibling)
-						// 	data += `\n${traverseDOM.innerText(nextSibling)}`
-						// 	domNode = nextSibling
-						// }
-						//
-						// const { anchorNode, anchorOffset } = document.getSelection()
-						// const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						//
-						// const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
-						// dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, currentPos)
-
-						// const t1 = new PerfTimer()
-						// const t2 = new PerfTimer()
-						//
-						// let data = ""
-						// t1.on(() => {
-						// 	data = traverseDOM.innerText(ref.current)
-						// })
-						// console.log(`traverseDOM.innerText=${t1.duration()}`)
-						//
-						// let pos = null
-						// t2.on(() => {
-						// 	const { anchorNode, anchorOffset } = document.getSelection()
-						// 	pos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// })
-						// console.log(`traverseDOM.computeVDOMCursor=${t2.duration()}`)
-						//
-						// const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
-						// dispatch.rewrite(shouldRender, data, pos)
-
-						// perfRenderPass.restart()
-
-						// // Compute the greedy data:
-						// greedy.current.data = traverseDOM.innerText(greedy.current.startNode)
-						//
-						// // Compute the VDOM cursor:
-						// const { anchorNode, anchorOffset } = document.getSelection()
-						// const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
-						// const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
-						//
-						// // Collapsed backspace on a paragraph:
-						// if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
-						// 		(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
-						// 	dispatch.collapsedBackspaceOnLine()
-						// 	return
-						// // Collapsed delete on a paragraph:
-						// } else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
-						// 		(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
-						// 	dispatch.collapsedDeleteOnLine()
-						// 	return
-						// // Enter:
-						// } else if (e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") {
-						// 	dispatch.enter()
-						// 	return
-						// // Enter (edge case):
-						// } else if ((e.nativeEvent.inputType === "insertText" || e.nativeEvent.inputType === "insertCompositionText" || e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") &&
-						// 		startNode !== greedy.current.startNode) {
-						// 	const concat = `${greedy.current.data}\n${traverseDOM.innerText(startNode)}`
-						// 	dispatch.greedyWrite(true, concat, greedy.current.pos1, greedy.current.pos2, currentPos)
-						// 	return
-						// }
-						//
-						// //  # Hello, world!
-						// //   ^
-						// // [01234]
-						// //     ^ DOM cursor
-						// //
-						// let wasPrevCharBeforeCursor = ""
-						// if (currentPos.offset - 2 >= 0 && currentPos.offset - 2 < greedy.current.data.length) {
-						// 	wasPrevCharBeforeCursor = greedy.current.data[currentPos.offset - 2]
-						// }
-						// let currentChar = ""
-						// if (e.nativeEvent.data) {
-						// 	currentChar = e.nativeEvent.data[0]
-						// }
-						// let wasNextCharAfterCursor = ""
-						// if (currentPos.offset >= 0 && currentPos.offset < greedy.current.data.length) {
-						// 	wasNextCharAfterCursor = greedy.current.data[currentPos.offset]
-						// }
-						// const heuristicInputAroundSyntax = currentPos.pos > state.pos2.pos && (md.isSyntax(wasPrevCharBeforeCursor) || md.isSyntax(currentChar) || md.isSyntax(wasNextCharAfterCursor))
-						// const heuristicBackspaceOrDelete = currentPos.pos < state.pos2.pos
-						// const shouldRender = (
-						// 	(heuristicInputAroundSyntax || heuristicBackspaceOrDelete) &&
-						// 	e.nativeEvent.inputType !== "insertCompositionText"
-						// )
-						// dispatch.greedyWrite(shouldRender, greedy.current.data, greedy.current.pos1, greedy.current.pos2, currentPos)
-						//
-						// const pos1 = currentPos.pos - currentPos.offset
-						// const pos2 = currentPos.pos + currentPos.offsetRemainder
-						// greedy.current = { startNode, pos1, pos2 }
+						dispatch.greedyWrite(true, data, greedy.current.pos1, greedy.current.pos2, currentPos)
 					},
 
 					onCut: e => {
@@ -590,8 +485,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			{/* <div ref={src} style={{ display: "none" }}> */}
 			{/*   {state.Components} */}
 			{/* </div> */}
-			{/* <DebugEditor state={state} /> */}
-			{/* <div style={stylex.parse("h:28")} /> */}
+			<DebugEditor state={state} />
+			<div style={stylex.parse("h:28")} />
 			<StatusBar state={state} dispatch={dispatch} />
 		</div>
 	)
