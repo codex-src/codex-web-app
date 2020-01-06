@@ -1,5 +1,4 @@
 import cmd from "./cmd"
-import computeCoordsScrollTo from "lib/computeCoordsScrollTo"
 import md from "lib/encoding/md"
 import parse from "./Components"
 import PerfTimer from "lib/PerfTimer"
@@ -12,15 +11,6 @@ import useMethods from "use-methods"
 import VDOM from "./VDOM"
 
 import "./code-demo.css"
-
-// TODO:
-//
-// - ComputeVDOMCursor
-// - ComputeDOMCursor
-const perfParser = new PerfTimer()        // Times the component parser phase.
-const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
-const perfDOMRenderer = new PerfTimer()   // Times the DOM renderer phase.
-const perfDOMCursor = new PerfTimer()     // Times the DOM cursor (to reset).
 
 const initialState = {
 	renderDOMNode: document.createElement("div"),
@@ -49,7 +39,7 @@ const reducer = state => ({
 	blur() {
 		state.isFocused = false
 	},
-	setState(body, pos1, pos2) {
+	select(body, pos1, pos2) {
 		const posReversed = pos1.pos > pos2.pos
 		if (posReversed) {
 			[pos1, pos2] = [pos2, pos1]
@@ -79,26 +69,21 @@ const reducer = state => ({
 	tab() {
 		this.write(true, "\t")
 	},
-	backspaceOnLine() {
+	collapsedBackspaceOnLine() {
 		if (!state.pos1.pos) {
 			this.renderComponents(true)
 			return
 		}
-		// DEBUG
-		console.log(`pos1=${state.pos1.pos} (before)`)
 		state.body = state.body.write("", state.pos1.pos - 1, state.pos1.pos)
 		state.pos1.pos--
-		// DEBUG
-		console.log(`pos1=${state.pos1.pos} (after)`)
 		this.collapse()
 		this.renderComponents(true)
 	},
-	deleteOnLine() {
+	collapsedDeleteOnLine() {
 		if (state.pos1.pos === state.body.data.length) {
 			this.renderComponents(true)
 			return
 		}
-		// DEPRECATE `pos2`?
 		state.body = state.body.write("", state.pos1.pos, state.pos1.pos + 1)
 		this.renderComponents(true)
 	},
@@ -106,11 +91,7 @@ const reducer = state => ({
 		this.write(true, "\n")
 	},
 	renderComponents(shouldRender) {
-		if (!shouldRender) {
-			// No-op.
-			return
-		}
-		state.shouldRenderComponents++
+		state.shouldRenderComponents += shouldRender
 	},
 	renderCursor() {
 		state.shouldRenderCursor++
@@ -166,58 +147,56 @@ function newFPSStyleString(ms) {
 	return "color: red;"
 }
 
-// // https://stackoverflow.com/a/39914235
-// function sleep(forMs) {
-// 	return new Promise(resolve => setTimeout(resolve, forMs))
-// }
+/* eslint-disable no-multi-spaces */
+const perfRenderPass    = new PerfTimer() // Times the render pass.
+const perfParser        = new PerfTimer() // Times the component parser phase.
+const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
+const perfDOMRenderer   = new PerfTimer() // Times the DOM renderer phase.
+const perfDOMCursor     = new PerfTimer() // Times the DOM cursor.
+/* eslint-disable no-multi-spaces */
 
 function Editor(props) {
 	const ref = React.useRef()
 	const greedy = React.useRef()
 
-	// 	const [state, dispatch] = useEditor(`
+	const [state, dispatch] = useEditor(`👩‍⚖️👩‍⚖️
+👩‍⚖️👩‍⚖️`)
+
+	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
-	// \`\`\`
-	// hello
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ## How to build a beautiful blog
+	//
+	// \`\`\`go
+	// package main
+	//
+	// import "fmt"
+	//
+	// func main() {
+	// 	fmt.Println("hello, world!")
+	// }
 	// \`\`\`
 	//
-	// `)
-
-	const [state, dispatch] = useEditor(`# How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-## How to build a beautiful blog
-
-\`\`\`go
-package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("hello, world!")
-}
-\`\`\`
-
-### How to build a beautiful blog
-
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
->
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
->
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-#### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-##### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-###### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+	// ### How to build a beautiful blog
+	//
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	// >
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	// >
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// #### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ##### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ###### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render components:
 	React.useLayoutEffect(
@@ -227,23 +206,20 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				Components.push(...parse(state.body))
 			})
 			perfReactRenderer.restart()
-			ReactDOM.render(
-				<Contents components={Components} />,
-				state.renderDOMNode,
-				() => {
-					perfReactRenderer.stop()
-					// Eagerly drop range for performance reasons:
-					//
-					// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
-					const selection = document.getSelection()
-					selection.removeAllRanges()
-					perfDOMRenderer.on(() => {
-						;[...ref.current.childNodes].map(each => each.remove())
-						ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
-					})
-					dispatch.renderCursor()
-				},
-			)
+			ReactDOM.render(<Contents components={Components} />, state.renderDOMNode, () => {
+				perfReactRenderer.stop()
+				// Eagerly drop range for performance reasons:
+				//
+				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+				const selection = document.getSelection()
+				selection.removeAllRanges()
+				perfDOMRenderer.on(() => {
+					// TODO
+					;[...ref.current.childNodes].map(each => each.remove())
+					ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
+				})
+				dispatch.renderCursor()
+			})
 		}, [state, dispatch]),
 		[state.shouldRenderComponents],
 	)
@@ -263,24 +239,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				range.collapse()
 				// (Range eagerly dropped)
 				selection.addRange(range)
-				// // TODO: Guard `backspaceOnLine` (Android):
-				// setTimeout(() => {
-				// 	selection.removeAllRanges()
-				// 	selection.addRange(range)
-				// }, 0)
-				const { y } = computeCoordsScrollTo({ bottom: 28 })
-				if (y === -1) {
-					// No-op.
-					return
-				}
-				window.scrollTo(0, y)
 			})
+			perfRenderPass.stop()
+
 			const p = perfParser.duration()
 			const r = perfReactRenderer.duration()
 			const d = perfDOMRenderer.duration()
 			const c = perfDOMCursor.duration()
-			const ms = p + r + d + c
-			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${ms})`, newFPSStyleString(ms))
+			const a = perfRenderPass.duration()
+			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${a})`, newFPSStyleString(a))
 		}, [state]),
 		[state.shouldRenderCursor],
 	)
@@ -294,7 +261,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
-			// console.log("onSelectionChange")
 			if (!state.isFocused) {
 				// No-op.
 				return
@@ -320,8 +286,19 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 				pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
 			}
-			dispatch.setState(state.body, pos1, pos2)
+			dispatch.select(state.body, pos1, pos2)
 			selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
+
+			// Precompute the greedy start node and VDOM cursor
+			// range:
+			const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
+			const gpos1 = pos1.pos - pos1.offset
+			const gpos2 = pos2.pos + pos2.offsetRemainder
+			greedy.current = {
+				startNode,   // The greedy DOM node.
+				pos1: gpos1, // The greedy cursor start.
+				pos2: gpos2, // The greedy cursor end.
+			}
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -368,22 +345,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						default:
 							// No-op.
 						}
-						// Precompute the greedy start node and VDOM
-						// cursor range:
-						const { node: anchorNode } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
-						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
-						const pos1 = state.pos1.pos - state.pos1.offset
-						const pos2 = state.pos2.pos + state.pos2.offsetRemainder
-						greedy.current = {
-							startNode, // The greedy DOM node.
-							pos1,      // The greedy cursor start.
-							pos2,      // The greedy cursor end.
-						}
 					},
 
-					// console.log({ ...e })
 					onInput: e => {
-						// console.log("onInput")
+						perfRenderPass.restart()
 
 						// Compute the greedy data:
 						greedy.current.data = traverseDOM.innerText(greedy.current.startNode)
@@ -393,22 +358,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
 						const currentPos = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 
-						// console.log(`currentPos=${currentPos.pos} state.pos2=${state.pos2.pos}`)
-
-						// Backspace on a paragraph:
-						//
-						// FIXME: Selection.
+						// Collapsed backspace on a paragraph:
 						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
-							// console.log("onInput:backspaceOnLine")
-							dispatch.backspaceOnLine()
+							dispatch.collapsedBackspaceOnLine()
 							return
-						// Delete on a paragraph:
-						//
-						// FIXME: Selection.
+						// Collapsed delete on a paragraph:
 						} else if ((e.nativeEvent.inputType === "deleteContentForward" || e.nativeEvent.inputType === "deleteWordForward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offsetRemainder)) {
-							dispatch.deleteOnLine()
+							dispatch.collapsedDeleteOnLine()
 							return
 						// Enter:
 						} else if (e.nativeEvent.inputType === "insertParagraph" || e.nativeEvent.inputType === "insertLineBreak") {
@@ -481,47 +439,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 					onDragStart: e => e.preventDefault(),
 					onDrop:      e => e.preventDefault(),
-
-					// const dragValue = state.value.slice(state.pos1, state.pos2)
-					// e.dataTransfer.setData("text", dragValue)
-					// // ...
-					// const dragValue = e.dataTransfer.getData("text")
-					//
-					// onDragStart: e => {
-					// 	// e.preventDefault()
-					// 	drop.current = {
-					// 		value: state.value.slice(state.pos1, state.pos2),
-					// 		start: {
-					// 			pos1: state.pos1,
-					// 			pos2: state.pos2,
-					// 		},
-					// 		end: {
-					// 			pos: 0, // Unknown.
-					// 		},
-					// 	}
-					// 	// ...
-					// },
-					//
-					// // https://github.com/facebook/draft-js/blob/master/src/component/handlers/drag/DraftEditorDragHandler.js
-					// onDrop: e => {
-					// 	e.preventDefault()
-					// 	// Compute the DOM node and offset:
-					// 	const {
-					// 		startContainer: node, // The computed anchor node.
-					// 		startOffset: offset,  // The computed anchor node offset.
-					// 	} = document.caretRangeFromPoint(e.nativeEvent.x, e.nativeEvent.y)
-					// 	// Compute the VDOM cursor:
-					// 	const pos = computeVDOMCursor(root.current, node, offset)
-					// 	Object.assign(drop.current, {
-					// 		end: {
-					// 			pos,
-					// 		},
-					// 	})
-					// 	// console.log(pos)
-					// 	setTimeout(() => {
-					// 		pos.current = {}
-					// 	}, 0)
-					// },
 				},
 			)}
 			<div style={stylex.parse("h:28")} />
