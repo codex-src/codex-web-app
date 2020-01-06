@@ -430,7 +430,7 @@ today`)
 						while (domNode) {
 							data += (domNode === domStart ? "" : "\n") + traverseDOM.innerText(domNode)
 							// Use `domLength` to guard end node:
-							if (domLength === 3 && domNode === domEnd) {
+							if (domLength > 2 && domNode === domEnd) {
 								break
 							}
 							domNode = domNode.nextSibling
