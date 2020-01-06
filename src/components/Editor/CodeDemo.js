@@ -80,25 +80,26 @@ const reducer = state => ({
 		this.write(true, "\t")
 	},
 	backspaceOnLine() {
-		// Guard the root node:
 		if (!state.pos1.pos) {
 			this.renderComponents(true)
 			return
 		}
-		// DEPRECATE `pos2`?
-		state.body = state.body.write("", state.pos1.pos - 1, state.pos2.pos)
+		// DEBUG
+		console.log(`pos1=${state.pos1.pos} (before)`)
+		state.body = state.body.write("", state.pos1.pos - 1, state.pos1.pos)
 		state.pos1.pos--
+		// DEBUG
+		console.log(`pos1=${state.pos1.pos} (after)`)
 		this.collapse()
 		this.renderComponents(true)
 	},
 	deleteOnLine() {
-		// Guard the root node:
 		if (state.pos1.pos === state.body.data.length) {
 			this.renderComponents(true)
 			return
 		}
 		// DEPRECATE `pos2`?
-		state.body = state.body.write("", state.pos1.pos, state.pos2.pos + 1)
+		state.body = state.body.write("", state.pos1.pos, state.pos1.pos + 1)
 		this.renderComponents(true)
 	},
 	enter() {
@@ -109,7 +110,7 @@ const reducer = state => ({
 			// No-op.
 			return
 		}
-		state.shouldRenderComponents += shouldRender
+		state.shouldRenderComponents++
 	},
 	renderCursor() {
 		state.shouldRenderCursor++
@@ -165,6 +166,11 @@ function Contents(props) {
 // 	return "color: red;"
 // }
 
+// https://stackoverflow.com/a/39914235
+function sleep(forMs) {
+	return new Promise(resolve => setTimeout(resolve, forMs))
+}
+
 function Editor(props) {
 	const ref = React.useRef()
 	const greedy = React.useRef()
@@ -216,27 +222,18 @@ how are you
 	// Should render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
+			// Eagerly drop range for performance reasons:
+			const selection = document.getSelection()
+			selection.removeAllRanges()
+
 			let Components = []
-			perfParser.on(() => {
-				Components = parse(state.body)
-			})
-			perfReactRenderer.restart()
+			Components = parse(state.body)
 			ReactDOM.render(
 				<Contents components={Components} />,
 				state.renderDOMNode,
 				() => {
-					perfReactRenderer.stop()
-					perfDOMRenderer.on(() => {
-						// TODO: Optimize.
-						;[...ref.current.childNodes].map(each => each.remove())
-						ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
-						// NOTE: Eagerly drop the selection for
-						// performance reasons.
-						//
-						// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
-						const selection = document.getSelection()
-						selection.removeAllRanges()
-					})
+					;[...ref.current.childNodes].map(each => each.remove())
+					ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
 					dispatch.renderCursor()
 				},
 			)
@@ -251,21 +248,31 @@ how are you
 				// No-op.
 				return
 			}
-			perfDOMCursor.on(() => {
+
+			;(async () => {
+
+				// perfDOMCursor.on(() => {
 				const selection = document.getSelection()
 				const range = document.createRange()
 				const { node, offset } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
 				range.setStart(node, offset)
 				range.collapse()
-				// selection.removeAllRanges()
+				// (Range was dropped eagerly)
+				await sleep(0)
+				// console.log({ range })
+				// setTimeout(() => {
 				selection.addRange(range)
-				const { y } = computeCoordsScrollTo({ bottom: 28 })
-				if (y === -1) {
-					// No-op.
-					return
-				}
-				window.scrollTo(0, y)
-			})
+				// }, 0)
+
+			})()
+
+			// const { y } = computeCoordsScrollTo({ bottom: 28 })
+			// if (y === -1) {
+			// 	// No-op.
+			// 	return
+			// }
+			// window.scrollTo(0, y)
+			// })
 			// const p = perfParser.duration()
 			// const r = perfReactRenderer.duration()
 			// const d = perfDOMRenderer.duration()
@@ -277,42 +284,42 @@ how are you
 	)
 
 	const selectionChangeCache = React.useRef({
-		node1: null, // The cursor start DOM node.
-		node2: 0,    // The cursor start DOM node offset.
-		offs1: null, // The cursor end DOM node.
-		offs2: 0,    // The cursor end DOM node offset.
+		anchorNode:   null, // The cursor start DOM node.
+		focusNode:    0,    // The cursor start DOM node offset.
+		anchorOffset: null, // The cursor end DOM node.
+		focusOffset:  0,    // The cursor end DOM node offset.
 	})
 
-	// https://developer.mozilla.org/en-US/docs/Web/API/Selection/setBaseAndExtent
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
-			console.log("onSelectionChange")
+			// console.log("onSelectionChange")
 			if (!state.isFocused) {
 				// No-op.
 				return
 			}
-			const {
-				anchorNode:   node1,
-				focusNode:    node2,
-				anchorOffset: offs1,
-				focusOffset:  offs2,
-			} = document.getSelection()
+			const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
+			if (!anchorNode || !focusNode) {
+				// No-op.
+				return
+			}
+			/* eslint-disable no-multi-spaces */
 			if (
-				node1 === selectionChangeCache.current.node1 &&
-				node2 === selectionChangeCache.current.node2 &&
-				offs1 === selectionChangeCache.current.offs1 &&
-				offs2 === selectionChangeCache.current.offs2
+				anchorNode   === selectionChangeCache.current.anchorNode   &&
+				focusNode    === selectionChangeCache.current.focusNode    &&
+				anchorOffset === selectionChangeCache.current.anchorOffset &&
+				focusOffset  === selectionChangeCache.current.focusOffset
 			) {
 				// No-op.
 				return
 			}
-			const pos1 = traverseDOM.computeVDOMCursor(ref.current, node1, offs1)
+			/* eslint-enable no-multi-spaces */
+			const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = { ...pos1 }
-			if (node2 !== node1 || offs2 !== offs1) {
-				pos2 = traverseDOM.computeVDOMCursor(ref.current, node2, offs2)
+			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+				pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
 			}
 			dispatch.setState(state.body, pos1, pos2)
-			selectionChangeCache.current = { node1, node2, offs1, offs2 }
+			selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -335,6 +342,25 @@ how are you
 
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
+
+					// onSelect: e => {
+					// 	if (!state.isFocused) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
+					// 	if (!anchorNode || !focusNode) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const pos1 = traverseDOM.computeVDOMCursor(ref.current, anchorNode, anchorOffset)
+					// 	let pos2 = { ...pos1 }
+					// 	if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
+					// 		pos2 = traverseDOM.computeVDOMCursor(ref.current, focusNode, focusOffset)
+					// 	}
+					// 	console.log(`onSelect: ${pos1.pos}`)
+					// 	dispatch.setState(state.body, pos1, pos2)
+					// },
 
 					onKeyDown: e => {
 						switch (true) {
@@ -359,10 +385,10 @@ how are you
 						default:
 							// No-op.
 						}
-						// Compute the pre-`input` start node:
+						// Precompute the greedy start node and VDOM
+						// cursor range:
 						const { node: anchorNode } = traverseDOM.computeDOMCursor(ref.current, state.pos1)
 						const startNode = traverseDOM.ascendToBlockDOMNode(ref.current, anchorNode)
-						// Compute the greedy VDOM cursor range:
 						const pos1 = state.pos1.pos - state.pos1.offset
 						const pos2 = state.pos2.pos + state.pos2.offsetRemainder
 						greedy.current = {
@@ -374,7 +400,7 @@ how are you
 
 					// console.log({ ...e })
 					onInput: e => {
-						console.log("onInput")
+						// console.log("onInput")
 
 						// Compute the greedy data:
 						greedy.current.data = traverseDOM.innerText(greedy.current.startNode)
@@ -391,6 +417,7 @@ how are you
 						// FIXME: Selection.
 						if ((e.nativeEvent.inputType === "deleteContentBackward" || e.nativeEvent.inputType === "deleteWordBackward" || e.nativeEvent.inputType === "deleteSoftLineBackward") &&
 								(state.pos1.pos === state.pos2.pos && !state.pos1.offset)) {
+							// console.log("onInput:backspaceOnLine")
 							dispatch.backspaceOnLine()
 							return
 						// Delete on a paragraph:

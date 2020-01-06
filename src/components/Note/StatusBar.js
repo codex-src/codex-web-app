@@ -45,9 +45,9 @@ function computeRHS({ words, duration }) {
  *
  */
 
-const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
-	<Icon style={stylex.parse("wh:12.5")} />
-))
+// const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
+// 	<Icon style={stylex.parse("wh:12.5")} />
+// ))
 
 const Text = stylex.Styleable(props => (
 	<p style={stylex.parse("tnum fs:12.5 ls:0.625% lh:100%")} {...props}>
