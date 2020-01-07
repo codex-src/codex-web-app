@@ -200,7 +200,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 	const updateGreedy = (anchorNode, focusNode, pos1, pos2) => {
 		// Sort the nodes and VDOM cursors:
 		if (pos1.pos > pos2.pos) {
-			;[anchorNode, focusNode] = [focusNode, anchorNode] // E.g. `startNode` and `endNode`.
+			;[anchorNode, focusNode] = [focusNode, anchorNode]
 			;[pos1, pos2] = [pos2, pos1]
 		}
 		// Compute the start (extend 1):
@@ -316,10 +316,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						updateGreedy(anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
+					// console.log(inputType)
 					onInput: e => {
 						const { nativeEvent: { inputType } } = e
-						console.log(inputType)
 						switch (inputType) {
+						// 8ba0140
+						case "deleteWordForward":
+							dispatch.renderDOMComponents(true)
+							return
 						case "historyUndo":
 							// TODO
 							return
