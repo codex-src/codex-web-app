@@ -36,9 +36,11 @@ export function recurseToDOMCursor(rootNode, pos) { // FIXME: Rename `pos`?
 				// If found recursing on the current node, return:
 				if (recurseOn(currentNode)) {
 					return true
+				// FIXME: Remove else branch.
+				} else {
+					// Decrement paragraph:
+					pos -= isDOMNode(currentNode) && currentNode.nextSibling
 				}
-				// Decrement paragraph:
-				pos -= isDOMNode(currentNode) && currentNode.nextSibling
 			}
 		}
 		return false

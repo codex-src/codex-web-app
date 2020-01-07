@@ -9,12 +9,15 @@ import {
 // `newVDOMCursor` creates a new VDOM cursor.
 export function newVDOMCursor() {
 	const pos = {
-		index:           0,
-		offset:          0,
-		offsetRemainder: 0,
-		textOffset:      0,
-		textRemainder:   0,
-		pos:             0,
+		index:                 0, // Rename to `domNodeIndex`.
+		// (TODO: greedyDOMNodeIndex)
+		greedyOffset:          0,
+		greedyOffsetRemainder: 0,
+		offset:                0,
+		offsetRemainder:       0,
+		textOffset:            0,
+		textOffsetRemainder:   0,
+		pos:                   0,
 	}
 	return pos
 }
@@ -86,63 +89,3 @@ export function recurseToVDOMCursor(rootNode, node, textOffset) { // FIXME: Rena
 	recurseOn(rootNode)
 	return cur
 }
-
-// // `recurseToVDOMCursor` recurses to the VDOM cursor from a
-// // DOM cursor.
-// export function recurseToVDOMCursor(rootNode, node, textOffset) {
-// 	const cur = newVDOMCursor()
-// 	// Iterate to the innermost node:
-// 	while (node.childNodes && node.childNodes.length) {
-// 		node = node.childNodes[textOffset]
-// 		textOffset = 0
-// 	}
-// 	const recurseOn = startNode => {
-// 		for (const currentNode of startNode.childNodes) {
-// 			// If greedy DOM node:
-// 			if (currentNode.parentNode === rootNode) {
-// 				cur.greedyOffset = 0
-// 			}
-// 			if (isBreakOrTextNode(currentNode)) {
-// 				// If found, compute the VDOM cursor:
-// 				if (currentNode === node) {
-// 					// Compute the DOM node and greedy DOM node:
-// 					const domNode = ascendToDOMNode(currentNode)
-// 					const greedyDOMNode = ascendToGreedyDOMNode(currentNode)
-// 					// Read the DOM node and greedy DOM node:
-// 					const domNodeLength = innerText(domNode).length
-// 					let greedyDOMNodeLength = domNodeLength // Assume non-greedy DOM node.
-// 					if (greedyDOMNode !== domNode) {
-// 						greedyDOMNodeLength = innerText(greedyDOMNode).length
-// 					}
-// 					cur.offset = cur.offset + textOffset
-// 					cur.offsetRemainder = domNodeLength - cur.offset
-// 					cur.greedyOffset += textOffset
-// 					cur.greedyOffsetRemainder = greedyDOMNodeLength - cur.greedyOffset
-// 					cur.textOffset = textOffset
-// 					cur.textOffsetRemainder = nodeValue(currentNode).length - textOffset
-// 					cur.pos += textOffset
-// 					return true
-// 				}
-// 				const { length } = nodeValue(currentNode)
-// 				cur.greedyOffset += length
-// 				cur.offset += length
-// 				cur.pos += length
-// 			} else {
-// 				// If found recursing the current node, return:
-// 				if (recurseOn(currentNode)) {
-// 					return true
-// 				}
-// 				// Increment paragraph:
-// 				const { nextSibling } = currentNode
-// 				const hasNextDOMNode = isDOMNode(currentNode) && nextSibling
-// 				cur.index += hasNextDOMNode
-// 				cur.greedyOffset += hasNextDOMNode
-// 				cur.offset = 0 // ??
-// 				cur.pos += hasNextDOMNode
-// 			}
-// 		}
-// 		return false
-// 	}
-// 	recurseOn(rootNode)
-// 	return cur
-// }

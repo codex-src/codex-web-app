@@ -1,17 +1,16 @@
+// import md from "lib/encoding/md"
+// import PerfTimer from "lib/PerfTimer"
+// import StatusBar from "components/Note"
 import cmd from "./cmd"
-import md from "lib/encoding/md"
 import parse from "./Components"
-import PerfTimer from "lib/PerfTimer"
 import React from "react"
 import ReactDOM from "react-dom"
-import StatusBar from "components/Note"
 import stylex from "stylex"
 import useMethods from "use-methods"
 import VDOM from "./VDOM"
-import { innerText, nodeValue } from "./nodeFns"
+import { innerText } from "./nodeFns"
 import {
 	ascendToGreedyDOMNode,
-	newDOMCursor,
 	newVDOMCursor,
 	recurseToDOMCursor,
 	recurseToVDOMCursor,
@@ -128,7 +127,7 @@ function useEditor(initialValue) {
 }
 
 const DebugEditor = props => (
-	<pre style={stylex.parse("overflow -x:scroll")}>
+	<pre style={stylex.parse("p-y:28 overflow -x:scroll")}>
 		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 			{JSON.stringify(
 				{
@@ -151,31 +150,33 @@ function Contents(props) {
 	return props.components
 }
 
-// `newFPSStyleString` returns a new frames per second CSS
-// inline-style string.
-function newFPSStyleString(ms) {
-	if (ms < 16.67) {
-		return "color: lightgreen;"
-	} else if (ms < 33.33) {
-		return "color: orange;"
-	}
-	return "color: red;"
-}
+// // `newFPSStyleString` returns a new frames per second CSS
+// // inline-style string.
+// function newFPSStyleString(ms) {
+// 	if (ms < 16.67) {
+// 		return "color: lightgreen;"
+// 	} else if (ms < 33.33) {
+// 		return "color: orange;"
+// 	}
+// 	return "color: red;"
+// }
 
-const perfRenderPass = new PerfTimer()    // Times the render pass.
-const perfParser = new PerfTimer()        // Times the component parser phase.
-const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
-const perfDOMRenderer = new PerfTimer()   // Times the DOM renderer phase.
-const perfDOMCursor = new PerfTimer()     // Times the DOM cursor.
+// const perfRenderPass = new PerfTimer()    // Times the render pass.
+// const perfParser = new PerfTimer()        // Times the component parser phase.
+// const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
+// const perfDOMRenderer = new PerfTimer()   // Times the DOM renderer phase.
+// const perfDOMCursor = new PerfTimer()     // Times the DOM cursor.
+//
+// const p = perfParser.duration()
+// const r = perfReactRenderer.duration()
+// const d = perfDOMRenderer.duration()
+// const c = perfDOMCursor.duration()
+// const a = perfRenderPass.duration()
+// console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${a})`, newFPSStyleString(a))
 
 function Editor(props) {
 	const ref = React.useRef()
 	const greedy = React.useRef()
-
-	// const renderMutex = React.useRef()
-
-	// Render mutex:
-	const renderInProgress = React.useRef(false)
 
 	const [state, dispatch] = useEditor(`
 \`\`\`
@@ -231,22 +232,15 @@ hello
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			const Components = []
-			// perfParser.on(() => {
 			Components.push(...parse(state.body))
-			// })
-			// perfReactRenderer.restart()
 			ReactDOM.render(<Contents components={Components} />, state.renderDOMNode, () => {
-				// perfReactRenderer.stop()
 				// Eagerly drop range for performance reasons:
 				//
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				const selection = document.getSelection()
 				selection.removeAllRanges()
-				// perfDOMRenderer.on(() => {
-				// TODO
-				;[...ref.current.childNodes].map(each => each.remove())
-				ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes)
-				// })
+				;[...ref.current.childNodes].map(each => each.remove())               // TODO
+				ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes) // TODO
 				dispatch.renderCursor()
 			})
 		}, [state, dispatch]),
@@ -260,7 +254,6 @@ hello
 				// No-op.
 				return
 			}
-			// perfDOMCursor.on(() => {
 			const selection = document.getSelection()
 			const range = document.createRange()
 			const { node, offset } = recurseToDOMCursor(ref.current, state.pos1)
@@ -268,26 +261,15 @@ hello
 			range.collapse()
 			// (Range eagerly dropped)
 			selection.addRange(range)
-			// })
-			renderInProgress.current = false
-			// console.log("Render done")
-			// perfRenderPass.stop()
-
-			// const p = perfParser.duration()
-			// const r = perfReactRenderer.duration()
-			// const d = perfDOMRenderer.duration()
-			// const c = perfDOMCursor.duration()
-			// const a = perfRenderPass.duration()
-			// console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${a})`, newFPSStyleString(a))
 		}, [state]),
 		[state.shouldRenderCursor],
 	)
 
 	const selectionChangeCache = React.useRef({
-		anchorNode:   null, // The cursor start DOM node.
-		focusNode:    0,    // The cursor start DOM node offset.
-		anchorOffset: null, // The cursor end DOM node.
-		focusOffset:  0,    // The cursor end DOM node offset.
+		anchorNode:   null, // The selection API start DOM node.
+		anchorOffset: 0,    // The selection API start DOM node offset.
+		focusNode:    null, // The selection API end DOM node.
+		focusOffset:  0,    // The selection API end DOM node offset.
 	})
 
 	React.useLayoutEffect(() => {
@@ -313,6 +295,9 @@ hello
 			}
 			/* eslint-enable no-multi-spaces */
 
+			// Precompute greedy range:
+			//
+			// TODO: Refactor to function; `onKeyDown` reuses.
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = { ...pos1 }
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
@@ -352,14 +337,12 @@ hello
 			const domLength = arr.indexOf(domEnd) - arr.indexOf(domStart) + 1
 
 			greedy.current = {
-				domStart,
-				domEnd,
-				pos1: domStartPos,
-				pos2: domEndPos,
-				domLength,
+				domStart,          // ...
+				domEnd,            // ...
+				pos1: domStartPos, // ...
+				pos2: domEndPos,   // ...
+				domLength,         // ...
 			}
-
-			console.log(greedy.current)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -383,32 +366,32 @@ hello
 					onFocus: dispatch.focus,
 					onBlur:  dispatch.blur,
 
-					// onKeyDown: e => {
-					// 	switch (true) {
-					// 	case e.key === "Tab":
-					// 		e.preventDefault()
-					// 		dispatch.tab()
-					// 		return
-					// 	case cmd.isUndo(e):
-					// 		e.preventDefault()
-					// 		// TODO
-					// 		return
-					// 	case cmd.isRedo(e):
-					// 		e.preventDefault()
-					// 		// TODO
-					// 		return
-					// 	case cmd.isBold(e):
-					// 		e.preventDefault()
-					// 		return
-					// 	case cmd.isItalic(e):
-					// 		e.preventDefault()
-					// 		return
-					// 	default:
-					// 		// No-op.
-					// 	}
-					// },
-
 					onKeyDown: e => {
+						// Shortcuts (e.g. formatting):
+						switch (true) {
+						case e.key === "Tab":
+							e.preventDefault()
+							dispatch.tab()
+							return
+						case cmd.isUndo(e):
+							e.preventDefault()
+							// TODO
+							return
+						case cmd.isRedo(e):
+							e.preventDefault()
+							// TODO
+							return
+						case cmd.isBold(e):
+							e.preventDefault()
+							return
+						case cmd.isItalic(e):
+							e.preventDefault()
+							return
+						default:
+							// No-op.
+						}
+
+						// Precompute greedy range:
 						const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
 						const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						let pos2 = { ...pos1 }
@@ -449,37 +432,22 @@ hello
 						const domLength = arr.indexOf(domEnd) - arr.indexOf(domStart) + 1
 
 						greedy.current = {
-							domStart,
-							domEnd,
-							pos1: domStartPos,
-							pos2: domEndPos,
-							domLength,
+							domStart,          // ...
+							domEnd,            // ...
+							pos1: domStartPos, // ...
+							pos2: domEndPos,   // ...
+							domLength,         // ...
 						}
 					},
-					onKeyUp: e => {
-						// console.log(Date.now(), "onKeyUp")
-					},
-
-					// // NOTE: Idempotent on backspace and delete.
-					// onBeforeInput: e => {
-					// 	console.log({ pos1: state.pos1.pos, pos2: state.pos1.pos })
-					// },
 
 					onInput: e => {
-						// // console.log(!!renderInProgress.current)
-						// if (renderInProgress.current) {
-						// 	// No-op.
-						// 	console.log("No-op")
-						// 	return
-						// }
-						//
-						// renderInProgress.current = true
-						// console.log("Render in progress")
-
 						let data = ""
 						let domNode = greedy.current.domStart
 						while (domNode) {
-							// console.log(domNode)
+							// FIXME: Can simplify expression:
+							//
+							// `data += (domNode.hasNextSibling ...)`?
+							//
 							data += (domNode === greedy.current.domStart ? "" : "\n") + innerText(domNode)
 							if (greedy.current.domLength > 2 && domNode === greedy.current.domEnd) {
 								break
@@ -487,94 +455,58 @@ hello
 							domNode = domNode.nextSibling
 						}
 
-						console.log({ data, ...greedy.current })
-
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 
 						const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
 						dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, currentPos)
-
-						// // Compute the greedy DOM and cursor start (-1):
-						// let domStart = ascendToGreedyDOMNode(ref.current, anchorNode)
-						// let domStartPos = currentPos.pos - currentPos.offset
-						// const { previousSibling } = domStart
-						// if (previousSibling) {
-						// 	domStart = previousSibling
-						// 	domStartPos -= `\n${innerText(domStart)}`.length
-						// }
-						//
-						// // Compute the greedy DOM and cursor end (+2):
-						// let domEnd = ascendToGreedyDOMNode(ref.current, anchorNode)
-						// let domEndPos = currentPos.pos + currentPos.offsetRemainder
-						// let { nextSibling } = domEnd
-						// if (nextSibling) {
-						// 	domEnd = nextSibling
-						// 	domEndPos += `\n${innerText(domEnd)}`.length
-						// 	nextSibling = domEnd.nextSibling
-						// 	if (nextSibling) {
-						// 		domEnd = nextSibling
-						// 		domEndPos += `\n${innerText(domEnd)}`.length
-						// 	}
-						// }
-						//
-						// const arr = [...ref.current.childNodes]
-						// const domLength = arr.indexOf(domEnd) - arr.indexOf(domStart) + 1
-						//
-						// greedy.current = {
-						// 	domStart,
-						// 	domEnd,
-						// 	pos1: domStartPos,
-						// 	pos2: domEndPos,
-						// 	domLength,
-						// }
 					},
 
-					onCut: e => {
-						e.preventDefault()
-						if (state.pos1.pos === state.pos2.pos) {
-							// No-op.
-							return
-						}
-						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-						e.clipboardData.setData("text/plain", data)
-						dispatch.write(true, "")
-					},
-
-					onCopy: e => {
-						e.preventDefault()
-						if (state.pos1.pos === state.pos2.pos) {
-							// No-op.
-							return
-						}
-						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-						e.clipboardData.setData("text/plain", data)
-					},
-
-					onPaste: e => {
-						e.preventDefault()
-						const data = e.clipboardData.getData("text/plain")
-						if (!data) {
-							// No-op.
-							return
-						}
-						dispatch.write(true, data)
-					},
+					// onCut: e => {
+					// 	e.preventDefault()
+					// 	if (state.pos1.pos === state.pos2.pos) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+					// 	e.clipboardData.setData("text/plain", data)
+					// 	dispatch.write(true, "")
+					// },
+					//
+					// onCopy: e => {
+					// 	e.preventDefault()
+					// 	if (state.pos1.pos === state.pos2.pos) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+					// 	e.clipboardData.setData("text/plain", data)
+					// },
+					//
+					// onPaste: e => {
+					// 	e.preventDefault()
+					// 	const data = e.clipboardData.getData("text/plain")
+					// 	if (!data) {
+					// 		// No-op.
+					// 		return
+					// 	}
+					// 	dispatch.write(true, data)
+					// },
 
 					onDragStart: e => e.preventDefault(),
 					onDrop:      e => e.preventDefault(),
 				},
 			)}
-			<div style={stylex.parse("h:28")} />
-			{/* style={stylex.parse("m-x:-24 p-x:24 p-y:32 b:gray-100")} */}
-			{/* <div ref={src} style={{ display: "none" }}> */}
-			{/*   {state.Components} */}
-			{/* </div> */}
 			<DebugEditor state={state} />
-			<div style={stylex.parse("h:28")} />
-			<StatusBar state={state} dispatch={dispatch} />
+			{/* FIXME */}
+			{/* <StatusBar state={state} dispatch={dispatch} /> */}
 		</div>
 	)
 }
+
+// style={stylex.parse("m-x:-24 p-x:24 p-y:32 b:gray-100")}
+// <div ref={src} style={{ display: "none" }}>
+//   {state.Components}
+// </div>
 
 export default Editor
