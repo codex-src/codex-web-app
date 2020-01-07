@@ -11,7 +11,6 @@ export function isSyntax(ch) {
 		ch === ">" ||
 		ch === "$" ||
 		ch === "`" ||
-		// ch === "\n" || // New.
 		ch === "-" ||
 		ch === "0" ||
 		ch === "1" ||

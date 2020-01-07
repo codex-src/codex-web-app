@@ -318,48 +318,48 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 					// console.log(inputType)
 					onInput: e => {
-						const { nativeEvent: { inputType } } = e
-						switch (inputType) {
-						// 8ba0140
-						case "deleteWordForward":
-							dispatch.renderDOMComponents(true)
-							return
-						case "historyUndo":
-							// TODO
-							return
-						case "historyRedo":
-							// TODO
-							return
-						// df21f58
-						case "insertLineBreak":
-							dispatch.write(true, "\n")
-							return
-						// df21f58
-						case "insertParagraph":
-							dispatch.write(true, "\n")
-							return
-						default:
-							// No-op.
-						}
-						// Read the mutated DOM:
-						let data = ""
-						let currentNode = greedy.current.start
-						while (currentNode) {
-							if (currentNode !== greedy.current.start) {
-								data += "\n"
-							}
-							data += innerText(currentNode)
-							if (greedy.current.range > 2 && currentNode === greedy.current.end) {
-								break
-							}
-							currentNode = currentNode.nextSibling
-						}
-						// Compute the current VDOM cursor:
-						const { anchorNode, anchorOffset } = document.getSelection()
-						const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// Done -- render:
-						const shouldRender = inputType !== "insertCompositionText"
-						dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
+						// const { nativeEvent: { inputType } } = e
+						// switch (inputType) {
+						// // 8ba0140
+						// case "deleteWordForward":
+						// 	dispatch.renderDOMComponents(true)
+						// 	return
+						// case "historyUndo":
+						// 	// TODO
+						// 	return
+						// case "historyRedo":
+						// 	// TODO
+						// 	return
+						// // df21f58
+						// case "insertLineBreak":
+						// 	dispatch.write(true, "\n")
+						// 	return
+						// // df21f58
+						// case "insertParagraph":
+						// 	dispatch.write(true, "\n")
+						// 	return
+						// default:
+						// 	// No-op.
+						// }
+						// // Read the mutated DOM:
+						// let data = ""
+						// let currentNode = greedy.current.start
+						// while (currentNode) {
+						// 	if (currentNode !== greedy.current.start) {
+						// 		data += "\n"
+						// 	}
+						// 	data += innerText(currentNode)
+						// 	if (greedy.current.range > 2 && currentNode === greedy.current.end) {
+						// 		break
+						// 	}
+						// 	currentNode = currentNode.nextSibling
+						// }
+						// // Compute the current VDOM cursor:
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// // Done -- render:
+						// const shouldRender = inputType !== "insertCompositionText"
+						// dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
 					},
 
 					onCut: e => {
