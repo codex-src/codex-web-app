@@ -4,28 +4,28 @@ import {
 	nodeValue,
 } from "../nodeFns"
 
-// `newDOMCursor` creates a new DOM cursor.
+// `newDOMCursor` returns a new DOM cursor.
+//
+// https://developer.mozilla.org/en-US/docs/Web/API/Range/setStart
 export function newDOMCursor() {
-	const cur = {
+	const cursor = {
 		node:   null,
 		offset: 0,
 	}
-	return cur
+	return cursor
 }
 
 // `recurseToDOMCursor` recurses to a DOM cursor from a VDOM
 // cursor position.
-//
-// TODO: Add test suite.
-export function recurseToDOMCursor(rootNode, pos) { // FIXME: Rename `pos`?
-	const cur = newDOMCursor()
+export function recurseToDOMCursor(rootNode, pos) {
+	const cursor = newDOMCursor()
 	const recurseOn = startNode => {
 		for (const currentNode of startNode.childNodes) {
 			if (isBreakOrTextNode(currentNode)) {
 				// If found, return:
 				const { length } = nodeValue(currentNode)
 				if (pos - length <= 0) {
-					Object.assign(cur, {
+					Object.assign(cursor, {
 						node: currentNode,
 						offset: pos,
 					})
@@ -36,15 +36,16 @@ export function recurseToDOMCursor(rootNode, pos) { // FIXME: Rename `pos`?
 				// If found recursing on the current node, return:
 				if (recurseOn(currentNode)) {
 					return true
-				// FIXME: Remove else branch.
-				} else {
+				}
+				const { nextSibling } = currentNode
+				if (isDOMNode(currentNode) && nextSibling) {
 					// Decrement paragraph:
-					pos -= isDOMNode(currentNode) && currentNode.nextSibling
+					pos--
 				}
 			}
 		}
 		return false
 	}
 	recurseOn(rootNode)
-	return cur
+	return cursor
 }

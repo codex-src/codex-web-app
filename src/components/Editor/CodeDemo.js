@@ -19,22 +19,20 @@ import {
 import "./code-demo.css"
 
 const initialState = {
-	renderDOMNode: document.createElement("div"),
-	initialValue:  "",
-	body:          new VDOM(""),
-	isFocused:     false,
-	posReversed:   false,
-	pos1:          newVDOMCursor(), // FIXME: Rename `cur1`.
-	pos2:          newVDOMCursor(), // FIXME: Rename `cur2`.
+	isFocused: false,
+	body:      new VDOM(""),
+	pos1:      newVDOMCursor(),
+	pos2:      newVDOMCursor(),
 
-	// `shouldRenderComponents` hints when to render React
-	// components.
-	shouldRenderComponents: 0,
+	// `shouldRenderDOMComponents` hints whether the editor’s
+	// DOM components should be rendered.
+	shouldRenderDOMComponents: 0,
 
-	// `shouldRenderPos` hints when to render the DOM cursor.
-	shouldRenderCursor: 0,
+	// `shouldRenderDOMCursor` hints whether the editor’s DOM
+	// cursor should be rendered.
+	shouldRenderDOMCursor: 0,
 
-	Components: [],
+	reactDOM: document.createElement("div"),
 }
 
 const reducer = state => ({
@@ -45,69 +43,37 @@ const reducer = state => ({
 		state.isFocused = false
 	},
 	select(body, pos1, pos2) {
-		const posReversed = pos1.pos > pos2.pos
-		if (posReversed) {
+		if (pos1.pos > pos2.pos) {
 			[pos1, pos2] = [pos2, pos1]
 		}
-		Object.assign(state, { body, posReversed, pos1, pos2 })
+		Object.assign(state, { body, pos1, pos2 })
 	},
-	// `collapse` collapses the cursors (to the start).
+	// `collapse` collapses the VDOM cursors.
 	collapse() {
 		state.pos2 = { ...state.pos1 }
 	},
-	// `write` writes plain text data and conditionally
-	// rerenders.
+	// `write` writes and renders.
 	write(shouldRender, data) {
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
 		state.pos1.pos += data.length
 		this.collapse()
-		this.renderComponents(shouldRender)
+		this.renderDOMComponents(shouldRender)
 	},
-	// `greedyWrite` greedily writes plain text data and
-	// conditionally rerenders.
+	// `greedyWrite` greedily writes and renders.
 	greedyWrite(shouldRender, data, pos1, pos2, currentPos) {
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = currentPos
 		this.collapse()
-		this.renderComponents(shouldRender)
+		this.renderDOMComponents(shouldRender)
 	},
-
-	// rewrite(shouldRender, data, pos) {
-	// 	state.body = state.body.write(data, 0, state.body.data.length)
-	// 	state.pos1 = pos
-	// 	this.collapse()
-	// 	this.renderComponents(shouldRender)
-	// },
-
 	tab() {
 		this.write(true, "\t")
 	},
-	collapsedBackspaceOnLine() {
-		if (!state.pos1.pos) {
-			this.renderComponents(true)
-			return
-		}
-		state.body = state.body.write("", state.pos1.pos - 1, state.pos1.pos)
-		state.pos1.pos--
-		this.collapse()
-		this.renderComponents(true)
+	renderDOMComponents(shouldRender) {
+		state.shouldRenderDOMComponents += shouldRender
 	},
-	collapsedDeleteOnLine() {
-		if (state.pos1.pos === state.body.data.length) {
-			this.renderComponents(true)
-			return
-		}
-		state.body = state.body.write("", state.pos1.pos, state.pos1.pos + 1)
-		this.renderComponents(true)
-	},
-	enter() {
-		this.write(true, "\n")
-	},
-	renderComponents(shouldRender) {
-		state.shouldRenderComponents += shouldRender
-	},
-	renderCursor() {
-		state.shouldRenderCursor++
+	renderDOMCursor() {
+		state.shouldRenderDOMCursor++
 	},
 })
 
@@ -115,7 +81,6 @@ const init = initialValue => initialState => {
 	const body = initialState.body.write(initialValue, 0, initialState.body.data.length)
 	const state = {
 		...initialState,
-		initialValue,
 		body,
 		Components: parse(body),
 	}
@@ -178,7 +143,7 @@ function Editor(props) {
 	const ref = React.useRef()
 	const greedy = React.useRef()
 
-	const [state, dispatch] = useEditor(`
+	const [state, dispatch] = useEditor(`hello
 \`\`\`
 
 hello
@@ -190,7 +155,7 @@ hello
 > hello
 > hello
 > hello
-`)
+hello`)
 
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
@@ -233,18 +198,18 @@ hello
 		React.useCallback(() => {
 			const Components = []
 			Components.push(...parse(state.body))
-			ReactDOM.render(<Contents components={Components} />, state.renderDOMNode, () => {
+			ReactDOM.render(<Contents components={Components} />, state.reactDOM, () => {
 				// Eagerly drop range for performance reasons:
 				//
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				const selection = document.getSelection()
 				selection.removeAllRanges()
 				;[...ref.current.childNodes].map(each => each.remove())               // TODO
-				ref.current.append(...state.renderDOMNode.cloneNode(true).childNodes) // TODO
-				dispatch.renderCursor()
+				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+				dispatch.renderDOMCursor()
 			})
 		}, [state, dispatch]),
-		[state.shouldRenderComponents],
+		[state.shouldRenderDOMComponents],
 	)
 
 	// Should render DOM cursor:
@@ -262,7 +227,7 @@ hello
 			// (Range eagerly dropped)
 			selection.addRange(range)
 		}, [state]),
-		[state.shouldRenderCursor],
+		[state.shouldRenderDOMCursor],
 	)
 
 	const selectionChangeCache = React.useRef({

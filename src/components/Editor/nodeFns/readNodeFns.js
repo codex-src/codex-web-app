@@ -16,18 +16,18 @@ export function innerText(rootNode) {
 		return nodeValue(rootNode)
 	}
 	let data = ""
-	const recurse = startNode => {
+	const recurseOn = startNode => {
 		for (const currentNode of startNode.childNodes) {
 			if (isBreakOrTextNode(currentNode)) {
 				data += nodeValue(currentNode)
 			} else {
-				recurse(currentNode)
+				recurseOn(currentNode)
 				if (isDOMNode(currentNode) && currentNode.nextSibling) {
 					data += "\n"
 				}
 			}
 		}
 	}
-	recurse(rootNode)
+	recurseOn(rootNode)
 	return data
 }
