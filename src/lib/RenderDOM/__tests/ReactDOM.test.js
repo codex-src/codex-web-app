@@ -7,16 +7,23 @@ import RenderDOM from "../RenderDOM"
 function ParseMarkupDOM(Component) {
 	const parser = new DOMParser()
 	const dom = parser.parseFromString(ReactDOMServer.renderToStaticMarkup(<Component />), "text/html")
-	const domNode = document.createElement("div")
-	domNode.appendChild(dom.body.childNodes[0])
-	return domNode.childNodes[0] // Breaks document fragments.
+	const div = document.createElement("div")
+	div.appendChild(dom.body.childNodes[0])
+	return div.childNodes[0] // Breaks document fragments.
 }
+
+test("br", () => {
+	const Component = props => <br />
+	const rootNode = RenderDOM(Component)
+	const parsedRootNode = ParseMarkupDOM(Component)
+	expect(rootNode.isEqualNode(parsedRootNode)).toBe(true)
+})
 
 test("text node", () => {
 	const Component = props => "Hello, world!"
-	const domNode = RenderDOM(Component)
-	const parsedDOMNode = ParseMarkupDOM(Component)
-	expect(domNode.isEqualNode(parsedDOMNode)).toBe(true)
+	const rootNode = RenderDOM(Component)
+	const parsedRootNode = ParseMarkupDOM(Component)
+	expect(rootNode.isEqualNode(parsedRootNode)).toBe(true)
 })
 
 test("p", () => {
@@ -25,9 +32,9 @@ test("p", () => {
 			Hello, world!
 		</p>
 	)
-	const domNode = RenderDOM(Component)
-	const parsedDOMNode = ParseMarkupDOM(Component)
-	expect(domNode.isEqualNode(parsedDOMNode)).toBe(true)
+	const rootNode = RenderDOM(Component)
+	const parsedRootNode = ParseMarkupDOM(Component)
+	expect(rootNode.isEqualNode(parsedRootNode)).toBe(true)
 })
 
 test("div", () => {
@@ -38,9 +45,9 @@ test("div", () => {
 			</p>
 		</div>
 	)
-	const domNode = RenderDOM(Component)
-	const parsedDOMNode = ParseMarkupDOM(Component)
-	expect(domNode.isEqualNode(parsedDOMNode)).toBe(true)
+	const rootNode = RenderDOM(Component)
+	const parsedRootNode = ParseMarkupDOM(Component)
+	expect(rootNode.isEqualNode(parsedRootNode)).toBe(true)
 })
 
 test("div#root", () => {
@@ -53,7 +60,7 @@ test("div#root", () => {
 			</div>
 		</div>
 	)
-	const domNode = RenderDOM(Component)
-	const parsedDOMNode = ParseMarkupDOM(Component)
-	expect(domNode.isEqualNode(parsedDOMNode)).toBe(true)
+	const rootNode = RenderDOM(Component)
+	const parsedRootNode = ParseMarkupDOM(Component)
+	expect(rootNode.isEqualNode(parsedRootNode)).toBe(true)
 })

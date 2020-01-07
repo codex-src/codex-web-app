@@ -1,27 +1,28 @@
-import * as compare from "./compare"
+import { isBreakOrTextNode } from "./nodeFns"
+import { isDOMNode } from "./domNodeFns"
 
-// `nodeValue` mocks the browser function.
+// `nodeValue` mocks the browser function; reads a node.
 export function nodeValue(node) {
-	if (!compare.isBreakOrTextNode(node)) {
+	if (!isBreakOrTextNode(node)) {
 		return ""
 	}
 	return node.nodeValue || "" // Break node.
 }
 
-// `innerText` mocks the browser function.
+// `innerText` mocks the browser function; recursively reads
+// a root node.
 export function innerText(rootNode) {
-	if (compare.isBreakOrTextNode(rootNode)) {
+	if (isBreakOrTextNode(rootNode)) {
 		return nodeValue(rootNode)
 	}
 	let data = ""
 	const recurse = startNode => {
 		for (const currentNode of startNode.childNodes) {
-			if (compare.isBreakOrTextNode(currentNode)) {
+			if (isBreakOrTextNode(currentNode)) {
 				data += nodeValue(currentNode)
 			} else {
 				recurse(currentNode)
-				if (compare.isBlockDOMNode(currentNode) &&
-						currentNode.nextSibling) {
+				if (isDOMNode(currentNode) && currentNode.nextSibling) {
 					data += "\n"
 				}
 			}

@@ -5,8 +5,10 @@ import stylex from "stylex"
 
 const GboardApp = props => (
 	<DebugCSS>
-		<div style={stylex.parse("p-x:24 p-y:32")}>
-			<Editor.Editor />
+		<div style={stylex.parse("p-x:24 p-y:32 flex -r -x:center")}>
+			<div style={stylex.parse("w:1024")}>
+				<Editor.Editor />
+			</div>
 		</div>
 	</DebugCSS>
 )
