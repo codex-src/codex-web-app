@@ -1,9 +1,9 @@
 // import md from "lib/encoding/md"
 // import PerfTimer from "lib/PerfTimer"
 // import StatusBar from "components/Note"
-import cmd from "./cmd"
 import DebugEditor from "./DebugEditor"
 import parse from "./Components"
+import platform from "lib/platform"
 import React from "react"
 import ReactDOM from "react-dom"
 import useMethods from "use-methods"
@@ -66,9 +66,6 @@ const reducer = state => ({
 		this.collapse()
 		this.renderDOMComponents(shouldRender)
 	},
-	tab() {
-		this.write(true, "\t")
-	},
 	renderDOMComponents(shouldRender) {
 		state.shouldRenderDOMComponents += shouldRender
 	},
@@ -125,55 +122,41 @@ function Contents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useEditor(`hello
+	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+## How to build a beautiful blog
+
+\`\`\`go
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("hello, world!")
+}
 \`\`\`
 
-hello
-hello
-hello
+### How to build a beautiful blog
 
-\`\`\`
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+>
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+>
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-> hello
-> hello
-> hello
-hello`)
+#### How to build a beautiful blog
 
-	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ## How to build a beautiful blog
-	//
-	// \`\`\`go
-	// package main
-	//
-	// import "fmt"
-	//
-	// func main() {
-	// 	fmt.Println("hello, world!")
-	// }
-	// \`\`\`
-	//
-	// ### How to build a beautiful blog
-	//
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	// >
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	// >
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// #### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ##### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ###### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+##### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+###### How to build a beautiful blog
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render components:
 	React.useLayoutEffect(
@@ -214,7 +197,7 @@ hello`)
 
 	const greedy = React.useRef()
 
-	const computeGreedy = (anchorNode, focusNode, pos1, pos2) => {
+	const updateGreedy = (anchorNode, focusNode, pos1, pos2) => {
 		// Sort the nodes and VDOM cursors:
 		if (pos1.pos > pos2.pos) {
 			;[anchorNode, focusNode] = [focusNode, anchorNode] // E.g. `startNode` and `endNode`.
@@ -241,7 +224,7 @@ hello`)
 		// Compute the range:
 		const childNodes = [...ref.current.childNodes]
 		const range = childNodes.indexOf(end) - childNodes.indexOf(start) + 1
-		// Done:
+		// Done -- set `greedy`:
 		greedy.current = {
 			start,
 			startPos,
@@ -249,7 +232,6 @@ hello`)
 			endPos,
 			range,
 		}
-		// console.log(greedy.current)
 	}
 
 	const selectionChangeCache = React.useRef({
@@ -288,7 +270,7 @@ hello`)
 			}
 			dispatch.select(state.body, pos1, pos2)
 			selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
-			computeGreedy(anchorNode, focusNode, pos1, pos2)
+			updateGreedy(anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -313,41 +295,49 @@ hello`)
 					onBlur:  dispatch.blur,
 
 					onKeyDown: e => {
-						// Shortcuts (e.g. formatting):
+						// Shortcuts:
 						switch (true) {
 						case e.key === "Tab":
 							e.preventDefault()
-							dispatch.tab()
+							dispatch.write(true, "\t")
 							return
-						case cmd.isUndo(e):
-							e.preventDefault()
-							// TODO
-							return
-						case cmd.isRedo(e):
-							e.preventDefault()
-							// TODO
-							return
-						case cmd.isBold(e):
+						// Bold:
+						case platform.isMetaOrCtrlKey(e) && e.keyCode === 66: // B
 							e.preventDefault()
 							return
-						case cmd.isItalic(e):
+						// Italic:
+						case platform.isMetaOrCtrlKey(e) && e.keyCode === 73: // I
 							e.preventDefault()
 							return
 						default:
 							// No-op.
 						}
 						const { anchorNode, focusNode } = document.getSelection()
-						computeGreedy(anchorNode, focusNode, state.pos1, state.pos2)
+						updateGreedy(anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
 					onInput: e => {
-						// Guard paragraph (compound components):
 						const { nativeEvent: { inputType } } = e
-						if (inputType === "insertLineBreak" || inputType === "insertParagraph") {
+						console.log(inputType)
+						switch (inputType) {
+						case "historyUndo":
+							// TODO
+							return
+						case "historyRedo":
+							// TODO
+							return
+						// df21f58
+						case "insertLineBreak":
 							dispatch.write(true, "\n")
 							return
+						// df21f58
+						case "insertParagraph":
+							dispatch.write(true, "\n")
+							return
+						default:
+							// No-op.
 						}
-						// Read the mutated data:
+						// Read the mutated DOM:
 						let data = ""
 						let currentNode = greedy.current.start
 						while (currentNode) {
@@ -363,8 +353,8 @@ hello`)
 						// Compute the current VDOM cursor:
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// Render:
-						const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
+						// Done -- render:
+						const shouldRender = inputType !== "insertCompositionText"
 						dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
 					},
 
