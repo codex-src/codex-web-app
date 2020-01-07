@@ -1,6 +1,5 @@
-// `isVirtualDOMNode` returns whether a node is a virtual
-// DOM node.
-export function isVirtualDOMNode(node) {
+// `isVDOMNode` returns whether a node is a VDOM node.
+export function isVDOMNode(node) {
 	const ok = (
 		node.nodeType === Node.ELEMENT_NODE &&
 		node.hasAttribute("data-vdom-node")
@@ -9,12 +8,12 @@ export function isVirtualDOMNode(node) {
 }
 
 // `isBrowserDOMNode` returns whether a node is a browser
-// DOM node.
+// generated DOM node.
 export function isBrowserDOMNode(node) {
 	const ok = (
 		node.nodeType === Node.ELEMENT_NODE && (
-			node.nodeName === "DIV" || // Chrome-generated.
-			node.nodeName === "P"      // Safari-generated.
+			node.nodeName === "DIV" ||
+			node.nodeName === "P"
 		) &&
 		!node.attributes.length
 	)
@@ -24,7 +23,7 @@ export function isBrowserDOMNode(node) {
 // `isDOMNode` returns whether a node is a DOM node.
 export function isDOMNode(node) {
 	const ok = (
-		isVirtualDOMNode(node) ||
+		isVDOMNode(node) ||
 		isBrowserDOMNode(node)
 	)
 	return ok

@@ -341,11 +341,20 @@ hello`)
 					},
 
 					onInput: e => {
+						// Guard paragraph (compound components):
+						const { nativeEvent: { inputType } } = e
+						if (inputType === "insertLineBreak" || inputType === "insertParagraph") {
+							dispatch.write(true, "\n")
+							return
+						}
 						// Read the mutated data:
 						let data = ""
 						let currentNode = greedy.current.start
 						while (currentNode) {
-							data += (currentNode === greedy.current.start ? "" : "\n") + innerText(currentNode)
+							if (currentNode !== greedy.current.start) {
+								data += "\n"
+							}
+							data += innerText(currentNode)
 							if (greedy.current.range > 2 && currentNode === greedy.current.end) {
 								break
 							}

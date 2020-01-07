@@ -65,6 +65,7 @@ export function recurseToVDOMCursor(rootNode, node, offset) {
 				}
 				const { nextSibling } = currentNode
 				if (isDOMNode(currentNode) && nextSibling) {
+					// Increment paragraph:
 					Object.assign(cursor, {
 						greedyDOMNodePos: cursor.greedyDOMNodePos + 1,
 						domNodePos: 0, // Reset.

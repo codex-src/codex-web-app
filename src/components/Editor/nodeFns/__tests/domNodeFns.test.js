@@ -4,7 +4,7 @@ import RenderDOM from "lib/RenderDOM"
 import {
 	isBrowserDOMNode,
 	isDOMNode,
-	isVirtualDOMNode,
+	isVDOMNode,
 } from "../domNodeFns"
 
 test("isBrowserDOMNode", () => {
@@ -14,17 +14,17 @@ test("isBrowserDOMNode", () => {
 		</div>
 	)
 	const rootNode = RenderDOM(Component)
-	expect(isBrowserDOMNode(rootNode) && !isVirtualDOMNode(rootNode)).toBe(true)
+	expect(isBrowserDOMNode(rootNode) && !isVDOMNode(rootNode)).toBe(true)
 })
 
-test("isVirtualDOMNode", () => {
+test("isVDOMNode", () => {
 	const Component = props => (
 		<div data-vdom-node>
 			<br />
 		</div>
 	)
 	const rootNode = RenderDOM(Component)
-	expect(!isBrowserDOMNode(rootNode) && isVirtualDOMNode(rootNode)).toBe(true)
+	expect(!isBrowserDOMNode(rootNode) && isVDOMNode(rootNode)).toBe(true)
 })
 
 test("isDOMNode", () => {

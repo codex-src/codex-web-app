@@ -22,7 +22,8 @@ export function innerText(rootNode) {
 				data += nodeValue(currentNode)
 			} else {
 				recurseOn(currentNode)
-				if (isDOMNode(currentNode) && currentNode.nextSibling) {
+				const { nextSibling } = currentNode
+				if (isDOMNode(currentNode) && nextSibling) {
 					data += "\n"
 				}
 			}
