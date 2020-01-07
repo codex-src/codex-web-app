@@ -2,10 +2,10 @@
 // import PerfTimer from "lib/PerfTimer"
 // import StatusBar from "components/Note"
 import cmd from "./cmd"
+import DebugEditor from "./DebugEditor"
 import parse from "./Components"
 import React from "react"
 import ReactDOM from "react-dom"
-import stylex from "stylex"
 import useMethods from "use-methods"
 import VDOM from "./VDOM"
 import { innerText } from "./nodeFns"
@@ -91,23 +91,6 @@ function useEditor(initialValue) {
 	return useMethods(reducer, initialState, init(initialValue))
 }
 
-const DebugEditor = props => (
-	<pre style={stylex.parse("p-y:28 overflow -x:scroll")}>
-		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
-			{JSON.stringify(
-				{
-					// body: props.state.body,
-					// data: props.state.body.data,
-					pos1: props.state.pos1,
-					pos2: props.state.pos2,
-				},
-				null,
-				"\t",
-			)}
-		</p>
-	</pre>
-)
-
 // NOTE: Reference-based components rerender much faster.
 //
 // https://twitter.com/dan_abramov/status/691306318204923905
@@ -141,7 +124,6 @@ function Contents(props) {
 
 function Editor(props) {
 	const ref = React.useRef()
-	const greedy = React.useRef()
 
 	const [state, dispatch] = useEditor(`hello
 \`\`\`
@@ -221,7 +203,7 @@ hello`)
 			}
 			const selection = document.getSelection()
 			const range = document.createRange()
-			const { node, offset } = recurseToDOMCursor(ref.current, state.pos1)
+			const { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
 			range.setStart(node, offset)
 			range.collapse()
 			// (Range eagerly dropped)
@@ -229,6 +211,46 @@ hello`)
 		}, [state]),
 		[state.shouldRenderDOMCursor],
 	)
+
+	const greedy = React.useRef()
+
+	const computeGreedy = (anchorNode, focusNode, pos1, pos2) => {
+		// Sort the nodes and VDOM cursors:
+		if (pos1.pos > pos2.pos) {
+			;[anchorNode, focusNode] = [focusNode, anchorNode] // E.g. `startNode` and `endNode`.
+			;[pos1, pos2] = [pos2, pos1]
+		}
+		// Compute the start (extend 1):
+		let start = ascendToGreedyDOMNode(ref.current, anchorNode)
+		let startPos = pos1.pos - pos1.greedyDOMNodePos
+		let extendStart = 1
+		while (extendStart && start.previousSibling) {
+			start = start.previousSibling
+			startPos -= innerText(start).length + 1 // Paragraph.
+			extendStart--
+		}
+		// Compute the end (extend 2):
+		let end = ascendToGreedyDOMNode(ref.current, focusNode)
+		let endPos = pos2.pos + pos2.greedyDOMNodeEndPos
+		let extendEnd = 2
+		while (extendEnd && end.nextSibling) {
+			end = end.nextSibling
+			endPos += innerText(end).length + 1 // Paragraph.
+			extendEnd--
+		}
+		// Compute the range:
+		const childNodes = [...ref.current.childNodes]
+		const range = childNodes.indexOf(end) - childNodes.indexOf(start) + 1
+		// Done:
+		greedy.current = {
+			start,
+			startPos,
+			end,
+			endPos,
+			range,
+		}
+		console.log(greedy.current)
+	}
 
 	const selectionChangeCache = React.useRef({
 		anchorNode:   null, // The selection API start DOM node.
@@ -259,10 +281,6 @@ hello`)
 				return
 			}
 			/* eslint-enable no-multi-spaces */
-
-			// Precompute greedy range:
-			//
-			// TODO: Refactor to function; `onKeyDown` reuses.
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = { ...pos1 }
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
@@ -270,44 +288,7 @@ hello`)
 			}
 			dispatch.select(state.body, pos1, pos2)
 			selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
-
-			// Sort the VDOM cursors:
-			const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
-			const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
-
-			// Compute the greedy DOM and cursor start (-1):
-			let domStart = ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode)
-			let domStartPos = sortedPos1.pos - sortedPos1.offset
-			const { previousSibling } = domStart
-			if (previousSibling) {
-				domStart = previousSibling
-				domStartPos -= `\n${innerText(domStart)}`.length
-			}
-
-			// Compute the greedy DOM and cursor end (+2):
-			let domEnd = ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode) // Do not use reverse order.
-			let domEndPos = sortedPos2.pos + sortedPos2.offsetRemainder
-			let { nextSibling } = domEnd
-			if (nextSibling) {
-				domEnd = nextSibling
-				domEndPos += `\n${innerText(domEnd)}`.length
-				nextSibling = domEnd.nextSibling
-				if (nextSibling) {
-					domEnd = nextSibling
-					domEndPos += `\n${innerText(domEnd)}`.length
-				}
-			}
-
-			const arr = [...ref.current.childNodes]
-			const domLength = arr.indexOf(domEnd) - arr.indexOf(domStart) + 1
-
-			greedy.current = {
-				domStart,          // ...
-				domEnd,            // ...
-				pos1: domStartPos, // ...
-				pos2: domEndPos,   // ...
-				domLength,         // ...
-			}
+			computeGreedy(anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -355,123 +336,67 @@ hello`)
 						default:
 							// No-op.
 						}
-
-						// Precompute greedy range:
-						const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
-						const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						let pos2 = { ...pos1 }
-						if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-							pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
-						}
-						// dispatch.select(state.body, pos1, pos2)
-						selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
-
-						// Sort the VDOM cursors:
-						const sortedPos1 = pos1.pos <= pos2.pos ? pos1 : pos2
-						const sortedPos2 = pos1.pos <= pos2.pos ? pos2 : pos1 // Reverse order.
-
-						// Compute the greedy DOM and cursor start (-1):
-						let domStart = ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode)
-						let domStartPos = sortedPos1.pos - sortedPos1.offset
-						const { previousSibling } = domStart
-						if (previousSibling) {
-							domStart = previousSibling
-							domStartPos -= `\n${innerText(domStart)}`.length
-						}
-
-						// Compute the greedy DOM and cursor end (+2):
-						let domEnd = ascendToGreedyDOMNode(ref.current, pos1 === sortedPos1 ? anchorNode : focusNode) // Do not use reverse order.
-						let domEndPos = sortedPos2.pos + sortedPos2.offsetRemainder
-						let { nextSibling } = domEnd
-						if (nextSibling) {
-							domEnd = nextSibling
-							domEndPos += `\n${innerText(domEnd)}`.length
-							nextSibling = domEnd.nextSibling
-							if (nextSibling) {
-								domEnd = nextSibling
-								domEndPos += `\n${innerText(domEnd)}`.length
-							}
-						}
-
-						const arr = [...ref.current.childNodes]
-						const domLength = arr.indexOf(domEnd) - arr.indexOf(domStart) + 1
-
-						greedy.current = {
-							domStart,          // ...
-							domEnd,            // ...
-							pos1: domStartPos, // ...
-							pos2: domEndPos,   // ...
-							domLength,         // ...
-						}
+						const { anchorNode, focusNode } = document.getSelection()
+						computeGreedy(anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
 					onInput: e => {
+						// Read the mutated data:
 						let data = ""
-						let domNode = greedy.current.domStart
-						while (domNode) {
-							// FIXME: Can simplify expression:
-							//
-							// `data += (domNode.hasNextSibling ...)`?
-							//
-							data += (domNode === greedy.current.domStart ? "" : "\n") + innerText(domNode)
-							if (greedy.current.domLength > 2 && domNode === greedy.current.domEnd) {
+						let currentNode = greedy.current.start
+						while (currentNode) {
+							data += (currentNode === greedy.current.start ? "" : "\n") + innerText(currentNode)
+							if (greedy.current.range > 2 && currentNode === greedy.current.end) {
 								break
 							}
-							domNode = domNode.nextSibling
+							currentNode = currentNode.nextSibling
 						}
-
+						// Compute the current VDOM cursor:
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-
+						// Render:
 						const shouldRender = e.nativeEvent.inputType !== "insertCompositionText"
-						dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, currentPos)
+						dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
 					},
-
-					// onCut: e => {
-					// 	e.preventDefault()
-					// 	if (state.pos1.pos === state.pos2.pos) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-					// 	e.clipboardData.setData("text/plain", data)
-					// 	dispatch.write(true, "")
-					// },
-					//
-					// onCopy: e => {
-					// 	e.preventDefault()
-					// 	if (state.pos1.pos === state.pos2.pos) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-					// 	e.clipboardData.setData("text/plain", data)
-					// },
-					//
-					// onPaste: e => {
-					// 	e.preventDefault()
-					// 	const data = e.clipboardData.getData("text/plain")
-					// 	if (!data) {
-					// 		// No-op.
-					// 		return
-					// 	}
-					// 	dispatch.write(true, data)
-					// },
 
 					onDragStart: e => e.preventDefault(),
 					onDrop:      e => e.preventDefault(),
 				},
 			)}
 			<DebugEditor state={state} />
-			{/* FIXME */}
-			{/* <StatusBar state={state} dispatch={dispatch} /> */}
 		</div>
 	)
 }
 
-// style={stylex.parse("m-x:-24 p-x:24 p-y:32 b:gray-100")}
-// <div ref={src} style={{ display: "none" }}>
-//   {state.Components}
-// </div>
+// onCut: e => {
+// 	e.preventDefault()
+// 	if (state.pos1.pos === state.pos2.pos) {
+// 		// No-op.
+// 		return
+// 	}
+// 	const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+// 	e.clipboardData.setData("text/plain", data)
+// 	dispatch.write(true, "")
+// },
+//
+// onCopy: e => {
+// 	e.preventDefault()
+// 	if (state.pos1.pos === state.pos2.pos) {
+// 		// No-op.
+// 		return
+// 	}
+// 	const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+// 	e.clipboardData.setData("text/plain", data)
+// },
+//
+// onPaste: e => {
+// 	e.preventDefault()
+// 	const data = e.clipboardData.getData("text/plain")
+// 	if (!data) {
+// 		// No-op.
+// 		return
+// 	}
+// 	dispatch.write(true, data)
+// },
 
 export default Editor

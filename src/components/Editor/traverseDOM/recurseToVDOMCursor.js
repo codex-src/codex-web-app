@@ -10,11 +10,11 @@ import {
 export function newVDOMCursor() {
 	const cursor = {
 		greedyDOMNodePos:    0,
-		greedyDOMNodeLength: 0,
+		greedyDOMNodeEndPos: 0,
 		domNodePos:          0,
-		domNodeLength:       0,
+		domNodeEndPos:       0,
 		nodePos:             0,
-		nodeLength:          0,
+		nodeEndPos:          0,
 		pos:                 0,
 	}
 	return cursor
@@ -43,11 +43,11 @@ export function recurseToVDOMCursor(rootNode, node, offset) {
 					const domNode = ascendToDOMNode(rootNode, node)
 					Object.assign(cursor, {
 						greedyDOMNodePos: cursor.greedyDOMNodePos + offset,
-						greedyDOMNodeLength: innerText(greedyDOMNode).length, // DEPRECATE?
+						greedyDOMNodeEndPos: innerText(greedyDOMNode).length - (cursor.greedyDOMNodePos + offset),
 						domNodePos: cursor.domNodePos + offset,
-						domNodeLength: innerText(domNode).length,             // DEPRECATE?
+						domNodeEndPos: innerText(domNode).length - (cursor.domNodePos + offset),
 						nodePos: cursor.nodePos + offset,
-						nodeLength: nodeValue(node).length,                   // DEPRECATE?
+						nodeEndPos: nodeValue(node).length - (cursor.nodePos + offset),
 						pos: cursor.pos + offset,
 					})
 					return true
