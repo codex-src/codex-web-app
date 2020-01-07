@@ -249,7 +249,7 @@ hello`)
 			endPos,
 			range,
 		}
-		console.log(greedy.current)
+		// console.log(greedy.current)
 	}
 
 	const selectionChangeCache = React.useRef({
@@ -359,6 +359,37 @@ hello`)
 						dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
 					},
 
+					onCut: e => {
+						e.preventDefault()
+						if (state.pos1.pos === state.pos2.pos) {
+							// No-op.
+							return
+						}
+						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", data)
+						dispatch.write(true, "")
+					},
+
+					onCopy: e => {
+						e.preventDefault()
+						if (state.pos1.pos === state.pos2.pos) {
+							// No-op.
+							return
+						}
+						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", data)
+					},
+
+					onPaste: e => {
+						e.preventDefault()
+						const data = e.clipboardData.getData("text/plain")
+						if (!data) {
+							// No-op.
+							return
+						}
+						dispatch.write(true, data)
+					},
+
 					onDragStart: e => e.preventDefault(),
 					onDrop:      e => e.preventDefault(),
 				},
@@ -367,36 +398,5 @@ hello`)
 		</div>
 	)
 }
-
-// onCut: e => {
-// 	e.preventDefault()
-// 	if (state.pos1.pos === state.pos2.pos) {
-// 		// No-op.
-// 		return
-// 	}
-// 	const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-// 	e.clipboardData.setData("text/plain", data)
-// 	dispatch.write(true, "")
-// },
-//
-// onCopy: e => {
-// 	e.preventDefault()
-// 	if (state.pos1.pos === state.pos2.pos) {
-// 		// No-op.
-// 		return
-// 	}
-// 	const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-// 	e.clipboardData.setData("text/plain", data)
-// },
-//
-// onPaste: e => {
-// 	e.preventDefault()
-// 	const data = e.clipboardData.getData("text/plain")
-// 	if (!data) {
-// 		// No-op.
-// 		return
-// 	}
-// 	dispatch.write(true, data)
-// },
 
 export default Editor
