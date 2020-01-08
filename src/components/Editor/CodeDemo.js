@@ -1,8 +1,8 @@
 // import md from "lib/encoding/md"
-// import PerfTimer from "lib/PerfTimer"
 // import StatusBar from "components/Note"
 import DebugEditor from "./DebugEditor"
 import parse from "./Components"
+import PerfTimer from "lib/PerfTimer"
 import platform from "lib/platform"
 import React from "react"
 import ReactDOM from "react-dom"
@@ -66,6 +66,36 @@ const reducer = state => ({
 		this.collapse()
 		this.renderDOMComponents(shouldRender)
 	},
+
+	// _delete(lengthL, lengthR) {
+	// 	// Guard the current node:
+	// 	if ((!state.pos1.pos && lengthL) || (state.pos2.pos === state.body.data.length && lengthR)) {
+	// 		// No-op.
+	// 		return
+	// 	}
+	// 	this._prune()
+	// 	state.body = state.body.write("", state.pos1.pos - lengthL, state.pos2.pos + lengthR)
+	// 	state.pos1.pos -= lengthL
+	// 	this._collapse()
+	// 	state.shouldRenderComponents++
+	// },
+	// opBackspace() {
+	// 	if (state.pos1.pos !== state.pos2.pos) {
+	// 		this._delete(0, 0)
+	// 		return
+	// 	}
+	// 	const { length } = utf8.prevChar(state.body.data, state.pos1.pos)
+	// 	this._delete(length, 0)
+	// },
+	// opDelete() {
+	// 	if (state.pos1.pos !== state.pos2.pos) {
+	// 		this._delete(0, 0)
+	// 		return
+	// 	}
+	// 	const { length } = utf8.nextChar(state.body.data, state.pos1.pos)
+	// 	this._delete(0, length)
+	// },
+
 	renderDOMComponents(shouldRender) {
 		state.shouldRenderDOMComponents += shouldRender
 	},
@@ -95,29 +125,22 @@ function Contents(props) {
 	return props.components
 }
 
-// // `newFPSStyleString` returns a new frames per second CSS
-// // inline-style string.
-// function newFPSStyleString(ms) {
-// 	if (ms < 16.67) {
-// 		return "color: lightgreen;"
-// 	} else if (ms < 33.33) {
-// 		return "color: orange;"
-// 	}
-// 	return "color: red;"
-// }
+// `newFPSStyleString` returns a new frames per second CSS
+// inline-style string.
+function newFPSStyleString(ms) {
+	if (ms < 16.67) {
+		return "color: lightgreen;"
+	} else if (ms < 33.33) {
+		return "color: orange;"
+	}
+	return "color: red;"
+}
 
-// const perfRenderPass = new PerfTimer()    // Times the render pass.
-// const perfParser = new PerfTimer()        // Times the component parser phase.
-// const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
-// const perfDOMRenderer = new PerfTimer()   // Times the DOM renderer phase.
-// const perfDOMCursor = new PerfTimer()     // Times the DOM cursor.
-//
-// const p = perfParser.duration()
-// const r = perfReactRenderer.duration()
-// const d = perfDOMRenderer.duration()
-// const c = perfDOMCursor.duration()
-// const a = perfRenderPass.duration()
-// console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${a})`, newFPSStyleString(a))
+const perfRenderPass = new PerfTimer()    // Times the render pass.
+const perfParser = new PerfTimer()        // Times the component parser phase.
+const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
+const perfDOMRenderer = new PerfTimer()   // Times the DOM renderer phase.
+const perfDOMCursor = new PerfTimer()     // Times the DOM cursor.
 
 function Editor(props) {
 	const ref = React.useRef()
@@ -161,16 +184,21 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 	// Should render components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const Components = []
-			Components.push(...parse(state.body))
+			perfParser.restart()
+			const Components = parse(state.body)
+			perfParser.stop()
+			perfReactRenderer.restart()
 			ReactDOM.render(<Contents components={Components} />, state.reactDOM, () => {
+				perfReactRenderer.stop()
 				// Eagerly drop range for performance reasons:
 				//
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				const selection = document.getSelection()
 				selection.removeAllRanges()
-				;[...ref.current.childNodes].map(each => each.remove())               // TODO
+				perfDOMRenderer.restart()
+				;[...ref.current.childNodes].map(each => each.remove())          // TODO
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+				perfDOMRenderer.stop()
 				dispatch.renderDOMCursor()
 			})
 		}, [state, dispatch]),
@@ -184,6 +212,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				// No-op.
 				return
 			}
+			perfDOMCursor.restart()
 			const selection = document.getSelection()
 			const range = document.createRange()
 			const { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
@@ -191,6 +220,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 			range.collapse()
 			// (Range eagerly dropped)
 			selection.addRange(range)
+			perfDOMCursor.stop()
+			perfRenderPass.stop()
+
+			const p = perfParser.duration()
+			const r = perfReactRenderer.duration()
+			const d = perfDOMRenderer.duration()
+			const c = perfDOMCursor.duration()
+			const a = perfRenderPass.duration()
+			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${a})`, newFPSStyleString(a))
 		}, [state]),
 		[state.shouldRenderDOMCursor],
 	)
@@ -295,10 +333,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					onBlur:  dispatch.blur,
 
 					onKeyDown: e => {
-						// Shortcuts:
 						switch (true) {
 						case e.key === "Tab":
 							e.preventDefault()
+							perfRenderPass.restart()
 							dispatch.write(true, "\t")
 							return
 						// Bold:
@@ -318,48 +356,49 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 					// console.log(inputType)
 					onInput: e => {
-						// const { nativeEvent: { inputType } } = e
-						// switch (inputType) {
-						// // 8ba0140
-						// case "deleteWordForward":
-						// 	dispatch.renderDOMComponents(true)
-						// 	return
-						// case "historyUndo":
-						// 	// TODO
-						// 	return
-						// case "historyRedo":
-						// 	// TODO
-						// 	return
-						// // df21f58
-						// case "insertLineBreak":
-						// 	dispatch.write(true, "\n")
-						// 	return
-						// // df21f58
-						// case "insertParagraph":
-						// 	dispatch.write(true, "\n")
-						// 	return
-						// default:
-						// 	// No-op.
-						// }
-						// // Read the mutated DOM:
-						// let data = ""
-						// let currentNode = greedy.current.start
-						// while (currentNode) {
-						// 	if (currentNode !== greedy.current.start) {
-						// 		data += "\n"
-						// 	}
-						// 	data += innerText(currentNode)
-						// 	if (greedy.current.range > 2 && currentNode === greedy.current.end) {
-						// 		break
-						// 	}
-						// 	currentNode = currentNode.nextSibling
-						// }
-						// // Compute the current VDOM cursor:
-						// const { anchorNode, anchorOffset } = document.getSelection()
-						// const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// // Done -- render:
-						// const shouldRender = inputType !== "insertCompositionText"
-						// dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
+						perfRenderPass.restart()
+						const { nativeEvent: { inputType } } = e
+						switch (inputType) {
+						// 8ba0140
+						case "deleteWordForward":
+							dispatch.renderDOMComponents(true)
+							return
+						case "historyUndo":
+							// TODO
+							return
+						case "historyRedo":
+							// TODO
+							return
+						// df21f58
+						case "insertLineBreak":
+							dispatch.write(true, "\n")
+							return
+						// df21f58
+						case "insertParagraph":
+							dispatch.write(true, "\n")
+							return
+						default:
+							// No-op.
+						}
+						// Read the mutated DOM:
+						let data = ""
+						let currentNode = greedy.current.start
+						while (currentNode) {
+							if (currentNode !== greedy.current.start) {
+								data += "\n"
+							}
+							data += innerText(currentNode)
+							if (greedy.current.range > 2 && currentNode === greedy.current.end) {
+								break
+							}
+							currentNode = currentNode.nextSibling
+						}
+						// Compute the current VDOM cursor:
+						const { anchorNode, anchorOffset } = document.getSelection()
+						const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// Done -- render:
+						const shouldRender = inputType !== "insertCompositionText"
+						dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
 					},
 
 					onCut: e => {
@@ -368,6 +407,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							// No-op.
 							return
 						}
+						perfRenderPass.restart()
 						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
 						e.clipboardData.setData("text/plain", data)
 						dispatch.write(true, "")
@@ -379,6 +419,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							// No-op.
 							return
 						}
+						perfRenderPass.restart()
 						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
 						e.clipboardData.setData("text/plain", data)
 					},
@@ -390,6 +431,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							// No-op.
 							return
 						}
+						perfRenderPass.restart()
 						dispatch.write(true, data)
 					},
 
@@ -397,7 +439,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					onDrop:      e => e.preventDefault(),
 				},
 			)}
-			<DebugEditor state={state} />
+			{/* <DebugEditor state={state} /> */}
 		</div>
 	)
 }
