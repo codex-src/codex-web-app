@@ -6,7 +6,9 @@ import PerfTimer from "lib/PerfTimer"
 import platform from "lib/platform"
 import React from "react"
 import ReactDOM from "react-dom"
+import shortcut from "./shortcut"
 import useMethods from "use-methods"
+import utf8 from "lib/encoding/utf8"
 import VDOM from "./VDOM"
 import { innerText } from "./nodeFns"
 import {
@@ -48,52 +50,105 @@ const reducer = state => ({
 		}
 		Object.assign(state, { body, pos1, pos2 })
 	},
-	// `collapse` collapses the VDOM cursors.
-	collapse() {
+	// `_collapse` collapses the VDOM cursors to the start.
+	_collapse() {
 		state.pos2 = { ...state.pos1 }
 	},
 	// `write` writes and renders.
 	write(shouldRender, data) {
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
 		state.pos1.pos += data.length
-		this.collapse()
+		this._collapse()
 		this.renderDOMComponents(shouldRender)
 	},
 	// `greedyWrite` greedily writes and renders.
 	greedyWrite(shouldRender, data, pos1, pos2, currentPos) {
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = currentPos
-		this.collapse()
+		this._collapse()
 		this.renderDOMComponents(shouldRender)
 	},
 
-	// _delete(lengthL, lengthR) {
-	// 	// Guard the current node:
-	// 	if ((!state.pos1.pos && lengthL) || (state.pos2.pos === state.body.data.length && lengthR)) {
-	// 		// No-op.
-	// 		return
-	// 	}
-	// 	this._prune()
-	// 	state.body = state.body.write("", state.pos1.pos - lengthL, state.pos2.pos + lengthR)
-	// 	state.pos1.pos -= lengthL
-	// 	this._collapse()
-	// 	state.shouldRenderComponents++
-	// },
-	// opBackspace() {
-	// 	if (state.pos1.pos !== state.pos2.pos) {
-	// 		this._delete(0, 0)
-	// 		return
-	// 	}
-	// 	const { length } = utf8.prevChar(state.body.data, state.pos1.pos)
-	// 	this._delete(length, 0)
-	// },
+	_delete(delL, delR) {
+		// Guard the anchor or focus node:
+		if ((!state.pos1.pos && delL) || (state.pos2.pos === state.body.data.length && delR)) {
+			// No-op.
+			this.renderDOMComponents(true) // Rerender to be safe.
+			return
+		}
+		state.body = state.body.write("", state.pos1.pos - delL, state.pos2.pos + delR)
+		state.pos1.pos -= delL
+		this._collapse()
+		this.renderDOMComponents(true)
+	},
+	backspace() {
+		if (state.pos1.pos !== state.pos2.pos) {
+			this._delete(0, 0)
+			return
+		}
+		const substr = state.body.data.slice(0, state.pos1.pos)
+		const { length } = utf8.endRune(substr)
+		this._delete(length, 0)
+	},
+	backspaceWord() {
+		if (state.pos1.pos !== state.pos2.pos) {
+			this._delete(0, 0)
+			return
+		}
+		// Iterate spaces:
+		let index = state.pos1.pos
+		while (index) {
+			const rune = utf8.endRune(state.body.data.slice(0, index))
+			if (!utf8.isHWhiteSpace(rune)) {
+				break
+			}
+			index -= rune.length
+		}
+		// Iterate non-word characters:
+		while (index) {
+			const rune = utf8.endRune(state.body.data.slice(0, index))
+			if (utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
+				break
+			}
+			index -= rune.length
+		}
+		// Iterate word characters:
+		while (index) {
+			const rune = utf8.endRune(state.body.data.slice(0, index))
+			if (!utf8.isAlphanum(rune)) {
+				break
+			}
+			index -= rune.length
+		}
+		const length = state.pos1.pos - index
+		this._delete(length || 1, 0) // Must delete one or more characters.
+	},
+	backspaceLine() {
+		if (state.pos1.pos !== state.pos2.pos) {
+			this._delete(0, 0)
+			return
+		}
+		let index = state.pos1.pos
+		while (index) {
+			const rune = utf8.endRune(state.body.data.slice(0, index))
+			if (utf8.isVWhiteSpace(rune)) {
+				break
+			}
+			index -= rune.length
+		}
+		const length = state.pos1.pos - index
+		this._delete(length || 1, 0) // Must delete one or more characters.
+	},
 	// opDelete() {
 	// 	if (state.pos1.pos !== state.pos2.pos) {
-	// 		this._delete(0, 0)
+	// 		this.delete(0, 0)
 	// 		return
 	// 	}
 	// 	const { length } = utf8.nextChar(state.body.data, state.pos1.pos)
-	// 	this._delete(0, length)
+	// 	this.delete(0, length)
+	// },
+	// opDeleteWord() {
+	// 	// TODO
 	// },
 
 	renderDOMComponents(shouldRender) {
@@ -145,41 +200,45 @@ const perfDOMCursor = new PerfTimer()     // Times the DOM cursor.
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+	const [state, dispatch] = useEditor(`hello
+hello
+hello`)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-## How to build a beautiful blog
-
-\`\`\`go
-package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("hello, world!")
-}
-\`\`\`
-
-### How to build a beautiful blog
-
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
->
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
->
-> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-#### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-##### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-###### How to build a beautiful blog
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ## How to build a beautiful blog
+	//
+	// \`\`\`go
+	// package main
+	//
+	// import "fmt"
+	//
+	// func main() {
+	// 	fmt.Println("hello, world!")
+	// }
+	// \`\`\`
+	//
+	// ### How to build a beautiful blog
+	//
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	// >
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	// >
+	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// #### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ##### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	//
+	// ###### How to build a beautiful blog
+	//
+	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render components:
 	React.useLayoutEffect(
@@ -339,14 +398,30 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							perfRenderPass.restart()
 							dispatch.write(true, "\t")
 							return
-						// Bold:
-						case platform.isMetaOrCtrlKey(e) && e.keyCode === 66: // B
+						case shortcut.isBackspace(e):
 							e.preventDefault()
+							perfRenderPass.restart()
+							dispatch.backspace()
 							return
-						// Italic:
-						case platform.isMetaOrCtrlKey(e) && e.keyCode === 73: // I
+						case shortcut.isBackspaceWord(e):
 							e.preventDefault()
+							perfRenderPass.restart()
+							dispatch.backspaceWord()
 							return
+						case shortcut.isBackspaceLine(e):
+							e.preventDefault()
+							perfRenderPass.restart()
+							dispatch.backspaceLine()
+							return
+
+						// // Bold:
+						// case platform.isMetaOrCtrlKey(e) && e.keyCode === 66: // B
+						// 	e.preventDefault()
+						// 	return
+						// // Italic:
+						// case platform.isMetaOrCtrlKey(e) && e.keyCode === 73: // I
+						// 	e.preventDefault()
+						// 	return
 						default:
 							// No-op.
 						}
@@ -354,15 +429,22 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						updateGreedy(anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
-					// console.log(inputType)
 					onInput: e => {
 						perfRenderPass.restart()
 						const { nativeEvent: { inputType } } = e
+						console.log({ inputType })
 						switch (inputType) {
-						// 8ba0140
-						case "deleteWordForward":
-							dispatch.renderDOMComponents(true)
-							return
+						// case "deleteWordBackward":
+						// 	console.log("test")
+						// 	dispatch.backspaceWord()
+						// 	return
+						// case "deleteSoftLineBackward":
+						// 	dispatch.backspaceLine()
+						// 	return
+						// // 8ba0140
+						// case "deleteWordForward":
+						// 	dispatch.renderDOMComponents(true)
+						// 	return
 						case "historyUndo":
 							// TODO
 							return
@@ -401,15 +483,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						// TODO: Can eagerly compute parsed components,
 						// hinting whether to rerender.
 						const _data = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
-						const str = _data.slice(currentPos.greedyDOMNodePos - 3, currentPos.greedyDOMNodePos + 2)
+						const substr = _data.slice(currentPos.greedyDOMNodePos - 3, currentPos.greedyDOMNodePos + 2)
 						const shouldRender = (
 							(
 								inputType !== "insertText" ||
-								md.isSyntax(str.slice(0, 1)) || // n - 3 -> #
-								md.isSyntax(str.slice(1, 2)) || // n - 2 -> ·
-								md.isSyntax(str.slice(2, 3)) || // n - 1 -> H
-								md.isSyntax(str.slice(3, 4)) || // n     -> e
-								md.isSyntax(str.slice(4, 5))    // n + 1 -> l
+								md.isSyntax(substr.slice(0, 1)) || // n - 3 -> #
+								md.isSyntax(substr.slice(1, 2)) || // n - 2 -> ·
+								md.isSyntax(substr.slice(2, 3)) || // n - 1 -> H
+								md.isSyntax(substr.slice(3, 4)) || // n     -> e
+								md.isSyntax(substr.slice(4, 5))    // n + 1 -> l
 							) &&
 							inputType !== "insertCompositionText"
 						)
@@ -454,7 +536,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					onDrop:      e => e.preventDefault(),
 				},
 			)}
-			{/* <DebugEditor state={state} /> */}
+			<DebugEditor state={state} />
 		</div>
 	)
 }
