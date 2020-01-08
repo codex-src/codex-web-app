@@ -15,6 +15,7 @@ export function newVDOMCursor() {
 	const cursor = {
 		greedyDOMNodePos:    0,
 		greedyDOMNodeEndPos: 0,
+		domNodeIndex:        0, // New.
 		domNodePos:          0,
 		domNodeEndPos:       0,
 		nodePos:             0,
@@ -73,6 +74,7 @@ export function recurseToVDOMCursor(rootNode, node, offset) {
 					// Increment paragraph:
 					Object.assign(cursor, {
 						greedyDOMNodePos: cursor.greedyDOMNodePos + 1,
+						domNodeIndex: cursor.domNodeIndex + 1,
 						domNodePos: 0, // Reset.
 						pos: cursor.pos + 1,
 					})

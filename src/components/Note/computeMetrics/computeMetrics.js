@@ -1,15 +1,15 @@
 function computeLine(state) {
-	const count = state.pos1.index + 1
+	const count = state.pos1.domNodeIndex + 1
 	return { count, desc: "line" }
 }
 
 function computeColumn(state) {
-	const count = state.pos1.offset + 1
+	const count = state.pos1.domNodePos + 1
 	return { count, desc: "column" }
 }
 
 function computeSelectedLines(state) {
-	const count = state.pos2.index - state.pos1.index + 1
+	const count = state.pos2.domNodeIndex - state.pos1.domNodeIndex + 1
 	return { count, desc: "line" }
 }
 

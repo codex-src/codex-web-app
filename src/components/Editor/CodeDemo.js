@@ -1,4 +1,3 @@
-// import StatusBar from "components/Note"
 import DebugEditor from "./DebugEditor"
 import inputType from "./inputType"
 import md from "lib/encoding/md"
@@ -7,6 +6,7 @@ import PerfTimer from "lib/PerfTimer"
 import React from "react"
 import ReactDOM from "react-dom"
 import shortcut from "./shortcut"
+import StatusBar from "components/Note"
 import useMethods from "use-methods"
 import utf8 from "lib/encoding/utf8"
 import VDOM from "./VDOM"
@@ -100,7 +100,7 @@ const reducer = state => ({
 		this.write(true, "\n")
 	},
 	_drop(delL, delR) {
-		// Guard the anchor or focus node:
+		// Guard the anchor node or focus node:
 		if ((!state.pos1.pos && delL) || (state.pos2.pos === state.body.data.length && delR)) {
 			// No-op.
 			this.renderDOMComponents(true) // Rerender to be safe.
@@ -322,7 +322,8 @@ function Editor(props) {
 			;[pos1, pos2] = [pos2, pos1]
 		}
 		// Compute the start (extend 1):
-		let domNodeStart = ascendToGreedyDOMNode(ref.current, anchorNode)
+		const currentDOMNode = ascendToDOMNode(ref.current, anchorNode)
+		let domNodeStart = ascendToGreedyDOMNode(ref.current, currentDOMNode)
 		let _pos1 = pos1.pos - pos1.greedyDOMNodePos
 		let extendStart = 1
 		while (extendStart && domNodeStart.previousSibling) {
@@ -344,11 +345,12 @@ function Editor(props) {
 		const range = childNodes.indexOf(domNodeEnd) - childNodes.indexOf(domNodeStart) + 1
 		// Done -- set `greedy.current`:
 		greedy.current = {
-			domNodeStart, // The greedy DOM node start.
-			domNodeEnd,   // The greedy DOM node end.
-			pos1: _pos1,  // The greedy DOM node start cursor position.
-			pos2: _pos2,  // The greedy DOM node end cursor position.
-			range,        // The greedy DOM node range.
+			currentDOMNode, // The current DOM node -- not greedy!
+			domNodeStart,   // The greedy DOM node start.
+			domNodeEnd,     // The greedy DOM node end.
+			pos1: _pos1,    // The greedy DOM node start cursor position.
+			pos2: _pos2,    // The greedy DOM node end cursor position.
+			range,          // The greedy DOM node range.
 		}
 	}
 
@@ -507,28 +509,38 @@ function Editor(props) {
 					// 	dispatch.enter()
 					// 	return
 
-					// TODO: Read (changed) data before and after the
-					// cursor.
 					onInput: e => {
+						console.log({ ...e })
+
+						// TODO: `perfRenderPass` may belong in
+						// `dispatch.write` and or
+						// `dispatch.greedyWrite`.
 						perfRenderPass.restart()
 						// Compute the greedy DOM node data and VDOM
 						// cursor:
 						const { anchorNode, anchorOffset } = document.getSelection()
-						const greedyDOMNodeData = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
+						const currentDOMNode = ascendToDOMNode(ref.current, anchorNode)
+						const greedyDOMNode = ascendToGreedyDOMNode(ref.current, currentDOMNode)
+						const greedyDOMNodeData = innerText(greedyDOMNode)
 						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						switch (true) {
 						case inputType.isEnter(e):
 							dispatch.enter()
 							return
+						// Enter when typing -- edge case (compound
+						// components):
+						case inputType.isTyping(e) && currentDOMNode !== greedy.current.currentDOMNode:
+							const d1 = `${innerText(greedy.current.currentDOMNode)}\n`
+							const d2 = `${innerText(currentDOMNode)}\n`
+							dispatch.greedyWrite(true, d1 + d2, pos.pos - d1.length, pos.pos + d2.length - 1, pos)
+							return
 						case inputType.isBackspace(e):
-							// FIXME
-							if (pos.greedyDOMNodePos && greedyDOMNodeData[pos.greedyDOMNodePos - 1] !== "\n") {
-								// No-op.
-								// (Do not return)
-								console.log("a")
-								break
-							}
-							console.log("b")
+							// // TODO
+							// if (pos.greedyDOMNodePos && greedyDOMNodeData[pos.greedyDOMNodePos - 1] !== "\n") {
+							// 	// No-op.
+							// 	// (Do not return)
+							// 	break
+							// }
 							dispatch.backspace()
 							return
 						case inputType.isBackspaceWord(e):
@@ -538,12 +550,12 @@ function Editor(props) {
 							dispatch.backspaceLine()
 							return
 						case inputType.isDelete(e):
-							// FIXME
-							if (pos.greedyDOMNodePos < greedyDOMNodeData.length && greedyDOMNodeData[pos.greedyDOMNodePos] !== "\n") {
-								// No-op.
-								// (Do not return)
-								break
-							}
+							// // TODO
+							// if (pos.greedyDOMNodePos < greedyDOMNodeData.length && greedyDOMNodeData[pos.greedyDOMNodePos] !== "\n") {
+							// 	// No-op.
+							// 	// (Do not return)
+							// 	break
+							// }
 							dispatch.delete()
 							return
 						case inputType.isDeleteWord(e):
@@ -590,64 +602,13 @@ function Editor(props) {
 								md.isSyntax(substr.slice(2, 3)) || // n - 1 -> H
 								md.isSyntax(substr.slice(3, 4)) || // n     -> e
 								md.isSyntax(substr.slice(4, 5))    // n + 1 -> l
-							) &&
-							e.nativeEvent.inputType !== "insertCompositionText"
+							) && (
+								!pos.domNodePos || // Temporary fix for compound components on Android.
+								e.nativeEvent.inputType !== "insertCompositionText"
+							)
 						)
 						// Done -- render:
 						dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, pos)
-
-						// perfRenderPass.restart()
-						// const { nativeEvent: { inputType } } = e
-						// switch (true) {
-						// // Backspace and delete events are handled on
-						// // desktop (`onKeyDown`) but on mobile (Android)
-						// // there are less guarentees:
-						// case inputType === "deleteContentBackward" || inputType === "deleteWordBackward" || inputType === "deleteSoftLineBackward":
-						// 	dispatch.backspace()
-						// 	return
-						// // (See above)
-						// case inputType === "deleteContentForward" || inputType === "deleteWordForward" /* TODO */:
-						// 	dispatch.delete()
-						// 	return
-						// case inputType === "historyUndo" || inputType === "historyRedo":
-						// 	// TODO
-						// 	return
-						// default:
-						// 	// No-op.
-						// }
-						// // Read the mutated DOM:
-						// let data = ""
-						// let currentNode = greedy.current.start
-						// while (currentNode) {
-						// 	if (currentNode !== greedy.current.start) {
-						// 		data += "\n"
-						// 	}
-						// 	data += innerText(currentNode)
-						// 	if (greedy.current.range > 2 && currentNode === greedy.current.end) {
-						// 		break
-						// 	}
-						// 	currentNode = currentNode.nextSibling
-						// }
-						// // Compute the current VDOM cursor:
-						// const { anchorNode, anchorOffset } = document.getSelection()
-						// const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// // Done -- render:
-						// //
-						// // TODO: Refer to parser for `shouldRender`.
-						// const greedyDOMNodeData = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
-						// const substr = greedyDOMNodeData.slice(currentPos.greedyDOMNodePos - 3, currentPos.greedyDOMNodePos + 2)
-						// const shouldRender = (
-						// 	(
-						// 		inputType !== "insertText" ||
-						// 		md.isSyntax(substr.slice(0, 1)) || // n - 3 -> #
-						// 		md.isSyntax(substr.slice(1, 2)) || // n - 2 -> ·
-						// 		md.isSyntax(substr.slice(2, 3)) || // n - 1 -> H
-						// 		md.isSyntax(substr.slice(3, 4)) || // n     -> e
-						// 		md.isSyntax(substr.slice(4, 5))    // n + 1 -> l
-						// 	) &&
-						// 	inputType !== "insertCompositionText"
-						// )
-						// dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
 					},
 
 					onCut: e => {
@@ -688,7 +649,9 @@ function Editor(props) {
 					onDrop:      e => e.preventDefault(),
 				},
 			)}
+			{/* Use React context? */}
 			<DebugEditor state={state} />
+			<StatusBar state={state} dispatch={dispatch} />
 		</div>
 	)
 }

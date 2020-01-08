@@ -7,7 +7,7 @@ const DebugEditor = props => (
 			{JSON.stringify(
 				{
 					// data: props.state.body.data,
-					body: props.state.body,
+					// body: props.state.body,
 					pos1: props.state.pos1,
 					pos2: props.state.pos2,
 				},

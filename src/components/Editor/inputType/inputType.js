@@ -1,5 +1,17 @@
 // DO NOT EDIT
 
+export function isTyping(e) {
+	switch (e.nativeEvent.inputType) {
+	case "insertText":
+		return true
+	case "insertCompositionText":
+		return true
+	default:
+		// No-op.
+	}
+	return false
+}
+
 export function isEnter(e) {
 	switch (e.nativeEvent.inputType) {
 	case "insertLineBreak":
