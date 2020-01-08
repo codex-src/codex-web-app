@@ -197,18 +197,18 @@ function newFPSStyleString(ms) {
 	return "color: red;"
 }
 
-const perfRenderPass = new PerfTimer()    // Times the render pass.
-const perfParser = new PerfTimer()        // Times the component parser phase.
+/* eslint-disable no-multi-spaces */
+const perfRenderPass    = new PerfTimer() // Times the render pass.
+const perfParser        = new PerfTimer() // Times the component parser phase.
 const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
-const perfDOMRenderer = new PerfTimer()   // Times the DOM renderer phase.
-const perfDOMCursor = new PerfTimer()     // Times the DOM cursor.
+const perfDOMRenderer   = new PerfTimer() // Times the DOM renderer phase.
+const perfDOMCursor     = new PerfTimer() // Times the DOM cursor.
+/* eslint-enable no-multi-spaces */
 
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useEditor(`hello🙋🏿‍♀️🙋🏿‍♀️
-hello
-hello`)
+	const [state, dispatch] = useEditor("hello")
 
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
@@ -296,8 +296,9 @@ hello`)
 			const r = perfReactRenderer.duration()
 			const d = perfDOMRenderer.duration()
 			const c = perfDOMCursor.duration()
-			const a = perfRenderPass.duration()
-			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${a})`, newFPSStyleString(a))
+			const sum = p + r + d + c
+			// const a = perfRenderPass.duration()
+			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
 		}, [state]),
 		[state.shouldRenderDOMCursor],
 	)
@@ -316,7 +317,7 @@ hello`)
 		let extendStart = 1
 		while (extendStart && start.previousSibling) {
 			start = start.previousSibling
-			startPos -= innerText(start).length + 1 // Paragraph.
+			startPos -= innerText(start).length + 1
 			extendStart--
 		}
 		// Compute the end (extend 2):
@@ -325,7 +326,7 @@ hello`)
 		let extendEnd = 2
 		while (extendEnd && end.nextSibling) {
 			end = end.nextSibling
-			endPos += innerText(end).length + 1 // Paragraph.
+			endPos += innerText(end).length + 1
 			extendEnd--
 		}
 		// Compute the range:
@@ -342,10 +343,10 @@ hello`)
 	}
 
 	const selectionChangeCache = React.useRef({
-		anchorNode:   null, // The selection API start DOM node.
-		anchorOffset: 0,    // The selection API start DOM node offset.
-		focusNode:    null, // The selection API end DOM node.
-		focusOffset:  0,    // The selection API end DOM node offset.
+		anchorNode:   null,
+		anchorOffset: 0,
+		focusNode:    null,
+		focusOffset:  0,
 	})
 
 	React.useLayoutEffect(() => {
@@ -415,7 +416,6 @@ hello`)
 							//
 							// NOTE: Firefox (72) does not correctly
 							// handle backspace on emoji.
-
 							if (
 								state.pos1.pos === state.pos2.pos &&         // Cursors are collapsed and
 								state.pos1.pos &&                            // bounds check and
@@ -455,11 +455,9 @@ hello`)
 							return
 						case shortcut.isBold(e):
 							e.preventDefault()
-							// TODO
 							return
 						case shortcut.isItalic(e):
 							e.preventDefault()
-							// TODO
 							return
 						default:
 							// No-op.
@@ -505,7 +503,7 @@ hello`)
 						// Compute the current VDOM cursor:
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// Done -- render (incl. native rendering):
+						// Done -- render:
 						//
 						// TODO: Can eagerly compute parsed components,
 						// hinting whether to rerender.

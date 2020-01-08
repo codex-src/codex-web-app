@@ -2,7 +2,7 @@ import React from "react"
 import stylex from "stylex"
 
 const DebugEditor = props => (
-	<pre style={stylex.parse("p-y:28 overflow -x:scroll")}>
+	<pre style={stylex.parse("p-y:28 pre-wrap overflow -x:scroll")}>
 		<p style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 			{JSON.stringify(
 				{

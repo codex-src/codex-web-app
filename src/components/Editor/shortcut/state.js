@@ -20,7 +20,7 @@ export function isRedo(e) {
 		e.shiftKey &&
 		!e.altKey &&
 		platform.isMetaOrCtrlKey(e) &&
-		(e.keyCode === keyCode.z || e.keyCode === keyCode.y) // Rhs untested.
+		(e.keyCode === keyCode.z || e.keyCode === keyCode.y) // Yank untested.
 	)
 	return ok
 }
