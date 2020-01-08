@@ -396,18 +396,20 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						// Compute the current VDOM cursor:
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// Done -- render:
+						// Done -- render (incl. native rendering):
 						//
 						// TODO: Can eagerly compute parsed components,
 						// hinting whether to rerender.
 						const _data = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
-						const chars = _data.slice(currentPos.greedyDOMNodePos - 1, currentPos.greedyDOMNodePos + 3)
+						const str = _data.slice(currentPos.greedyDOMNodePos - 3, currentPos.greedyDOMNodePos + 2)
 						const shouldRender = (
 							(
-								md.isSyntax(chars.slice(0, 1)) || // n - 2
-								md.isSyntax(chars.slice(1, 2)) || // n - 1
-								md.isSyntax(chars.slice(2, 3)) || // n
-								md.isSyntax(chars.slice(3, 4))    // n + 1
+								inputType !== "insertText" ||
+								md.isSyntax(str.slice(0, 1)) || // n - 3 -> #
+								md.isSyntax(str.slice(1, 2)) || // n - 2 -> ·
+								md.isSyntax(str.slice(2, 3)) || // n - 1 -> H
+								md.isSyntax(str.slice(3, 4)) || // n     -> e
+								md.isSyntax(str.slice(4, 5))    // n + 1 -> l
 							) &&
 							inputType !== "insertCompositionText"
 						)
