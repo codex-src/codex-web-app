@@ -1,14 +1,14 @@
 import {
 	endRune,
-	runeLength,
+	runeCount,
 	startRune,
 } from "../rune"
 
-test("runeLength", () => {
-	expect(runeLength("")).toBe(0)
-	expect(runeLength("🐶")).toBe(1)
-	expect(runeLength("🐶🐱")).toBe(2)
-	expect(runeLength("🐶🐱🐭")).toBe(3)
+test("runeCount", () => {
+	expect(runeCount("")).toBe(0)
+	expect(runeCount("🐶")).toBe(1)
+	expect(runeCount("🐶🐱")).toBe(2)
+	expect(runeCount("🐶🐱🐭")).toBe(3)
 })
 
 test("startRune", () => {
