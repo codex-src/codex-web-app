@@ -9,8 +9,6 @@ function formatMMDDYYYY(year, month, day, showYear) {
 }
 
 // E.g. 2006/01/02.
-//
-// TODO: Add test suite.
 export function formatDateShorthand(year, month, day, showYear = true, useMMDDYYYY = false) {
 	if (useMMDDYYYY) {
 		return formatMMDDYYYY(year, month, day, showYear)
@@ -22,8 +20,6 @@ export function formatDateShorthand(year, month, day, showYear = true, useMMDDYY
 }
 
 // E.g. January 1st, 2006.
-//
-// TODO: Add test suite.
 export function formatDate(year, month, day, showYear = true) {
 	let suffix = "th"
 	if (day % 10 === 1) {

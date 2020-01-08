@@ -16,9 +16,8 @@ function isDeleteMacOS(e) {
 	return ok
 }
 
-// NOTE: macOS accepts `ctrl-d` and `delete`.
 export function isDelete(e) {
-	// Guard macOS:
+	// Guard macOS (^-d):
 	if (platform.isMacOS && isDeleteMacOS(e)) {
 		return true
 	}

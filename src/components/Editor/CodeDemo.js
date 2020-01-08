@@ -3,15 +3,20 @@ import DebugEditor from "./DebugEditor"
 import md from "lib/encoding/md"
 import parse from "./Components"
 import PerfTimer from "lib/PerfTimer"
-import platform from "lib/platform"
 import React from "react"
 import ReactDOM from "react-dom"
 import shortcut from "./shortcut"
 import useMethods from "use-methods"
 import utf8 from "lib/encoding/utf8"
 import VDOM from "./VDOM"
-import { innerText } from "./nodeFns"
+
 import {
+	innerText,
+	isBreakNode,
+} from "./nodeFns"
+
+import {
+	ascendToDOMNode,
 	ascendToGreedyDOMNode,
 	newVDOMCursor,
 	recurseToDOMCursor,
@@ -68,8 +73,13 @@ const reducer = state => ({
 		this._collapse()
 		this.renderDOMComponents(shouldRender)
 	},
-
-	_delete(delL, delR) {
+	tab() {
+		this.write(true, "\t")
+	},
+	enter() {
+		this.write(true, "\n")
+	},
+	_drop(delL, delR) {
 		// Guard the anchor or focus node:
 		if ((!state.pos1.pos && delL) || (state.pos2.pos === state.body.data.length && delR)) {
 			// No-op.
@@ -83,16 +93,15 @@ const reducer = state => ({
 	},
 	backspace() {
 		if (state.pos1.pos !== state.pos2.pos) {
-			this._delete(0, 0)
+			this._drop(0, 0)
 			return
 		}
-		const substr = state.body.data.slice(0, state.pos1.pos)
-		const { length } = utf8.endRune(substr)
-		this._delete(length, 0)
+		const { length } = utf8.endRune(state.body.data.slice(0, state.pos1.pos))
+		this._drop(length, 0)
 	},
 	backspaceWord() {
 		if (state.pos1.pos !== state.pos2.pos) {
-			this._delete(0, 0)
+			this._drop(0, 0)
 			return
 		}
 		// Iterate spaces:
@@ -121,11 +130,11 @@ const reducer = state => ({
 			index -= rune.length
 		}
 		const length = state.pos1.pos - index
-		this._delete(length || 1, 0) // Must delete one or more characters.
+		this._drop(length || 1, 0) // Must delete one or more characters.
 	},
 	backspaceLine() {
 		if (state.pos1.pos !== state.pos2.pos) {
-			this._delete(0, 0)
+			this._drop(0, 0)
 			return
 		}
 		let index = state.pos1.pos
@@ -137,19 +146,16 @@ const reducer = state => ({
 			index -= rune.length
 		}
 		const length = state.pos1.pos - index
-		this._delete(length || 1, 0) // Must delete one or more characters.
+		this._drop(length || 1, 0) // Must delete one or more characters.
 	},
-	// opDelete() {
-	// 	if (state.pos1.pos !== state.pos2.pos) {
-	// 		this.delete(0, 0)
-	// 		return
-	// 	}
-	// 	const { length } = utf8.nextChar(state.body.data, state.pos1.pos)
-	// 	this.delete(0, length)
-	// },
-	// opDeleteWord() {
-	// 	// TODO
-	// },
+	delete() {
+		if (state.pos1.pos !== state.pos2.pos) {
+			this._drop(0, 0)
+			return
+		}
+		const { length } = utf8.startRune(state.body.data.slice(state.pos1.pos))
+		this._drop(0, length)
+	},
 
 	renderDOMComponents(shouldRender) {
 		state.shouldRenderDOMComponents += shouldRender
@@ -200,7 +206,7 @@ const perfDOMCursor = new PerfTimer()     // Times the DOM cursor.
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useEditor(`hello
+	const [state, dispatch] = useEditor(`hello🙋🏿‍♀️🙋🏿‍♀️
 hello
 hello`)
 
@@ -274,7 +280,11 @@ hello`)
 			perfDOMCursor.restart()
 			const selection = document.getSelection()
 			const range = document.createRange()
-			const { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
+			// Guard break nodes (Firefox):
+			let { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
+			if (isBreakNode(node)) {
+				node = ascendToDOMNode(ref.current, node)
+			}
 			range.setStart(node, offset)
 			range.collapse()
 			// (Range eagerly dropped)
@@ -294,7 +304,7 @@ hello`)
 
 	const greedy = React.useRef()
 
-	const updateGreedy = (anchorNode, focusNode, pos1, pos2) => {
+	const newGreedyRange = (anchorNode, focusNode, pos1, pos2) => {
 		// Sort the nodes and VDOM cursors:
 		if (pos1.pos > pos2.pos) {
 			;[anchorNode, focusNode] = [focusNode, anchorNode]
@@ -367,7 +377,7 @@ hello`)
 			}
 			dispatch.select(state.body, pos1, pos2)
 			selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
-			updateGreedy(anchorNode, focusNode, pos1, pos2)
+			newGreedyRange(anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -392,59 +402,76 @@ hello`)
 					onBlur:  dispatch.blur,
 
 					onKeyDown: e => {
+						perfRenderPass.restart()
 						switch (true) {
 						case e.key === "Tab":
 							e.preventDefault()
-							perfRenderPass.restart()
-							dispatch.write(true, "\t")
+							dispatch.tab()
 							return
 						case shortcut.isBackspace(e):
+							// Defer to native browser behavior because
+							// backspace on emoji is well behaved in
+							// Chrome and Safari.
+							//
+							// NOTE: Firefox (72) does not correctly
+							// handle backspace on emoji.
+
+							if (
+								state.pos1.pos === state.pos2.pos &&         // Cursors are collapsed and
+								state.pos1.pos &&                            // bounds check and
+								state.body.data[state.pos1.pos - 1] !== "\n" // non-paragraph character (before).
+							) {
+								// No-op.
+								return
+							}
 							e.preventDefault()
-							perfRenderPass.restart()
 							dispatch.backspace()
 							return
 						case shortcut.isBackspaceWord(e):
 							e.preventDefault()
-							perfRenderPass.restart()
 							dispatch.backspaceWord()
 							return
 						case shortcut.isBackspaceLine(e):
 							e.preventDefault()
-							perfRenderPass.restart()
 							dispatch.backspaceLine()
 							return
-
-						// // Bold:
-						// case platform.isMetaOrCtrlKey(e) && e.keyCode === 66: // B
-						// 	e.preventDefault()
-						// 	return
-						// // Italic:
-						// case platform.isMetaOrCtrlKey(e) && e.keyCode === 73: // I
-						// 	e.preventDefault()
-						// 	return
+						case shortcut.isDelete(e):
+							// Defer to native browser behavior because
+							// delete on emoji is well behaved in Chrome
+							// and Safari.
+							//
+							// NOTE: Surprisingly, Firefox (72) does
+							// correctly handle delete on emoji.
+							if (
+								state.pos1.pos === state.pos2.pos &&       // Cursors are collapsed and
+								state.pos1.pos < state.body.data.length && // bounds check and
+								state.body.data[state.pos1.pos] !== "\n"   // non-paragraph character (after).
+							) {
+								// No-op.
+								return
+							}
+							e.preventDefault()
+							dispatch.delete()
+							return
+						case shortcut.isBold(e):
+							e.preventDefault()
+							// TODO
+							return
+						case shortcut.isItalic(e):
+							e.preventDefault()
+							// TODO
+							return
 						default:
 							// No-op.
 						}
 						const { anchorNode, focusNode } = document.getSelection()
-						updateGreedy(anchorNode, focusNode, state.pos1, state.pos2)
+						newGreedyRange(anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
 					onInput: e => {
 						perfRenderPass.restart()
 						const { nativeEvent: { inputType } } = e
-						console.log({ inputType })
 						switch (inputType) {
-						// case "deleteWordBackward":
-						// 	console.log("test")
-						// 	dispatch.backspaceWord()
-						// 	return
-						// case "deleteSoftLineBackward":
-						// 	dispatch.backspaceLine()
-						// 	return
-						// // 8ba0140
-						// case "deleteWordForward":
-						// 	dispatch.renderDOMComponents(true)
-						// 	return
 						case "historyUndo":
 							// TODO
 							return
@@ -453,11 +480,11 @@ hello`)
 							return
 						// df21f58
 						case "insertLineBreak":
-							dispatch.write(true, "\n")
+							dispatch.enter()
 							return
 						// df21f58
 						case "insertParagraph":
-							dispatch.write(true, "\n")
+							dispatch.enter()
 							return
 						default:
 							// No-op.

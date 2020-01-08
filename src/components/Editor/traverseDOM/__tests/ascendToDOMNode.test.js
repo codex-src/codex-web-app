@@ -1,6 +1,10 @@
 import React from "react"
 import RenderDOM from "lib/RenderDOM"
-import { ascendToDOMNode, ascendToGreedyDOMNode } from "../ascendToDOMNode"
+
+import {
+	ascendToDOMNode,
+	ascendToGreedyDOMNode,
+} from "../ascendToDOMNode"
 
 test("integration", () => {
 	const Component = props => (

@@ -1,4 +1,8 @@
-import { ascendToDOMNode, ascendToGreedyDOMNode } from "./ascendToDOMNode"
+import {
+	ascendToDOMNode,
+	ascendToGreedyDOMNode,
+} from "./ascendToDOMNode"
+
 import {
 	innerText,
 	isBreakOrTextNode,
@@ -24,7 +28,8 @@ export function newVDOMCursor() {
 // DOM cursor.
 export function recurseToVDOMCursor(rootNode, node, offset) {
 	const cursor = newVDOMCursor()
-	if (node.childNodes && node.childNodes.length) {
+	// Guard node and offset (Firefox):
+	while (node.childNodes && node.childNodes.length) {
 		node = node.childNodes[offset]
 		offset = 0
 	}

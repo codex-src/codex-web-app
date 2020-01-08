@@ -2,7 +2,7 @@
 // encoded Unicode character.
 //
 // https://golang.org/pkg/unicode/utf8/#pkg-constants
-const UTF8MaxBytesPerCharacter = 4
+export const UTF8MaxBytesPerCharacter = 4
 
 // `runeCount` counts the number of runes.
 export function runeCount(str) {
