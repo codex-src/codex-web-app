@@ -18,7 +18,7 @@ const Node = render => ({ reactKey, ...props }) => {
 		element,
 		{
 			"id": reactKey,
-			"data-vdom-node": reactKey,
+			"data-vdom-node": true, // reactKey,
 			...element.props,
 		},
 	)

@@ -1,5 +1,6 @@
 // import StatusBar from "components/Note"
 import DebugEditor from "./DebugEditor"
+import inputType from "./inputType"
 import md from "lib/encoding/md"
 import parse from "./Components"
 import PerfTimer from "lib/PerfTimer"
@@ -24,6 +25,25 @@ import {
 } from "./traverseDOM"
 
 import "./code-demo.css"
+
+/* eslint-disable no-multi-spaces */
+const perfRenderPass    = new PerfTimer() // Times the render pass.
+const perfParser        = new PerfTimer() // Times the component parser phase.
+const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
+const perfDOMRenderer   = new PerfTimer() // Times the DOM renderer phase.
+const perfDOMCursor     = new PerfTimer() // Times the DOM cursor.
+/* eslint-enable no-multi-spaces */
+
+// `newFPSStyleString` returns a new frames per second CSS
+// inline-style string.
+function newFPSStyleString(ms) {
+	if (ms < 16.67) {
+		return "color: lightgreen;"
+	} else if (ms < 33.33) {
+		return "color: orange;"
+	}
+	return "color: red;"
+}
 
 const initialState = {
 	isFocused: false,
@@ -67,9 +87,9 @@ const reducer = state => ({
 		this.renderDOMComponents(shouldRender)
 	},
 	// `greedyWrite` greedily writes and renders.
-	greedyWrite(shouldRender, data, pos1, pos2, currentPos) {
+	greedyWrite(shouldRender, data, pos1, pos2, resetPos) {
 		state.body = state.body.write(data, pos1, pos2)
-		state.pos1 = currentPos
+		state.pos1 = resetPos
 		this._collapse()
 		this.renderDOMComponents(shouldRender)
 	},
@@ -186,29 +206,18 @@ function Contents(props) {
 	return props.components
 }
 
-// `newFPSStyleString` returns a new frames per second CSS
-// inline-style string.
-function newFPSStyleString(ms) {
-	if (ms < 16.67) {
-		return "color: lightgreen;"
-	} else if (ms < 33.33) {
-		return "color: orange;"
-	}
-	return "color: red;"
-}
-
-/* eslint-disable no-multi-spaces */
-const perfRenderPass    = new PerfTimer() // Times the render pass.
-const perfParser        = new PerfTimer() // Times the component parser phase.
-const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
-const perfDOMRenderer   = new PerfTimer() // Times the DOM renderer phase.
-const perfDOMCursor     = new PerfTimer() // Times the DOM cursor.
-/* eslint-enable no-multi-spaces */
-
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useEditor("hello")
+	const [state, dispatch] = useEditor(`
+
+🙋🏿‍♀️🙋🏿‍♀️
+
+\`\`\`
+
+\`\`\`
+
+`)
 
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
@@ -305,40 +314,41 @@ function Editor(props) {
 
 	const greedy = React.useRef()
 
-	const newGreedyRange = (anchorNode, focusNode, pos1, pos2) => {
+	// `resetGreedy` resets the greedy DOM node range.
+	const resetGreedy = (anchorNode, focusNode, pos1, pos2) => {
 		// Sort the nodes and VDOM cursors:
 		if (pos1.pos > pos2.pos) {
 			;[anchorNode, focusNode] = [focusNode, anchorNode]
 			;[pos1, pos2] = [pos2, pos1]
 		}
 		// Compute the start (extend 1):
-		let start = ascendToGreedyDOMNode(ref.current, anchorNode)
-		let startPos = pos1.pos - pos1.greedyDOMNodePos
+		let domNodeStart = ascendToGreedyDOMNode(ref.current, anchorNode)
+		let _pos1 = pos1.pos - pos1.greedyDOMNodePos
 		let extendStart = 1
-		while (extendStart && start.previousSibling) {
-			start = start.previousSibling
-			startPos -= innerText(start).length + 1
+		while (extendStart && domNodeStart.previousSibling) {
+			domNodeStart = domNodeStart.previousSibling
+			_pos1 -= innerText(domNodeStart).length + 1
 			extendStart--
 		}
 		// Compute the end (extend 2):
-		let end = ascendToGreedyDOMNode(ref.current, focusNode)
-		let endPos = pos2.pos + pos2.greedyDOMNodeEndPos
+		let domNodeEnd = ascendToGreedyDOMNode(ref.current, focusNode)
+		let _pos2 = pos2.pos + pos2.greedyDOMNodeEndPos
 		let extendEnd = 2
-		while (extendEnd && end.nextSibling) {
-			end = end.nextSibling
-			endPos += innerText(end).length + 1
+		while (extendEnd && domNodeEnd.nextSibling) {
+			domNodeEnd = domNodeEnd.nextSibling
+			_pos2 += innerText(domNodeEnd).length + 1
 			extendEnd--
 		}
 		// Compute the range:
 		const childNodes = [...ref.current.childNodes]
-		const range = childNodes.indexOf(end) - childNodes.indexOf(start) + 1
-		// Done -- set `greedy`:
+		const range = childNodes.indexOf(domNodeEnd) - childNodes.indexOf(domNodeStart) + 1
+		// Done -- set `greedy.current`:
 		greedy.current = {
-			start,
-			startPos,
-			end,
-			endPos,
-			range,
+			domNodeStart, // The greedy DOM node start.
+			domNodeEnd,   // The greedy DOM node end.
+			pos1: _pos1,  // The greedy DOM node start cursor position.
+			pos2: _pos2,  // The greedy DOM node end cursor position.
+			range,        // The greedy DOM node range.
 		}
 	}
 
@@ -378,7 +388,7 @@ function Editor(props) {
 			}
 			dispatch.select(state.body, pos1, pos2)
 			selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
-			newGreedyRange(anchorNode, focusNode, pos1, pos2)
+			resetGreedy(anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -409,50 +419,54 @@ function Editor(props) {
 							e.preventDefault()
 							dispatch.tab()
 							return
-						case shortcut.isBackspace(e):
-							// Defer to native browser behavior because
-							// backspace on emoji is well behaved in
-							// Chrome and Safari.
-							//
-							// NOTE: Firefox (72) does not correctly
-							// handle backspace on emoji.
-							if (
-								state.pos1.pos === state.pos2.pos &&         // Cursors are collapsed and
-								state.pos1.pos &&                            // bounds check and
-								state.body.data[state.pos1.pos - 1] !== "\n" // non-paragraph character (before).
-							) {
-								// No-op.
-								return
-							}
-							e.preventDefault()
-							dispatch.backspace()
-							return
-						case shortcut.isBackspaceWord(e):
-							e.preventDefault()
-							dispatch.backspaceWord()
-							return
-						case shortcut.isBackspaceLine(e):
-							e.preventDefault()
-							dispatch.backspaceLine()
-							return
-						case shortcut.isDelete(e):
-							// Defer to native browser behavior because
-							// delete on emoji is well behaved in Chrome
-							// and Safari.
-							//
-							// NOTE: Surprisingly, Firefox (72) does
-							// correctly handle delete on emoji.
-							if (
-								state.pos1.pos === state.pos2.pos &&       // Cursors are collapsed and
-								state.pos1.pos < state.body.data.length && // bounds check and
-								state.body.data[state.pos1.pos] !== "\n"   // non-paragraph character (after).
-							) {
-								// No-op.
-								return
-							}
-							e.preventDefault()
-							dispatch.delete()
-							return
+						// // NOTE: Android does not register backspace
+						// // events as `onKeyDown`.
+						// case shortcut.isBackspace(e):
+						// 	// Defer to native browser behavior because
+						// 	// backspace on emoji is well behaved in
+						// 	// Chrome and Safari.
+						// 	//
+						// 	// NOTE: Firefox (72) does not correctly
+						// 	// handle backspace on emoji.
+						// 	if (
+						// 		state.pos1.pos === state.pos2.pos &&         // Cursors are collapsed and
+						// 		state.pos1.pos &&                            // bounds check and
+						// 		state.body.data[state.pos1.pos - 1] !== "\n" // non-paragraph character (before).
+						// 	) {
+						// 		// No-op.
+						// 		return
+						// 	}
+						// 	e.preventDefault()
+						// 	dispatch.backspace()
+						// 	return
+						// case shortcut.isBackspaceWord(e):
+						// 	e.preventDefault()
+						// 	dispatch.backspaceWord()
+						// 	return
+						// case shortcut.isBackspaceLine(e):
+						// 	e.preventDefault()
+						// 	dispatch.backspaceLine()
+						// 	return
+						// // NOTE: Android does not register delete events
+						// // as `onKeyDown`.
+						// case shortcut.isDelete(e):
+						// 	// Defer to native browser behavior because
+						// 	// delete on emoji is well behaved in Chrome
+						// 	// and Safari.
+						// 	//
+						// 	// NOTE: Surprisingly, Firefox (72) does
+						// 	// correctly handle delete on emoji.
+						// 	if (
+						// 		state.pos1.pos === state.pos2.pos &&       // Cursors are collapsed and
+						// 		state.pos1.pos < state.body.data.length && // bounds check and
+						// 		state.body.data[state.pos1.pos] !== "\n"   // non-paragraph character (after).
+						// 	) {
+						// 		// No-op.
+						// 		return
+						// 	}
+						// 	e.preventDefault()
+						// 	dispatch.delete()
+						// 	return
 						case shortcut.isBold(e):
 							e.preventDefault()
 							return
@@ -463,64 +477,272 @@ function Editor(props) {
 							// No-op.
 						}
 						const { anchorNode, focusNode } = document.getSelection()
-						newGreedyRange(anchorNode, focusNode, state.pos1, state.pos2)
+						resetGreedy(anchorNode, focusNode, state.pos1, state.pos2)
 					},
+
+					// // Enter on a compound component natively
+					// // renders (Chrome):
+					// //
+					// // <pre data-vdom-node>
+					// //   <ul>
+					// //     <li data-vdom-node>
+					// //       {/* ... */}
+					// //     </li>
+					// //   </ul>
+					// //   <div>
+					// //     <br />
+					// //   </div>
+					// //   <ul>
+					// //     <li data-vdom-node>
+					// //       {/* ... */}
+					// //     </li>
+					// //   </ul>
+					// // </pre>
+					// //
+					// // https://github.com/codex-src/codex-app.js/commit/df21f58c07314883b605fcf7f49fe7cd02b65941
+					// case "insertLineBreak":
+					// 	dispatch.enter()
+					// 	return
+					// case "insertParagraph":
+					// 	dispatch.enter()
+					// 	return
+
+					// // Read up to three characters before and up to
+					// // two characters after:
+					// //
+					// //  #·Hello, world!
+					// //     ^
+					// // [01234]
+					// //
+					// const substr = data.slice(pos.greedyDOMNodePos - 3, pos.greedyDOMNodePos + 2)
 
 					onInput: e => {
 						perfRenderPass.restart()
-						const { nativeEvent: { inputType } } = e
-						switch (inputType) {
-						case "historyUndo":
-							// TODO
-							return
-						case "historyRedo":
-							// TODO
-							return
-						// df21f58
-						case "insertLineBreak":
+						// Compute the greedy DOM node data and VDOM
+						// cursor:
+						const { anchorNode, anchorOffset } = document.getSelection()
+						const greedyDOMNodeData = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
+						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// console.log(ascendToGreedyDOMNode(ref.current, anchorNode), pos)
+						// console.log({ greedyDOMNodePos: pos.greedyDOMNodePos, greedyDOMNodeData })
+						switch (true) {
+						case inputType.isEnter(e):
 							dispatch.enter()
 							return
-						// df21f58
-						case "insertParagraph":
-							dispatch.enter()
+						case inputType.isBackspace(e):
+							// FIXME
+							if (pos.greedyDOMNodePos && greedyDOMNodeData[pos.greedyDOMNodePos - 1] !== "\n") {
+								// No-op.
+								// (Do not return)
+								console.log("a")
+								break
+							}
+							console.log("b")
+							dispatch.backspace()
+							return
+						case inputType.isBackspaceWord(e):
+							dispatch.backspaceWord()
+							return
+						case inputType.isBackspaceLine(e):
+							dispatch.backspaceLine()
+							return
+						case inputType.isDelete(e):
+							// FIXME
+							if (pos.greedyDOMNodePos < greedyDOMNodeData.length && greedyDOMNodeData[pos.greedyDOMNodePos] !== "\n") {
+								// No-op.
+								// (Do not return)
+								break
+							}
+							dispatch.delete()
+							return
+						case inputType.isDeleteWord(e):
+							dispatch.deleteWord()
+							return
+						case inputType.isUndo(e):
+							dispatch.undo()
+							return
+						case inputType.isRedo(e):
+							dispatch.redo()
 							return
 						default:
 							// No-op.
 						}
 						// Read the mutated DOM:
 						let data = ""
-						let currentNode = greedy.current.start
+						let currentNode = greedy.current.domNodeStart
 						while (currentNode) {
-							if (currentNode !== greedy.current.start) {
+							if (currentNode !== greedy.current.domNodeStart) {
 								data += "\n"
 							}
 							data += innerText(currentNode)
-							if (greedy.current.range > 2 && currentNode === greedy.current.end) {
+							if (greedy.current.range > 2 && currentNode === greedy.current.domNodeEnd) {
 								break
 							}
 							currentNode = currentNode.nextSibling
 						}
-						// Compute the current VDOM cursor:
-						const { anchorNode, anchorOffset } = document.getSelection()
-						const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// Done -- render:
+						// Get heuristics for native rendering e.g.
+						// `shouldRender` -- read up to three characters
+						// before and up to two characters after:
 						//
-						// TODO: Can eagerly compute parsed components,
-						// hinting whether to rerender.
-						const _data = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
-						const substr = _data.slice(currentPos.greedyDOMNodePos - 3, currentPos.greedyDOMNodePos + 2)
+						//  #·Hello, world!
+						//     ^
+						// [01234]
+						//
+						// TODO: Refer to `Components.parser` for
+						// `shouldRender`.
+						const substr = greedyDOMNodeData.slice(pos.greedyDOMNodePos - 3, pos.greedyDOMNodePos + 2)
 						const shouldRender = (
 							(
-								inputType !== "insertText" ||
+								e.nativeEvent.inputType !== "insertText" ||
 								md.isSyntax(substr.slice(0, 1)) || // n - 3 -> #
 								md.isSyntax(substr.slice(1, 2)) || // n - 2 -> ·
 								md.isSyntax(substr.slice(2, 3)) || // n - 1 -> H
 								md.isSyntax(substr.slice(3, 4)) || // n     -> e
 								md.isSyntax(substr.slice(4, 5))    // n + 1 -> l
 							) &&
-							inputType !== "insertCompositionText"
+							e.nativeEvent.inputType !== "insertCompositionText"
 						)
-						dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
+						// Done -- render:
+						dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, pos)
+
+						// perfRenderPass.restart()
+						// // Backspace and delete events are handled on
+						// // desktop (`onKeyDown`) but on mobile (Android)
+						// // there are less guarentees.
+						// //
+						// // This `switch` is serves as a fallback.
+						// switch (true) {
+						// case inputType.isEnter(e):
+						// 	dispatch.enter()
+						// 	return
+						// case inputType.isBackspace(e):
+						// 	// // TODO: Refactor to function.
+						// 	// if (
+						// 	// 	state.pos1.pos === state.pos2.pos &&         // Cursors are collapsed and
+						// 	// 	state.pos1.pos &&                            // bounds check and
+						// 	// 	state.body.data[state.pos1.pos - 1] !== "\n" // non-paragraph character (before).
+						// 	// ) {
+						// 	// 	// No-op.
+						// 	// 	return
+						// 	// }
+						// 	dispatch.backspace()
+						// 	return
+						// case inputType.isBackspaceWord(e):
+						// 	dispatch.backspaceWord()
+						// 	return
+						// case inputType.isBackspaceLine(e):
+						// 	dispatch.backspaceLine()
+						// 	return
+						// case inputType.isDelete(e):
+						// 	// // TODO: Refactor to function.
+						// 	// if (
+						// 	// 	state.pos1.pos === state.pos2.pos &&       // Cursors are collapsed and
+						// 	// 	state.pos1.pos < state.body.data.length && // bounds check and
+						// 	// 	state.body.data[state.pos1.pos] !== "\n"   // non-paragraph character (after).
+						// 	// ) {
+						// 	// 	// No-op.
+						// 	// 	return
+						// 	// }
+						// 	dispatch.delete()
+						// 	return
+						// // case inputType.isDeleteWord(e):
+						// // 	dispatch.deleteWord()
+						// // 	return
+						// // case inputType.isUndo(e):
+						// // 	dispatch.undo()
+						// // 	return
+						// // case inputType.isRedo(e):
+						// // 	dispatch.redo()
+						// // 	return
+						// default:
+						// 	// No-op.
+						// }
+						// // Read the mutated DOM:
+						// let data = ""
+						// let currentNode = greedy.current.start
+						// while (currentNode) {
+						// 	if (currentNode !== greedy.current.start) {
+						// 		data += "\n"
+						// 	}
+						// 	data += innerText(currentNode)
+						// 	if (greedy.current.range > 2 && currentNode === greedy.current.end) {
+						// 		break
+						// 	}
+						// 	currentNode = currentNode.nextSibling
+						// }
+						// // Compute the current VDOM cursor:
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// // Done -- render:
+						// //
+						// // TODO: Refer to parser for `shouldRender`.
+						// const greedyDOMNodeData = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
+						// const substr = greedyDOMNodeData.slice(currentPos.greedyDOMNodePos - 3, currentPos.greedyDOMNodePos + 2)
+						// const shouldRender = (
+						// 	(
+						// 		e.nativeEvent.inputType !== "insertText" ||
+						// 		md.isSyntax(substr.slice(0, 1)) || // n - 3 -> #
+						// 		md.isSyntax(substr.slice(1, 2)) || // n - 2 -> ·
+						// 		md.isSyntax(substr.slice(2, 3)) || // n - 1 -> H
+						// 		md.isSyntax(substr.slice(3, 4)) || // n     -> e
+						// 		md.isSyntax(substr.slice(4, 5))    // n + 1 -> l
+						// 	) &&
+						// 	e.nativeEvent.inputType !== "insertCompositionText"
+						// )
+						// dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
+
+						// perfRenderPass.restart()
+						// const { nativeEvent: { inputType } } = e
+						// switch (true) {
+						// // Backspace and delete events are handled on
+						// // desktop (`onKeyDown`) but on mobile (Android)
+						// // there are less guarentees:
+						// case inputType === "deleteContentBackward" || inputType === "deleteWordBackward" || inputType === "deleteSoftLineBackward":
+						// 	dispatch.backspace()
+						// 	return
+						// // (See above)
+						// case inputType === "deleteContentForward" || inputType === "deleteWordForward" /* TODO */:
+						// 	dispatch.delete()
+						// 	return
+						// case inputType === "historyUndo" || inputType === "historyRedo":
+						// 	// TODO
+						// 	return
+						// default:
+						// 	// No-op.
+						// }
+						// // Read the mutated DOM:
+						// let data = ""
+						// let currentNode = greedy.current.start
+						// while (currentNode) {
+						// 	if (currentNode !== greedy.current.start) {
+						// 		data += "\n"
+						// 	}
+						// 	data += innerText(currentNode)
+						// 	if (greedy.current.range > 2 && currentNode === greedy.current.end) {
+						// 		break
+						// 	}
+						// 	currentNode = currentNode.nextSibling
+						// }
+						// // Compute the current VDOM cursor:
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// // Done -- render:
+						// //
+						// // TODO: Refer to parser for `shouldRender`.
+						// const greedyDOMNodeData = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
+						// const substr = greedyDOMNodeData.slice(currentPos.greedyDOMNodePos - 3, currentPos.greedyDOMNodePos + 2)
+						// const shouldRender = (
+						// 	(
+						// 		inputType !== "insertText" ||
+						// 		md.isSyntax(substr.slice(0, 1)) || // n - 3 -> #
+						// 		md.isSyntax(substr.slice(1, 2)) || // n - 2 -> ·
+						// 		md.isSyntax(substr.slice(2, 3)) || // n - 1 -> H
+						// 		md.isSyntax(substr.slice(3, 4)) || // n     -> e
+						// 		md.isSyntax(substr.slice(4, 5))    // n + 1 -> l
+						// 	) &&
+						// 	inputType !== "insertCompositionText"
+						// )
+						// dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
 					},
 
 					onCut: e => {
