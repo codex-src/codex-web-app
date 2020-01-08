@@ -507,15 +507,8 @@ function Editor(props) {
 					// 	dispatch.enter()
 					// 	return
 
-					// // Read up to three characters before and up to
-					// // two characters after:
-					// //
-					// //  #·Hello, world!
-					// //     ^
-					// // [01234]
-					// //
-					// const substr = data.slice(pos.greedyDOMNodePos - 3, pos.greedyDOMNodePos + 2)
-
+					// TODO: Read (changed) data before and after the
+					// cursor.
 					onInput: e => {
 						perfRenderPass.restart()
 						// Compute the greedy DOM node data and VDOM
@@ -523,8 +516,6 @@ function Editor(props) {
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const greedyDOMNodeData = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
 						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// console.log(ascendToGreedyDOMNode(ref.current, anchorNode), pos)
-						// console.log({ greedyDOMNodePos: pos.greedyDOMNodePos, greedyDOMNodeData })
 						switch (true) {
 						case inputType.isEnter(e):
 							dispatch.enter()
@@ -604,92 +595,6 @@ function Editor(props) {
 						)
 						// Done -- render:
 						dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, pos)
-
-						// perfRenderPass.restart()
-						// // Backspace and delete events are handled on
-						// // desktop (`onKeyDown`) but on mobile (Android)
-						// // there are less guarentees.
-						// //
-						// // This `switch` is serves as a fallback.
-						// switch (true) {
-						// case inputType.isEnter(e):
-						// 	dispatch.enter()
-						// 	return
-						// case inputType.isBackspace(e):
-						// 	// // TODO: Refactor to function.
-						// 	// if (
-						// 	// 	state.pos1.pos === state.pos2.pos &&         // Cursors are collapsed and
-						// 	// 	state.pos1.pos &&                            // bounds check and
-						// 	// 	state.body.data[state.pos1.pos - 1] !== "\n" // non-paragraph character (before).
-						// 	// ) {
-						// 	// 	// No-op.
-						// 	// 	return
-						// 	// }
-						// 	dispatch.backspace()
-						// 	return
-						// case inputType.isBackspaceWord(e):
-						// 	dispatch.backspaceWord()
-						// 	return
-						// case inputType.isBackspaceLine(e):
-						// 	dispatch.backspaceLine()
-						// 	return
-						// case inputType.isDelete(e):
-						// 	// // TODO: Refactor to function.
-						// 	// if (
-						// 	// 	state.pos1.pos === state.pos2.pos &&       // Cursors are collapsed and
-						// 	// 	state.pos1.pos < state.body.data.length && // bounds check and
-						// 	// 	state.body.data[state.pos1.pos] !== "\n"   // non-paragraph character (after).
-						// 	// ) {
-						// 	// 	// No-op.
-						// 	// 	return
-						// 	// }
-						// 	dispatch.delete()
-						// 	return
-						// // case inputType.isDeleteWord(e):
-						// // 	dispatch.deleteWord()
-						// // 	return
-						// // case inputType.isUndo(e):
-						// // 	dispatch.undo()
-						// // 	return
-						// // case inputType.isRedo(e):
-						// // 	dispatch.redo()
-						// // 	return
-						// default:
-						// 	// No-op.
-						// }
-						// // Read the mutated DOM:
-						// let data = ""
-						// let currentNode = greedy.current.start
-						// while (currentNode) {
-						// 	if (currentNode !== greedy.current.start) {
-						// 		data += "\n"
-						// 	}
-						// 	data += innerText(currentNode)
-						// 	if (greedy.current.range > 2 && currentNode === greedy.current.end) {
-						// 		break
-						// 	}
-						// 	currentNode = currentNode.nextSibling
-						// }
-						// // Compute the current VDOM cursor:
-						// const { anchorNode, anchorOffset } = document.getSelection()
-						// const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// // Done -- render:
-						// //
-						// // TODO: Refer to parser for `shouldRender`.
-						// const greedyDOMNodeData = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
-						// const substr = greedyDOMNodeData.slice(currentPos.greedyDOMNodePos - 3, currentPos.greedyDOMNodePos + 2)
-						// const shouldRender = (
-						// 	(
-						// 		e.nativeEvent.inputType !== "insertText" ||
-						// 		md.isSyntax(substr.slice(0, 1)) || // n - 3 -> #
-						// 		md.isSyntax(substr.slice(1, 2)) || // n - 2 -> ·
-						// 		md.isSyntax(substr.slice(2, 3)) || // n - 1 -> H
-						// 		md.isSyntax(substr.slice(3, 4)) || // n     -> e
-						// 		md.isSyntax(substr.slice(4, 5))    // n + 1 -> l
-						// 	) &&
-						// 	e.nativeEvent.inputType !== "insertCompositionText"
-						// )
-						// dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
 
 						// perfRenderPass.restart()
 						// const { nativeEvent: { inputType } } = e
