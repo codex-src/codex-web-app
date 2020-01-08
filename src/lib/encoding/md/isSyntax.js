@@ -6,7 +6,6 @@ export function isSyntax(ch) {
 	}
 	const ok = (
 		ch === "#" ||
-		ch === " " ||
 		ch === "/" ||
 		ch === ">" ||
 		ch === "$" ||

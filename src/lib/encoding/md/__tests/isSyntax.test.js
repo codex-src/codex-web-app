@@ -3,7 +3,6 @@ import { isSyntax } from "../isSyntax.js"
 test("isSyntax", () => {
 	expect(isSyntax("")).toBe(false)
 	expect(isSyntax("#")).toBe(true)
-	expect(isSyntax(" ")).toBe(true)
 	expect(isSyntax("/")).toBe(true)
 	expect(isSyntax(">")).toBe(true)
 	expect(isSyntax("$")).toBe(true)

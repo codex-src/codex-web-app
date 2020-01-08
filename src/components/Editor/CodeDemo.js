@@ -1,6 +1,6 @@
-// import md from "lib/encoding/md"
 // import StatusBar from "components/Note"
 import DebugEditor from "./DebugEditor"
+import md from "lib/encoding/md"
 import parse from "./Components"
 import PerfTimer from "lib/PerfTimer"
 import platform from "lib/platform"
@@ -397,7 +397,20 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const currentPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						// Done -- render:
-						const shouldRender = inputType !== "insertCompositionText"
+						//
+						// TODO: Can eagerly compute parsed components,
+						// hinting whether to rerender.
+						const _data = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
+						const chars = _data.slice(currentPos.greedyDOMNodePos - 1, currentPos.greedyDOMNodePos + 3)
+						const shouldRender = (
+							(
+								md.isSyntax(chars.slice(0, 1)) || // n - 2
+								md.isSyntax(chars.slice(1, 2)) || // n - 1
+								md.isSyntax(chars.slice(2, 3)) || // n
+								md.isSyntax(chars.slice(3, 4))    // n + 1
+							) &&
+							inputType !== "insertCompositionText"
+						)
 						dispatch.greedyWrite(shouldRender, data, greedy.current.startPos, greedy.current.endPos, currentPos)
 					},
 
