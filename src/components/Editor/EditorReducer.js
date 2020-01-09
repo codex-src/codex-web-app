@@ -5,10 +5,10 @@ import VDOM from "./VDOM"
 import { newVDOMCursor } from "./traverseDOM"
 
 const initialState = {
-	isFocused: false,
-	body:      new VDOM(""),
-	pos1:      newVDOMCursor(),
-	pos2:      newVDOMCursor(),
+	isFocused: false,           // Is the editor focused?
+	body:      new VDOM(""),    // The VDOM body.
+	pos1:      newVDOMCursor(), // The VDOM cursor start.
+	pos2:      newVDOMCursor(), // The VDOM cursor end.
 
 	// `shouldRenderDOMComponents` hints whether the editor’s
 	// DOM components should be rendered.
@@ -18,7 +18,7 @@ const initialState = {
 	// cursor should be rendered.
 	shouldRenderDOMCursor: 0,
 
-	reactDOM: document.createElement("div"),
+	reactDOM: document.createElement("div"), // The React rendered DOM.
 }
 
 const reducer = state => ({

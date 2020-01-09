@@ -1,2 +1,2 @@
-import * as exports from "./NewEditor"
+import * as exports from "./Editor"
 export default exports

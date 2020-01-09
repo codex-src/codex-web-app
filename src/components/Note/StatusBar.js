@@ -1,4 +1,4 @@
-// import * as Feather from "react-feather"
+import * as Feather from "react-feather"
 import computeMetrics from "./computeMetrics"
 import Editor from "components/Editor"
 import React from "react"
@@ -46,9 +46,9 @@ function computeRHS({ words, duration }) {
  *
  */
 
-// const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
-// 	<Icon style={stylex.parse("wh:12.5")} />
-// ))
+const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
+	<Icon style={stylex.parse("wh:12.5 c:gray")} />
+))
 
 const Text = stylex.Styleable(props => (
 	<p style={stylex.parse("tnum fs:12.5 ls:0.625% lh:100%")} {...props}>
@@ -68,8 +68,8 @@ function StatusBar(props) {
 
 					{/* LHS */}
 					<div style={stylex.parse("flex -r -y:center")}>
-						{/* <Icon icon={Feather.Scissors} /> */}
-						{/* <div style={stylex.parse("w:6.25")} /> */}
+						<Icon icon={Feather.Scissors} />
+						<div style={stylex.parse("w:6.25")} />
 						<Text>
 							{computeLHS(metrics)}
 						</Text>
@@ -80,8 +80,8 @@ function StatusBar(props) {
 						<Text>
 							{computeRHS(metrics)}
 						</Text>
-						{/* <div style={stylex.parse("w:6.25")} /> */}
-						{/* <Icon icon={Feather.Search} /> */}
+						<div style={stylex.parse("w:6.25")} />
+						<Icon icon={Feather.Hash} />
 					</div>
 
 				</div>
