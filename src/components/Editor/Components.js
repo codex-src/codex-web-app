@@ -47,51 +47,37 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-const headersSyntax = {
-	"# ":      "h1",
-	"## ":     "h2",
-	"### ":    "h3",
-	"#### ":   "h4",
-	"##### ":  "h5",
-	"###### ": "h6",
-}
-
-const Header = React.memo(Node(props => {
-	const TagName = headersSyntax[props.start]
-	return (
-		<TagName style={stylex.parse("fw:700 fs:19")}>
-			<Markdown start={props.start}>
-				{props.children}
-			</Markdown>
-		</TagName>
-	)
-}))
+const Header = React.memo(Node(props => (
+	<div style={stylex.parse("fw:700 fs:19")}>
+		<Markdown start={props.start}>
+			{props.children}
+		</Markdown>
+	</div>
+)))
 
 const Comment = React.memo(Node(props => (
-	<p style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
 		<Markdown style={stylex.parse("c:gray")} start="//">
 			{props.children}
 		</Markdown>
-	</p>
+	</div>
 )))
 
 // Compound component.
 const Blockquote = React.memo(Node(props => (
-	<blockquote>
-		<ul>
-			{props.children.map(each => (
-				<li key={each.key} id={each.key} style={stylex.parse("fs:19")} data-vdom-node>
-					<Markdown start={each.start}>
-						{each.data || (
-							!(each.start + each.data) && (
-								<br />
-							)
-						)}
-					</Markdown>
-				</li>
-			))}
-		</ul>
-	</blockquote>
+	<div>
+		{props.children.map(each => (
+			<div key={each.key} id={each.key} style={stylex.parse("fs:19")} data-vdom-node>
+				<Markdown start={each.start}>
+					{each.data || (
+						!(each.start + each.data) && (
+							<br />
+						)
+					)}
+				</Markdown>
+			</div>
+		))}
+	</div>
 )))
 
 const codeStyle = {
@@ -101,7 +87,7 @@ const codeStyle = {
 }
 
 const codeBlockStyle = {
-	...stylex.parse("m-x:-24 p-y:16 b:gray-50 overflow -x:scroll"),
+	...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
 	...codeStyle,
 	boxShadow: "0px 0px 1px hsl(var(--gray))",
 }
@@ -115,38 +101,36 @@ const codeBlockItemCodeStyle = {
 //
 // http://cdpn.io/PowjgOg
 const CodeBlock = React.memo(Node(props => (
-	<pre style={codeBlockStyle} spellCheck={false}>
-		<ul>
-			{props.children.map((each, index) => (
-				<li key={each.key} id={each.key} data-vdom-node>
-					<code style={codeBlockItemCodeStyle}>
-						<Markdown
-							start={!index && props.start}
-							end={index + 1 === props.children.length && props.end}
-						>
-							{each.data || (
-								index > 0 && index + 1 < props.children.length && (
-									<br />
-								)
-							)}
-						</Markdown>
-					</code>
-				</li>
-			))}
-		</ul>
-	</pre>
+	<div style={codeBlockStyle} spellCheck={false}>
+		{props.children.map((each, index) => (
+			<div key={each.key} id={each.key} data-vdom-node>
+				<code style={codeBlockItemCodeStyle}>
+					<Markdown
+						start={!index && props.start}
+						end={index + 1 === props.children.length && props.end}
+					>
+						{each.data || (
+							index > 0 && index + 1 < props.children.length && (
+								<br />
+							)
+						)}
+					</Markdown>
+				</code>
+			</div>
+		))}
+	</div>
 )))
 
 const Paragraph = React.memo(Node(props => (
-	<p style={stylex.parse("fs:19")}>
+	<div style={stylex.parse("fs:19")}>
 		{props.children}
-	</p>
+	</div>
 )))
 
 const Break = React.memo(Node(props => (
-	<p style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
 		<Markdown start={props.start} />
-	</p>
+	</div>
 )))
 
 // Convenience function.

@@ -346,6 +346,7 @@ function Editor(props) {
 		// Done -- set `greedy.current`:
 		greedy.current = {
 			currentDOMNode, // The current DOM node -- not greedy!
+			currentDOMNodeCopy: currentDOMNode.cloneNode(true),
 			domNodeStart,   // The greedy DOM node start.
 			domNodeEnd,     // The greedy DOM node end.
 			pos1: _pos1,    // The greedy DOM node start cursor position.
@@ -368,7 +369,7 @@ function Editor(props) {
 				return
 			}
 			const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
-			if (!anchorNode || !focusNode) {
+			if (!anchorNode || !focusNode || anchorNode === ref.current || focusNode === ref.current) {
 				// No-op.
 				return
 			}
@@ -417,108 +418,39 @@ function Editor(props) {
 					onKeyDown: e => {
 						perfRenderPass.restart()
 						switch (true) {
-						case e.key === "Tab":
+						case e.key === "Tab": // FIXME: Use `shortcut.isTab(e)`?
 							e.preventDefault()
 							dispatch.tab()
 							return
-						// // NOTE: Android does not register backspace
-						// // events as `onKeyDown`.
-						// case shortcut.isBackspace(e):
-						// 	// Defer to native browser behavior because
-						// 	// backspace on emoji is well behaved in
-						// 	// Chrome and Safari.
-						// 	//
-						// 	// NOTE: Firefox (72) does not correctly
-						// 	// handle backspace on emoji.
-						// 	if (
-						// 		state.pos1.pos === state.pos2.pos &&         // Cursors are collapsed and
-						// 		state.pos1.pos &&                            // bounds check and
-						// 		state.body.data[state.pos1.pos - 1] !== "\n" // non-paragraph character (before).
-						// 	) {
-						// 		// No-op.
-						// 		return
-						// 	}
-						// 	e.preventDefault()
-						// 	dispatch.backspace()
-						// 	return
-						// case shortcut.isBackspaceWord(e):
-						// 	e.preventDefault()
-						// 	dispatch.backspaceWord()
-						// 	return
-						// case shortcut.isBackspaceLine(e):
-						// 	e.preventDefault()
-						// 	dispatch.backspaceLine()
-						// 	return
-						// // NOTE: Android does not register delete events
-						// // as `onKeyDown`.
-						// case shortcut.isDelete(e):
-						// 	// Defer to native browser behavior because
-						// 	// delete on emoji is well behaved in Chrome
-						// 	// and Safari.
-						// 	//
-						// 	// NOTE: Surprisingly, Firefox (72) does
-						// 	// correctly handle delete on emoji.
-						// 	if (
-						// 		state.pos1.pos === state.pos2.pos &&       // Cursors are collapsed and
-						// 		state.pos1.pos < state.body.data.length && // bounds check and
-						// 		state.body.data[state.pos1.pos] !== "\n"   // non-paragraph character (after).
-						// 	) {
-						// 		// No-op.
-						// 		return
-						// 	}
-						// 	e.preventDefault()
-						// 	dispatch.delete()
-						// 	return
 						case shortcut.isBold(e):
 							e.preventDefault()
+							// TODO
 							return
 						case shortcut.isItalic(e):
 							e.preventDefault()
+							// TODO
 							return
 						default:
 							// No-op.
 						}
 						const { anchorNode, focusNode } = document.getSelection()
+						if (!anchorNode || !focusNode || anchorNode === ref.current || focusNode === ref.current) {
+							// No-op.
+							return
+						}
 						resetGreedy(anchorNode, focusNode, state.pos1, state.pos2)
 					},
-
-					// // Enter on a compound component natively
-					// // renders (Chrome):
-					// //
-					// // <pre data-vdom-node>
-					// //   <ul>
-					// //     <li data-vdom-node>
-					// //       {/* ... */}
-					// //     </li>
-					// //   </ul>
-					// //   <div>
-					// //     <br />
-					// //   </div>
-					// //   <ul>
-					// //     <li data-vdom-node>
-					// //       {/* ... */}
-					// //     </li>
-					// //   </ul>
-					// // </pre>
-					// //
-					// // https://github.com/codex-src/codex-app.js/commit/df21f58c07314883b605fcf7f49fe7cd02b65941
-					// case "insertLineBreak":
-					// 	dispatch.enter()
-					// 	return
-					// case "insertParagraph":
-					// 	dispatch.enter()
-					// 	return
 
 					onInput: e => {
 						console.log({ ...e })
 
-						// TODO: `perfRenderPass` may belong in
-						// `dispatch.write` and or
-						// `dispatch.greedyWrite`.
 						perfRenderPass.restart()
-						// Compute the greedy DOM node data and VDOM
-						// cursor:
+						// Compute the greedy DOM node and VDOM cursor:
 						const { anchorNode, anchorOffset } = document.getSelection()
+						if (!anchorNode || anchorNode === ref.current) {
+							// No-op.
+							return
+						}
 						const currentDOMNode = ascendToDOMNode(ref.current, anchorNode)
 						const greedyDOMNode = ascendToGreedyDOMNode(ref.current, currentDOMNode)
 						const greedyDOMNodeData = innerText(greedyDOMNode)
@@ -527,37 +459,39 @@ function Editor(props) {
 						case inputType.isEnter(e):
 							dispatch.enter()
 							return
-						// Enter when typing -- edge case (compound
-						// components):
-						case inputType.isTyping(e) && currentDOMNode !== greedy.current.currentDOMNode:
+						// Enter when typing -- (compound components):
+						case inputType.isTyping(e) && currentDOMNode !== greedy.current.currentDOMNode: { // Scope.
 							const d1 = `${innerText(greedy.current.currentDOMNode)}\n`
 							const d2 = `${innerText(currentDOMNode)}\n`
 							dispatch.greedyWrite(true, d1 + d2, pos.pos - d1.length, pos.pos + d2.length - 1, pos)
 							return
-						case inputType.isBackspace(e):
-							// // TODO
-							// if (pos.greedyDOMNodePos && greedyDOMNodeData[pos.greedyDOMNodePos - 1] !== "\n") {
-							// 	// No-op.
-							// 	// (Do not return)
-							// 	break
-							// }
+						}
+						case inputType.isBackspace(e): { // Scope.
+							const d = innerText(greedy.current.currentDOMNodeCopy)
+							if (state.pos1.domNodePos && d[state.pos1.domNodePos - 1] !== "\n") {
+								// No-op.
+								// (Do not return)
+								break
+							}
 							dispatch.backspace()
 							return
+						}
 						case inputType.isBackspaceWord(e):
 							dispatch.backspaceWord()
 							return
 						case inputType.isBackspaceLine(e):
 							dispatch.backspaceLine()
 							return
-						case inputType.isDelete(e):
-							// // TODO
-							// if (pos.greedyDOMNodePos < greedyDOMNodeData.length && greedyDOMNodeData[pos.greedyDOMNodePos] !== "\n") {
-							// 	// No-op.
-							// 	// (Do not return)
-							// 	break
-							// }
+						case inputType.isDelete(e): { // Scope.
+							const d = innerText(greedy.current.currentDOMNodeCopy)
+							if (state.pos1.domNodePos < d.length && d[state.pos1.domNodePos] !== "\n") {
+								// No-op.
+								// (Do not return)
+								break
+							}
 							dispatch.delete()
 							return
+						}
 						case inputType.isDeleteWord(e):
 							dispatch.deleteWord()
 							return
@@ -570,6 +504,7 @@ function Editor(props) {
 						default:
 							// No-op.
 						}
+
 						// Read the mutated DOM:
 						let data = ""
 						let currentNode = greedy.current.domNodeStart
