@@ -1,4 +1,5 @@
 import DebugEditor from "./DebugEditor"
+import getScopedSelection from "./helpers/getScopedSelection"
 import invariant from "invariant"
 import md from "lib/encoding/md"
 import newGreedyRange from "./helpers/newGreedyRange"
@@ -24,8 +25,9 @@ import {
 
 import "./editor.css"
 
+export const Context = React.createContext()
+
 /* eslint-disable no-multi-spaces */
-const perfRenderPass    = new PerfTimer() // Times the render pass.
 const perfParser        = new PerfTimer() // Times the component parser phase.
 const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
 const perfDOMRenderer   = new PerfTimer() // Times the DOM renderer phase.
@@ -48,23 +50,6 @@ function newFPSStyleString(ms) {
 // https://twitter.com/dan_abramov/status/691306318204923905
 function Contents(props) {
 	return props.components
-}
-
-export const Context = React.createContext()
-
-// if ((!anchorNode || !focusNode) ||
-// 		(!scopeNode.contains(anchorNode) || !scopeNode.contains(focusNode))) {
-// 	return null
-// }
-
-// `getScopedSelection` scopes a selection to a scope node.
-function getScopedSelection(scopeNode) {
-	const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
-	invariant(
-		anchorNode && focusNode && scopeNode.contains(anchorNode) && scopeNode.contains(focusNode),
-		"getScopedSelection: The anchor node and or focus node cannot be beyond the scope node.",
-	)
-	return { anchorNode, focusNode, anchorOffset, focusOffset }
 }
 
 export function Editor(props) {
@@ -358,7 +343,6 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							// No-op.
 							return
 						}
-						perfRenderPass.restart()
 						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
 						e.clipboardData.setData("text/plain", data)
 						dispatch.write(true, "")
@@ -370,7 +354,6 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							// No-op.
 							return
 						}
-						perfRenderPass.restart()
 						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
 						e.clipboardData.setData("text/plain", data)
 					},
@@ -382,7 +365,6 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							// No-op.
 							return
 						}
-						perfRenderPass.restart()
 						dispatch.write(true, data)
 					},
 
