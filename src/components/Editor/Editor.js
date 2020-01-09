@@ -215,7 +215,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 				pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
 			}
-			dispatch.select(state.body, pos1, pos2)
+			dispatch.setState(state.body, pos1, pos2)
 			greedy.current = newGreedyRange(ref.current, anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)

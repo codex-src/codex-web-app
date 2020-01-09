@@ -8,7 +8,7 @@ import { newVDOMCursor } from "./traverseDOM"
 const Operation = {
 	focus:         "focus",
 	blur:          "blur",
-	select:        "select",
+	// select:     "select",
 	input:         "input",
 	tab:           "tab",
 	enter:         "enter",
@@ -23,29 +23,31 @@ const Operation = {
 }
 
 const initialState = {
-	op:        "",              // The current editing operation.
-	hasFocus: false,           // Is the editor focused?
-	body:      new VDOM(""),    // The VDOM body.
-	pos1:      newVDOMCursor(), // The VDOM cursor start.
-	pos2:      newVDOMCursor(), // The VDOM cursor end.
+	op:       "",              // The current editing operation.
+	hasFocus: false,           // Does the editor have focus?
+	body:     new VDOM(""),    // The VDOM body.
+	pos1:     newVDOMCursor(), // The VDOM cursor start.
+	pos2:     newVDOMCursor(), // The VDOM cursor end.
 
-	// `shouldRenderDOMComponents` hints whether the editor’s
-	// DOM components should be rendered.
+	// `shouldRenderDOMComponents` hints whether to rerender
+	// the user-facing DOM components; uses a counter to track
+	// the number of renders.
 	shouldRenderDOMComponents: 0,
 
-	// `shouldRenderDOMCursor` hints whether the editor’s DOM
-	// cursor should be rendered.
+	// `shouldRenderDOMCursor` hints whether to rerender the
+	// user-facing DOM cursor; uses a counter to track the
+	// number of renders.
 	shouldRenderDOMCursor: 0,
 
 	reactDOM: document.createElement("div"), // The React rendered DOM.
 
 	// The cached render types (enum).
-	componentTypes: [],
+	types: [],
 }
 
 const reducer = state => ({
-	select(body, pos1, pos2) {
-		// state.op = Operation.select
+	// TODO: Comment.
+	setState(body, pos1, pos2) {
 		if (pos1.pos > pos2.pos) {
 			[pos1, pos2] = [pos2, pos1]
 		}
@@ -70,20 +72,21 @@ const reducer = state => ({
 		this.collapse()
 		this.renderDOMComponents(shouldRender)
 	},
-	// `drop` drops characters to the left and or right of the
-	// current cursor positions.
-	drop(delL, delR) {
+	// `drop` drops characters from the left and or right of
+	// the current cursor positions.
+	drop(dropL, dropR) {
 		// Guard the anchor node or focus node:
-		if ((!state.pos1.pos && delL) || (state.pos2.pos === state.body.data.length && delR)) {
+		if ((!state.pos1.pos && dropL) || (state.pos2.pos === state.body.data.length && dropR)) {
 			// No-op.
 			this.renderDOMComponents(true) // Rerender to be safe.
 			return
 		}
-		state.body = state.body.write("", state.pos1.pos - delL, state.pos2.pos + delR)
-		state.pos1.pos -= delL
+		state.body = state.body.write("", state.pos1.pos - dropL, state.pos2.pos + dropR)
+		state.pos1.pos -= dropL
 		this.collapse()
 		this.renderDOMComponents(true)
 	},
+	// cacheTypes?
 	setTypes(types) {
 		state.types = [...types]
 	},
