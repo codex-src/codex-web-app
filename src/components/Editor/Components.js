@@ -87,13 +87,13 @@ const CodeBlock = Node(props => (
 	<div
 		className="semantic-code-block"
 		style={{
-			...stylex.parse("m-x:-24 p-x:24 p-y:16 pre b:gray-50 overflow -x:scroll"),
+			...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
 			boxShadow: "0px 0px 1px hsl(var(--gray))",
 		}}
 		spellCheck={false}
 	>
 		{props.children.map((each, index) => (
-			<div key={each.key} id={each.key} data-vdom-node>
+			<div key={each.key} id={each.key} style={stylex.parse("p-x:24")} data-vdom-node>
 				<code>
 					<Markdown
 						start={!index && props.start}

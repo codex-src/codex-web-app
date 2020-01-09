@@ -1,6 +1,4 @@
-// // DEPRECATE
-// // import inputType from "./inputType"
-import DebugEditor from "./DebugEditor"
+import Debug from "./Debug"
 import md from "lib/encoding/md"
 import parse from "./Components"
 import PerfTimer from "lib/PerfTimer"
@@ -60,6 +58,8 @@ export function Editor(props) {
 🙋🏿‍♀️🙋🏿‍♀️
 
 \`\`\`
+
+hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 
 \`\`\`
 
@@ -160,8 +160,9 @@ export function Editor(props) {
 
 	const greedy = React.useRef()
 
-	// `newGreedyRange` creates a new greedy DOM node range.
-	const newGreedyRange = (anchorNode, focusNode, pos1, pos2) => {
+	// `prepareGreedyDOMNodeRange` prepares the greedy DOM
+	// node range (see `onInput`):
+	const prepareGreedyDOMNodeRange = (anchorNode, focusNode, pos1, pos2) => {
 		// Sort the nodes and VDOM cursors:
 		if (pos1.pos > pos2.pos) {
 			;[anchorNode, focusNode] = [focusNode, anchorNode]
@@ -232,9 +233,15 @@ export function Editor(props) {
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 				pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
 			}
+			console.log({ pos1, pos2 })
 			dispatch.select(state.body, pos1, pos2)
-			selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
-			newGreedyRange(anchorNode, focusNode, pos1, pos2)
+			selectionChangeCache.current = {
+				anchorNode,
+				focusNode,
+				anchorOffset,
+				focusOffset,
+			}
+			prepareGreedyDOMNodeRange(anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -336,7 +343,7 @@ export function Editor(props) {
 							// No-op.
 							return
 						}
-						newGreedyRange(anchorNode, focusNode, state.pos1, state.pos2)
+						prepareGreedyDOMNodeRange(anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
 					// console.log({ ...e })
@@ -427,7 +434,7 @@ export function Editor(props) {
 					onDrop:      e => e.preventDefault(),
 				},
 			)}
-			<DebugEditor />
+			<Debug />
 			<StatusBar />
 		</Provider>
 	)
