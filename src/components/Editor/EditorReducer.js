@@ -10,6 +10,9 @@ const initialState = {
 	pos1:      newVDOMCursor(), // The VDOM cursor start.
 	pos2:      newVDOMCursor(), // The VDOM cursor end.
 
+	// The cached render types (enum).
+	types: [],
+
 	// `shouldRenderDOMComponents` hints whether the editor’s
 	// DOM components should be rendered.
 	shouldRenderDOMComponents: 0,
@@ -52,10 +55,14 @@ const reducer = state => ({
 		this._collapse()
 		this.renderDOMComponents(shouldRender)
 	},
+	setTypes(types) {
+		state.types = [...types]
+	},
 	tab() {
 		this.write(true, "\t")
 	},
 	enter() {
+		// console.log(state.body)
 		this.write(true, "\n")
 	},
 	_drop(delL, delR) {
@@ -146,10 +153,11 @@ const reducer = state => ({
 
 const init = initialValue => initialState => {
 	const body = initialState.body.write(initialValue, 0, initialState.body.data.length)
+	const { Components } = parse(body)
 	const state = {
 		...initialState,
 		body,
-		Components: parse(body),
+		Components,
 	}
 	return state
 }

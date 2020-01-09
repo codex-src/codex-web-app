@@ -1,6 +1,5 @@
+// import getScopedSelection from "./helpers/getScopedSelection"
 import DebugEditor from "./DebugEditor"
-import getScopedSelection from "./helpers/getScopedSelection"
-import invariant from "invariant"
 import md from "lib/encoding/md"
 import newGreedyRange from "./helpers/newGreedyRange"
 import parse from "./Components"
@@ -52,14 +51,26 @@ function Contents(props) {
 	return props.components
 }
 
+// `compareTypes` compares two arrays of type enums.
+function compareTypes(t1, t2) {
+	if (t1.length !== t2.length) {
+		return false
+	}
+	let index = 0
+	while (index < t1.length) {
+		if (t1[index] !== t2[index]) {
+			return false
+		}
+		index++
+	}
+	return true
+}
+
 export function Editor(props) {
-	// The root node:
 	const ref = React.useRef()
 
-	// The greedy DOM node range (see `newGreedyRange`):
 	const greedy = React.useRef()
 
-	// `selectionchange` cache:
 	const selectionChange = React.useRef({
 		anchorNode:   null,
 		anchorOffset: 0,
@@ -119,7 +130,12 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			perfParser.restart()
-			const Components = parse(state.body)
+			const { Components, types } = parse(state.body)
+			// if (compareTypes(types, state.types)) {
+			// 	// No-op.
+			// 	return
+			// }
+			// dispatch.setTypes(types)
 			perfParser.stop()
 			perfReactRenderer.restart()
 			ReactDOM.render(<Contents components={Components} />, state.reactDOM, () => {
@@ -160,12 +176,12 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 			selection.addRange(range)
 			perfDOMCursor.stop()
 
-			const p = perfParser.duration()
-			const r = perfReactRenderer.duration()
-			const d = perfDOMRenderer.duration()
-			const c = perfDOMCursor.duration()
-			const sum = p + r + d + c
-			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
+			// const p = perfParser.duration()
+			// const r = perfReactRenderer.duration()
+			// const d = perfDOMRenderer.duration()
+			// const c = perfDOMCursor.duration()
+			// const sum = p + r + d + c
+			// console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
 		}, [state]),
 		[state.shouldRenderDOMCursor],
 	)
@@ -176,13 +192,21 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 				// No-op.
 				return
 			}
-			const selection = getScopedSelection(ref.current)
-			if (selectionChange.current === selection) {
+			const { anchorNode, anchorOffset, focusNode, focusOffset } = window.getSelection()
+			if (!anchorNode || !focusNode) {
 				// No-op.
 				return
 			}
-			selectionChange.current = selection
-			const { anchorNode, anchorOffset, focusNode, focusOffset } = getScopedSelection(ref.current)
+			/* eslint-disable no-multi-spaces */
+			if (selectionChange.current.anchorNode   === anchorNode   &&
+					selectionChange.current.focusNode    === focusNode    &&
+					selectionChange.current.anchorOffset === anchorOffset &&
+					selectionChange.current.focusOffset  === focusOffset) {
+				// No-op.
+				return
+			}
+			/* eslint-enable no-multi-spaces */
+			selectionChange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = { ...pos1 }
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
@@ -290,13 +314,17 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 						default:
 							// No-op.
 						}
-						const { anchorNode, focusNode } = getScopedSelection(ref.current)
+						const { anchorNode, focusNode } = window.getSelection()
+						if (!anchorNode || !focusNode) {
+							// No-op.
+							return
+						}
 						greedy.current = newGreedyRange(ref.current, anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
 					onInput: e => {
 						// Read the mutated greedy DOM node range:
-						const { anchorNode, anchorOffset } = getScopedSelection(ref.current)
+						const { anchorNode, anchorOffset } = window.getSelection()
 						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						let data = ""
 						let greedyDOMNode = greedy.current.domNodeStart

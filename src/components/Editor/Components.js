@@ -1,3 +1,4 @@
+import md from "lib/encoding/md"
 import React from "react"
 import stylex from "stylex"
 
@@ -50,7 +51,9 @@ const Markdown = ({ style, ...props }) => (
 const Header = Node(props => (
 	<div className="semantic-header" style={stylex.parse("fw:700 fs:19")}>
 		<Markdown start={props.start}>
-			{props.children}
+			{props.children || (
+				<br />
+			)}
 		</Markdown>
 	</div>
 ))
@@ -58,7 +61,9 @@ const Header = Node(props => (
 const Comment = Node(props => (
 	<div className="semantic-comment" style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
 		<Markdown style={stylex.parse("c:gray")} start="//">
-			{props.children}
+			{props.children || (
+				<br />
+			)}
 		</Markdown>
 	</div>
 ))
@@ -113,7 +118,9 @@ const CodeBlock = Node(props => (
 
 const Paragraph = Node(props => (
 	<div className="semantic-paragraph" style={stylex.parse("fs:19")}>
-		{props.children}
+		{props.children || (
+			<br />
+		)}
 	</div>
 ))
 
@@ -132,16 +139,30 @@ function isBlockquote(data, hasNextSibling) {
 	return ok
 }
 
+const Types = {
+	Header:     0,
+	Comment:    1,
+	Blockquote: 2,
+	CodeBlock:  3,
+	Paragraph:  4,
+	Break:      5,
+}
+
+// // Paragraph (fast pass):
+// case data.length && md.isSyntax(data[0]):
+//   Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
+//   types.push(Types.Paragraph)
+//   break
+
+/* eslint-disable no-case-declarations */
 function parse(body) {
-	const Components = []
+	const Components = [] // The React components.
+	const types = []      // An enum array of the types.
 	let index = 0
 	while (index < body.nodes.length) {
-		const {
-			key,  // The current node’s key (hash).
-			data, // The current node’s plain text data
-		} = body.nodes[index]
-		/* eslint-disable no-case-declarations */
+		const { key, data } = body.nodes[index]
 		switch (true) {
+		// Header:
 		case (
 			(data.length >= 2 && data.slice(0, 2) === ("# ")) ||
 			(data.length >= 3 && data.slice(0, 3) === ("## ")) ||
@@ -152,23 +173,15 @@ function parse(body) {
 		):
 			const headerIndex = data.indexOf("# ")
 			const headerStart = data.slice(0, headerIndex + 2)
-			Components.push((
-				<Header key={key} reactKey={key} start={headerStart}>
-					{data.slice(headerIndex + 2) || (
-						<br />
-					)}
-				</Header>
-			))
+			Components.push(<Header key={key} reactKey={key} start={headerStart}>{data.slice(headerIndex + 2)}</Header>)
+			types.push(Types.Header)
 			break
+		// Comment:
 		case data.length >= 2 && data.slice(0, 2) === "//":
-			Components.push((
-				<Comment key={key} reactKey={key}>
-					{data.slice(2) || (
-						<br />
-					)}
-				</Comment>
-			))
+			Components.push(<Comment key={key} reactKey={key}>{data.slice(2)}</Comment>)
+			types.push(Types.Comment)
 			break
+		// Blockquote:
 		case isBlockquote(data, index + 1 < body.nodes.length):
 			const bquoteStart = index
 			index++
@@ -190,15 +203,15 @@ function parse(body) {
 					))}
 				</Blockquote>
 			))
-			// NOTE: Decrement because `index` will be auto-
-			// incremented.
+			types.push(Types.Blockquote)
+			// Decrement (compound components):
 			index--
 			break
+		// Code block:
 		case (
-			data.length >= 6 && (
-				data.slice(0, 3) === "```" &&
-				data.slice(-3) === "```"
-			)
+			data.length >= 6 &&
+			data.slice(0, 3) === "```" &&
+			data.slice(-3) === "```"
 		):
 			Components.push((
 				<CodeBlock key={key} reactKey={key} start="```" end="```">
@@ -210,7 +223,9 @@ function parse(body) {
 					]}
 				</CodeBlock>
 			))
+			types.push(Types.CodeBlock)
 			break
+		// Code block (multiline):
 		case data.length >= 3 && data.slice(0, 3) === "```":
 			const cblockStart = index
 			index++
@@ -222,15 +237,10 @@ function parse(body) {
 				}
 				index++
 			}
-			index++
-			if (!cblockDidTerminate) { // Unterminated code block.
-				Components.push((
-					<Paragraph key={key} reactKey={key}>
-						{data || (
-							<br />
-						)}
-					</Paragraph>
-				))
+			index++ // ??
+			if (!cblockDidTerminate) {
+				Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
+				types.push(Types.Paragraph)
 				index = cblockStart
 				break
 			}
@@ -241,38 +251,34 @@ function parse(body) {
 						{
 							...each,
 							data: !index || index + 1 === cblockNodes.length
-								? ""
-								: each.data,
+								? ""         // Start and end nodes.
+								: each.data, // Center nodes.
 						}
 					))}
 				</CodeBlock>
 			))
-			// NOTE: Decrement because `index` will be auto-
-			// incremented.
+			types.push(Types.CodeBlock)
+			// Decrement (compound components):
 			index--
 			break
+		// Break:
 		case (
-			data.length === 3 && (
-				data === "***" ||
-				data === "---"
-			)
+			data.length === 3 &&
+			(data === "***" || data === "---")
 		):
 			Components.push(<Break key={key} reactKey={key} start={data} />)
+			types.push(Types.Break)
 			break
+		// Paragraph:
 		default:
-			Components.push((
-				<Paragraph key={key} reactKey={key}>
-					{data || (
-						<br />
-					)}
-				</Paragraph>
-			))
+			Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
+			types.push(Types.Paragraph)
 			break
 		}
 		index++
 	}
-	/* eslint-enable no-case-declarations */
-	return Components
+	return { Components, types }
 }
+/* eslint-enable no-case-declarations */
 
 export default parse

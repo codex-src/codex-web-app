@@ -5,7 +5,7 @@ function getScopedSelection(scopeNode) {
 	const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
 	invariant(
 		anchorNode && focusNode && scopeNode.contains(anchorNode) && scopeNode.contains(focusNode),
-		"getScopedSelection: The anchor node and or focus node cannot be beyond the scope node.",
+		"getScopedSelection: Selection is not in scope.",
 	)
 	return { anchorNode, focusNode, anchorOffset, focusOffset }
 }
