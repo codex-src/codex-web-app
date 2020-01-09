@@ -154,7 +154,7 @@ const init = initialValue => initialState => {
 	return state
 }
 
-function useEditor(initialValue) {
+function useEditor(initialValue = "") {
 	return useMethods(reducer, initialState, init(initialValue))
 }
 

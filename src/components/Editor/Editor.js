@@ -1,4 +1,5 @@
-import Debug from "./Debug"
+import DebugEditor from "./DebugEditor"
+import invariant from "invariant"
 import md from "lib/encoding/md"
 import newGreedyRange from "./helpers/newGreedyRange"
 import parse from "./Components"
@@ -51,15 +52,30 @@ function Contents(props) {
 
 export const Context = React.createContext()
 
+// if ((!anchorNode || !focusNode) ||
+// 		(!scopeNode.contains(anchorNode) || !scopeNode.contains(focusNode))) {
+// 	return null
+// }
+
+// `getScopedSelection` scopes a selection to a scope node.
+function getScopedSelection(scopeNode) {
+	const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
+	invariant(
+		anchorNode && focusNode && scopeNode.contains(anchorNode) && scopeNode.contains(focusNode),
+		"getScopedSelection: The anchor node and or focus node cannot be beyond the scope node.",
+	)
+	return { anchorNode, focusNode, anchorOffset, focusOffset }
+}
+
 export function Editor(props) {
 	// The root node:
 	const ref = React.useRef()
 
-	// The greedy DOM node range:
+	// The greedy DOM node range (see `newGreedyRange`):
 	const greedy = React.useRef()
 
 	// `selectionchange` cache:
-	const selectionChangeCache = React.useRef({
+	const selectionChange = React.useRef({
 		anchorNode:   null,
 		anchorOffset: 0,
 		focusNode:    null,
@@ -158,14 +174,12 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 			// (Range eagerly dropped)
 			selection.addRange(range)
 			perfDOMCursor.stop()
-			perfRenderPass.stop()
 
 			const p = perfParser.duration()
 			const r = perfReactRenderer.duration()
 			const d = perfDOMRenderer.duration()
 			const c = perfDOMCursor.duration()
 			const sum = p + r + d + c
-			// const a = perfRenderPass.duration()
 			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
 		}, [state]),
 		[state.shouldRenderDOMCursor],
@@ -177,34 +191,19 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 				// No-op.
 				return
 			}
-			const { anchorNode, focusNode, anchorOffset, focusOffset } = document.getSelection()
-			if (!anchorNode || !focusNode || anchorNode === ref.current || focusNode === ref.current) {
+			const selection = getScopedSelection(ref.current)
+			if (selectionChange.current === selection) {
 				// No-op.
 				return
 			}
-			/* eslint-disable no-multi-spaces */
-			if (
-				anchorNode   === selectionChangeCache.current.anchorNode   &&
-				focusNode    === selectionChangeCache.current.focusNode    &&
-				anchorOffset === selectionChangeCache.current.anchorOffset &&
-				focusOffset  === selectionChangeCache.current.focusOffset
-			) {
-				// No-op.
-				return
-			}
-			/* eslint-enable no-multi-spaces */
+			selectionChange.current = selection
+			const { anchorNode, anchorOffset, focusNode, focusOffset } = getScopedSelection(ref.current)
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = { ...pos1 }
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 				pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
 			}
 			dispatch.select(state.body, pos1, pos2)
-			selectionChangeCache.current = {
-				anchorNode,
-				focusNode,
-				anchorOffset,
-				focusOffset,
-			}
 			greedy.current = newGreedyRange(ref.current, anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
@@ -222,8 +221,10 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 					ref,
 
 					style: {
-						paddingBottom: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`, // Scroll past end.
-						transform: state.isFocused && "translateZ(0px)", // GPU optimization.
+						// // Scroll past end:
+						// paddingBottom: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
+						// GPU optimization:
+						transform: state.isFocused && "translateZ(0px)",
 					},
 
 					contentEditable: true,
@@ -234,7 +235,6 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 					onBlur:  dispatch.blur,
 
 					onKeyDown: e => {
-						perfRenderPass.restart()
 						switch (true) {
 						case shortcut.isEnter(e):
 							e.preventDefault()
@@ -284,12 +284,12 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							e.preventDefault()
 							dispatch.deleteWord()
 							break
-						case shortcut.isUndo(e): // TODO: Test on iOS.
+						case shortcut.isUndo(e): // Needs to be tested on mobile OSs.
 							e.preventDefault()
 							// TODO
 							// dispatch.undo()
 							break
-						case shortcut.isRedo(e): // TODO: Test on iOS.
+						case shortcut.isRedo(e): // Needs to be tested on mobile OSs.
 							e.preventDefault()
 							// TODO
 							// dispatch.redo()
@@ -305,23 +305,13 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 						default:
 							// No-op.
 						}
-						const { anchorNode, focusNode } = document.getSelection()
-						if (!anchorNode || !focusNode || anchorNode === ref.current || focusNode === ref.current) {
-							// No-op.
-							return
-						}
+						const { anchorNode, focusNode } = getScopedSelection(ref.current)
 						greedy.current = newGreedyRange(ref.current, anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
 					onInput: e => {
-						perfRenderPass.restart()
-						// Compute the greedy DOM node and VDOM cursor:
-						const { anchorNode, anchorOffset } = document.getSelection()
-						if (!anchorNode || anchorNode === ref.current) {
-							// No-op.
-							return
-						}
-						// Read the mutated DOM:
+						// Read the mutated greedy DOM node range:
+						const { anchorNode, anchorOffset } = getScopedSelection(ref.current)
 						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						let data = ""
 						let greedyDOMNode = greedy.current.domNodeStart
@@ -400,7 +390,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 					onDrop:      e => e.preventDefault(),
 				},
 			)}
-			{/* <Debug /> */}
+			<DebugEditor />
 			<StatusBar />
 		</Provider>
 	)
