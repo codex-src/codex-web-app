@@ -94,7 +94,7 @@ const CodeBlock = Node(props => (
 	>
 		{props.children.map((each, index) => (
 			<div key={each.key} id={each.key} style={stylex.parse("p-x:24")} data-vdom-node>
-				<code>
+				<code style={stylex.parse("m-r:-24 p-r:24")}>
 					<Markdown
 						start={!index && props.start}
 						end={index + 1 === props.children.length && props.end}
