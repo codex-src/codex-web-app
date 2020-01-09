@@ -1,5 +1,6 @@
 import Debug from "./Debug"
 import md from "lib/encoding/md"
+import newGreedyRange from "./helpers/newGreedyRange"
 import parse from "./Components"
 import PerfTimer from "lib/PerfTimer"
 import React from "react"
@@ -51,7 +52,19 @@ function Contents(props) {
 export const Context = React.createContext()
 
 export function Editor(props) {
+	// The root node:
 	const ref = React.useRef()
+
+	// The greedy DOM node range:
+	const greedy = React.useRef()
+
+	// `selectionchange` cache:
+	const selectionChangeCache = React.useRef({
+		anchorNode:   null,
+		anchorOffset: 0,
+		focusNode:    null,
+		focusOffset:  0,
+	})
 
 	// 	const [state, dispatch] = useEditor(`
 	//
@@ -158,54 +171,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 		[state.shouldRenderDOMCursor],
 	)
 
-	const greedy = React.useRef()
-
-	// `prepareGreedyDOMNodeRange` prepares a greedy DOM node
-	// range (see `onInput`):
-	const prepareGreedyDOMNodeRange = (anchorNode, focusNode, pos1, pos2) => {
-		// Sort the nodes and VDOM cursors:
-		if (pos1.pos > pos2.pos) {
-			;[anchorNode, focusNode] = [focusNode, anchorNode]
-			;[pos1, pos2] = [pos2, pos1]
-		}
-		// Compute the start (extend 1):
-		let domNodeStart = ascendToGreedyDOMNode(ref.current, anchorNode)
-		let _pos1 = pos1.pos - pos1.greedyDOMNodePos
-		let extendStart = 1
-		while (extendStart && domNodeStart.previousSibling) {
-			domNodeStart = domNodeStart.previousSibling
-			_pos1 -= innerText(domNodeStart).length + 1
-			extendStart--
-		}
-		// Compute the end (extend 2):
-		let domNodeEnd = ascendToGreedyDOMNode(ref.current, focusNode)
-		let _pos2 = pos2.pos + pos2.greedyDOMNodeEndPos
-		let extendEnd = 2
-		while (extendEnd && domNodeEnd.nextSibling) {
-			domNodeEnd = domNodeEnd.nextSibling
-			_pos2 += innerText(domNodeEnd).length + 1
-			extendEnd--
-		}
-		// Compute the range:
-		const childNodes = [...ref.current.childNodes]
-		const range = childNodes.indexOf(domNodeEnd) - childNodes.indexOf(domNodeStart) + 1
-		// Done -- set `greedy.current`:
-		greedy.current = {
-			domNodeStart, // The greedy DOM node start.
-			domNodeEnd,   // The greedy DOM node end.
-			pos1: _pos1,  // The greedy DOM node start cursor position.
-			pos2: _pos2,  // The greedy DOM node end cursor position.
-			range,        // The greedy DOM node range.
-		}
-	}
-
-	const selectionChangeCache = React.useRef({
-		anchorNode:   null,
-		anchorOffset: 0,
-		focusNode:    null,
-		focusOffset:  0,
-	})
-
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.isFocused) {
@@ -240,7 +205,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 				anchorOffset,
 				focusOffset,
 			}
-			prepareGreedyDOMNodeRange(anchorNode, focusNode, pos1, pos2)
+			greedy.current = newGreedyRange(ref.current, anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -257,9 +222,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					ref,
 
 					style: {
-						// Scroll past end:
-						paddingBottom: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
-						transform: state.isFocused && "translateZ(0px)",
+						paddingBottom: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`, // Scroll past end.
+						transform: state.isFocused && "translateZ(0px)", // GPU optimization.
 					},
 
 					contentEditable: true,
@@ -272,11 +236,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 					onKeyDown: e => {
 						perfRenderPass.restart()
 						switch (true) {
-						case e.key === "Enter": // TODO: shortcut.isEnter(e)
+						case shortcut.isEnter(e):
 							e.preventDefault()
 							dispatch.enter()
 							break
-						case e.key === "Tab": // TODO: shortcut.isTab(e)
+						case shortcut.isTab(e):
 							e.preventDefault()
 							dispatch.tab()
 							break
@@ -346,10 +310,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 							// No-op.
 							return
 						}
-						prepareGreedyDOMNodeRange(anchorNode, focusNode, state.pos1, state.pos2)
+						greedy.current = newGreedyRange(ref.current, anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
-					// console.log({ ...e })
 					onInput: e => {
 						perfRenderPass.restart()
 						// Compute the greedy DOM node and VDOM cursor:
