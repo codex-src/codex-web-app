@@ -77,10 +77,7 @@ function Note(props) {
 				mainInsetBottom={80}
 				scrollPastEnd
 			/>
-			<StatusBar
-				state={state}
-				dispatch={dispatch}
-			/>
+			{/* <StatusBar /> */}
 		</React.Fragment>
 	)
 }

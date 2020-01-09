@@ -12,7 +12,7 @@ import stylex from "stylex"
 
 // `Node` is a higher-order component that decorates a
 // render function.
-const Node = render => ({ reactKey, ...props }) => {
+const Node = render => React.memo(({ reactKey, ...props }) => {
 	const element = render(props)
 	const newRender = React.cloneElement(
 		element,
@@ -23,7 +23,7 @@ const Node = render => ({ reactKey, ...props }) => {
 		},
 	)
 	return newRender
-}
+})
 
 const Syntax = stylex.Styleable(props => (
 	<span style={stylex.parse("pre c:blue-a400")}>
@@ -47,25 +47,25 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-const Header = React.memo(Node(props => (
-	<div style={stylex.parse("fw:700 fs:19")}>
+const Header = Node(props => (
+	<div className="semantic-header" style={stylex.parse("fw:700 fs:19")}>
 		<Markdown start={props.start}>
 			{props.children}
 		</Markdown>
 	</div>
-)))
+))
 
-const Comment = React.memo(Node(props => (
-	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+const Comment = Node(props => (
+	<div className="semantic-comment" style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
 		<Markdown style={stylex.parse("c:gray")} start="//">
 			{props.children}
 		</Markdown>
 	</div>
-)))
+))
 
 // Compound component.
-const Blockquote = React.memo(Node(props => (
-	<div>
+const Blockquote = Node(props => (
+	<div className="semantic-blockquote">
 		{props.children.map(each => (
 			<div key={each.key} id={each.key} style={stylex.parse("fs:19")} data-vdom-node>
 				<Markdown start={each.start}>
@@ -78,33 +78,23 @@ const Blockquote = React.memo(Node(props => (
 			</div>
 		))}
 	</div>
-)))
-
-const codeStyle = {
-	MozTabSize: 2,
-	tabSize: 2,
-	font: "15px/1.375 Monaco",
-}
-
-const codeBlockStyle = {
-	...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
-	...codeStyle,
-	boxShadow: "0px 0px 1px hsl(var(--gray))",
-}
-
-const codeBlockItemCodeStyle = {
-	...stylex.parse("p-x:24"),
-	...codeStyle,
-}
+))
 
 // Compound component.
 //
-// http://cdpn.io/PowjgOg
-const CodeBlock = React.memo(Node(props => (
-	<div style={codeBlockStyle} spellCheck={false}>
+// https://cdpn.io/PowjgOg
+const CodeBlock = Node(props => (
+	<div
+		className="semantic-code-block"
+		style={{
+			...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
+			boxShadow: "0px 0px 1px hsl(var(--gray))",
+		}}
+		spellCheck={false}
+	>
 		{props.children.map((each, index) => (
 			<div key={each.key} id={each.key} data-vdom-node>
-				<code style={codeBlockItemCodeStyle}>
+				<code style={stylex.parse("p-x:24")}>
 					<Markdown
 						start={!index && props.start}
 						end={index + 1 === props.children.length && props.end}
@@ -119,19 +109,19 @@ const CodeBlock = React.memo(Node(props => (
 			</div>
 		))}
 	</div>
-)))
+))
 
-const Paragraph = React.memo(Node(props => (
-	<div style={stylex.parse("fs:19")}>
+const Paragraph = Node(props => (
+	<div className="semantic-paragraph" style={stylex.parse("fs:19")}>
 		{props.children}
 	</div>
-)))
+))
 
-const Break = React.memo(Node(props => (
-	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+const Break = Node(props => (
+	<div className="semantic-break" style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
 		<Markdown start={props.start} />
 	</div>
-)))
+))
 
 // Convenience function.
 function isBlockquote(data, hasNextSibling) {

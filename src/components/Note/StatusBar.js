@@ -1,5 +1,6 @@
 // import * as Feather from "react-feather"
 import computeMetrics from "./computeMetrics"
+import Editor from "components/Editor"
 import React from "react"
 import stylex from "stylex"
 
@@ -55,7 +56,9 @@ const Text = stylex.Styleable(props => (
 	</p>
 ))
 
-function StatusBar({ state, dispatch, ...props }) {
+function StatusBar(props) {
+	const [state] = React.useContext(Editor.Context)
+
 	const metrics = computeMetrics(state)
 
 	return (

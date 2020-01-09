@@ -13,9 +13,10 @@ import {
 // `newVDOMCursor` returns a new VDOM cursor.
 export function newVDOMCursor() {
 	const cursor = {
+		greedyDOMNodeIndex:  0, // New
 		greedyDOMNodePos:    0,
 		greedyDOMNodeEndPos: 0,
-		domNodeIndex:        0, // New.
+		domNodeIndex:        0, // New
 		domNodePos:          0,
 		domNodeEndPos:       0,
 		nodePos:             0,
@@ -39,6 +40,7 @@ export function recurseToVDOMCursor(rootNode, node, offset) {
 			// If greedy DOM node:
 			if (currentNode.parentNode === rootNode) {
 				Object.assign(cursor, {
+					greedyDOMNodeIndex: cursor.greedyDOMNodeIndex + !!cursor.pos,
 					greedyDOMNodePos: 0, // Reset.
 				})
 			}

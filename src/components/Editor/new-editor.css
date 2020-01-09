@@ -1,0 +1,18 @@
+article {
+	white-space:   pre-wrap;
+	font:          19px/1.5 "system-ui";
+	caret-color:   hsl(var(--black));
+	outline:       none;
+	overflow-wrap: break-word;
+}
+
+.semantic-code-block,
+.semantic-code-block code {
+	-moz-tab-size: 2;
+	tab-size:      2;
+	font:          15px/1.375 "Monaco", "monospace";
+}
+
+::selection {
+	background: #4499EE1F;
+}

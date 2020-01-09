@@ -7,9 +7,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import shortcut from "./shortcut"
 import StatusBar from "components/Note"
-import useMethods from "use-methods"
-import utf8 from "lib/encoding/utf8"
-import VDOM from "./VDOM"
+import useEditor from "./NewEditorReducer"
 
 import {
 	innerText,
@@ -19,12 +17,11 @@ import {
 import {
 	ascendToDOMNode,
 	ascendToGreedyDOMNode,
-	newVDOMCursor,
 	recurseToDOMCursor,
 	recurseToVDOMCursor,
 } from "./traverseDOM"
 
-import "./code-demo.css"
+import "./new-editor.css"
 
 /* eslint-disable no-multi-spaces */
 const perfRenderPass    = new PerfTimer() // Times the render pass.
@@ -45,160 +42,6 @@ function newFPSStyleString(ms) {
 	return "color: red;"
 }
 
-const initialState = {
-	isFocused: false,
-	body:      new VDOM(""),
-	pos1:      newVDOMCursor(),
-	pos2:      newVDOMCursor(),
-
-	// `shouldRenderDOMComponents` hints whether the editor’s
-	// DOM components should be rendered.
-	shouldRenderDOMComponents: 0,
-
-	// `shouldRenderDOMCursor` hints whether the editor’s DOM
-	// cursor should be rendered.
-	shouldRenderDOMCursor: 0,
-
-	reactDOM: document.createElement("div"),
-}
-
-const reducer = state => ({
-	focus() {
-		state.isFocused = true
-	},
-	blur() {
-		state.isFocused = false
-	},
-	select(body, pos1, pos2) {
-		if (pos1.pos > pos2.pos) {
-			[pos1, pos2] = [pos2, pos1]
-		}
-		Object.assign(state, { body, pos1, pos2 })
-	},
-	// `_collapse` collapses the VDOM cursors to the start.
-	_collapse() {
-		state.pos2 = { ...state.pos1 }
-	},
-	// `write` writes and renders.
-	write(shouldRender, data) {
-		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
-		state.pos1.pos += data.length
-		this._collapse()
-		this.renderDOMComponents(shouldRender)
-	},
-	// `greedyWrite` greedily writes and renders.
-	greedyWrite(shouldRender, data, pos1, pos2, resetPos) {
-		state.body = state.body.write(data, pos1, pos2)
-		state.pos1 = resetPos
-		this._collapse()
-		this.renderDOMComponents(shouldRender)
-	},
-	tab() {
-		this.write(true, "\t")
-	},
-	enter() {
-		this.write(true, "\n")
-	},
-	_drop(delL, delR) {
-		// Guard the anchor node or focus node:
-		if ((!state.pos1.pos && delL) || (state.pos2.pos === state.body.data.length && delR)) {
-			// No-op.
-			this.renderDOMComponents(true) // Rerender to be safe.
-			return
-		}
-		state.body = state.body.write("", state.pos1.pos - delL, state.pos2.pos + delR)
-		state.pos1.pos -= delL
-		this._collapse()
-		this.renderDOMComponents(true)
-	},
-	backspace() {
-		if (state.pos1.pos !== state.pos2.pos) {
-			this._drop(0, 0)
-			return
-		}
-		const { length } = utf8.endRune(state.body.data.slice(0, state.pos1.pos))
-		this._drop(length, 0)
-	},
-	backspaceWord() {
-		if (state.pos1.pos !== state.pos2.pos) {
-			this._drop(0, 0)
-			return
-		}
-		// Iterate spaces:
-		let index = state.pos1.pos
-		while (index) {
-			const rune = utf8.endRune(state.body.data.slice(0, index))
-			if (!utf8.isHWhiteSpace(rune)) {
-				break
-			}
-			index -= rune.length
-		}
-		// Iterate non-word characters:
-		while (index) {
-			const rune = utf8.endRune(state.body.data.slice(0, index))
-			if (utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
-				break
-			}
-			index -= rune.length
-		}
-		// Iterate word characters:
-		while (index) {
-			const rune = utf8.endRune(state.body.data.slice(0, index))
-			if (!utf8.isAlphanum(rune)) {
-				break
-			}
-			index -= rune.length
-		}
-		const length = state.pos1.pos - index
-		this._drop(length || 1, 0) // Must delete one or more characters.
-	},
-	backspaceLine() {
-		if (state.pos1.pos !== state.pos2.pos) {
-			this._drop(0, 0)
-			return
-		}
-		let index = state.pos1.pos
-		while (index) {
-			const rune = utf8.endRune(state.body.data.slice(0, index))
-			if (utf8.isVWhiteSpace(rune)) {
-				break
-			}
-			index -= rune.length
-		}
-		const length = state.pos1.pos - index
-		this._drop(length || 1, 0) // Must delete one or more characters.
-	},
-	delete() {
-		if (state.pos1.pos !== state.pos2.pos) {
-			this._drop(0, 0)
-			return
-		}
-		const { length } = utf8.startRune(state.body.data.slice(state.pos1.pos))
-		this._drop(0, length)
-	},
-
-	renderDOMComponents(shouldRender) {
-		state.shouldRenderDOMComponents += shouldRender
-	},
-	renderDOMCursor() {
-		state.shouldRenderDOMCursor++
-	},
-})
-
-const init = initialValue => initialState => {
-	const body = initialState.body.write(initialValue, 0, initialState.body.data.length)
-	const state = {
-		...initialState,
-		body,
-		Components: parse(body),
-	}
-	return state
-}
-
-function useEditor(initialValue) {
-	return useMethods(reducer, initialState, init(initialValue))
-}
-
 // NOTE: Reference-based components rerender much faster.
 //
 // https://twitter.com/dan_abramov/status/691306318204923905
@@ -206,7 +49,9 @@ function Contents(props) {
 	return props.components
 }
 
-function Editor(props) {
+export const Context = React.createContext()
+
+export function Editor(props) {
 	const ref = React.useRef()
 
 	const [state, dispatch] = useEditor(`
@@ -399,8 +244,9 @@ function Editor(props) {
 		}
 	}, [state, dispatch])
 
+	const { Provider } = Context
 	return (
-		<div>
+		<Provider value={[state, dispatch]}>
 			{React.createElement(
 				"article",
 				{
@@ -441,8 +287,8 @@ function Editor(props) {
 						resetGreedy(anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
+					// console.log({ ...e })
 					onInput: e => {
-						console.log({ ...e })
 
 						perfRenderPass.restart()
 						// Compute the greedy DOM node and VDOM cursor:
@@ -584,11 +430,8 @@ function Editor(props) {
 					onDrop:      e => e.preventDefault(),
 				},
 			)}
-			{/* Use React context? */}
-			<DebugEditor state={state} />
-			<StatusBar state={state} dispatch={dispatch} />
-		</div>
+			<DebugEditor />
+			<StatusBar />
+		</Provider>
 	)
 }
-
-export default Editor

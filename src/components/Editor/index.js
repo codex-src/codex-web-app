@@ -1,10 +1,2 @@
-// import * as Editor from "./Editor"
-// import useEditor from "./EditorReducer"
-import Editor from "./CodeDemo"
-
-const exports = {
-	Editor, // Editor.Editor,
-	// useEditor,
-}
-
+import * as exports from "./NewEditor"
 export default exports
