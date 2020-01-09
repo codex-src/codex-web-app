@@ -1,5 +1,6 @@
+// // DEPRECATE
+// // import inputType from "./inputType"
 import DebugEditor from "./DebugEditor"
-import inputType from "./inputType"
 import md from "lib/encoding/md"
 import parse from "./Components"
 import PerfTimer from "lib/PerfTimer"
@@ -159,16 +160,15 @@ export function Editor(props) {
 
 	const greedy = React.useRef()
 
-	// `resetGreedy` resets the greedy DOM node range.
-	const resetGreedy = (anchorNode, focusNode, pos1, pos2) => {
+	// `newGreedyRange` creates a new greedy DOM node range.
+	const newGreedyRange = (anchorNode, focusNode, pos1, pos2) => {
 		// Sort the nodes and VDOM cursors:
 		if (pos1.pos > pos2.pos) {
 			;[anchorNode, focusNode] = [focusNode, anchorNode]
 			;[pos1, pos2] = [pos2, pos1]
 		}
 		// Compute the start (extend 1):
-		const currentDOMNode = ascendToDOMNode(ref.current, anchorNode)
-		let domNodeStart = ascendToGreedyDOMNode(ref.current, currentDOMNode)
+		let domNodeStart = ascendToGreedyDOMNode(ref.current, anchorNode)
 		let _pos1 = pos1.pos - pos1.greedyDOMNodePos
 		let extendStart = 1
 		while (extendStart && domNodeStart.previousSibling) {
@@ -190,13 +190,11 @@ export function Editor(props) {
 		const range = childNodes.indexOf(domNodeEnd) - childNodes.indexOf(domNodeStart) + 1
 		// Done -- set `greedy.current`:
 		greedy.current = {
-			currentDOMNode, // The current DOM node -- not greedy!
-			currentDOMNodeCopy: currentDOMNode.cloneNode(true),
-			domNodeStart,   // The greedy DOM node start.
-			domNodeEnd,     // The greedy DOM node end.
-			pos1: _pos1,    // The greedy DOM node start cursor position.
-			pos2: _pos2,    // The greedy DOM node end cursor position.
-			range,          // The greedy DOM node range.
+			domNodeStart, // The greedy DOM node start.
+			domNodeEnd,   // The greedy DOM node end.
+			pos1: _pos1,  // The greedy DOM node start cursor position.
+			pos2: _pos2,  // The greedy DOM node end cursor position.
+			range,        // The greedy DOM node range.
 		}
 	}
 
@@ -236,7 +234,7 @@ export function Editor(props) {
 			}
 			dispatch.select(state.body, pos1, pos2)
 			selectionChangeCache.current = { anchorNode, focusNode, anchorOffset, focusOffset }
-			resetGreedy(anchorNode, focusNode, pos1, pos2)
+			newGreedyRange(anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -264,10 +262,64 @@ export function Editor(props) {
 					onKeyDown: e => {
 						perfRenderPass.restart()
 						switch (true) {
-						case e.key === "Tab": // FIXME: Use `shortcut.isTab(e)`?
+						case e.key === "Enter": // TODO: shortcut.isEnter(e)
+							e.preventDefault()
+							dispatch.enter()
+							break
+						case e.key === "Tab": // TODO: shortcut.isTab(e)
 							e.preventDefault()
 							dispatch.tab()
-							return
+							break
+						case shortcut.isBackspace(e):
+							// Defer to native browser behavior because
+							// backspace on emoji is well behaved in
+							// Chrome and Safari.
+							//
+							// NOTE: Firefox (72) does not correctly
+							// handle backspace on emoji.
+							if (state.pos1.pos === state.pos2.pos && state.pos1.pos && state.body.data[state.pos1.pos - 1] !== "\n") {
+								// No-op.
+								break
+							}
+							e.preventDefault()
+							dispatch.backspace()
+							break
+						case shortcut.isBackspaceWord(e):
+							e.preventDefault()
+							dispatch.backspaceWord()
+							break
+						case shortcut.isBackspaceLine(e):
+							e.preventDefault()
+							dispatch.backspaceLine()
+							break
+						case shortcut.isDelete(e):
+							// Defer to native browser behavior because
+							// delete on emoji is well behaved in Chrome
+							// and Safari.
+							//
+							// NOTE: Surprisingly, Firefox (72) does
+							// correctly handle delete on emoji.
+							if (state.pos1.pos === state.pos2.pos && state.pos1.pos < state.body.data.length && state.body.data[state.pos1.pos] !== "\n") {
+								// No-op.
+								break
+							}
+							e.preventDefault()
+							dispatch.delete()
+							break
+						case shortcut.isDeleteWord(e):
+							e.preventDefault()
+							dispatch.deleteWord()
+							break
+						case shortcut.isUndo(e): // TODO: Test on iOS.
+							e.preventDefault()
+							// TODO
+							// dispatch.undo()
+							break
+						case shortcut.isRedo(e): // TODO: Test on iOS.
+							e.preventDefault()
+							// TODO
+							// dispatch.redo()
+							break
 						case shortcut.isBold(e):
 							e.preventDefault()
 							// TODO
@@ -284,12 +336,11 @@ export function Editor(props) {
 							// No-op.
 							return
 						}
-						resetGreedy(anchorNode, focusNode, state.pos1, state.pos2)
+						newGreedyRange(anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
 					// console.log({ ...e })
 					onInput: e => {
-
 						perfRenderPass.restart()
 						// Compute the greedy DOM node and VDOM cursor:
 						const { anchorNode, anchorOffset } = document.getSelection()
@@ -297,72 +348,17 @@ export function Editor(props) {
 							// No-op.
 							return
 						}
-						const currentDOMNode = ascendToDOMNode(ref.current, anchorNode)
-						const greedyDOMNode = ascendToGreedyDOMNode(ref.current, currentDOMNode)
-						const greedyDOMNodeData = innerText(greedyDOMNode)
-						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						switch (true) {
-						case inputType.isEnter(e):
-							dispatch.enter()
-							return
-						// Enter when typing -- (compound components):
-						case inputType.isTyping(e) && currentDOMNode !== greedy.current.currentDOMNode: { // Scope.
-							const d1 = `${innerText(greedy.current.currentDOMNode)}\n`
-							const d2 = `${innerText(currentDOMNode)}\n`
-							dispatch.greedyWrite(true, d1 + d2, pos.pos - d1.length, pos.pos + d2.length - 1, pos)
-							return
-						}
-						case inputType.isBackspace(e): { // Scope.
-							const d = innerText(greedy.current.currentDOMNodeCopy)
-							if (state.pos1.domNodePos && d[state.pos1.domNodePos - 1] !== "\n") {
-								// No-op.
-								// (Do not return)
-								break
-							}
-							dispatch.backspace()
-							return
-						}
-						case inputType.isBackspaceWord(e):
-							dispatch.backspaceWord()
-							return
-						case inputType.isBackspaceLine(e):
-							dispatch.backspaceLine()
-							return
-						case inputType.isDelete(e): { // Scope.
-							const d = innerText(greedy.current.currentDOMNodeCopy)
-							if (state.pos1.domNodePos < d.length && d[state.pos1.domNodePos] !== "\n") {
-								// No-op.
-								// (Do not return)
-								break
-							}
-							dispatch.delete()
-							return
-						}
-						case inputType.isDeleteWord(e):
-							dispatch.deleteWord()
-							return
-						case inputType.isUndo(e):
-							dispatch.undo()
-							return
-						case inputType.isRedo(e):
-							dispatch.redo()
-							return
-						default:
-							// No-op.
-						}
-
 						// Read the mutated DOM:
+						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						let data = ""
-						let currentNode = greedy.current.domNodeStart
-						while (currentNode) {
-							if (currentNode !== greedy.current.domNodeStart) {
-								data += "\n"
-							}
-							data += innerText(currentNode)
-							if (greedy.current.range > 2 && currentNode === greedy.current.domNodeEnd) {
+						let greedyDOMNode = greedy.current.domNodeStart
+						while (greedyDOMNode) {
+							data += (greedyDOMNode === greedy.current.domNodeStart ? "" : "\n") + innerText(greedyDOMNode)
+							if (greedy.current.range > 2 && greedyDOMNode === greedy.current.domNodeEnd) {
 								break
 							}
-							currentNode = currentNode.nextSibling
+							const { nextSibling } = greedyDOMNode
+							greedyDOMNode = nextSibling
 						}
 						// Get heuristics for native rendering e.g.
 						// `shouldRender` -- read up to three characters
@@ -374,7 +370,8 @@ export function Editor(props) {
 						//
 						// TODO: Refer to `Components.parser` for
 						// `shouldRender`.
-						const substr = greedyDOMNodeData.slice(pos.greedyDOMNodePos - 3, pos.greedyDOMNodePos + 2)
+						const _data = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
+						const substr = _data.slice(pos.greedyDOMNodePos - 3, pos.greedyDOMNodePos + 2)
 						const shouldRender = (
 							(
 								e.nativeEvent.inputType !== "insertText" ||
