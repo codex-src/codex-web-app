@@ -10,10 +10,13 @@ function DebugEditor(props) {
 			<div style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 				{JSON.stringify(
 					{
-						body: state.body,
+						// body: state.body,
 						// data: state.body.data,
-						pos1: state.pos1,
-						pos2: state.pos2,
+
+						op:    state.op,
+						types: state.types,
+						pos1:  state.pos1,
+						pos2:  state.pos2,
 					},
 					null,
 					"\t",

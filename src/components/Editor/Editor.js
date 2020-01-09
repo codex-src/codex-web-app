@@ -133,6 +133,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 			const { Components, types } = parse(state.body)
 			// if (compareTypes(types, state.types)) {
 			// 	// No-op.
+			// 	console.log("Prevented a render")
 			// 	return
 			// }
 			// dispatch.setTypes(types)
@@ -158,7 +159,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 	// Should render DOM cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			if (!state.isFocused) {
+			if (!state.hasFocus) {
 				// No-op.
 				return
 			}
@@ -176,19 +177,19 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 			selection.addRange(range)
 			perfDOMCursor.stop()
 
-			// const p = perfParser.duration()
-			// const r = perfReactRenderer.duration()
-			// const d = perfDOMRenderer.duration()
-			// const c = perfDOMCursor.duration()
-			// const sum = p + r + d + c
-			// console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
+			const p = perfParser.duration()
+			const r = perfReactRenderer.duration()
+			const d = perfDOMRenderer.duration()
+			const c = perfDOMCursor.duration()
+			const sum = p + r + d + c
+			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
 		}, [state]),
 		[state.shouldRenderDOMCursor],
 	)
 
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
-			if (!state.isFocused) {
+			if (!state.hasFocus) {
 				// No-op.
 				return
 			}
@@ -198,10 +199,12 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 				return
 			}
 			/* eslint-disable no-multi-spaces */
-			if (selectionChange.current.anchorNode   === anchorNode   &&
-					selectionChange.current.focusNode    === focusNode    &&
-					selectionChange.current.anchorOffset === anchorOffset &&
-					selectionChange.current.focusOffset  === focusOffset) {
+			if (
+				selectionChange.current.anchorNode   === anchorNode   &&
+				selectionChange.current.focusNode    === focusNode    &&
+				selectionChange.current.anchorOffset === anchorOffset &&
+				selectionChange.current.focusOffset  === focusOffset
+			) {
 				// No-op.
 				return
 			}
@@ -232,26 +235,27 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 					style: {
 						// // Scroll past end:
 						// paddingBottom: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
+
 						// GPU optimization:
-						transform: state.isFocused && "translateZ(0px)",
+						transform: state.hasFocus && "translateZ(0px)",
 					},
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
-					spellCheck: false,
+					// spellCheck: false,
 
-					onFocus: dispatch.focus,
-					onBlur:  dispatch.blur,
+					onFocus: dispatch.opFocus,
+					onBlur:  dispatch.opBlur,
 
 					onKeyDown: e => {
 						switch (true) {
 						case shortcut.isEnter(e):
 							e.preventDefault()
-							dispatch.enter()
+							dispatch.opEnter()
 							break
 						case shortcut.isTab(e):
 							e.preventDefault()
-							dispatch.tab()
+							dispatch.opTab()
 							break
 						case shortcut.isBackspace(e):
 							// Defer to native browser behavior because
@@ -265,15 +269,15 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 								break
 							}
 							e.preventDefault()
-							dispatch.backspace()
+							dispatch.opBackspace()
 							break
 						case shortcut.isBackspaceWord(e):
 							e.preventDefault()
-							dispatch.backspaceWord()
+							dispatch.opBackspaceWord()
 							break
 						case shortcut.isBackspaceLine(e):
 							e.preventDefault()
-							dispatch.backspaceLine()
+							dispatch.opBackspaceLine()
 							break
 						case shortcut.isDelete(e):
 							// Defer to native browser behavior because
@@ -287,11 +291,11 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 								break
 							}
 							e.preventDefault()
-							dispatch.delete()
+							dispatch.opDelete()
 							break
 						case shortcut.isDeleteWord(e):
 							e.preventDefault()
-							dispatch.deleteWord()
+							// TODO
 							break
 						case shortcut.isUndo(e): // Needs to be tested on mobile OSs.
 							e.preventDefault()
@@ -336,33 +340,35 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							const { nextSibling } = greedyDOMNode
 							greedyDOMNode = nextSibling
 						}
-						// Get heuristics for native rendering e.g.
-						// `shouldRender` -- read up to three characters
-						// before and up to two characters after:
-						//
-						//  #·Hello, world!
-						//     ^
-						// [01234]
-						//
-						// TODO: Refer to `Components.parser` for
-						// `shouldRender`.
-						const _data = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
-						const substr = _data.slice(pos.greedyDOMNodePos - 3, pos.greedyDOMNodePos + 2)
-						const shouldRender = (
-							(
-								e.nativeEvent.inputType !== "insertText" ||
-								md.isSyntax(substr.slice(0, 1)) || // n - 3 -> #
-								md.isSyntax(substr.slice(1, 2)) || // n - 2 -> ·
-								md.isSyntax(substr.slice(2, 3)) || // n - 1 -> H
-								md.isSyntax(substr.slice(3, 4)) || // n     -> e
-								md.isSyntax(substr.slice(4, 5))    // n + 1 -> l
-							) && (
-								!pos.domNodePos || // Temporary fix for compound components on Android.
-								e.nativeEvent.inputType !== "insertCompositionText"
-							)
-						)
+
+						// // Get heuristics for native rendering e.g.
+						// // `shouldRender` -- read up to three characters
+						// // before and up to two characters after:
+						// //
+						// //  #·Hello, world!
+						// //     ^
+						// // [01234]
+						// //
+						// // TODO: Refer to `Components.parser` for
+						// // `shouldRender`.
+						// const _data = innerText(ascendToGreedyDOMNode(ref.current, anchorNode))
+						// const substr = _data.slice(pos.greedyDOMNodePos - 3, pos.greedyDOMNodePos + 2)
+						// const shouldRender = (
+						// 	(
+						// 		e.nativeEvent.inputType !== "insertText" ||
+						// 		md.isSyntax(substr.slice(0, 1)) || // n - 3 -> #
+						// 		md.isSyntax(substr.slice(1, 2)) || // n - 2 -> ·
+						// 		md.isSyntax(substr.slice(2, 3)) || // n - 1 -> H
+						// 		md.isSyntax(substr.slice(3, 4)) || // n     -> e
+						// 		md.isSyntax(substr.slice(4, 5))    // n + 1 -> l
+						// 	) && (
+						// 		!pos.domNodePos || // Temporary fix for compound components on Android.
+						// 		e.nativeEvent.inputType !== "insertCompositionText"
+						// 	)
+						// )
+
 						// Done -- render:
-						dispatch.greedyWrite(shouldRender, data, greedy.current.pos1, greedy.current.pos2, pos)
+						dispatch.opInput(data, greedy.current.pos1, greedy.current.pos2, pos)
 					},
 
 					onCut: e => {
@@ -373,7 +379,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 						}
 						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
 						e.clipboardData.setData("text/plain", data)
-						dispatch.write(true, "")
+						dispatch.opCut()
 					},
 
 					onCopy: e => {
@@ -384,6 +390,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 						}
 						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
 						e.clipboardData.setData("text/plain", data)
+						dispatch.opCopy()
 					},
 
 					onPaste: e => {
@@ -393,7 +400,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							// No-op.
 							return
 						}
-						dispatch.write(true, data)
+						dispatch.opPaste(data)
 					},
 
 					onDragStart: e => e.preventDefault(),
