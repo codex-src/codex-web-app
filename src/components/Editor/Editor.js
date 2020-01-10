@@ -57,7 +57,7 @@ function Components(props) {
 
 export function Editor(props) {
 	const ref = React.useRef()
-	const selectionchange = React.useRef()
+	const lastSeletionChange = React.useRef()
 	const greedy = React.useRef()
 
 	const [state, dispatch] = useEditor(`
@@ -161,17 +161,17 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 			}
 			/* eslint-disable no-multi-spaces */
 			if (
-				selectionchange.current &&
-				selectionchange.current.anchorNode   === anchorNode   &&
-				selectionchange.current.focusNode    === focusNode    &&
-				selectionchange.current.anchorOffset === anchorOffset &&
-				selectionchange.current.focusOffset  === focusOffset
+				lastSeletionChange.current                               &&
+				lastSeletionChange.current.anchorNode   === anchorNode   &&
+				lastSeletionChange.current.focusNode    === focusNode    &&
+				lastSeletionChange.current.anchorOffset === anchorOffset &&
+				lastSeletionChange.current.focusOffset  === focusOffset
 			) {
 				// No-op.
 				return
 			}
 			/* eslint-enable no-multi-spaces */
-			selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
+			lastSeletionChange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = { ...pos1 }
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
@@ -259,12 +259,12 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							e.preventDefault()
 							// TODO
 							break
-						case shortcut.isUndo(e): // Needs to be tested on mobile OSs.
+						case shortcut.isUndo(e): // Needs to be tested on mobile.
 							e.preventDefault()
 							// TODO
 							// dispatch.undo()
 							break
-						case shortcut.isRedo(e): // Needs to be tested on mobile OSs.
+						case shortcut.isRedo(e): // Needs to be tested on mobile.
 							e.preventDefault()
 							// TODO
 							// dispatch.redo()
@@ -306,33 +306,25 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 
 					onCut: e => {
 						e.preventDefault()
-						if (state.pos1.pos === state.pos2.pos) {
-							// No-op.
-							return
-						}
 						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-						e.clipboardData.setData("text/plain", data)
+						if (data) {
+							e.clipboardData.setData("text/plain", data)
+						}
 						dispatch.opCut()
 					},
 
 					onCopy: e => {
 						e.preventDefault()
-						if (state.pos1.pos === state.pos2.pos) {
-							// No-op.
-							return
-						}
 						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-						e.clipboardData.setData("text/plain", data)
-						// dispatch.opCopy()
+						if (data) {
+							e.clipboardData.setData("text/plain", data)
+						}
+						dispatch.opCopy()
 					},
 
 					onPaste: e => {
 						e.preventDefault()
 						const data = e.clipboardData.getData("text/plain")
-						if (!data) {
-							// No-op.
-							return
-						}
 						dispatch.opPaste(data)
 					},
 

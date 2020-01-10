@@ -19,8 +19,7 @@ export function sameTypes(t1, t2) {
 	}
 	let index = 0
 	while (index < t1.length) {
-		if (t1[index].length !== t2[index].length && // Fast pass.
-				t1[index] !== t2[index]) {
+		if (t1[index].length !== t2[index].length && t1[index] !== t2[index]) {
 			return false
 		}
 		index++

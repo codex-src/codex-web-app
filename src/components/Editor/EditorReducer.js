@@ -23,7 +23,7 @@ const Operation = {
 	delete:        "delete",
 	deleteWord:    "delete-word",
 	cut:           "cut",
-	// copy:       "copy",
+	copy:          "copy",
 	paste:         "paste",
 }
 
@@ -115,7 +115,6 @@ const reducer = state => ({
 	},
 	// FIXME: Use `text` instead of `utf8`?
 	opBackspace() {
-		// TODO: Add no-op operation.
 		state.op = Operation.backspace
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
@@ -126,7 +125,6 @@ const reducer = state => ({
 	},
 	// FIXME: Use `text` instead of `utf8`?
 	opBackspaceWord() {
-		// TODO: Add no-op operation.
 		state.op = Operation.backspaceWord
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
@@ -162,7 +160,6 @@ const reducer = state => ({
 	},
 	// FIXME: Use `text` instead of `utf8`?
 	opBackspaceLine() {
-		// TODO: Add no-op operation.
 		state.op = Operation.backspaceLine
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
@@ -181,7 +178,6 @@ const reducer = state => ({
 	},
 	// FIXME: Use `text` instead of `utf8`?
 	opDelete() {
-		// TODO: Add no-op operation.
 		state.op = Operation.delete
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
@@ -193,6 +189,9 @@ const reducer = state => ({
 	opCut() {
 		state.op = Operation.cut
 		this.write("")
+	},
+	opCopy() {
+		state.op = Operation.copy
 	},
 	opPaste(data) {
 		state.op = Operation.paste
