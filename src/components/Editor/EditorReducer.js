@@ -30,15 +30,16 @@ const Operation = {
 }
 
 const initialState = {
-	op:           "",               // The current editing operation.
-	opRecordedAt: 0,                // When was the current editing operation recorded?
-	hasFocus:     false,            // Does the editor have focus?
-	body:         new VDOM(""),     // The VDOM body.
-	pos1:         new VDOMCursor(), // The VDOM cursor start.
-	pos2:         new VDOMCursor(), // The VDOM cursor end.
-	Components:   [],               // The parsed components.
-	history:      [],               // The history (and future) state stack.
-	historyIndex: -1,               // The history (and future) state stack index.
+	op:            "",               // The current editing operation.
+	opRecordedAt:  0,                // When was the current editing operation recorded?
+	hasFocus:      false,            // Does the editor have focus?
+	body:          new VDOM(""),     // The VDOM body.
+	didCorrectPos: false,            // Did correct the cursor positions on first write?
+	pos1:          new VDOMCursor(), // The VDOM cursor start.
+	pos2:          new VDOMCursor(), // The VDOM cursor end.
+	Components:    [],               // The parsed components.
+	history:       [],               // The history (and future) state stack.
+	historyIndex:  -1,               // The history (and future) state stack index.
 
 	// `shouldRender` hints whether to rerender; uses a
 	// counter to track the number of renders.
@@ -77,6 +78,11 @@ const reducer = state => ({
 	},
 	// `write` writes at the current cursor positions.
 	write(data) {
+		if (!state.didCorrectPos) {
+			state.history[0].pos1.pos = state.pos1.pos
+			state.history[0].pos2.pos = state.pos2.pos
+			state.didCorrectPos = true
+		}
 		this.prune()
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
 		state.pos1.pos += data.length
@@ -114,8 +120,10 @@ const reducer = state => ({
 	prune() {
 		state.history.splice(state.historyIndex + 1)
 	},
-	// TODO: `nextState`?
 
+	/*
+	 * Operations
+	 */
 	opSelect(pos1, pos2) {
 		this.recordOp(Operation.select)
 		this.setState(state.body, pos1, pos2)
@@ -131,6 +139,12 @@ const reducer = state => ({
 	// const { exact, offsetStart, offsetEnd } = diffString(state.body.data.slice(pos1, pos2), data)
 	opInput(data, pos1, pos2, resetPos) {
 		this.recordOp(Operation.input)
+		if (!state.didCorrectPos) { // Copied from `write`.
+			state.history[0].pos1.pos = state.pos1.pos
+			state.history[0].pos2.pos = state.pos2.pos
+			state.didCorrectPos = true
+		}
+		this.prune()
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = resetPos
 		this.collapse()
@@ -228,8 +242,7 @@ const reducer = state => ({
 	opUndo() {
 		this.recordOp(Operation.undo)
 		if (!state.historyIndex) {
-			// state.didCorrectPos = false
-			// No-op.
+			state.didCorrectPos = false
 			return
 		}
 		state.historyIndex--

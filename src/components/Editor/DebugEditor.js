@@ -12,8 +12,13 @@ function DebugEditor(props) {
 			<div style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 				{safeStringify(
 					{
-						op:           state.op,
-						history:      state.history.map(each => each.body.data),
+						// op: state.op,
+						didCorrectPos: state.didCorrectPos,
+						history: state.history.map(each => ({
+							data: each.body.data,
+							pos1: each.pos1.pos,
+							pos2: each.pos2.pos,
+						})),
 						historyIndex: state.historyIndex,
 
 						// ...state,

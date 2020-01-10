@@ -115,7 +115,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(<Components components={state.Components} />, state.reactDOM, () => {
-				const selection = document.getSelection()
+				const selection = window.getSelection()
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				selection.removeAllRanges()
 				;[...ref.current.childNodes].map(each => each.remove())          // TODO
@@ -136,7 +136,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 				// No-op.
 				return
 			}
-			const selection = document.getSelection()
+			const selection = window.getSelection()
 			const range = document.createRange()
 			// Guard break nodes (Firefox):
 			let { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
