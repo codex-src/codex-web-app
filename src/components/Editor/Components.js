@@ -12,6 +12,9 @@ const Type = {
 	Break:      "Break",
 }
 
+// DEPRECATE: Use components and remove types. Note that
+// `React.memo` and `Node` can obscure `type`.
+//
 // `sameTypes` returns whether two type arrays are the same:
 export function sameTypes(t1, t2) {
 	if (t1.length !== t2.length) {

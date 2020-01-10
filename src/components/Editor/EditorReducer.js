@@ -69,13 +69,17 @@ const reducer = state => ({
 		this.collapse()
 		this.render()
 	},
-	// `greedyWrite` greedily writes and resets the cursors.
-	greedyWrite(data, pos1, pos2, resetPos) {
-		state.body = state.body.write(data, pos1, pos2)
-		state.pos1 = resetPos
-		this.collapse()
-		this.render()
-	},
+
+	// DEPRECATE
+	//
+	// // `greedyWrite` greedily writes and resets the cursors.
+	// greedyWrite(data, pos1, pos2, resetPos) {
+	// 	state.body = state.body.write(data, pos1, pos2)
+	// 	state.pos1 = resetPos
+	// 	this.collapse()
+	// 	this.render()
+	// },
+
 	// `drop` drops characters from the left and or right of
 	// the current cursor positions.
 	drop(dropL, dropR) {
@@ -102,8 +106,11 @@ const reducer = state => ({
 		state.hasFocus = false
 	},
 	opInput(data, pos1, pos2, resetPos) {
-		state.op = Operation.input
-		this.greedyWrite(data, pos1, pos2, resetPos)
+		// TODO: Diff.
+		state.body = state.body.write(data, pos1, pos2)
+		state.pos1 = resetPos
+		this.collapse()
+		this.render()
 	},
 	opEnter() {
 		state.op = Operation.enter
@@ -200,7 +207,6 @@ const reducer = state => ({
 
 	// `render` updates `shouldRender`.
 	render() {
-		// Get the current types and parse new types:
 		const { types } = state
 		const { Components, types: newTypes } = parseComponents(state.body)
 		Object.assign(state, {

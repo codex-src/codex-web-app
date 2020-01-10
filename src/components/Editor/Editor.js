@@ -1,5 +1,5 @@
-// import PerfTimer from "lib/PerfTimer"
 import DebugEditor from "./DebugEditor"
+import invariant from "invariant"
 import newGreedyRange from "./helpers/newGreedyRange"
 import React from "react"
 import ReactDOM from "react-dom"
@@ -22,6 +22,8 @@ import "./editor.css"
 
 export const Context = React.createContext()
 
+// import PerfTimer from "lib/PerfTimer"
+//
 // /* eslint-disable no-multi-spaces */
 // const perfParser        = new PerfTimer() // Times the component parser phase.
 // const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
@@ -57,7 +59,7 @@ function Components(props) {
 
 export function Editor(props) {
 	const ref = React.useRef()
-	const lastSeletionChange = React.useRef()
+	const seletionChange = React.useRef()
 	const greedy = React.useRef()
 
 	const [state, dispatch] = useEditor(`
@@ -161,17 +163,17 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 			}
 			/* eslint-disable no-multi-spaces */
 			if (
-				lastSeletionChange.current                               &&
-				lastSeletionChange.current.anchorNode   === anchorNode   &&
-				lastSeletionChange.current.focusNode    === focusNode    &&
-				lastSeletionChange.current.anchorOffset === anchorOffset &&
-				lastSeletionChange.current.focusOffset  === focusOffset
+				seletionChange.current                               &&
+				seletionChange.current.anchorNode   === anchorNode   &&
+				seletionChange.current.focusNode    === focusNode    &&
+				seletionChange.current.anchorOffset === anchorOffset &&
+				seletionChange.current.focusOffset  === focusOffset
 			) {
 				// No-op.
 				return
 			}
 			/* eslint-enable no-multi-spaces */
-			lastSeletionChange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
+			seletionChange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = { ...pos1 }
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
@@ -289,6 +291,14 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 					},
 
 					onInput: e => {
+						invariant(
+							// greedy.current.domNodeStart &&
+							// greedy.current.domNodeEnd &&
+							greedy.current.pos1 >= 0 && // Should not be -1.
+							// greedy.current.pos2 &&
+							greedy.current.range,
+							"FIXME",
+						)
 						const { anchorNode, anchorOffset } = window.getSelection()
 						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						let data = ""
