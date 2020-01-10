@@ -201,25 +201,26 @@ const reducer = state => ({
 
 	// `render` updates `shouldRender`.
 	render() {
-		// `markdownStart` returns whether to render based on
-		// markdown start characters:
+		// Get the current types and parse new types:
+		const { types } = state
+		const { Components, types: newTypes } = parseComponents(state.body)
+		Object.assign(state, {
+			Components,      // The new components.
+			types: newTypes, // The new component types.
+		})
+		// Guard edge case at markdown start:
 		//
 		//  #·H<cursor> -> ["#", " "]
 		// //·H<cursor> -> ["/", " "]
 		//  >·H<cursor> -> [">", " "]
 		//
-		const markdownStart = () => (
+		const markdownStart = (
 			state.pos1.pos - 3 >= 0 &&
 			markdown.isSyntax(state.body.data[state.pos1.pos - 3]) &&
 			state.body.data[state.pos1.pos - 2] === " "
 		)
-		const { Components, types } = parseComponents(state.body)
-		if (sameTypes(types, state.types) && !markdownStart()) {
-			state.Components = Components
-			return
-		}
-		Object.assign(state, { Components, types })
-		state.shouldRender++
+		// Native rendering strategy:
+		state.shouldRender += state.op !== Operation.input || !sameTypes(types, newTypes) || markdownStart
 	},
 	// `renderDOMCursor` updates `shouldRenderDOMCursor`.
 	renderDOMCursor() {
