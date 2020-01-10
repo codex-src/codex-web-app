@@ -9,7 +9,7 @@ import {
 	sameComponents,
 } from "./Components"
 
-// User editing operations:
+// Editing operations:
 const Operation = {
 	select:        "select",
 	focus:         "focus",
@@ -53,7 +53,7 @@ const reducer = state => ({
 	// `setState` sets the VDOM state.
 	setState(body, pos1, pos2) {
 		if (pos1.pos > pos2.pos) {
-			[pos1, pos2] = [pos2, pos1]
+			;[pos1, pos2] = [pos2, pos1]
 		}
 		Object.assign(state, {
 			body,
@@ -63,7 +63,7 @@ const reducer = state => ({
 	},
 	// `recordOp` records the current editing operation.
 	recordOp(op) {
-		if (op === Operation.select && Date.now() - state.opRecordedAt < 20) {
+		if (op === Operation.select && Date.now() - state.opRecordedAt < 100) {
 			// No-op.
 			return
 		}

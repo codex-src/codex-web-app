@@ -65,8 +65,8 @@ const Blockquote = props => (
 		{props.children.map(each => (
 			<div key={each.key} id={each.key} style={stylex.parse("fs:19")} data-vdom-node>
 				<Markdown start={each.start}>
-					{each.data || (
-						!(each.start + each.data) && (
+					{each.children || (
+						!(each.start + each.children) && (
 							<br />
 						)
 					)}
@@ -104,7 +104,7 @@ const CodeBlock = props => (
 						start={!index && props.start}
 						end={index + 1 === props.children.length && props.end}
 					>
-						{each.data || (
+						{each.children || (
 							index > 0 && index + 1 < props.children.length && (
 								<br />
 							)
@@ -148,15 +148,6 @@ function isBlockquote(data, hasNextSibling) {
 	return ok
 }
 
-// TODO (1): Add scopes where needed.
-// TODO (2): Add fast pass for paragraphs.
-//
-// case data.length && markdown.isSyntax(data[0]):
-//   Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
-//   types.push(Type.Paragraph)
-//   break
-//
-/* eslint-disable no-case-declarations */
 export function parseComponents(body) {
 	const Components = []
 	let index = 0
@@ -171,19 +162,18 @@ export function parseComponents(body) {
 			(data.length >= 5 && data.slice(0, 5) === ("#### ")) ||
 			(data.length >= 6 && data.slice(0, 6) === ("##### ")) ||
 			(data.length >= 7 && data.slice(0, 7) === ("###### "))
-		):
+		): {
 			const headerIndex = data.indexOf("# ")
 			const headerStart = data.slice(0, headerIndex + 2)
 			Components.push(<Header key={key} reactKey={key} start={headerStart}>{data.slice(headerIndex + 2)}</Header>)
-			// types.push(Type.Header)
 			break
+		}
 		// Comment:
 		case data.length >= 2 && data.slice(0, 2) === "//":
 			Components.push(<Comment key={key} reactKey={key}>{data.slice(2)}</Comment>)
-			// types.push(Type.Comment)
 			break
 		// Blockquote:
-		case isBlockquote(data, index + 1 < body.nodes.length):
+		case isBlockquote(data, index + 1 < body.nodes.length): {
 			const bquoteStart = index
 			index++
 			while (index < body.nodes.length) {
@@ -197,17 +187,17 @@ export function parseComponents(body) {
 				<Blockquote key={key} reactKey={key}>
 					{bquoteNodes.map(each => (
 						{
-							...each,
-							start: each.data.slice(0, 2),
-							data:  each.data.slice(2),
+							key:      each.key,
+							start:    each.data.slice(0, 2),
+							children: each.data.slice(2),
 						}
 					))}
 				</Blockquote>
 			))
-			// types.push(Type.Blockquote)
 			// Decrement (compound components):
 			index--
 			break
+		}
 		// Code block:
 		case (
 			data.length >= 6 &&
@@ -218,16 +208,15 @@ export function parseComponents(body) {
 				<CodeBlock key={key} reactKey={key} start="```" end="```">
 					{[
 						{
-							...body.nodes[index],
-							data: data.slice(3, -3),
+							key, // Reuse the current key.
+							children: data.slice(3, -3),
 						},
 					]}
 				</CodeBlock>
 			))
-			// types.push(Type.CodeBlock)
 			break
 		// Code block (multiline):
-		case data.length >= 3 && data.slice(0, 3) === "```":
+		case data.length >= 3 && data.slice(0, 3) === "```": {
 			const cblockStart = index
 			index++
 			let cblockDidTerminate = false
@@ -238,10 +227,9 @@ export function parseComponents(body) {
 				}
 				index++
 			}
-			index++ // ??
+			index++
 			if (!cblockDidTerminate) {
 				Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
-				// types.push(Type.Paragraph)
 				index = cblockStart
 				break
 			}
@@ -250,34 +238,31 @@ export function parseComponents(body) {
 				<CodeBlock key={key} reactKey={key} start={data} end="```">
 					{cblockNodes.map((each, index) => (
 						{
-							...each,
-							data: !index || index + 1 === cblockNodes.length
+							key:      each.key,
+							children: !index || index + 1 === cblockNodes.length
 								? ""         // Start and end nodes.
 								: each.data, // Center nodes.
 						}
 					))}
 				</CodeBlock>
 			))
-			// types.push(Type.CodeBlock)
 			// Decrement (compound components):
 			index--
 			break
+		}
 		// Break:
 		case (
 			data.length === 3 &&
 			(data === "***" || data === "---")
 		):
 			Components.push(<Break key={key} reactKey={key} start={data} />)
-			// types.push(Type.Break)
 			break
 		// Paragraph:
 		default:
 			Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
-			// types.push(Type.Paragraph)
 			break
 		}
 		index++
 	}
 	return Components
 }
-/* eslint-enable no-case-declarations */
