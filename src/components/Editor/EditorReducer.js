@@ -1,10 +1,15 @@
-import parse from "./Components"
+import markdown from "lib/encoding/markdown"
 import useMethods from "use-methods"
 import utf8 from "lib/encoding/utf8"
 import VDOM from "./VDOM"
 import { newVDOMCursor } from "./traverseDOM"
 
-// User-facing editing operations:
+import {
+	parseComponents,
+	sameTypes,
+} from "./Components"
+
+// User editing operations:
 const Operation = {
 	focus:         "focus",
 	blur:          "blur",
@@ -13,40 +18,39 @@ const Operation = {
 	tab:           "tab",
 	enter:         "enter",
 	backspace:     "backspace",
-	backspaceLine: "backspace-line",
 	backspaceWord: "backspace-word",
+	backspaceLine: "backspace-line",
 	delete:        "delete",
 	deleteWord:    "delete-word",
 	cut:           "cut",
-	copy:          "copy",
+	// copy:       "copy",
 	paste:         "paste",
 }
 
 const initialState = {
-	op:       "",              // The current editing operation.
-	hasFocus: false,           // Does the editor have focus?
-	body:     new VDOM(""),    // The VDOM body.
-	pos1:     newVDOMCursor(), // The VDOM cursor start.
-	pos2:     newVDOMCursor(), // The VDOM cursor end.
+	op:         "",              // The current editing operation.
+	hasFocus:   false,           // Does the editor have focus?
+	body:       new VDOM(""),    // The VDOM body.
+	pos1:       newVDOMCursor(), // The VDOM cursor start.
+	pos2:       newVDOMCursor(), // The VDOM cursor end.
+	Components: [],              // The parsed components.
+	types:      [],              // The parsed component types.
 
-	// `shouldRenderDOMComponents` hints whether to rerender
-	// the user-facing DOM components; uses a counter to track
-	// the number of renders.
-	shouldRenderDOMComponents: 0,
+	// `shouldRender` hints whether to rerender; uses a
+	// counter to track the number of renders.
+	shouldRender: 0,
 
 	// `shouldRenderDOMCursor` hints whether to rerender the
-	// user-facing DOM cursor; uses a counter to track the
+	// user facing DOM cursor; uses a counter to track the
 	// number of renders.
 	shouldRenderDOMCursor: 0,
 
-	reactDOM: document.createElement("div"), // The React rendered DOM.
-
-	// The cached render types (enum).
-	types: [],
+	// The React rendered DOM.
+	reactDOM: document.createElement("div"),
 }
 
 const reducer = state => ({
-	// TODO: Comment.
+	// TODO: Add comment.
 	setState(body, pos1, pos2) {
 		if (pos1.pos > pos2.pos) {
 			[pos1, pos2] = [pos2, pos1]
@@ -59,36 +63,31 @@ const reducer = state => ({
 		state.pos2 = { ...state.pos1 }
 	},
 	// `write` writes at the current cursor positions.
-	write(shouldRender, data) {
+	write(data) {
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
 		state.pos1.pos += data.length
 		this.collapse()
-		this.renderDOMComponents(shouldRender)
+		this.render()
 	},
 	// `greedyWrite` greedily writes and resets the cursors.
-	greedyWrite(shouldRender, data, pos1, pos2, resetPos) {
+	greedyWrite(data, pos1, pos2, resetPos) {
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = resetPos
 		this.collapse()
-		this.renderDOMComponents(shouldRender)
+		this.render()
 	},
 	// `drop` drops characters from the left and or right of
 	// the current cursor positions.
 	drop(dropL, dropR) {
-		// Guard the anchor node or focus node:
+		// Guard the anchor node and or focus node:
 		if ((!state.pos1.pos && dropL) || (state.pos2.pos === state.body.data.length && dropR)) {
 			// No-op.
-			this.renderDOMComponents(true) // Rerender to be safe.
 			return
 		}
 		state.body = state.body.write("", state.pos1.pos - dropL, state.pos2.pos + dropR)
 		state.pos1.pos -= dropL
 		this.collapse()
-		this.renderDOMComponents(true)
-	},
-	// cacheTypes?
-	setTypes(types) {
-		state.types = [...types]
+		this.render()
 	},
 
 	/*
@@ -104,20 +103,19 @@ const reducer = state => ({
 	},
 	opInput(data, pos1, pos2, resetPos) {
 		state.op = Operation.input
-		state.body = state.body.write(data, pos1, pos2)
-		state.pos1 = resetPos
-		this.collapse()
-		this.renderDOMComponents(true)
+		this.greedyWrite(data, pos1, pos2, resetPos)
 	},
 	opEnter() {
 		state.op = Operation.enter
-		this.write(true, "\n")
+		this.write("\n")
 	},
 	opTab() {
 		state.op = Operation.tab
-		this.write(true, "\t")
+		this.write("\t")
 	},
+	// FIXME: Use `text` instead of `utf8`?
 	opBackspace() {
+		// TODO: Add no-op operation.
 		state.op = Operation.backspace
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
@@ -126,7 +124,9 @@ const reducer = state => ({
 		const { length } = utf8.endRune(state.body.data.slice(0, state.pos1.pos))
 		this.drop(length, 0)
 	},
+	// FIXME: Use `text` instead of `utf8`?
 	opBackspaceWord() {
+		// TODO: Add no-op operation.
 		state.op = Operation.backspaceWord
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
@@ -160,7 +160,9 @@ const reducer = state => ({
 		const length = state.pos1.pos - index
 		this.drop(length || 1, 0) // Must delete one or more characters.
 	},
+	// FIXME: Use `text` instead of `utf8`?
 	opBackspaceLine() {
+		// TODO: Add no-op operation.
 		state.op = Operation.backspaceLine
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
@@ -177,7 +179,9 @@ const reducer = state => ({
 		const length = state.pos1.pos - index
 		this.drop(length || 1, 0) // Must delete one or more characters.
 	},
+	// FIXME: Use `text` instead of `utf8`?
 	opDelete() {
+		// TODO: Add no-op operation.
 		state.op = Operation.delete
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
@@ -188,19 +192,36 @@ const reducer = state => ({
 	},
 	opCut() {
 		state.op = Operation.cut
-		this.write(true, "")
-	},
-	opCopy() {
-		state.op = Operation.copy
+		this.write("")
 	},
 	opPaste(data) {
 		state.op = Operation.paste
-		this.write(true, data)
+		this.write(data)
 	},
 
-	renderDOMComponents(shouldRender) {
-		state.shouldRenderDOMComponents += shouldRender
+	// `render` updates `shouldRender`.
+	render() {
+		// `markdownStart` returns whether to render based on
+		// markdown start characters:
+		//
+		//  #·H<cursor> -> ["#", " "]
+		// //·H<cursor> -> ["/", " "]
+		//  >·H<cursor> -> [">", " "]
+		//
+		const markdownStart = () => (
+			state.pos1.pos - 3 >= 0 &&
+			markdown.isSyntax(state.body.data[state.pos1.pos - 3]) &&
+			state.body.data[state.pos1.pos - 2] === " "
+		)
+		const { Components, types } = parseComponents(state.body)
+		if (sameTypes(types, state.types) && !markdownStart()) {
+			state.Components = Components
+			return
+		}
+		Object.assign(state, { Components, types })
+		state.shouldRender++
 	},
+	// `renderDOMCursor` updates `shouldRenderDOMCursor`.
 	renderDOMCursor() {
 		state.shouldRenderDOMCursor++
 	},
@@ -208,11 +229,12 @@ const reducer = state => ({
 
 const init = initialValue => initialState => {
 	const body = initialState.body.write(initialValue, 0, initialState.body.data.length)
-	const { Components } = parse(body)
+	const { Components, types } = parseComponents(body)
 	const state = {
 		...initialState,
 		body,
 		Components,
+		types,
 	}
 	return state
 }

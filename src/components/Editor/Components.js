@@ -1,15 +1,32 @@
-import md from "lib/encoding/md"
+// import markdown from "lib/encoding/markdown"
 import React from "react"
 import stylex from "stylex"
 
-// export const types = {
-// 	[Header.name]:     "Header",
-// 	[Comment.name]:    "Comment",
-// 	[Blockquote.name]: "Blockquote",
-// 	[CodeBlock.name]:  "CodeBlock",
-// 	[Paragraph.name]:  "Paragraph",
-// 	[Break.name]:      "Break",
-// }
+// Component types:
+const Type = {
+	Header:     "Header",
+	Comment:    "Comment",
+	Blockquote: "Blockquote",
+	CodeBlock:  "CodeBlock",
+	Paragraph:  "Paragraph",
+	Break:      "Break",
+}
+
+// `sameTypes` returns whether two type arrays are the same:
+export function sameTypes(t1, t2) {
+	if (t1.length !== t2.length) {
+		return false
+	}
+	let index = 0
+	while (index < t1.length) {
+		if (t1[index].length !== t2[index].length && // Fast pass.
+				t1[index] !== t2[index]) {
+			return false
+		}
+		index++
+	}
+	return true
+}
 
 // `Node` is a higher-order component that decorates a
 // render function.
@@ -139,23 +156,16 @@ function isBlockquote(data, hasNextSibling) {
 	return ok
 }
 
-const Types = {
-	Header:     0,
-	Comment:    1,
-	Blockquote: 2,
-	CodeBlock:  3,
-	Paragraph:  4,
-	Break:      5,
-}
-
-// // Paragraph (fast pass):
-// case data.length && md.isSyntax(data[0]):
+// TODO (1): Add scopes where needed.
+// TODO (2): Add fast pass for paragraphs.
+//
+// case data.length && markdown.isSyntax(data[0]):
 //   Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
-//   types.push(Types.Paragraph)
+//   types.push(Type.Paragraph)
 //   break
-
+//
 /* eslint-disable no-case-declarations */
-function parse(body) {
+export function parseComponents(body) {
 	const Components = [] // The React components.
 	const types = []      // An enum array of the types.
 	let index = 0
@@ -174,12 +184,12 @@ function parse(body) {
 			const headerIndex = data.indexOf("# ")
 			const headerStart = data.slice(0, headerIndex + 2)
 			Components.push(<Header key={key} reactKey={key} start={headerStart}>{data.slice(headerIndex + 2)}</Header>)
-			types.push(Types.Header)
+			types.push(Type.Header)
 			break
 		// Comment:
 		case data.length >= 2 && data.slice(0, 2) === "//":
 			Components.push(<Comment key={key} reactKey={key}>{data.slice(2)}</Comment>)
-			types.push(Types.Comment)
+			types.push(Type.Comment)
 			break
 		// Blockquote:
 		case isBlockquote(data, index + 1 < body.nodes.length):
@@ -203,7 +213,7 @@ function parse(body) {
 					))}
 				</Blockquote>
 			))
-			types.push(Types.Blockquote)
+			types.push(Type.Blockquote)
 			// Decrement (compound components):
 			index--
 			break
@@ -223,7 +233,7 @@ function parse(body) {
 					]}
 				</CodeBlock>
 			))
-			types.push(Types.CodeBlock)
+			types.push(Type.CodeBlock)
 			break
 		// Code block (multiline):
 		case data.length >= 3 && data.slice(0, 3) === "```":
@@ -240,7 +250,7 @@ function parse(body) {
 			index++ // ??
 			if (!cblockDidTerminate) {
 				Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
-				types.push(Types.Paragraph)
+				types.push(Type.Paragraph)
 				index = cblockStart
 				break
 			}
@@ -257,7 +267,7 @@ function parse(body) {
 					))}
 				</CodeBlock>
 			))
-			types.push(Types.CodeBlock)
+			types.push(Type.CodeBlock)
 			// Decrement (compound components):
 			index--
 			break
@@ -267,12 +277,12 @@ function parse(body) {
 			(data === "***" || data === "---")
 		):
 			Components.push(<Break key={key} reactKey={key} start={data} />)
-			types.push(Types.Break)
+			types.push(Type.Break)
 			break
 		// Paragraph:
 		default:
 			Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
-			types.push(Types.Paragraph)
+			types.push(Type.Paragraph)
 			break
 		}
 		index++
@@ -280,5 +290,3 @@ function parse(body) {
 	return { Components, types }
 }
 /* eslint-enable no-case-declarations */
-
-export default parse

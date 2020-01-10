@@ -11,12 +11,12 @@ function DebugEditor(props) {
 				{JSON.stringify(
 					{
 						// body: state.body,
-						// data: state.body.data,
 
-						op:    state.op,
+						op: state.op,
+						data: state.body.data,
+						// pos1: state.pos1,
+						// pos2: state.pos2,
 						types: state.types,
-						pos1:  state.pos1,
-						pos2:  state.pos2,
 					},
 					null,
 					"\t",
