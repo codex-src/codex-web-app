@@ -35,7 +35,6 @@ const initialState = {
 	pos1:         newVDOMCursor(), // The VDOM cursor start.
 	pos2:         newVDOMCursor(), // The VDOM cursor end.
 	Components:   [],              // The parsed components.
-	types:        [],              // The parsed component types.
 
 	// `shouldRender` hints whether to rerender; uses a
 	// counter to track the number of renders.
@@ -46,7 +45,7 @@ const initialState = {
 	// number of renders.
 	shouldRenderDOMCursor: 0,
 
-	// The React rendered DOM.
+	// The React managed DOM.
 	reactDOM: document.createElement("div"),
 }
 
@@ -73,7 +72,7 @@ const reducer = state => ({
 			opRecordedAt: Date.now(),
 		})
 	},
-	// `collapse` collapses the end cursor to the start
+	// `collapse` collapses the VDOM cursors to the start
 	// cursor.
 	collapse() {
 		state.pos2 = { ...state.pos1 }
