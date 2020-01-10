@@ -1,6 +1,6 @@
 // import * as Feather from "react-feather"
-import computeMetrics from "./computeMetrics"
 import Editor from "components/Editor"
+import getMetrics from "./getMetrics"
 import React from "react"
 import stylex from "stylex"
 
@@ -59,7 +59,7 @@ const Text = stylex.Styleable(props => (
 function StatusBar(props) {
 	const [state] = React.useContext(Editor.Context)
 
-	const metrics = computeMetrics(state)
+	const metrics = getMetrics(state)
 
 	return (
 		<aside style={{ ...stylex.parse("fixed -x -b b:gray-100 z:1 no-pointer-events"), boxShadow: "0px -1px hsl(var(--gray-200))" }}>

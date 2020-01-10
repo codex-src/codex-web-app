@@ -1,3 +1,4 @@
+// import getCoordsScrollTo from "lib/getCoordsScrollTo"
 import DebugEditor from "./DebugEditor"
 import invariant from "invariant"
 import newGreedyRange from "./helpers/newGreedyRange"
@@ -146,6 +147,12 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 			range.collapse()
 			// (Range eagerly dropped)
 			selection.addRange(range)
+			// const { y } = getCoordsScrollTo({ bottom: 28 })
+			// if (y === -1) {
+			// 	// No-op.
+			// 	return
+			// }
+			// window.scrollTo({ top: y, behavior: "smooth" }) // FIXME: `top`?
 		}, [state]),
 		[state.shouldRenderDOMCursor],
 	)
@@ -292,11 +299,11 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 
 					onInput: e => {
 						invariant(
-							// greedy.current.domNodeStart &&
-							// greedy.current.domNodeEnd &&
-							greedy.current.pos1 >= 0 && // Should not be -1.
-							// greedy.current.pos2 &&
-							greedy.current.range,
+							greedy.current.domNodeStart &&
+							greedy.current.domNodeEnd &&
+							greedy.current.pos1 >= 0 &&
+							greedy.current.pos2 >= 0 &&
+							greedy.current.range >= 1,
 							"FIXME",
 						)
 						const { anchorNode, anchorOffset } = window.getSelection()

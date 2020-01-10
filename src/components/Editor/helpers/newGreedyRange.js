@@ -5,7 +5,7 @@ import { innerText } from "../nodeFns"
 //
 /* eslint-disable no-multi-spaces */
 const MaxExtendStart = 1
-const MaxExtendEnd   = 2 // TODO: Does 1 work?
+const MaxExtendEnd   = 2
 /* eslint-enable no-multi-spaces */
 
 // `sortSelectionNodesAndOffsets` eagerly sorts the

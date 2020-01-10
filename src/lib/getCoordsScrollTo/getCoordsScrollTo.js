@@ -30,11 +30,11 @@ function computeCurrentBounds(domRect, offset) {
 	return bounds
 }
 
-// `computeCoordsScrollTo` computes the nearest x- and y-
-// axis coords for `window.scrollTo`.
+// `getCoordsScrollTo` computes the nearest x-axis and
+// y-axis coords for `window.scrollTo`.
 //
 // NOTE: X-axis expects `domNode.scrollTo`.
-function computeCoordsScrollTo(offset = { left: 0, right: 0, top: 0, bottom: 0 }) {
+function getCoordsScrollTo(offset = { left: 0, right: 0, top: 0, bottom: 0 }) {
 	const domRect = computeCurrentDOMRect()
 	if (!domRect) {
 		return { x: -1, y: -1 }
@@ -57,4 +57,4 @@ function computeCoordsScrollTo(offset = { left: 0, right: 0, top: 0, bottom: 0 }
 	return coords
 }
 
-export default computeCoordsScrollTo
+export default getCoordsScrollTo

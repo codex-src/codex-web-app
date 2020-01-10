@@ -1,9 +1,10 @@
 article {
-	white-space:   pre-wrap;
-	font:          19px/1.5 "system-ui";
-	caret-color:   hsl(var(--black));
-	outline:       none;
-	overflow-wrap: break-word;
+	white-space:     pre-wrap;
+	font:            19px/1.5 "system-ui";
+	caret-color:     hsl(var(--black));
+	outline:         none;
+	overflow-wrap:   break-word;
+	scroll-behavior: smooth;
 }
 
 ::selection {
