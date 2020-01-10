@@ -1,3 +1,3 @@
 export * from "./ascendToDOMNode"
-export * from "./recurseToDOMCursor"
-export * from "./recurseToVDOMCursor"
+export * from "./DOMCursor"
+export * from "./VDOMCursor"

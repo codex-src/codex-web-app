@@ -148,6 +148,7 @@ function isBlockquote(data, hasNextSibling) {
 	return ok
 }
 
+// TODO: Can simplify scoped variable names.
 export function parseComponents(body) {
 	const Components = []
 	let index = 0

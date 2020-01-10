@@ -2,7 +2,7 @@ import markdown from "lib/encoding/markdown"
 import useMethods from "use-methods"
 import utf8 from "lib/encoding/utf8"
 import VDOM from "./VDOM"
-import { newVDOMCursor } from "./traverseDOM"
+import { VDOMCursor } from "./traverseDOM"
 
 import {
 	parseComponents,
@@ -18,23 +18,27 @@ const Operation = {
 	tab:           "tab",
 	enter:         "enter",
 	backspace:     "backspace",
-	backspaceWord: "backspace-word",
-	backspaceLine: "backspace-line",
+	backspaceWord: "backspace word",
+	backspaceLine: "backspace line",
 	delete:        "delete",
-	deleteWord:    "delete-word",
+	deleteWord:    "delete word",
 	cut:           "cut",
 	copy:          "copy",
 	paste:         "paste",
+	undo:          "undo",
+	redo:          "redo",
 }
 
 const initialState = {
-	op:           "",              // The current editing operation.
-	opRecordedAt: 0,               // When was the current editing operation recorded?
-	hasFocus:     false,           // Does the editor have focus?
-	body:         new VDOM(""),    // The VDOM body.
-	pos1:         newVDOMCursor(), // The VDOM cursor start.
-	pos2:         newVDOMCursor(), // The VDOM cursor end.
-	Components:   [],              // The parsed components.
+	op:           "",               // The current editing operation.
+	opRecordedAt: 0,                // When was the current editing operation recorded?
+	hasFocus:     false,            // Does the editor have focus?
+	body:         new VDOM(""),     // The VDOM body.
+	pos1:         new VDOMCursor(), // The VDOM cursor start.
+	pos2:         new VDOMCursor(), // The VDOM cursor end.
+	Components:   [],               // The parsed components.
+	history:      [],               // The history (and future) state stack.
+	historyIndex: -1,               // The history (and future) state stack index.
 
 	// `shouldRender` hints whether to rerender; uses a
 	// counter to track the number of renders.
@@ -55,11 +59,7 @@ const reducer = state => ({
 		if (pos1.pos > pos2.pos) {
 			;[pos1, pos2] = [pos2, pos1]
 		}
-		Object.assign(state, {
-			body,
-			pos1,
-			pos2,
-		})
+		Object.assign(state, { body, pos1, pos2 })
 	},
 	// `recordOp` records the current editing operation.
 	recordOp(op) {
@@ -67,18 +67,17 @@ const reducer = state => ({
 			// No-op.
 			return
 		}
-		Object.assign(state, {
-			op,
-			opRecordedAt: Date.now(),
-		})
+		const opRecordedAt = Date.now()
+		Object.assign(state, { op, opRecordedAt })
 	},
 	// `collapse` collapses the VDOM cursors to the start
 	// cursor.
 	collapse() {
-		state.pos2 = { ...state.pos1 }
+		state.pos2 = state.pos1
 	},
 	// `write` writes at the current cursor positions.
 	write(data) {
+		this.prune()
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
 		state.pos1.pos += data.length
 		this.collapse()
@@ -92,11 +91,30 @@ const reducer = state => ({
 			// No-op.
 			return
 		}
+		this.prune()
 		state.body = state.body.write("", state.pos1.pos - dropL, state.pos2.pos + dropR)
 		state.pos1.pos -= dropL
 		this.collapse()
 		this.render()
 	},
+	// `storeUndo` stores the current state to the history
+	// state stack.
+	storeUndo() {
+		const undo = state.history[state.historyIndex]
+		if (undo.body.data.length === state.body.data.length && undo.body.data === state.body.data) {
+			// No-op.
+			return
+		}
+		const { body, pos1, pos2 } = state
+		state.history.push({ body, pos1, pos2 })
+		state.historyIndex++
+	},
+	// `prune` prunes future states from the history state
+	// stack.
+	prune() {
+		state.history.splice(state.historyIndex + 1)
+	},
+	// TODO: `nextState`?
 
 	opSelect(pos1, pos2) {
 		this.recordOp(Operation.select)
@@ -206,11 +224,36 @@ const reducer = state => ({
 		this.recordOp(Operation.paste)
 		this.write(data)
 	},
+	// console.log({ body, pos1, pos2 })
+	opUndo() {
+		this.recordOp(Operation.undo)
+		if (!state.historyIndex) {
+			// state.didCorrectPos = false
+			// No-op.
+			return
+		}
+		state.historyIndex--
+		const { body, pos1, pos2 } = state.history[state.historyIndex]
+		Object.assign(state, { body, pos1, pos2 })
+		this.render()
+	},
+	// console.log({ body, pos1, pos2 })
+	opRedo() {
+		this.recordOp(Operation.redo)
+		if (state.historyIndex + 1 === state.history.length) {
+			// No-op.
+			return
+		}
+		state.historyIndex++
+		const { body, pos1, pos2 } = state.history[state.historyIndex]
+		Object.assign(state, { body, pos1, pos2 })
+		this.render()
+	},
 
 	// `render` updates `shouldRender`.
 	render() {
 		// Get the current components and parse new components:
-		const Components = state.Components.slice().map(each => ({ ...each })) // Read proxy.
+ 		const Components = state.Components.map(each => ({ ...each })) // Read proxy.
 		const NewComponents = parseComponents(state.body)
 		state.Components = NewComponents
 		// Guard edge case at markdown start:
@@ -234,12 +277,16 @@ const reducer = state => ({
 })
 
 const init = initialValue => initialState => {
+	// const { pos1: { pos: pos1 }, pos2: { pos: pos2 } } = initialState
+	const { pos1, pos2 } = initialState
 	const body = initialState.body.write(initialValue, 0, initialState.body.data.length)
 	const Components = parseComponents(body)
 	const state = {
 		...initialState,
 		body,
 		Components,
+		history: [{ ...{ body, pos1, pos2 } }], // FIXME: Create new references?
+		historyIndex: 0,
 	}
 	return state
 }

@@ -12,18 +12,12 @@ function DebugEditor(props) {
 			<div style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 				{safeStringify(
 					{
-						// op:              state.op,
-						// opRecordedAt:    state.opRecordedAt,
-						// hasFocus:        state.hasFocus,
-						// body:            state.body,
-						// pos1:            state.pos1,
-						// pos2:            state.pos2,
-						// Components:      state.Components,
-						// shouldRender:    state.shouldRender,
-						// shouldRenderDOM: state.shouldRenderDOM,
+						op:           state.op,
+						history:      state.history.map(each => each.body.data),
+						historyIndex: state.historyIndex,
 
-						...state,
-						reactDOM: undefined,
+						// ...state,
+						// reactDOM: undefined,
 					},
 					Types,
 				)}

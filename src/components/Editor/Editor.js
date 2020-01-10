@@ -157,6 +157,22 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 		[state.shouldRenderDOMCursor],
 	)
 
+	// Undo process (on focus):
+	React.useEffect(
+		React.useCallback(() => {
+			if (!state.hasFocus) {
+				return
+			}
+			const id = setInterval(dispatch.storeUndo, 1e3)
+			return () => {
+				setTimeout(() => {
+					clearInterval(id)
+				}, 1e3)
+			}
+		}, [state, dispatch]),
+		[state.hasFocus],
+	)
+
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.hasFocus) {
@@ -182,7 +198,8 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 			/* eslint-enable no-multi-spaces */
 			seletionChange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-			let pos2 = { ...pos1 }
+			// FIXME
+			let pos2 = pos1
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 				pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
 			}
@@ -268,24 +285,24 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							e.preventDefault()
 							// TODO
 							break
-						case shortcut.isUndo(e): // Needs to be tested on mobile.
+						// TODO: Not tested on mobile.
+						case shortcut.isUndo(e):
 							e.preventDefault()
-							// TODO
-							// dispatch.undo()
+							dispatch.opUndo()
 							break
-						case shortcut.isRedo(e): // Needs to be tested on mobile.
+						// TODO: Not tested on mobile.
+						case shortcut.isRedo(e):
 							e.preventDefault()
-							// TODO
-							// dispatch.redo()
+							dispatch.opRedo()
 							break
-						case shortcut.isBold(e):
-							e.preventDefault()
-							// TODO
-							return
-						case shortcut.isItalic(e):
-							e.preventDefault()
-							// TODO
-							return
+						// case shortcut.isBold(e):
+						// 	e.preventDefault()
+						// 	// TODO
+						// 	return
+						// case shortcut.isItalic(e):
+						// 	e.preventDefault()
+						// 	// TODO
+						// 	return
 						default:
 							// No-op.
 						}

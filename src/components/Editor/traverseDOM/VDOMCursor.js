@@ -10,26 +10,27 @@ import {
 	nodeValue,
 } from "../nodeFns"
 
-// `newVDOMCursor` returns a new VDOM cursor.
-export function newVDOMCursor() {
-	const cursor = {
-		greedyDOMNodeIndex:  0, // New
-		greedyDOMNodePos:    0,
-		greedyDOMNodeEndPos: 0,
-		domNodeIndex:        0, // New
-		domNodePos:          0,
-		domNodeEndPos:       0,
-		nodePos:             0,
-		nodeEndPos:          0,
-		pos:                 0,
+// `VDOMCursor` represents a VDOM cursor.
+export class VDOMCursor {
+	constructor() {
+		Object.assign(this, {
+			greedyDOMNodeIndex:  0,
+			greedyDOMNodePos:    0,
+			greedyDOMNodeEndPos: 0,
+			domNodeIndex:        0,
+			domNodePos:          0,
+			domNodeEndPos:       0,
+			nodePos:             0,
+			nodeEndPos:          0,
+			pos:                 0,
+		})
 	}
-	return cursor
 }
 
 // `recurseToVDOMCursor` recurses to the VDOM cursor from a
 // DOM cursor.
 export function recurseToVDOMCursor(rootNode, node, offset) {
-	const cursor = newVDOMCursor()
+	const cursor = new VDOMCursor()
 	// Guard node and offset (Firefox):
 	while (node.childNodes && node.childNodes.length) {
 		node = node.childNodes[offset]
