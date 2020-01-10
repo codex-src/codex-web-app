@@ -1,3 +1,4 @@
+// import stringify from "./stringify"
 import React from "react"
 import stylex from "stylex"
 import { Context } from "./Editor"
@@ -10,13 +11,11 @@ function DebugEditor(props) {
 			<div style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 				{JSON.stringify(
 					{
-						// body: state.body,
-
-						op: state.op,
-						data: state.body.data,
-						pos1: state.pos1.pos,
-						pos2: state.pos2.pos,
-						types: state.types,
+						op:           state.op,
+						opRecordedAt: state.opRecordedAt,
+						body:         state.body,
+						pos1:         state.pos1,
+						pos2:         state.pos2,
 					},
 					null,
 					"\t",

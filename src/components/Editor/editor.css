@@ -6,13 +6,6 @@ article {
 	overflow-wrap: break-word;
 }
 
-.semantic-code-block,
-.semantic-code-block code {
-	-moz-tab-size: 2;
-	tab-size:      2;
-	font:          15px/1.375 "Monaco", "monospace";
-}
-
 ::selection {
 	background: #4499EE1F;
 }

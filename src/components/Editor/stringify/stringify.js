@@ -1,4 +1,4 @@
-import * as Components from "../Components"
+import { ComponentTypes } from "../Components"
 
 function destructure(Component) {
 	// Guard non-objects:
@@ -14,7 +14,7 @@ function destructure(Component) {
 		return Component
 	}
 	const { type, props } = Component
-	return { Component: Components.types[type.name], props }
+	return { Component: ComponentTypes[type.name], props }
 }
 
 function stringify(obj) {

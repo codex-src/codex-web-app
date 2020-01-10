@@ -1,4 +1,3 @@
-import diffString from "lib/diff/diffString"
 import markdown from "lib/encoding/markdown"
 import useMethods from "use-methods"
 import utf8 from "lib/encoding/utf8"
@@ -7,14 +6,14 @@ import { newVDOMCursor } from "./traverseDOM"
 
 import {
 	parseComponents,
-	sameTypes,
+	sameComponents,
 } from "./Components"
 
 // User editing operations:
 const Operation = {
+	select:        "select",
 	focus:         "focus",
 	blur:          "blur",
-	// select:     "select",
 	input:         "input",
 	tab:           "tab",
 	enter:         "enter",
@@ -29,13 +28,14 @@ const Operation = {
 }
 
 const initialState = {
-	op:         "",              // The current editing operation.
-	hasFocus:   false,           // Does the editor have focus?
-	body:       new VDOM(""),    // The VDOM body.
-	pos1:       newVDOMCursor(), // The VDOM cursor start.
-	pos2:       newVDOMCursor(), // The VDOM cursor end.
-	Components: [],              // The parsed components.
-	types:      [],              // The parsed component types.
+	op:           "",              // The current editing operation.
+	opRecordedAt: 0,               // When was the current editing operation recorded?
+	hasFocus:     false,           // Does the editor have focus?
+	body:         new VDOM(""),    // The VDOM body.
+	pos1:         newVDOMCursor(), // The VDOM cursor start.
+	pos2:         newVDOMCursor(), // The VDOM cursor end.
+	Components:   [],              // The parsed components.
+	types:        [],              // The parsed component types.
 
 	// `shouldRender` hints whether to rerender; uses a
 	// counter to track the number of renders.
@@ -51,12 +51,27 @@ const initialState = {
 }
 
 const reducer = state => ({
-	// TODO: Add comment.
+	// `setState` sets the VDOM state.
 	setState(body, pos1, pos2) {
 		if (pos1.pos > pos2.pos) {
 			[pos1, pos2] = [pos2, pos1]
 		}
-		Object.assign(state, { body, pos1, pos2 })
+		Object.assign(state, {
+			body,
+			pos1,
+			pos2,
+		})
+	},
+	// `recordOp` records the current editing operation.
+	recordOp(op) {
+		if (op === Operation.select && Date.now() - state.opRecordedAt < 20) {
+			// No-op.
+			return
+		}
+		Object.assign(state, {
+			op,
+			opRecordedAt: Date.now(),
+		})
 	},
 	// `collapse` collapses the end cursor to the start
 	// cursor.
@@ -70,17 +85,6 @@ const reducer = state => ({
 		this.collapse()
 		this.render()
 	},
-
-	// DEPRECATE
-	//
-	// // `greedyWrite` greedily writes and resets the cursors.
-	// greedyWrite(data, pos1, pos2, resetPos) {
-	// 	state.body = state.body.write(data, pos1, pos2)
-	// 	state.pos1 = resetPos
-	// 	this.collapse()
-	// 	this.render()
-	// },
-
 	// `drop` drops characters from the left and or right of
 	// the current cursor positions.
 	drop(dropL, dropR) {
@@ -95,36 +99,36 @@ const reducer = state => ({
 		this.render()
 	},
 
-	/*
-	 * Operations
-	 */
+	opSelect(pos1, pos2) {
+		this.recordOp(Operation.select)
+		this.setState(state.body, pos1, pos2)
+	},
 	opFocus() {
-		state.op = Operation.focus
+		this.recordOp(Operation.focus)
 		state.hasFocus = true
 	},
 	opBlur() {
-		state.op = Operation.blur
+		this.recordOp(Operation.blur)
 		state.hasFocus = false
 	},
 	// const { exact, offsetStart, offsetEnd } = diffString(state.body.data.slice(pos1, pos2), data)
 	opInput(data, pos1, pos2, resetPos) {
-		state.op = Operation.input
+		this.recordOp(Operation.input)
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = resetPos
 		this.collapse()
 		this.render()
 	},
 	opEnter() {
-		state.op = Operation.enter
+		this.recordOp(Operation.enter)
 		this.write("\n")
 	},
 	opTab() {
-		state.op = Operation.tab
+		this.recordOp(Operation.tab)
 		this.write("\t")
 	},
-	// FIXME: Use `text` instead of `utf8`?
 	opBackspace() {
-		state.op = Operation.backspace
+		this.recordOp(Operation.backspace)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
 			return
@@ -132,14 +136,13 @@ const reducer = state => ({
 		const { length } = utf8.endRune(state.body.data.slice(0, state.pos1.pos))
 		this.drop(length, 0)
 	},
-	// FIXME: Use `text` instead of `utf8`?
 	opBackspaceWord() {
-		state.op = Operation.backspaceWord
+		this.recordOp(Operation.backspaceWord)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
 			return
 		}
-		// Spaces:
+		// Iterate spaces:
 		let index = state.pos1.pos
 		while (index) {
 			const rune = utf8.endRune(state.body.data.slice(0, index))
@@ -148,7 +151,7 @@ const reducer = state => ({
 			}
 			index -= rune.length
 		}
-		// Non-word characters:
+		// Iterate non-word characters:
 		while (index) {
 			const rune = utf8.endRune(state.body.data.slice(0, index))
 			if (utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
@@ -156,7 +159,7 @@ const reducer = state => ({
 			}
 			index -= rune.length
 		}
-		// Word characters:
+		// Iterate word characters:
 		while (index) {
 			const rune = utf8.endRune(state.body.data.slice(0, index))
 			if (!utf8.isAlphanum(rune)) {
@@ -167,9 +170,8 @@ const reducer = state => ({
 		const length = state.pos1.pos - index
 		this.drop(length || 1, 0) // Must delete one or more characters.
 	},
-	// FIXME: Use `text` instead of `utf8`?
 	opBackspaceLine() {
-		state.op = Operation.backspaceLine
+		this.recordOp(Operation.backspaceLine)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
 			return
@@ -185,9 +187,8 @@ const reducer = state => ({
 		const length = state.pos1.pos - index
 		this.drop(length || 1, 0) // Must delete one or more characters.
 	},
-	// FIXME: Use `text` instead of `utf8`?
 	opDelete() {
-		state.op = Operation.delete
+		this.recordOp(Operation.delete)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.drop(0, 0)
 			return
@@ -196,25 +197,23 @@ const reducer = state => ({
 		this.drop(0, length)
 	},
 	opCut() {
-		state.op = Operation.cut
+		this.recordOp(Operation.cut)
 		this.write("")
 	},
 	opCopy() {
-		state.op = Operation.copy
+		this.recordOp(Operation.copy)
 	},
 	opPaste(data) {
-		state.op = Operation.paste
+		this.recordOp(Operation.paste)
 		this.write(data)
 	},
 
 	// `render` updates `shouldRender`.
 	render() {
-		const { types } = state
-		const { Components, types: newTypes } = parseComponents(state.body)
-		Object.assign(state, {
-			Components,      // The new components.
-			types: newTypes, // The new component types.
-		})
+		// Get the current components and parse new components:
+		const Components = state.Components.slice().map(each => ({ ...each })) // Read proxy.
+		const NewComponents = parseComponents(state.body)
+		state.Components = NewComponents
 		// Guard edge case at markdown start:
 		//
 		//  #·H<cursor> -> ["#", " "]
@@ -227,7 +226,7 @@ const reducer = state => ({
 			state.body.data[state.pos1.pos - 2] === " "
 		)
 		// Native rendering strategy:
-		state.shouldRender += state.op !== Operation.input || !sameTypes(types, newTypes) || markdownStart
+		state.shouldRender += state.op !== Operation.input || !sameComponents(Components, NewComponents) || markdownStart
 	},
 	// `renderDOMCursor` updates `shouldRenderDOMCursor`.
 	renderDOMCursor() {
@@ -237,12 +236,11 @@ const reducer = state => ({
 
 const init = initialValue => initialState => {
 	const body = initialState.body.write(initialValue, 0, initialState.body.data.length)
-	const { Components, types } = parseComponents(body)
+	const Components = parseComponents(body)
 	const state = {
 		...initialState,
 		body,
 		Components,
-		types,
 	}
 	return state
 }

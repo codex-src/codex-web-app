@@ -1,51 +1,21 @@
-// import markdown from "lib/encoding/markdown"
 import React from "react"
 import stylex from "stylex"
 
-// Component types:
-const Type = {
-	Header:     "Header",
-	Comment:    "Comment",
-	Blockquote: "Blockquote",
-	CodeBlock:  "CodeBlock",
-	Paragraph:  "Paragraph",
-	Break:      "Break",
-}
-
-// DEPRECATE: Use components and remove types. Note that
-// `React.memo` and `Node` can obscure `type`.
-//
-// `sameTypes` returns whether two type arrays are the same.
-//
-// TODO: Refactor to use components.
-export function sameTypes(types1, types2) {
-	if (types1.length !== types2.length) {
+// `sameComponents` returns whether two component arrays are
+// the same (based on type -- reference).
+export function sameComponents(Components, NewComponents) {
+	if (Components.length !== NewComponents.length) {
 		return false
 	}
 	let index = 0
-	while (index < types1.length) {
-		if (types1[index].length !== types2[index].length || types1[index] !== types2[index]) {
+	while (index < Components.length) {
+		if (Components[index].type !== NewComponents[index].type) {
 			return false
 		}
 		index++
 	}
 	return true
 }
-
-// `Node` is a higher-order component that decorates a
-// render function.
-const Node = render => React.memo(({ reactKey, ...props }) => {
-	const element = render(props)
-	const newRender = React.cloneElement(
-		element,
-		{
-			"id": reactKey,
-			"data-vdom-node": true, // reactKey,
-			...element.props,
-		},
-	)
-	return newRender
-})
 
 const Syntax = stylex.Styleable(props => (
 	<span style={stylex.parse("pre c:blue-a400")}>
@@ -69,29 +39,29 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-const Header = Node(props => (
-	<div className="semantic-header" style={stylex.parse("fw:700 fs:19")}>
+const Header = props => (
+	<div id={props.reactKey} style={stylex.parse("fw:700 fs:19")} data-vdom-node>
 		<Markdown start={props.start}>
 			{props.children || (
 				<br />
 			)}
 		</Markdown>
 	</div>
-))
+)
 
-const Comment = Node(props => (
-	<div className="semantic-comment" style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+const Comment = props => (
+	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false} data-vdom-node>
 		<Markdown style={stylex.parse("c:gray")} start="//">
 			{props.children || (
 				<br />
 			)}
 		</Markdown>
 	</div>
-))
+)
 
 // Compound component.
-const Blockquote = Node(props => (
-	<div className="semantic-blockquote">
+const Blockquote = props => (
+	<div id={props.reactKey} data-vdom-node>
 		{props.children.map(each => (
 			<div key={each.key} id={each.key} style={stylex.parse("fs:19")} data-vdom-node>
 				<Markdown start={each.start}>
@@ -104,23 +74,32 @@ const Blockquote = Node(props => (
 			</div>
 		))}
 	</div>
-))
+)
+
+const codeStyle = {
+	MozTabSize: 2, // Firefox.
+	tabSize: 2,
+	font: "15px/1.375 'Monaco', 'monospace'",
+}
 
 // Compound component.
 //
 // https://cdpn.io/PowjgOg
-const CodeBlock = Node(props => (
+const CodeBlock = props => (
 	<div
-		className="semantic-code-block"
+		id={props.reactKey}
+
 		style={{
 			...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
+			...codeStyle,
 			boxShadow: "0px 0px 1px hsl(var(--gray))",
 		}}
 		spellCheck={false}
+		data-vdom-node
 	>
 		{props.children.map((each, index) => (
 			<div key={each.key} id={each.key} style={stylex.parse("p-x:24")} data-vdom-node>
-				<code style={stylex.parse("m-r:-24 p-r:24")}>
+				<code style={{ ...stylex.parse("m-r:-24 p-r:24"), ...codeStyle }}>
 					<Markdown
 						start={!index && props.start}
 						end={index + 1 === props.children.length && props.end}
@@ -135,21 +114,30 @@ const CodeBlock = Node(props => (
 			</div>
 		))}
 	</div>
-))
+)
 
-const Paragraph = Node(props => (
-	<div className="semantic-paragraph" style={stylex.parse("fs:19")}>
+const Paragraph = props => (
+	<div id={props.reactKey} style={stylex.parse("fs:19")} data-vdom-node>
 		{props.children || (
 			<br />
 		)}
 	</div>
-))
+)
 
-const Break = Node(props => (
-	<div className="semantic-break" style={stylex.parse("fs:19 c:gray")} spellCheck={false}>
+const Break = props => (
+	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false} data-vdom-node>
 		<Markdown start={props.start} />
 	</div>
-))
+)
+
+export const Types = {
+	[Header]:     "Header",
+	[Comment]:    "Comment",
+	[Blockquote]: "Blockquote",
+	[CodeBlock]:  "CodeBlock",
+	[Paragraph]:  "Paragraph",
+	[Break]:      "Break",
+}
 
 // Convenience function.
 function isBlockquote(data, hasNextSibling) {
@@ -170,8 +158,7 @@ function isBlockquote(data, hasNextSibling) {
 //
 /* eslint-disable no-case-declarations */
 export function parseComponents(body) {
-	const Components = [] // The React components.
-	const types = []      // An enum array of the types.
+	const Components = []
 	let index = 0
 	while (index < body.nodes.length) {
 		const { key, data } = body.nodes[index]
@@ -188,12 +175,12 @@ export function parseComponents(body) {
 			const headerIndex = data.indexOf("# ")
 			const headerStart = data.slice(0, headerIndex + 2)
 			Components.push(<Header key={key} reactKey={key} start={headerStart}>{data.slice(headerIndex + 2)}</Header>)
-			types.push(Type.Header)
+			// types.push(Type.Header)
 			break
 		// Comment:
 		case data.length >= 2 && data.slice(0, 2) === "//":
 			Components.push(<Comment key={key} reactKey={key}>{data.slice(2)}</Comment>)
-			types.push(Type.Comment)
+			// types.push(Type.Comment)
 			break
 		// Blockquote:
 		case isBlockquote(data, index + 1 < body.nodes.length):
@@ -217,7 +204,7 @@ export function parseComponents(body) {
 					))}
 				</Blockquote>
 			))
-			types.push(Type.Blockquote)
+			// types.push(Type.Blockquote)
 			// Decrement (compound components):
 			index--
 			break
@@ -237,7 +224,7 @@ export function parseComponents(body) {
 					]}
 				</CodeBlock>
 			))
-			types.push(Type.CodeBlock)
+			// types.push(Type.CodeBlock)
 			break
 		// Code block (multiline):
 		case data.length >= 3 && data.slice(0, 3) === "```":
@@ -254,7 +241,7 @@ export function parseComponents(body) {
 			index++ // ??
 			if (!cblockDidTerminate) {
 				Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
-				types.push(Type.Paragraph)
+				// types.push(Type.Paragraph)
 				index = cblockStart
 				break
 			}
@@ -271,7 +258,7 @@ export function parseComponents(body) {
 					))}
 				</CodeBlock>
 			))
-			types.push(Type.CodeBlock)
+			// types.push(Type.CodeBlock)
 			// Decrement (compound components):
 			index--
 			break
@@ -281,16 +268,16 @@ export function parseComponents(body) {
 			(data === "***" || data === "---")
 		):
 			Components.push(<Break key={key} reactKey={key} start={data} />)
-			types.push(Type.Break)
+			// types.push(Type.Break)
 			break
 		// Paragraph:
 		default:
 			Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
-			types.push(Type.Paragraph)
+			// types.push(Type.Paragraph)
 			break
 		}
 		index++
 	}
-	return { Components, types }
+	return Components
 }
 /* eslint-enable no-case-declarations */
