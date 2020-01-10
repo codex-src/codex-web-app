@@ -106,17 +106,9 @@ const reducer = state => ({
 		state.op = Operation.blur
 		state.hasFocus = false
 	},
+	// const { exact, offsetStart, offsetEnd } = diffString(state.body.data.slice(pos1, pos2), data)
 	opInput(data, pos1, pos2, resetPos) {
 		state.op = Operation.input
-		const data0 = state.body.data.slice(pos1, pos2)
-		const { exact, offsetStart, offsetEnd } = diffString(data0, data)
-		if (exact) {
-			// No-op.
-			return
-		}
-		// data = data.slice(offsetStart, offsetEnd)
-		// state.body = state.body.write(data, pos1 + offsetStart, pos2 + offsetEnd)
-		console.log({ data: data.slice(offsetStart, offsetEnd), pos1: pos1 + offsetStart, pos2: pos2 + offsetEnd })
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = resetPos
 		this.collapse()

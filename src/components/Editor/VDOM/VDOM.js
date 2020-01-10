@@ -108,10 +108,11 @@ class VDOM {
 	// `write` writes plain text data at a selection.
 	write(data, pos1, pos2) {
 		invariant(
+			// 0 <= pos1 && pos1 <= pos2 && pos2 <= this.data.length,
 			pos1 >= 0 && pos2 >= pos1 && pos2 <= this.data.length,
 			`vdom: ${0} <= ${pos1} <= ${pos2} <= ${this.data.length}`,
 		)
-		// Sorted by order of use.
+		// (Sorted by order of use)
 		const { start, end } = this._affectedRangeSelection(pos1, pos2) // The affected range.
 		const newNodes = []                                             // The new nodes.
 		const parsedNodes = parseVDOMNodes(data)                        // The parsed nodes from the plain text data.

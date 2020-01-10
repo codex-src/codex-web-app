@@ -15,14 +15,16 @@ const Type = {
 // DEPRECATE: Use components and remove types. Note that
 // `React.memo` and `Node` can obscure `type`.
 //
-// `sameTypes` returns whether two type arrays are the same:
-export function sameTypes(t1, t2) {
-	if (t1.length !== t2.length) {
+// `sameTypes` returns whether two type arrays are the same.
+//
+// TODO: Refactor to use components.
+export function sameTypes(types1, types2) {
+	if (types1.length !== types2.length) {
 		return false
 	}
 	let index = 0
-	while (index < t1.length) {
-		if (t1[index].length !== t2[index].length && t1[index] !== t2[index]) {
+	while (index < types1.length) {
+		if (types1[index].length !== types2[index].length || types1[index] !== types2[index]) {
 			return false
 		}
 		index++
