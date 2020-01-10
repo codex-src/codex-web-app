@@ -1,3 +1,4 @@
+import diffString from "lib/diff/diffString"
 import markdown from "lib/encoding/markdown"
 import useMethods from "use-methods"
 import utf8 from "lib/encoding/utf8"
@@ -106,7 +107,16 @@ const reducer = state => ({
 		state.hasFocus = false
 	},
 	opInput(data, pos1, pos2, resetPos) {
-		// TODO: Diff.
+		state.op = Operation.input
+		const data0 = state.body.data.slice(pos1, pos2)
+		const { exact, offsetStart, offsetEnd } = diffString(data0, data)
+		if (exact) {
+			// No-op.
+			return
+		}
+		// data = data.slice(offsetStart, offsetEnd)
+		// state.body = state.body.write(data, pos1 + offsetStart, pos2 + offsetEnd)
+		console.log({ data: data.slice(offsetStart, offsetEnd), pos1: pos1 + offsetStart, pos2: pos2 + offsetEnd })
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = resetPos
 		this.collapse()

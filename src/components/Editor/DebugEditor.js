@@ -14,8 +14,8 @@ function DebugEditor(props) {
 
 						op: state.op,
 						data: state.body.data,
-						// pos1: state.pos1,
-						// pos2: state.pos2,
+						pos1: state.pos1.pos,
+						pos2: state.pos2.pos,
 						types: state.types,
 					},
 					null,

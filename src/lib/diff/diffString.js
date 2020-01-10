@@ -1,32 +1,36 @@
-// `diffString` diffs two strings, returning the common
-// substring and indexes.
+// `diffString` diffs a source stirng with a new string,
+// returning the common substring and offsets.
 //
-// diffString("helloworld", "helloworldlol") -> { exact: false, start: 10, end:   0 }
-// diffString("helloworld", "hellololworld") -> { exact: false, start:  5, end:  -5 }
-// diffString("helloworld", "lolhelloworld") -> { exact: false, start:  0, end: -10 }
+// diffString("helloworld", "helloworldlol") -> { exact: false, offsetStart: 10, offsetEnd:   0 }
+// diffString("helloworld", "hellololworld") -> { exact: false, offsetStart:  5, offsetEnd:  -5 }
+// diffString("helloworld", "lolhelloworld") -> { exact: false, offsetStart:  0, offsetEnd: -10 }
 //
-function diffString(str1, str2) {
-	let index = 0 // From the start.
-	while (index < str1.length && index < str2.length) {
-		if (str1[index] !== str2[index]) {
+function diffString(srcStr, newStr) {
+	let index = 0
+	while (index < srcStr.length && index < newStr.length) {
+		if (srcStr[index] !== newStr[index]) {
 			break
 		}
 		index++
 	}
 	// Exact match:
-	const start = index
-	if (index === str2.length) {
-		return { exact: true, start, end: 0 }
+	const offsetStart = index
+	if (index === newStr.length) {
+		return { exact: true, offsetStart, offsetEnd: 0 }
 	}
-	index = 0 // From the end.
+	index = 0
 	while (index >= 0) {
-		if (str1[(str1.length - 1) - index] !== str2[(str2.length - 1) - index]) {
+		if (srcStr[(srcStr.length - 1) - index] !== newStr[(newStr.length - 1) - index]) {
 			break
 		}
 		index++
 	}
-	const end = -index
-	return { exact: false, start, end }
+	// Guard edge case where Jest expected 0 but got -0:
+	let offsetEnd = index // E.g. 0.
+	if (offsetEnd) {
+		offsetEnd = -index
+	}
+	return { exact: false, offsetStart, offsetEnd }
 }
 
 export default diffString
