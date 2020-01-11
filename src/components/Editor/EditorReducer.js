@@ -76,23 +76,40 @@ const reducer = state => ({
 	collapse() {
 		state.pos2 = state.pos1
 	},
+	// TODO: Refactor `write` and `greedyWrite` to be one in
+	// the same.
+	//
 	// `write` writes at the current cursor positions.
 	write(data) {
-		if (!state.didCorrectPos) {
-			state.history[0].pos1.pos = state.pos1.pos
-			state.history[0].pos2.pos = state.pos2.pos
-			state.didCorrectPos = true
-		}
+		// if (!state.didCorrectPos) {
+		// 	state.history[0].pos1.pos = state.pos1.pos
+		// 	state.history[0].pos2.pos = state.pos2.pos
+		// 	state.didCorrectPos = true
+		// }
 		this.pruneRedos()
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
 		state.pos1.pos += data.length
 		this.collapse()
 		this.render()
 	},
+	// `greedyWrite` greedily writes to the cursor positions
+	// then resets the VDOM cursors.
+	greedyWrite(data, pos1, pos2, resetPos) {
+		// if (!state.didCorrectPos) {
+		// 	state.history[0].pos1.pos = state.pos1.pos
+		// 	state.history[0].pos2.pos = state.pos2.pos
+		// 	state.didCorrectPos = true
+		// }
+		this.pruneRedos()
+		state.body = state.body.write(data, pos1, pos2)
+		state.pos1 = resetPos
+		this.collapse()
+		this.render()
+	},
 	// `drop` drops characters from the left and or right of
 	// the current cursor positions.
 	drop(dropL, dropR) {
-		// Guard the anchor node and or focus node:
+		// Guard the start node and or end node:
 		if ((!state.pos1.pos && dropL) || (state.pos2.pos === state.body.data.length && dropR)) {
 			// No-op.
 			return
@@ -106,13 +123,13 @@ const reducer = state => ({
 	// `storeUndo` stores the current state to the history
 	// state stack.
 	storeUndo() {
-		const undo = state.history[state.historyIndex]
-		if (undo.body.data.length === state.body.data.length && undo.body.data === state.body.data) {
+		const undoState = state.history[state.historyIndex]
+		if (undoState.body.data.length === state.body.data.length && undoState.body.data === state.body.data) {
 			// No-op.
 			return
 		}
 		const { body, pos1, pos2 } = state
-		state.history.push({ body, pos1, pos2 })
+		state.history.push({ body, pos1: pos1.copy(), pos2: pos2.copy() })
 		state.historyIndex++
 	},
 	// `pruneRedos` prunes future states from the history
@@ -136,19 +153,9 @@ const reducer = state => ({
 		this.recordOp(Operation.blur)
 		state.hasFocus = false
 	},
-	// const { exact, offsetStart, offsetEnd } = diffString(state.body.data.slice(pos1, pos2), data)
 	opInput(data, pos1, pos2, resetPos) {
 		this.recordOp(Operation.input)
-		if (!state.didCorrectPos) { // Copied from `write`.
-			state.history[0].pos1.pos = state.pos1.pos
-			state.history[0].pos2.pos = state.pos2.pos
-			state.didCorrectPos = true
-		}
-		this.pruneRedos()
-		state.body = state.body.write(data, pos1, pos2)
-		state.pos1 = resetPos
-		this.collapse()
-		this.render()
+		this.greedyWrite(data, pos1, pos2, resetPos)
 	},
 	opEnter() {
 		this.recordOp(Operation.enter)
@@ -233,24 +240,23 @@ const reducer = state => ({
 	},
 	opCopy() {
 		this.recordOp(Operation.copy)
+		// No-op.
 	},
 	opPaste(data) {
 		this.recordOp(Operation.paste)
 		this.write(data)
 	},
-	// console.log({ body, pos1, pos2 })
 	opUndo() {
 		this.recordOp(Operation.undo)
 		if (!state.historyIndex) {
-			state.didCorrectPos = false
+			// state.didCorrectPos = false
 			return
 		}
 		state.historyIndex--
-		const { body, pos1, pos2 } = state.history[state.historyIndex]
-		Object.assign(state, { body, pos1, pos2 })
+		const undoState = state.history[state.historyIndex]
+		Object.assign(state, undoState)
 		this.render()
 	},
-	// console.log({ body, pos1, pos2 })
 	opRedo() {
 		this.recordOp(Operation.redo)
 		if (state.historyIndex + 1 === state.history.length) {
@@ -258,12 +264,11 @@ const reducer = state => ({
 			return
 		}
 		state.historyIndex++
-		const { body, pos1, pos2 } = state.history[state.historyIndex]
-		Object.assign(state, { body, pos1, pos2 })
+		const redoState = state.history[state.historyIndex]
+		Object.assign(state, redoState)
 		this.render()
 	},
-
-	// `render` updates `shouldRender`.
+	// `render` conditionally updates `shouldRender`.
 	render() {
 		// Get the current components and parse new components:
 		const Components = state.Components.map(each => ({ ...each })) // Read proxy.
@@ -290,15 +295,14 @@ const reducer = state => ({
 })
 
 const init = initialValue => initialState => {
-	// const { pos1: { pos: pos1 }, pos2: { pos: pos2 } } = initialState
-	const { pos1, pos2 } = initialState
-	const body = initialState.body.write(initialValue, 0, initialState.body.data.length)
+	let { body, pos1, pos2 } = initialState
+	body = body.write(initialValue, 0, body.data.length)
 	const Components = parseComponents(body)
 	const state = {
 		...initialState,
 		body,
 		Components,
-		history: [{ ...{ body, pos1, pos2 } }], // FIXME: Create new references?
+		history: [{ body, pos1: pos1.copy(), pos2: pos2.copy() }],
 		historyIndex: 0,
 	}
 	return state

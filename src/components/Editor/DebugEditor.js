@@ -13,7 +13,9 @@ function DebugEditor(props) {
 				{safeStringify(
 					{
 						// op: state.op,
-						didCorrectPos: state.didCorrectPos,
+						// didCorrectPos: state.didCorrectPos,
+						pos1: state.pos1.pos,
+						pos2: state.pos2.pos,
 						history: state.history.map(each => ({
 							data: each.body.data,
 							pos1: each.pos1.pos,

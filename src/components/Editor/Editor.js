@@ -64,17 +64,7 @@ export function Editor(props) {
 	const seletionChange = React.useRef()
 	const greedy = React.useRef()
 
-	const [state, dispatch] = useEditor(`
-
-🙋🏿‍♀️🙋🏿‍♀️
-
-\`\`\`
-
-hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
-
-\`\`\`
-
-`)
+	const [state, dispatch] = useEditor("")
 
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
@@ -116,7 +106,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(<Components components={state.Components} />, state.reactDOM, () => {
-				const selection = window.getSelection()
+				const selection = document.getSelection()
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				selection.removeAllRanges()
 				;[...ref.current.childNodes].map(each => each.remove())          // TODO
@@ -128,20 +118,16 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 	)
 
 	// Should render DOM cursor:
-	//
-	// NOTE: `shouldRenderDOMCursor` is chained to
-	// `shouldRender`.
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.hasFocus) {
 				// No-op.
 				return
 			}
-			const selection = window.getSelection()
+			const selection = document.getSelection()
 			const range = document.createRange()
-			// Guard break nodes (Firefox):
 			let { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
-			if (isBreakNode(node)) {
+			if (isBreakNode(node)) { // Firefox.
 				node = ascendToDOMNode(ref.current, node)
 			}
 			range.setStart(node, offset)
@@ -180,7 +166,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 				// No-op.
 				return
 			}
-			const { anchorNode, anchorOffset, focusNode, focusOffset } = window.getSelection()
+			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
 			if (!anchorNode || !focusNode) {
 				// No-op.
 				return
@@ -307,7 +293,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 						default:
 							// No-op.
 						}
-						const { anchorNode, focusNode } = window.getSelection()
+						const { anchorNode, focusNode } = document.getSelection()
 						if (!anchorNode || !focusNode) {
 							// No-op.
 							return
@@ -324,7 +310,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							greedy.current.range >= 1,
 							"FIXME",
 						)
-						const { anchorNode, anchorOffset } = window.getSelection()
+						const { anchorNode, anchorOffset } = document.getSelection()
 						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						let data = ""
 						let greedyDOMNode = greedy.current.domNodeStart

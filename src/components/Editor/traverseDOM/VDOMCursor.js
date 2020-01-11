@@ -25,6 +25,11 @@ export class VDOMCursor {
 			pos:                 0,
 		})
 	}
+	copy() {
+		const copy = new VDOMCursor()
+		Object.assign(copy, this)
+		return copy
+	}
 }
 
 // `recurseToVDOMCursor` recurses to the VDOM cursor from a
@@ -41,7 +46,7 @@ export function recurseToVDOMCursor(rootNode, node, offset) {
 			// If greedy DOM node:
 			if (currentNode.parentNode === rootNode) {
 				Object.assign(cursor, {
-					greedyDOMNodeIndex: cursor.greedyDOMNodeIndex + !!cursor.pos,
+					greedyDOMNodeIndex: cursor.greedyDOMNodeIndex + (cursor.pos > 0), // !!cursor.pos
 					greedyDOMNodePos: 0, // Reset.
 				})
 			}

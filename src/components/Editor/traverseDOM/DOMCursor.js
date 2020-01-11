@@ -14,6 +14,11 @@ export class DOMCursor {
 			offset: 0,
 		})
 	}
+	copy() {
+		const copy = new DOMCursor()
+		Object.assign(copy, this)
+		return copy
+	}
 }
 
 // `recurseToDOMCursor` recurses to a DOM cursor from a VDOM
