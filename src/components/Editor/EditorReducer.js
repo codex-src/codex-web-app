@@ -13,7 +13,7 @@ import {
 
 const initialState = {
 	op:           OperationTypes.INIT,
-	opTimestamp:  0, // E.g. `Date.now()`.
+	opTimestamp:  0,
 	hasFocus:     false,
 	body:         new VDOM(""),
 	pos1:         new VDOMCursor(),
@@ -140,7 +140,7 @@ const reducer = state => ({
 	},
 	commitCopy() {
 		this.commitNewOperation(OperationTypes.COPY)
-		// No-op.
+		// Idempotent.
 	},
 	commitPaste(data) {
 		this.commitNewOperation(OperationTypes.PASTE)
@@ -172,6 +172,8 @@ const reducer = state => ({
 	},
 })
 
+// `init` returns a function to an initializer function so
+// that `initialValue` can be passed as an argument.
 const init = initialValue => initialState => {
 	let { body, pos1, pos2 } = initialState
 	body = body.write(initialValue, 0, body.data.length)
