@@ -130,13 +130,13 @@ const Break = props => (
 	</div>
 )
 
-export const Types = {
-	[Header]:     "Header",
-	[Comment]:    "Comment",
-	[Blockquote]: "Blockquote",
-	[CodeBlock]:  "CodeBlock",
-	[Paragraph]:  "Paragraph",
-	[Break]:      "Break",
+export const ComponentMap = {
+	[btoa(Header)]:     "Header",
+	[btoa(Comment)]:    "Comment",
+	[btoa(Blockquote)]: "Blockquote",
+	[btoa(CodeBlock)]:  "CodeBlock",
+	[btoa(Paragraph)]:  "Paragraph",
+	[btoa(Break)]:      "Break",
 }
 
 // Convenience function.

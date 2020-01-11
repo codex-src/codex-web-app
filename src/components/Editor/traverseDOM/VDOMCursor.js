@@ -26,9 +26,9 @@ export class VDOMCursor {
 		})
 	}
 	newReference() {
-		const newRef = new VDOMCursor()
-		Object.assign(newRef, this)
-		return newRef
+		const ref = new VDOMCursor()
+		Object.assign(ref, this)
+		return ref
 	}
 }
 

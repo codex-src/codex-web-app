@@ -2,7 +2,7 @@ import React from "react"
 import stringifyReact from "./stringifyReact"
 import stylex from "stylex"
 import { Context } from "./Editor"
-import { Types } from "./Components"
+import { ComponentMap } from "./Components"
 
 function DebugEditor(props) {
 	const [state] = React.useContext(Context)
@@ -12,7 +12,9 @@ function DebugEditor(props) {
 			<div style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 				{stringifyReact(
 					{
-						operation:    state.op,
+						// shouldRenderDOMCursor: state.shouldRenderDOMCursor,
+
+						op:           state.op,
 						pos1:         state.pos1.pos,
 						pos2:         state.pos2.pos,
 						didWritePos:  state.didWritePos,
@@ -22,7 +24,7 @@ function DebugEditor(props) {
 						// ...state,
 						// reactDOM: undefined,
 					},
-					Types,
+					ComponentMap,
 				)}
 			</div>
 		</div>

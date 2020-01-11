@@ -2,6 +2,7 @@ import OperationTypes from "../OperationTypes"
 
 export function setStateReducerFragment(state) {
 	const dispatchers = {
+		// `setState` sets the VDOM (body) and VDOM cursors.
 		setState(body, pos1, pos2) {
 			if (pos1.pos > pos2.pos) {
 				;[pos1, pos2] = [pos2, pos1]
@@ -17,6 +18,8 @@ export function setStateReducerFragment(state) {
 			const opTimestamp = Date.now()
 			Object.assign(state, { op, opTimestamp })
 		},
+		// `collapse` collapses the end VDOM cursor to the start
+		// VDOM cursor.
 		collapse() {
 			state.pos2 = state.pos1
 		},

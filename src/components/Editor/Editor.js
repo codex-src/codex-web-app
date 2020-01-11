@@ -190,10 +190,7 @@ hello
 					ref,
 
 					style: {
-						// // Scroll past end:
 						// paddingBottom: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
-
-						// GPU optimization:
 						transform: state.hasFocus && "translateZ(0px)",
 					},
 

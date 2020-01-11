@@ -13,7 +13,7 @@ function destructureReact(Component, ComponentMap) {
 		return Component
 	}
 	const { type, props } = Component
-	return { Component: ComponentMap[type], props }
+	return { Component: ComponentMap[btoa(type)], props }
 }
 
 // `stringifyReact` stringifies an object with React

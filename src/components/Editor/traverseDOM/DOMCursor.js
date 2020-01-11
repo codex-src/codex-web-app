@@ -15,9 +15,9 @@ export class DOMCursor {
 		})
 	}
 	newReference() {
-		const newRef = new DOMCursor()
-		Object.assign(newRef, this)
-		return newRef
+		const ref = new DOMCursor()
+		Object.assign(ref, this)
+		return ref
 	}
 }
 
