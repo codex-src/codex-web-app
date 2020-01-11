@@ -1,17 +1,9 @@
+// import Headers from "components/Headers"
+// import stylex from "stylex"
 import Editor from "components/Editor"
 import React from "react"
-import StatusBar from "./StatusBar"
 
-// import Headers from "components/Headers"
-//
-// <header>
-// 	<Headers.H1 style={stylex.parse("fs:32")} contentEditable>
-// 		How to build a blog
-// 	</Headers.H1>
-// </header>
-// <div style={stylex.parse("h:16")} />
-
-const data = `# How to build a beautiful blog
+const intialValue = `# How to build a beautiful blog
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
@@ -48,7 +40,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
 
 function Note(props) {
-	const [state, dispatch] = Editor.useEditor(data)
+	const [state, dispatch] = Editor.useEditor(intialValue)
 
 	React.useLayoutEffect(() => {
 		const nav = document.querySelector("nav")
@@ -70,14 +62,16 @@ function Note(props) {
 
 	return (
 		<React.Fragment>
+			{/* <header> */}
+			{/* 	<Headers.H1 style={stylex.parse("fs:32")} contentEditable> */}
+			{/* 		How to build a blog */}
+			{/* 	</Headers.H1> */}
+			{/* </header> */}
+			{/* <div style={stylex.parse("h:16")} /> */}
 			<Editor.Editor
 				state={state}
 				dispatch={dispatch}
-				mainInsetTop={80}
-				mainInsetBottom={80}
-				scrollPastEnd
 			/>
-			{/* <StatusBar /> */}
 		</React.Fragment>
 	)
 }

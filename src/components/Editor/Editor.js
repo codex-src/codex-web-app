@@ -4,9 +4,8 @@ import newGreedyRange from "./helpers/newGreedyRange"
 import React from "react"
 import ReactDOM from "react-dom"
 import shortcut from "./shortcut"
-import StatusBar from "components/Note"
+import StatusBar from "./StatusBar"
 import text from "lib/encoding/text"
-import useEditor from "./EditorReducer"
 
 import {
 	newFPSStyleString,
@@ -31,7 +30,7 @@ import "./editor.css"
 
 export const Context = React.createContext()
 
-// NOTE: Reference-based components rerender much faster
+// NOTE: Reference-based components rerender faster than
 // anonymous components.
 //
 // https://twitter.com/dan_abramov/status/691306318204923905
@@ -39,53 +38,10 @@ function Components(props) {
 	return props.components
 }
 
-export function Editor(props) {
+export function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const seletionchange = React.useRef()
 	const greedy = React.useRef()
-
-	const [state, dispatch] = useEditor(`1
-2
-3
-4
-5
-6`)
-
-	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ## How to build a beautiful blog
-	//
-	// \`\`\`go
-	// package main
-	//
-	// import "fmt"
-	//
-	// func main() {
-	// 	fmt.Println("hello, world!")
-	// }
-	// \`\`\`
-	//
-	// ### How to build a beautiful blog
-	//
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	// >
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	// >
-	// > Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// #### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ##### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-	//
-	// ###### How to build a beautiful blog
-	//
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
 
 	// Should render:
 	React.useLayoutEffect(
@@ -210,14 +166,13 @@ export function Editor(props) {
 					ref,
 
 					style: {
-						// paddingBottom: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
-						paddingBottom: 28,
-						fontFeatureSettings: "'tnum'",
+						paddingBottom: !props.scrollPastEnd ? 28 : `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
 						transform: state.hasFocus && "translateZ(0px)",
 					},
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
+					spellCheck: false,
 
 					onFocus: dispatch.commitFocus,
 					onBlur:  dispatch.commitBlur,
@@ -303,18 +258,18 @@ export function Editor(props) {
 
 					onInput: e => {
 						const { anchorNode, anchorOffset } = document.getSelection()
-						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
+						const resetPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						let data = ""
 						let greedyDOMNode = greedy.current.domNodeStart
 						while (greedyDOMNode) {
 							data += (greedyDOMNode === greedy.current.domNodeStart ? "" : "\n") + innerText(greedyDOMNode)
-							if (greedy.current.domNodeRange > 2 && greedyDOMNode === greedy.current.domNodeEnd) {
+							if (greedy.current.domNodeRange >= 3 && greedyDOMNode === greedy.current.domNodeEnd) {
 								break
 							}
 							const { nextSibling } = greedyDOMNode
 							greedyDOMNode = nextSibling
 						}
-						dispatch.commitInput(data, greedy.current.pos1.pos, greedy.current.pos2.pos, pos)
+						dispatch.commitInput(data, greedy.current.pos1.pos, greedy.current.pos2.pos, resetPos)
 					},
 
 					onCut: e => {
@@ -345,8 +300,12 @@ export function Editor(props) {
 					onDrop:      e => e.preventDefault(),
 				},
 			)}
-			<DebugEditor />
-			<StatusBar />
+			{props.statusBar && (
+				<StatusBar />
+			)}
+			{props.debug && (
+				<DebugEditor />
+			)}
 		</Provider>
 	)
 }

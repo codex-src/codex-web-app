@@ -5,7 +5,7 @@ import stylex from "stylex"
 
 export const Submit = stylex.Unstyleable(({ fetching, ...props }) => (
 	<Base.StyledButtonWithBoxShadow style={stylex.parse("b:blue-a400")} type="submit" {...props}>
-		<p style={stylex.parse("center fw:700 fs:17 ls:1.25% c:white -a:97.5%")}>
+		<p style={stylex.parse("center fw:700 fs:17 ls:2.5% c:white -a:97.5%")}>
 			{!fetching ? (
 				props.children
 			) : (

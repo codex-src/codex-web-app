@@ -13,12 +13,13 @@ const months = [
 	"December",  // 11
 ]
 
-// `getMonthName` gets the month name for an index.
-function getMonthName(index) {
-	if (index < 0 || index >= months.length) {
+// `getMonthName` gets the month name for a date number.
+function getMonthName(date) {
+	const monthIndex = date - 1
+	if (monthIndex < 0 || monthIndex >= months.length) {
 		return ""
 	}
-	return months[index]
+	return months[monthIndex]
 }
 
 export default getMonthName

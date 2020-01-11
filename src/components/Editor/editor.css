@@ -7,6 +7,6 @@ article {
 	scroll-behavior: smooth;
 }
 
-::selection {
-	background: #4499EE1F;
-}
+/* ::selection { */
+/* 	background: TODO; */
+/* } */

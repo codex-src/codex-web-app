@@ -35,6 +35,7 @@ function Fetcher(props) {
 	)
 
 	if (errors && !GraphQL.errorsIs(errors, Errors.sqlNoRows)) {
+		// FIXME
 		invariant(false, errors.map(error => error.message).join(", "))
 	} else if (fetching) {
 		return null

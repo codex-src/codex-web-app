@@ -19,18 +19,28 @@ export function formatDateShorthand(year, month, day, showYear = true, useMMDDYY
 	return `${year}/${month}/${day}`
 }
 
-// E.g. January 1st, 2006.
+// E.g. January 1, 2006.
 export function formatDate(year, month, day, showYear = true) {
-	let suffix = "th"
-	if (day % 10 === 1) {
-		suffix = "st"
-	} else if (day % 10 === 2) {
-		suffix = "nd"
-	} else if (day % 10 === 3) {
-		suffix = "rd"
-	}
+	// let suffix = "th"
+	// switch (day) {
+	// case 1:
+	// case 21:
+	// case 31:
+	// 	suffix = "st"
+	// 	break
+	// case 2:
+	// case 22:
+	// 	suffix = "nd"
+	// 	break
+	// case 3:
+	// case 23:
+	// 	suffix = "rd"
+	// 	break
+	// default:
+	// 	// No-op.
+	// }
 	if (!showYear) {
-		return `${getMonthName(month)} ${day}${suffix}`
+		return `${getMonthName(month)} ${day}`
 	}
-	return `${getMonthName(month)} ${day}${suffix}, ${year}`
+	return `${getMonthName(month)} ${day}, ${year}`
 }

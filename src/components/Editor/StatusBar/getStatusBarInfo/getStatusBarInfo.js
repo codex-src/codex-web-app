@@ -23,22 +23,21 @@ function computeWords(state) {
 	return { count, desc: "word" }
 }
 
-// TODO: Add hours?
 function computeDuration(state) {
 	const count = Math.ceil(state.body.data.length / 6 / 200)
 	return { count, desc: "minute" }
 }
 
-function getMetrics(state) {
+function getStatusBarInfo(state) {
 	const metrics = {
-		line:               computeLine(state),
-		column:             computeColumn(state),
-		selectedLines:      computeSelectedLines(state),
+		line: computeLine(state),
+		column: computeColumn(state),
+		selectedLines: computeSelectedLines(state),
 		selectedCharacters: computeSelectedCharacters(state),
-		words:              computeWords(state),
-		duration:           computeDuration(state),
+		words: computeWords(state),
+		duration: computeDuration(state),
 	}
 	return metrics
 }
 
-export default getMetrics
+export default getStatusBarInfo
