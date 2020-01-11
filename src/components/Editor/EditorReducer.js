@@ -38,7 +38,7 @@ const initialState = {
 	pos1:          new VDOMCursor(),
 	pos2:          new VDOMCursor(),
 	Components:    [],
-	didWritePos: false,
+	didWritePos:   false,
 	history:       [],
 	historyIndex:  -1,
 
