@@ -65,7 +65,6 @@ const reducer = state => ({
 		this.commitNewOperation(OperationTypes.TAB)
 		this.write("\t")
 	},
-	// REFACTOR
 	commitBackspace() {
 		this.commitNewOperation(OperationTypes.BACKSPACE)
 		if (state.pos1.pos !== state.pos2.pos) {
@@ -75,7 +74,6 @@ const reducer = state => ({
 		const { length } = utf8.endRune(state.body.data.slice(0, state.pos1.pos))
 		this.dropBytes(length, 0)
 	},
-	// REFACTOR
 	commitBackspaceWord() {
 		this.commitNewOperation(OperationTypes.BACKSPACEWORD)
 		if (state.pos1.pos !== state.pos2.pos) {
@@ -94,7 +92,7 @@ const reducer = state => ({
 		// Iterate non-word characters:
 		while (index) {
 			const rune = utf8.endRune(state.body.data.slice(0, index))
-			if (utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
+			if (utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
 				break
 			}
 			index -= rune.length
@@ -108,9 +106,8 @@ const reducer = state => ({
 			index -= rune.length
 		}
 		const length = state.pos1.pos - index
-		this.dropBytes(length || 1, 0) // Must delete one or more characters.
+		this.dropBytes(length || 1, 0)
 	},
-	// REFACTOR
 	commitBackspaceLine() {
 		this.commitNewOperation(OperationTypes.BACKSPACELINE)
 		if (state.pos1.pos !== state.pos2.pos) {
@@ -126,9 +123,8 @@ const reducer = state => ({
 			index -= rune.length
 		}
 		const length = state.pos1.pos - index
-		this.dropBytes(length || 1, 0) // Must delete one or more characters.
+		this.dropBytes(length || 1, 0)
 	},
-	// REFACTOR
 	commitDelete() {
 		this.commitNewOperation(OperationTypes.DELETE)
 		if (state.pos1.pos !== state.pos2.pos) {

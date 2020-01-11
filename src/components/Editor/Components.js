@@ -25,15 +25,15 @@ const Syntax = stylex.Styleable(props => (
 
 const Markdown = ({ style, ...props }) => (
 	<React.Fragment>
-		{props.start && (
+		{props.startSyntax && (
 			<Syntax style={style}>
-				{props.start}
+				{props.startSyntax}
 			</Syntax>
 		)}
 		{props.children}
-		{props.end && (
+		{props.endSyntax && (
 			<Syntax style={style}>
-				{props.end}
+				{props.endSyntax}
 			</Syntax>
 		)}
 	</React.Fragment>
@@ -41,7 +41,7 @@ const Markdown = ({ style, ...props }) => (
 
 const Header = props => (
 	<div id={props.reactKey} style={stylex.parse("fw:700 fs:19")} data-vdom-node>
-		<Markdown start={props.start}>
+		<Markdown startSyntax={props.startSyntax}>
 			{props.children || (
 				<br />
 			)}
@@ -51,7 +51,7 @@ const Header = props => (
 
 const Comment = props => (
 	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false} data-vdom-node>
-		<Markdown style={stylex.parse("c:gray")} start="//">
+		<Markdown style={stylex.parse("c:gray")} startSyntax="//">
 			{props.children || (
 				<br />
 			)}
@@ -64,9 +64,9 @@ const Blockquote = props => (
 	<div id={props.reactKey} data-vdom-node>
 		{props.children.map(each => (
 			<div key={each.key} id={each.key} style={stylex.parse("fs:19")} data-vdom-node>
-				<Markdown start={each.start}>
+				<Markdown startSyntax={each.startSyntax}>
 					{each.children || (
-						!(each.start + each.children) && (
+						!(each.startSyntax + each.children) && (
 							<br />
 						)
 					)}
@@ -101,8 +101,8 @@ const CodeBlock = props => (
 			<div key={each.key} id={each.key} style={stylex.parse("p-x:24")} data-vdom-node>
 				<code style={{ ...stylex.parse("m-r:-24 p-r:24"), ...codeStyle }}>
 					<Markdown
-						start={!index && props.start}
-						end={index + 1 === props.children.length && props.end}
+						startSyntax={!index && props.startSyntax}
+						endSyntax={index + 1 === props.children.length && props.endSyntax}
 					>
 						{each.children || (
 							index > 0 && index + 1 < props.children.length && (
@@ -126,7 +126,7 @@ const Paragraph = props => (
 
 const Break = props => (
 	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false} data-vdom-node>
-		<Markdown start={props.start} />
+		<Markdown startSyntax={props.startSyntax} />
 	</div>
 )
 
@@ -148,7 +148,6 @@ function isBlockquote(data, hasNextSibling) {
 	return ok
 }
 
-// TODO: Can simplify scoped variable names.
 export function parseComponents(body) {
 	const Components = []
 	let index = 0
@@ -164,9 +163,9 @@ export function parseComponents(body) {
 			(data.length >= 6 && data.slice(0, 6) === ("##### ")) ||
 			(data.length >= 7 && data.slice(0, 7) === ("###### "))
 		): {
-			const headerIndex = data.indexOf("# ")
-			const headerStart = data.slice(0, headerIndex + 2)
-			Components.push(<Header key={key} reactKey={key} start={headerStart}>{data.slice(headerIndex + 2)}</Header>)
+			const commonSyntaxStartIndex = data.indexOf("# ")
+			const startSyntax = data.slice(0, commonSyntaxStartIndex + 2)
+			Components.push(<Header key={key} reactKey={key} startSyntax={startSyntax}>{data.slice(commonSyntaxStartIndex + 2)}</Header>)
 			break
 		}
 		// Comment:
@@ -175,7 +174,7 @@ export function parseComponents(body) {
 			break
 		// Blockquote:
 		case isBlockquote(data, index + 1 < body.nodes.length): {
-			const bquoteStart = index
+			const startIndex = index
 			index++
 			while (index < body.nodes.length) {
 				if (!isBlockquote(body.nodes[index].data, index + 1 < body.nodes.length)) {
@@ -183,14 +182,14 @@ export function parseComponents(body) {
 				}
 				index++
 			}
-			const bquoteNodes = body.nodes.slice(bquoteStart, index)
+			const nodes = body.nodes.slice(startIndex, index)
 			Components.push((
 				<Blockquote key={key} reactKey={key}>
-					{bquoteNodes.map(each => (
+					{nodes.map(each => (
 						{
-							key:      each.key,
-							start:    each.data.slice(0, 2),
-							children: each.data.slice(2),
+							key:         each.key,
+							startSyntax: each.data.slice(0, 2),
+							children:    each.data.slice(2),
 						}
 					))}
 				</Blockquote>
@@ -202,11 +201,11 @@ export function parseComponents(body) {
 		// Code block:
 		case (
 			data.length >= 6 &&
-			data.slice(0, 3) === "```" &&
-			data.slice(-3) === "```"
+			data.slice(0, 3) === "```" && // Start syntax.
+			data.slice(-3) === "```"      // End syntax.
 		):
 			Components.push((
-				<CodeBlock key={key} reactKey={key} start="```" end="```">
+				<CodeBlock key={key} reactKey={key} startSyntax="```" endSyntax="```">
 					{[
 						{
 							key, // Reuse the current key.
@@ -218,29 +217,29 @@ export function parseComponents(body) {
 			break
 		// Code block (multiline):
 		case data.length >= 3 && data.slice(0, 3) === "```": {
-			const cblockStart = index
+			const startIndex = index
 			index++
-			let cblockDidTerminate = false
+			let didTerminate = false
 			while (index < body.nodes.length) {
 				if (body.nodes[index].data.length === 3 && body.nodes[index].data === "```") {
-					cblockDidTerminate = true
+					didTerminate = true
 					break
 				}
 				index++
 			}
 			index++
-			if (!cblockDidTerminate) {
+			if (!didTerminate) {
 				Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
-				index = cblockStart
+				index = startIndex
 				break
 			}
-			const cblockNodes = body.nodes.slice(cblockStart, index)
+			const nodes = body.nodes.slice(startIndex, index)
 			Components.push((
-				<CodeBlock key={key} reactKey={key} start={data} end="```">
-					{cblockNodes.map((each, index) => (
+				<CodeBlock key={key} reactKey={key} startSyntax={data} endSyntax="```">
+					{nodes.map((each, index) => (
 						{
 							key:      each.key,
-							children: !index || index + 1 === cblockNodes.length
+							children: !index || index + 1 === nodes.length
 								? ""         // Start and end nodes.
 								: each.data, // Center nodes.
 						}
@@ -256,7 +255,7 @@ export function parseComponents(body) {
 			data.length === 3 &&
 			(data === "***" || data === "---")
 		):
-			Components.push(<Break key={key} reactKey={key} start={data} />)
+			Components.push(<Break key={key} reactKey={key} startSyntax={data} />)
 			break
 		// Paragraph:
 		default:
