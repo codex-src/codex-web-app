@@ -31,16 +31,15 @@ const Operation = {
 }
 
 const initialState = {
-	op:            Operation.init,
-	opRecordedAt:  0,
-	hasFocus:      false,
-	body:          new VDOM(""),
-	pos1:          new VDOMCursor(),
-	pos2:          new VDOMCursor(),
-	Components:    [],
-	didWritePos:   false,
-	history:       [],
-	historyIndex:  -1,
+	op:           Operation.init,
+	opRecordedAt: 0,
+	hasFocus:     false,
+	body:         new VDOM(""),
+	pos1:         new VDOMCursor(),
+	pos2:         new VDOMCursor(),
+	Components:   [],
+	history:      [],
+	historyIndex: -1,
 
 	// `shouldRender` hints whether to rerender; uses a
 	// counter to track the number of renders.
@@ -55,14 +54,12 @@ const initialState = {
 }
 
 const reducer = state => ({
-	// `setState` sets the VDOM state.
 	setState(body, pos1, pos2) {
 		if (pos1.pos > pos2.pos) {
 			;[pos1, pos2] = [pos2, pos1]
 		}
 		Object.assign(state, { body, pos1, pos2 })
 	},
-	// `recordOp` records the current editing operation.
 	recordOp(op) {
 		if (op === Operation.select && Date.now() - state.opRecordedAt < 100) {
 			// No-op.
@@ -71,17 +68,15 @@ const reducer = state => ({
 		const opRecordedAt = Date.now()
 		Object.assign(state, { op, opRecordedAt })
 	},
-	// `collapse` collapses the VDOM cursors to the start
-	// cursor.
 	collapse() {
 		state.pos2 = state.pos1
 	},
 	// `write` writes at the current cursor positions.
 	write(data) {
-		if (!state.didWritePos) {
+		if (!state.historyIndex) {
 			state.history[0].pos1.pos = state.pos1.pos
 			state.history[0].pos2.pos = state.pos2.pos
-			state.didWritePos = true
+			// state.didWritePos = true
 		}
 		this.pruneRedos()
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
@@ -92,10 +87,10 @@ const reducer = state => ({
 	// `greedyWrite` greedily writes to the cursor positions
 	// then resets the VDOM cursors.
 	greedyWrite(data, pos1, pos2, resetPos) {
-		if (!state.didWritePos) {
+		if (!state.historyIndex) {
 			state.history[0].pos1.pos = state.pos1.pos
 			state.history[0].pos2.pos = state.pos2.pos
-			state.didWritePos = true
+			// state.didWritePos = true
 		}
 		this.pruneRedos()
 		state.body = state.body.write(data, pos1, pos2)
@@ -245,9 +240,6 @@ const reducer = state => ({
 	},
 	opUndo() {
 		this.recordOp(Operation.undo)
-		if (state.historyIndex <= 1) {
-			state.didWritePos = false
-		}
 		if (!state.historyIndex) {
 			// No-op.
 			return

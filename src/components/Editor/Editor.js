@@ -144,6 +144,11 @@ hello
 			// 	return
 			// }
 			// window.scrollTo({ top: y, behavior: "smooth" }) // FIXME: `top`?
+
+			// // NOTE (1): Use `Math.floor` to mimic Chrome.
+			// // NOTE (2): Use `... - 1` to prevent jumping.
+			// const buffer = Math.floor(19 * 1.5) - 1
+			// scrollIntoViewIfNeeded({ top: (props.nav || 0) + buffer, bottom: buffer })
 		}, [state]),
 		[state.shouldRenderDOMCursor],
 	)
@@ -154,7 +159,9 @@ hello
 			if (!state.hasFocus) {
 				return
 			}
-			const id = setInterval(dispatch.storeUndo, 1e3)
+			const id = setInterval(() => {
+				dispatch.storeUndo()
+			}, 1e3)
 			return () => {
 				setTimeout(() => {
 					clearInterval(id)
