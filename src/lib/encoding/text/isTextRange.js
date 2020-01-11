@@ -1,7 +1,5 @@
-/* eslint-disable no-multi-spaces */
-export const TextLow  = 0x00 //   0
-export const TextHigh = 0x7f // 127
-/* eslint-enable no-multi-spaces */
+export const TextLow  = 0x00 // eslint-disable-line
+export const TextHigh = 0x7f // eslint-disable-line
 
 // `isTextRange` returns whether a character is in the ASCII
 // text range.

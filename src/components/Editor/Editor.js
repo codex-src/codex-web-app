@@ -24,33 +24,6 @@ import "./editor.css"
 
 export const Context = React.createContext()
 
-// import PerfTimer from "lib/PerfTimer"
-//
-// /* eslint-disable no-multi-spaces */
-// const perfParser        = new PerfTimer() // Times the component parser phase.
-// const perfReactRenderer = new PerfTimer() // Times the React renderer phase.
-// const perfDOMRenderer   = new PerfTimer() // Times the DOM renderer phase.
-// const perfDOMCursor     = new PerfTimer() // Times the DOM cursor.
-// /* eslint-enable no-multi-spaces */
-//
-// // `newFPSStyleString` returns a new frames per second CSS
-// // inline-style string.
-// function newFPSStyleString(ms) {
-// 	if (ms < 16.67) {
-// 		return "color: lightgreen;"
-// 	} else if (ms < 33.33) {
-// 		return "color: orange;"
-// 	}
-// 	return "color: red;"
-// }
-//
-// const p = perfParser.duration()
-// const r = perfReactRenderer.duration()
-// const d = perfDOMRenderer.duration()
-// const c = perfDOMCursor.duration()
-// const sum = p + r + d + c
-// console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
-
 // NOTE: Reference-based components rerender much faster
 // anonymous components.
 //
@@ -121,6 +94,8 @@ hello
 		[state.shouldRender],
 	)
 
+	// console.log({ length: innerText(ref.current).length, pos1: state.pos1.pos, node, offset })
+
 	// Should render DOM cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -160,7 +135,7 @@ hello
 				return
 			}
 			const id = setInterval(() => {
-				dispatch.storeUndo()
+				dispatch.storeUndoState()
 			}, 1e3)
 			return () => {
 				setTimeout(() => {
@@ -182,18 +157,16 @@ hello
 				// No-op.
 				return
 			}
-			/* eslint-disable no-multi-spaces */
 			if (
-				seletionChange.current                               &&
-				seletionChange.current.anchorNode   === anchorNode   &&
-				seletionChange.current.focusNode    === focusNode    &&
-				seletionChange.current.anchorOffset === anchorOffset &&
-				seletionChange.current.focusOffset  === focusOffset
+				seletionChange.current                               && // eslint-disable-line
+				seletionChange.current.anchorNode   === anchorNode   && // eslint-disable-line
+				seletionChange.current.focusNode    === focusNode    && // eslint-disable-line
+				seletionChange.current.anchorOffset === anchorOffset && // eslint-disable-line
+				seletionChange.current.focusOffset  === focusOffset     // eslint-disable-line
 			) {
 				// No-op.
 				return
 			}
-			/* eslint-enable no-multi-spaces */
 			seletionChange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 			// FIXME
@@ -201,7 +174,7 @@ hello
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 				pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
 			}
-			dispatch.opSelect(pos1, pos2)
+			dispatch.commitSelect(pos1, pos2)
 			greedy.current = newGreedyRange(ref.current, anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
@@ -230,18 +203,18 @@ hello
 					suppressContentEditableWarning: true,
 					// spellCheck: false,
 
-					onFocus: dispatch.opFocus,
-					onBlur:  dispatch.opBlur,
+					onFocus: dispatch.commitFocus,
+					onBlur:  dispatch.commitBlur,
 
 					onKeyDown: e => {
 						switch (true) {
 						case shortcut.isEnter(e):
 							e.preventDefault()
-							dispatch.opEnter()
+							dispatch.commitEnter()
 							break
 						case shortcut.isTab(e):
 							e.preventDefault()
-							dispatch.opTab()
+							dispatch.commitTab()
 							break
 						case shortcut.isBackspace(e):
 							// Defer to native browser behavior because
@@ -255,15 +228,15 @@ hello
 								break
 							}
 							e.preventDefault()
-							dispatch.opBackspace()
+							dispatch.commitBackspace()
 							break
 						case shortcut.isBackspaceWord(e):
 							e.preventDefault()
-							dispatch.opBackspaceWord()
+							dispatch.commitBackspaceWord()
 							break
 						case shortcut.isBackspaceLine(e):
 							e.preventDefault()
-							dispatch.opBackspaceLine()
+							dispatch.commitBackspaceLine()
 							break
 						case shortcut.isDelete(e):
 							// Defer to native browser behavior because
@@ -277,7 +250,7 @@ hello
 								break
 							}
 							e.preventDefault()
-							dispatch.opDelete()
+							dispatch.commitDelete()
 							break
 						case shortcut.isDeleteWord(e):
 							e.preventDefault()
@@ -286,12 +259,12 @@ hello
 						// TODO: Not tested on mobile.
 						case shortcut.isUndo(e):
 							e.preventDefault()
-							dispatch.opUndo()
+							dispatch.commitUndo()
 							break
 						// TODO: Not tested on mobile.
 						case shortcut.isRedo(e):
 							e.preventDefault()
-							dispatch.opRedo()
+							dispatch.commitRedo()
 							break
 						// case shortcut.isBold(e):
 						// 	e.preventDefault()
@@ -333,7 +306,7 @@ hello
 							const { nextSibling } = greedyDOMNode
 							greedyDOMNode = nextSibling
 						}
-						dispatch.opInput(data, greedy.current.pos1, greedy.current.pos2, pos)
+						dispatch.commitInput(data, greedy.current.pos1, greedy.current.pos2, pos)
 					},
 
 					onCut: e => {
@@ -342,7 +315,7 @@ hello
 						if (data) {
 							e.clipboardData.setData("text/plain", data)
 						}
-						dispatch.opCut()
+						dispatch.commitCut()
 					},
 
 					onCopy: e => {
@@ -351,13 +324,13 @@ hello
 						if (data) {
 							e.clipboardData.setData("text/plain", data)
 						}
-						dispatch.opCopy()
+						dispatch.commitCopy()
 					},
 
 					onPaste: e => {
 						e.preventDefault()
 						const data = e.clipboardData.getData("text/plain")
-						dispatch.opPaste(data)
+						dispatch.commitPaste(data)
 					},
 
 					onDragStart: e => e.preventDefault(),

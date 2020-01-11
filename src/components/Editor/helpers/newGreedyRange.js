@@ -2,11 +2,8 @@ import { ascendToGreedyDOMNode } from "../traverseDOM"
 import { innerText } from "../nodeFns"
 
 // The number of nodes to extend the greedy DOM node range:
-//
-/* eslint-disable no-multi-spaces */
-const MaxExtendStart = 1
-const MaxExtendEnd   = 2
-/* eslint-enable no-multi-spaces */
+const MaxExtendStart = 1 // eslint-disable-line
+const MaxExtendEnd   = 2 // eslint-disable-line
 
 // `sortSelectionNodesAndOffsets` eagerly sorts the
 // selection nodes and cursor positions.

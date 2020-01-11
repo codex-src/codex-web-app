@@ -1,11 +1,9 @@
 import text from "lib/encoding/text"
 
-/* eslint-disable no-multi-spaces */
-export const UTF8BasicMultilingualPlaneLow  = 0x000080 //       128
-export const UTF8BasicMultilingualPlaneHigh = 0x00ffff //    65,535
-export const UTF8AstralPlaneLow             = 0x010000 //    65,536
-export const UTF8AstralPlaneHigh            = 0x10ffff // 1,114,111
-/* eslint-enable no-multi-spaces */
+export const UTF8BasicMultilingualPlaneLow  = 0x000080 // eslint-disable-line
+export const UTF8BasicMultilingualPlaneHigh = 0x00ffff // eslint-disable-line
+export const UTF8AstralPlaneLow             = 0x010000 // eslint-disable-line
+export const UTF8AstralPlaneHigh            = 0x10ffff // eslint-disable-line
 
 // https://github.com/slevithan/xregexp/blob/master/tools/output/properties.js#L8 (20ab3d7)
 //

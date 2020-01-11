@@ -3,15 +3,9 @@ function sniffUserAgent(substr) {
 	return navigator.userAgent.indexOf(substr) !== -1
 }
 
-// Browsers:
-//
-/* eslint-disable no-multi-spaces */
-export const isChrome  = sniffUserAgent("Chrome")
-export const isSafari  = sniffUserAgent("Safari")
-export const isFirefox = sniffUserAgent("Firefox")
-
-// Platforms:
-export const isMacOS   = sniffUserAgent("Mac OS X")
-export const isWindows = sniffUserAgent("Windows")
-export const isLinux   = sniffUserAgent("Linux")
-/* eslint-enable no-multi-spaces */
+export const isChrome  = sniffUserAgent("Chrome")   // eslint-disable-line
+export const isSafari  = sniffUserAgent("Safari")   // eslint-disable-line
+export const isFirefox = sniffUserAgent("Firefox")  // eslint-disable-line
+export const isMacOS   = sniffUserAgent("Mac OS X") // eslint-disable-line
+export const isWindows = sniffUserAgent("Windows")  // eslint-disable-line
+export const isLinux   = sniffUserAgent("Linux")    // eslint-disable-line
