@@ -64,7 +64,11 @@ export function Editor(props) {
 	const seletionChange = React.useRef()
 	const greedy = React.useRef()
 
-	const [state, dispatch] = useEditor("")
+	const [state, dispatch] = useEditor(`
+
+hello
+
+`)
 
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//

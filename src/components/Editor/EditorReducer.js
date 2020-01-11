@@ -11,6 +11,7 @@ import {
 
 // Editing operations:
 const Operation = {
+	init:          "initialize",
 	select:        "select",
 	focus:         "focus",
 	blur:          "blur",
@@ -30,16 +31,16 @@ const Operation = {
 }
 
 const initialState = {
-	op:            "",               // The current editing operation.
-	opRecordedAt:  0,                // When was the current editing operation recorded?
-	hasFocus:      false,            // Does the editor have focus?
-	body:          new VDOM(""),     // The VDOM body.
-	didCorrectPos: false,            // Did correct the cursor positions on first write?
-	pos1:          new VDOMCursor(), // The VDOM cursor start.
-	pos2:          new VDOMCursor(), // The VDOM cursor end.
-	Components:    [],               // The parsed components.
-	history:       [],               // The history (and future) state stack.
-	historyIndex:  -1,               // The history (and future) state stack index.
+	op:            Operation.init,
+	opRecordedAt:  0,
+	hasFocus:      false,
+	body:          new VDOM(""),
+	pos1:          new VDOMCursor(),
+	pos2:          new VDOMCursor(),
+	Components:    [],
+	didCorrectPos: false,
+	history:       [],
+	historyIndex:  -1,
 
 	// `shouldRender` hints whether to rerender; uses a
 	// counter to track the number of renders.
@@ -50,7 +51,6 @@ const initialState = {
 	// number of renders.
 	shouldRenderDOMCursor: 0,
 
-	// The React managed DOM.
 	reactDOM: document.createElement("div"),
 }
 
@@ -81,11 +81,11 @@ const reducer = state => ({
 	//
 	// `write` writes at the current cursor positions.
 	write(data) {
-		// if (!state.didCorrectPos) {
-		// 	state.history[0].pos1.pos = state.pos1.pos
-		// 	state.history[0].pos2.pos = state.pos2.pos
-		// 	state.didCorrectPos = true
-		// }
+		if (!state.didCorrectPos) {
+			state.history[0].pos1.pos = state.pos1.pos
+			state.history[0].pos2.pos = state.pos2.pos
+			state.didCorrectPos = true
+		}
 		this.pruneRedos()
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
 		state.pos1.pos += data.length
@@ -95,11 +95,11 @@ const reducer = state => ({
 	// `greedyWrite` greedily writes to the cursor positions
 	// then resets the VDOM cursors.
 	greedyWrite(data, pos1, pos2, resetPos) {
-		// if (!state.didCorrectPos) {
-		// 	state.history[0].pos1.pos = state.pos1.pos
-		// 	state.history[0].pos2.pos = state.pos2.pos
-		// 	state.didCorrectPos = true
-		// }
+		if (!state.didCorrectPos) {
+			state.history[0].pos1.pos = state.pos1.pos
+			state.history[0].pos2.pos = state.pos2.pos
+			state.didCorrectPos = true
+		}
 		this.pruneRedos()
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = resetPos
@@ -248,8 +248,11 @@ const reducer = state => ({
 	},
 	opUndo() {
 		this.recordOp(Operation.undo)
+		if (state.historyIndex <= 1) {
+			state.didCorrectPos = false
+		}
 		if (!state.historyIndex) {
-			// state.didCorrectPos = false
+			// No-op.
 			return
 		}
 		state.historyIndex--
