@@ -1,5 +1,6 @@
 import markdown from "lib/encoding/markdown"
 import OperationTypes from "../OperationTypes"
+import { perfParser } from "../__perf"
 
 import {
 	parseComponents,
@@ -12,7 +13,9 @@ export function renderReducerFragment(state) {
 		render() {
 			// Get the current components and parse new components:
 			const Components = state.Components.map(each => ({ ...each })) // Read proxy.
+			perfParser.restart()
 			const NewComponents = parseComponents(state.body)
+			perfParser.stop()
 			state.Components = NewComponents
 			// Guard edge case at markdown start:
 			//

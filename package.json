@@ -23,7 +23,7 @@
   "scripts": {
     "lint": "yarn eslint --ignore-pattern=build --ignore-pattern=\"**/*.min.js\" .",
     "start": "react-scripts start",
-    "start-build": "PORT=3000 serve -s build",
+    "start-build": "yarn build && PORT=3000 serve --no-clipboard -s build",
     "test": "react-scripts test",
     "test-once": "yarn test --watchAll=false",
     "build": "react-scripts build",

@@ -1,5 +1,5 @@
-// import getCoordsScrollTo from "lib/getCoordsScrollTo"
 import DebugEditor from "./DebugEditor"
+import getCoordsScrollTo from "lib/getCoordsScrollTo"
 import newGreedyRange from "./helpers/newGreedyRange"
 import React from "react"
 import ReactDOM from "react-dom"
@@ -7,6 +7,14 @@ import shortcut from "./shortcut"
 import StatusBar from "components/Note"
 import text from "lib/encoding/text"
 import useEditor from "./EditorReducer"
+
+import {
+	newFPSStyleString,
+	perfDOMCursor,
+	perfDOMRenderer,
+	perfParser,
+	perfReactRenderer,
+} from "./__perf"
 
 import {
 	innerText,
@@ -36,11 +44,7 @@ export function Editor(props) {
 	const seletionChange = React.useRef()
 	const greedy = React.useRef()
 
-	const [state, dispatch] = useEditor(`
-
-hello
-
-`)
+	const [state, dispatch] = useEditor("Hello, world!")
 
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
@@ -81,19 +85,21 @@ hello
 	// Should render:
 	React.useLayoutEffect(
 		React.useCallback(() => {
+			perfReactRenderer.restart()
 			ReactDOM.render(<Components components={state.Components} />, state.reactDOM, () => {
-				const selection = document.getSelection()
+				perfReactRenderer.stop()
+				perfDOMRenderer.restart()
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+				const selection = document.getSelection()
 				selection.removeAllRanges()
 				;[...ref.current.childNodes].map(each => each.remove())          // TODO
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+				perfDOMRenderer.stop()
 				dispatch.renderDOMCursor()
 			})
 		}, [state, dispatch]),
 		[state.shouldRender],
 	)
-
-	// console.log({ length: innerText(ref.current).length, pos1: state.pos1.pos, node, offset })
 
 	// Should render DOM cursor:
 	React.useLayoutEffect(
@@ -102,6 +108,7 @@ hello
 				// No-op.
 				return
 			}
+			perfDOMCursor.restart()
 			const selection = document.getSelection()
 			const range = document.createRange()
 			let { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
@@ -112,22 +119,23 @@ hello
 			range.collapse()
 			// (Range eagerly dropped)
 			selection.addRange(range)
-			// const { y } = getCoordsScrollTo({ bottom: 28 })
-			// if (y === -1) {
-			// 	// No-op.
-			// 	return
-			// }
-			// window.scrollTo({ top: y, behavior: "smooth" }) // FIXME: `top`?
+			const { y } = getCoordsScrollTo({ bottom: 28 })
+			if (y !== -1) {
+				window.scrollTo(0, y)
+			}
+			perfDOMCursor.stop()
 
-			// // NOTE (1): Use `Math.floor` to mimic Chrome.
-			// // NOTE (2): Use `... - 1` to prevent jumping.
-			// const buffer = Math.floor(19 * 1.5) - 1
-			// scrollIntoViewIfNeeded({ top: (props.nav || 0) + buffer, bottom: buffer })
+			const p = perfParser.duration()
+			const r = perfReactRenderer.duration()
+			const d = perfDOMRenderer.duration()
+			const c = perfDOMCursor.duration()
+			const sum = p + r + d + c
+			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
 		}, [state]),
 		[state.shouldRenderDOMCursor],
 	)
 
-	// Store undo state (background process):
+	// Start history process (on focus):
 	React.useEffect(
 		React.useCallback(() => {
 			if (!state.hasFocus) {
@@ -191,6 +199,7 @@ hello
 
 					style: {
 						// paddingBottom: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
+						paddingBottom: 28,
 						transform: state.hasFocus && "translateZ(0px)",
 					},
 
@@ -260,14 +269,14 @@ hello
 							e.preventDefault()
 							dispatch.commitRedo()
 							break
-						// case shortcut.isBold(e):
-						// 	e.preventDefault()
-						// 	// TODO
-						// 	return
-						// case shortcut.isItalic(e):
-						// 	e.preventDefault()
-						// 	// TODO
-						// 	return
+						case shortcut.isBold(e):
+							e.preventDefault()
+							// TODO
+							return
+						case shortcut.isItalic(e):
+							e.preventDefault()
+							// TODO
+							return
 						default:
 							// No-op.
 						}

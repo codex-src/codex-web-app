@@ -4,11 +4,12 @@ import stylex from "stylex"
 import { ComponentMap } from "./Components"
 import { Context } from "./Editor"
 
+/* eslint-disable */
 function DebugEditor(props) {
 	const [state] = React.useContext(Context)
 
 	return (
-		// false && (
+		false && (
 			<div style={{ ...stylex.parse("p-y:28 pre-wrap"), overflowWrap: "break-word" }}>
 				<div style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 					{stringifyReact(
@@ -29,8 +30,9 @@ function DebugEditor(props) {
 					)}
 				</div>
 			</div>
-		// )
+		)
 	)
 }
+/* eslint-enable */
 
 export default DebugEditor
