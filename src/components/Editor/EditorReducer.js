@@ -38,7 +38,7 @@ const initialState = {
 	pos1:          new VDOMCursor(),
 	pos2:          new VDOMCursor(),
 	Components:    [],
-	didCorrectPos: false,
+	didWritePos: false,
 	history:       [],
 	historyIndex:  -1,
 
@@ -76,15 +76,12 @@ const reducer = state => ({
 	collapse() {
 		state.pos2 = state.pos1
 	},
-	// TODO: Refactor `write` and `greedyWrite` to be one in
-	// the same.
-	//
 	// `write` writes at the current cursor positions.
 	write(data) {
-		if (!state.didCorrectPos) {
+		if (!state.didWritePos) {
 			state.history[0].pos1.pos = state.pos1.pos
 			state.history[0].pos2.pos = state.pos2.pos
-			state.didCorrectPos = true
+			state.didWritePos = true
 		}
 		this.pruneRedos()
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
@@ -95,10 +92,10 @@ const reducer = state => ({
 	// `greedyWrite` greedily writes to the cursor positions
 	// then resets the VDOM cursors.
 	greedyWrite(data, pos1, pos2, resetPos) {
-		if (!state.didCorrectPos) {
+		if (!state.didWritePos) {
 			state.history[0].pos1.pos = state.pos1.pos
 			state.history[0].pos2.pos = state.pos2.pos
-			state.didCorrectPos = true
+			state.didWritePos = true
 		}
 		this.pruneRedos()
 		state.body = state.body.write(data, pos1, pos2)
@@ -249,7 +246,7 @@ const reducer = state => ({
 	opUndo() {
 		this.recordOp(Operation.undo)
 		if (state.historyIndex <= 1) {
-			state.didCorrectPos = false
+			state.didWritePos = false
 		}
 		if (!state.historyIndex) {
 			// No-op.
