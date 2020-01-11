@@ -83,7 +83,7 @@ const reducer = state => ({
 			state.history[0].pos2.pos = state.pos2.pos
 			state.didCorrectPos = true
 		}
-		this.prune()
+		this.pruneRedos()
 		state.body = state.body.write(data, state.pos1.pos, state.pos2.pos)
 		state.pos1.pos += data.length
 		this.collapse()
@@ -97,7 +97,7 @@ const reducer = state => ({
 			// No-op.
 			return
 		}
-		this.prune()
+		this.pruneRedos()
 		state.body = state.body.write("", state.pos1.pos - dropL, state.pos2.pos + dropR)
 		state.pos1.pos -= dropL
 		this.collapse()
@@ -115,9 +115,9 @@ const reducer = state => ({
 		state.history.push({ body, pos1, pos2 })
 		state.historyIndex++
 	},
-	// `prune` prunes future states from the history state
-	// stack.
-	prune() {
+	// `pruneRedos` prunes future states from the history
+	// state stack.
+	pruneRedos() {
 		state.history.splice(state.historyIndex + 1)
 	},
 
@@ -144,7 +144,7 @@ const reducer = state => ({
 			state.history[0].pos2.pos = state.pos2.pos
 			state.didCorrectPos = true
 		}
-		this.prune()
+		this.pruneRedos()
 		state.body = state.body.write(data, pos1, pos2)
 		state.pos1 = resetPos
 		this.collapse()
@@ -266,7 +266,7 @@ const reducer = state => ({
 	// `render` updates `shouldRender`.
 	render() {
 		// Get the current components and parse new components:
- 		const Components = state.Components.map(each => ({ ...each })) // Read proxy.
+		const Components = state.Components.map(each => ({ ...each })) // Read proxy.
 		const NewComponents = parseComponents(state.body)
 		state.Components = NewComponents
 		// Guard edge case at markdown start:

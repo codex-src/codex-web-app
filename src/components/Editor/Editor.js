@@ -6,6 +6,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import shortcut from "./shortcut"
 import StatusBar from "components/Note"
+import text from "lib/encoding/text"
 import useEditor from "./EditorReducer"
 
 import {
@@ -252,7 +253,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							//
 							// NOTE: Firefox (72) does not correctly
 							// handle backspace on emoji.
-							if (state.pos1.pos === state.pos2.pos && state.pos1.pos && state.body.data[state.pos1.pos - 1] !== "\n") {
+							if (state.pos1.pos === state.pos2.pos && state.pos1.pos && !text.isTextRange(state.body.data[state.pos1.pos - 1])) {
 								// No-op.
 								break
 							}
@@ -274,7 +275,7 @@ hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello
 							//
 							// NOTE: Firefox (72) **does** correctly
 							// handle delete on emoji.
-							if (state.pos1.pos === state.pos2.pos && state.pos1.pos < state.body.data.length && state.body.data[state.pos1.pos] !== "\n") {
+							if (state.pos1.pos === state.pos2.pos && state.pos1.pos < state.body.data.length && !text.isTextRange(state.body.data[state.pos1.pos])) {
 								// No-op.
 								break
 							}

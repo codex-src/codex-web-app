@@ -1,8 +1,6 @@
 import text from "lib/encoding/text"
 
 /* eslint-disable no-multi-spaces */
-export const ASCIILow                       = 0x000000 //         0
-export const ASCIIHigh                      = 0x00007f //       127
 export const UTF8BasicMultilingualPlaneLow  = 0x000080 //       128
 export const UTF8BasicMultilingualPlaneHigh = 0x00ffff //    65,535
 export const UTF8AstralPlaneLow             = 0x010000 //    65,536
@@ -26,7 +24,7 @@ function isAlphanum(rune) {
 	const codePoint = rune.codePointAt(0)
 	switch (true) {
 	// Text range (ASCII):
-	case codePoint >= ASCIILow && codePoint <= ASCIIHigh:
+	case codePoint >= text.TextLow && codePoint <= text.TextHigh:
 		return text.isAlphanum(rune)
 	// Basic multilingual plane range:
 	case codePoint >= UTF8BasicMultilingualPlaneLow && codePoint <= UTF8BasicMultilingualPlaneHigh:
