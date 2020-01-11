@@ -1,6 +1,4 @@
-import OperationTypes from "../OperationTypes"
-
-export function setStateReducerFragment(state) {
+export function setStateReducer(state) {
 	const dispatchers = {
 		// `setState` sets the VDOM (body) and VDOM cursors.
 		setState(body, pos1, pos2) {
@@ -8,15 +6,6 @@ export function setStateReducerFragment(state) {
 				;[pos1, pos2] = [pos2, pos1]
 			}
 			Object.assign(state, { body, pos1, pos2 })
-		},
-		// `commitNewOperation` commits a new operation.
-		commitNewOperation(op) {
-			if (op === OperationTypes.SELECT && Date.now() - state.opTimestamp < 100) {
-				// No-op.
-				return
-			}
-			const opTimestamp = Date.now()
-			Object.assign(state, { op, opTimestamp })
 		},
 		// `collapse` collapses the end VDOM cursor to the start
 		// VDOM cursor.
@@ -36,8 +25,8 @@ export function setStateReducerFragment(state) {
 			this.collapse()
 			this.render()
 		},
-		// `greedyWrite` greedily writes at argument cursor
-		// positions then resets the VDOM cursors.
+		// `greedyWrite` greedily writes at the argument cursor
+		// positions and resets the VDOM cursors.
 		greedyWrite(data, pos1, pos2, resetPos) {
 			if (!state.historyIndex && !state.didWritePos) {
 				state.history[0].pos1.pos = state.pos1.pos

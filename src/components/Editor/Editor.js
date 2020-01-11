@@ -41,10 +41,15 @@ function Components(props) {
 
 export function Editor(props) {
 	const ref = React.useRef()
-	const seletionChange = React.useRef()
+	const seletionchange = React.useRef()
 	const greedy = React.useRef()
 
-	const [state, dispatch] = useEditor("Hello, world!")
+	const [state, dispatch] = useEditor(`1
+2
+3
+4
+5
+6`)
 
 	// 	const [state, dispatch] = useEditor(`# How to build a beautiful blog
 	//
@@ -92,8 +97,13 @@ export function Editor(props) {
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				const selection = document.getSelection()
 				selection.removeAllRanges()
+
+				// const g1 = greedy.current.pos1.greedyDOMNodeIndex
+				// const g2 = greedy.current.pos2.greedyDOMNodeIndex
+
 				;[...ref.current.childNodes].map(each => each.remove())          // TODO
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+
 				perfDOMRenderer.stop()
 				dispatch.renderDOMCursor()
 			})
@@ -119,9 +129,9 @@ export function Editor(props) {
 			range.collapse()
 			// (Range eagerly dropped)
 			selection.addRange(range)
-			const { y } = getCoordsScrollTo({ bottom: 28 })
-			if (y !== -1) {
-				window.scrollTo(0, y)
+			const coords = getCoordsScrollTo({ bottom: 28 })
+			if (coords.y !== -1) {
+				window.scrollTo(0, coords.y)
 			}
 			perfDOMCursor.stop()
 
@@ -136,6 +146,8 @@ export function Editor(props) {
 	)
 
 	// Start history process (on focus):
+	//
+	// TODO: Use operations instead of focus?
 	React.useEffect(
 		React.useCallback(() => {
 			if (!state.hasFocus) {
@@ -165,16 +177,16 @@ export function Editor(props) {
 				return
 			}
 			if (
-				seletionChange.current                               && // eslint-disable-line
-				seletionChange.current.anchorNode   === anchorNode   && // eslint-disable-line
-				seletionChange.current.focusNode    === focusNode    && // eslint-disable-line
-				seletionChange.current.anchorOffset === anchorOffset && // eslint-disable-line
-				seletionChange.current.focusOffset  === focusOffset     // eslint-disable-line
+				seletionchange.current                               && // eslint-disable-line
+				seletionchange.current.anchorNode   === anchorNode   && // eslint-disable-line
+				seletionchange.current.focusNode    === focusNode    && // eslint-disable-line
+				seletionchange.current.anchorOffset === anchorOffset && // eslint-disable-line
+				seletionchange.current.focusOffset  === focusOffset     // eslint-disable-line
 			) {
 				// No-op.
 				return
 			}
-			seletionChange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
+			seletionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = pos1
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
@@ -200,6 +212,7 @@ export function Editor(props) {
 					style: {
 						// paddingBottom: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
 						paddingBottom: 28,
+						fontFeatureSettings: "'tnum'",
 						transform: state.hasFocus && "translateZ(0px)",
 					},
 
@@ -289,27 +302,19 @@ export function Editor(props) {
 					},
 
 					onInput: e => {
-						// invariant(
-						// 	greedy.current.domNodeStart &&
-						// 	greedy.current.domNodeEnd &&
-						// 	greedy.current.pos1 >= 0 &&
-						// 	greedy.current.pos2 >= 0 &&
-						// 	greedy.current.range >= 1,
-						// 	"FIXME",
-						// )
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						let data = ""
 						let greedyDOMNode = greedy.current.domNodeStart
 						while (greedyDOMNode) {
 							data += (greedyDOMNode === greedy.current.domNodeStart ? "" : "\n") + innerText(greedyDOMNode)
-							if (greedy.current.range > 2 && greedyDOMNode === greedy.current.domNodeEnd) {
+							if (greedy.current.domNodeRange > 2 && greedyDOMNode === greedy.current.domNodeEnd) {
 								break
 							}
 							const { nextSibling } = greedyDOMNode
 							greedyDOMNode = nextSibling
 						}
-						dispatch.commitInput(data, greedy.current.pos1, greedy.current.pos2, pos)
+						dispatch.commitInput(data, greedy.current.pos1.pos, greedy.current.pos2.pos, pos)
 					},
 
 					onCut: e => {

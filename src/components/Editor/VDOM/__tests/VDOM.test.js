@@ -1,9 +1,9 @@
-import VDOM from "../vdom"
+import VDOM from "../VDOM"
 
 function testKeys(vdom) {
 	const seen = {}
 	for (const node of vdom.nodes) {
-		expect(!!seen[node.key]).toBe(false)
+		expect(seen[node.key]).toBe(undefined)
 		seen[node.key] = true
 	}
 }

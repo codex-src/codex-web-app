@@ -5,10 +5,10 @@ import { parseComponents } from "./Components"
 import { VDOMCursor } from "./traverseDOM"
 
 import {
-	historyReducerFragment,
-	operationReducerFragment,
-	renderReducerFragment,
-	setStateReducerFragment,
+	historyReducer,
+	operationReducer,
+	renderReducer,
+	setStateReducer,
 } from "./ReducerFragments"
 
 const initialState = {
@@ -23,23 +23,30 @@ const initialState = {
 	history:      [],
 	historyIndex: -1,
 
-	// `shouldRender` hints whether to rerender; uses a
-	// counter to track the number of renders.
+	// `shouldRender` hints whether to render; uses a counter
+	// to track the number of renders.
 	shouldRender: 0,
 
-	// `shouldRenderDOMCursor` hints whether to rerender the
-	// user facing DOM cursor; uses a counter to track the
-	// number of renders.
+	// `shouldRenderDOMCursor` hints whether to render the DOM
+	// cursor; uses a counter to track the number of renders.
 	shouldRenderDOMCursor: 0,
 
 	reactDOM: document.createElement("div"),
 }
 
+// // TODO
+// const fragments = {
+// 	historyReducer,
+// 	operationReducer,
+// 	renderReducer,
+// 	setStateReducer,
+// }
+
 const reducer = state => ({
-	...historyReducerFragment(state),
-	...operationReducerFragment(state),
-	...renderReducerFragment(state),
-	...setStateReducerFragment(state),
+	...  historyReducer(state), // eslint-disable-line
+	...operationReducer(state), // eslint-disable-line
+	...   renderReducer(state), // eslint-disable-line
+	... setStateReducer(state), // eslint-disable-line
 })
 
 // `init` returns a function to an initializer function so

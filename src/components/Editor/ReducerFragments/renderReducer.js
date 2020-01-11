@@ -7,7 +7,7 @@ import {
 	sameComponents,
 } from "../Components"
 
-export function renderReducerFragment(state) {
+export function renderReducer(state) {
 	const dispatchers = {
 		// `render` conditionally updates `shouldRender`.
 		render() {

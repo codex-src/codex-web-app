@@ -1,58 +1,77 @@
+import invariant from "invariant"
 import { ascendToGreedyDOMNode } from "../traverseDOM"
 import { innerText } from "../nodeFns"
 
-// The number of nodes to extend the greedy DOM node range:
-const MaxExtendStart = 1 // eslint-disable-line
-const MaxExtendEnd   = 2 // eslint-disable-line
+// The number of nodes to extend the greedy DOM node range
+// before and after:
+const MaxExtendBefore = 1 // eslint-disable-line
+const MaxExtendAfter  = 2 // eslint-disable-line
 
-// `sortSelectionNodesAndOffsets` eagerly sorts the
-// selection nodes and cursor positions.
-function sortSelectionNodesAndOffsets(anchorNode, focusNode, pos1, pos2) {
-	if (pos1.pos > pos2.pos) {
-		;[anchorNode, focusNode] = [focusNode, anchorNode]
-		;[pos1, pos2] = [pos2, pos1]
+// `sortNodesAndPos` sorts nodes and VDOM cursors.
+function sortNodesAndPos(startNode, endNode, startPos, endPos) {
+	if (startPos.pos > endPos.pos) {
+		;[startNode, endNode] = [endNode, startNode]
+		;[startPos, endPos] = [endPos, startPos]
 	}
-	return { anchorNode, focusNode, pos1, pos2 }
+	return { startNode, endNode, startPos, endPos }
 }
 
 // `newGreedyRange` creates a new greedy DOM node range.
-function newGreedyRange(rootNode, anchorNode, focusNode, pos1, pos2) {
+function newGreedyRange(rootNode, startNode, endNode, startPos, endPos) {
 	;({
-		anchorNode, // The start node.
-		focusNode,  // The end node.
-		pos1,       // The start node cursor position.
-		pos2,       // The end node cursor position.
-	} = sortSelectionNodesAndOffsets(anchorNode, focusNode, pos1, pos2))
+		startNode, // The sorted start node.
+		endNode,   // The sorted end node.
+		startPos,  // The sorted start VDOM cursor.
+		endPos,    // The sorted end VDOM cursor.
+	} = sortNodesAndPos(startNode, endNode, startPos, endPos))
+
+	const pos1 = {
+		greedyDOMNodeIndex: startPos.greedyDOMNodeIndex,
+		pos: startPos.pos,
+	}
+	const pos2 = {
+		greedyDOMNodeIndex: endPos.greedyDOMNodeIndex,
+		pos: endPos.pos,
+	}
+
 	// Start:
-	let domNodeStart = ascendToGreedyDOMNode(rootNode, anchorNode)
-	let _pos1 = pos1.pos - pos1.greedyDOMNodePos
-	let extendStart = MaxExtendStart
-	while (extendStart && domNodeStart.previousSibling) {
+	let domNodeStart = ascendToGreedyDOMNode(rootNode, startNode)
+	pos1.pos -= startPos.greedyDOMNodePos
+	let before = MaxExtendBefore
+	while (before && domNodeStart.previousSibling) {
 		domNodeStart = domNodeStart.previousSibling
-		_pos1 -= innerText(domNodeStart).length + 1
-		extendStart--
+		pos1.pos -= innerText(domNodeStart).length + 1
+		pos1.greedyDOMNodeIndex--
+		before--
 	}
 	// End:
-	let domNodeEnd = ascendToGreedyDOMNode(rootNode, focusNode)
-	let _pos2 = pos2.pos + pos2.greedyDOMNodeEndPos
-	let extendEnd = MaxExtendEnd
-	while (extendEnd && domNodeEnd.nextSibling) {
+	let domNodeEnd = ascendToGreedyDOMNode(rootNode, endNode)
+	pos2.pos += endPos.greedyDOMNodeEndPos
+	let after = MaxExtendAfter
+	while (after && domNodeEnd.nextSibling) {
 		domNodeEnd = domNodeEnd.nextSibling
-		_pos2 += innerText(domNodeEnd).length + 1
-		extendEnd--
+		pos2.pos += innerText(domNodeEnd).length + 1
+		pos2.greedyDOMNodeIndex++
+		after--
 	}
-	// Range:
-	const childNodes = [...rootNode.childNodes]
-	const range = childNodes.indexOf(domNodeEnd) - childNodes.indexOf(domNodeStart) + 1
 	// Done -- return:
-	const greedyDOMNodeRange = {
+	const domNodeRange = pos2.greedyDOMNodeIndex - pos1.greedyDOMNodeIndex + 1 // (Not zero-based)
+	const greedy = {
 		domNodeStart, // The greedy DOM node start.
 		domNodeEnd,   // The greedy DOM node end.
-		pos1: _pos1,  // The greedy DOM node start cursor position.
-		pos2: _pos2,  // The greedy DOM node end cursor position.
-		range,        // The greedy DOM node range.
+		pos1,         // The greedy DOM node start cursor position.
+		pos2,         // The greedy DOM node end cursor position.
+		domNodeRange, // The greedy DOM node range.
 	}
-	return greedyDOMNodeRange
+	invariant(
+		greedy.domNodeStart &&
+		greedy.domNodeEnd &&
+		greedy.pos1.pos >= 0 &&               // Ignores `greedyDOMNodeIndex`.
+		greedy.pos2.pos >= greedy.pos1.pos && // Ignores `greedyDOMNodeIndex`.
+		greedy.domNodeRange >= 1,
+		"newGreedyRange: FIXME",
+	)
+	return greedy
 }
 
 export default newGreedyRange

@@ -1,33 +1,42 @@
 import OperationTypes from "../OperationTypes"
 import utf8 from "lib/encoding/utf8"
 
-export const operationReducerFragment = state => ({
+export const operationReducer = state => ({
+	commit(op) {
+		if (op === OperationTypes.SELECT && Date.now() - state.opTimestamp < 100) {
+			// No-op.
+			return
+		}
+		const opTimestamp = Date.now()
+		Object.assign(state, { op, opTimestamp })
+	},
+
 	commitSelect(pos1, pos2) {
-		this.commitNewOperation(OperationTypes.SELECT)
+		this.commit(OperationTypes.SELECT)
 		this.setState(state.body, pos1, pos2)
 	},
 	commitFocus() {
-		this.commitNewOperation(OperationTypes.FOCUS)
+		this.commit(OperationTypes.FOCUS)
 		state.hasFocus = true
 	},
 	commitBlur() {
-		this.commitNewOperation(OperationTypes.BLUR)
+		this.commit(OperationTypes.BLUR)
 		state.hasFocus = false
 	},
 	commitInput(data, pos1, pos2, resetPos) {
-		this.commitNewOperation(OperationTypes.INPUT)
+		this.commit(OperationTypes.INPUT)
 		this.greedyWrite(data, pos1, pos2, resetPos)
 	},
 	commitEnter() {
-		this.commitNewOperation(OperationTypes.ENTER)
+		this.commit(OperationTypes.ENTER)
 		this.write("\n")
 	},
 	commitTab() {
-		this.commitNewOperation(OperationTypes.TAB)
+		this.commit(OperationTypes.TAB)
 		this.write("\t")
 	},
 	commitBackspace() {
-		this.commitNewOperation(OperationTypes.BACKSPACE)
+		this.commit(OperationTypes.BACKSPACE)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.dropBytes(0, 0)
 			return
@@ -36,7 +45,7 @@ export const operationReducerFragment = state => ({
 		this.dropBytes(length, 0)
 	},
 	commitBackspaceWord() {
-		this.commitNewOperation(OperationTypes.BACKSPACEWORD)
+		this.commit(OperationTypes.BACKSPACEWORD)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.dropBytes(0, 0)
 			return
@@ -70,7 +79,7 @@ export const operationReducerFragment = state => ({
 		this.dropBytes(length || 1, 0)
 	},
 	commitBackspaceLine() {
-		this.commitNewOperation(OperationTypes.BACKSPACELINE)
+		this.commit(OperationTypes.BACKSPACELINE)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.dropBytes(0, 0)
 			return
@@ -87,7 +96,7 @@ export const operationReducerFragment = state => ({
 		this.dropBytes(length || 1, 0)
 	},
 	commitDelete() {
-		this.commitNewOperation(OperationTypes.DELETE)
+		this.commit(OperationTypes.DELETE)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.dropBytes(0, 0)
 			return
@@ -96,21 +105,21 @@ export const operationReducerFragment = state => ({
 		this.dropBytes(0, length)
 	},
 	commitCut() {
-		this.commitNewOperation(OperationTypes.CUT)
+		this.commit(OperationTypes.CUT)
 		this.write("")
 	},
 	commitCopy() {
-		this.commitNewOperation(OperationTypes.COPY)
-		// Idempotent.
+		this.commit(OperationTypes.COPY)
+		// (Idempotent)
 	},
 	commitPaste(data) {
-		this.commitNewOperation(OperationTypes.PASTE)
+		this.commit(OperationTypes.PASTE)
 		this.write(data)
 	},
 	commitUndo() {
-		this.commitNewOperation(OperationTypes.UNDO)
+		this.commit(OperationTypes.UNDO)
 		if (!state.historyIndex) {
-			// No-op.
+			// No-op
 			return
 		} else if (state.historyIndex === 1 && state.didWritePos) {
 			state.didWritePos = false // Reset.
@@ -121,9 +130,9 @@ export const operationReducerFragment = state => ({
 		this.render()
 	},
 	commitRedo() {
-		this.commitNewOperation(OperationTypes.REDO)
+		this.commit(OperationTypes.REDO)
 		if (state.historyIndex + 1 === state.history.length) {
-			// No-op.
+			// No-op
 			return
 		}
 		state.historyIndex++

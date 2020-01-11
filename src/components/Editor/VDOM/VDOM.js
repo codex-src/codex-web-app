@@ -10,12 +10,8 @@ function parseVDOMNodes(data) {
 	return nodes
 }
 
-// A `VDOM` represents a VDOM for plain text data;
-// paragraphs are parsed into VDOM nodes. A VDOM node is a
-// document unique paragraph.
+// A `VDOM` represents a VDOM for plain text data.
 class VDOM {
-	// NOTE: `_sharedNodes`: nodes are shared between VDOMs --
-	// keys are unchanged.
 	constructor(data, _sharedNodes = []) {
 		const nodes = []
 		if (!_sharedNodes.length) {
@@ -28,116 +24,119 @@ class VDOM {
 			nodes, // The VDOM nodes.
 		})
 	}
-	// `_affectedRangeNode` computes the affected range for
-	// a key.
-	_affectedRangeNode(key) {
-		const offset = {
-			pos1: 0,
-			pos2: 0,
-		}
-		let index = 0
-		while (index < this.nodes.length) {
-			if (key === this.nodes[index].key) {
-				offset.pos2 = offset.pos1 + this.nodes[index].data.length
-				break
-			}
-			offset.pos1 += this.nodes[index].data.length
-			if (index + 1 < this.nodes.length) {
-				offset.pos1++
-			}
-			index++
-		}
-		return offset
-	}
-	// `_affectedRangeSelection` computes the affected range
-	// for a selection.
-	_affectedRangeSelection(pos1, pos2) {
-		// Compute start range:
-		const start = {
+	// `_affectedRange` computes the affected range for the
+	// argument cursor positions.
+	_affectedRange(pos1, pos2) {
+		// Start:
+		const rangeStart = {
 			node: 0,
 			offset: 0,
 		}
-		while (start.node < this.nodes.length) {
-			if (pos1 - this.nodes[start.node].data.length <= 0) {
-				start.offset = pos1
+		while (rangeStart.node < this.nodes.length) {
+			if (pos1 - this.nodes[rangeStart.node].data.length <= 0) {
+				rangeStart.offset = pos1
 				break
 			}
-			pos1 -= this.nodes[start.node].data.length
-			if (start.node + 1 < this.nodes.length) {
+			pos1 -= this.nodes[rangeStart.node].data.length
+			if (rangeStart.node + 1 < this.nodes.length) {
 				pos1--
 			}
-			start.node++
+			rangeStart.node++
 		}
-		// Compute end range:
-		const end = {
+		// End:
+		const rangeEnd = {
 			node: 0,
 			offset: 0,
 		}
-		while (end.node < this.nodes.length) {
-			if (pos2 - this.nodes[end.node].data.length <= 0) {
-				end.offset = pos2
+		while (rangeEnd.node < this.nodes.length) {
+			if (pos2 - this.nodes[rangeEnd.node].data.length <= 0) {
+				rangeEnd.offset = pos2
 				break
 			}
-			pos2 -= this.nodes[end.node].data.length
-			if (end.node + 1 < this.nodes.length) {
+			pos2 -= this.nodes[rangeEnd.node].data.length
+			if (rangeEnd.node + 1 < this.nodes.length) {
 				pos2--
 			}
-			end.node++
+			rangeEnd.node++
 		}
-		return { start, end }
+		return { rangeStart, rangeEnd }
 	}
-	// `_mergeStartNode` creates a new start node, merged at
-	// the end.
-	_mergeStartNode(start, node) {
-		const newNode = { ...this.nodes[start.node] }
-		newNode.data = newNode.data.slice(0, start.offset) + node.data
-		return newNode
+	// `_mergeStartNode` creates a new start node (merged at
+	// the end).
+	_mergeStartNode(rangeStart, parsedNodes) {
+		const currentNode = { ...this.nodes[rangeStart.node] } // New reference.
+		if (parsedNodes[0].data.length === currentNode.data.length &&
+				parsedNodes[0].data === currentNode.data) {
+			return { mergedStartNode: currentNode, didMerge: false }
+		}
+		const newNode = currentNode
+		newNode.data = newNode.data.slice(0, rangeStart.offset) + parsedNodes[0].data
+		return { mergedStartNode: newNode, didMerge: true }
 	}
-	// `_mergedEndNode` creates a new end node, merged at the
-	// start.
-	//
-	// NOTE: `_mergeEndNode` must generate a new key.
-	_mergeEndNode(end, node) {
+	// `_mergedEndNode` creates a new end node (merged at the
+	// start).
+	_mergeEndNode(rangeEnd, parsedNodes) {
+		const currentNode = { ...this.nodes[rangeEnd.node] } // New reference.
+		if (parsedNodes.length >= 3 &&
+				parsedNodes[parsedNodes.length - 1].data.length === currentNode.data.length &&
+				parsedNodes[parsedNodes.length - 1].data === currentNode.data) {
+			return { mergedEndNode: currentNode, didMerge: false }
+		}
 		const newNode = {
-			...this.nodes[end.node],
-			key: id.newSevenByteHash(),
+			...currentNode,
+			key: id.newSevenByteHash(), // End nodes must generate a new key.
 		}
-		newNode.data = node.data + newNode.data.slice(end.offset)
-		return newNode
+		newNode.data = parsedNodes[parsedNodes.length - 1].data + newNode.data.slice(rangeEnd.offset)
+		return { mergedEndNode: newNode, didMerge: true }
 	}
-	// `write` writes plain text data at a selection.
+	// `write` writes plain text data at the argument cursor
+	// positions.
 	write(data, pos1, pos2) {
 		invariant(
-			// 0 <= pos1 && pos1 <= pos2 && pos2 <= this.data.length,
-			pos1 >= 0 && pos2 >= pos1 && pos2 <= this.data.length,
+			pos1 >= 0 && pos1 <= pos2 && pos2 <= this.data.length,
 			`vdom: ${0} <= ${pos1} <= ${pos2} <= ${this.data.length}`,
 		)
 		// (Sorted by order of use)
-		const { start, end } = this._affectedRangeSelection(pos1, pos2) // The affected range.
-		const newNodes = []                                             // The new nodes.
-		const parsedNodes = parseVDOMNodes(data)                        // The parsed nodes from the plain text data.
-		// Nodes before start:
-		if (start.node > 0) {
-			newNodes.push(...[...this.nodes.slice(0, start.node)])
+		const {
+			rangeStart, // The affected range start.
+			rangeEnd,   // The affected range end.
+		} = this._affectedRange(pos1, pos2)
+		const newNodes = []
+		const parsedNodes = parseVDOMNodes(data)
+		// const changedKeys = []
+		// Before start:
+		if (rangeStart.node >= 1) {
+			newNodes.push(...[...this.nodes.slice(0, rangeStart.node)])
 		}
-		// Start node:
-		const mergedStartNode = this._mergeStartNode(start, parsedNodes[0])
+		// Start (needs one or more parsed nodes):
+		const { mergedStartNode /* , didMerge */ } = this._mergeStartNode(rangeStart, parsedNodes)
+		// if (didMerge) {
+		// 	changedKeys.push(mergedStartNode.key)
+		// }
 		newNodes.push(mergedStartNode)
-		// Intermediary nodes; must be three or more:
-		if (parsedNodes.length > 2) {
-			newNodes.push(...[...parsedNodes.slice(1, -1)])
+		// Center (needs three or more parsed nodes):
+		if (parsedNodes.length >= 3) {
+			// TODO: Reuse keys.
+			for (const parsedNode of [...parsedNodes.slice(1, -1)]) {
+				// changedKeys.push(parsedNode.key)
+				newNodes.push(parsedNode)
+			}
 		}
-		// End node:
+		// End (needs one or two or more parsed nodes):
 		if (parsedNodes.length === 1) {
-			mergedStartNode.data += this.nodes[end.node].data.slice(end.offset)
-		} else { // Must be two or more nodes.
-			const mergedEndNode = this._mergeEndNode(end, parsedNodes.slice(-1)[0])
+			mergedStartNode.data += this.nodes[rangeEnd.node].data.slice(rangeEnd.offset)
+		} else if (parsedNodes.length >= 2) {
+			const { mergedEndNode /* , didMerge */ } = this._mergeEndNode(rangeEnd, parsedNodes)
+			// if (didMerge) {
+			// 	changedKeys.push(mergedEndNode.key)
+			// }
 			newNodes.push(mergedEndNode)
 		}
-		// Nodes after end:
-		if (end.node + 1 < this.nodes.length) {
-			newNodes.push(...[...this.nodes.slice(end.node + 1)])
+		// After end:
+		if (rangeEnd.node + 1 < this.nodes.length) {
+			newNodes.push(...[...this.nodes.slice(rangeEnd.node + 1)])
 		}
+		// console.log(changedKeys)
 		const newData = this.data.slice(0, pos1) + data + this.data.slice(pos2)
 		return new VDOM(newData, newNodes)
 	}
