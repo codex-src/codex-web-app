@@ -1,6 +1,5 @@
 // import getCoordsScrollTo from "lib/getCoordsScrollTo"
 import DebugEditor from "./DebugEditor"
-import invariant from "invariant"
 import newGreedyRange from "./helpers/newGreedyRange"
 import React from "react"
 import ReactDOM from "react-dom"
@@ -128,7 +127,7 @@ hello
 		[state.shouldRenderDOMCursor],
 	)
 
-	// Undo process (on focus):
+	// Store undo state (background process):
 	React.useEffect(
 		React.useCallback(() => {
 			if (!state.hasFocus) {
@@ -169,7 +168,6 @@ hello
 			}
 			seletionChange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-			// FIXME
 			let pos2 = pos1
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 				pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
@@ -201,7 +199,6 @@ hello
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
-					// spellCheck: false,
 
 					onFocus: dispatch.commitFocus,
 					onBlur:  dispatch.commitBlur,
@@ -286,14 +283,14 @@ hello
 					},
 
 					onInput: e => {
-						invariant(
-							greedy.current.domNodeStart &&
-							greedy.current.domNodeEnd &&
-							greedy.current.pos1 >= 0 &&
-							greedy.current.pos2 >= 0 &&
-							greedy.current.range >= 1,
-							"FIXME",
-						)
+						// invariant(
+						// 	greedy.current.domNodeStart &&
+						// 	greedy.current.domNodeEnd &&
+						// 	greedy.current.pos1 >= 0 &&
+						// 	greedy.current.pos2 >= 0 &&
+						// 	greedy.current.range >= 1,
+						// 	"FIXME",
+						// )
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const pos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 						let data = ""

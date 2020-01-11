@@ -9,7 +9,7 @@ export function historyReducerFragment(state) {
 				return
 			}
 			const { body, pos1, pos2 } = state
-			state.history.push({ body, pos1: pos1.copy(), pos2: pos2.copy() })
+			state.history.push({ body, pos1: pos1.newReference(), pos2: pos2.newReference() })
 			state.historyIndex++
 		},
 		// `dropRedoStates` drops future states (redo states)

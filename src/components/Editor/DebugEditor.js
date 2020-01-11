@@ -12,9 +12,10 @@ function DebugEditor(props) {
 			<div style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 				{stringifyReact(
 					{
-						op:           state.op,
+						operation:    state.op,
 						pos1:         state.pos1.pos,
 						pos2:         state.pos2.pos,
+						didWritePos:  state.didWritePos,
 						history:      state.history.map(each => ({ data: each.body.data, pos1: each.pos1.pos, pos2: each.pos2.pos })),
 						historyIndex: state.historyIndex,
 

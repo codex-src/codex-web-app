@@ -13,7 +13,7 @@ import {
 
 const initialState = {
 	op:           OperationTypes.INIT,
-	opRecordedAt: 0,
+	opTimestamp:  0, // E.g. `Date.now()`.
 	hasFocus:     false,
 	body:         new VDOM(""),
 	pos1:         new VDOMCursor(),
@@ -42,32 +42,32 @@ const reducer = state => ({
 	...setStateReducerFragment(state), // eslint-disable-line
 
 	commitSelect(pos1, pos2) {
-		this.recordOp(OperationTypes.SELECT)
+		this.commitNewOperation(OperationTypes.SELECT)
 		this.setState(state.body, pos1, pos2)
 	},
 	commitFocus() {
-		this.recordOp(OperationTypes.FOCUS)
+		this.commitNewOperation(OperationTypes.FOCUS)
 		state.hasFocus = true
 	},
 	commitBlur() {
-		this.recordOp(OperationTypes.BLUR)
+		this.commitNewOperation(OperationTypes.BLUR)
 		state.hasFocus = false
 	},
 	commitInput(data, pos1, pos2, resetPos) {
-		this.recordOp(OperationTypes.INPUT)
+		this.commitNewOperation(OperationTypes.INPUT)
 		this.greedyWrite(data, pos1, pos2, resetPos)
 	},
 	commitEnter() {
-		this.recordOp(OperationTypes.ENTER)
+		this.commitNewOperation(OperationTypes.ENTER)
 		this.write("\n")
 	},
 	commitTab() {
-		this.recordOp(OperationTypes.TAB)
+		this.commitNewOperation(OperationTypes.TAB)
 		this.write("\t")
 	},
 	// REFACTOR
 	commitBackspace() {
-		this.recordOp(OperationTypes.BACKSPACE)
+		this.commitNewOperation(OperationTypes.BACKSPACE)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.dropBytes(0, 0)
 			return
@@ -77,7 +77,7 @@ const reducer = state => ({
 	},
 	// REFACTOR
 	commitBackspaceWord() {
-		this.recordOp(OperationTypes.BACKSPACEWORD)
+		this.commitNewOperation(OperationTypes.BACKSPACEWORD)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.dropBytes(0, 0)
 			return
@@ -112,7 +112,7 @@ const reducer = state => ({
 	},
 	// REFACTOR
 	commitBackspaceLine() {
-		this.recordOp(OperationTypes.BACKSPACELINE)
+		this.commitNewOperation(OperationTypes.BACKSPACELINE)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.dropBytes(0, 0)
 			return
@@ -130,7 +130,7 @@ const reducer = state => ({
 	},
 	// REFACTOR
 	commitDelete() {
-		this.recordOp(OperationTypes.DELETE)
+		this.commitNewOperation(OperationTypes.DELETE)
 		if (state.pos1.pos !== state.pos2.pos) {
 			this.dropBytes(0, 0)
 			return
@@ -139,22 +139,24 @@ const reducer = state => ({
 		this.dropBytes(0, length)
 	},
 	commitCut() {
-		this.recordOp(OperationTypes.CUT)
+		this.commitNewOperation(OperationTypes.CUT)
 		this.write("")
 	},
 	commitCopy() {
-		this.recordOp(OperationTypes.COPY)
+		this.commitNewOperation(OperationTypes.COPY)
 		// No-op.
 	},
 	commitPaste(data) {
-		this.recordOp(OperationTypes.PASTE)
+		this.commitNewOperation(OperationTypes.PASTE)
 		this.write(data)
 	},
 	commitUndo() {
-		this.recordOp(OperationTypes.undo)
+		this.commitNewOperation(OperationTypes.UNDO)
 		if (!state.historyIndex) {
 			// No-op.
 			return
+		} else if (state.historyIndex === 1 && state.didWritePos) {
+			state.didWritePos = false // Reset.
 		}
 		state.historyIndex--
 		const undoState = state.history[state.historyIndex]
@@ -162,7 +164,7 @@ const reducer = state => ({
 		this.render()
 	},
 	commitRedo() {
-		this.recordOp(OperationTypes.redo)
+		this.commitNewOperation(OperationTypes.REDO)
 		if (state.historyIndex + 1 === state.history.length) {
 			// No-op.
 			return
@@ -182,7 +184,7 @@ const init = initialValue => initialState => {
 		...initialState,
 		body,
 		Components,
-		history: [{ body, pos1: pos1.copy(), pos2: pos2.copy() }],
+		history: [{ body, pos1: pos1.newReference(), pos2: pos2.newReference() }],
 		historyIndex: 0,
 	}
 	return state

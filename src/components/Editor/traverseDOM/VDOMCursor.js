@@ -25,10 +25,10 @@ export class VDOMCursor {
 			pos:                 0,
 		})
 	}
-	copy() {
-		const copy = new VDOMCursor()
-		Object.assign(copy, this)
-		return copy
+	newReference() {
+		const newRef = new VDOMCursor()
+		Object.assign(newRef, this)
+		return newRef
 	}
 }
 

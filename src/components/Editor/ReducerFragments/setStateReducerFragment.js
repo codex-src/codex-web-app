@@ -8,13 +8,14 @@ export function setStateReducerFragment(state) {
 			}
 			Object.assign(state, { body, pos1, pos2 })
 		},
-		recordOp(op) {
-			if (op === OperationTypes.SELECT && Date.now() - state.opRecordedAt < 100) {
+		// `commitNewOperation` commits a new operation.
+		commitNewOperation(op) {
+			if (op === OperationTypes.SELECT && Date.now() - state.opTimestamp < 100) {
 				// No-op.
 				return
 			}
-			const opRecordedAt = Date.now()
-			Object.assign(state, { op, opRecordedAt })
+			const opTimestamp = Date.now()
+			Object.assign(state, { op, opTimestamp })
 		},
 		collapse() {
 			state.pos2 = state.pos1
@@ -32,8 +33,8 @@ export function setStateReducerFragment(state) {
 			this.collapse()
 			this.render()
 		},
-		// `greedyWrite` greedily writes to the cursor positions
-		// then resets the VDOM cursors.
+		// `greedyWrite` greedily writes at argument cursor
+		// positions then resets the VDOM cursors.
 		greedyWrite(data, pos1, pos2, resetPos) {
 			if (!state.historyIndex && !state.didWritePos) {
 				state.history[0].pos1.pos = state.pos1.pos
@@ -48,15 +49,15 @@ export function setStateReducerFragment(state) {
 		},
 		// `dropBytes` drops bytes from the left and or right of
 		// the current cursor positions.
-		dropBytes(dropL, dropR) {
+		dropBytes(bytesL, bytesR) {
 			// Guard the start node and or end node:
-			if ((!state.pos1.pos && dropL) || (state.pos2.pos === state.body.data.length && dropR)) {
+			if ((!state.pos1.pos && bytesL) || (state.pos2.pos === state.body.data.length && bytesR)) {
 				// No-op.
 				return
 			}
 			this.dropRedoStates()
-			state.body = state.body.write("", state.pos1.pos - dropL, state.pos2.pos + dropR)
-			state.pos1.pos -= dropL
+			state.body = state.body.write("", state.pos1.pos - bytesL, state.pos2.pos + bytesR)
+			state.pos1.pos -= bytesL
 			this.collapse()
 			this.render()
 		},

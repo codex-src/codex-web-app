@@ -14,10 +14,10 @@ export class DOMCursor {
 			offset: 0,
 		})
 	}
-	copy() {
-		const copy = new DOMCursor()
-		Object.assign(copy, this)
-		return copy
+	newReference() {
+		const newRef = new DOMCursor()
+		Object.assign(newRef, this)
+		return newRef
 	}
 }
 
