@@ -56,8 +56,8 @@ function EditorApp(props) {
 						state={state}
 						dispatch={dispatch}
 						// scrollPastEnd
-						statusBar
-						debug
+						// statusBar
+						// debug
 					/>
 				</div>
 			</div>

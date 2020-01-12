@@ -57,7 +57,7 @@ function newGreedyRange(rootNode, startNode, endNode, startPos, endPos) {
 		after--
 	}
 	// Done -- return:
-	const domNodeRange = pos2.greedyDOMNodeIndex - pos1.greedyDOMNodeIndex + 1 // (Not zero-based)
+	const domNodeRange = pos2.greedyDOMNodeIndex - pos1.greedyDOMNodeIndex + 1
 	const greedy = {
 		domNodeStart, // The greedy DOM node start.
 		domNodeEnd,   // The greedy DOM node end.

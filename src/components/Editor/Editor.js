@@ -175,9 +175,8 @@ export function Editor({ state, dispatch, ...props }) {
 					ref,
 
 					style: {
-						paddingBottom: !props.scrollPastEnd
-							? 28
-							: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
+						paddingBottom: props.scrollPastEnd && `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
+						// paddingBottom: props.statusBar && 28,
 						transform: state.hasFocus && "translateZ(0px)",
 					},
 
