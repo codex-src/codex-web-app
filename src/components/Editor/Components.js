@@ -5,11 +5,12 @@ import stylex from "stylex"
 // the same (based on type -- reference).
 export function sameComponents(Components, NewComponents) {
 	if (Components.length !== NewComponents.length) {
+		console.log(false)
 		return false
 	}
 	let index = 0
 	while (index < Components.length) {
-		if (Components[index].type !== NewComponents[index].type) {
+		if (Components[index].type.type !== NewComponents[index].type.type) {
 			return false
 		}
 		index++
@@ -17,19 +18,14 @@ export function sameComponents(Components, NewComponents) {
 	return true
 }
 
-// // `VDOMNode` adds attributes to a render function.
-// const VDOMNode = render => ({ reactKey, ...props }) => {
-// 	const element = render(props)
-// 	const newRender = React.cloneElement(
-// 		element,
-// 		{
-// 			"id": reactKey,
-// 			"data-vdom-node": true,
-// 			...element.props,
-// 		},
-// 	)
-// 	return newRender
-// }
+function vdomNodeAttrs({ reactKey }) {
+	const attrs = {
+		"id": reactKey,
+		"data-vdom-node": true,
+		"data-vdom-unix": Date.now(),
+	}
+	return attrs
+}
 
 const Syntax = stylex.Styleable(props => (
 	<span style={stylex.parse("pre c:blue-a400")}>
@@ -53,29 +49,29 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-const Header = props => (
-	<div id={props.reactKey} style={stylex.parse("fw:700 fs:19")} data-vdom-node data-vdom-unix={Date.now()}>
+const Header = React.memo(props => (
+	<div style={stylex.parse("fw:700 fs:19")} { ...vdomNodeAttrs(props) }>
 		<Markdown startSyntax={props.startSyntax}>
 			{props.children || (
 				<br />
 			)}
 		</Markdown>
 	</div>
-)
+))
 
-const Comment = props => (
-	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false} data-vdom-node>
+const Comment = React.memo(props => (
+	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false} { ...vdomNodeAttrs(props) }>
 		<Markdown style={stylex.parse("c:gray")} startSyntax="//">
 			{props.children || (
 				<br />
 			)}
 		</Markdown>
 	</div>
-)
+))
 
 // Compound component.
-const Blockquote = props => (
-	<div id={props.reactKey} data-vdom-node>
+const Blockquote = React.memo(props => (
+	<div { ...vdomNodeAttrs(props) }>
 		{props.children.map(each => (
 			<div key={each.key} id={each.key} style={stylex.parse("fs:19")} data-vdom-node>
 				<Markdown startSyntax={each.startSyntax}>
@@ -88,10 +84,10 @@ const Blockquote = props => (
 			</div>
 		))}
 	</div>
-)
+))
 
 const codeStyle = {
-	MozTabSize: 2, // Firefox.
+	MozTabSize: 2, // (Firefox)
 	tabSize: 2,
 	font: "15px/1.375 'Monaco', 'monospace'",
 }
@@ -99,17 +95,15 @@ const codeStyle = {
 // Compound component.
 //
 // https://cdpn.io/PowjgOg
-const CodeBlock = props => (
+const CodeBlock = React.memo(props => (
 	<div
-		id={props.reactKey}
-
 		style={{
 			...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
 			...codeStyle,
 			boxShadow: "0px 0px 1px hsl(var(--gray))",
 		}}
 		spellCheck={false}
-		data-vdom-node
+		{ ...vdomNodeAttrs(props) }
 	>
 		{props.children.map((each, index) => (
 			<div key={each.key} id={each.key} style={stylex.parse("p-x:24")} data-vdom-node>
@@ -128,29 +122,29 @@ const CodeBlock = props => (
 			</div>
 		))}
 	</div>
-)
+))
 
-const Paragraph = props => (
-	<div id={props.reactKey} style={stylex.parse("fs:19")} data-vdom-node>
+const Paragraph = React.memo(props => (
+	<div style={stylex.parse("fs:19")} { ...vdomNodeAttrs(props) }>
 		{props.children || (
 			<br />
 		)}
 	</div>
-)
+))
 
-const Break = props => (
-	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false} data-vdom-node>
+const Break = React.memo(props => (
+	<div style={stylex.parse("fs:19 c:gray")} spellCheck={false} { ...vdomNodeAttrs(props) }>
 		<Markdown startSyntax={props.startSyntax} />
 	</div>
-)
+))
 
 export const ComponentMap = {
-	[btoa(Header)]:     "Header",
-	[btoa(Comment)]:    "Comment",
-	[btoa(Blockquote)]: "Blockquote",
-	[btoa(CodeBlock)]:  "CodeBlock",
-	[btoa(Paragraph)]:  "Paragraph",
-	[btoa(Break)]:      "Break",
+	[Header.type]:     "Header",
+	[Comment.type]:    "Comment",
+	[Blockquote.type]: "Blockquote",
+	[CodeBlock.type]:  "CodeBlock",
+	[Paragraph.type]:  "Paragraph",
+	[Break.type]:      "Break",
 }
 
 // Convenience function.
@@ -163,8 +157,6 @@ function isBlockquote(data, hasNextSibling) {
 }
 
 export function parseComponents(body) {
-	// const updatedAt = Date.now()
-
 	const Components = []
 	let index = 0
 	while (index < body.nodes.length) {
@@ -280,5 +272,6 @@ export function parseComponents(body) {
 		}
 		index++
 	}
+	// console.log(Components[0].type.type)
 	return Components
 }

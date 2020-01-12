@@ -13,14 +13,14 @@ function DebugEditor(props) {
 			<div style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 				{stringifyReact(
 					{
-						// body: state.body.nodes, // .map(each => each.key),
-
 						// op:           state.op,
-						pos1:         state.pos1,
-						pos2:         state.pos2,
+						// pos1:         state.pos1,
+						// pos2:         state.pos2,
 						// didWritePos:  state.didWritePos,
 						// history:      state.history.map(each => ({ data: each.body.data, pos1: each.pos1.pos, pos2: each.pos2.pos })),
 						// historyIndex: state.historyIndex,
+
+						Components: state.Components,
 
 						// ...state,
 						// reactDOM: undefined,

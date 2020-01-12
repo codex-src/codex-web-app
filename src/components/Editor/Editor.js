@@ -8,10 +8,10 @@ import StatusBar from "./StatusBar"
 import text from "lib/encoding/text"
 
 import {
-	newFPSStyleString,
+	// newFPSStyleString,
+	// perfParser,
 	perfDOMCursor,
 	perfDOMRenderer,
-	perfParser,
 	perfReactRenderer,
 } from "./__perf"
 
@@ -40,8 +40,6 @@ function Components(props) {
 
 export function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
-	const seletionchange = React.useRef()
-	const greedy = React.useRef()
 
 	// Should render (DOM):
 	React.useLayoutEffect(
@@ -81,7 +79,7 @@ export function Editor({ state, dispatch, ...props }) {
 			const selection = document.getSelection()
 			const range = document.createRange()
 			let { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
-			if (isBreakNode(node)) { // Firefox.
+			if (isBreakNode(node)) { // (Firefox)
 				node = ascendToDOMNode(ref.current, node)
 			}
 			range.setStart(node, offset)
@@ -96,19 +94,17 @@ export function Editor({ state, dispatch, ...props }) {
 			// }
 			perfDOMCursor.stop()
 
-			const p = perfParser.duration()
-			const r = perfReactRenderer.duration()
-			const d = perfDOMRenderer.duration()
-			const c = perfDOMCursor.duration()
-			const sum = p + r + d + c
-			console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
+			// const p = perfParser.duration()
+			// const r = perfReactRenderer.duration()
+			// const d = perfDOMRenderer.duration()
+			// const c = perfDOMCursor.duration()
+			// const sum = p + r + d + c
+			// console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
 		}, [state]),
 		[state.shouldRenderDOMCursor],
 	)
 
 	// Start history process (on focus):
-	//
-	// TODO: Use operations instead of focus?
 	React.useEffect(
 		React.useCallback(() => {
 			if (!state.hasFocus) {
@@ -125,6 +121,9 @@ export function Editor({ state, dispatch, ...props }) {
 		}, [state, dispatch]),
 		[state.hasFocus],
 	)
+
+	const seletionchange = React.useRef()
+	const greedy = React.useRef()
 
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
@@ -171,7 +170,9 @@ export function Editor({ state, dispatch, ...props }) {
 					ref,
 
 					style: {
-						paddingBottom: !props.scrollPastEnd ? 28 : `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
+						paddingBottom: !props.scrollPastEnd
+							? 28
+							: `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
 						transform: state.hasFocus && "translateZ(0px)",
 					},
 
@@ -305,6 +306,7 @@ export function Editor({ state, dispatch, ...props }) {
 					onDrop:      e => e.preventDefault(),
 				},
 			)}
+			{/* {state.Components} */}
 			{props.statusBar && (
 				<StatusBar />
 			)}

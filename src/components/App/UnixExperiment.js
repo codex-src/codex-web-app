@@ -12,22 +12,31 @@ const reducer = state => ({
 	},
 })
 
-// `VDOMNode` adds attributes to a render function.
-const VDOMNode = render => React.memo(({ reactKey, ...props }) => {
-	const element = render(props)
-	const newRender = React.cloneElement(
-		element,
-		{
-			"data-vdom-node": true,
-			"data-vdom-unix": Date.now(),
-			...element.props,
-		},
-	)
-	return newRender
-})
+// // `VDOMNode` adds attributes to a render function.
+// const VDOMNode = render => React.memo(({ reactKey, ...props }) => {
+// 	const element = render(props)
+// 	const newRender = React.cloneElement(
+// 		element,
+// 		{
+// 			"data-vdom-node": true,
+// 			"data-vdom-unix": Date.now(),
+// 			...element.props,
+// 		},
+// 	)
+// 	return newRender
+// })
 
-const Item = VDOMNode(props => (
-	<pre>
+function vdomNodeAttrs({ reactKey }) {
+	const attrs = {
+		"id": reactKey,
+		"data-vdom-node": true,
+		"data-vdom-unix": Date.now(),
+	}
+	return attrs
+}
+
+const Item = React.memo(props => (
+	<pre { ...vdomNodeAttrs(props) }>
 		{props.children}
 	</pre>
 ))

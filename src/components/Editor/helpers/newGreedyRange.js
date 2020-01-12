@@ -65,15 +65,18 @@ function newGreedyRange(rootNode, startNode, endNode, startPos, endPos) {
 		pos2,         // The greedy DOM node end cursor position.
 		domNodeRange, // The greedy DOM node range.
 	}
+	if (greedy.pos1.pos < 0) {
+		console.warn({ greedy })
+	}
 	invariant(
-		greedy.domNodeStart &&
-		greedy.domNodeEnd &&
-		greedy.pos1.pos >= 0 &&               // Ignores `greedyDOMNodeIndex`.
-		greedy.pos2.pos >= greedy.pos1.pos && // Ignores `greedyDOMNodeIndex`.
-		greedy.domNodeRange >= 1,
+		// greedy.domNodeStart &&
+		// greedy.domNodeEnd &&
+		greedy.pos1.pos >= 0,                    // Ignores `greedyDOMNodeIndex`.
+		// greedy.pos2.pos >= greedy.pos1.pos && // Ignores `greedyDOMNodeIndex`.
+		// greedy.domNodeRange >= 1,
 		"newGreedyRange: FIXME",
 	)
-	// console.warn({ greedy })
+
 	return greedy
 }
 

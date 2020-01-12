@@ -12,7 +12,7 @@ export function renderReducer(state) {
 		// `render` conditionally updates `shouldRender`.
 		render() {
 			// Get the current components and parse new components:
-			const Components = state.Components.map(each => ({ ...each })) // Read proxy.
+			const Components = state.Components.map(each => ({ ...each, type: { ...each.type } })) // Read proxy.
 			perfParser.restart()
 			const NewComponents = parseComponents(state.body)
 			perfParser.stop()

@@ -12,8 +12,9 @@ function destructureReact(Component, ComponentMap) {
 	if (!Component.$$typeof && Component.$$typeof !== Symbol.for("react.element")) {
 		return Component
 	}
+	// Use type.type because of `React.memo`.
 	const { type, props } = Component
-	return { Component: ComponentMap[btoa(type)], props }
+	return { Component: ComponentMap[type.type], props }
 }
 
 // `stringifyReact` stringifies an object with React
