@@ -1,9 +1,9 @@
+// import getScrollToCoords from "lib/getScrollToCoords"
 import DebugEditor from "./DebugEditor"
-import getCoordsScrollTo from "lib/getCoordsScrollTo"
+import keyDown from "./keyDown"
 import newGreedyRange from "./helpers/newGreedyRange"
 import React from "react"
 import ReactDOM from "react-dom"
-import shortcut from "./shortcut"
 import StatusBar from "./StatusBar"
 import text from "lib/encoding/text"
 
@@ -43,19 +43,22 @@ export function Editor({ state, dispatch, ...props }) {
 	const seletionchange = React.useRef()
 	const greedy = React.useRef()
 
-	// Should render:
+	// Should render (DOM):
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			perfReactRenderer.restart()
 			ReactDOM.render(<Components components={state.Components} />, state.reactDOM, () => {
+				if (!state.shouldRender) {
+					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+					return
+				}
 				perfReactRenderer.stop()
 				perfDOMRenderer.restart()
+				// Eagerly drop range:
+				//
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				const selection = document.getSelection()
 				selection.removeAllRanges()
-
-				// const g1 = greedy.current.pos1.greedyDOMNodeIndex
-				// const g2 = greedy.current.pos2.greedyDOMNodeIndex
 
 				;[...ref.current.childNodes].map(each => each.remove())          // TODO
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
@@ -70,7 +73,7 @@ export function Editor({ state, dispatch, ...props }) {
 	// Should render DOM cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			if (!state.hasFocus) {
+			if (!state.shouldRenderDOMCursor) {
 				// No-op.
 				return
 			}
@@ -85,10 +88,12 @@ export function Editor({ state, dispatch, ...props }) {
 			range.collapse()
 			// (Range eagerly dropped)
 			selection.addRange(range)
-			const coords = getCoordsScrollTo({ bottom: 28 })
-			if (coords.y !== -1) {
-				window.scrollTo(0, coords.y)
-			}
+			// // TODO: Idempotent because of native rendering
+			// // strategy.
+			// const coords = getScrollToCoords({ bottom: 28 })
+			// if (coords.y !== -1) {
+			// 	window.scrollTo({ to: coords.y, behavior: "smooth" })
+			// }
 			perfDOMCursor.stop()
 
 			const p = perfParser.duration()
@@ -179,15 +184,15 @@ export function Editor({ state, dispatch, ...props }) {
 
 					onKeyDown: e => {
 						switch (true) {
-						case shortcut.isEnter(e):
+						case keyDown.isEnter(e):
 							e.preventDefault()
 							dispatch.commitEnter()
 							break
-						case shortcut.isTab(e):
+						case keyDown.isTab(e):
 							e.preventDefault()
 							dispatch.commitTab()
 							break
-						case shortcut.isBackspace(e):
+						case keyDown.isBackspace(e):
 							// Defer to native browser behavior because
 							// backspace on emoji is well behaved in
 							// Chrome and Safari.
@@ -201,15 +206,15 @@ export function Editor({ state, dispatch, ...props }) {
 							e.preventDefault()
 							dispatch.commitBackspace()
 							break
-						case shortcut.isBackspaceWord(e):
+						case keyDown.isBackspaceWord(e):
 							e.preventDefault()
 							dispatch.commitBackspaceWord()
 							break
-						case shortcut.isBackspaceLine(e):
+						case keyDown.isBackspaceLine(e):
 							e.preventDefault()
 							dispatch.commitBackspaceLine()
 							break
-						case shortcut.isDelete(e):
+						case keyDown.isDelete(e):
 							// Defer to native browser behavior because
 							// delete on emoji is well behaved in Chrome
 							// and Safari.
@@ -223,25 +228,25 @@ export function Editor({ state, dispatch, ...props }) {
 							e.preventDefault()
 							dispatch.commitDelete()
 							break
-						case shortcut.isDeleteWord(e):
+						case keyDown.isDeleteWord(e):
 							e.preventDefault()
 							// TODO
 							break
 						// TODO: Not tested on mobile.
-						case shortcut.isUndo(e):
+						case keyDown.isUndo(e):
 							e.preventDefault()
 							dispatch.commitUndo()
 							break
 						// TODO: Not tested on mobile.
-						case shortcut.isRedo(e):
+						case keyDown.isRedo(e):
 							e.preventDefault()
 							dispatch.commitRedo()
 							break
-						case shortcut.isBold(e):
+						case keyDown.isBold(e):
 							e.preventDefault()
 							// TODO
 							return
-						case shortcut.isItalic(e):
+						case keyDown.isItalic(e):
 							e.preventDefault()
 							// TODO
 							return

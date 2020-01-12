@@ -17,6 +17,20 @@ export function sameComponents(Components, NewComponents) {
 	return true
 }
 
+// // `VDOMNode` adds attributes to a render function.
+// const VDOMNode = render => ({ reactKey, ...props }) => {
+// 	const element = render(props)
+// 	const newRender = React.cloneElement(
+// 		element,
+// 		{
+// 			"id": reactKey,
+// 			"data-vdom-node": true,
+// 			...element.props,
+// 		},
+// 	)
+// 	return newRender
+// }
+
 const Syntax = stylex.Styleable(props => (
 	<span style={stylex.parse("pre c:blue-a400")}>
 		{props.children}
@@ -40,7 +54,7 @@ const Markdown = ({ style, ...props }) => (
 )
 
 const Header = props => (
-	<div id={props.reactKey} style={stylex.parse("fw:700 fs:19")} data-vdom-node>
+	<div id={props.reactKey} style={stylex.parse("fw:700 fs:19")} data-vdom-node data-vdom-unix={Date.now()}>
 		<Markdown startSyntax={props.startSyntax}>
 			{props.children || (
 				<br />
@@ -149,6 +163,8 @@ function isBlockquote(data, hasNextSibling) {
 }
 
 export function parseComponents(body) {
+	// const updatedAt = Date.now()
+
 	const Components = []
 	let index = 0
 	while (index < body.nodes.length) {

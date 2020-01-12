@@ -17,6 +17,8 @@ function sortNodesAndPos(startNode, endNode, startPos, endPos) {
 }
 
 // `newGreedyRange` creates a new greedy DOM node range.
+//
+// TODO: Revert to `pos`.
 function newGreedyRange(rootNode, startNode, endNode, startPos, endPos) {
 	;({
 		startNode, // The sorted start node.
@@ -71,6 +73,7 @@ function newGreedyRange(rootNode, startNode, endNode, startPos, endPos) {
 		greedy.domNodeRange >= 1,
 		"newGreedyRange: FIXME",
 	)
+	// console.warn({ greedy })
 	return greedy
 }
 
