@@ -1,13 +1,13 @@
 import markdown from "lib/encoding/markdown"
-import OperationTypes from "../OperationTypes"
+import OperationTypes from "./OperationTypes"
 import { perfParser } from "../__perf"
 
 import {
 	parseComponents,
 	sameComponents,
-} from "../Components"
+} from "../Components/Markdown"
 
-export function renderReducer(state) {
+function render(state) {
 	const dispatchers = {
 		// `render` conditionally updates `shouldRender`.
 		render() {
@@ -38,3 +38,5 @@ export function renderReducer(state) {
 	}
 	return dispatchers
 }
+
+export default render

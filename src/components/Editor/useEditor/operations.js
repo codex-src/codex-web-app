@@ -1,7 +1,7 @@
-import OperationTypes from "../OperationTypes"
+import OperationTypes from "./OperationTypes"
 import utf8 from "lib/encoding/utf8"
 
-export const operationReducer = state => ({
+const operations = state => ({
 	commit(op) {
 		if (op === OperationTypes.SELECT && Date.now() - state.opTimestamp < 100) {
 			// No-op.
@@ -119,10 +119,10 @@ export const operationReducer = state => ({
 	commitUndo() {
 		this.commit(OperationTypes.UNDO)
 		if (!state.historyIndex) {
-			// No-op
+			// No-op.
 			return
 		} else if (state.historyIndex === 1 && state.didWritePos) {
-			state.didWritePos = false // Reset.
+			state.didWritePos = false
 		}
 		state.historyIndex--
 		const undoState = state.history[state.historyIndex]
@@ -132,7 +132,7 @@ export const operationReducer = state => ({
 	commitRedo() {
 		this.commit(OperationTypes.REDO)
 		if (state.historyIndex + 1 === state.history.length) {
-			// No-op
+			// No-op.
 			return
 		}
 		state.historyIndex++
@@ -141,3 +141,5 @@ export const operationReducer = state => ({
 		this.render()
 	},
 })
+
+export default operations

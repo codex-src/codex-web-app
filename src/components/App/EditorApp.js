@@ -57,7 +57,7 @@ function EditorApp(props) {
 						dispatch={dispatch}
 						// scrollPastEnd
 						statusBar
-						// debug
+						debug
 					/>
 				</div>
 			</div>

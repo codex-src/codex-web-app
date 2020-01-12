@@ -1,4 +1,4 @@
-export function historyReducer(state) {
+function history(state) {
 	const dispatchers = {
 		// `storeUndoState` stores the current state to the
 		// history stack and increments the history stack index.
@@ -20,3 +20,5 @@ export function historyReducer(state) {
 	}
 	return dispatchers
 }
+
+export default history

@@ -1,5 +1,5 @@
 import * as Editor from "./Editor"
-import useEditor from "./EditorReducer"
+import useEditor from "./useEditor"
 
 const exports = {
 	...Editor,

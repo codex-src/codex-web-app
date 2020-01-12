@@ -1,16 +1,16 @@
 import React from "react"
 import stylex from "stylex"
+import { Markdown } from "./MarkdownText"
 
 // `sameComponents` returns whether two component arrays are
 // the same (based on type -- reference).
 export function sameComponents(Components, NewComponents) {
 	if (Components.length !== NewComponents.length) {
-		console.log(false)
 		return false
 	}
 	let index = 0
 	while (index < Components.length) {
-		if (Components[index].type.type !== NewComponents[index].type.type) {
+		if (Components[index].type.type !== NewComponents[index].type.type) { // (React.memo)
 			return false
 		}
 		index++
@@ -26,28 +26,6 @@ function vdomNodeAttrs({ reactKey }) {
 	}
 	return attrs
 }
-
-const Syntax = stylex.Styleable(props => (
-	<span style={stylex.parse("pre c:blue-a400")}>
-		{props.children}
-	</span>
-))
-
-const Markdown = ({ style, ...props }) => (
-	<React.Fragment>
-		{props.startSyntax && (
-			<Syntax style={style}>
-				{props.startSyntax}
-			</Syntax>
-		)}
-		{props.children}
-		{props.endSyntax && (
-			<Syntax style={style}>
-				{props.endSyntax}
-			</Syntax>
-		)}
-	</React.Fragment>
-)
 
 const Header = React.memo(props => (
 	<div style={stylex.parse("fw:700 fs:19")} { ...vdomNodeAttrs(props) }>
@@ -138,7 +116,7 @@ const Break = React.memo(props => (
 	</div>
 ))
 
-export const ComponentMap = {
+export const ComponentTypesMap = {
 	[Header.type]:     "Header",
 	[Comment.type]:    "Comment",
 	[Blockquote.type]: "Blockquote",
@@ -272,6 +250,5 @@ export function parseComponents(body) {
 		}
 		index++
 	}
-	// console.log(Components[0].type.type)
 	return Components
 }

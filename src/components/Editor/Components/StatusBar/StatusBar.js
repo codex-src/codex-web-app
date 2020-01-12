@@ -2,11 +2,7 @@ import * as Feather from "react-feather"
 import getStatusBarInfo from "./getStatusBarInfo"
 import React from "react"
 import stylex from "stylex"
-import { Context } from "../Editor"
-
-/*
- *
- */
+import { Context } from "../../Editor"
 
 // `formatCommas` formats a number with commas.
 function formatCommas({ count }) {
@@ -35,10 +31,6 @@ function computeRHS({ words, duration }) {
 	}
 	return `${formatPlural(words)}, ${formatPlural(duration)}`
 }
-
-/*
- *
- */
 
 const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
 	<Icon style={stylex.parse("wh:12.5")} />

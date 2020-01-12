@@ -1,15 +1,12 @@
+import history from "./history"
+import operations from "./operations"
 import OperationTypes from "./OperationTypes"
+import render from "./render"
+import setState from "./setState"
 import useMethods from "use-methods"
-import VDOM from "./VDOM"
-import { parseComponents } from "./Components"
-import { VDOMCursor } from "./traverseDOM"
-
-import {
-	historyReducer,
-	operationReducer,
-	renderReducer,
-	setStateReducer,
-} from "./ReducerFragments"
+import VDOM from "../VDOM"
+import { parseComponents } from "../Components/Markdown"
+import { VDOMCursor } from "../traverseDOM"
 
 const initialState = {
 	op:           OperationTypes.INIT,
@@ -35,10 +32,10 @@ const initialState = {
 }
 
 const reducer = state => ({
-	...  historyReducer(state), // eslint-disable-line
-	...operationReducer(state), // eslint-disable-line
-	...   renderReducer(state), // eslint-disable-line
-	... setStateReducer(state), // eslint-disable-line
+	   ...history(state), // eslint-disable-line
+	...operations(state), // eslint-disable-line
+	    ...render(state), // eslint-disable-line
+	  ...setState(state), // eslint-disable-line
 })
 
 // `init` returns a function to an initializer function so

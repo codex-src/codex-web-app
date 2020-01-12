@@ -1,4 +1,4 @@
-export function setStateReducer(state) {
+function setState(state) {
 	const dispatchers = {
 		// `setState` sets the VDOM (body) and VDOM cursors.
 		setState(body, pos1, pos2) {
@@ -56,3 +56,5 @@ export function setStateReducer(state) {
 	}
 	return dispatchers
 }
+
+export default setState

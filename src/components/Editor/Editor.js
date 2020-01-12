@@ -1,10 +1,10 @@
 // import getScrollToCoords from "lib/getScrollToCoords"
-import DebugEditor from "./DebugEditor"
+import DebugEditor from "./debug/DebugEditor"
 import keyDown from "./keyDown"
 import newGreedyRange from "./helpers/newGreedyRange"
 import React from "react"
 import ReactDOM from "react-dom"
-import StatusBar from "./StatusBar"
+import StatusBar from "./Components/StatusBar"
 import text from "lib/encoding/text"
 
 import {
