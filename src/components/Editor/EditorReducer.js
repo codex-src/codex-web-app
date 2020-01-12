@@ -34,14 +34,6 @@ const initialState = {
 	reactDOM: document.createElement("div"),
 }
 
-// // TODO
-// const fragments = {
-// 	historyReducer,
-// 	operationReducer,
-// 	renderReducer,
-// 	setStateReducer,
-// }
-
 const reducer = state => ({
 	...  historyReducer(state), // eslint-disable-line
 	...operationReducer(state), // eslint-disable-line

@@ -7,9 +7,9 @@ export function isVDOMNode(node) {
 	return ok
 }
 
-// `isBrowserDOMNode` returns whether a node is a browser
-// generated DOM node.
-export function isBrowserDOMNode(node) {
+// `isBrowserGeneratedDOMNode` returns whether a node is a
+// browser generated DOM node.
+export function isBrowserGeneratedDOMNode(node) {
 	const ok = (
 		node.nodeType === Node.ELEMENT_NODE && (
 			node.nodeName === "DIV" ||
@@ -24,7 +24,7 @@ export function isBrowserDOMNode(node) {
 export function isDOMNode(node) {
 	const ok = (
 		isVDOMNode(node) ||
-		isBrowserDOMNode(node)
+		isBrowserGeneratedDOMNode(node)
 	)
 	return ok
 }

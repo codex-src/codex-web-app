@@ -50,6 +50,11 @@ export function Editor({ state, dispatch, ...props }) {
 					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 					return
 				}
+				// console.log({
+				// 	curr:    [...ref.current.childNodes].map(each => ({ id: each.id, unix: parseInt(each.getAttribute("data-vdom-unix"), 10) })),
+				// 	next: [...state.reactDOM.childNodes].map(each => ({ id: each.id, unix: parseInt(each.getAttribute("data-vdom-unix"), 10) })),
+				// })
+
 				perfReactRenderer.stop()
 				perfDOMRenderer.restart()
 				// Eagerly drop range:

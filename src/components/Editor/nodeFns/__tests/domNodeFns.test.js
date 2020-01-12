@@ -2,19 +2,19 @@ import React from "react"
 import ReactDOMServer from "react-dom/server"
 import RenderDOM from "lib/RenderDOM"
 import {
-	isBrowserDOMNode,
+	isBrowserGeneratedDOMNode,
 	isDOMNode,
 	isVDOMNode,
 } from "../domNodeFns"
 
-test("isBrowserDOMNode", () => {
+test("isBrowserGeneratedDOMNode", () => {
 	const Component = props => (
 		<div>
 			<br />
 		</div>
 	)
 	const rootNode = RenderDOM(Component)
-	expect(isBrowserDOMNode(rootNode) && !isVDOMNode(rootNode)).toBe(true)
+	expect(isBrowserGeneratedDOMNode(rootNode) && !isVDOMNode(rootNode)).toBe(true)
 })
 
 test("isVDOMNode", () => {
@@ -24,7 +24,7 @@ test("isVDOMNode", () => {
 		</div>
 	)
 	const rootNode = RenderDOM(Component)
-	expect(!isBrowserDOMNode(rootNode) && isVDOMNode(rootNode)).toBe(true)
+	expect(!isBrowserGeneratedDOMNode(rootNode) && isVDOMNode(rootNode)).toBe(true)
 })
 
 test("isDOMNode", () => {
