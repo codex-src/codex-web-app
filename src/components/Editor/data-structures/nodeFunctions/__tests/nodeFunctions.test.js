@@ -1,6 +1,6 @@
 import React from "react"
 import RenderDOM from "lib/RenderDOM"
-import { isBreakOrTextNode } from "../nodeFns"
+import { isBreakOrTextNode } from "../nodeFunctions"
 
 test("br", () => {
 	const Component = props => <br />

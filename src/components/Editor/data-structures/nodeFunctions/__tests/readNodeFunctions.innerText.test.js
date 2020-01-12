@@ -1,6 +1,6 @@
 import React from "react"
 import RenderDOM from "lib/RenderDOM"
-import { innerText } from "../readNodeFns"
+import { innerText } from "../readNodeFunctions"
 
 test("p: \"\"", () => {
 	const Component = props => (

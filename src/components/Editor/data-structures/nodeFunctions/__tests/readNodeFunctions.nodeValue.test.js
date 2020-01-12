@@ -1,6 +1,6 @@
 import React from "react"
 import RenderDOM from "lib/RenderDOM"
-import { nodeValue } from "../readNodeFns"
+import { nodeValue } from "../readNodeFunctions"
 
 test("br", () => {
 	const Component = props => <br />

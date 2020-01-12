@@ -8,7 +8,7 @@ import {
 	isBreakOrTextNode,
 	isDOMNode,
 	nodeValue,
-} from "../nodeFns"
+} from "../nodeFunctions"
 
 // `VDOMCursor` represents a VDOM cursor.
 export class VDOMCursor {
@@ -79,7 +79,7 @@ export function recurseToVDOMCursor(rootNode, node, offset) {
 				}
 				const { nextSibling } = currentNode
 				if (isDOMNode(currentNode) && nextSibling) {
-					// Increment paragraph:
+					// Increment one paragraph:
 					Object.assign(cursor, {
 						greedyDOMNodePos: cursor.greedyDOMNodePos + 1,
 						domNodeIndex: cursor.domNodeIndex + 1,

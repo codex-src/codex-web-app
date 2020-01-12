@@ -5,7 +5,7 @@ import {
 	isBrowserGeneratedDOMNode,
 	isDOMNode,
 	isVDOMNode,
-} from "../domNodeFns"
+} from "../domNodeFunctions"
 
 test("isBrowserGeneratedDOMNode", () => {
 	const Component = props => (

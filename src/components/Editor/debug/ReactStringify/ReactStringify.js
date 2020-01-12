@@ -26,7 +26,7 @@ function ReactDestructure(value, ComponentTypesMap) {
 	// Guard components that use `React.memo`:
 	let { type, props } = value
 	if (type.type) {
-		type = type.type
+		;({ type } = type)
 	}
 	return { Component: ComponentTypesMap[type], props }
 }

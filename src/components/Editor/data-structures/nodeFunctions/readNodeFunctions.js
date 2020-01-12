@@ -1,5 +1,5 @@
-import { isBreakOrTextNode } from "./nodeFns"
-import { isDOMNode } from "./domNodeFns"
+import { isBreakOrTextNode } from "./nodeFunctions"
+import { isDOMNode } from "./domNodeFunctions"
 
 // `nodeValue` mocks the browser function; reads a node.
 export function nodeValue(node) {

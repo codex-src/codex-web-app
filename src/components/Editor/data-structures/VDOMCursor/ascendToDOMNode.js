@@ -1,5 +1,5 @@
 import invariant from "invariant"
-import { isDOMNode } from "../nodeFns"
+import { isDOMNode } from "../nodeFunctions"
 
 // `ascendToDOMNode` ascends to the nearest DOM node.
 export function ascendToDOMNode(rootNode, node) {

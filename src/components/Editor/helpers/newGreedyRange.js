@@ -1,6 +1,6 @@
 import invariant from "invariant"
-import { ascendToGreedyDOMNode } from "../traverseDOM"
-import { innerText } from "../nodeFns"
+import { ascendToGreedyDOMNode } from "../data-structures/VDOMCursor"
+import { innerText } from "../data-structures/nodeFunctions"
 
 // The number of nodes to extend the greedy DOM node range
 // before and after:

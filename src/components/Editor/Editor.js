@@ -1,30 +1,30 @@
 // import getScrollToCoords from "lib/getScrollToCoords"
 import DebugEditor from "./debug/DebugEditor"
-import keyDown from "./keyDown"
+import keyDownEvent from "./keyDownEvent"
 import newGreedyRange from "./helpers/newGreedyRange"
 import React from "react"
 import ReactDOM from "react-dom"
 import StatusBar from "./Components/StatusBar"
 import text from "lib/encoding/text"
+import { recurseToDOMCursor } from "./data-structures/DOMCursor"
 
 import {
 	// newFPSStyleString,
-	// perfParser,
 	perfDOMCursor,
 	perfDOMRenderer,
+	// perfParser,
 	perfReactRenderer,
 } from "./__perf"
 
 import {
 	innerText,
 	isBreakNode,
-} from "./nodeFns"
+} from "./data-structures/nodeFunctions"
 
 import {
 	ascendToDOMNode,
-	recurseToDOMCursor,
 	recurseToVDOMCursor,
-} from "./traverseDOM"
+} from "./data-structures/VDOMCursor"
 
 import "./editor.css"
 
@@ -190,15 +190,15 @@ export function Editor({ state, dispatch, ...props }) {
 
 					onKeyDown: e => {
 						switch (true) {
-						case keyDown.isEnter(e):
+						case keyDownEvent.isEnter(e):
 							e.preventDefault()
 							dispatch.commitEnter()
 							break
-						case keyDown.isTab(e):
+						case keyDownEvent.isTab(e):
 							e.preventDefault()
 							dispatch.commitTab()
 							break
-						case keyDown.isBackspace(e):
+						case keyDownEvent.isBackspace(e):
 							// Defer to native browser behavior because
 							// backspace on emoji is well behaved in
 							// Chrome and Safari.
@@ -212,15 +212,15 @@ export function Editor({ state, dispatch, ...props }) {
 							e.preventDefault()
 							dispatch.commitBackspace()
 							break
-						case keyDown.isBackspaceWord(e):
+						case keyDownEvent.isBackspaceWord(e):
 							e.preventDefault()
 							dispatch.commitBackspaceWord()
 							break
-						case keyDown.isBackspaceLine(e):
+						case keyDownEvent.isBackspaceLine(e):
 							e.preventDefault()
 							dispatch.commitBackspaceLine()
 							break
-						case keyDown.isDelete(e):
+						case keyDownEvent.isDelete(e):
 							// Defer to native browser behavior because
 							// delete on emoji is well behaved in Chrome
 							// and Safari.
@@ -234,25 +234,25 @@ export function Editor({ state, dispatch, ...props }) {
 							e.preventDefault()
 							dispatch.commitDelete()
 							break
-						case keyDown.isDeleteWord(e):
+						case keyDownEvent.isDeleteWord(e):
 							e.preventDefault()
 							// TODO
 							break
 						// TODO: Not tested on mobile.
-						case keyDown.isUndo(e):
+						case keyDownEvent.isUndo(e):
 							e.preventDefault()
 							dispatch.commitUndo()
 							break
 						// TODO: Not tested on mobile.
-						case keyDown.isRedo(e):
+						case keyDownEvent.isRedo(e):
 							e.preventDefault()
 							dispatch.commitRedo()
 							break
-						case keyDown.isBold(e):
+						case keyDownEvent.isBold(e):
 							e.preventDefault()
 							// TODO
 							return
-						case keyDown.isItalic(e):
+						case keyDownEvent.isItalic(e):
 							e.preventDefault()
 							// TODO
 							return

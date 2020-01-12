@@ -4,9 +4,9 @@ import OperationTypes from "./OperationTypes"
 import render from "./render"
 import setState from "./setState"
 import useMethods from "use-methods"
-import VDOM from "../VDOM"
+import VDOM from "../data-structures/VDOM"
 import { parseComponents } from "../Components/Markdown"
-import { VDOMCursor } from "../traverseDOM"
+import { VDOMCursor } from "../data-structures/VDOMCursor"
 
 const initialState = {
 	op:           OperationTypes.INIT,

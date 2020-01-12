@@ -2,7 +2,7 @@ import {
 	isBreakOrTextNode,
 	isDOMNode,
 	nodeValue,
-} from "../nodeFns"
+} from "../nodeFunctions"
 
 // `DOMCursor` represents a DOM cursor.
 //
@@ -45,7 +45,7 @@ export function recurseToDOMCursor(rootNode, pos) {
 				}
 				const { nextSibling } = currentNode
 				if (isDOMNode(currentNode) && nextSibling) {
-					// Decrement paragraph:
+					// Decrement one paragraph:
 					pos--
 				}
 			}
