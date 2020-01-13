@@ -1,0 +1,17 @@
+<!DOCTYPE html><html><body><div id="root" contenteditable><div>Hello, world!</div><div><br></div><div>Hello, world!</div><div><br></div><div>Hello, world!</div></div><script>
+
+const rootNode = document.querySelector("#root")
+const observer = new MutationObserver(mutations => {
+	console.log(mutations[mutations.length - 1])
+})
+observer.observe(rootNode, {
+	// childList: true,
+	// attributes: true,
+	characterData: true,
+	subtree: true,
+	// attributeOldValue: true,
+	// characterDataOldValue: true,
+})
+// observer.disconnect()
+
+</script></body></html>
