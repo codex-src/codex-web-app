@@ -32,3 +32,12 @@ export function isBackspaceLine(e) {
 	)
 	return ok
 }
+
+export function isBackspaceClass(e) {
+	const ok = (
+		isBackspace(e) ||
+		isBackspaceWord(e) ||
+		isBackspaceLine(e)
+	)
+	return ok
+}

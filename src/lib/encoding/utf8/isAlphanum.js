@@ -32,6 +32,7 @@ function isAlphanum(rune) {
 		return isAstralPlaneRegex.test(rune)
 	default:
 		// No-op.
+		break
 	}
 	return false
 }

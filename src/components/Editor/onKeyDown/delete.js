@@ -6,8 +6,11 @@ const keyCode = {
 }
 
 function isDeleteMacOS(e) {
+	if (!platform.isMacOS) {
+		return false
+	}
 	const ok = (
-		!e.shiftKey && // macOS.
+		!e.shiftKey && // (macOS)
 		e.ctrlKey &&
 		!e.altKey &&
 		!e.metaKey &&
@@ -17,10 +20,6 @@ function isDeleteMacOS(e) {
 }
 
 export function isDelete(e) {
-	// Guard macOS (^-d):
-	if (platform.isMacOS && isDeleteMacOS(e)) {
-		return true
-	}
 	const ok = (
 		!e.ctrlKey &&
 		!e.altKey &&
@@ -36,6 +35,15 @@ export function isDeleteWord(e) {
 		e.altKey &&
 		!e.metaKey &&
 		e.keyCode === keyCode.delete
+	)
+	return ok
+}
+
+export function isDeleteClass(e) {
+	const ok = (
+		isDelete(e) ||
+		isDeleteMacOS(e) ||
+		isDeleteWord(e)
 	)
 	return ok
 }

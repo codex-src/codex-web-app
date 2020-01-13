@@ -148,7 +148,7 @@ export function parseComponents(body) {
 			(data.length >= 5 && data.slice(0, 5) === ("#### ")) ||
 			(data.length >= 6 && data.slice(0, 6) === ("##### ")) ||
 			(data.length >= 7 && data.slice(0, 7) === ("###### "))
-		): {
+		): { // Add scope.
 			const commonSyntaxStartIndex = data.indexOf("# ")
 			const startSyntax = data.slice(0, commonSyntaxStartIndex + 2)
 			Components.push(<Header key={key} reactKey={key} startSyntax={startSyntax}>{data.slice(commonSyntaxStartIndex + 2)}</Header>)
@@ -159,7 +159,7 @@ export function parseComponents(body) {
 			Components.push(<Comment key={key} reactKey={key}>{data.slice(2)}</Comment>)
 			break
 		// Blockquote:
-		case isBlockquote(data, index + 1 < body.nodes.length): {
+		case isBlockquote(data, index + 1 < body.nodes.length): { // Add scope.
 			const startIndex = index
 			index++
 			while (index < body.nodes.length) {
@@ -202,7 +202,7 @@ export function parseComponents(body) {
 			))
 			break
 		// Code block (multiline):
-		case data.length >= 3 && data.slice(0, 3) === "```": {
+		case data.length >= 3 && data.slice(0, 3) === "```": { // Add scope.
 			const startIndex = index
 			index++
 			let didTerminate = false

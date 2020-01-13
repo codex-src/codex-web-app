@@ -65,10 +65,10 @@ class VDOM {
 	// the end).
 	_mergeStartNode(rangeStart, parsedNodes) {
 		const currentNode = { ...this.nodes[rangeStart.node] } // New reference.
-		if (parsedNodes[0].data.length === currentNode.data.length &&
-				parsedNodes[0].data === currentNode.data) {
-			return { mergedStartNode: currentNode, didMerge: false }
-		}
+		// if (parsedNodes[0].data.length === currentNode.data.length &&
+		// 		parsedNodes[0].data === currentNode.data) {
+		// 	return { mergedStartNode: currentNode, didMerge: false }
+		// }
 		const newNode = currentNode
 		newNode.data = newNode.data.slice(0, rangeStart.offset) + parsedNodes[0].data
 		return { mergedStartNode: newNode, didMerge: true }
@@ -77,11 +77,11 @@ class VDOM {
 	// start).
 	_mergeEndNode(rangeEnd, parsedNodes) {
 		const currentNode = { ...this.nodes[rangeEnd.node] } // New reference.
-		if (parsedNodes.length >= 3 &&
-				parsedNodes[parsedNodes.length - 1].data.length === currentNode.data.length &&
-				parsedNodes[parsedNodes.length - 1].data === currentNode.data) {
-			return { mergedEndNode: currentNode, didMerge: false }
-		}
+		// if (parsedNodes.length >= 3 &&
+		// 		parsedNodes[parsedNodes.length - 1].data.length === currentNode.data.length &&
+		// 		parsedNodes[parsedNodes.length - 1].data === currentNode.data) {
+		// 	return { mergedEndNode: currentNode, didMerge: false }
+		// }
 		const newNode = {
 			...currentNode,
 			key: id.newSevenByteHash(),
@@ -92,10 +92,16 @@ class VDOM {
 	// `write` writes plain text data at the argument cursor
 	// positions.
 	write(data, pos1, pos2) {
+		// console.log({ data, pos1, pos2 })
+
 		invariant(
 			0 <= pos1 && pos1 <= pos2 && pos2 <= this.data.length, // eslint-disable-line
-			`vdom: ${0} <= ${pos1} <= ${pos2} <= ${this.data.length}`,
+			`VDOM: ${0} <= ${pos1} <= ${pos2} <= ${this.data.length}`,
 		)
+
+		// pos1 = Math.max(0, pos1)
+		// pos2 = Math.min(pos2, this.data.length)
+
 		// (Sorted by order of use)
 		const {
 			rangeStart, // The affected range start.

@@ -1,6 +1,10 @@
-import invariant from "invariant"
-import { ascendToGreedyDOMNode } from "../data-structures/VDOMCursor"
+// import invariant from "invariant"
 import { innerText } from "../data-structures/nodeFunctions"
+
+import {
+	ascendToDOMNode,
+	ascendToGreedyDOMNode,
+} from "../data-structures/VDOMCursor"
 
 // The number of nodes to extend the greedy DOM node range
 // before and after:
@@ -24,13 +28,16 @@ function newGreedyRange(debugFrom, rootNode, startNode, endNode, startPos, endPo
 		startPos,  // The sorted start VDOM cursor.
 		endPos,    // The sorted end VDOM cursor.
 	} = sortNodesAndPos(startNode, endNode, startPos, endPos))
+
+	const currentDOMNode = ascendToDOMNode(rootNode, startNode)
+
 	// Start:
 	let domNodeStart = ascendToGreedyDOMNode(rootNode, startNode)
 	let pos1 = startPos.pos - startPos.greedyDOMNodePos
 	let extendBefore = MaxExtendBefore
 	while (extendBefore && domNodeStart.previousSibling) {
 		domNodeStart = domNodeStart.previousSibling
-		pos1 -= innerText(domNodeStart).length + 1 // FIXME
+		pos1 -= innerText(domNodeStart).length + 1
 		extendBefore--
 	}
 	// End:
@@ -39,20 +46,21 @@ function newGreedyRange(debugFrom, rootNode, startNode, endNode, startPos, endPo
 	let extendAfter = MaxExtendAfter
 	while (extendAfter && domNodeEnd.nextSibling) {
 		domNodeEnd = domNodeEnd.nextSibling
-		pos2 += innerText(domNodeEnd).length + 1 // FIXME
+		pos2 += innerText(domNodeEnd).length + 1
 		extendAfter--
 	}
 	// Done -- return:
 	const childNodes = [...rootNode.childNodes]
 	const domNodeRange = childNodes.indexOf(domNodeEnd) - childNodes.indexOf(domNodeStart) + 1
 	const greedy = {
-		domNodeStart, // The greedy DOM node start.
-		domNodeEnd,   // The greedy DOM node end.
-		pos1,         // The greedy DOM node start cursor position.
-		pos2,         // The greedy DOM node end cursor position.
-		domNodeRange, // The greedy DOM node range.
+		currentDOMNode, // The non-greedy current DOM node.
+		domNodeStart,   // The greedy DOM node start.
+		domNodeEnd,     // The greedy DOM node end.
+		pos1,           // The greedy DOM node start cursor position.
+		pos2,           // The greedy DOM node end cursor position.
+		domNodeRange,   // The greedy DOM node range.
 	}
-	invariant(greedy.pos1 >= 0, "FIXME")
+	// invariant(greedy.pos1 >= 0, "FIXME")
 	return greedy
 }
 

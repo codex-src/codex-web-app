@@ -1,12 +1,14 @@
 // import getScrollToCoords from "lib/getScrollToCoords"
+// import text from "lib/encoding/text"
+import DebugCSS from "components/DebugCSS"
 import DebugEditor from "./debug/DebugEditor"
+import inputType from "./inputType"
 import newGreedyRange from "./helpers/greedy"
 import onKeyDown from "./onKeyDown"
 import React from "react"
 import ReactDOM from "react-dom"
 import StatusBar from "./components/StatusBar"
 import stylex from "stylex"
-import text from "lib/encoding/text"
 import { recurseToDOMCursor } from "./data-structures/DOMCursor"
 
 import {
@@ -15,7 +17,7 @@ import {
 } from "./data-structures/nodeFunctions"
 
 import {
-	// ascendToDOMNode,
+	ascendToDOMNode,
 	recurseToVDOMCursor,
 } from "./data-structures/VDOMCursor"
 
@@ -66,7 +68,7 @@ export function Editor({ state, dispatch, ...props }) {
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.shouldRenderDOMCursor) {
-				// No-op.
+				// (No-op)
 				return
 			}
 			const selection = document.getSelection()
@@ -113,38 +115,40 @@ export function Editor({ state, dispatch, ...props }) {
 		[state.hasFocus],
 	)
 
-	const seletionchange = React.useRef()
-	const greedy = React.useRef()
+	const selectionchangeRef = React.useRef()
+	const greedyRef = React.useRef()
 
 	React.useLayoutEffect(() => {
 		const onSelectionChange = e => {
 			if (!state.hasFocus) {
-				// No-op.
+				// (No-op)
 				return
 			}
 			const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
 			if (!anchorNode || !focusNode) {
-				// No-op.
+				// (No-op)
 				return
 			}
+			// // TODO
+			// const { current } = selectionchangeRef
 			if (
-				seletionchange.current                               && // eslint-disable-line
-				seletionchange.current.anchorNode   === anchorNode   && // eslint-disable-line
-				seletionchange.current.focusNode    === focusNode    && // eslint-disable-line
-				seletionchange.current.anchorOffset === anchorOffset && // eslint-disable-line
-				seletionchange.current.focusOffset  === focusOffset     // eslint-disable-line
+				selectionchangeRef.current                               && // eslint-disable-line
+				selectionchangeRef.current.anchorNode   === anchorNode   && // eslint-disable-line
+				selectionchangeRef.current.focusNode    === focusNode    && // eslint-disable-line
+				selectionchangeRef.current.anchorOffset === anchorOffset && // eslint-disable-line
+				selectionchangeRef.current.focusOffset  === focusOffset     // eslint-disable-line
 			) {
-				// No-op.
+				// (No-op)
 				return
 			}
-			seletionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
+			selectionchangeRef.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 			const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
 			let pos2 = pos1
 			if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
 				pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
 			}
 			dispatch.commitSelect(pos1, pos2)
-			greedy.current = newGreedyRange("selectionchange", ref.current, anchorNode, focusNode, pos1, pos2)
+			greedyRef.current = newGreedyRange("selectionchange", ref.current, anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -154,152 +158,145 @@ export function Editor({ state, dispatch, ...props }) {
 
 	const { Provider } = Context
 	return (
-		<Provider value={[state, dispatch]}>
-			{React.createElement(
-				"article",
-				{
-					ref,
+		<DebugCSS>
+			<Provider value={[state, dispatch]}>
+				{React.createElement(
+					"article",
+					{
+						ref,
 
-					style: {
-						paddingBottom: props.scrollPastEnd && `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
-						// paddingBottom: props.statusBar && 28,
-						transform: state.hasFocus && "translateZ(0px)",
-					},
+						style: {
+							paddingBottom: props.scrollPastEnd && `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
+							// paddingBottom: props.statusBar && 28,
+							transform: state.hasFocus && "translateZ(0px)",
+						},
 
-					contentEditable: true,
-					suppressContentEditableWarning: true,
-					spellCheck: false,
+						contentEditable: true,
+						suppressContentEditableWarning: true,
+						spellCheck: false,
 
-					onFocus: dispatch.commitFocus,
-					onBlur:  dispatch.commitBlur,
+						onFocus: dispatch.commitFocus,
+						onBlur:  dispatch.commitBlur,
 
-					onKeyDown: e => {
-						switch (true) {
-						case onKeyDown.isEnter(e):
-							e.preventDefault()
-							dispatch.commitEnter()
-							break
-						case onKeyDown.isTab(e):
-							e.preventDefault()
-							dispatch.commitTab()
-							break
-						case onKeyDown.isBackspace(e):
-							// Defer to native browser behavior:
-							//
-							// NOTE: Firefox (72) does not correctly
-							// handle backspace on emoji.
-							if (state.pos1.pos === state.pos2.pos && state.pos1.pos && !text.isInTextRange(state.body.data[state.pos1.pos - 1])) {
-								// No-op.
+						onKeyDown: e => {
+							switch (true) {
+							case onKeyDown.isBackspaceClass(e):
+								// Guard the anchor node:
+								if (state.pos1.pos === state.pos2.pos && (!state.pos1.pos || state.body.data[state.pos1.pos - 1] === "\n")) {
+									e.preventDefault()
+									dispatch.commitBackspace()
+									return
+								}
+								// (No-op)
+								break
+							case onKeyDown.isDeleteClass(e):
+								// Guard the anchor node:
+								if (state.pos1.pos === state.pos2.pos && (state.pos1.pos === state.body.data.length || state.body.data[state.pos1.pos] === "\n")) {
+									e.preventDefault()
+									dispatch.commitDelete()
+									return
+								}
+								// (No-op)
+								break
+							case onKeyDown.isBold(e):
+								e.preventDefault()
+								return
+							case onKeyDown.isItalic(e):
+								e.preventDefault()
+								return
+							default:
+								// (No-op)
 								break
 							}
-							e.preventDefault()
-							dispatch.commitBackspace()
-							break
-						case onKeyDown.isBackspaceWord(e):
-							e.preventDefault()
-							dispatch.commitBackspaceWord()
-							break
-						case onKeyDown.isBackspaceLine(e):
-							e.preventDefault()
-							dispatch.commitBackspaceLine()
-							break
-						case onKeyDown.isDelete(e):
-							// Defer to native browser behavior:
-							//
-							// NOTE: Firefox (72) **does** correctly
-							// handle delete on emoji.
-							if (state.pos1.pos === state.pos2.pos && state.pos1.pos < state.body.data.length && !text.isInTextRange(state.body.data[state.pos1.pos])) {
-								// No-op.
+							const { anchorNode, focusNode } = document.getSelection()
+							if (!anchorNode || !focusNode) {
+								// (No-op)
+								return
+							}
+							// console.log({ debugFrom: "onSelect", rootNode: ref.current, anchorNode, focusNode, pos1: state.pos1, pos2: state.pos2 })
+							greedyRef.current = newGreedyRange("onKeyDown", ref.current, anchorNode, focusNode, state.pos1, state.pos2)
+						},
+
+						onInput: e => {
+							const greedy = greedyRef.current
+							const { anchorNode, anchorOffset } = document.getSelection()
+							const currentDOMNode = ascendToDOMNode(ref.current, anchorNode)
+							const resetPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
+
+							switch (true) {
+							case inputType.isHistoryUndo(e):
+								dispatch.commitUndo()
+								return
+							case inputType.isHistoryRedo(e):
+								dispatch.commitRedo()
+								return
+							// Insert paragraph when typing:
+							case inputType.isInsertText(e) && currentDOMNode !== greedy.currentDOMNode: { // (Add scope)
+								const p1 = `${innerText(greedy.currentDOMNode)}\n`
+								const p2 = `${innerText(currentDOMNode)}\n`
+								dispatch.greedyWrite(p1 + p2, resetPos.pos - p1.length, resetPos.pos + p2.length - 1, resetPos)
+								return
+							}
+							case inputType.isInsertParagraph(e):
+								dispatch.commitEnter()
+								return
+							default:
+								// (No-op)
 								break
 							}
-							e.preventDefault()
-							dispatch.commitDelete()
-							break
-						case onKeyDown.isDeleteWord(e):
-							e.preventDefault()
-							// TODO
-							break
-						case onKeyDown.isUndo(e): // TODO: Not tested on mobile.
-							e.preventDefault()
-							dispatch.commitUndo()
-							break
-						case onKeyDown.isRedo(e): // TODO: Not tested on mobile.
-							e.preventDefault()
-							dispatch.commitRedo()
-							break
-						case onKeyDown.isBold(e):
-							e.preventDefault()
-							// TODO
-							break
-						case onKeyDown.isItalic(e):
-							e.preventDefault()
-							// TODO
-							break
-						default:
-							// No-op.
-						}
-						const { anchorNode, focusNode } = document.getSelection()
-						if (!anchorNode || !focusNode) {
-							// No-op.
-							return
-						}
-						greedy.current = newGreedyRange("onKeyDown", ref.current, anchorNode, focusNode, state.pos1, state.pos2)
-					},
 
-					onInput: e => {
-						const { anchorNode, anchorOffset } = document.getSelection()
-						const resetPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						let data = ""
-						let greedyDOMNode = greedy.current.domNodeStart
-						while (greedyDOMNode) {
-							data += (greedyDOMNode === greedy.current.domNodeStart ? "" : "\n") + innerText(greedyDOMNode)
-							if (greedy.current.domNodeRange >= 3 && greedyDOMNode === greedy.current.domNodeEnd) {
-								break
+							let data = ""
+							let currentNode = greedy.domNodeStart
+							while (currentNode) {
+								data += (currentNode === greedy.domNodeStart ? "" : "\n") + innerText(currentNode)
+								if (greedy.domNodeRange >= 3 && currentNode === greedy.domNodeEnd) {
+									break
+								}
+								const { nextSibling } = currentNode
+								currentNode = nextSibling
 							}
-							const { nextSibling } = greedyDOMNode
-							greedyDOMNode = nextSibling
-						}
-						dispatch.commitInput(data, greedy.current.pos1, greedy.current.pos2, resetPos)
-					},
+							dispatch.commitInput(data, greedy.pos1, greedy.pos2, resetPos)
+						},
 
-					onCut: e => {
-						e.preventDefault()
-						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-						if (data) {
-							e.clipboardData.setData("text/plain", data)
-						}
-						dispatch.commitCut()
-					},
+						onCut: e => {
+							e.preventDefault()
+							const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+							if (data) {
+								e.clipboardData.setData("text/plain", data)
+							}
+							dispatch.commitCut()
+						},
 
-					onCopy: e => {
-						e.preventDefault()
-						const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
-						if (data) {
-							e.clipboardData.setData("text/plain", data)
-						}
-						dispatch.commitCopy()
-					},
+						onCopy: e => {
+							e.preventDefault()
+							const data = state.body.data.slice(state.pos1.pos, state.pos2.pos)
+							if (data) {
+								e.clipboardData.setData("text/plain", data)
+							}
+							dispatch.commitCopy()
+						},
 
-					onPaste: e => {
-						e.preventDefault()
-						const data = e.clipboardData.getData("text/plain")
-						dispatch.commitPaste(data)
-					},
+						onPaste: e => {
+							e.preventDefault()
+							const data = e.clipboardData.getData("text/plain")
+							dispatch.commitPaste(data)
+						},
 
-					onDragStart: e => e.preventDefault(),
-					onDrop:      e => e.preventDefault(),
-				},
-			)}
-			{/* {state.Components} */}
-			{props.statusBar && (
-				<StatusBar />
-			)}
-			{props.debug && (
-				<React.Fragment>
-					<div style={stylex.parse("h:28")} />
-					<DebugEditor />
-				</React.Fragment>
-			)}
-		</Provider>
+						onDragStart: e => e.preventDefault(),
+						onDrop:      e => e.preventDefault(),
+					},
+				)}
+				{/* {state.Components} */}
+				{props.statusBar && (
+					<StatusBar />
+				)}
+				{props.debug && (
+					<React.Fragment>
+						<div style={stylex.parse("h:28")} />
+						<DebugEditor />
+					</React.Fragment>
+				)}
+			</Provider>
+		</DebugCSS>
 	)
 }

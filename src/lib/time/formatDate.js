@@ -38,6 +38,7 @@ export function formatDate(year, month, day, showYear = true) {
 	// 	break
 	// default:
 	// 	// No-op.
+	// 	break
 	// }
 	if (!showYear) {
 		return `${getMonthName(month)} ${day}`
