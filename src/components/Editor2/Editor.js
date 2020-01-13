@@ -9,13 +9,13 @@ import useMethods from "use-methods"
 
 import "./editor.css"
 
-const Paragraph = props => (
-	<div id={props.reactKey} className="paragraph" data-vdom-node>
+const Paragraph = React.memo(props => (
+	<div id={props.reactKey} className="paragraph" data-vdom-node data-vdom-unix={Date.now()}>
 		{props.children || (
 			<br />
 		)}
 	</div>
-)
+))
 
 function parseMarkdown(nodes) {
 	const components = []
@@ -186,10 +186,6 @@ function Editor(props) {
 
 	}, [dispatch])
 
-	// const t1 = Date.now()
-	// const t2 = Date.now()
-	// console.log(t2 - t1)
-	//
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(<Contents>{state.components}</Contents>, state.reactDOM, () => {
@@ -229,6 +225,7 @@ function Editor(props) {
 		[state.shouldRenderDOMCursor],
 	)
 
+	console.log(state.reactDOM)
 	return (
 		<DebugCSS>
 			<React.Fragment>
