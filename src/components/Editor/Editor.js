@@ -159,7 +159,7 @@ export function Editor({ state, dispatch, ...props }) {
 				pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
 			}
 			dispatch.commitSelect(pos1, pos2)
-			greedy.current = newGreedyRange(ref.current, anchorNode, focusNode, pos1, pos2, "selectionchange")
+			greedy.current = newGreedyRange("selectionchange", ref.current, anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", onSelectionChange)
 		return () => {
@@ -188,46 +188,16 @@ export function Editor({ state, dispatch, ...props }) {
 					onFocus: dispatch.commitFocus,
 					onBlur:  dispatch.commitBlur,
 
-					onSelect: e => {
-						if (!state.hasFocus) {
-							// No-op.
-							return
-						}
-						const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-						if (!anchorNode || !focusNode) {
-							// No-op.
-							return
-						}
-						if (
-							seletionchange.current                               && // eslint-disable-line
-							seletionchange.current.anchorNode   === anchorNode   && // eslint-disable-line
-							seletionchange.current.focusNode    === focusNode    && // eslint-disable-line
-							seletionchange.current.anchorOffset === anchorOffset && // eslint-disable-line
-							seletionchange.current.focusOffset  === focusOffset     // eslint-disable-line
-						) {
-							// No-op.
-							return
-						}
-						seletionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
-						const pos1 = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						let pos2 = pos1
-						if (focusNode !== anchorNode || focusOffset !== anchorOffset) {
-							pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
-						}
-						dispatch.commitSelect(pos1, pos2)
-						greedy.current = newGreedyRange(ref.current, anchorNode, focusNode, pos1, pos2, "onSelect")
-					},
-
 					onKeyDown: e => {
 						switch (true) {
 						case onKeyDown.isEnter(e):
 							e.preventDefault()
 							dispatch.commitEnter()
-							return
+							break
 						case onKeyDown.isTab(e):
 							e.preventDefault()
 							dispatch.commitTab()
-							return
+							break
 						case onKeyDown.isBackspace(e):
 							// Defer to native browser behavior:
 							//
@@ -235,19 +205,19 @@ export function Editor({ state, dispatch, ...props }) {
 							// handle backspace on emoji.
 							if (state.pos1.pos === state.pos2.pos && state.pos1.pos && !text.isInTextRange(state.body.data[state.pos1.pos - 1])) {
 								// No-op.
-								return
+								break
 							}
 							e.preventDefault()
 							dispatch.commitBackspace()
-							return
+							break
 						case onKeyDown.isBackspaceWord(e):
 							e.preventDefault()
 							dispatch.commitBackspaceWord()
-							return
+							break
 						case onKeyDown.isBackspaceLine(e):
 							e.preventDefault()
 							dispatch.commitBackspaceLine()
-							return
+							break
 						case onKeyDown.isDelete(e):
 							// Defer to native browser behavior:
 							//
@@ -255,34 +225,40 @@ export function Editor({ state, dispatch, ...props }) {
 							// handle delete on emoji.
 							if (state.pos1.pos === state.pos2.pos && state.pos1.pos < state.body.data.length && !text.isInTextRange(state.body.data[state.pos1.pos])) {
 								// No-op.
-								return
+								break
 							}
 							e.preventDefault()
 							dispatch.commitDelete()
-							return
+							break
 						case onKeyDown.isDeleteWord(e):
 							e.preventDefault()
 							// TODO
-							return
+							break
 						case onKeyDown.isUndo(e): // TODO: Not tested on mobile.
 							e.preventDefault()
 							dispatch.commitUndo()
-							return
+							break
 						case onKeyDown.isRedo(e): // TODO: Not tested on mobile.
 							e.preventDefault()
 							dispatch.commitRedo()
-							return
+							break
 						case onKeyDown.isBold(e):
 							e.preventDefault()
 							// TODO
-							return
+							break
 						case onKeyDown.isItalic(e):
 							e.preventDefault()
 							// TODO
-							return
+							break
 						default:
 							// No-op.
 						}
+						const { anchorNode, focusNode } = document.getSelection()
+						if (!anchorNode || !focusNode) {
+							// No-op.
+							return
+						}
+						greedy.current = newGreedyRange("onKeyDown", ref.current, anchorNode, focusNode, state.pos1, state.pos2)
 					},
 
 					onInput: e => {

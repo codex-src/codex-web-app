@@ -17,7 +17,7 @@ function sortNodesAndPos(startNode, endNode, startPos, endPos) {
 }
 
 // `newGreedyRange` creates a new greedy DOM node range.
-function newGreedyRange(rootNode, startNode, endNode, startPos, endPos, debugFrom) {
+function newGreedyRange(debugFrom, rootNode, startNode, endNode, startPos, endPos) {
 	;({
 		startNode, // The sorted start node.
 		endNode,   // The sorted end node.
