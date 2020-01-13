@@ -47,7 +47,7 @@ function EditorApp(props) {
 		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
 			<div style={stylex.parse("w:768 no-min-w")}>
 				<Editor
-					initialValue={"Hello, world!\n\nHello, world!\n\nHello, world!"}
+					initialValue={"Hello, world!\n\n\n\nHello, world!"}
 
 					// state={state}
 					// dispatch={dispatch}
