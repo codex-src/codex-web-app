@@ -1,9 +1,9 @@
 import isAlphanum from "./isAlphanum"
-import isTextRange from "./isTextRange"
+import isInTextRange from "./isInTextRange"
 
 const exports = {
 	isAlphanum,
-	isTextRange,
+	isInTextRange,
 }
 
 export default exports

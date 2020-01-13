@@ -5,7 +5,7 @@ import { perfParser } from "../__perf"
 import {
 	parseComponents,
 	sameComponents,
-} from "../Components/Markdown"
+} from "../components/Markdown"
 
 function render(state) {
 	const dispatchers = {

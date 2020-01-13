@@ -107,7 +107,7 @@ module.exports = {
 		"wrap-iife":                        [1, "inside"], // require parentheses around immediate `function` invocations
 		"wrap-regex":                       0, // require parenthesis around regex literals
 		"yield-star-spacing":               0, // require or disallow spacing around the `*` in `yield*` expressions
-		"yoda":                             1, // require or disallow "Yoda" conditions
+		"yoda":                             [1, "never" /* , { exceptRange: true } */], // require or disallow "Yoda" conditions
 
 		"init-declarations":                2, // require or disallow initialization in variable declarations
 		"max-statements-per-line":          2, // enforce a maximum number of statements allowed per line

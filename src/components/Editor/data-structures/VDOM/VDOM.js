@@ -84,7 +84,7 @@ class VDOM {
 		}
 		const newNode = {
 			...currentNode,
-			key: id.newSevenByteHash(), // End nodes must generate a new key.
+			key: id.newSevenByteHash(),
 		}
 		newNode.data = parsedNodes[parsedNodes.length - 1].data + newNode.data.slice(rangeEnd.offset)
 		return { mergedEndNode: newNode, didMerge: true }
@@ -93,7 +93,7 @@ class VDOM {
 	// positions.
 	write(data, pos1, pos2) {
 		invariant(
-			pos1 >= 0 && pos1 <= pos2 && pos2 <= this.data.length,
+			0 <= pos1 && pos1 <= pos2 && pos2 <= this.data.length, // eslint-disable-line
 			`vdom: ${0} <= ${pos1} <= ${pos2} <= ${this.data.length}`,
 		)
 		// (Sorted by order of use)
@@ -103,22 +103,17 @@ class VDOM {
 		} = this._affectedRange(pos1, pos2)
 		const newNodes = []
 		const parsedNodes = parseVDOMNodes(data)
-		// const changedKeys = []
 		// Before start:
 		if (rangeStart.node >= 1) {
 			newNodes.push(...[...this.nodes.slice(0, rangeStart.node)])
 		}
 		// Start (needs one or more parsed nodes):
 		const { mergedStartNode /* , didMerge */ } = this._mergeStartNode(rangeStart, parsedNodes)
-		// if (didMerge) {
-		// 	changedKeys.push(mergedStartNode.key)
-		// }
 		newNodes.push(mergedStartNode)
 		// Center (needs three or more parsed nodes):
 		if (parsedNodes.length >= 3) {
 			// TODO: Reuse keys.
 			for (const parsedNode of [...parsedNodes.slice(1, -1)]) {
-				// changedKeys.push(parsedNode.key)
 				newNodes.push(parsedNode)
 			}
 		}
@@ -127,16 +122,12 @@ class VDOM {
 			mergedStartNode.data += this.nodes[rangeEnd.node].data.slice(rangeEnd.offset)
 		} else if (parsedNodes.length >= 2) {
 			const { mergedEndNode /* , didMerge */ } = this._mergeEndNode(rangeEnd, parsedNodes)
-			// if (didMerge) {
-			// 	changedKeys.push(mergedEndNode.key)
-			// }
 			newNodes.push(mergedEndNode)
 		}
 		// After end:
 		if (rangeEnd.node + 1 < this.nodes.length) {
 			newNodes.push(...[...this.nodes.slice(rangeEnd.node + 1)])
 		}
-		// console.log(changedKeys)
 		const newData = this.data.slice(0, pos1) + data + this.data.slice(pos2)
 		return new VDOM(newData, newNodes)
 	}

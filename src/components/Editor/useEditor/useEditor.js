@@ -1,11 +1,11 @@
-import history from "./history"
-import operations from "./operations"
+import historyReducer from "./historyReducer"
+import operationsReducer from "./operationsReducer"
 import OperationTypes from "./OperationTypes"
-import render from "./render"
-import setState from "./setState"
+import renderReducer from "./renderReducer"
+import setStateReducer from "./setStateReducer"
 import useMethods from "use-methods"
 import VDOM from "../data-structures/VDOM"
-import { parseComponents } from "../Components/Markdown"
+import { parseComponents } from "../components/Markdown"
 import { VDOMCursor } from "../data-structures/VDOMCursor"
 
 const initialState = {
@@ -32,18 +32,17 @@ const initialState = {
 }
 
 const reducer = state => ({
-	   ...history(state), // eslint-disable-line
-	...operations(state), // eslint-disable-line
-	    ...render(state), // eslint-disable-line
-	  ...setState(state), // eslint-disable-line
+	...historyReducer(state),
+	...operationsReducer(state),
+	...renderReducer(state),
+	...setStateReducer(state),
 })
 
-// `init` returns a function to an initializer function so
-// that `initialValue` can be passed as an argument.
+// `init` returns a function to an initializer function.
 const init = initialValue => initialState => {
-	let { body, pos1, pos2 } = initialState
-	body = body.write(initialValue, 0, body.data.length)
-	const Components = parseComponents(body)
+	const { /* body, */ pos1, pos2 } = initialState
+	const body = new VDOM(initialValue)      // Temporary fix.
+	const Components = parseComponents(body) // Temporary fix.
 	const state = {
 		...initialState,
 		body,

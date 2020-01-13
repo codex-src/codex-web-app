@@ -1,9 +1,9 @@
 export const TextLow  = 0x00 // eslint-disable-line
 export const TextHigh = 0x7f // eslint-disable-line
 
-// `isTextRange` returns whether a character is in the ASCII
-// text range.
-function isTextRange(ch) {
+// `isInTextRange` returns whether a character is in the
+// ASCII text range.
+function isInTextRange(ch) {
 	const codePoint = ch.codePointAt(0)
 	const ok = (
 		codePoint >= TextLow &&
@@ -12,4 +12,4 @@ function isTextRange(ch) {
 	return ok
 }
 
-export default isTextRange
+export default isInTextRange
