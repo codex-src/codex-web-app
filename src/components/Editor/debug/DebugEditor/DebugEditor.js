@@ -12,11 +12,10 @@ function DebugEditor(props) {
 			<div style={{ MozTabSize: 2, tabSize: 2, font: "12px/1.375 Monaco" }}>
 				{JSON.stringify(
 					{
-						op:           state.op,
-						pos1:         state.pos1.pos,
-						pos2:         state.pos2.pos,
-						// history:      state.history.map(each => ({ data: each.body.data, pos1: each.pos1.pos, pos2: each.pos2.pos })),
-						// historyIndex: state.historyIndex,
+						op:   state.op,
+						data: state.body.data,
+						pos1: state.pos1.pos,
+						pos2: state.pos2.pos,
 
 						// ...state,
 						// reactDOM: state.reactDOM.outerHTML,

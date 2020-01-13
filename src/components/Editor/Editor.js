@@ -10,20 +10,12 @@ import text from "lib/encoding/text"
 import { recurseToDOMCursor } from "./data-structures/DOMCursor"
 
 import {
-	// newFPSStyleString,
-	// perfParser,
-	perfDOMCursor,
-	perfDOMRenderer,
-	perfReactRenderer,
-} from "./__perf"
-
-import {
 	innerText,
-	isBreakNode,
+	// isBreakNode,
 } from "./data-structures/nodeFunctions"
 
 import {
-	ascendToDOMNode,
+	// ascendToDOMNode,
 	recurseToVDOMCursor,
 } from "./data-structures/VDOMCursor"
 
@@ -45,7 +37,6 @@ export function Editor({ state, dispatch, ...props }) {
 	// Should render (DOM):
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			perfReactRenderer.restart()
 			ReactDOM.render(<Components components={state.Components} />, state.reactDOM, () => {
 				if (!state.shouldRender) {
 					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
@@ -56,8 +47,6 @@ export function Editor({ state, dispatch, ...props }) {
 				// 	next: [...state.reactDOM.childNodes].map(each => ({ id: each.id, unix: parseInt(each.getAttribute("data-vdom-unix"), 10) })),
 				// })
 
-				perfReactRenderer.stop()
-				perfDOMRenderer.restart()
 				// Eagerly drop range:
 				//
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
@@ -67,7 +56,6 @@ export function Editor({ state, dispatch, ...props }) {
 				;[...ref.current.childNodes].map(each => each.remove())          // TODO
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
 
-				perfDOMRenderer.stop()
 				dispatch.renderDOMCursor()
 			})
 		}, [state, dispatch]),
@@ -81,13 +69,15 @@ export function Editor({ state, dispatch, ...props }) {
 				// No-op.
 				return
 			}
-			perfDOMCursor.restart()
 			const selection = document.getSelection()
 			const range = document.createRange()
 			let { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
-			if (isBreakNode(node)) { // (Firefox)
-				node = ascendToDOMNode(ref.current, node)
+			if (!node) {
+				return
 			}
+			// if (isBreakNode(node)) { // (Firefox)
+			// 	node = ascendToDOMNode(ref.current, node)
+			// }
 			range.setStart(node, offset)
 			range.collapse()
 			// (Range eagerly dropped)
@@ -98,12 +88,7 @@ export function Editor({ state, dispatch, ...props }) {
 			// if (coords.y !== -1) {
 			// 	window.scrollTo({ to: coords.y, behavior: "smooth" })
 			// }
-			perfDOMCursor.stop()
 
-			// const p = perfParser.duration()
-			// const r = perfReactRenderer.duration()
-			// const d = perfDOMRenderer.duration()
-			// const c = perfDOMCursor.duration()
 			// const sum = p + r + d + c
 			// console.log(`%cparser=${p} react=${r} dom=${d} cursor=${c} (${sum})`, newFPSStyleString(sum))
 		}, [state]),
