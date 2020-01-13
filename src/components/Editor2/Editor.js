@@ -1,6 +1,6 @@
-// import * as dom from "./dom"
+// import invariant from "invariant"
+import * as dom from "./dom"
 import DebugCSS from "components/DebugCSS"
-import invariant from "invariant"
 import rand from "lib/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
@@ -26,6 +26,7 @@ function parseMarkdown(nodes) {
 }
 
 const initialState = {
+	domCursorRect: { x: 0, y: 0 },
 	data: "",
 	nodes: [],
 	components: [],
@@ -36,39 +37,28 @@ const initialState = {
 
 const reducer = state => ({
 	// `dropVDOMNodes` drops VDOM nodes.
-	dropVDOMNodes(keys) {
-		// invariant(
-		// 	Array.isArray(keys) && keys.length,
-		// 	"reducer.dropVDOMNodes: FIXME",
-		// )
+	dropVDOMNodes(keys, domRect) {
 		for (const key of keys) {
 			const index = state.nodes.findIndex(each => each.key === key)
-			// invariant(
-			// 	index >= 0,
-			// 	"reducer.dropVDOMNodes: FIXME",
-			// )
 			state.nodes.splice(index, 1)
 		}
 		state.data = state.nodes.map(each => each.data).join("\n")
+		state.domCursorRect = { x: domRect.x, y: domRect.y }
 		this.renderDOM()
 	},
 	// `updateVDOMNode` updates a VDOM node.
-	updateVDOMNode(key, data) {
-		// invariant(
-		// 	typeof key === "string" && /^[a-zA-Z0-9]{7}$/.test(key),
-		// 	"reducer.updateVDOMNode: FIXME",
-		// )
-		// invariant(
-		// 	typeof data === "string",
-		// 	"reducer.updateVDOMNode: FIXME",
-		// )
+	updateVDOMNode(key, data, domRect) {
 		const node = state.nodes.find(each => each.key === key)
-		// invariant(
-		// 	node,
-		// 	"reducer.updateVDOMNode: FIXME",
-		// )
 		node.data = data
 		state.data = state.nodes.map(each => each.data).join("\n")
+		state.domCursorRect = { x: domRect.x, y: domRect.y }
+		this.renderDOM()
+	},
+	// `insertVDOMNode` inserts a VDOM node (after a key).
+	insertVDOMNode(key, domRect) {
+		const index = state.nodes.findIndex(each => each.key === key)
+		state.nodes.splice(index + 1, 0, { key: rand.newSevenByteHash(), data: "" })
+		state.domCursorRect = { x: domRect.x, y: domRect.y }
 		this.renderDOM()
 	},
 
@@ -144,79 +134,87 @@ function getDOMRect() {
 function Editor(props) {
 	const ref = React.useRef()
 	const observerGC = React.useRef()
-	const domCursorRect = React.useRef()
 
 	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const observeMutations = React.useCallback(() => {
-		const h = mutations => {
+
+		const onDelete = mutations => {
 			if (!mutations[0].removedNodes.length) {
 				// (No-op)
 				return
 			}
 			const keys = []
 			for (const mutation of mutations) {
+				// keys.push(mutation.removedNodes[0].id)
 				for (const removedNode of mutation.removedNodes) {
 					keys.push(removedNode.id)
 				}
 			}
-			const domRect = getDOMRect()
-			invariant(domRect, "observeMutations: FIXME")
-			domCursorRect.current = domRect
-			dispatch.dropVDOMNodes(keys)
+			dispatch.dropVDOMNodes(keys, getDOMRect())
 		}
-		const observer = new MutationObserver(h)
-		observer.observe(ref.current, { childList: true }) // TODO: Break nodes, compound nodes?
+		const deleteObserver = new MutationObserver(onDelete)
+		deleteObserver.observe(ref.current, { childList: true }) // TODO: Break nodes, compound nodes?
+
+		const onUpdate = mutations => {
+			const ancestorNode = dom.traverseToAncestorNode(ref.current, mutations[mutations.length - 1].target)
+			const key = ancestorNode.id
+			const data = dom.innerText(ancestorNode)
+			dispatch.updateVDOMNode(key, data, getDOMRect())
+		}
+		const updateObserver = new MutationObserver(onUpdate)
+		updateObserver.observe(ref.current, { characterData: true, subtree: true })
+
+		const onInsert = mutations => {
+			for (const mutation of mutations) {
+				if (mutation.target === ref.current) {
+					// (No-op)
+					continue
+				}
+				const key = mutation.target.previousSibling.id
+				dispatch.insertVDOMNode(key, getDOMRect())
+			}
+		}
+		const insertObserver = new MutationObserver(onInsert)
+		insertObserver.observe(ref.current, { childList: true, subtree: true })
+
 		return () => {
-			observer.disconnect()
+			deleteObserver.disconnect()
+			updateObserver.disconnect()
+			insertObserver.disconnect()
 		}
+
 	}, [dispatch])
 
-	// const textObserver = new MutationObserver(mutations => {
-	// 	const mutation = mutations[mutations.length - 1]
-	// 	const ancestor = dom.traverseToAncestorNode(ref.current, mutation.target)
-	// 	// Get the ancestor node ID -- key:
-	// 	const key = ancestor.id
-	// 	// Get the ancestor node data:
-	// 	const data = dom.innerText(ancestor)
-	// 	// // Get the ancestor node DOMRect:
-	// 	const { x, y } = document.getSelection().getRangeAt(0).getBoundingClientRect()
-	// 	// Get the ancestor node range:
-	// 	range.current = document.caretRangeFromPoint(x, y)
-	// 	dispatch.updateVDOMNode(key, data)
-	// })
-	// textObserver.observe(ref.current, {
-	// 	// childList: true,
-	// 	// attributes: true,
-	// 	characterData: true,
-	// 	subtree: true,
-	// 	// attributeOldValue: true,
-	// 	// characterDataOldValue: true,
-	// })
-
+	// const t1 = Date.now()
+	// const t2 = Date.now()
+	// console.log(t2 - t1)
+	//
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(<Contents>{state.components}</Contents>, state.reactDOM, () => {
 				if (!state.shouldRenderDOM) {
+					;[...ref.current.childNodes].map(each => each.remove())
 					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-					observerGC.current = observeMutations(ref.current)
+					observerGC.current = observeMutations()
 					return
 				}
-				observerGC.current()
-				observerGC.current = null
-
 				// Eagerly drop range (for performance reasons):
 				const selection = document.getSelection()
 				selection.removeAllRanges()
+
+				observerGC.current()
 				;[...ref.current.childNodes].map(each => each.remove())          // TODO
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
-				observerGC.current = observeMutations(ref.current)
+				observerGC.current = observeMutations()
 				dispatch.renderDOMCursor()
 			})
 		}, [state, dispatch, observeMutations]),
 		[state.shouldRenderDOM],
 	)
 
+	// TODO: Can use key and cursor position relative to key
+	// to reset cursor.
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.shouldRenderDOMCursor) {
@@ -225,62 +223,11 @@ function Editor(props) {
 			}
 			const selection = document.getSelection()
 			// (Range eagerly dropped)
-			const range = document.caretRangeFromPoint(domCursorRect.current.x, domCursorRect.current.y)
+			const range = document.caretRangeFromPoint(state.domCursorRect.x, state.domCursorRect.y)
 			selection.addRange(range)
 		}, [state]),
 		[state.shouldRenderDOMCursor],
 	)
-
-	// React.useLayoutEffect(
-	// 	React.useCallback(() => {
-	// 		const nodeObserver = new MutationObserver(mutations => {
-	// 			console.log(domRerenderInProgress.current)
-	// 			// if (domRerenderInProgress.current) {
-	// 			// 	// (No-op)
-	// 			// 	return
-	// 			// }
-	// 			if (!mutations[0].removedNodes.length) {
-	// 				// (No-op)
-	// 				return
-	// 			}
-	// 			const keys = []
-	// 			for (const mutation of mutations) {
-	// 				for (const removedNode of mutation.removedNodes) {
-	// 					keys.push(removedNode.id)
-	// 				}
-	// 			}
-	// 			domCursorRect.current = getDOMRect()
-	// 			dispatch.dropVDOMNodes(keys)
-	// 		})
-	// 		nodeObserver.observe(ref.current, { childList: true }) // FIXME: Break nodes, compound nodes?
-	// 		// const textObserver = new MutationObserver(mutations => {
-	// 		// 	const mutation = mutations[mutations.length - 1]
-	// 		// 	const ancestor = dom.traverseToAncestorNode(ref.current, mutation.target)
-	// 		// 	// Get the ancestor node ID -- key:
-	// 		// 	const key = ancestor.id
-	// 		// 	// Get the ancestor node data:
-	// 		// 	const data = dom.innerText(ancestor)
-	// 		// 	// // Get the ancestor node DOMRect:
-	// 		// 	const { x, y } = document.getSelection().getRangeAt(0).getBoundingClientRect()
-	// 		// 	// Get the ancestor node range:
-	// 		// 	range.current = document.caretRangeFromPoint(x, y)
-	// 		// 	dispatch.updateVDOMNode(key, data)
-	// 		// })
-	// 		// textObserver.observe(ref.current, {
-	// 		// 	// childList: true,
-	// 		// 	// attributes: true,
-	// 		// 	characterData: true,
-	// 		// 	subtree: true,
-	// 		// 	// attributeOldValue: true,
-	// 		// 	// characterDataOldValue: true,
-	// 		// })
-	// 		return () => {
-	// 			nodeObserver.disconnect()
-	// 			// textObserver.disconnect()
-	// 		}
-	// 	}, [dispatch]), // eslint-disable-line
-	// 	[],
-	// )
 
 	return (
 		<DebugCSS>
@@ -303,18 +250,22 @@ function Editor(props) {
 						onDrop:  e => e.preventDefault(),
 					},
 				)}
-				<div style={stylex.parse("h:28")} />
-				<div style={{ ...stylex.parse("pre-wrap"), tabSize: 2, font: "12px/1.375 'Monaco'" }}>
-					{JSON.stringify(
-						{
-							...state,
-							components: undefined,
-							reactDOM: undefined,
-						},
-						null,
-						"\t",
-					)}
-				</div>
+				{props.debug && (
+					<React.Fragment>
+						<div style={stylex.parse("h:28")} />
+						<div style={{ ...stylex.parse("pre-wrap"), tabSize: 2, font: "12px/1.375 'Monaco'" }}>
+							{JSON.stringify(
+								{
+									...state,
+									components: undefined,
+									reactDOM: undefined,
+								},
+								null,
+								"\t",
+							)}
+						</div>
+					</React.Fragment>
+				)}
 			</React.Fragment>
 		</DebugCSS>
 	)
