@@ -1,11 +1,12 @@
 // import * as dom from "./dom"
-// import RenderDOM from "lib/RenderDOM"
+// import array from "lib/array"
 import DebugCSS from "components/DebugCSS"
 import Enum from "lib/Enum"
 import invariant from "invariant"
 import rand from "lib/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
+import RenderDOM from "lib/RenderDOM"
 import stylex from "stylex"
 import useMethods from "use-methods"
 
@@ -50,8 +51,10 @@ const OperationTypes = new Enum(
 const initialState = {
 	operation: "",
 	operationUnix: 0,
+	hasFocus: false,
 	domRectCursor: null,
 	nodes: null,
+	// nodesMap: null,
 	data: "",
 	components: null,
 	reactDOM: null,
@@ -71,39 +74,59 @@ const reducer = state => ({
 
 	commitFocus() {
 		this.commitOperation(OperationTypes.FOCUS)
+		state.hasFocus = true
 	},
 	commitBlur() {
 		this.commitOperation(OperationTypes.BLUR)
+		state.hasFocus = false
 	},
 	commitSelect(domRect) {
 		this.commitOperation(OperationTypes.SELECT)
 		state.domRectCursor = domRect
 	},
 
-	commitInput(targetRange, resultRange, domRect) {
+	commitInput(target, domRect) {
 		this.commitOperation(OperationTypes.INPUT)
-
-		console.log({ targetRange, resultRange })
-
 		state.domRectCursor = domRect
-	}
 
-	// renderComponents() {
-	// 	const nodes = state.nodes.map(each => ({ ...each })) // (Read proxy)
-	// 	state.components = parseMarkdown(nodes)
-	// 	state.shouldRenderComponents++
-	// },
-	// renderCursor() {
-	// 	state.shouldRenderCursor++
-	// },
+		const seenKeys = {}
+		for (const node of target.nodes) {
+			if (seenKeys[node.key] !== undefined) {
+				node.key = rand.newSevenByteHash()
+			}
+			seenKeys[node.key] = true
+		}
+
+		const from = state.nodes.findIndex(each => each.key === target.start.key)
+		const to = state.nodes.findIndex(each => each.key === target.end.key)
+		state.nodes.splice(from, to - from + 1, ...target.nodes)
+
+		state.data = state.nodes.map(each => each.data).join("\n")
+		state.domRectCursor = domRect
+		this.renderComponents()
+	},
+
+	renderComponents() {
+		const nodes = state.nodes.map(each => ({ ...each })) // (Read proxy)
+		state.components = parseMarkdown(nodes)
+		state.onRenderComponents++
+	},
+	renderCursor() {
+		state.onRenderCursor++
+	},
 })
 
-// newVDOMNodes parses new VDOM nodes from plain text data.
+// newVDOMNodes parses a new VDOM nodes array and map.
 function newVDOMNodes(data) {
 	const nodes = data.split("\n").map(each => ({
 		key: rand.newSevenByteHash(), // The node key (for React).
 		data: each,                   // The node plain text data.
 	}))
+	// let nodesMap = {}
+	// for (const node of nodes) {
+	// 	nodesMap[node.key] = node
+	// }
+	// return { nodes, nodesMap }
 	return nodes
 }
 
@@ -114,6 +137,7 @@ const init = initialValue => initialState => {
 		operation: OperationTypes.INIT,
 		operationUnix: Date.now(),
 		nodes,
+		// nodesMap,
 		data: initialValue,
 		components: parseMarkdown(nodes),
 		reactDOM: document.createElement("div"),
@@ -121,56 +145,90 @@ const init = initialValue => initialState => {
 	return state
 }
 
-// // isTextNode returns whether a node is a text node.
-// function isTextNode(node) {
-// 	return node.nodeType === Node.TEXT_NODE
-// }
-//
-// // isElementNode returns whether a node is an element node.
-// function isElementNode(node) {
-// 	return node.nodeType === Node.ELEMENT_NODE
-// }
-//
-// // isTextOrBreakElementNode returns whether a node is a text
-// // or a break element node.
-// function isTextOrBreakElementNode(node) {
-// 	const ok = (
-// 		isTextNode(node) || (
-// 			isElementNode(node) &&
-// 			node.nodeName === "BR"
-// 		)
-// 	)
-// 	return ok
-// }
-//
-// // nodeValue mocks the browser functions; reads a text or
-// // break element node.
-// function nodeValue(node) {
-// 	return node.nodeValue || ""
-// }
-//
-// // innerText mocks the browser function; (recursively) reads
-// // a root node.
-// function innerText(rootNode) {
+const naked = RenderDOM(props => <div />)
+
+// isVDOMNode returns whether a node is a VDOM node.
+function isVDOMNode(node) {
+	const ok = (
+		node.hasAttribute("data-vdom-node") ||
+		naked.isEqualNode(node)
+	)
+	return ok
+}
+
+// isTextNode returns whether a node is a text node.
+function isTextNode(node) {
+	return node.nodeType === Node.TEXT_NODE
+}
+
+// isElementNode returns whether a node is an element node.
+function isElementNode(node) {
+	return node.nodeType === Node.ELEMENT_NODE
+}
+
+// isTextOrBreakElementNode returns whether a node is a text
+// or a break element node.
+function isTextOrBreakElementNode(node) {
+	const ok = (
+		isTextNode(node) || (
+			isElementNode(node) &&
+			node.nodeName === "BR"
+		)
+	)
+	return ok
+}
+
+// nodeValue mocks the browser functions; reads a text or
+// break element node.
+function nodeValue(node) {
+	return node.nodeValue || ""
+}
+
+// innerText mocks the browser function; (recursively) reads
+// a root node.
+function innerText(rootNode) {
+	invariant(
+		rootNode && isElementNode(rootNode),
+		"innerText: FIXME",
+	)
+	let data = ""
+	const recurseOn = startNode => {
+		for (const childNode of startNode.childNodes) {
+			if (!isTextOrBreakElementNode(childNode)) {
+				recurseOn(childNode)
+				const { nextSibling } = childNode
+				if (isVDOMNode(childNode) === rootNode && isVDOMNode(nextSibling)) {
+					data += "\n"
+				}
+			}
+			data += nodeValue(childNode)
+		}
+	}
+	recurseOn(rootNode)
+	return data
+}
+
+// // innerTextVDOMRootNode recursively reads a VDOM root node.
+// function innerTextVDOMRootNode(node) {
 // 	invariant(
-// 		rootNode && isElementNode(rootNode),
-// 		"innerText: FIXME",
+// 		node && isElementNode(node),
+// 		"innerTextVDOMRootNode: FIXME",
 // 	)
-// 	let readBytes = ""
+// 	const nodes = [{ key: node.id, data: "" }] // (VDOM nodes)
 // 	const recurseOn = startNode => {
 // 		for (const childNode of startNode.childNodes) {
 // 			if (!isTextOrBreakElementNode(childNode)) {
 // 				recurseOn(childNode)
 // 				const { nextSibling } = childNode
-// 				if (childNode.hasAttribute("data-vdom-node") === rootNode && isElementNode(nextSibling)) {
-// 					readBytes += "\n"
+// 				if (childNode.hasAttribute("data-vdom-node") === node && isElementNode(nextSibling)) {
+// 					nodes.push({ key: nextSibling.id, data: "" })
 // 				}
 // 			}
-// 			readBytes += nodeValue(childNode)
+// 			nodes[nodes.length - 1].data += nodeValue(childNode)
 // 		}
 // 	}
-// 	recurseOn(rootNode)
-// 	return readBytes
+// 	recurseOn(node)
+// 	return nodes
 // }
 
 // getDOMRectCursor gets the DOMRect from the cursor
@@ -190,17 +248,6 @@ function getDOMRectCursor() {
 	return domRects[0]
 }
 
-// const naked = RenderDOM(props => <div />)
-//
-// // isVDOMNode returns whether a node is a VDOM node.
-// function isVDOMNode(node) {
-// 	const ok = (
-// 		node.hasAttribute("data-vdom-node") ||
-// 		naked.isEqualNode(node)
-// 	)
-// 	return ok
-// }
-//
 // // getVDOMNode returns the VDOM node.
 // function getVDOMNode(rootNode, node) {
 // 	invariant(
@@ -249,6 +296,25 @@ function getSortedVDOMRootNodes(rootNode) {
 	return null
 }
 
+class Target {
+	constructor(node) {
+		Object.assign(this, {
+			ref: node,
+			key: node.id,
+		})
+	}
+}
+
+class TargetRange {
+	constructor(startNode, endNode) {
+		Object.assign(this, {
+			start: new Target(startNode),
+			end: new Target(endNode),
+			nodes: null,
+		})
+	}
+}
+
 // getTargetVDOMRootNodeRange gets the target VDOM root node
 // range; an array of VDOM root node and metadata.
 function getTargetVDOMRootNodeRange(rootNode) {
@@ -263,16 +329,18 @@ function getTargetVDOMRootNodeRange(rootNode) {
 		endNode = endNode.nextSibling
 		offsetEnd--
 	}
-	const targetRange = []
-	let node = startNode
-	while (node !== null) {
-		targetRange.push({ ref: node, id: node.id })
-		if (node === endNode) {
+	const range = new TargetRange(startNode, endNode)
+	const nodes = []
+	let currentNode = range.start.ref
+	while (currentNode !== null) { // FIXME: Need to support compounds components.
+		nodes.push({ key: currentNode.id, data: innerText(currentNode) })
+		if (currentNode === range.end.ref) {
 			break
 		}
-		node = node.nextSibling
+		currentNode = currentNode.nextSibling
 	}
-	return targetRange
+	range.nodes = nodes
+	return range
 }
 
 function EditorContents(props) {
@@ -282,10 +350,10 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init("hello, world!\n\nhello, world!\n\nhello, world!\n\nhello, world!\nhello, world!\nhello, world!"))
+	const [state, dispatch] = useMethods(reducer, initialState, init("hello, world!\n\nhello, world!\n\nhello, world!"))
 
 	const selectionchange = React.useRef()
-	const targetRange = React.useRef()
+	const target = React.useRef()
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -323,17 +391,38 @@ function Editor(props) {
 				// 	return
 				// }
 
-				// state.renderCursor()
+				// Eagerly drop range (for performance reasons):
+				//
+				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+				const selection = document.getSelection()
+				selection.removeAllRanges()
+
+				dispatch.renderCursor()
 			})
-		}, [state]),
+		}, [state, dispatch]),
 		[state.onRenderComponents],
+	)
+
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.hasFocus) {
+				// (No-op)
+				return
+			}
+			const selection = document.getSelection()
+			// (Range eagerly dropped)
+
+			const range = document.caretRangeFromPoint(state.domRectCursor.x, state.domRectCursor.y)
+			selection.addRange(range)
+		}, [state]),
+		[state.onRenderCursor],
 	)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			const handler = () => {
 				const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-				if (!anchorNode || !focusNode) {
+				if (!anchorNode || !focusNode || !ref.current.contains(anchorNode) || !ref.current.contains(focusNode)) {
 					// (No-op)
 					return
 				}
@@ -350,12 +439,8 @@ function Editor(props) {
 				}
 				selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 				const domRect = getDOMRectCursor()
-				invariant(
-					domRect,
-					"selectionchange: FIXME",
-				)
 				dispatch.commitSelect(domRect)
-				targetRange.current = getTargetVDOMRootNodeRange(ref.current)
+				target.current = getTargetVDOMRootNodeRange(ref.current)
 			}
 			document.addEventListener("selectionchange", handler)
 			return () => {
@@ -381,22 +466,34 @@ function Editor(props) {
 						onBlur:  dispatch.commitBlur,
 
 						onKeyDown: e => {
-							targetRange.current = getTargetVDOMRootNodeRange(ref.current)
+							const { anchorNode, focusNode } = document.getSelection()
+							if (!anchorNode || !focusNode || !ref.current.contains(anchorNode) || !ref.current.contains(focusNode)) {
+								// (No-op)
+								return
+							}
+							target.current = getTargetVDOMRootNodeRange(ref.current)
 						},
 
 						onInput: e => {
-							const { current } = targetRange
-							invariant(
-								current && Array.isArray(current) && current.length,
-								"onInput (1): FIXME",
-							)
-							const resultRange = getTargetVDOMRootNodeRange(ref.current)
+							const { current: { start, end } } = target
+							const newTarget = new TargetRange(start.ref, end.ref)
+							const nodes = []
+							let currentNode = newTarget.start.ref
+							while (currentNode !== null) { // FIXME: Need to support compounds components.
+								nodes.push({ key: currentNode.id, data: innerText(currentNode) })
+								if (currentNode === newTarget.end.ref) {
+									break
+								}
+								currentNode = currentNode.nextSibling
+							}
+							newTarget.nodes = nodes
+
 							const domRect = getDOMRectCursor()
-							invariant(
-								domRect,
-								"onInput (2): FIXME",
-							)
-							dispatch.commitInput(current, resultRange, domRect)
+							dispatch.commitInput(newTarget, domRect)
+
+							// const { anchorNode } = document.getSelection()
+							// const key = getVDOMRootNode(ref.current, anchorNode).id
+							// console.log(current, range, key)
 						},
 
 						// onCut:   e => e.preventDefault(),
@@ -414,10 +511,10 @@ function Editor(props) {
 								{
 									...state,
 
-									// domRectCursor: {
-									// 	x: !state.domRectCursor ? 0 : state.domRectCursor.x,
-									// 	y: !state.domRectCursor ? 0 : state.domRectCursor.y,
-									// },
+									domRectCursor: {
+										x: !state.domRectCursor ? 0 : state.domRectCursor.x,
+										y: !state.domRectCursor ? 0 : state.domRectCursor.y,
+									},
 
 									components: undefined,
 									reactDOM:   undefined,
