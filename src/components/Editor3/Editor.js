@@ -52,9 +52,8 @@ const initialState = {
 	operation: "",
 	operationUnix: 0,
 	hasFocus: false,
-	domRectCursor: null,
+	caretPoint: null,
 	nodes: null,
-	// nodesMap: null,
 	data: "",
 	components: null,
 	reactDOM: null,
@@ -80,14 +79,14 @@ const reducer = state => ({
 		this.commitOperation(OperationTypes.BLUR)
 		state.hasFocus = false
 	},
-	commitSelect(domRect) {
+	commitSelect(caretPoint) {
 		this.commitOperation(OperationTypes.SELECT)
-		state.domRectCursor = domRect
+		state.caretPoint = caretPoint
 	},
 
-	commitInput(target, domRect) {
+	commitInput(target, caretPoint) {
 		this.commitOperation(OperationTypes.INPUT)
-		state.domRectCursor = domRect
+		state.caretPoint = caretPoint
 
 		const seenKeys = {}
 		for (const node of target.nodes) {
@@ -102,7 +101,7 @@ const reducer = state => ({
 		state.nodes.splice(from, to - from + 1, ...target.nodes)
 
 		state.data = state.nodes.map(each => each.data).join("\n")
-		state.domRectCursor = domRect
+		state.caretPoint = caretPoint
 		this.renderComponents()
 	},
 
@@ -119,14 +118,9 @@ const reducer = state => ({
 // newVDOMNodes parses a new VDOM nodes array and map.
 function newVDOMNodes(data) {
 	const nodes = data.split("\n").map(each => ({
-		key: rand.newSevenByteHash(), // The node key (for React).
-		data: each,                   // The node plain text data.
+		key: rand.newSevenByteHash(),
+		data: each,
 	}))
-	// let nodesMap = {}
-	// for (const node of nodes) {
-	// 	nodesMap[node.key] = node
-	// }
-	// return { nodes, nodesMap }
 	return nodes
 }
 
@@ -137,7 +131,6 @@ const init = initialValue => initialState => {
 		operation: OperationTypes.INIT,
 		operationUnix: Date.now(),
 		nodes,
-		// nodesMap,
 		data: initialValue,
 		components: parseMarkdown(nodes),
 		reactDOM: document.createElement("div"),
@@ -197,7 +190,7 @@ function innerText(rootNode) {
 			if (!isTextOrBreakElementNode(childNode)) {
 				recurseOn(childNode)
 				const { nextSibling } = childNode
-				if (isVDOMNode(childNode) === rootNode && isVDOMNode(nextSibling)) {
+				if (isVDOMNode(childNode) === rootNode && nextSibling) { // isVDOMNode(nextSibling)) {
 					data += "\n"
 				}
 			}
@@ -208,44 +201,23 @@ function innerText(rootNode) {
 	return data
 }
 
-// // innerTextVDOMRootNode recursively reads a VDOM root node.
-// function innerTextVDOMRootNode(node) {
-// 	invariant(
-// 		node && isElementNode(node),
-// 		"innerTextVDOMRootNode: FIXME",
-// 	)
-// 	const nodes = [{ key: node.id, data: "" }] // (VDOM nodes)
-// 	const recurseOn = startNode => {
-// 		for (const childNode of startNode.childNodes) {
-// 			if (!isTextOrBreakElementNode(childNode)) {
-// 				recurseOn(childNode)
-// 				const { nextSibling } = childNode
-// 				if (childNode.hasAttribute("data-vdom-node") === node && isElementNode(nextSibling)) {
-// 					nodes.push({ key: nextSibling.id, data: "" })
-// 				}
-// 			}
-// 			nodes[nodes.length - 1].data += nodeValue(childNode)
-// 		}
-// 	}
-// 	recurseOn(node)
-// 	return nodes
-// }
-
-// getDOMRectCursor gets the DOMRect from the cursor
+// getCaretPoint gets the caret point based on the cursor
 // (preferred) or the anchor node.
-function getDOMRectCursor() {
+function getCaretPoint() {
 	const selection = document.getSelection()
 	if (!selection.anchorNode) {
 		return null
 	}
-	const domRects = selection.getRangeAt(0).getClientRects()
-	if (!domRects.length) {
+	const rects = selection.getRangeAt(0).getClientRects()
+	if (!rects.length) {
 		if (!selection.anchorNode.getBoundingClientRect) {
 			return null
 		}
-		return selection.anchorNode.getBoundingClientRect()
+		const { x, y } = selection.anchorNode.getBoundingClientRect()
+		return { x, y }
 	}
-	return domRects[0]
+	const { x, y } = rects[0]
+	return { x, y }
 }
 
 // // getVDOMNode returns the VDOM node.
@@ -305,11 +277,13 @@ class Target {
 	}
 }
 
+// TODO: Can drop Target and use concatenated keys.
 class TargetRange {
-	constructor(startNode, endNode) {
+	constructor(startNode, endNode /* , range */) {
 		Object.assign(this, {
 			start: new Target(startNode),
 			end: new Target(endNode),
+			// range,
 			nodes: null,
 		})
 	}
@@ -319,28 +293,31 @@ class TargetRange {
 // range; an array of VDOM root node and metadata.
 function getTargetVDOMRootNodeRange(rootNode) {
 	let [startNode, endNode] = getSortedVDOMRootNodes(rootNode)
+	// let range = 1
 	let offsetStart = 1
 	while (offsetStart > 0 && startNode.previousSibling) {
 		startNode = startNode.previousSibling
 		offsetStart--
+		// range++
 	}
 	let offsetEnd = 2
 	while (offsetEnd > 0 && endNode.nextSibling) {
 		endNode = endNode.nextSibling
 		offsetEnd--
+		// range++
 	}
-	const range = new TargetRange(startNode, endNode)
+	const target = new TargetRange(startNode, endNode /* , range */)
 	const nodes = []
-	let currentNode = range.start.ref
+	let currentNode = target.start.ref
 	while (currentNode !== null) { // FIXME: Need to support compounds components.
 		nodes.push({ key: currentNode.id, data: innerText(currentNode) })
-		if (currentNode === range.end.ref) {
+		if (currentNode === target.end.ref) {
 			break
 		}
 		currentNode = currentNode.nextSibling
 	}
-	range.nodes = nodes
-	return range
+	target.nodes = nodes
+	return target
 }
 
 function EditorContents(props) {
@@ -350,52 +327,51 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init("hello, world!\n\nhello, world!\n\nhello, world!"))
+	const [state, dispatch] = useMethods(reducer, initialState, init("hello, world!hello, world!"))
 
 	const selectionchange = React.useRef()
 	const target = React.useRef()
 
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			const observer = new MutationObserver(mutations => {
-
-				for (const { addedNodes, removedNodes, /* previousSibling, */ nextSibling } of mutations) {
-
-					if (addedNodes.length) {
-						for (const addedNode of addedNodes) {
-							ref.current.insertBefore(addedNode.cloneNode(true), nextSibling)
-						}
-					} else if (removedNodes.length) { // XOR?
-						// for (const removedNode of removedNodes) {
-						// 	// ...
-						// }
-					}
-
-				}
-
-				// console.log(mutations)
-			})
-			observer.observe(state.reactDOM, { childList: true })
-			return () => {
-				observer.disconnect()
-			}
-		}, [state]),
-		[],
-	)
+	// React.useLayoutEffect(
+	// 	React.useCallback(() => {
+	// 		const observer = new MutationObserver(mutations => {
+	// 			for (const { addedNodes, removedNodes, /* previousSibling, */ nextSibling } of mutations) {
+	// 				if (addedNodes.length) {
+	// 					for (const addedNode of addedNodes) {
+	// 						console.log({ ref: ref.current, addedNode: addedNode.cloneNode(true), nextSibling })
+	// 						ref.current.insertBefore(addedNode.cloneNode(true), nextSibling)
+	// 					}
+	// 				} else if (removedNodes.length) { // XOR?
+	// 					// for (const removedNode of removedNodes) {
+	// 					// 	// ...
+	// 					// }
+	// 				}
+	// 			}
+	// 			// console.log(mutations)
+	// 		})
+	// 		observer.observe(state.reactDOM, { childList: true })
+	// 		return () => {
+	// 			observer.disconnect()
+	// 		}
+	// 	}, [state]),
+	// 	[],
+	// )
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-				// if (!state.onRenderComponents) {
-				// 	ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-				// 	return
-				// }
-
+				if (!state.onRenderComponents) {
+					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+					return
+				}
 				// Eagerly drop range (for performance reasons):
 				//
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				const selection = document.getSelection()
 				selection.removeAllRanges()
+
+				;[...ref.current.childNodes].map(each => each.remove())          // TODO
+				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
 
 				dispatch.renderCursor()
 			})
@@ -411,8 +387,11 @@ function Editor(props) {
 			}
 			const selection = document.getSelection()
 			// (Range eagerly dropped)
-
-			const range = document.caretRangeFromPoint(state.domRectCursor.x, state.domRectCursor.y)
+			invariant(
+				state.caretPoint && typeof state.caretPoint === "object" && state.caretPoint.x !== undefined && state.caretPoint.y !== undefined,
+				"FIXME",
+			)
+			const range = document.caretRangeFromPoint(state.caretPoint.x, state.caretPoint.y)
 			selection.addRange(range)
 		}, [state]),
 		[state.onRenderCursor],
@@ -438,8 +417,8 @@ function Editor(props) {
 					return
 				}
 				selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
-				const domRect = getDOMRectCursor()
-				dispatch.commitSelect(domRect)
+				const caretPoint = getCaretPoint()
+				dispatch.commitSelect(caretPoint)
 				target.current = getTargetVDOMRootNodeRange(ref.current)
 			}
 			document.addEventListener("selectionchange", handler)
@@ -474,22 +453,42 @@ function Editor(props) {
 							target.current = getTargetVDOMRootNodeRange(ref.current)
 						},
 
+						// const { anchorNode, anchorOffset } = document.getSelection()
+						// const resetPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
+						// let data = ""
+						// let greedyDOMNode = greedy.current.domNodeStart
+						// while (greedyDOMNode) {
+						// 	data += (greedyDOMNode === greedy.current.domNodeStart ? "" : "\n") + innerText(greedyDOMNode)
+						// 	if (greedy.current.domNodeRange >= 3 && greedyDOMNode === greedy.current.domNodeEnd) {
+						// 		break
+						// 	}
+						// 	const { nextSibling } = greedyDOMNode
+						// 	greedyDOMNode = nextSibling
+						// }
+						// dispatch.commitInput(data, greedy.current.pos1, greedy.current.pos2, resetPos)
+
 						onInput: e => {
-							const { current: { start, end } } = target
-							const newTarget = new TargetRange(start.ref, end.ref)
+							const { current } = target
+
+							// console.log(ref.current.innerHTML)
+
+							const newTarget = new TargetRange(current.start.ref, current.end.ref)
 							const nodes = []
-							let currentNode = newTarget.start.ref
+							let currentNode = current.start.ref
 							while (currentNode !== null) { // FIXME: Need to support compounds components.
 								nodes.push({ key: currentNode.id, data: innerText(currentNode) })
-								if (currentNode === newTarget.end.ref) {
+								// NOTE: Use >= 3 to guard edge case.
+								if (current.nodes.length >= 3 && currentNode === current.end.ref) {
 									break
 								}
 								currentNode = currentNode.nextSibling
 							}
 							newTarget.nodes = nodes
 
-							const domRect = getDOMRectCursor()
-							dispatch.commitInput(newTarget, domRect)
+							// console.log(nodes)
+
+							const caretPoint = getCaretPoint()
+							dispatch.commitInput(newTarget, caretPoint)
 
 							// const { anchorNode } = document.getSelection()
 							// const key = getVDOMRootNode(ref.current, anchorNode).id
@@ -510,11 +509,6 @@ function Editor(props) {
 							{JSON.stringify(
 								{
 									...state,
-
-									domRectCursor: {
-										x: !state.domRectCursor ? 0 : state.domRectCursor.x,
-										y: !state.domRectCursor ? 0 : state.domRectCursor.y,
-									},
 
 									components: undefined,
 									reactDOM:   undefined,
