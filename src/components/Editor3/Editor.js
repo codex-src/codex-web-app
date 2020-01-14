@@ -20,7 +20,7 @@ const Paragraph = props => (
 	</div>
 )
 
-function parseMarkdown(nodes) {
+function parseComponents(nodes) {
 	const components = []
 	for (const { key, data } of nodes) {
 		components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
@@ -96,8 +96,8 @@ const reducer = state => ({
 			seenKeys[node.key] = true
 		}
 
-		const from = state.nodes.findIndex(each => each.key === target.start.key)
-		const to = state.nodes.findIndex(each => each.key === target.end.key)
+		const from = state.nodes.findIndex(each => each.key === target.startNodeKey)
+		const to = state.nodes.findIndex(each => each.key === target.endNodeKey)
 		state.nodes.splice(from, to - from + 1, ...target.nodes)
 
 		state.data = state.nodes.map(each => each.data).join("\n")
@@ -107,7 +107,7 @@ const reducer = state => ({
 
 	renderComponents() {
 		const nodes = state.nodes.map(each => ({ ...each })) // (Read proxy)
-		state.components = parseMarkdown(nodes)
+		state.components = parseComponents(nodes)
 		state.onRenderComponents++
 	},
 	renderCursor() {
@@ -132,7 +132,7 @@ const init = initialValue => initialState => {
 		operationUnix: Date.now(),
 		nodes,
 		data: initialValue,
-		components: parseMarkdown(nodes),
+		components: parseComponents(nodes),
 		reactDOM: document.createElement("div"),
 	}
 	return state
@@ -268,22 +268,13 @@ function getSortedVDOMRootNodes(rootNode) {
 	return null
 }
 
-class Target {
-	constructor(node) {
-		Object.assign(this, {
-			ref: node,
-			key: node.id,
-		})
-	}
-}
-
-// TODO: Can drop Target and use concatenated keys.
 class TargetRange {
-	constructor(startNode, endNode /* , range */) {
+	constructor(startNode, endNode) {
 		Object.assign(this, {
-			start: new Target(startNode),
-			end: new Target(endNode),
-			// range,
+			startNode: startNode,
+			startNodeKey: startNode.id,
+			endNode: endNode,
+			endNodeKey: endNode.id,
 			nodes: null,
 		})
 	}
@@ -293,25 +284,22 @@ class TargetRange {
 // range; an array of VDOM root node and metadata.
 function getTargetVDOMRootNodeRange(rootNode) {
 	let [startNode, endNode] = getSortedVDOMRootNodes(rootNode)
-	// let range = 1
 	let offsetStart = 1
 	while (offsetStart > 0 && startNode.previousSibling) {
 		startNode = startNode.previousSibling
 		offsetStart--
-		// range++
 	}
 	let offsetEnd = 2
 	while (offsetEnd > 0 && endNode.nextSibling) {
 		endNode = endNode.nextSibling
 		offsetEnd--
-		// range++
 	}
-	const target = new TargetRange(startNode, endNode /* , range */)
+	const target = new TargetRange(startNode, endNode)
 	const nodes = []
-	let currentNode = target.start.ref
+	let currentNode = target.startNode
 	while (currentNode !== null) { // FIXME: Need to support compounds components.
 		nodes.push({ key: currentNode.id, data: innerText(currentNode) })
-		if (currentNode === target.end.ref) {
+		if (currentNode === target.endNode) {
 			break
 		}
 		currentNode = currentNode.nextSibling
@@ -335,7 +323,7 @@ function Editor(props) {
 	// React.useLayoutEffect(
 	// 	React.useCallback(() => {
 	// 		const observer = new MutationObserver(mutations => {
-	// 			for (const { addedNodes, removedNodes, /* previousSibling, */ nextSibling } of mutations) {
+	// 			for (const { addedNodes, removedNodes, previousSibling, nextSibling } of mutations) { // eslint-disable-line
 	// 				if (addedNodes.length) {
 	// 					for (const addedNode of addedNodes) {
 	// 						console.log({ ref: ref.current, addedNode: addedNode.cloneNode(true), nextSibling })
@@ -369,10 +357,8 @@ function Editor(props) {
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				const selection = document.getSelection()
 				selection.removeAllRanges()
-
 				;[...ref.current.childNodes].map(each => each.remove())          // TODO
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
-
 				dispatch.renderCursor()
 			})
 		}, [state, dispatch]),
@@ -381,7 +367,7 @@ function Editor(props) {
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			if (!state.hasFocus) {
+			if (!state.onRenderCursor) {
 				// (No-op)
 				return
 			}
@@ -472,13 +458,13 @@ function Editor(props) {
 
 							// console.log(ref.current.innerHTML)
 
-							const newTarget = new TargetRange(current.start.ref, current.end.ref)
+							const newTarget = new TargetRange(current.startNode, current.endNode)
 							const nodes = []
-							let currentNode = current.start.ref
+							let currentNode = current.startNode
 							while (currentNode !== null) { // FIXME: Need to support compounds components.
 								nodes.push({ key: currentNode.id, data: innerText(currentNode) })
 								// NOTE: Use >= 3 to guard edge case.
-								if (current.nodes.length >= 3 && currentNode === current.end.ref) {
+								if (current.nodes.length >= 3 && currentNode === current.endNode) {
 									break
 								}
 								currentNode = currentNode.nextSibling
@@ -511,7 +497,7 @@ function Editor(props) {
 									...state,
 
 									components: undefined,
-									reactDOM:   undefined,
+									reactDOM:  undefined,
 								},
 								null,
 								"\t",
