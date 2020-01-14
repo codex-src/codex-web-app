@@ -1,16 +1,17 @@
-<!DOCTYPE html><html><body><div id="root" contenteditable><div>Hello, world!</div><div><br></div><div>Hello, world!</div><div><br></div><div>Hello, world!</div></div><script>
+<!DOCTYPE html><html><body><div id="root" contenteditable><div data-vdom-key="a">Hello, world!</div><div data-vdom-key="b"><br></div><div data-vdom-key="c">Hello, world!</div><div data-vdom-key="d"><br></div><div data-vdom-key="e">Hello, world!</div></div><script>
 
 const rootNode = document.querySelector("#root")
-const observer = new MutationObserver(mutations => {
-	console.log(mutations[mutations.length - 1])
+const observer = new MutationObserver((mutations, obs) => {
+	console.log(mutations[mutations.length - 1], obs)
 })
 observer.observe(rootNode, {
-	// childList: true,
+	childList: true,
 	// attributes: true,
-	characterData: true,
-	subtree: true,
+	// characterData: true,
+	// subtree: true,
 	// attributeOldValue: true,
 	// characterDataOldValue: true,
+	// attributeFilter: ["lol"],
 })
 // observer.disconnect()
 

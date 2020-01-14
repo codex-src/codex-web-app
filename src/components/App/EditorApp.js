@@ -2,8 +2,6 @@ import Editor from "components/Editor2"
 import React from "react"
 import stylex from "stylex"
 
-// const data = "Hello, world!"
-
 // const data = `# How to build a beautiful blog
 //
 // Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -47,8 +45,7 @@ function EditorApp(props) {
 		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
 			<div style={stylex.parse("w:768 no-min-w")}>
 				<Editor
-					initialValue={"Hello, world!\n\nHello, world!\n\nHello, world!"}
-
+					initialValue={"Hello, world!\nHello, world!\nHello, world!"}
 					// state={state}
 					// dispatch={dispatch}
 					// scrollPastEnd

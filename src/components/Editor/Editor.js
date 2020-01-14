@@ -1,10 +1,12 @@
+import { DiffDOM } from "diff-dom"
+
 // import getScrollToCoords from "lib/getScrollToCoords"
 // import inputType from "./inputType"
-// import newGreedyRange from "./helpers/greedy"
 // import onKeyDown from "./onKeyDown"
 // import text from "lib/encoding/text"
 import DebugCSS from "components/DebugCSS"
 import DebugEditor from "./debug/DebugEditor"
+import newGreedyRange from "./helpers/greedy"
 import React from "react"
 import ReactDOM from "react-dom"
 import StatusBar from "./components/StatusBar"
@@ -33,6 +35,9 @@ function Components(props) {
 	return props.components
 }
 
+const dd = new DiffDOM()
+
+
 export function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 
@@ -55,14 +60,64 @@ export function Editor({ state, dispatch, ...props }) {
 				const selection = document.getSelection()
 				selection.removeAllRanges()
 
-				;[...ref.current.childNodes].map(each => each.remove())          // TODO
-				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+				const t1 = Date.now()
+				const diff = dd.diff(ref.current, state.reactDOM)
+				console.log(diff)
+				dd.apply(ref.current, diff)
+				const t2 = Date.now()
+				console.log(t2 - t1)
+
+				// console.log(diff)
+
+				// ;[...ref.current.childNodes].map(each => each.remove())          // TODO
+				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
 
 				dispatch.renderDOMCursor()
 			})
 		}, [state, dispatch]),
 		[state.shouldRender],
 	)
+
+	//	// Should render (DOM):
+	//	React.useLayoutEffect(
+	//		React.useCallback(() => {
+	//			ReactDOM.render(<Components components={state.Components} />, state.reactDOM, () => {
+	//				// Eagerly drop range:
+	//				//
+	//				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+	//				const selection = document.getSelection()
+	//				selection.removeAllRanges()
+	//
+	//				// ;[...ref.current.childNodes].map(each => each.remove())          // TODO
+	//				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+	//
+	//				dispatch.renderDOMCursor()
+	//			})
+	//
+	//			// ReactDOM.render(<Components components={state.Components} />, state.reactDOM, () => {
+	//			// 	if (!state.shouldRender) {
+	//			// 		ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+	//			// 		return
+	//			// 	}
+	//			// 	// console.log({
+	//			// 	// 	curr:    [...ref.current.childNodes].map(each => ({ id: each.id, unix: parseInt(each.getAttribute("data-vdom-unix"), 10) })),
+	//			// 	// 	next: [...state.reactDOM.childNodes].map(each => ({ id: each.id, unix: parseInt(each.getAttribute("data-vdom-unix"), 10) })),
+	//			// 	// })
+	//			//
+	//			// 	// Eagerly drop range:
+	//			// 	//
+	//			// 	// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+	//			// 	const selection = document.getSelection()
+	//			// 	selection.removeAllRanges()
+	//			//
+	//			// 	;[...ref.current.childNodes].map(each => each.remove())          // TODO
+	//			// 	ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+	//			//
+	//			// 	dispatch.renderDOMCursor()
+	//			// })
+	//		}, [state, dispatch]),
+	//		[state.shouldRender],
+	//	)
 
 	// Should render DOM cursor:
 	React.useLayoutEffect(
@@ -73,7 +128,7 @@ export function Editor({ state, dispatch, ...props }) {
 			}
 			const selection = document.getSelection()
 			const range = document.createRange()
-			let { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
+			const { node, offset } = recurseToDOMCursor(ref.current, state.pos1.pos)
 			if (!node) {
 				return
 			}
@@ -116,7 +171,7 @@ export function Editor({ state, dispatch, ...props }) {
 	)
 
 	const selectionchange = React.useRef()
-	// const greedy = React.useRef()
+	const greedy = React.useRef()
 
 	React.useLayoutEffect(() => {
 		const h = e => {
@@ -143,7 +198,7 @@ export function Editor({ state, dispatch, ...props }) {
 				pos2 = recurseToVDOMCursor(ref.current, focusNode, focusOffset)
 			}
 			dispatch.commitSelect(pos1, pos2)
-			// greedy.current = newGreedyRange("selectionchange", ref.current, anchorNode, focusNode, pos1, pos2)
+			greedy.current = newGreedyRange("selectionchange", ref.current, anchorNode, focusNode, pos1, pos2)
 		}
 		document.addEventListener("selectionchange", h)
 		return () => {
@@ -158,7 +213,7 @@ export function Editor({ state, dispatch, ...props }) {
 				{React.createElement(
 					"article",
 					{
-						ref,
+						// ref,
 
 						style: {
 							paddingBottom: props.scrollPastEnd && `calc(100vh - ${Math.floor(19 * 1.5) + 28}px)`,
@@ -173,8 +228,6 @@ export function Editor({ state, dispatch, ...props }) {
 						onBlur:  dispatch.commitBlur,
 
 						onKeyDown: e => {
-							console.log({ ...e })
-
 							// switch (true) {
 							// case onKeyDown.isBackspaceClass(e):
 							// 	// Guard the anchor node:
@@ -204,13 +257,34 @@ export function Editor({ state, dispatch, ...props }) {
 							// 	// (No-op)
 							// 	return
 							// }
+
+							const { anchorNode, focusNode } = document.getSelection()
+							if (!anchorNode || !focusNode) {
+								// (No-op)
+								return
+							}
+							greedy.current = newGreedyRange("onKeyDown", ref.current, anchorNode, focusNode, state.pos1, state.pos2)
 						},
 
 						onInput: e => {
-							const d1 = Date.now()
-							innerText(ref.current)
-							const d2 = Date.now()
-							console.log(d2 - d1)
+							// const d1 = Date.now()
+							// innerText(ref.current)
+							// const d2 = Date.now()
+							// console.log(d2 - d1)
+
+							const { anchorNode, anchorOffset } = document.getSelection()
+							const resetPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
+							let data = ""
+							let greedyDOMNode = greedy.current.domNodeStart
+							while (greedyDOMNode) {
+								data += (greedyDOMNode === greedy.current.domNodeStart ? "" : "\n") + innerText(greedyDOMNode)
+								if (greedy.current.domNodeRange >= 3 && greedyDOMNode === greedy.current.domNodeEnd) {
+									break
+								}
+								const { nextSibling } = greedyDOMNode
+								greedyDOMNode = nextSibling
+							}
+							dispatch.commitInput(data, greedy.current.pos1, greedy.current.pos2, resetPos)
 						},
 
 						onCut: e => {
@@ -240,6 +314,7 @@ export function Editor({ state, dispatch, ...props }) {
 						onDragStart: e => e.preventDefault(),
 						onDrop:      e => e.preventDefault(),
 					},
+					<article ref={ref} />
 				)}
 				{/* {state.Components} */}
 				{props.statusBar && (

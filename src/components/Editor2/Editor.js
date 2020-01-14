@@ -186,23 +186,38 @@ function Editor(props) {
 
 	}, [dispatch])
 
+	// React.useLayoutEffect(
+	// 	React.useCallback(() => {
+	// 		ReactDOM.render(<Contents>{state.components}</Contents>, state.reactDOM, () => {
+	// 			if (!state.shouldRenderDOM) {
+	// 				;[...ref.current.childNodes].map(each => each.remove())
+	// 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+	// 				observerGC.current = observeMutations()
+	// 				return
+	// 			}
+	// 			// Eagerly drop range (for performance reasons):
+	// 			const selection = document.getSelection()
+	// 			selection.removeAllRanges()
+	//
+	// 			observerGC.current()
+	// 			;[...ref.current.childNodes].map(each => each.remove())          // TODO
+	// 			ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+	// 			observerGC.current = observeMutations()
+	// 			dispatch.renderDOMCursor()
+	// 		})
+	// 	}, [state, dispatch, observeMutations]),
+	// 	[state.shouldRenderDOM],
+	// )
+
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			ReactDOM.render(<Contents>{state.components}</Contents>, state.reactDOM, () => {
+			ReactDOM.render(<Contents>{state.components}</Contents>, ref.current, () => {
 				if (!state.shouldRenderDOM) {
-					;[...ref.current.childNodes].map(each => each.remove())
-					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-					observerGC.current = observeMutations()
-					return
+					observeMutations()
 				}
 				// Eagerly drop range (for performance reasons):
 				const selection = document.getSelection()
 				selection.removeAllRanges()
-
-				observerGC.current()
-				;[...ref.current.childNodes].map(each => each.remove())          // TODO
-				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
-				observerGC.current = observeMutations()
 				dispatch.renderDOMCursor()
 			})
 		}, [state, dispatch, observeMutations]),

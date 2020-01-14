@@ -28,7 +28,7 @@ const initialState = {
 	// cursor; uses a counter to track the number of renders.
 	shouldRenderDOMCursor: 0,
 
-	reactDOM: document.createElement("div"),
+	reactDOM: document.createElement("article"),
 }
 
 const reducer = state => ({
