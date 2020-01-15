@@ -90,8 +90,8 @@ const reducer = state => ({
 
 		const seenKeys = {}
 		for (const node of nodes) {
-			if (seenKeys[node.key] !== undefined) {
-				node.key = rand.newSevenByteHash()
+			if (seenKeys[node.key]) {
+				node.key = rand.newUUID()
 			}
 			seenKeys[node.key] = true
 		}
@@ -120,7 +120,7 @@ const reducer = state => ({
 // newVDOMNodes parses a new VDOM nodes array and map.
 function newVDOMNodes(data) {
 	const nodes = data.split("\n").map(each => ({
-		key: rand.newSevenByteHash(),
+		key: rand.newUUID(),
 		data: each,
 	}))
 	return nodes
@@ -205,6 +205,23 @@ function innerText(rootNode) {
 	return data
 }
 
+// isChildNodeOf returns whether a node is a child of a
+// parent node. This function is preferred to node.contains
+// because node.contains returns true on the same node.
+function isChildOf(parentNode, node) {
+	if (__DEV__) {
+		invariant(
+			parentNode && node,
+			"FIXME",
+		)
+	}
+	const ok = (
+		node !== parentNode &&
+		parentNode.contains(node)
+	)
+	return ok
+}
+
 // getCaretPoint gets the caret point based on the cursor
 // (preferred) or the anchor node.
 function getCaretPoint() {
@@ -224,21 +241,21 @@ function getCaretPoint() {
 	return { x, y }
 }
 
-// // getVDOMNode returns the VDOM node.
-// function getVDOMNode(rootNode, node) {
-// 	if (__DEV__) {
-// 		invariant(
-// 			rootNode && node && rootNode.contains(node),
-// 			"FIXME",
-// 		)
-// 	}
-// 	while (!isVDOMNode(node)) {
-// 		node = node.parentNode
-// 	}
-// 	return node
-// }
+// getVDOMNode returns the VDOM node.
+function getVDOMNode(rootNode, node) {
+	if (__DEV__) {
+		invariant(
+			rootNode && node && rootNode.contains(node),
+			"FIXME",
+		)
+	}
+	while (!isVDOMNode(node)) {
+		node = node.parentNode
+	}
+	return node
+}
 
-// getVDOMRootNode returns the root VDOM node.
+// getVDOMRootNode returns the VDOM root node.
 function getVDOMRootNode(rootNode, node) {
 	if (__DEV__) {
 		invariant(
@@ -304,64 +321,134 @@ function EditorContents(props) {
 	return props.components
 }
 
+// React.useLayoutEffect(
+// 	React.useCallback(() => {
+// 		const observer = new MutationObserver(mutations => {
+// 			for (const { addedNodes, removedNodes, previousSibling, nextSibling } of mutations) { // eslint-disable-line
+// 				if (addedNodes.length) {
+// 					for (const addedNode of addedNodes) {
+// 						console.log({ ref: ref.current, addedNode: addedNode.cloneNode(true), nextSibling })
+// 						ref.current.insertBefore(addedNode.cloneNode(true), nextSibling)
+// 					}
+// 				} else if (removedNodes.length) { // XOR?
+// 					// for (const removedNode of removedNodes) {
+// 					// 	// ...
+// 					// }
+// 				}
+// 			}
+// 			// console.log(mutations)
+// 		})
+// 		observer.observe(state.reactDOM, { childList: true })
+// 		return () => {
+// 			observer.disconnect()
+// 		}
+// 	}, [state]),
+// 	[],
+// )
+
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, world!\n\nHello, world!"))
+	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, world!"))
+	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
 	const target = React.useRef()
 
-	// React.useLayoutEffect(
-	// 	React.useCallback(() => {
-	// 		const observer = new MutationObserver(mutations => {
-	// 			for (const { addedNodes, removedNodes, previousSibling, nextSibling } of mutations) { // eslint-disable-line
-	// 				if (addedNodes.length) {
-	// 					for (const addedNode of addedNodes) {
-	// 						console.log({ ref: ref.current, addedNode: addedNode.cloneNode(true), nextSibling })
-	// 						ref.current.insertBefore(addedNode.cloneNode(true), nextSibling)
-	// 					}
-	// 				} else if (removedNodes.length) { // XOR?
-	// 					// for (const removedNode of removedNodes) {
-	// 					// 	// ...
-	// 					// }
-	// 				}
-	// 			}
-	// 			// console.log(mutations)
-	// 		})
-	// 		observer.observe(state.reactDOM, { childList: true })
-	// 		return () => {
-	// 			observer.disconnect()
-	// 		}
-	// 	}, [state]),
-	// 	[],
-	// )
+	// for (const addedNode of addedNodes) {
+	// 	let node = getVDOMNode(state.reactDOM, addedNode)
+	// 	// Guard compound component (end):
+	// 	if (!node.nextSibling && node.parentNode !== state.reactDOM) {
+	// 		node = getVDOMRootNode(state.reactDOM, node) // node = node.parentNode
+	// 	}
+	// 	let { nextSibling } = node
+	// 	if (nextSibling) {
+	// 		nextSibling = document.getElementById(nextSibling.id)
+	// 	}
+	// 	const newNode = node.cloneNode(true)
+	// 	console.log(ref.current.insertBefore(newNode, nextSibling))
+	// }
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const _t1 = Date.now()
-			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-				const _t2 = Date.now()
-				console.log(`react=${_t2 - _t1}`)
-				if (!state.onRenderComponents) {
-					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-					return
+			const observer = new MutationObserver(mutations => {
+				for (const mutation of mutations) {
+					const { addedNodes, previousSibling, nextSibling } = mutation
+					for (const node of addedNodes) {
+
+						// (Imposter node)
+						if (previousSibling) {
+							const clientNode = document.getElementById(previousSibling.id)
+							if (clientNode.nextSibling && clientNode.id === clientNode.nextSibling.id) {
+								clientNode.nextSibling.remove()
+							}
+						}
+
+						let clientNode = null
+						if (nextSibling) {
+							clientNode = document.getElementById(nextSibling.id)
+						}
+						const newNode = node.cloneNode(true)
+						ref.current.insertBefore(newNode, clientNode)
+
+					}
+
+					// const { addedNodes /* , removedNodes */ } = mutation
+					//
+					// for (const addedNode of addedNodes) {
+					// 	let node = getVDOMNode(state.reactDOM, addedNode)
+					// 	let { nextSibling } = node
+					// 	if (nextSibling) {
+					// 		nextSibling = document.getElementById(nextSibling.id)
+					// 	}
+					//
+					// 	// const foundImposter = document.getElementById(node.id)
+					// 	// if (foundImposter) {
+					// 	// 	console.log("I FOUND AN IMPOSTER! DIE YOU SCOUNDRAL!")
+					// 	// 	console.log(foundImposter.replaceWith(node.cloneNode(true)))
+					// 	// 	continue
+					// 	// }
+					// 	console.log(document.getElementById(node.id))
+					// 	console.log(ref.current.insertBefore(node.cloneNode(true), nextSibling))
+					// }
+					//
+					// // for (const removedNodes) {
+					// // 	// TODO
+					// // }
+
 				}
-				// Eagerly drop range (for performance reasons):
-				//
-				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
-				const selection = document.getSelection()
-				selection.removeAllRanges()
-
-				const t1 = Date.now()
-				;[...ref.current.childNodes].map(each => each.remove())          // TODO
-				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
-				const t2 = Date.now()
-				console.log(`dom=${t2 - t1}`)
-
-				dispatch.renderCursor()
 			})
-		}, [state, dispatch]),
+			observer.observe(state.reactDOM, {
+				childList: true,  // Observe the element nodes.
+				// subtree: true, // Observe the nested element nodes.
+			})
+			return () => {
+				observer.disconnect()
+			}
+		}, [state]),
+		[],
+	)
+
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
+				// if (!state.onRenderComponents) {
+				// 	ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+				// 	return
+				// }
+				// // Eagerly drop range (for performance reasons):
+				// //
+				// // https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+				// const selection = document.getSelection()
+				// selection.removeAllRanges()
+				// const t1 = Date.now()
+				// ;[...ref.current.childNodes].map(each => each.remove())          // TODO
+				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+				// const t2 = Date.now()
+				// console.log(`dom=${t2 - t1}`)
+				// dispatch.renderCursor()
+			})
+		}, [state, dispatch]), // eslint-disable-line
 		[state.onRenderComponents],
 	)
 
@@ -387,7 +474,7 @@ function Editor(props) {
 		React.useCallback(() => {
 			const handler = () => {
 				const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
-				if (!anchorNode || !focusNode || !ref.current.contains(anchorNode) || !ref.current.contains(focusNode)) {
+				if (!anchorNode || !focusNode || !isChildOf(ref.current, anchorNode) || !isChildOf(ref.current, focusNode)) {
 					// (No-op)
 					return
 				}
@@ -432,7 +519,7 @@ function Editor(props) {
 
 						onKeyDown: e => {
 							const { anchorNode, focusNode } = document.getSelection()
-							if (!anchorNode || !focusNode || !ref.current.contains(anchorNode) || !ref.current.contains(focusNode)) {
+							if (!anchorNode || !focusNode || !isChildOf(ref.current, anchorNode) || !isChildOf(ref.current, focusNode)) {
 								// (No-op)
 								return
 							}
@@ -463,7 +550,7 @@ function Editor(props) {
 
 							const nodes = []
 							let node = startNode
-							while (node !== null) {
+							while (node) {
 								nodes.push({ key: node.id, data: innerText(node) })
 								if (node === endNode) {
 									break
@@ -471,13 +558,7 @@ function Editor(props) {
 								node = node.nextSibling
 							}
 
-							// caretPoint appears to be unstable. Instead,
-							// we can get the VDOM node and offset to
-							// create a range.
-							//
-							// Update: getCaretPoint appears to return
-							// null when out of bounds (window bounds).
-
+							// NOTE: caretPoint can be unstable.
 							const caretPoint = getCaretPoint()
 							dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
 						},
