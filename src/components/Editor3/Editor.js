@@ -1,5 +1,3 @@
-// import * as dom from "./dom"
-// import array from "lib/array"
 import DebugCSS from "components/DebugCSS"
 import Enum from "lib/Enum"
 import invariant from "invariant"
@@ -11,6 +9,8 @@ import stylex from "stylex"
 import useMethods from "use-methods"
 
 import "./Editor.css"
+
+const __DEV__ = process.env.NODE_ENV === "development"
 
 // TODO: data-vdom-key or data-vdom-node={key}?
 const Paragraph = props => (
@@ -55,6 +55,7 @@ const initialState = {
 	hasFocus: false,
 	caretPoint: null,
 	nodes: null,
+	// nodesMap: null,
 	data: "",
 	components: null,
 	reactDOM: null,
@@ -105,8 +106,11 @@ const reducer = state => ({
 	},
 
 	renderComponents() {
+		// const t1 = Date.now()
 		const nodes = state.nodes.map(each => ({ ...each })) // (Read proxy)
 		state.components = parseComponents(nodes)
+		// const t2 = Date.now()
+		// console.log(`parse=${t2 - t1}`)
 		state.onRenderComponents++
 	},
 	renderCursor() {
@@ -120,6 +124,11 @@ function newVDOMNodes(data) {
 		key: rand.newSevenByteHash(),
 		data: each,
 	}))
+	// const nodesMap = {}
+	// for (const each of nodes) {
+	// 	nodesMap[each.key] = each
+	// }
+	// return { nodes, nodesMap }
 	return nodes
 }
 
@@ -130,6 +139,7 @@ const init = initialValue => initialState => {
 		operation: OperationTypes.INIT,
 		operationUnix: Date.now(),
 		nodes,
+		// nodesMap,
 		data: initialValue,
 		components: parseComponents(nodes),
 		reactDOM: document.createElement("div"),
@@ -179,10 +189,12 @@ function nodeValue(node) {
 // innerText mocks the browser function; (recursively) reads
 // a root node.
 function innerText(rootNode) {
-	invariant(
-		rootNode && isElementNode(rootNode),
-		"innerText: FIXME",
-	)
+	if (__DEV__) {
+		invariant(
+			rootNode && isElementNode(rootNode),
+			"FIXME",
+		)
+	}
 	let data = ""
 	const recurseOn = startNode => {
 		for (const childNode of startNode.childNodes) {
@@ -221,10 +233,12 @@ function getCaretPoint() {
 
 // // getVDOMNode returns the VDOM node.
 // function getVDOMNode(rootNode, node) {
-// 	invariant(
-// 		rootNode && node && rootNode.contains(node),
-// 		"getVDOMNode: FIXME",
-// 	)
+// 	if (__DEV__) {
+// 		invariant(
+// 			rootNode && node && rootNode.contains(node),
+// 			"FIXME",
+// 		)
+// 	}
 // 	while (!isVDOMNode(node)) {
 // 		node = node.parentNode
 // 	}
@@ -233,10 +247,12 @@ function getCaretPoint() {
 
 // getVDOMRootNode returns the root VDOM node.
 function getVDOMRootNode(rootNode, node) {
-	invariant(
-		rootNode && node && rootNode.contains(node),
-		"getVDOMRootNode: FIXME",
-	)
+	if (__DEV__) {
+		invariant(
+			rootNode && node && rootNode.contains(node),
+			"FIXME",
+		)
+	}
 	while (node.parentNode !== rootNode) {
 		node = node.parentNode
 	}
@@ -246,25 +262,32 @@ function getVDOMRootNode(rootNode, node) {
 // getSortedVDOMRootNodes gets the VDOM root nodes.
 function getSortedVDOMRootNodes(rootNode) {
 	const { anchorNode, focusNode } = document.getSelection()
-	invariant(
-		rootNode && anchorNode && focusNode && rootNode.contains(anchorNode) && rootNode.contains(focusNode),
-		"getSortedVDOMRootNodes: FIXME",
-	)
-	if (anchorNode === focusNode) {
-		const node = getVDOMRootNode(rootNode, anchorNode)
-		return [node, node]
+	if (__DEV__) {
+		invariant(
+			rootNode && anchorNode && focusNode && rootNode.contains(anchorNode) && rootNode.contains(focusNode),
+			"FIXME",
+		)
 	}
-	const node1 = getVDOMRootNode(rootNode, anchorNode)
-	const node2 = getVDOMRootNode(rootNode, focusNode)
-	for (const childNode of rootNode.childNodes) {
-		if (childNode === node1) {
-			return [node1, node2]
-		} else if (childNode === node2) {
-			return [node2, node1]
+	if (anchorNode !== focusNode) {
+		const node1 = getVDOMRootNode(rootNode, anchorNode)
+		const node2 = getVDOMRootNode(rootNode, focusNode)
+		for (const childNode of rootNode.childNodes) {
+			if (childNode === node1) {
+				return [node1, node2]
+			} else if (childNode === node2) {
+				return [node2, node1]
+			}
+		}
+		if (__DEV__) {
+			// (Unreachable code)
+			invariant(
+				false,
+				"FIXME",
+			)
 		}
 	}
-	// (Never)
-	return null
+	const node = getVDOMRootNode(rootNode, anchorNode)
+	return [node, node]
 }
 
 // getTargetVDOMRootNodeRange gest the target start and end
@@ -291,7 +314,7 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init("hello, world!"))
+	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
 	const target = React.useRef()
@@ -323,7 +346,10 @@ function Editor(props) {
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
+			const _t1 = Date.now()
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
+				const _t2 = Date.now()
+				console.log(`react=${_t2 - _t1}`)
 				if (!state.onRenderComponents) {
 					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 					return
@@ -333,8 +359,13 @@ function Editor(props) {
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				const selection = document.getSelection()
 				selection.removeAllRanges()
+
+				const t1 = Date.now()
 				;[...ref.current.childNodes].map(each => each.remove())          // TODO
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+				const t2 = Date.now()
+				console.log(`dom=${t2 - t1}`)
+
 				dispatch.renderCursor()
 			})
 		}, [state, dispatch]),
@@ -349,11 +380,11 @@ function Editor(props) {
 			}
 			const selection = document.getSelection()
 			// (Range eagerly dropped)
-			invariant(
-				state.caretPoint && typeof state.caretPoint === "object" && state.caretPoint.x !== undefined && state.caretPoint.y !== undefined,
-				"FIXME",
-			)
 			const range = document.caretRangeFromPoint(state.caretPoint.x, state.caretPoint.y)
+			if (!range) {
+				console.warn({ range }) // DELETEME
+				return
+			}
 			selection.addRange(range)
 		}, [state]),
 		[state.onRenderCursor],
@@ -430,15 +461,31 @@ function Editor(props) {
 								endNode = endNode.nextSibling
 							}
 
+							// Simple fix for compound components: if a
+							// node has multiple child nodes (element
+							// nodes) a node can be assumed to be a
+							// compound components.
+							//
+							// This means we have two special rules --
+							// empty nodes, e.g. <div>, *are* considered
+							// VDOM nodes, and nodes with multiple
+							// children element nodes, e.g. isVDOMNode,
+							// are compound components.
+
 							const nodes = []
 							let node = startNode
-							while (node !== null) { // FIXME: Add support for compounds components.
+							while (node !== null) {
 								nodes.push({ key: node.id, data: innerText(node) })
 								if (node === endNode) {
 									break
 								}
 								node = node.nextSibling
 							}
+
+							// caretPoint appears to be unstable. Instead,
+							// we can get the VDOM node and offset to
+							// create a range.
+
 							const caretPoint = getCaretPoint()
 							dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
 						},
@@ -459,7 +506,7 @@ function Editor(props) {
 									...state,
 
 									components: undefined,
-									reactDOM: undefined,
+									reactDOM:   undefined,
 								},
 								null,
 								"\t",
