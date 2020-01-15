@@ -12,6 +12,7 @@ import useMethods from "use-methods"
 
 import "./Editor.css"
 
+// TODO: data-vdom-key or data-vdom-node={key}?
 const Paragraph = props => (
 	<div id={props.reactKey} data-vdom-node>
 		{props.children || (
@@ -83,25 +84,23 @@ const reducer = state => ({
 		this.commitOperation(OperationTypes.SELECT)
 		state.caretPoint = caretPoint
 	},
-
-	commitInput(target, caretPoint) {
-		this.commitOperation(OperationTypes.INPUT)
+	commitInput(startKey, endKey, nodes, caretPoint) {
+		this.commitOperation(OperationTypes.INPUT) // (See commitSelect)
 		state.caretPoint = caretPoint
 
 		const seenKeys = {}
-		for (const node of target.nodes) {
+		for (const node of nodes) {
 			if (seenKeys[node.key] !== undefined) {
 				node.key = rand.newSevenByteHash()
 			}
 			seenKeys[node.key] = true
 		}
 
-		const from = state.nodes.findIndex(each => each.key === target.startNodeKey)
-		const to = state.nodes.findIndex(each => each.key === target.endNodeKey)
-		state.nodes.splice(from, to - from + 1, ...target.nodes)
+		const x1 = state.nodes.findIndex(each => each.key === startKey)
+		const x2 = state.nodes.findIndex(each => each.key === endKey)
+		state.nodes.splice(x1, x2 - x1 + 1, ...nodes)
 
 		state.data = state.nodes.map(each => each.data).join("\n")
-		state.caretPoint = caretPoint
 		this.renderComponents()
 	},
 
@@ -268,44 +267,21 @@ function getSortedVDOMRootNodes(rootNode) {
 	return null
 }
 
-class TargetRange {
-	constructor(startNode, endNode) {
-		Object.assign(this, {
-			startNode: startNode,
-			startNodeKey: startNode.id,
-			endNode: endNode,
-			endNodeKey: endNode.id,
-			nodes: null,
-		})
-	}
-}
-
-// getTargetVDOMRootNodeRange gets the target VDOM root node
-// range; an array of VDOM root node and metadata.
+// getTargetVDOMRootNodeRange gest the target start and end
+// VDOM root nodes and range (one-based).
 function getTargetVDOMRootNodeRange(rootNode) {
 	let [startNode, endNode] = getSortedVDOMRootNodes(rootNode)
-	let offsetStart = 1
-	while (offsetStart > 0 && startNode.previousSibling) {
+	let extendStart = 0
+	while (extendStart < 1 && startNode.previousSibling) {
 		startNode = startNode.previousSibling
-		offsetStart--
+		extendStart++
 	}
-	let offsetEnd = 2
-	while (offsetEnd > 0 && endNode.nextSibling) {
+	let extendEnd = 0
+	while (extendEnd < 2 && endNode.nextSibling) {
 		endNode = endNode.nextSibling
-		offsetEnd--
+		extendEnd++
 	}
-	const target = new TargetRange(startNode, endNode)
-	const nodes = []
-	let currentNode = target.startNode
-	while (currentNode !== null) { // FIXME: Need to support compounds components.
-		nodes.push({ key: currentNode.id, data: innerText(currentNode) })
-		if (currentNode === target.endNode) {
-			break
-		}
-		currentNode = currentNode.nextSibling
-	}
-	target.nodes = nodes
-	return target
+	return { startNode, endNode, extendStart, extendEnd }
 }
 
 function EditorContents(props) {
@@ -315,7 +291,7 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init("hello, world!hello, world!"))
+	const [state, dispatch] = useMethods(reducer, initialState, init("hello, world!"))
 
 	const selectionchange = React.useRef()
 	const target = React.useRef()
@@ -439,53 +415,39 @@ function Editor(props) {
 							target.current = getTargetVDOMRootNodeRange(ref.current)
 						},
 
-						// const { anchorNode, anchorOffset } = document.getSelection()
-						// const resetPos = recurseToVDOMCursor(ref.current, anchorNode, anchorOffset)
-						// let data = ""
-						// let greedyDOMNode = greedy.current.domNodeStart
-						// while (greedyDOMNode) {
-						// 	data += (greedyDOMNode === greedy.current.domNodeStart ? "" : "\n") + innerText(greedyDOMNode)
-						// 	if (greedy.current.domNodeRange >= 3 && greedyDOMNode === greedy.current.domNodeEnd) {
-						// 		break
-						// 	}
-						// 	const { nextSibling } = greedyDOMNode
-						// 	greedyDOMNode = nextSibling
-						// }
-						// dispatch.commitInput(data, greedy.current.pos1, greedy.current.pos2, resetPos)
+						// const { anchorNode } = document.getSelection()
+						// const key = getVDOMRootNode(ref.current, anchorNode).id
+						// console.log(current, range, key)
 
 						onInput: e => {
-							const { current } = target
+							let { current: { startNode, endNode, extendStart, extendEnd } } = target
 
-							// console.log(ref.current.innerHTML)
+							// Guard up to one paragraph before and after
+							// the start and end nodes:
+							if (!extendStart && startNode.previousSibling) {
+								startNode = startNode.previousSibling
+							} else if (!extendEnd && endNode.nextSibling) {
+								endNode = endNode.nextSibling
+							}
 
-							const newTarget = new TargetRange(current.startNode, current.endNode)
 							const nodes = []
-							let currentNode = current.startNode
-							while (currentNode !== null) { // FIXME: Need to support compounds components.
-								nodes.push({ key: currentNode.id, data: innerText(currentNode) })
-								// NOTE: Use >= 3 to guard edge case.
-								if (current.nodes.length >= 3 && currentNode === current.endNode) {
+							let node = startNode
+							while (node !== null) { // FIXME: Add support for compounds components.
+								nodes.push({ key: node.id, data: innerText(node) })
+								if (node === endNode) {
 									break
 								}
-								currentNode = currentNode.nextSibling
+								node = node.nextSibling
 							}
-							newTarget.nodes = nodes
-
-							// console.log(nodes)
-
 							const caretPoint = getCaretPoint()
-							dispatch.commitInput(newTarget, caretPoint)
-
-							// const { anchorNode } = document.getSelection()
-							// const key = getVDOMRootNode(ref.current, anchorNode).id
-							// console.log(current, range, key)
+							dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
 						},
 
-						// onCut:   e => e.preventDefault(),
-						// onCopy:  e => e.preventDefault(),
-						// onPaste: e => e.preventDefault(),
-						// onDrag:  e => e.preventDefault(),
-						// onDrop:  e => e.preventDefault(),
+						onCut:   e => e.preventDefault(),
+						onCopy:  e => e.preventDefault(),
+						onPaste: e => e.preventDefault(),
+						onDrag:  e => e.preventDefault(),
+						onDrop:  e => e.preventDefault(),
 					},
 				)}
 				{props.debug && (
@@ -497,7 +459,7 @@ function Editor(props) {
 									...state,
 
 									components: undefined,
-									reactDOM:  undefined,
+									reactDOM: undefined,
 								},
 								null,
 								"\t",
