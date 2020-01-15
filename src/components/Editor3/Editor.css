@@ -1,4 +1,4 @@
-article {
+[contenteditable] {
 	white-space:     pre-wrap;
 	font:            19px/1.5 "system-ui";
 	caret-color:     hsl(var(--black));

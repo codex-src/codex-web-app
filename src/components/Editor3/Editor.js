@@ -149,7 +149,7 @@ const reducer = state => ({
 		const seenKeys = {}
 		for (const node of nodes) {
 			if (seenKeys[node.key]) {
-				node.key = rand.newUUID().slice(0, 8)
+				node.key = rand.newUUID()
 			}
 			seenKeys[node.key] = true
 		}
@@ -177,7 +177,7 @@ const reducer = state => ({
 // newVDOMNodes parses a new VDOM nodes array and map.
 function newVDOMNodes(data) {
 	const nodes = data.split("\n").map(each => ({
-		key: rand.newUUID().slice(0, 8),
+		key: rand.newUUID(),
 		data: each,
 	}))
 	return nodes
@@ -297,43 +297,24 @@ function getCaretPoint() {
 	return { x, y }
 }
 
-// // getVDOMNode returns the VDOM node.
-// function getVDOMNode(rootNode, node) {
-// 	if (__DEV__) {
-// 		invariant(
-// 			rootNode && node && rootNode.contains(node),
-// 			"FIXME",
-// 		)
-// 	}
-// 	while (!isVDOMNode(node)) {
-// 		node = node.parentNode
-// 	}
-// 	return node
-// }
+// getVDOMNode returns the VDOM node.
+function getVDOMNode(rootNode, node) { // eslint-disable-line no-unused-vars
+	while (!isVDOMNode(node)) {
+		node = node.parentNode
+	}
+	return node
+}
 
 // getVDOMRootNode returns the VDOM root node.
 function getVDOMRootNode(rootNode, node) {
-	if (__DEV__) {
-		invariant(
-			rootNode && node && rootNode.contains(node),
-			"FIXME",
-		)
-	}
 	while (node.parentNode !== rootNode) {
 		node = node.parentNode
 	}
 	return node
 }
 
-// getSortedVDOMRootNodes gets the VDOM root nodes.
-function getSortedVDOMRootNodes(rootNode) {
-	const { anchorNode, focusNode } = document.getSelection()
-	if (__DEV__) {
-		invariant(
-			rootNode && anchorNode && focusNode && rootNode.contains(anchorNode) && rootNode.contains(focusNode),
-			"FIXME",
-		)
-	}
+// getAndSortVDOMRootNodes gets and sorts VDOM root nodes.
+function getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode) {
 	if (anchorNode !== focusNode) {
 		const node1 = getVDOMRootNode(rootNode, anchorNode)
 		const node2 = getVDOMRootNode(rootNode, focusNode)
@@ -344,34 +325,48 @@ function getSortedVDOMRootNodes(rootNode) {
 				return [node2, node1]
 			}
 		}
-		if (__DEV__) {
-			// Supposed to be unreachable code:
-			invariant(
-				false,
-				"FIXME",
-			)
-		}
+		// (Unreachable code)
 	}
 	const node = getVDOMRootNode(rootNode, anchorNode)
 	return [node, node]
 }
 
-// getTargetVDOMRootNodeRange gest the target start and end
-// VDOM root nodes and range (one-based).
-function getTargetVDOMRootNodeRange(rootNode) {
-	let [startNode, endNode] = getSortedVDOMRootNodes(rootNode)
-	let extendStart = 0
-	while (!extendStart && startNode.previousSibling) {
+// getTargetRange gets the target range of VDOM root nodes.
+function getTargetRange(rootNode, anchorNode, focusNode) {
+	let [startNode, endNode] = getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode)
+	// Get the start node:
+	const nodeMap = { [startNode.id]: startNode }
+	let didExtendStart = 0
+	if (startNode.previousSibling) {
 		startNode = startNode.previousSibling
-		extendStart++
+		nodeMap[startNode.id] = startNode
+		didExtendStart = true
 	}
-	let extendEnd = 0
-	while (!extendEnd && endNode.nextSibling) {
+	// Get the end node:
+	let didExtendEnd = 0
+	if (endNode.nextSibling) {
 		endNode = endNode.nextSibling
-		extendEnd++
+		nodeMap[endNode.id] = endNode
+		didExtendEnd = true
 	}
-	return { startNode, endNode, extendStart, extendEnd }
+	return { startNode, endNode, nodeMap, didExtendStart, didExtendEnd }
 }
+
+// // getTargetRange gets the target range of VDOM root nodes.
+// function getTargetRange(rootNode, anchorNode, focusNode) {
+// 	const targetNodes = []
+// 	let [startNode, endNode] = getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode)
+// 	targetNodes.push(startNode)
+// 	if (startNode.previousSibling) {
+// 		startNode = startNode.previousSibling
+// 		targetNodes.unshift(startNode)
+// 	}
+// 	if (endNode.nextSibling) {
+// 		endNode = endNode.nextSibling
+// 		targetNodes.push(endNode)
+// 	}
+// 	return { targetNodes, startNode, endNode }
+// }
 
 function EditorContents(props) {
 	return props.components
@@ -383,8 +378,8 @@ function EditorContents(props) {
 		const originalRemoveChild = Node.prototype.removeChild
 		Node.prototype.removeChild = function(child) {
 			if (child.parentNode !== this) {
-				if (console) {
-					console.error("Cannot remove a child from a different parent", child, this)
+				if (__DEV__) {
+					console.error("Dan Abramov: Cannot remove a child from a different parent", child, this)
 				}
 				return child
 			}
@@ -394,8 +389,8 @@ function EditorContents(props) {
 		const originalInsertBefore = Node.prototype.insertBefore
 		Node.prototype.insertBefore = function(newNode, referenceNode) {
 			if (referenceNode && referenceNode.parentNode !== this) {
-				if (console) {
-					console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
+				if (__DEV__) {
+					console.error("Dan Abramov: Cannot insert before a reference node from a different parent", referenceNode, this)
 				}
 				return newNode
 			}
@@ -410,7 +405,7 @@ function Editor(props) {
 	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
-	const target = React.useRef()
+	const targetRange = React.useRef()
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -427,7 +422,7 @@ function Editor(props) {
 			// 	dispatch.renderCursor()
 			// })
 			dispatch.renderCursor()
-		}, [state, dispatch]),
+		}, [dispatch]),
 		[state.onRenderComponents],
 	)
 
@@ -473,8 +468,7 @@ function Editor(props) {
 				selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 				const caretPoint = getCaretPoint()
 				dispatch.commitSelect(caretPoint)
-				target.current = getTargetVDOMRootNodeRange(ref.current)
-				target.current.anchorOffset = anchorOffset
+				targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
 			}
 			document.addEventListener("selectionchange", handler)
 			return () => {
@@ -500,71 +494,70 @@ function Editor(props) {
 						onBlur:  dispatch.commitBlur,
 
 						onKeyDown: e => {
-							const { anchorNode, anchorOffset, focusNode } = document.getSelection()
+							const { anchorNode, focusNode } = document.getSelection()
 							if (!anchorNode || !focusNode || !isChildOf(ref.current, anchorNode) || !isChildOf(ref.current, focusNode)) {
 								// (No-op)
 								return
 							}
-							target.current = getTargetVDOMRootNodeRange(ref.current)
-							target.current.anchorOffset = anchorOffset
+							targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
 						},
 
-						onInput: e => {
-							let { current: { startNode, endNode, extendStart, extendEnd, anchorOffset } } = target
+						// let extendStart = 0
+						// while (!extendStart && startNode.previousSibling) {
+						// 	startNode = startNode.previousSibling
+						// 	targetNodes.unshift(startNode)
+						// 	extendStart++
+						// }
+						// let extendEnd = 0
+						// while (!extendEnd && endNode.nextSibling) {
+						// 	endNode = endNode.nextSibling
+						// 	targetNodes.push(endNode)
+						// 	extendEnd++
+						// }
 
-							// Guard up to one paragraph before and after
-							// the start and end nodes:
-							if (!extendStart && startNode.previousSibling) {
+						onInput: e => {
+							let { current: { startNode, endNode, nodeMap, didExtendStart, didExtendEnd } } = targetRange
+
+							// Extend up to one node before:
+							if (!didExtendStart && startNode.previousSibling) {
 								startNode = startNode.previousSibling
-							} else if (!extendEnd && endNode.nextSibling) {
+								nodeMap[startNode.id] = startNode
+							// Extend up to one node after:
+							} else if (!didExtendEnd && endNode.nextSibling) {
 								endNode = endNode.nextSibling
+								nodeMap[endNode.id] = endNode
 							}
 
-							// Simple fix for compound components: if a
-							// node has multiple child nodes (element
-							// nodes) a node can be assumed to be a
-							// compound component.
-							//
-							// This means we have two special rules --
-							// empty nodes, e.g. <div>, *are* considered
-							// VDOM nodes, and nodes with multiple
-							// children elements, e.g. isVDOMNode, are
-							// compound components.
-
-							// TODO: Add support for isCollasped.
-
 							const seenNodes = {}
-							const removeNodes = []
-
-							// const removeNodes = []
+							let fakeVDOMNode = null
 
 							const nodes = []
 							let node = startNode
 							while (node) {
-								nodes.push({ key: rand.newUUID().slice(0, 8), data: innerText(node) })
-
+								nodes.push({ key: rand.newUUID(), data: innerText(node) })
 								if (seenNodes[node.id]) {
-									removeNodes.push(seenNodes[node.id], node)
+									fakeVDOMNode = [node, seenNodes[node.id]]
 								}
 								seenNodes[node.id] = node
-
 								if (node === endNode) {
 									break
 								}
 								node = node.nextSibling
 							}
 
-							if (removeNodes.length) {
-								if (!anchorOffset) {
-									console.log("a")
-									removeNodes[0].remove()
-								} else {
-									console.log("b")
-									removeNodes[1].remove()
+							const caretPoint = getCaretPoint() // (Takes precedence)
+
+							if (fakeVDOMNode) {
+								const [a, b] = fakeVDOMNode
+								// I’m real! He’s the clone!
+								if (nodeMap[a.id] === a) {
+									b.replaceWith(a)
+								// No I’m real! He’s the clone!
+								} else if (nodeMap[a.id] === b) {
+									a.replaceWith(b)
 								}
 							}
 
-							const caretPoint = getCaretPoint()
 							dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
 						},
 
