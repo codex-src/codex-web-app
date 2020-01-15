@@ -12,9 +12,40 @@ import "./Editor.css"
 
 const __DEV__ = process.env.NODE_ENV === "development"
 
-// TODO: data-vdom-key or data-vdom-node={key}?
-const Paragraph = props => (
-	<div id={props.reactKey} data-vdom-node>
+const Syntax = stylex.Styleable(props => (
+	<span style={stylex.parse("pre c:blue-a400")}>
+		{props.children}
+	</span>
+))
+
+const Markdown = ({ style, ...props }) => (
+	<React.Fragment>
+		{props.startSyntax && (
+			<Syntax style={style}>
+				{props.startSyntax}
+			</Syntax>
+		)}
+		{props.children}
+		{props.endSyntax && (
+			<Syntax style={style}>
+				{props.endSyntax}
+			</Syntax>
+		)}
+	</React.Fragment>
+)
+
+const Header = ({ reactKey, ...props }) => (
+	<div id={reactKey} style={stylex.parse("fw:700 fs:19")} data-vdom-node>
+		<Markdown startSyntax={props.startSyntax}>
+			{props.children || (
+				<br />
+			)}
+		</Markdown>
+	</div>
+)
+
+const Paragraph = ({ reactKey, ...props }) => (
+	<div id={reactKey} style={stylex.parse("fs:19")} data-vdom-node>
 		{props.children || (
 			<br />
 		)}
@@ -22,11 +53,33 @@ const Paragraph = props => (
 )
 
 function parseComponents(nodes) {
-	const components = []
-	for (const { key, data } of nodes) {
-		components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
+	const Components = []
+	let index = 0
+	while (index < nodes.length) {
+		const { key, data } = nodes[index]
+		switch (true) {
+		// <Header>
+		case (
+			(data.length >= 2 && data.slice(0, 2) === ("# ")) ||
+			(data.length >= 3 && data.slice(0, 3) === ("## ")) ||
+			(data.length >= 4 && data.slice(0, 4) === ("### ")) ||
+			(data.length >= 5 && data.slice(0, 5) === ("#### ")) ||
+			(data.length >= 6 && data.slice(0, 6) === ("##### ")) ||
+			(data.length >= 7 && data.slice(0, 7) === ("###### "))
+		): {
+			const commonSyntaxStartIndex = data.indexOf("# ")
+			const startSyntax = data.slice(0, commonSyntaxStartIndex + 2)
+			Components.push(<Header key={key} reactKey={key} startSyntax={startSyntax}>{data.slice(commonSyntaxStartIndex + 2)}</Header>)
+			break
+		}
+		// <Paragraph>
+		default:
+			Components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
+			break
+		}
+		index++
 	}
-	return components
+	return Components
 }
 
 const OperationTypes = new Enum(
@@ -241,19 +294,19 @@ function getCaretPoint() {
 	return { x, y }
 }
 
-// getVDOMNode returns the VDOM node.
-function getVDOMNode(rootNode, node) {
-	if (__DEV__) {
-		invariant(
-			rootNode && node && rootNode.contains(node),
-			"FIXME",
-		)
-	}
-	while (!isVDOMNode(node)) {
-		node = node.parentNode
-	}
-	return node
-}
+// // getVDOMNode returns the VDOM node.
+// function getVDOMNode(rootNode, node) {
+// 	if (__DEV__) {
+// 		invariant(
+// 			rootNode && node && rootNode.contains(node),
+// 			"FIXME",
+// 		)
+// 	}
+// 	while (!isVDOMNode(node)) {
+// 		node = node.parentNode
+// 	}
+// 	return node
+// }
 
 // getVDOMRootNode returns the VDOM root node.
 function getVDOMRootNode(rootNode, node) {
@@ -349,8 +402,8 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, world!"))
-	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
+	// const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, world!"))
+	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
 	const target = React.useRef()
@@ -368,103 +421,83 @@ function Editor(props) {
 	// 	const newNode = node.cloneNode(true)
 	// 	console.log(ref.current.insertBefore(newNode, nextSibling))
 	// }
-
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			const observer = new MutationObserver(mutations => {
-				for (const mutation of mutations) {
-					const { addedNodes, previousSibling, nextSibling } = mutation
-					for (const node of addedNodes) {
-
-						// (Imposter node)
-						if (previousSibling) {
-							const clientNode = document.getElementById(previousSibling.id)
-							if (clientNode.nextSibling && clientNode.id === clientNode.nextSibling.id) {
-								clientNode.nextSibling.remove()
-							}
-						}
-
-						let clientNode = null
-						if (nextSibling) {
-							clientNode = document.getElementById(nextSibling.id)
-						}
-						const newNode = node.cloneNode(true)
-						ref.current.insertBefore(newNode, clientNode)
-
-					}
-
-					// const { addedNodes /* , removedNodes */ } = mutation
-					//
-					// for (const addedNode of addedNodes) {
-					// 	let node = getVDOMNode(state.reactDOM, addedNode)
-					// 	let { nextSibling } = node
-					// 	if (nextSibling) {
-					// 		nextSibling = document.getElementById(nextSibling.id)
-					// 	}
-					//
-					// 	// const foundImposter = document.getElementById(node.id)
-					// 	// if (foundImposter) {
-					// 	// 	console.log("I FOUND AN IMPOSTER! DIE YOU SCOUNDRAL!")
-					// 	// 	console.log(foundImposter.replaceWith(node.cloneNode(true)))
-					// 	// 	continue
-					// 	// }
-					// 	console.log(document.getElementById(node.id))
-					// 	console.log(ref.current.insertBefore(node.cloneNode(true), nextSibling))
-					// }
-					//
-					// // for (const removedNodes) {
-					// // 	// TODO
-					// // }
-
-				}
-			})
-			observer.observe(state.reactDOM, {
-				childList: true,  // Observe the element nodes.
-				// subtree: true, // Observe the nested element nodes.
-			})
-			return () => {
-				observer.disconnect()
-			}
-		}, [state]),
-		[],
-	)
+	//
+	// React.useLayoutEffect(
+	// 	React.useCallback(() => {
+	// 		const observer = new MutationObserver(mutations => {
+	// 			for (const mutation of mutations) {
+	// 				const { addedNodes, removedNodes, previousSibling, nextSibling } = mutation
+	// 				for (const node of addedNodes) {
+	//
+	// 					// Remove DOM-generated nodes:
+	// 					if (previousSibling) {
+	// 						const clientPreviousSibling = document.getElementById(previousSibling.id)
+	// 						const clientNode = clientPreviousSibling.nextSibling
+	// 						if (clientNode && clientPreviousSibling.id === clientNode.id) {
+	// 							clientNode.remove()
+	// 						}
+	// 					}
+	//
+	// 					let clientNextSibling = null
+	// 					if (nextSibling) {
+	// 						clientNextSibling = document.getElementById(nextSibling.id)
+	// 					}
+	// 					const newNode = node.cloneNode(true)
+	// 					ref.current.insertBefore(newNode, clientNextSibling)
+	//
+	// 				}
+	//
+	// 				for (const removedNode of removedNodes) {
+	// 					const clientNode = document.getElementById(removedNode.id)
+	// 					clientNode.remove()
+	// 				}
+	//
+	// 			}
+	// 		})
+	// 		observer.observe(state.reactDOM, {
+	// 			childList: true,  // Observe the element nodes.
+	// 			// subtree: true, // Observe the nested element nodes.
+	// 		})
+	// 		return () => {
+	// 			observer.disconnect()
+	// 		}
+	// 	}, [state]),
+	// 	[],
+	// )
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-				// if (!state.onRenderComponents) {
-				// 	ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-				// 	return
-				// }
-				// // Eagerly drop range (for performance reasons):
-				// //
-				// // https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
-				// const selection = document.getSelection()
-				// selection.removeAllRanges()
+				if (!state.onRenderComponents) {
+					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+					return
+				}
 				// const t1 = Date.now()
-				// ;[...ref.current.childNodes].map(each => each.remove())          // TODO
-				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+				;[...ref.current.childNodes].map(each => each.remove())          // TODO
+				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
 				// const t2 = Date.now()
 				// console.log(`dom=${t2 - t1}`)
-				// dispatch.renderCursor()
+				dispatch.renderCursor()
 			})
-		}, [state, dispatch]), // eslint-disable-line
+		}, [state, dispatch]),
 		[state.onRenderComponents],
 	)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			if (!state.onRenderCursor) {
+			if (!state.hasFocus) {
 				// (No-op)
 				return
 			}
 			const selection = document.getSelection()
-			// (Range eagerly dropped)
 			const range = document.caretRangeFromPoint(state.caretPoint.x, state.caretPoint.y)
 			if (!range) {
-				console.warn({ range }) // DELETEME
+				if (__DEV__) {
+					console.warn({ range })
+				}
 				return
 			}
+			selection.removeAllRanges()
 			selection.addRange(range)
 		}, [state]),
 		[state.onRenderCursor],
