@@ -507,10 +507,10 @@ function Editor(props) {
 						onInput: e => {
 							let { current: { startNode, currentNode, endNode, nodeMap, didExtendStart, didExtendEnd } } = targetRange
 
-							if (e.nativeEvent.inputType === "historyUndo") {
-								// (No-op)
-								return
-							}
+							// if (e.nativeEvent.inputType === "historyUndo") {
+							// 	// (No-op)
+							// 	return
+							// }
 
 							// Extend up to one node before:
 							if (!didExtendStart && startNode.previousSibling) { // XOR
@@ -546,27 +546,29 @@ function Editor(props) {
 
 							const caretPoint = getCaretPoint() // (Takes precedence)
 
-							document.execCommand("undo", false, null)
+							// document.execCommand("undo", false, null)
 
-							// if (fakeVDOMNode) {
-							// 	console.log(
-							// 		nodeMap[[fakeVDOMNode[0].id]] === fakeVDOMNode[0], didExtendStart,
-							// 		nodeMap[[fakeVDOMNode[1].id]] === fakeVDOMNode[1], didExtendEnd,
-							// 	)
-							// }
+							// console.log(nodes)
 
-							// if (fakeVDOMNode) {
-							// 	const [node1, node2] = fakeVDOMNode
-							// 	// I’m real! He’s the clone!
-							// 	if (nodeMap[node1.id] === node1) {
-							// 		// console.log("a")
-							// 		node2.remove()
-							// 	// No I’m real! He’s the clone!
-							// 	} else {
-							// 		// console.log("b")
-							// 		node1.remove()
-							// 	}
-							// }
+							if (fakeVDOMNode) {
+								console.log(
+									nodeMap[[fakeVDOMNode[0].id]] === fakeVDOMNode[0], Boolean(didExtendStart),
+									nodeMap[[fakeVDOMNode[1].id]] === fakeVDOMNode[1], Boolean(didExtendEnd),
+								)
+							}
+
+							if (fakeVDOMNode) {
+								const [node1, node2] = fakeVDOMNode
+								// I’m real! He’s the clone!
+								if (nodeMap[node1.id] === node1 || (didExtendStart && didExtendEnd)) { // !!!!!!!!!!!!!!!!!!!!!!!!
+									// console.log("a")
+									node2.remove()
+								// No I’m real! He’s the clone!
+								} else {
+									// console.log("b")
+									node1.remove()
+								}
+							}
 
 							dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
 						},
