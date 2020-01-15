@@ -55,7 +55,6 @@ const initialState = {
 	hasFocus: false,
 	caretPoint: null,
 	nodes: null,
-	// nodesMap: null,
 	data: "",
 	components: null,
 	reactDOM: null,
@@ -124,11 +123,6 @@ function newVDOMNodes(data) {
 		key: rand.newSevenByteHash(),
 		data: each,
 	}))
-	// const nodesMap = {}
-	// for (const each of nodes) {
-	// 	nodesMap[each.key] = each
-	// }
-	// return { nodes, nodesMap }
 	return nodes
 }
 
@@ -139,7 +133,6 @@ const init = initialValue => initialState => {
 		operation: OperationTypes.INIT,
 		operationUnix: Date.now(),
 		nodes,
-		// nodesMap,
 		data: initialValue,
 		components: parseComponents(nodes),
 		reactDOM: document.createElement("div"),
@@ -295,12 +288,12 @@ function getSortedVDOMRootNodes(rootNode) {
 function getTargetVDOMRootNodeRange(rootNode) {
 	let [startNode, endNode] = getSortedVDOMRootNodes(rootNode)
 	let extendStart = 0
-	while (extendStart < 1 && startNode.previousSibling) {
+	while (!extendStart && startNode.previousSibling) {
 		startNode = startNode.previousSibling
 		extendStart++
 	}
 	let extendEnd = 0
-	while (extendEnd < 2 && endNode.nextSibling) {
+	while (!extendEnd && endNode.nextSibling) { // EXPERIMENTAL -- was < 2
 		endNode = endNode.nextSibling
 		extendEnd++
 	}
@@ -314,7 +307,7 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
+	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, world!\n\nHello, world!"))
 
 	const selectionchange = React.useRef()
 	const target = React.useRef()
@@ -446,10 +439,6 @@ function Editor(props) {
 							target.current = getTargetVDOMRootNodeRange(ref.current)
 						},
 
-						// const { anchorNode } = document.getSelection()
-						// const key = getVDOMRootNode(ref.current, anchorNode).id
-						// console.log(current, range, key)
-
 						onInput: e => {
 							let { current: { startNode, endNode, extendStart, extendEnd } } = target
 
@@ -485,6 +474,9 @@ function Editor(props) {
 							// caretPoint appears to be unstable. Instead,
 							// we can get the VDOM node and offset to
 							// create a range.
+							//
+							// Update: getCaretPoint appears to return
+							// null when out of bounds (window bounds).
 
 							const caretPoint = getCaretPoint()
 							dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
