@@ -87,14 +87,14 @@ const OperationTypes = new Enum(
 	"SELECT",
 	"FOCUS",
 	"BLUR",
-	"INPUT",
-	"TAB",
-	"ENTER",
+	"INPUT", // TODO: document.execCommand?
+	"TAB",   // TODO: document.execCommand?
+	"ENTER", // TODO: document.execCommand?
 	"BACKSPACE",
-	"BACKSPACE_WORD",
-	"BACKSPACE_LINE",
+	// "BACKSPACE_WORD",
+	// "BACKSPACE_LINE",
 	"DELETE",
-	"DELETE_WORD",
+	// "DELETE_WORD",
 	"CUT",
 	"COPY",
 	"PASTE",
@@ -106,14 +106,19 @@ const initialState = {
 	operation: "",
 	operationUnix: 0,
 	hasFocus: false,
-	caretPoint: null,
+	caretPoint: null, // TODO
 	nodes: null,
-	data: "",
 	components: null,
 	reactDOM: null,
 	onRenderComponents: 0,
 	onRenderCursor: 0,
 }
+
+// In theory, we only need to support backspace and delete
+// -- we should be able to ignore all other modifier
+// versions because we (will) defer to native browser
+// behavior except when on an empty node, then we commit a
+// backspace or delete regardless of user input.
 
 const reducer = state => ({
 	commitOperation(operation) {
@@ -144,7 +149,7 @@ const reducer = state => ({
 		const seenKeys = {}
 		for (const node of nodes) {
 			if (seenKeys[node.key]) {
-				node.key = rand.newUUID()
+				node.key = rand.newUUID().slice(0, 8)
 			}
 			seenKeys[node.key] = true
 		}
@@ -153,7 +158,6 @@ const reducer = state => ({
 		const x2 = state.nodes.findIndex(each => each.key === endKey)
 		state.nodes.splice(x1, x2 - x1 + 1, ...nodes)
 
-		state.data = state.nodes.map(each => each.data).join("\n")
 		this.renderComponents()
 	},
 
@@ -173,7 +177,7 @@ const reducer = state => ({
 // newVDOMNodes parses a new VDOM nodes array and map.
 function newVDOMNodes(data) {
 	const nodes = data.split("\n").map(each => ({
-		key: rand.newUUID(),
+		key: rand.newUUID().slice(0, 8),
 		data: each,
 	}))
 	return nodes
@@ -186,7 +190,6 @@ const init = initialValue => initialState => {
 		operation: OperationTypes.INIT,
 		operationUnix: Date.now(),
 		nodes,
-		data: initialValue,
 		components: parseComponents(nodes),
 		reactDOM: document.createElement("div"),
 	}
@@ -342,7 +345,7 @@ function getSortedVDOMRootNodes(rootNode) {
 			}
 		}
 		if (__DEV__) {
-			// (Unreachable code)
+			// Supposed to be unreachable code:
 			invariant(
 				false,
 				"FIXME",
@@ -363,7 +366,7 @@ function getTargetVDOMRootNodeRange(rootNode) {
 		extendStart++
 	}
 	let extendEnd = 0
-	while (!extendEnd && endNode.nextSibling) { // EXPERIMENTAL -- was < 2
+	while (!extendEnd && endNode.nextSibling) {
 		endNode = endNode.nextSibling
 		extendEnd++
 	}
@@ -374,111 +377,56 @@ function EditorContents(props) {
 	return props.components
 }
 
-// React.useLayoutEffect(
-// 	React.useCallback(() => {
-// 		const observer = new MutationObserver(mutations => {
-// 			for (const { addedNodes, removedNodes, previousSibling, nextSibling } of mutations) { // eslint-disable-line
-// 				if (addedNodes.length) {
-// 					for (const addedNode of addedNodes) {
-// 						console.log({ ref: ref.current, addedNode: addedNode.cloneNode(true), nextSibling })
-// 						ref.current.insertBefore(addedNode.cloneNode(true), nextSibling)
-// 					}
-// 				} else if (removedNodes.length) { // XOR?
-// 					// for (const removedNode of removedNodes) {
-// 					// 	// ...
-// 					// }
-// 				}
-// 			}
-// 			// console.log(mutations)
-// 		})
-// 		observer.observe(state.reactDOM, { childList: true })
-// 		return () => {
-// 			observer.disconnect()
-// 		}
-// 	}, [state]),
-// 	[],
-// )
+// https://github.com/facebook/react/issues/11538#issuecomment-417504600
+;(function() {
+	if (typeof Node === "function" && Node.prototype) {
+		const originalRemoveChild = Node.prototype.removeChild
+		Node.prototype.removeChild = function(child) {
+			if (child.parentNode !== this) {
+				if (console) {
+					console.error("Cannot remove a child from a different parent", child, this)
+				}
+				return child
+			}
+			return originalRemoveChild.apply(this, arguments)
+		}
+
+		const originalInsertBefore = Node.prototype.insertBefore
+		Node.prototype.insertBefore = function(newNode, referenceNode) {
+			if (referenceNode && referenceNode.parentNode !== this) {
+				if (console) {
+					console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
+				}
+				return newNode
+			}
+			return originalInsertBefore.apply(this, arguments)
+		}
+	}
+})()
 
 function Editor(props) {
 	const ref = React.useRef()
 
-	// const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, world!"))
 	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
 	const target = React.useRef()
 
-	// for (const addedNode of addedNodes) {
-	// 	let node = getVDOMNode(state.reactDOM, addedNode)
-	// 	// Guard compound component (end):
-	// 	if (!node.nextSibling && node.parentNode !== state.reactDOM) {
-	// 		node = getVDOMRootNode(state.reactDOM, node) // node = node.parentNode
-	// 	}
-	// 	let { nextSibling } = node
-	// 	if (nextSibling) {
-	// 		nextSibling = document.getElementById(nextSibling.id)
-	// 	}
-	// 	const newNode = node.cloneNode(true)
-	// 	console.log(ref.current.insertBefore(newNode, nextSibling))
-	// }
-	//
-	// React.useLayoutEffect(
-	// 	React.useCallback(() => {
-	// 		const observer = new MutationObserver(mutations => {
-	// 			for (const mutation of mutations) {
-	// 				const { addedNodes, removedNodes, previousSibling, nextSibling } = mutation
-	// 				for (const node of addedNodes) {
-	//
-	// 					// Remove DOM-generated nodes:
-	// 					if (previousSibling) {
-	// 						const clientPreviousSibling = document.getElementById(previousSibling.id)
-	// 						const clientNode = clientPreviousSibling.nextSibling
-	// 						if (clientNode && clientPreviousSibling.id === clientNode.id) {
-	// 							clientNode.remove()
-	// 						}
-	// 					}
-	//
-	// 					let clientNextSibling = null
-	// 					if (nextSibling) {
-	// 						clientNextSibling = document.getElementById(nextSibling.id)
-	// 					}
-	// 					const newNode = node.cloneNode(true)
-	// 					ref.current.insertBefore(newNode, clientNextSibling)
-	//
-	// 				}
-	//
-	// 				for (const removedNode of removedNodes) {
-	// 					const clientNode = document.getElementById(removedNode.id)
-	// 					clientNode.remove()
-	// 				}
-	//
-	// 			}
-	// 		})
-	// 		observer.observe(state.reactDOM, {
-	// 			childList: true,  // Observe the element nodes.
-	// 			// subtree: true, // Observe the nested element nodes.
-	// 		})
-	// 		return () => {
-	// 			observer.disconnect()
-	// 		}
-	// 	}, [state]),
-	// 	[],
-	// )
-
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-				if (!state.onRenderComponents) {
-					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-					return
-				}
-				// const t1 = Date.now()
-				;[...ref.current.childNodes].map(each => each.remove())          // TODO
-				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
-				// const t2 = Date.now()
-				// console.log(`dom=${t2 - t1}`)
-				dispatch.renderCursor()
-			})
+			// ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
+			// 	if (!state.onRenderComponents) {
+			// 		ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+			// 		return
+			// 	}
+			// 	// const t1 = Date.now()
+			// 	;[...ref.current.childNodes].map(each => each.remove())          // TODO
+			// 	ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+			// 	// const t2 = Date.now()
+			// 	// console.log(`dom=${t2 - t1}`)
+			// 	dispatch.renderCursor()
+			// })
+			dispatch.renderCursor()
 		}, [state, dispatch]),
 		[state.onRenderComponents],
 	)
@@ -526,6 +474,7 @@ function Editor(props) {
 				const caretPoint = getCaretPoint()
 				dispatch.commitSelect(caretPoint)
 				target.current = getTargetVDOMRootNodeRange(ref.current)
+				target.current.anchorOffset = anchorOffset
 			}
 			document.addEventListener("selectionchange", handler)
 			return () => {
@@ -551,16 +500,17 @@ function Editor(props) {
 						onBlur:  dispatch.commitBlur,
 
 						onKeyDown: e => {
-							const { anchorNode, focusNode } = document.getSelection()
+							const { anchorNode, anchorOffset, focusNode } = document.getSelection()
 							if (!anchorNode || !focusNode || !isChildOf(ref.current, anchorNode) || !isChildOf(ref.current, focusNode)) {
 								// (No-op)
 								return
 							}
 							target.current = getTargetVDOMRootNodeRange(ref.current)
+							target.current.anchorOffset = anchorOffset
 						},
 
 						onInput: e => {
-							let { current: { startNode, endNode, extendStart, extendEnd } } = target
+							let { current: { startNode, endNode, extendStart, extendEnd, anchorOffset } } = target
 
 							// Guard up to one paragraph before and after
 							// the start and end nodes:
@@ -573,25 +523,47 @@ function Editor(props) {
 							// Simple fix for compound components: if a
 							// node has multiple child nodes (element
 							// nodes) a node can be assumed to be a
-							// compound components.
+							// compound component.
 							//
 							// This means we have two special rules --
 							// empty nodes, e.g. <div>, *are* considered
 							// VDOM nodes, and nodes with multiple
-							// children element nodes, e.g. isVDOMNode,
-							// are compound components.
+							// children elements, e.g. isVDOMNode, are
+							// compound components.
+
+							// TODO: Add support for isCollasped.
+
+							const seenNodes = {}
+							const removeNodes = []
+
+							// const removeNodes = []
 
 							const nodes = []
 							let node = startNode
 							while (node) {
-								nodes.push({ key: node.id, data: innerText(node) })
+								nodes.push({ key: rand.newUUID().slice(0, 8), data: innerText(node) })
+
+								if (seenNodes[node.id]) {
+									removeNodes.push(seenNodes[node.id], node)
+								}
+								seenNodes[node.id] = node
+
 								if (node === endNode) {
 									break
 								}
 								node = node.nextSibling
 							}
 
-							// NOTE: caretPoint can be unstable.
+							if (removeNodes.length) {
+								if (!anchorOffset) {
+									console.log("a")
+									removeNodes[0].remove()
+								} else {
+									console.log("b")
+									removeNodes[1].remove()
+								}
+							}
+
 							const caretPoint = getCaretPoint()
 							dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
 						},
@@ -602,6 +574,7 @@ function Editor(props) {
 						onDrag:  e => e.preventDefault(),
 						onDrop:  e => e.preventDefault(),
 					},
+					state.components,
 				)}
 				{props.debug && (
 					<React.Fragment>
@@ -610,6 +583,8 @@ function Editor(props) {
 							{JSON.stringify(
 								{
 									...state,
+
+									data: state.nodes.map(each => each.data).join("\n"),
 
 									components: undefined,
 									reactDOM:   undefined,
