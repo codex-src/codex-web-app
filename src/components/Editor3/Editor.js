@@ -334,39 +334,24 @@ function getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode) {
 // getTargetRange gets the target range of VDOM root nodes.
 function getTargetRange(rootNode, anchorNode, focusNode) {
 	let [startNode, endNode] = getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode)
+	const currentNode = startNode
 	// Get the start node:
 	const nodeMap = { [startNode.id]: startNode }
 	let didExtendStart = 0
 	if (startNode.previousSibling) {
 		startNode = startNode.previousSibling
 		nodeMap[startNode.id] = startNode
-		didExtendStart = true
+		didExtendStart++
 	}
 	// Get the end node:
 	let didExtendEnd = 0
-	if (endNode.nextSibling) {
+	while (didExtendEnd <= 1 && endNode.nextSibling) {
 		endNode = endNode.nextSibling
 		nodeMap[endNode.id] = endNode
-		didExtendEnd = true
+		didExtendEnd++
 	}
-	return { startNode, endNode, nodeMap, didExtendStart, didExtendEnd }
+	return { startNode, currentNode, endNode, nodeMap, didExtendStart, didExtendEnd }
 }
-
-// // getTargetRange gets the target range of VDOM root nodes.
-// function getTargetRange(rootNode, anchorNode, focusNode) {
-// 	const targetNodes = []
-// 	let [startNode, endNode] = getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode)
-// 	targetNodes.push(startNode)
-// 	if (startNode.previousSibling) {
-// 		startNode = startNode.previousSibling
-// 		targetNodes.unshift(startNode)
-// 	}
-// 	if (endNode.nextSibling) {
-// 		endNode = endNode.nextSibling
-// 		targetNodes.push(endNode)
-// 	}
-// 	return { targetNodes, startNode, endNode }
-// }
 
 function EditorContents(props) {
 	return props.components
@@ -378,9 +363,9 @@ function EditorContents(props) {
 		const originalRemoveChild = Node.prototype.removeChild
 		Node.prototype.removeChild = function(child) {
 			if (child.parentNode !== this) {
-				if (__DEV__) {
-					console.error("Dan Abramov: Cannot remove a child from a different parent", child, this)
-				}
+				// if (__DEV__) {
+				// 	console.error("Cannot remove a child from a different parent", child, this)
+				// }
 				return child
 			}
 			return originalRemoveChild.apply(this, arguments)
@@ -389,9 +374,9 @@ function EditorContents(props) {
 		const originalInsertBefore = Node.prototype.insertBefore
 		Node.prototype.insertBefore = function(newNode, referenceNode) {
 			if (referenceNode && referenceNode.parentNode !== this) {
-				if (__DEV__) {
-					console.error("Dan Abramov: Cannot insert before a reference node from a different parent", referenceNode, this)
-				}
+				// if (__DEV__) {
+				// 	console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
+				// }
 				return newNode
 			}
 			return originalInsertBefore.apply(this, arguments)
@@ -402,13 +387,17 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
+	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
+	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\n\n\nHello, world!\nHello, world!\nHello, world!"))
 
 	const selectionchange = React.useRef()
 	const targetRange = React.useRef()
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
+			const selection = document.getSelection()
+			selection.removeAllRanges()
+
 			// ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
 			// 	if (!state.onRenderComponents) {
 			// 		ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
@@ -440,7 +429,7 @@ function Editor(props) {
 				}
 				return
 			}
-			selection.removeAllRanges()
+			// (Range eagerly dropped)
 			selection.addRange(range)
 		}, [state]),
 		[state.onRenderCursor],
@@ -516,27 +505,37 @@ function Editor(props) {
 						// }
 
 						onInput: e => {
-							let { current: { startNode, endNode, nodeMap, didExtendStart, didExtendEnd } } = targetRange
+							let { current: { startNode, currentNode, endNode, nodeMap, didExtendStart, didExtendEnd } } = targetRange
+
+							if (e.nativeEvent.inputType === "historyUndo") {
+								// (No-op)
+								return
+							}
 
 							// Extend up to one node before:
-							if (!didExtendStart && startNode.previousSibling) {
+							if (!didExtendStart && startNode.previousSibling) { // XOR
 								startNode = startNode.previousSibling
 								nodeMap[startNode.id] = startNode
+								didExtendStart++
 							// Extend up to one node after:
 							} else if (!didExtendEnd && endNode.nextSibling) {
 								endNode = endNode.nextSibling
 								nodeMap[endNode.id] = endNode
+								didExtendEnd++
 							}
 
 							const seenNodes = {}
 							let fakeVDOMNode = null
 
-							const nodes = []
-							let node = startNode
+							const nodes = [{ key: startNode.id, data: innerText(startNode) }]
+							seenNodes[startNode.id] = startNode
+
+							let node = startNode.nextSibling
 							while (node) {
-								nodes.push({ key: rand.newUUID(), data: innerText(node) })
+								const key = node !== currentNode ? node.id : rand.newUUID()
+								nodes.push({ key, data: innerText(node) })
 								if (seenNodes[node.id]) {
-									fakeVDOMNode = [node, seenNodes[node.id]]
+									fakeVDOMNode = [seenNodes[node.id], node]
 								}
 								seenNodes[node.id] = node
 								if (node === endNode) {
@@ -547,16 +546,27 @@ function Editor(props) {
 
 							const caretPoint = getCaretPoint() // (Takes precedence)
 
-							if (fakeVDOMNode) {
-								const [a, b] = fakeVDOMNode
-								// I’m real! He’s the clone!
-								if (nodeMap[a.id] === a) {
-									b.replaceWith(a)
-								// No I’m real! He’s the clone!
-								} else if (nodeMap[a.id] === b) {
-									a.replaceWith(b)
-								}
-							}
+							document.execCommand("undo", false, null)
+
+							// if (fakeVDOMNode) {
+							// 	console.log(
+							// 		nodeMap[[fakeVDOMNode[0].id]] === fakeVDOMNode[0], didExtendStart,
+							// 		nodeMap[[fakeVDOMNode[1].id]] === fakeVDOMNode[1], didExtendEnd,
+							// 	)
+							// }
+
+							// if (fakeVDOMNode) {
+							// 	const [node1, node2] = fakeVDOMNode
+							// 	// I’m real! He’s the clone!
+							// 	if (nodeMap[node1.id] === node1) {
+							// 		// console.log("a")
+							// 		node2.remove()
+							// 	// No I’m real! He’s the clone!
+							// 	} else {
+							// 		// console.log("b")
+							// 		node1.remove()
+							// 	}
+							// }
 
 							dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
 						},
