@@ -1,11 +1,12 @@
 import DebugCSS from "components/DebugCSS"
-import Enum from "lib/Enum"
+import Enum from "utils/Enum"
 import invariant from "invariant"
-import rand from "lib/random/id"
+import rand from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
-import RenderDOM from "lib/RenderDOM"
+import RenderDOM from "utils/RenderDOM"
 import stylex from "stylex"
+import syncViews from "./syncViews"
 import useMethods from "use-methods"
 
 import "./Editor.css"
@@ -34,23 +35,23 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-const Header = ({ reactKey, ...props }) => (
-	<div id={reactKey} style={stylex.parse("fw:700 fs:19")} data-vdom-node>
+const Header = React.memo(({ reactKey, ...props }) => (
+	<div id={reactKey} style={stylex.parse("fw:700 fs:19")} data-vdom-node data-vdom-memo={Date.now()}>
 		<Markdown startSyntax={props.startSyntax}>
 			{props.children || (
 				<br />
 			)}
 		</Markdown>
 	</div>
-)
+))
 
-const Paragraph = ({ reactKey, ...props }) => (
-	<div id={reactKey} style={stylex.parse("fs:19")} data-vdom-node>
+const Paragraph = React.memo(({ reactKey, ...props }) => (
+	<div id={reactKey} style={stylex.parse("fs:19")} data-vdom-node data-vdom-memo={Date.now()}>
 		{props.children || (
 			<br />
 		)}
 	</div>
-)
+))
 
 function parseComponents(nodes) {
 	const Components = []
@@ -353,55 +354,59 @@ function EditorContents(props) {
 	return props.components
 }
 
-// https://github.com/facebook/react/issues/11538#issuecomment-417504600
-;(function() {
-	if (typeof Node === "function" && Node.prototype) {
-		const originalRemoveChild = Node.prototype.removeChild
-		Node.prototype.removeChild = function(child) {
-			if (child.parentNode !== this) {
-				// if (__DEV__) {
-				// 	console.error("Cannot remove a child from a different parent", child, this)
-				// }
-				return child
-			}
-			return originalRemoveChild.apply(this, arguments)
-		}
-
-		const originalInsertBefore = Node.prototype.insertBefore
-		Node.prototype.insertBefore = function(newNode, referenceNode) {
-			if (referenceNode && referenceNode.parentNode !== this) {
-				// if (__DEV__) {
-				// 	console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
-				// }
-				return newNode
-			}
-			return originalInsertBefore.apply(this, arguments)
-		}
-	}
-})()
+// // https://github.com/facebook/react/issues/11538#issuecomment-417504600
+// ;(function() {
+// 	if (typeof Node === "function" && Node.prototype) {
+// 		const originalRemoveChild = Node.prototype.removeChild
+// 		Node.prototype.removeChild = function(child) {
+// 			if (child.parentNode !== this) {
+// 				// if (__DEV__) {
+// 				// 	console.error("Cannot remove a child from a different parent", child, this)
+// 				// }
+// 				return child
+// 			}
+// 			return originalRemoveChild.apply(this, arguments)
+// 		}
+//
+// 		const originalInsertBefore = Node.prototype.insertBefore
+// 		Node.prototype.insertBefore = function(newNode, referenceNode) {
+// 			if (referenceNode && referenceNode.parentNode !== this) {
+// 				// if (__DEV__) {
+// 				// 	console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
+// 				// }
+// 				return newNode
+// 			}
+// 			return originalInsertBefore.apply(this, arguments)
+// 		}
+// 	}
+// })()
 
 function Editor(props) {
 	const ref = React.useRef()
 
-	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
-	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\n\n\nHello, world!\nHello, world!\nHello, world!"))
+	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
+	// const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\n\n\nHello, world!\nHello, world!\nHello, world!"))
 
 	const selectionchange = React.useRef()
 	const targetRange = React.useRef()
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			console.log(state.components)
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
 				if (!state.onRenderComponents) {
-					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+					syncViews(ref.current, state.reactDOM, "data-vdom-memo")
+					// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 					return
 				}
 				// Eagerly drop range:
 				const selection = document.getSelection()
 				selection.removeAllRanges()
-				;[...ref.current.childNodes].map(each => each.remove())          // TODO
-				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+
+				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
+
+				// ;[...ref.current.childNodes].map(each => each.remove())          // TODO
+				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+
 				dispatch.renderCursor()
 			})
 			dispatch.renderCursor()
