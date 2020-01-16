@@ -10,7 +10,7 @@ import useMethods from "use-methods"
 
 import "./Editor.css"
 
-const __DEV__ = process.env.NODE_ENV === "development"
+const __DEV__ = process.env.NODE_ENV !== "production"
 
 const Syntax = stylex.Styleable(props => (
 	<span style={stylex.parse("pre c:blue-a400")}>
@@ -334,23 +334,19 @@ function getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode) {
 // getTargetRange gets the target range of VDOM root nodes.
 function getTargetRange(rootNode, anchorNode, focusNode) {
 	let [startNode, endNode] = getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode)
-	const currentNode = startNode
 	// Get the start node:
-	const nodeMap = { [startNode.id]: startNode }
-	let didExtendStart = 0
-	if (startNode.previousSibling) {
+	let extendStart = 0
+	while (extendStart < 1 && startNode.previousSibling) {
 		startNode = startNode.previousSibling
-		nodeMap[startNode.id] = startNode
-		didExtendStart++
+		extendStart++
 	}
 	// Get the end node:
-	let didExtendEnd = 0
-	while (didExtendEnd <= 1 && endNode.nextSibling) {
+	let extendEnd = 0
+	while (extendEnd < 2 && endNode.nextSibling) {
 		endNode = endNode.nextSibling
-		nodeMap[endNode.id] = endNode
-		didExtendEnd++
+		extendEnd++
 	}
-	return { startNode, currentNode, endNode, nodeMap, didExtendStart, didExtendEnd }
+	return { startNode, endNode, extendStart, extendEnd }
 }
 
 function EditorContents(props) {
@@ -395,23 +391,21 @@ function Editor(props) {
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const selection = document.getSelection()
-			selection.removeAllRanges()
-
-			// ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-			// 	if (!state.onRenderComponents) {
-			// 		ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-			// 		return
-			// 	}
-			// 	// const t1 = Date.now()
-			// 	;[...ref.current.childNodes].map(each => each.remove())          // TODO
-			// 	ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
-			// 	// const t2 = Date.now()
-			// 	// console.log(`dom=${t2 - t1}`)
-			// 	dispatch.renderCursor()
-			// })
+			console.log(state.components)
+			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
+				if (!state.onRenderComponents) {
+					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+					return
+				}
+				// Eagerly drop range:
+				const selection = document.getSelection()
+				selection.removeAllRanges()
+				;[...ref.current.childNodes].map(each => each.remove())          // TODO
+				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+				dispatch.renderCursor()
+			})
 			dispatch.renderCursor()
-		}, [dispatch]),
+		}, [state, dispatch]),
 		[state.onRenderComponents],
 	)
 
@@ -424,10 +418,7 @@ function Editor(props) {
 			const selection = document.getSelection()
 			const range = document.caretRangeFromPoint(state.caretPoint.x, state.caretPoint.y)
 			if (!range) {
-				if (__DEV__) {
-					console.warn({ range })
-				}
-				return
+				console.warn({ range })
 			}
 			// (Range eagerly dropped)
 			selection.addRange(range)
@@ -491,85 +482,30 @@ function Editor(props) {
 							targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
 						},
 
-						// let extendStart = 0
-						// while (!extendStart && startNode.previousSibling) {
-						// 	startNode = startNode.previousSibling
-						// 	targetNodes.unshift(startNode)
-						// 	extendStart++
-						// }
-						// let extendEnd = 0
-						// while (!extendEnd && endNode.nextSibling) {
-						// 	endNode = endNode.nextSibling
-						// 	targetNodes.push(endNode)
-						// 	extendEnd++
-						// }
-
 						onInput: e => {
-							let { current: { startNode, currentNode, endNode, nodeMap, didExtendStart, didExtendEnd } } = targetRange
+							let { current: { startNode, endNode, extendStart, extendEnd } } = targetRange
 
-							// if (e.nativeEvent.inputType === "historyUndo") {
-							// 	// (No-op)
-							// 	return
-							// }
-
-							// Extend up to one node before:
-							if (!didExtendStart && startNode.previousSibling) { // XOR
+							// Extend up to one more node before:
+							if (!extendStart && startNode.previousSibling) {
 								startNode = startNode.previousSibling
-								nodeMap[startNode.id] = startNode
-								didExtendStart++
-							// Extend up to one node after:
-							} else if (!didExtendEnd && endNode.nextSibling) {
+								extendStart++
+							// Extend up to one more node after:
+							} else if (!extendEnd && endNode.nextSibling) {
 								endNode = endNode.nextSibling
-								nodeMap[endNode.id] = endNode
-								didExtendEnd++
+								extendEnd++
 							}
 
-							const seenNodes = {}
-							let fakeVDOMNode = null
-
 							const nodes = [{ key: startNode.id, data: innerText(startNode) }]
-							seenNodes[startNode.id] = startNode
-
 							let node = startNode.nextSibling
 							while (node) {
-								const key = node !== currentNode ? node.id : rand.newUUID()
-								nodes.push({ key, data: innerText(node) })
-								if (seenNodes[node.id]) {
-									fakeVDOMNode = [seenNodes[node.id], node]
-								}
-								seenNodes[node.id] = node
+								nodes.push({ key: node.id, data: innerText(node) })
 								if (node === endNode) {
 									break
 								}
 								node = node.nextSibling
 							}
 
-							const caretPoint = getCaretPoint() // (Takes precedence)
-
-							// document.execCommand("undo", false, null)
-
-							// console.log(nodes)
-
-							if (fakeVDOMNode) {
-								console.log(
-									nodeMap[[fakeVDOMNode[0].id]] === fakeVDOMNode[0], Boolean(didExtendStart),
-									nodeMap[[fakeVDOMNode[1].id]] === fakeVDOMNode[1], Boolean(didExtendEnd),
-								)
-							}
-
-							if (fakeVDOMNode) {
-								const [node1, node2] = fakeVDOMNode
-								// I’m real! He’s the clone!
-								if (nodeMap[node1.id] === node1 || (didExtendStart && didExtendEnd)) { // !!!!!!!!!!!!!!!!!!!!!!!!
-									// console.log("a")
-									node2.remove()
-								// No I’m real! He’s the clone!
-								} else {
-									// console.log("b")
-									node1.remove()
-								}
-							}
-
+							const caretPoint = getCaretPoint()
 							dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
 						},
 
@@ -579,7 +515,6 @@ function Editor(props) {
 						onDrag:  e => e.preventDefault(),
 						onDrop:  e => e.preventDefault(),
 					},
-					state.components,
 				)}
 				{props.debug && (
 					<React.Fragment>

@@ -1,6 +1,6 @@
 import * as Router from "react-router-dom"
 import React from "react"
-import RenderDOM from "lib/RenderDOM"
+import RenderDOM from "utils/RenderDOM"
 import RouterLink from "../RouterLink"
 
 test("none", () => {
