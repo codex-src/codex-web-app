@@ -107,7 +107,7 @@ const initialState = {
 	operation: "",
 	operationTimestamp: 0,
 	hasFocus: false,
-	caretPoint: null, // TODO
+	caretDOMRect: null,
 	nodes: null,
 	components: null,
 	reactDOM: null,
@@ -135,13 +135,13 @@ const reducer = state => ({
 		this.commitOperation(OperationTypes.BLUR)
 		state.hasFocus = false
 	},
-	commitSelect(caretPoint) {
+	commitSelect(caretDOMRect) {
 		if (state.operation === OperationTypes.SELECT && Date.now() - state.operationTimestamp < 100) {
 			// (No-op)
 			return
 		}
 		this.commitOperation(OperationTypes.SELECT)
-		state.caretPoint = caretPoint
+		state.caretDOMRect = caretDOMRect
 	},
 	commitInput(startKey, endKey, nodes) {
 		this.commitOperation(OperationTypes.INPUT)
@@ -312,14 +312,14 @@ function getCaretDOMRectFromSelection(selection) {
 		)
 	}
 	const range = selection.getRangeAt(0)
-	let rect = null
-	if ((rect = range.getClientRects()[0])) {
-		return rect
-	// } else if ((rect = range.getBoundingClientRect())) {
-	// 	return rect
+	let caret = null
+	if ((caret = range.getClientRects()[0])) {
+		return caret
+	// } else if ((caret = range.getBoundingClientRect())) {
+	// 	return caret
 	// }
-	} else if ((rect = selection.anchorNode.getBoundingClientRect())) {
-		return rect
+	} else if ((caret = selection.anchorNode.getBoundingClientRect())) {
+		return caret
 	}
 	return null
 }
@@ -340,8 +340,9 @@ function getVDOMRootNode(rootNode, node) {
 	return node
 }
 
-// getAndSortVDOMRootNodes gets and sorts VDOM root nodes.
-function getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode) {
+// getSortedStartAndEndNodes gets the sorted start and end
+// nodes (VDOM root nodes).
+function getSortedStartAndEndNodes(rootNode, anchorNode, focusNode) {
 	if (anchorNode !== focusNode) {
 		const node1 = getVDOMRootNode(rootNode, anchorNode)
 		const node2 = getVDOMRootNode(rootNode, focusNode)
@@ -352,28 +353,21 @@ function getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode) {
 				return [node2, node1]
 			}
 		}
-		// (Unreachable code)
-		if (__DEV__) {
-			invariant(
-				false,
-				"FIXME",
-			)
-		}
 	}
 	const node = getVDOMRootNode(rootNode, anchorNode)
 	return [node, node]
 }
 
-// getTargetRange gets the target range of VDOM root nodes.
+// getTargetRange gets a target range.
 function getTargetRange(rootNode, anchorNode, focusNode) {
-	let [startNode, endNode] = getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode)
-	// Get the start node:
+	let [startNode, endNode] = getSortedStartAndEndNodes(rootNode, anchorNode, focusNode)
+	// Extend the start node:
 	let extendStart = 0
 	while (extendStart < 1 && startNode.previousSibling) {
 		startNode = startNode.previousSibling
 		extendStart++
 	}
-	// Get the end node:
+	// Extend the end node:
 	let extendEnd = 0
 	while (extendEnd < 2 && endNode.nextSibling) {
 		endNode = endNode.nextSibling
@@ -381,6 +375,24 @@ function getTargetRange(rootNode, anchorNode, focusNode) {
 	}
 	return { startNode, endNode, extendStart, extendEnd }
 }
+
+// // getTargetRange gets the target range of VDOM root nodes.
+// function getTargetRange(rootNode, anchorNode, focusNode) {
+// 	let [startNode, endNode] = getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode)
+// 	// Get the start node:
+// 	let extendStart = 0
+// 	while (extendStart < 1 && startNode.previousSibling) {
+// 		startNode = startNode.previousSibling
+// 		extendStart++
+// 	}
+// 	// Get the end node:
+// 	let extendEnd = 0
+// 	while (extendEnd < 2 && endNode.nextSibling) {
+// 		endNode = endNode.nextSibling
+// 		extendEnd++
+// 	}
+// 	return { startNode, endNode, extendStart, extendEnd }
+// }
 
 function EditorContents(props) {
 	return props.components
@@ -397,39 +409,9 @@ function Editor(props) {
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-				if (!state.onRenderComponents) {
-					syncViews(ref.current, state.reactDOM, "data-vdom-memo")
-					return
-				}
-				const selection = document.getSelection()
-				let { x, y, height } = getCaretDOMRectFromSelection(selection)
-				console.log(y)
-				if (y < 0) {
-					window.scrollBy(0, y)
-					y = 0 // (Reset)
-				} else if (y + height > window.innerHeight) {
-					window.scrollBy(0, y + height - window.innerHeight)
-					y = window.innerHeight - height // (Reset)
-				}
-				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
-				const range = document.caretRangeFromPoint(x, y)
-				// console.log(x, y, range)
-				if (!isChildOf(ref.current, range.startContainer)) {
-					// (No-op)
-					return
-				}
-				selection.removeAllRanges()
-				selection.addRange(range)
-			})
-		}, [state]),
-		[state.onRenderComponents],
-	)
-
-	React.useLayoutEffect(
-		React.useCallback(() => {
 			const handler = () => {
-				const { anchorNode, anchorOffset, focusNode, focusOffset } = document.getSelection()
+				const selection = document.getSelection()
+				const { anchorNode, anchorOffset, focusNode, focusOffset } = selection
 				if (!anchorNode || !focusNode || !isChildOf(ref.current, anchorNode) || !isChildOf(ref.current, focusNode)) {
 					// (No-op)
 					return
@@ -446,8 +428,11 @@ function Editor(props) {
 					return
 				}
 				selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
-				const caretPoint = getCaretPoint()
-				dispatch.commitSelect(caretPoint)
+				const caret = getCaretDOMRectFromSelection(selection)
+				dispatch.commitSelect(caret)
+				// NOTE: selectionchange does not always fire when
+				// expected; onKeyDown also sets the target range as
+				// a backup.
 				targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
 			}
 			document.addEventListener("selectionchange", handler)
@@ -456,6 +441,35 @@ function Editor(props) {
 			}
 		}, [dispatch]),
 		[],
+	)
+
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
+				if (!state.onRenderComponents) {
+					syncViews(ref.current, state.reactDOM, "data-vdom-memo")
+					return
+				}
+				const selection = document.getSelection()
+				let { x, y, height } = getCaretDOMRectFromSelection(selection) // state.caretDOMRect?
+				if (y < 0) {
+					window.scrollBy(0, y)
+					y = 0 // (Reset)
+				} else if (y + height > window.innerHeight) {
+					window.scrollBy(0, y + height - window.innerHeight)
+					y = window.innerHeight - height // (Reset)
+				}
+				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
+				const range = document.caretRangeFromPoint(x, y)
+				if (!isChildOf(ref.current, range.startContainer)) {
+					// (No-op)
+					return
+				}
+				selection.removeAllRanges()
+				selection.addRange(range)
+			})
+		}, [state]),
+		[state.onRenderComponents],
 	)
 
 	return (
@@ -509,8 +523,8 @@ function Editor(props) {
 							node = node.nextSibling
 						}
 
-						const caretPoint = getCaretPoint()
-						dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
+						const caretDOMRect = getCaretPoint()
+						dispatch.commitInput(startNode.id, endNode.id, nodes, caretDOMRect)
 						},
 
 						onCut:   e => e.preventDefault(),
