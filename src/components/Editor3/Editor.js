@@ -1,6 +1,7 @@
+// import invariant from "invariant"
 import DebugCSS from "components/DebugCSS"
 import Enum from "utils/Enum"
-import invariant from "invariant"
+import onKeyDown from "./onKeyDown"
 import rand from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
@@ -11,7 +12,7 @@ import useMethods from "use-methods"
 
 import "./Editor.css"
 
-const __DEV__ = process.env.NODE_ENV !== "production"
+// const __DEV__ = process.env.NODE_ENV !== "production"
 
 const Syntax = stylex.Styleable(props => (
 	<span style={stylex.parse("pre c:blue-a400")}>
@@ -35,8 +36,17 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-const Header = React.memo(({ reactKey, ...props }) => (
-	<div id={reactKey} style={stylex.parse("fw:700 fs:19")} data-vdom-node data-vdom-memo={Date.now()}>
+function CodexNode(props) {
+	const attrs = {
+		"id": props.reactKey,
+		"data-vdom-node": true,
+		"data-vdom-memo": Date.now(),
+	}
+	return attrs
+}
+
+const Header = React.memo(props => (
+	<div style={stylex.parse("fw:700 fs:19")} { ...CodexNode(props) }>
 		<Markdown startSyntax={props.startSyntax}>
 			{props.children || (
 				<br />
@@ -45,8 +55,8 @@ const Header = React.memo(({ reactKey, ...props }) => (
 	</div>
 ))
 
-const Paragraph = React.memo(({ reactKey, ...props }) => (
-	<div id={reactKey} style={stylex.parse("fs:19")} data-vdom-node data-vdom-memo={Date.now()}>
+const Paragraph = React.memo(props => (
+	<div style={stylex.parse("fs:19")} { ...CodexNode(props) }>
 		{props.children || (
 			<br />
 		)}
@@ -241,12 +251,6 @@ function nodeValue(node) {
 // innerText mocks the browser function; (recursively) reads
 // a root node.
 function innerText(rootNode) {
-	if (__DEV__) {
-		invariant(
-			rootNode && isElementNode(rootNode),
-			"FIXME",
-		)
-	}
 	let data = ""
 	const recurseOn = startNode => {
 		for (const childNode of startNode.childNodes) {
@@ -268,12 +272,6 @@ function innerText(rootNode) {
 // parent node. This function is preferred to node.contains
 // because node.contains returns true on the same node.
 function isChildOf(parentNode, node) {
-	if (__DEV__) {
-		invariant(
-			parentNode && node,
-			"FIXME",
-		)
-	}
 	const ok = (
 		node !== parentNode &&
 		parentNode.contains(node)
@@ -284,12 +282,6 @@ function isChildOf(parentNode, node) {
 // getCaretFromSelection gets a DOMRect for the caret from
 // a selection.
 function getCaretFromSelection(selection) {
-	if (__DEV__) {
-		invariant(
-			selection && selection.anchorNode,
-			"FIXME",
-		)
-	}
 	const range = selection.getRangeAt(0)
 	let caret = null
 	if ((caret = range.getClientRects()[0])) {
@@ -319,9 +311,9 @@ function getVDOMRootNode(rootNode, node) {
 	return node
 }
 
-// getSortedStartAndEndNodes gets the sorted start and end
-// nodes (VDOM root nodes).
-function getSortedStartAndEndNodes(rootNode, anchorNode, focusNode) {
+// getAndSortStartAndEndNodes gets the sorts the start and
+// end nodes (VDOM root nods).
+function getAndSortStartAndEndNodes(rootNode, anchorNode, focusNode) {
 	if (anchorNode !== focusNode) {
 		const node1 = getVDOMRootNode(rootNode, anchorNode)
 		const node2 = getVDOMRootNode(rootNode, focusNode)
@@ -339,7 +331,7 @@ function getSortedStartAndEndNodes(rootNode, anchorNode, focusNode) {
 
 // getTargetRange gets a target range.
 function getTargetRange(rootNode, anchorNode, focusNode) {
-	let [startNode, endNode] = getSortedStartAndEndNodes(rootNode, anchorNode, focusNode)
+	let [startNode, endNode] = getAndSortStartAndEndNodes(rootNode, anchorNode, focusNode)
 	// Extend the start node:
 	let extendStart = 0
 	while (extendStart < 1 && startNode.previousSibling) {
@@ -348,7 +340,7 @@ function getTargetRange(rootNode, anchorNode, focusNode) {
 	}
 	// Extend the end node:
 	let extendEnd = 0
-	while (extendEnd < 2 && endNode.nextSibling) {
+	while (extendEnd < 2 && endNode.nextSibling) { // NOTE: Must be `extendEnd < 2`.
 		endNode = endNode.nextSibling
 		extendEnd++
 	}
@@ -362,8 +354,8 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init(""))
-	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
+	// const [state, dispatch] = useMethods(reducer, initialState, init(""))
+	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
 	const targetRange = React.useRef()
@@ -443,12 +435,40 @@ function Editor(props) {
 
 						contentEditable: true,
 						suppressContentEditableWarning: true,
-						// spellCheck: false,
 
 						onFocus: dispatch.commitFocus,
 						onBlur:  dispatch.commitBlur,
 
 						onKeyDown: e => {
+							// switch (true) {
+							// case onKeyDown.isBackspaceClass(e):
+							// 	// Guard the anchor node:
+							// 	if (state.pos1.pos === state.pos2.pos && (!state.pos1.pos || state.body.data[state.pos1.pos - 1] === "\n")) {
+							// 		e.preventDefault()
+							// 		dispatch.commitBackspace()
+							// 		return
+							// 	}
+							// 	// (No-op)
+							// 	return
+							// case onKeyDown.isDeleteClass(e):
+							// 	// Guard the anchor node:
+							// 	if (state.pos1.pos === state.pos2.pos && (state.pos1.pos === state.body.data.length || state.body.data[state.pos1.pos] === "\n")) {
+							// 		e.preventDefault()
+							// 		dispatch.commitDelete()
+							// 		return
+							// 	}
+							// 	// (No-op)
+							// 	return
+							// case onKeyDown.isBold(e):
+							// 	e.preventDefault()
+							// 	return
+							// case onKeyDown.isItalic(e):
+							// 	e.preventDefault()
+							// 	return
+							// default:
+							// 	// (No-op)
+							// 	return
+							// }
 							const { anchorNode, focusNode } = document.getSelection()
 							if (!anchorNode || !isChildOf(ref.current, anchorNode)) {
 								// (No-op)
@@ -467,11 +487,11 @@ function Editor(props) {
 								return
 							}
 
-							// Extend up to one more node before:
+							// Re-extend the start node (once):
 							if (!extendStart && startNode.previousSibling) {
 								startNode = startNode.previousSibling
 								extendStart++
-								// Extend up to one more node after:
+							// Re-extend the end node (once):
 							} else if (!extendEnd && endNode.nextSibling) {
 								endNode = endNode.nextSibling
 								extendEnd++
