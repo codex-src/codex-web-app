@@ -50,40 +50,91 @@
 // to find the index of the current node, the sum being pos1
 // and pos2
 
-// getPos gets a cursor position.
-function getPos(rootNode, node, offset) {
+// // getPos gets a cursor position.
+// function getPos(rootNode, node, offset) {
+// 	// Guard node and offset (Firefox):
+// 	let pos = 0
+// 	while (node.childNodes && node.childNodes.length) {
+// 		node = node.childNodes[offset]
+// 		offset = 0
+// 	}
+// 	const recurseOn = startNode => {
+// 		for (const childNode of startNode.childNodes) {
+// 			if (isBreakOrTextNode(childNode)) {
+// 				// If found, return:
+// 				if (childNode === node) {
+// 					pos += offset
+// 					return true
+// 				}
+// 				const { length } = nodeValue(childNode)
+// 				pos += length
+// 			} else {
+// 				// If found recursing on the current node, return:
+// 				if (recurseOn(childNode)) {
+// 					return true
+// 				}
+// 				const { nextSibling } = childNode
+// 				if (isVDOMNode(childNode) && isVDOMNode(nextSibling)) {
+// 					// Increment one paragraph:
+// 					pos++
+// 				}
+// 			}
+// 		}
+// 		return false
+// 	}
+// 	recurseOn(rootNode)
+// 	return pos
+// }
+
+// `recurseToVDOMCursor` recurses to the VDOM cursor from a
+// DOM cursor.
+export function recurseToVDOMCursor(rootNode, node, offset) {
+	const cursor = {
+		vdomNodePos: 0,
+		pos: 0,
+	}
 	// Guard node and offset (Firefox):
-	let pos = 0
 	while (node.childNodes && node.childNodes.length) {
 		node = node.childNodes[offset]
 		offset = 0
 	}
 	const recurseOn = startNode => {
-		for (const currentNode of startNode.childNodes) {
-			if (isBreakOrTextNode(currentNode)) {
+		for (const childNode of startNode.childNodes) {
+			if (isBreakOrTextNode(childNode)) {
 				// If found, return:
-				if (currentNode === node) {
-					pos += offset
+				if (childNode === node) {
+					const domNode = ascendToDOMNode(rootNode, node)
+					Object.assign(cursor, {
+						vdomNodePos: cursor.vdomNodePos + offset,
+						pos: cursor.pos + offset,
+					})
 					return true
 				}
-				const { length } = nodeValue(currentNode)
-				pos += length
+				const { length } = nodeValue(childNode)
+				Object.assign(cursor, {
+					vdomNodePos: cursor.vdomNodePos + length,
+					pos: cursor.pos + length,
+				})
 			} else {
 				// If found recursing on the current node, return:
-				if (recurseOn(currentNode)) {
+				if (recurseOn(childNode)) {
 					return true
 				}
-				const { nextSibling } = currentNode
+				const { nextSibling } = childNode
 				if (isVDOMNode(childNode) && isVDOMNode(nextSibling)) {
 					// Increment one paragraph:
-					pos++
+					Object.assign(cursor, {
+						vdomNodeIndex: cursor.vdomNodeIndex + 1,
+						vdomNodePos: 0, // Reset.
+						pos: cursor.pos + 1,
+					})
 				}
 			}
 		}
 		return false
 	}
 	recurseOn(rootNode)
-	return pos
+	return cursor
 }
 
 // // innerText mocks the browser function; (recursively) reads
