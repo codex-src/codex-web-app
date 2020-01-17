@@ -105,7 +105,7 @@ const OperationTypes = new Enum(
 
 const initialState = {
 	operation: "",
-	operationUnix: 0,
+	operationTimestamp: 0,
 	hasFocus: false,
 	caretPoint: null, // TODO
 	nodes: null,
@@ -122,14 +122,11 @@ const initialState = {
 
 const reducer = state => ({
 	commitOperation(operation) {
-		const now = Date.now()
-		if (operation === OperationTypes.SELECT && now - state.operationUnix < 100) {
-			// (No-op)
-			return
-		}
-		Object.assign(state, { operation, operationUnix: now })
+		Object.assign(state, {
+			operation,
+			operationTimestamp: Date.now(),
+		})
 	},
-
 	commitFocus() {
 		this.commitOperation(OperationTypes.FOCUS)
 		state.hasFocus = true
@@ -139,12 +136,15 @@ const reducer = state => ({
 		state.hasFocus = false
 	},
 	commitSelect(caretPoint) {
+		if (state.operation === OperationTypes.SELECT && Date.now() - state.operationTimestamp < 100) {
+			// (No-op)
+			return
+		}
 		this.commitOperation(OperationTypes.SELECT)
 		state.caretPoint = caretPoint
 	},
-	commitInput(startKey, endKey, nodes, caretPoint) {
-		this.commitOperation(OperationTypes.INPUT) // (See commitSelect)
-		state.caretPoint = caretPoint
+	commitInput(startKey, endKey, nodes) {
+		this.commitOperation(OperationTypes.INPUT)
 
 		const seenKeys = {}
 		for (const node of nodes) {
@@ -160,7 +160,10 @@ const reducer = state => ({
 
 		this.renderComponents()
 	},
-
+	commitInputNoOp() {
+		this.commitOperation(OperationTypes.INPUT)
+		this.renderComponents()
+	},
 	renderComponents() {
 		// const t1 = Date.now()
 		const nodes = state.nodes.map(each => ({ ...each })) // (Read proxy)
@@ -185,7 +188,7 @@ const init = initialValue => initialState => {
 	const state = {
 		...initialState,
 		operation: OperationTypes.INIT,
-		operationUnix: Date.now(),
+		operationTimestamp: Date.now(),
 		nodes,
 		components: parseComponents(nodes),
 		reactDOM: document.createElement("div"),
@@ -298,7 +301,8 @@ function getCaretPoint() {
 // from a selection based on one of two methods:
 //
 // - selection.getRangeAt(0).getClientRects()[0]
-// - selection.getRangeAt(0).getBoundingClientRect()
+// - selection.getRangeAt(0).getBoundingClientRect() // DEPRECATE?
+// - selection.anchorNode.getBoundingClientRect()
 //
 function getCaretDOMRectFromSelection(selection) {
 	if (__DEV__) {
@@ -311,7 +315,10 @@ function getCaretDOMRectFromSelection(selection) {
 	let rect = null
 	if ((rect = range.getClientRects()[0])) {
 		return rect
-	} else if ((rect = range.getBoundingClientRect())) {
+	// } else if ((rect = range.getBoundingClientRect())) {
+	// 	return rect
+	// }
+	} else if ((rect = selection.anchorNode.getBoundingClientRect())) {
 		return rect
 	}
 	return null
@@ -382,8 +389,8 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
-	// const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\n\n\nHello, world!\nHello, world!\nHello, world!"))
+	const [state, dispatch] = useMethods(reducer, initialState, init(""))
+	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
 	const targetRange = React.useRef()
@@ -397,6 +404,7 @@ function Editor(props) {
 				}
 				const selection = document.getSelection()
 				let { x, y, height } = getCaretDOMRectFromSelection(selection)
+				console.log(y)
 				if (y < 0) {
 					window.scrollBy(0, y)
 					y = 0 // (Reset)
@@ -406,6 +414,7 @@ function Editor(props) {
 				}
 				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
 				const range = document.caretRangeFromPoint(x, y)
+				// console.log(x, y, range)
 				if (!isChildOf(ref.current, range.startContainer)) {
 					// (No-op)
 					return
@@ -474,30 +483,34 @@ function Editor(props) {
 						},
 
 						onInput: e => {
-							let { current: { startNode, endNode, extendStart, extendEnd } } = targetRange
+						let { current: { startNode, endNode, extendStart, extendEnd } } = targetRange
+						if (!isChildOf(ref.current, startNode) || !isChildOf(ref.current, endNode)) {
+							dispatch.commitInputNoOp()
+							return
+						}
 
-							// Extend up to one more node before:
-							if (!extendStart && startNode.previousSibling) {
-								startNode = startNode.previousSibling
-								extendStart++
-							// Extend up to one more node after:
-							} else if (!extendEnd && endNode.nextSibling) {
-								endNode = endNode.nextSibling
-								extendEnd++
+						// Extend up to one more node before:
+						if (!extendStart && startNode.previousSibling) {
+							startNode = startNode.previousSibling
+							extendStart++
+						// Extend up to one more node after:
+						} else if (!extendEnd && endNode.nextSibling) {
+							endNode = endNode.nextSibling
+							extendEnd++
+						}
+
+						const nodes = [{ key: startNode.id, data: innerText(startNode) }]
+						let node = startNode.nextSibling
+						while (node) {
+							nodes.push({ key: node.id, data: innerText(node) })
+							if (node === endNode) {
+								break
 							}
+							node = node.nextSibling
+						}
 
-							const nodes = [{ key: startNode.id, data: innerText(startNode) }]
-							let node = startNode.nextSibling
-							while (node) {
-								nodes.push({ key: node.id, data: innerText(node) })
-								if (node === endNode) {
-									break
-								}
-								node = node.nextSibling
-							}
-
-							const caretPoint = getCaretPoint()
-							dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
+						const caretPoint = getCaretPoint()
+						dispatch.commitInput(startNode.id, endNode.id, nodes, caretPoint)
 						},
 
 						onCut:   e => e.preventDefault(),
@@ -514,9 +527,7 @@ function Editor(props) {
 							{JSON.stringify(
 								{
 									...state,
-
-									data: state.nodes.map(each => each.data).join("\n"),
-
+									// data: state.nodes.map(each => each.data).join("\n"),
 									components: undefined,
 									reactDOM:   undefined,
 								},
