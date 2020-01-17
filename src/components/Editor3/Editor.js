@@ -88,7 +88,8 @@ const OperationTypes = new Enum(
 	"SELECT",
 	"FOCUS",
 	"BLUR",
-	"INPUT", // TODO: document.execCommand?
+	"INPUT",
+	"INPUT_NOOP",
 	"TAB",   // TODO: document.execCommand?
 	"ENTER", // TODO: document.execCommand?
 	"BACKSPACE",
@@ -107,7 +108,7 @@ const initialState = {
 	operation: "",
 	operationTimestamp: 0,
 	hasFocus: false,
-	caretDOMRect: null,
+	caret: null,
 	nodes: null,
 	components: null,
 	reactDOM: null,
@@ -135,15 +136,15 @@ const reducer = state => ({
 		this.commitOperation(OperationTypes.BLUR)
 		state.hasFocus = false
 	},
-	commitSelect(caretDOMRect) {
-		if (state.operation === OperationTypes.SELECT && Date.now() - state.operationTimestamp < 100) {
+	commitSelect(caret) {
+		if (state.operation === OperationTypes.SELECT || Date.now() - state.operationTimestamp < 100) {
 			// (No-op)
 			return
 		}
 		this.commitOperation(OperationTypes.SELECT)
-		state.caretDOMRect = caretDOMRect
+		state.caret = caret
 	},
-	commitInput(startKey, endKey, nodes) {
+	commitInput(startKey, endKey, nodes, caret) {
 		this.commitOperation(OperationTypes.INPUT)
 
 		const seenKeys = {}
@@ -158,10 +159,12 @@ const reducer = state => ({
 		const x2 = state.nodes.findIndex(each => each.key === endKey)
 		state.nodes.splice(x1, x2 - x1 + 1, ...nodes)
 
+		state.caret = caret
 		this.renderComponents()
 	},
-	commitInputNoOp() {
-		this.commitOperation(OperationTypes.INPUT)
+	commitInputNoOp(caret) {
+		this.commitOperation(OperationTypes.INPUT_NOOP)
+		state.caret = caret
 		this.renderComponents()
 	},
 	renderComponents() {
@@ -278,33 +281,9 @@ function isChildOf(parentNode, node) {
 	return ok
 }
 
-// getCaretPoint gets the caret point based on the cursor
-// (preferred) or the anchor node.
-function getCaretPoint() {
-	const selection = document.getSelection()
-	if (!selection.anchorNode) {
-		return null
-	}
-	const rects = selection.getRangeAt(0).getClientRects()
-	if (!rects.length) {
-		if (!selection.anchorNode.getBoundingClientRect) {
-			return null
-		}
-		const { x, y } = selection.anchorNode.getBoundingClientRect()
-		return { x, y }
-	}
-	const { x, y } = rects[0]
-	return { x, y }
-}
-
-// getCaretDOMRectFromSelection gets a DOMRect for the caret
-// from a selection based on one of two methods:
-//
-// - selection.getRangeAt(0).getClientRects()[0]
-// - selection.getRangeAt(0).getBoundingClientRect() // DEPRECATE?
-// - selection.anchorNode.getBoundingClientRect()
-//
-function getCaretDOMRectFromSelection(selection) {
+// getCaretFromSelection gets a DOMRect for the caret from
+// a selection.
+function getCaretFromSelection(selection) {
 	if (__DEV__) {
 		invariant(
 			selection && selection.anchorNode,
@@ -376,24 +355,6 @@ function getTargetRange(rootNode, anchorNode, focusNode) {
 	return { startNode, endNode, extendStart, extendEnd }
 }
 
-// // getTargetRange gets the target range of VDOM root nodes.
-// function getTargetRange(rootNode, anchorNode, focusNode) {
-// 	let [startNode, endNode] = getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode)
-// 	// Get the start node:
-// 	let extendStart = 0
-// 	while (extendStart < 1 && startNode.previousSibling) {
-// 		startNode = startNode.previousSibling
-// 		extendStart++
-// 	}
-// 	// Get the end node:
-// 	let extendEnd = 0
-// 	while (extendEnd < 2 && endNode.nextSibling) {
-// 		endNode = endNode.nextSibling
-// 		extendEnd++
-// 	}
-// 	return { startNode, endNode, extendStart, extendEnd }
-// }
-
 function EditorContents(props) {
 	return props.components
 }
@@ -412,7 +373,7 @@ function Editor(props) {
 			const handler = () => {
 				const selection = document.getSelection()
 				const { anchorNode, anchorOffset, focusNode, focusOffset } = selection
-				if (!anchorNode || !focusNode || !isChildOf(ref.current, anchorNode) || !isChildOf(ref.current, focusNode)) {
+				if (!anchorNode || !isChildOf(ref.current, anchorNode)) {
 					// (No-op)
 					return
 				}
@@ -428,7 +389,7 @@ function Editor(props) {
 					return
 				}
 				selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
-				const caret = getCaretDOMRectFromSelection(selection)
+				const caret = getCaretFromSelection(selection)
 				dispatch.commitSelect(caret)
 				// NOTE: selectionchange does not always fire when
 				// expected; onKeyDown also sets the target range as
@@ -450,8 +411,7 @@ function Editor(props) {
 					syncViews(ref.current, state.reactDOM, "data-vdom-memo")
 					return
 				}
-				const selection = document.getSelection()
-				let { x, y, height } = getCaretDOMRectFromSelection(selection) // state.caretDOMRect?
+				let { x, y, height } = state.caret
 				if (y < 0) {
 					window.scrollBy(0, y)
 					y = 0 // (Reset)
@@ -461,10 +421,11 @@ function Editor(props) {
 				}
 				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
 				const range = document.caretRangeFromPoint(x, y)
-				if (!isChildOf(ref.current, range.startContainer)) {
+				if (!range.startContainer || !isChildOf(ref.current, range.startContainer)) {
 					// (No-op)
 					return
 				}
+				const selection = document.getSelection()
 				selection.removeAllRanges()
 				selection.addRange(range)
 			})
@@ -489,7 +450,7 @@ function Editor(props) {
 
 						onKeyDown: e => {
 							const { anchorNode, focusNode } = document.getSelection()
-							if (!anchorNode || !focusNode || !isChildOf(ref.current, anchorNode) || !isChildOf(ref.current, focusNode)) {
+							if (!anchorNode || !isChildOf(ref.current, anchorNode)) {
 								// (No-op)
 								return
 							}
@@ -497,34 +458,36 @@ function Editor(props) {
 						},
 
 						onInput: e => {
-						let { current: { startNode, endNode, extendStart, extendEnd } } = targetRange
-						if (!isChildOf(ref.current, startNode) || !isChildOf(ref.current, endNode)) {
-							dispatch.commitInputNoOp()
-							return
-						}
+							const selection = document.getSelection()
+							const caret = getCaretFromSelection(selection)
 
-						// Extend up to one more node before:
-						if (!extendStart && startNode.previousSibling) {
-							startNode = startNode.previousSibling
-							extendStart++
-						// Extend up to one more node after:
-						} else if (!extendEnd && endNode.nextSibling) {
-							endNode = endNode.nextSibling
-							extendEnd++
-						}
-
-						const nodes = [{ key: startNode.id, data: innerText(startNode) }]
-						let node = startNode.nextSibling
-						while (node) {
-							nodes.push({ key: node.id, data: innerText(node) })
-							if (node === endNode) {
-								break
+							let { current: { startNode, endNode, extendStart, extendEnd } } = targetRange
+							if (!startNode || !isChildOf(ref.current, startNode)) {
+								dispatch.commitInputNoOp(caret)
+								return
 							}
-							node = node.nextSibling
-						}
 
-						const caretDOMRect = getCaretPoint()
-						dispatch.commitInput(startNode.id, endNode.id, nodes, caretDOMRect)
+							// Extend up to one more node before:
+							if (!extendStart && startNode.previousSibling) {
+								startNode = startNode.previousSibling
+								extendStart++
+								// Extend up to one more node after:
+							} else if (!extendEnd && endNode.nextSibling) {
+								endNode = endNode.nextSibling
+								extendEnd++
+							}
+
+							const nodes = [{ key: startNode.id, data: innerText(startNode) }]
+							let node = startNode.nextSibling
+							while (node) {
+								nodes.push({ key: node.id, data: innerText(node) })
+								if (node === endNode) {
+									break
+								}
+								node = node.nextSibling
+							}
+
+							dispatch.commitInput(startNode.id, endNode.id, nodes, caret)
 						},
 
 						onCut:   e => e.preventDefault(),
