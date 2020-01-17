@@ -156,7 +156,6 @@ const reducer = state => ({
 	},
 	commitInput(startKey, endKey, nodes, caret) {
 		this.commitOperation(OperationTypes.INPUT)
-
 		const seenKeys = {}
 		for (const node of nodes) {
 			if (seenKeys[node.key]) {
@@ -164,11 +163,9 @@ const reducer = state => ({
 			}
 			seenKeys[node.key] = true
 		}
-
 		const x1 = state.nodes.findIndex(each => each.key === startKey)
 		const x2 = state.nodes.findIndex(each => each.key === endKey)
 		state.nodes.splice(x1, x2 - x1 + 1, ...nodes)
-
 		state.caret = caret
 		this.renderComponents()
 	},
@@ -178,11 +175,8 @@ const reducer = state => ({
 		this.renderComponents()
 	},
 	renderComponents() {
-		// const t1 = Date.now()
 		const nodes = state.nodes.map(each => ({ ...each })) // (Read proxy)
 		state.components = parseComponents(nodes)
-		// const t2 = Date.now()
-		// console.log(`parse=${t2 - t1}`)
 		state.onRenderComponents++
 	},
 })
@@ -257,7 +251,7 @@ function innerText(rootNode) {
 			if (!isTextOrBreakElementNode(childNode)) {
 				recurseOn(childNode)
 				const { nextSibling } = childNode
-				if (isVDOMNode(childNode) === rootNode && nextSibling) { // isVDOMNode(nextSibling)) {
+				if (isVDOMNode(childNode) && isVDOMNode(nextSibling)) {
 					data += "\n"
 				}
 			}

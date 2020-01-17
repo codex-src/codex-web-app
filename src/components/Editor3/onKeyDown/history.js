@@ -1,4 +1,4 @@
-import platform from "lib/platform"
+import platform from "utils/platform"
 
 const keyCode = {
 	y: 89, // Redo (yank).
