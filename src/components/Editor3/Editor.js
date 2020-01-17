@@ -112,7 +112,6 @@ const initialState = {
 	components: null,
 	reactDOM: null,
 	onRenderComponents: 0,
-	onRenderCursor: 0,
 }
 
 // In theory, we only need to support backspace and delete
@@ -169,9 +168,6 @@ const reducer = state => ({
 		// const t2 = Date.now()
 		// console.log(`parse=${t2 - t1}`)
 		state.onRenderComponents++
-	},
-	renderCursor() {
-		state.onRenderCursor++
 	},
 })
 
@@ -298,6 +294,29 @@ function getCaretPoint() {
 	return { x, y }
 }
 
+// getCaretDOMRectFromSelection gets a DOMRect for the caret
+// from a selection based on one of two methods:
+//
+// - selection.getRangeAt(0).getClientRects()[0]
+// - selection.getRangeAt(0).getBoundingClientRect()
+//
+function getCaretDOMRectFromSelection(selection) {
+	if (__DEV__) {
+		invariant(
+			selection && selection.anchorNode,
+			"FIXME",
+		)
+	}
+	const range = selection.getRangeAt(0)
+	let rect = null
+	if ((rect = range.getClientRects()[0])) {
+		return rect
+	} else if ((rect = range.getBoundingClientRect())) {
+		return rect
+	}
+	return null
+}
+
 // getVDOMNode returns the VDOM node.
 function getVDOMNode(rootNode, node) { // eslint-disable-line no-unused-vars
 	while (!isVDOMNode(node)) {
@@ -327,6 +346,12 @@ function getAndSortVDOMRootNodes(rootNode, anchorNode, focusNode) {
 			}
 		}
 		// (Unreachable code)
+		if (__DEV__) {
+			invariant(
+				false,
+				"FIXME",
+			)
+		}
 	}
 	const node = getVDOMRootNode(rootNode, anchorNode)
 	return [node, node]
@@ -354,33 +379,6 @@ function EditorContents(props) {
 	return props.components
 }
 
-// // https://github.com/facebook/react/issues/11538#issuecomment-417504600
-// ;(function() {
-// 	if (typeof Node === "function" && Node.prototype) {
-// 		const originalRemoveChild = Node.prototype.removeChild
-// 		Node.prototype.removeChild = function(child) {
-// 			if (child.parentNode !== this) {
-// 				// if (__DEV__) {
-// 				// 	console.error("Cannot remove a child from a different parent", child, this)
-// 				// }
-// 				return child
-// 			}
-// 			return originalRemoveChild.apply(this, arguments)
-// 		}
-//
-// 		const originalInsertBefore = Node.prototype.insertBefore
-// 		Node.prototype.insertBefore = function(newNode, referenceNode) {
-// 			if (referenceNode && referenceNode.parentNode !== this) {
-// 				// if (__DEV__) {
-// 				// 	console.error("Cannot insert before a reference node from a different parent", referenceNode, this)
-// 				// }
-// 				return newNode
-// 			}
-// 			return originalInsertBefore.apply(this, arguments)
-// 		}
-// 	}
-// })()
-
 function Editor(props) {
 	const ref = React.useRef()
 
@@ -395,40 +393,28 @@ function Editor(props) {
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
 				if (!state.onRenderComponents) {
 					syncViews(ref.current, state.reactDOM, "data-vdom-memo")
-					// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 					return
 				}
-				// Eagerly drop range:
 				const selection = document.getSelection()
-				selection.removeAllRanges()
-
+				let { x, y, height } = getCaretDOMRectFromSelection(selection)
+				if (y < 0) {
+					window.scrollBy(0, y)
+					y = 0 // (Reset)
+				} else if (y + height > window.innerHeight) {
+					window.scrollBy(0, y + height - window.innerHeight)
+					y = window.innerHeight - height // (Reset)
+				}
 				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
-
-				// ;[...ref.current.childNodes].map(each => each.remove())          // TODO
-				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
-
-				dispatch.renderCursor()
+				const range = document.caretRangeFromPoint(x, y)
+				if (!isChildOf(ref.current, range.startContainer)) {
+					// (No-op)
+					return
+				}
+				selection.removeAllRanges()
+				selection.addRange(range)
 			})
-			dispatch.renderCursor()
-		}, [state, dispatch]),
-		[state.onRenderComponents],
-	)
-
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			if (!state.hasFocus) {
-				// (No-op)
-				return
-			}
-			const selection = document.getSelection()
-			const range = document.caretRangeFromPoint(state.caretPoint.x, state.caretPoint.y)
-			if (!range) {
-				console.warn({ range })
-			}
-			// (Range eagerly dropped)
-			selection.addRange(range)
 		}, [state]),
-		[state.onRenderCursor],
+		[state.onRenderComponents],
 	)
 
 	React.useLayoutEffect(
