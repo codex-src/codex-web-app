@@ -444,6 +444,9 @@ function Editor(props) {
 							// 	}
 							// 	// (No-op)
 							// 	return
+							// // NOTE: Delete word is not well behaved
+							// // (Chrome) -- deletes up to the next word,
+							// // regardless of line breaks.
 							// case onKeyDown.isDeleteClass(e):
 							// 	// Guard the anchor node:
 							// 	if (state.pos1.pos === state.pos2.pos && (state.pos1.pos === state.body.data.length || state.body.data[state.pos1.pos] === "\n")) {
