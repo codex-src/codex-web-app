@@ -1,5 +1,6 @@
 import invariant from "invariant"
 import swapChildNodes from "./swapChildNodes"
+import typeOf from "utils/typeOf"
 
 const __DEV__ = process.env.NODE_ENV !== "production"
 
@@ -8,9 +9,10 @@ const __DEV__ = process.env.NODE_ENV !== "production"
 function syncViews(clientDOM, hiddenDOM, numAttr) {
 	if (__DEV__) {
 		invariant(
-			(clientDOM && clientDOM.nodeType && clientDOM.nodeType === Node.ELEMENT_NODE) &&
-			(hiddenDOM && hiddenDOM.nodeType && clientDOM.nodeType === Node.ELEMENT_NODE) &&
-			(numAttr && typeof numAttr === "string"),
+			arguments.length === 3 &&
+			typeOf.obj(clientDOM) &&
+			typeOf.obj(hiddenDOM) &&
+			typeOf.str(numAttr),
 			"FIXME",
 		)
 	}
@@ -19,14 +21,7 @@ function syncViews(clientDOM, hiddenDOM, numAttr) {
 	let start = clientDOM.childNodes.length - 1 // Iterate backwards for performance reasons.
 	while (start >= 0) {
 		const node = clientDOM.childNodes[start]
-		if (__DEV__) {
-			invariant(
-				node.id && node.getAttribute(numAttr),
-				"FIXME",
-			)
-		}
-		const { id } = node
-		clientDOMMap[id] = node
+		clientDOMMap[node.id] = node
 		start--
 	}
 	if (__DEV__) {
@@ -75,6 +70,12 @@ function syncViews(clientDOM, hiddenDOM, numAttr) {
 			clientDOM.append(hiddenDOM.childNodes[start].cloneNode(true))
 			start++
 		}
+	}
+	if (__DEV__) {
+		invariant(
+			start === Math.max(clientDOM.childNodes.length, hiddenDOM.childNodes.length),
+			"FIXME",
+		)
 	}
 }
 

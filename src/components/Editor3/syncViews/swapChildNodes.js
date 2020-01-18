@@ -1,4 +1,5 @@
 import invariant from "invariant"
+import typeOf from "utils/typeOf"
 
 const __DEV__ = process.env.NODE_ENV !== "production"
 
@@ -7,7 +8,9 @@ function swapChildNodes(node1, node2) {
 	const { parentNode } = node1
 	if (__DEV__) {
 		invariant(
-			parentNode === node2.parentNode,
+			arguments.length === 2 &&
+			typeOf.obj(node1) &&
+			typeOf.obj(node2),
 			"FIXME",
 		)
 	}

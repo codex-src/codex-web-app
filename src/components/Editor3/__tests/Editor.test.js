@@ -8,12 +8,12 @@ import ReactDOM from "react-dom"
 // https://github.com/puppeteer/puppeteer/tree/master/experimental/puppeteer-firefox
 
 const SELECTOR = "[contenteditable]" // eslint-disable-line
-const DELAY    = 10                  // eslint-disable-line
+const DELAY    = 16.67               // eslint-disable-line
 
 // init initializes the browser and a new page (to
 // http://localhost:3000).
 async function init() {
-	const browser = await puppeteer.launch({ headless: false })
+	const browser = await puppeteer.launch({ headless: process.env.HEADLESS === "true" })
 	const page = await browser.newPage()
 	await page.setViewport({ width: 1200, height: 780 })
 	page.on("pageerror", error => expect(error).toBeNull())
@@ -92,10 +92,10 @@ test("integration", async () => {
 	expect($3).toBe("helloworld\nhelloworld\nhelloworld")
 
 	await clear(page)
-	for (const each of new Array(100)) {
+	for (const each of new Array(10)) { // 100
 		await press(page, "Enter")
 	}
-	for (const each of new Array(100)) {
+	for (const each of new Array(10)) { // 100
 		await press(page, "Backspace")
 	}
 	const $4 = await innerText(page)
