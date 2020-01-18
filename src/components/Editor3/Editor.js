@@ -37,7 +37,7 @@ const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-function CodexNode(props) {
+function HashNode(props) {
 	const attrs = {
 		"id": props.reactKey,
 		"data-vdom-node": true,
@@ -47,7 +47,7 @@ function CodexNode(props) {
 }
 
 const Header = React.memo(props => (
-	<div style={stylex.parse("fw:700 fs:19")} { ...CodexNode(props) }>
+	<div style={stylex.parse("fw:700 fs:19")} { ...HashNode(props) }>
 		<Markdown startSyntax={props.startSyntax}>
 			{props.children || (
 				<br />
@@ -57,7 +57,7 @@ const Header = React.memo(props => (
 ))
 
 const Paragraph = React.memo(props => (
-	<div style={stylex.parse("fs:19")} { ...CodexNode(props) }>
+	<div style={stylex.parse("fs:19")} { ...HashNode(props) }>
 		{props.children || (
 			<br />
 		)}
@@ -655,21 +655,27 @@ function Editor(props) {
 
 						onKeyDown: e => {
 							switch (true) {
+							case onKeyDown.isEnter(e):
+								e.preventDefault()
+								document.execCommand("insertText", false, "\n")
+								return
+							case onKeyDown.isTab(e):
+								e.preventDefault()
+								document.execCommand("insertText", false, "\t")
+								return
 							case onKeyDown.isBackspaceClass(e):
-								// Guard the anchor node:
 								if (state.cursors.areCollapsed && !state.cursors.anchor.pos) {
 									e.preventDefault()
 									dispatch.backspaceOnHashNode()
-									break
+									return
 								}
 								// No-op
 								break
 							case onKeyDown.isDeleteClass(e):
-								// Guard the anchor node:
 								if (state.cursors.areCollapsed && state.cursors.anchor.pos === state.cursors.anchor.length) {
 									e.preventDefault()
 									dispatch.deleteOnHashNode()
-									break
+									return
 								}
 								// No-op
 								break
@@ -691,33 +697,13 @@ function Editor(props) {
 							targetInputRange.current = getTargetInputRange(ref.current, anchorNode, focusNode)
 						},
 
-						// onKeyDown: e => {
-						// 	switch (true) {
-						// 	case onKeyDown.isBold(e):
-						// 		e.preventDefault()
-						// 		break
-						// 	case onKeyDown.isItalic(e):
-						// 		e.preventDefault()
-						// 		break
-						// 	default:
-						// 		// No-op
-						// 		break
-						// 	}
-						// 	const { anchorNode, focusNode } = document.getSelection()
-						// 	if (!anchorNode || !contains(ref.current, anchorNode)) {
-						// 		// No-op
-						// 		return
-						// 	}
-						// 	targetInputRange.current = getTargetInputRange(ref.current, anchorNode, focusNode)
-						// },
-
 						onInput: e => {
 							// Repeat ID (based on Chrome):
 							const { anchorNode, anchorOffset } = document.getSelection()
-							const hashNode = getHashNode(anchorNode)
-							if (!hashNode.id && hashNode.previousSibling) { // Firefox
-								hashNode.id = hashNode.previousSibling.id
-							}
+							// const hashNode = getHashNode(anchorNode)
+							// if (!hashNode.id && hashNode.previousSibling) { // Firefox
+							// 	hashNode.id = hashNode.previousSibling.id
+							// }
 							let { current: { startNode, endNode, extendStart, extendEnd } } = targetInputRange
 							// Re-extend the start and end nodes:
 							if (!extendStart && startNode.previousSibling) {

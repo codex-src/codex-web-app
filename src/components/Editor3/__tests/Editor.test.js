@@ -8,7 +8,7 @@ import ReactDOM from "react-dom"
 // https://github.com/puppeteer/puppeteer/tree/master/experimental/puppeteer-firefox
 
 const SELECTOR = "[contenteditable]" // eslint-disable-line
-const DELAY    = 20                  // eslint-disable-line
+const DELAY    = 16.67               // eslint-disable-line
 
 // init initializes the browser and a new page (to
 // http://localhost:3000).
@@ -52,45 +52,28 @@ test("integration", async () => {
 	jest.setTimeout(60e3)
 	const [browser, page] = await init()
 
+	// Basic type test (1):
 	await clear(page)
-	await type(page, "helloworld\nhelloworld\nhelloworld")
+	await type(page, "hello\nhello\nhello")
 	const $1 = await innerText(page)
-	expect($1).toBe("helloworld\nhelloworld\nhelloworld")
+	expect($1).toBe("hello\nhello\nhello")
 
+	// Basic type test (2):
 	await clear(page)
-	await type(page, "helloworld")
+	await type(page, "hello")
 	await press(page, "ArrowLeft")
 	await press(page, "ArrowLeft")
 	await press(page, "ArrowLeft")
 	await press(page, "ArrowLeft")
 	await press(page, "ArrowLeft")
-	await type(page, "world")
-	await press(page, "Enter")
-	await type(page, "helloworld")
+	await type(page, "hello")
 	await press(page, "Enter")
 	await type(page, "hello")
+	await press(page, "Enter")
 	const $2 = await innerText(page)
-	expect($2).toBe("helloworld\nhelloworld\nhelloworld")
+	expect($2).toBe("hello\nhello\nhello")
 
-	await clear(page)
-	await type(page, "helloworld")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await type(page, "helloworld")
-	await press(page, "Enter")
-	await type(page, "helloworld")
-	await press(page, "Enter")
-	const $3 = await innerText(page)
-	expect($3).toBe("helloworld\nhelloworld\nhelloworld")
-
+	// Repeat enter and backspace:
 	await clear(page)
 	for (const each of new Array(10)) { // 100
 		await press(page, "Enter")
@@ -98,8 +81,29 @@ test("integration", async () => {
 	for (const each of new Array(10)) { // 100
 		await press(page, "Backspace")
 	}
+	const $3 = await innerText(page)
+	expect($3).toBe("\n") // <div contenteditable><br></div>
+
+	// Repeat backspace:
+	await clear(page)
+	await type(page, "hello\nhello\nhello")
+	for (const each of new Array(17)) {
+		await press(page, "Backspace")
+	}
 	const $4 = await innerText(page)
-	expect($4).toBe("\n") // <div contenteditable><br></div>
+	expect($4).toBe("\n")
+
+	// Repeat backspace forward:
+	await clear(page)
+	await type(page, "hello\nhello\nhello")
+	for (const each of new Array(17)) {
+		await press(page, "ArrowLeft")
+	}
+	for (const each of new Array(17)) {
+		await press(page, "Delete")
+	}
+	const $5 = await innerText(page)
+	expect($5).toBe("\n")
 
 	await close(browser)
 })
