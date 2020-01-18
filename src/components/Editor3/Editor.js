@@ -619,6 +619,44 @@ function Editor(props) {
 						onFocus: dispatch.commitFocus,
 						onBlur:  dispatch.commitBlur,
 
+						// onKeyDown: e => {
+						// 	switch (true) {
+						// 	case onKeyDown.isBackspaceClass(e):
+						// 		// Guard the anchor node:
+						// 		if (state.cursors.areCollapsed && !state.cursors.anchor.pos) {
+						// 			e.preventDefault()
+						// 			dispatch.backspaceOnNode()
+						// 			break
+						// 		}
+						// 		// No-op
+						// 		break
+						// 	case onKeyDown.isDeleteClass(e):
+						// 		// Guard the anchor node:
+						// 		if (state.cursors.areCollapsed && state.cursors.anchor.pos === state.cursors.anchor.length) {
+						// 			e.preventDefault()
+						// 			dispatch.deleteOnNode()
+						// 			break
+						// 		}
+						// 		// No-op
+						// 		break
+						// 	case onKeyDown.isBold(e):
+						// 		e.preventDefault()
+						// 		break
+						// 	case onKeyDown.isItalic(e):
+						// 		e.preventDefault()
+						// 		break
+						// 	default:
+						// 		// No-op
+						// 		break
+						// 	}
+						// 	const { anchorNode, focusNode } = document.getSelection()
+						// 	if (!anchorNode || !contains(ref.current, anchorNode)) {
+						// 		// No-op
+						// 		return
+						// 	}
+						// 	targetInputRange.current = getTargetInputRange(ref.current, anchorNode, focusNode)
+						// },
+
 						onKeyDown: e => {
 							switch (true) {
 							case onKeyDown.isBold(e):
@@ -640,33 +678,35 @@ function Editor(props) {
 						},
 
 						onInput: e => {
+							// Repeat ID (based on Chrome):
+							const { anchorNode, anchorOffset } = document.getSelection()
+							const hashNode = getHashNode(anchorNode)
+							if (!hashNode.id && hashNode.previousSibling) { // Firefox
+								hashNode.id = hashNode.previousSibling.id
+							}
 							let { current: { startNode, endNode, extendStart, extendEnd } } = targetInputRange
-
 							// Re-extend the start and end nodes:
 							if (!extendStart && startNode.previousSibling) {
 								startNode = startNode.previousSibling
-								extendStart++
+								// extendStart++
 							} if (!extendEnd && endNode.nextSibling) {
 								endNode = endNode.nextSibling
-								extendEnd++
+								// extendEnd++
 							}
-
 							// **startKey and endKey cannot change!**
 							const startKey = startNode.id
 							const endKey = endNode.id
 
-							// Guard the hash node ID:
-							const { anchorNode, anchorOffset } = document.getSelection()
-							const hashNode = getHashNode(anchorNode)
-							if (!hashNode.id) { // Firefox
-								hashNode.id = random.newUUID() // Takes precedence
+							let node = startNode
+							if (!contains(ref.current, node)) { // Firefox
+								node = endNode
 							}
 
 							// Parse the new nodes:
 							const seenKeys = {}
-							const newNodes = [{ key: startNode.id, data: innerText(startNode) }]
-							seenKeys[startNode.id] = true
-							let node = startNode.nextSibling
+							const newNodes = [{ key: node.id, data: innerText(node) }]
+							seenKeys[node.id] = true
+							node = node.nextSibling
 							while (node) {
 								// NOTE: Firefox creates a new node
 								// *without* an ID and Chrome creates a new
@@ -681,7 +721,6 @@ function Editor(props) {
 								}
 								node = node.nextSibling
 							}
-							// const { anchorNode, anchorOffset } = document.getSelection()
 							let anchor = null
 							try {
 								anchor = getCursor(anchorNode, anchorOffset)
@@ -689,9 +728,10 @@ function Editor(props) {
 							} catch {
 								anchor = state.cursors.anchor
 							}
-							console.log(startKey)
-							console.log(endKey)
-							// dispatch.commitInput(startKey, endKey, newNodes, anchor)
+							// console.log({ startKey, endKey, newNodes, anchor })
+							// console.log(startKey.slice(0, 2), endKey.slice(0, 2))
+							// console.log(startNode, endNode, newNodes)
+							dispatch.commitInput(startKey, endKey, newNodes, anchor)
 						},
 
 						onCut:   e => e.preventDefault(),
