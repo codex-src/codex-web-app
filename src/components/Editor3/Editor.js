@@ -538,7 +538,7 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, darkness…"))
+	const [state, dispatch] = useMethods(reducer, initialState, init("\nHello, world!\n\nHello, darkness…"))
 	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
@@ -697,16 +697,16 @@ function Editor(props) {
 							const startKey = startNode.id
 							const endKey = endNode.id
 
-							let node = startNode
-							if (!contains(ref.current, node)) { // Firefox
-								node = endNode
-							}
+							// let node = startNode
+							// if (!contains(ref.current, node)) { // Firefox
+							// 	node = endNode
+							// }
 
 							// Parse the new nodes:
 							const seenKeys = {}
-							const newNodes = [{ key: node.id, data: innerText(node) }]
-							seenKeys[node.id] = true
-							node = node.nextSibling
+							const newNodes = [{ key: startNode.id, data: innerText(startNode) }]
+							seenKeys[startNode.id] = true
+							let node = startNode.nextSibling
 							while (node) {
 								// NOTE: Firefox creates a new node
 								// *without* an ID and Chrome creates a new
@@ -728,9 +728,6 @@ function Editor(props) {
 							} catch {
 								anchor = state.cursors.anchor
 							}
-							// console.log({ startKey, endKey, newNodes, anchor })
-							// console.log(startKey.slice(0, 2), endKey.slice(0, 2))
-							// console.log(startNode, endNode, newNodes)
 							dispatch.commitInput(startKey, endKey, newNodes, anchor)
 						},
 
