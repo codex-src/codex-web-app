@@ -132,6 +132,24 @@ const initialState = {
 	onRenderHook: 0,
 }
 
+function _selectAll(cursor1, cursor2, node1, node2) {
+	const ok = (
+		cursor1.key === node1.key &&
+		cursor2.key === node2.key &&
+		!cursor1.pos &&
+		cursor2.pos === node2.data.length
+	)
+	return ok
+}
+
+function computeSelectAll(cursor1, cursor2, node1, node2) {
+	const ok = (
+		_selectAll(cursor1, cursor2, node1, node2) ||
+		_selectAll(cursor2, cursor1, node1, node2) // Reversed
+	)
+	return ok
+}
+
 const reducer = state => ({
 	commitOperation(operation) {
 		const operationAt = Date.now()
@@ -148,7 +166,6 @@ const reducer = state => ({
 		this.commitOperation(OperationTypes.BLUR)
 		state.hasFocus = false
 	},
-	// NOTE: start and end are not sorted.
 	commitSelect(anchor, focus) {
 		if (state.operation === OperationTypes.SELECT && Date.now() - state.operationAt >= 100) {
 			this.commitOperation(OperationTypes.SELECT)
@@ -157,11 +174,24 @@ const reducer = state => ({
 			anchor.key === focus.key &&
 			anchor.pos === focus.pos
 		)
+		const areSelectingAll = computeSelectAll(anchor, focus, { ...state.nodes[0] }, { ...state.nodes[state.nodes.length - 1] })
 		Object.assign(state.cursors, {
 			anchor,
 			focus,
 			areCollapsed,
+			areSelectingAll,
 		})
+	},
+	selectAll() {
+		const syntheticAnchor = {
+			key: state.nodes[0].key,
+			pos: 0,
+		}
+		const syntheticFocus = {
+			key: state.nodes[state.nodes.length - 1].key,
+			pos: state.nodes[state.nodes.length - 1].data.length,
+		}
+		this.commitSelect(syntheticAnchor, syntheticFocus)
 	},
 	commitInput(startKey, endKey, newNodes, anchor) {
 		this.commitOperation(OperationTypes.INPUT)
@@ -205,6 +235,16 @@ const reducer = state => ({
 		const syntheticAnchor = {
 			key: node1.key,
 			pos: node1.data.length,
+		}
+		this.commitInput(node1.key, node2.key, newNodes, syntheticAnchor)
+	},
+	reset() {
+		const node1 = state.nodes[0]
+		const node2 = state.nodes[state.nodes.length - 1]
+		const newNodes = [{ ...node1, data: "" }]
+		const syntheticAnchor = {
+			key: node1.key,
+			pos: 0,
 		}
 		this.commitInput(node1.key, node2.key, newNodes, syntheticAnchor)
 	},
@@ -385,7 +425,7 @@ function findPosAndLength(hashNode, node, offset) {
 				if (currentNode === node) {
 					Object.assign(pos, {
 						pos: pos.pos + offset,
-						length: innerText(hashNode).length, // Lazy but works.
+						length: innerText(hashNode).length, // Lazy but works
 					})
 					return true
 				}
@@ -582,8 +622,9 @@ function Editor(props) {
 		React.useCallback(() => {
 			const h = () => {
 				const selection = document.getSelection()
-				const { anchorNode, anchorOffset, focusNode, focusOffset } = selection
-				if (!anchorNode || !contains(ref.current, anchorNode)) {
+				let { anchorNode, anchorOffset, focusNode, focusOffset } = selection
+				// NOTE: Use node.contains not contains.
+				if (!anchorNode || !ref.current.contains(anchorNode)) {
 					// No-op
 					return
 				}
@@ -599,6 +640,13 @@ function Editor(props) {
 					return
 				}
 				selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
+				if (anchorNode === ref.current && focusNode === ref.current) {
+					anchorNode = ref.current.childNodes[0]
+					focusNode = ref.current.childNodes[ref.current.childNodes.length - 1]
+					dispatch.selectAll()
+					targetInputRange.current = getTargetInputRange(ref.current, anchorNode, focusNode)
+					return
+				}
 				const anchor = getCursor(anchorNode, anchorOffset)
 				let focus = { ...anchor }
 				if (anchorNode !== focusNode || anchorOffset !== focusOffset) {
@@ -653,6 +701,10 @@ function Editor(props) {
 						onFocus: dispatch.commitFocus,
 						onBlur:  dispatch.commitBlur,
 
+						// onSelect: e => {
+						// 	console.log("onSelect")
+						// },
+
 						onKeyDown: e => {
 							switch (true) {
 							case onKeyDown.isEnter(e):
@@ -668,6 +720,10 @@ function Editor(props) {
 									e.preventDefault()
 									dispatch.backspaceOnHashNode()
 									return
+								} else if (state.cursors.areSelectingAll) {
+									e.preventDefault()
+									dispatch.reset()
+									return
 								}
 								// No-op
 								break
@@ -675,6 +731,10 @@ function Editor(props) {
 								if (state.cursors.areCollapsed && state.cursors.anchor.pos === state.cursors.anchor.length) {
 									e.preventDefault()
 									dispatch.deleteOnHashNode()
+									return
+								} else if (state.cursors.areSelectingAll) {
+									e.preventDefault()
+									dispatch.reset()
 									return
 								}
 								// No-op
@@ -755,11 +815,11 @@ function Editor(props) {
 						<div style={{ ...stylex.parse("pre-wrap"), MozTabSize: 2, tabSize: 2, font: "12px/1.375 'Monaco'" }}>
 							{JSON.stringify(
 								{
-									data: state.nodes.map(each => each.data),
+									// data: state.nodes.map(each => each.data),
 
-									// ...state,
-									// components: undefined,
-									// reactDOM:   undefined,
+									...state,
+									components: undefined,
+									reactDOM:   undefined,
 								},
 								null,
 								"\t",

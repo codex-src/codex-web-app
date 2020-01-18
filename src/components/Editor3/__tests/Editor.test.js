@@ -5,7 +5,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 
 const SELECTOR = "[contenteditable]" // eslint-disable-line
-const DELAY    = 16.67               // eslint-disable-line
+const DELAY    = 50                  // eslint-disable-line
 
 // init initializes the browser and a new page (to
 // http://localhost:3000).
