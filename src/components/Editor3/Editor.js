@@ -15,6 +15,22 @@ import "./Editor.css"
 
 const __DEV__ = process.env.NODE_ENV !== "production"
 
+// same types returns whether two component arrays are the
+// same (based on type -- reference).
+function sameTypes(components, next) {
+	if (components.length !== next.length) {
+		return false
+	}
+	let index = 0
+	while (index < components.length) {
+		if (components[index].type.type !== next[index].type.type) { // React.memo
+			return false
+		}
+		index++
+	}
+	return true
+}
+
 const Syntax = stylex.Styleable(props => (
 	<span style={stylex.parse("pre c:blue-a400")}>
 		{props.children}
@@ -241,7 +257,7 @@ const reducer = state => ({
 		}
 		this.commitInput(node1.key, node2.key, newNodes, syntheticAnchor)
 	},
-	reset(data = "") {
+	clear(data = "") {
 		const node1 = state.nodes[0]
 		const node2 = state.nodes[state.nodes.length - 1]
 		const newNodes = [{ ...node1, data }]
@@ -253,9 +269,30 @@ const reducer = state => ({
 		this.commitInput(node1.key, node2.key, newNodes, syntheticAnchor)
 	},
 	render() {
+		// Get the current components and parse new components:
+		const components = state.components.map(each => ({ ...each, type: {  ...each.type } })) // Read proxy
 		const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
-		state.components = parseComponents(nodes)
-		state.onRenderHook++
+		const next = parseComponents(nodes)
+		state.components = next
+
+		// // Guard edge case at markdown start:
+		// //
+		// //  #·H<cursor> -> ["#", " "]
+		// // //·H<cursor> -> ["/", " "]
+		// //  >·H<cursor> -> [">", " "]
+		// //
+		// const markdownStart = (
+		// 	state.pos1.pos - 3 >= 0 &&
+		// 	markdown.isSyntax(state.body.data[state.pos1.pos - 3]) &&
+		// 	state.body.data[state.pos1.pos - 2] === " "
+		// )
+
+		// Native rendering strategy:
+		state.onRenderHook += !sameTypes(components, next) // || markdownStart
+
+		// const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
+		// state.components = parseComponents(nodes)
+		// state.onRenderHook++
 	},
 })
 
@@ -616,15 +653,15 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, world!\n\nHello, world!\n\nHello, world!\n\nHello, world!"))
 	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
+	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, world!\n\nHello, world!\n\nHello, world!\n\nHello, world!"))
 
 	const selectionchange = React.useRef()
 	const targetInputRange = React.useRef()
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const h = () => {
+			const onSelectionChange = () => {
 				const selection = document.getSelection()
 				let { anchorNode, anchorOffset, focusNode, focusOffset } = selection
 				// NOTE: Use node.contains not contains.
@@ -646,7 +683,7 @@ function Editor(props) {
 				// }
 				// selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
 
-				if (anchorNode === ref.current && focusNode === ref.current) {
+				if (anchorNode === ref.current && focusNode === ref.current) { // Firefox
 					anchorNode = ref.current.childNodes[0]
 					focusNode = ref.current.childNodes[ref.current.childNodes.length - 1]
 					dispatch.selectAll()
@@ -661,9 +698,9 @@ function Editor(props) {
 				dispatch.commitSelect(anchor, focus)
 				targetInputRange.current = getTargetInputRange(ref.current, anchorNode, focusNode)
 			}
-			document.addEventListener("selectionchange", h)
+			document.addEventListener("selectionchange", onSelectionChange)
 			return () => {
-				document.removeEventListener("selectionchange", h)
+				document.removeEventListener("selectionchange", onSelectionChange)
 			}
 		}, [dispatch]),
 		[],
@@ -728,7 +765,7 @@ function Editor(props) {
 									return
 								} else if (state.cursors.areSelectingAll) {
 									e.preventDefault()
-									dispatch.reset()
+									dispatch.clear()
 									return
 								}
 								// No-op
@@ -740,7 +777,7 @@ function Editor(props) {
 									return
 								} else if (state.cursors.areSelectingAll) {
 									e.preventDefault()
-									dispatch.reset()
+									dispatch.clear()
 									return
 								}
 								// No-op
@@ -765,7 +802,7 @@ function Editor(props) {
 
 						onInput: e => {
 							if (ref.current.childNodes.length && !isHashNode(ref.current.childNodes[0])) {
-								dispatch.reset(ref.current.innerText) // ¡SOS!
+								dispatch.clear(ref.current.innerText) // ¡SOS!
 								return
 							}
 
