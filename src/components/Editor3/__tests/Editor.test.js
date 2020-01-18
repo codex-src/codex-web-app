@@ -48,9 +48,8 @@ async function innerText(page) {
 	return await page.$eval(SELECTOR, node => node.innerText)
 }
 
-jest.setTimeout(60e3)
-
 test("integration", async () => {
+	jest.setTimeout(60e3)
 	const [browser, page] = await init()
 
 	await clear(page)
@@ -91,6 +90,16 @@ test("integration", async () => {
 	await press(page, "Enter")
 	const $3 = await innerText(page)
 	expect($3).toBe("helloworld\nhelloworld\nhelloworld")
+
+	await clear(page)
+	for (const each of new Array(100)) {
+		await press(page, "Enter")
+	}
+	for (const each of new Array(100)) {
+		await press(page, "Backspace")
+	}
+	const $4 = await innerText(page)
+	expect($4).toBe("\n") // <div contenteditable><br></div>
 
 	await close(browser)
 })
