@@ -8,7 +8,7 @@ import ReactDOM from "react-dom"
 // https://github.com/puppeteer/puppeteer/tree/master/experimental/puppeteer-firefox
 
 const SELECTOR = "[contenteditable]" // eslint-disable-line
-const DELAY    = 16.67               // eslint-disable-line
+const DELAY    = 20                  // eslint-disable-line
 
 // init initializes the browser and a new page (to
 // http://localhost:3000).

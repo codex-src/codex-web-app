@@ -174,6 +174,40 @@ const reducer = state => ({
 		})
 		this.render()
 	},
+	backspaceOnHashNode() {
+		const index = state.nodes.findIndex(each => each.key === state.cursors.anchor.key)
+		if (!index) {
+			// No-op
+			return
+		}
+		// Get the affected nodes and compute the new nodes:
+		const node1 = state.nodes[index - 1]
+		const node2 = state.nodes[index]
+		const newNodes = [{ ...node1, data: node1.data + node2.data }]
+		// Create a synthetic anchor node:
+		const syntheticAnchor = {
+			key: node1.key,
+			pos: node1.data.length,
+		}
+		this.commitInput(node1.key, node2.key, newNodes, syntheticAnchor)
+	},
+	deleteOnHashNode() {
+		const index = state.nodes.findIndex(each => each.key === state.cursors.anchor.key)
+		if (index + 1 === state.nodes.length) {
+			// No-op
+			return
+		}
+		// Get the affected nodes and compute the new nodes:
+		const node1 = state.nodes[index]
+		const node2 = state.nodes[index + 1]
+		const newNodes = [{ ...node1, data: node1.data + node2.data }]
+		// Create a synthetic anchor node:
+		const syntheticAnchor = {
+			key: node1.key,
+			pos: node1.data.length,
+		}
+		this.commitInput(node1.key, node2.key, newNodes, syntheticAnchor)
+	},
 	render() {
 		const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
 		state.components = parseComponents(nodes)
@@ -538,7 +572,7 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init("\nHello, world!\n\nHello, darkness…"))
+	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, world!\n\nHello, world!\n\nHello, world!\n\nHello, world!"))
 	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
@@ -619,46 +653,26 @@ function Editor(props) {
 						onFocus: dispatch.commitFocus,
 						onBlur:  dispatch.commitBlur,
 
-						// onKeyDown: e => {
-						// 	switch (true) {
-						// 	case onKeyDown.isBackspaceClass(e):
-						// 		// Guard the anchor node:
-						// 		if (state.cursors.areCollapsed && !state.cursors.anchor.pos) {
-						// 			e.preventDefault()
-						// 			dispatch.backspaceOnNode()
-						// 			break
-						// 		}
-						// 		// No-op
-						// 		break
-						// 	case onKeyDown.isDeleteClass(e):
-						// 		// Guard the anchor node:
-						// 		if (state.cursors.areCollapsed && state.cursors.anchor.pos === state.cursors.anchor.length) {
-						// 			e.preventDefault()
-						// 			dispatch.deleteOnNode()
-						// 			break
-						// 		}
-						// 		// No-op
-						// 		break
-						// 	case onKeyDown.isBold(e):
-						// 		e.preventDefault()
-						// 		break
-						// 	case onKeyDown.isItalic(e):
-						// 		e.preventDefault()
-						// 		break
-						// 	default:
-						// 		// No-op
-						// 		break
-						// 	}
-						// 	const { anchorNode, focusNode } = document.getSelection()
-						// 	if (!anchorNode || !contains(ref.current, anchorNode)) {
-						// 		// No-op
-						// 		return
-						// 	}
-						// 	targetInputRange.current = getTargetInputRange(ref.current, anchorNode, focusNode)
-						// },
-
 						onKeyDown: e => {
 							switch (true) {
+							case onKeyDown.isBackspaceClass(e):
+								// Guard the anchor node:
+								if (state.cursors.areCollapsed && !state.cursors.anchor.pos) {
+									e.preventDefault()
+									dispatch.backspaceOnHashNode()
+									break
+								}
+								// No-op
+								break
+							case onKeyDown.isDeleteClass(e):
+								// Guard the anchor node:
+								if (state.cursors.areCollapsed && state.cursors.anchor.pos === state.cursors.anchor.length) {
+									e.preventDefault()
+									dispatch.deleteOnHashNode()
+									break
+								}
+								// No-op
+								break
 							case onKeyDown.isBold(e):
 								e.preventDefault()
 								break
@@ -676,6 +690,26 @@ function Editor(props) {
 							}
 							targetInputRange.current = getTargetInputRange(ref.current, anchorNode, focusNode)
 						},
+
+						// onKeyDown: e => {
+						// 	switch (true) {
+						// 	case onKeyDown.isBold(e):
+						// 		e.preventDefault()
+						// 		break
+						// 	case onKeyDown.isItalic(e):
+						// 		e.preventDefault()
+						// 		break
+						// 	default:
+						// 		// No-op
+						// 		break
+						// 	}
+						// 	const { anchorNode, focusNode } = document.getSelection()
+						// 	if (!anchorNode || !contains(ref.current, anchorNode)) {
+						// 		// No-op
+						// 		return
+						// 	}
+						// 	targetInputRange.current = getTargetInputRange(ref.current, anchorNode, focusNode)
+						// },
 
 						onInput: e => {
 							// Repeat ID (based on Chrome):
@@ -696,21 +730,12 @@ function Editor(props) {
 							// **startKey and endKey cannot change!**
 							const startKey = startNode.id
 							const endKey = endNode.id
-
-							// let node = startNode
-							// if (!contains(ref.current, node)) { // Firefox
-							// 	node = endNode
-							// }
-
 							// Parse the new nodes:
 							const seenKeys = {}
 							const newNodes = [{ key: startNode.id, data: innerText(startNode) }]
 							seenKeys[startNode.id] = true
 							let node = startNode.nextSibling
 							while (node) {
-								// NOTE: Firefox creates a new node
-								// *without* an ID and Chrome creates a new
-								// node *with* a repeat ID.
 								if (seenKeys[node.id]) {
 									node.id = random.newUUID()
 								}
