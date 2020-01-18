@@ -3,6 +3,10 @@ import puppeteer from "puppeteer"
 import React from "react"
 import ReactDOM from "react-dom"
 
+// TODO: Add Puppeteer for Firefox.
+//
+// https://github.com/puppeteer/puppeteer/tree/master/experimental/puppeteer-firefox
+
 const SELECTOR = "[contenteditable]" // eslint-disable-line
 const DELAY    = 10                  // eslint-disable-line
 

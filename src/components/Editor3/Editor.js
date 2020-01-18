@@ -147,7 +147,7 @@ const reducer = state => ({
 		state.hasFocus = false
 	},
 	commitSelect(caret) {
-		if (state.operation === OperationTypes.SELECT || Date.now() - state.operationTimestamp < 100) {
+		if (state.operation === OperationTypes.SELECT && Date.now() - state.operationTimestamp < 100) {
 			// (No-op)
 			return
 		}
@@ -247,20 +247,41 @@ function nodeValue(node) {
 function innerText(rootNode) {
 	let data = ""
 	const recurseOn = startNode => {
-		for (const childNode of startNode.childNodes) {
-			if (!isTextOrBreakElementNode(childNode)) {
-				recurseOn(childNode)
-				const { nextSibling } = childNode
-				if (isVDOMNode(childNode) && isVDOMNode(nextSibling)) {
+		for (const currentNode of startNode.childNodes) {
+			if (isTextOrBreakElementNode(currentNode)) {
+				data += nodeValue(currentNode)
+			} else {
+				recurseOn(currentNode)
+				const { nextSibling } = currentNode
+				if (isVDOMNode(currentNode) && isVDOMNode(nextSibling)) {
 					data += "\n"
 				}
 			}
-			data += nodeValue(childNode)
 		}
 	}
 	recurseOn(rootNode)
 	return data
 }
+
+// // innerText mocks the browser function; (recursively) reads
+// // a root node.
+// function innerText(rootNode) {
+// 	let data = ""
+// 	const recurseOn = startNode => {
+// 		for (const childNode of startNode.childNodes) {
+// 			if (!isTextOrBreakElementNode(childNode)) {
+// 				recurseOn(childNode)
+// 				const { nextSibling } = childNode
+// 				if (isVDOMNode(childNode) && isVDOMNode(nextSibling)) {
+// 					data += "\n"
+// 				}
+// 			}
+// 			data += nodeValue(childNode)
+// 		}
+// 	}
+// 	recurseOn(rootNode)
+// 	return data
+// }
 
 // isChildNodeOf returns whether a node is a child of a
 // parent node. This function is preferred to node.contains
@@ -348,15 +369,15 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	// const [state, dispatch] = useMethods(reducer, initialState, init(""))
-	const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
+	const [state, dispatch] = useMethods(reducer, initialState, init("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt u"))
+	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
 	const targetRange = React.useRef()
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const handler = () => {
+			const h = () => {
 				const selection = document.getSelection()
 				const { anchorNode, anchorOffset, focusNode, focusOffset } = selection
 				if (!anchorNode || !isChildOf(ref.current, anchorNode)) {
@@ -382,9 +403,9 @@ function Editor(props) {
 				// a backup.
 				targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
 			}
-			document.addEventListener("selectionchange", handler)
+			document.addEventListener("selectionchange", h)
 			return () => {
-				document.removeEventListener("selectionchange", handler)
+				document.removeEventListener("selectionchange", h)
 			}
 		}, [dispatch]),
 		[],
@@ -400,13 +421,14 @@ function Editor(props) {
 				let { x, y, height } = state.caret
 				if (y < 0) {
 					window.scrollBy(0, y)
-					y = 0 // (Reset)
+					y = 0
 				} else if (y + height > window.innerHeight) {
 					window.scrollBy(0, y + height - window.innerHeight)
-					y = window.innerHeight - height // (Reset)
+					y = window.innerHeight - height
 				}
 				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
 				const range = document.caretRangeFromPoint(x, y)
+				console.log(range)
 				if (!range.startContainer || !isChildOf(ref.current, range.startContainer)) {
 					// (No-op)
 					return
@@ -475,25 +497,21 @@ function Editor(props) {
 						},
 
 						onInput: e => {
-							const selection = document.getSelection()
-							const caret = getCaretFromSelection(selection)
-
 							let { current: { startNode, endNode, extendStart, extendEnd } } = targetRange
+							const caret = getCaretFromSelection(document.getSelection())
 							if (!startNode || !isChildOf(ref.current, startNode)) {
 								dispatch.commitInputNoOp(caret)
 								return
 							}
-
-							// Re-extend the start node (once):
+							// Re-extend the start node:
 							if (!extendStart && startNode.previousSibling) {
 								startNode = startNode.previousSibling
 								extendStart++
-							// Re-extend the end node (once):
+							// Re-extend the end node:
 							} else if (!extendEnd && endNode.nextSibling) {
 								endNode = endNode.nextSibling
 								extendEnd++
 							}
-
 							const nodes = [{ key: startNode.id, data: innerText(startNode) }]
 							let node = startNode.nextSibling
 							while (node) {
@@ -503,7 +521,6 @@ function Editor(props) {
 								}
 								node = node.nextSibling
 							}
-
 							dispatch.commitInput(startNode.id, endNode.id, nodes, caret)
 						},
 
@@ -521,7 +538,6 @@ function Editor(props) {
 							{JSON.stringify(
 								{
 									...state,
-									// data: state.nodes.map(each => each.data).join("\n"),
 									components: undefined,
 									reactDOM:   undefined,
 								},
