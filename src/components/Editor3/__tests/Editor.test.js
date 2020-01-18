@@ -52,13 +52,13 @@ test("integration", async () => {
 	jest.setTimeout(60e3)
 	const [browser, page] = await init()
 
-	// Basic type test (1):
+	// Basic type test (1 of 2):
 	await clear(page)
 	await type(page, "hello\nhello\nhello")
 	const $1 = await innerText(page)
 	expect($1).toBe("hello\nhello\nhello")
 
-	// Basic type test (2):
+	// Basic type test (2 of 2):
 	await clear(page)
 	await type(page, "hello")
 	await press(page, "ArrowLeft")

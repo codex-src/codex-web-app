@@ -6,22 +6,22 @@ const __DEV__ = process.env.NODE_ENV !== "production"
 
 // syncViews syncs two DOM root nodes. Uses a number-based
 // attribute as a heuristic to compare child nodes.
-function syncViews(clientDOM, hiddenDOM, numAttr) {
+function syncViews(client, hidden, numAttr) {
 	if (__DEV__) {
 		invariant(
 			arguments.length === 3 &&
-			typeOf.obj(clientDOM) &&
-			typeOf.obj(hiddenDOM) &&
+			typeOf.obj(client) &&
+			typeOf.obj(hidden) &&
 			typeOf.str(numAttr),
 			"FIXME",
 		)
 	}
 	// Create a map of the client DOM child nodes:
-	const clientDOMMap = {}
-	let start = clientDOM.childNodes.length - 1 // Iterate backwards for performance reasons.
+	const clientMap = {}
+	let start = client.childNodes.length - 1 // Iterate backwards for a performance boost
 	while (start >= 0) {
-		const node = clientDOM.childNodes[start]
-		clientDOMMap[node.id] = node
+		const node = client.childNodes[start]
+		clientMap[node.id] = node
 		start--
 	}
 	if (__DEV__) {
@@ -31,16 +31,16 @@ function syncViews(clientDOM, hiddenDOM, numAttr) {
 		)
 	}
 	start = 0
-	const length = Math.min(clientDOM.childNodes.length, hiddenDOM.childNodes.length)
+	const length = Math.min(client.childNodes.length, hidden.childNodes.length)
 	while (start < length) {
-		const clientNode = clientDOM.childNodes[start]
-		const hiddenNode = hiddenDOM.childNodes[start]
+		const clientNode = client.childNodes[start]
+		const hiddenNode = hidden.childNodes[start]
 		// Keys **do not** match:
 		if (clientNode.id !== hiddenNode.id) {
 			// Does the client DOM have a fresh node?
-			if (clientDOMMap[hiddenNode.id] && +clientDOMMap[hiddenNode.id].getAttribute(numAttr) >= +hiddenNode.getAttribute(numAttr)) {
+			if (clientMap[hiddenNode.id] && +clientMap[hiddenNode.id].getAttribute(numAttr) >= +hiddenNode.getAttribute(numAttr)) {
 				// Yes -- swap them:
-				swapChildNodes(clientNode, clientDOMMap[hiddenNode.id])
+				swapChildNodes(clientNode, clientMap[hiddenNode.id])
 			} else {
 				// No -- replace the client node (stale) with a
 				// clone of the hidden node (fresh):
@@ -56,24 +56,24 @@ function syncViews(clientDOM, hiddenDOM, numAttr) {
 		start++
 	}
 	// Client DOM is larger than the hidden DOM:
-	if (start < clientDOM.childNodes.length) {
+	if (start < client.childNodes.length) {
 		// Drop extraneous nodes:
-		let end = clientDOM.childNodes.length - 1 // Iterate backwards.
+		let end = client.childNodes.length - 1 // Iterate backwards (do not change start)
 		while (end >= start) {
-			clientDOM.childNodes[end].remove()
+			client.childNodes[end].remove()
 			end--
 		}
 	// Hidden DOM is larger than the client DOM:
-	} else if (start < hiddenDOM.childNodes.length) {
+	} else if (start < hidden.childNodes.length) {
 		// Push extraneous nodes:
-		while (start < hiddenDOM.childNodes.length) {
-			clientDOM.append(hiddenDOM.childNodes[start].cloneNode(true))
+		while (start < hidden.childNodes.length) {
+			client.append(hidden.childNodes[start].cloneNode(true))
 			start++
 		}
 	}
 	if (__DEV__) {
 		invariant(
-			start === Math.max(clientDOM.childNodes.length, hiddenDOM.childNodes.length),
+			start === Math.max(client.childNodes.length, hidden.childNodes.length),
 			"FIXME",
 		)
 	}

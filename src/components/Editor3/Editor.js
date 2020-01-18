@@ -657,7 +657,7 @@ function Editor(props) {
 							switch (true) {
 							case onKeyDown.isEnter(e):
 								e.preventDefault()
-								document.execCommand("insertText", false, "\n")
+								document.execCommand("insertParagraph", false, null)
 								return
 							case onKeyDown.isTab(e):
 								e.preventDefault()
@@ -700,10 +700,10 @@ function Editor(props) {
 						onInput: e => {
 							// Repeat ID (based on Chrome):
 							const { anchorNode, anchorOffset } = document.getSelection()
-							// const hashNode = getHashNode(anchorNode)
-							// if (!hashNode.id && hashNode.previousSibling) { // Firefox
-							// 	hashNode.id = hashNode.previousSibling.id
-							// }
+							const hashNode = getHashNode(anchorNode)
+							if (!hashNode.id && hashNode.previousSibling) { // Firefox
+								hashNode.id = hashNode.previousSibling.id
+							}
 							let { current: { startNode, endNode, extendStart, extendEnd } } = targetInputRange
 							// Re-extend the start and end nodes:
 							if (!extendStart && startNode.previousSibling) {
