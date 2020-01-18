@@ -5,7 +5,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 
 const SELECTOR = "[contenteditable]" // eslint-disable-line
-const DELAY    = 50                  // eslint-disable-line
+const DELAY    = 100                 // eslint-disable-line
 
 // init initializes the browser and a new page (to
 // http://localhost:3000).
@@ -50,35 +50,37 @@ async function innerText(page) {
 }
 
 async function integration(browser, page) {
-	// Basic type test (1 of 2):
-	await clear(page)
-	await type(page, "hello\nhello\nhello")
-	const $1 = await innerText(page)
-	expect($1).toBe("hello\nhello\nhello")
-	// Basic type test (2 of 2):
-	await clear(page)
-	await type(page, "hello")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await press(page, "ArrowLeft")
-	await type(page, "hello")
-	await press(page, "Enter")
-	await type(page, "hello")
-	await press(page, "Enter")
-	const $2 = await innerText(page)
-	expect($2).toBe("hello\nhello\nhello")
-	// Repeat enter and backspace:
-	await clear(page)
-	for (const each of new Array(10)) { // 100
-		await press(page, "Enter")
-	}
-	for (const each of new Array(10)) { // 100
-		await press(page, "Backspace")
-	}
-	const $3 = await innerText(page)
-	expect($3).toBe("\n") // <div contenteditable><br></div>
+	// // Basic type test (1 of 2):
+	// await clear(page)
+	// await type(page, "hello\nhello\nhello")
+	// const $1 = await innerText(page)
+	// expect($1).toBe("hello\nhello\nhello")
+	// // Basic type test (2 of 2):
+	// await clear(page)
+	// await type(page, "hello")
+	// await press(page, "ArrowLeft")
+	// await press(page, "ArrowLeft")
+	// await press(page, "ArrowLeft")
+	// await press(page, "ArrowLeft")
+	// await press(page, "ArrowLeft")
+	// await type(page, "hello")
+	// await press(page, "Enter")
+	// await type(page, "hello")
+	// await press(page, "Enter")
+	// const $2 = await innerText(page)
+	// expect($2).toBe("hello\nhello\nhello")
+
+	// // Repeat enter and backspace:
+	// await clear(page)
+	// for (const each of new Array(10)) { // 100
+	// 	await press(page, "Enter")
+	// }
+	// for (const each of new Array(10)) { // 100
+	// 	await press(page, "Backspace")
+	// }
+	// const $3 = await innerText(page)
+	// expect($3).toBe("\n") // <div contenteditable><br></div>
+
 	// Repeat backspace:
 	await clear(page)
 	await type(page, "hello\nhello\nhello")
@@ -87,6 +89,7 @@ async function integration(browser, page) {
 	}
 	const $4 = await innerText(page)
 	expect($4).toBe("\n")
+
 	// Repeat backspace forward:
 	await clear(page)
 	await type(page, "hello\nhello\nhello")
