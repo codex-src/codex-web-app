@@ -116,9 +116,26 @@ const OperationTypes = new Enum(
 
 const initialState = {
 	operation: "",
-	operationTimestamp: 0,
+	operationAt: 0,
 	hasFocus: false,
-	caret: null,
+
+	// caret: null, // DEPRECATE?
+
+	cursors: {
+		start: {
+			key: "",
+			index: 0,
+			pos: 0,
+		},
+		end: {
+			key: "",
+			index: 0,
+			pos: 0,
+		},
+		hasSelection: false,
+		// isReversed: false,
+	},
+
 	nodes: null,
 	components: null,
 	reactDOM: null,
@@ -133,9 +150,10 @@ const initialState = {
 
 const reducer = state => ({
 	commitOperation(operation) {
+		const operationAt = Date.now()
 		Object.assign(state, {
 			operation,
-			operationTimestamp: Date.now(),
+			operationAt,
 		})
 	},
 	commitFocus() {
@@ -146,13 +164,22 @@ const reducer = state => ({
 		this.commitOperation(OperationTypes.BLUR)
 		state.hasFocus = false
 	},
-	commitSelect(caret) {
-		if (state.operation === OperationTypes.SELECT && Date.now() - state.operationTimestamp < 100) {
-			// (No-op)
-			return
+	commitSelect(start, end) {
+		if (state.operation === OperationTypes.SELECT && Date.now() - state.operationAt >= 100) {
+			this.commitOperation(OperationTypes.SELECT)
 		}
-		this.commitOperation(OperationTypes.SELECT)
-		state.caret = caret
+		// let isReversed = false
+		if ((start.index === end.index && start.pos > end.pos) || start.index > end.index) {
+			;[start, end] = [end, start] // Does this work?
+			// isReversed = true
+		}
+		const hasSelection = start.index !== end.index || start.pos === end.pos
+		Object.assign(state.cursors, {
+			start,
+			end,
+			// isReversed,
+			hasSelection,
+		})
 	},
 	commitInput(startKey, endKey, nodes, caret) {
 		this.commitOperation(OperationTypes.INPUT)
@@ -166,7 +193,7 @@ const reducer = state => ({
 		const x1 = state.nodes.findIndex(each => each.key === startKey)
 		const x2 = state.nodes.findIndex(each => each.key === endKey)
 		state.nodes.splice(x1, x2 - x1 + 1, ...nodes)
-		state.caret = caret
+		// ...
 		this.renderComponents()
 	},
 	commitInputNoOp(caret) {
@@ -195,23 +222,12 @@ const init = initialValue => initialState => {
 	const state = {
 		...initialState,
 		operation: OperationTypes.INIT,
-		operationTimestamp: Date.now(),
+		operationAt: Date.now(),
 		nodes,
 		components: parseComponents(nodes),
 		reactDOM: document.createElement("div"),
 	}
 	return state
-}
-
-const naked = RenderDOM(props => <div />)
-
-// isVDOMNode returns whether a node is a VDOM node.
-function isVDOMNode(node) {
-	const ok = (
-		node.hasAttribute("data-vdom-node") ||
-		naked.isEqualNode(node)
-	)
-	return ok
 }
 
 // isTextNode returns whether a node is a text node.
@@ -236,6 +252,19 @@ function isTextOrBreakElementNode(node) {
 	return ok
 }
 
+const naked = RenderDOM(props => <div />)
+
+// isKeyNode returns whether a node is a VDOM node.
+function isKeyNode(node) {
+	const ok = (
+		isElementNode(node) && (
+			node.hasAttribute("data-vdom-node") ||
+			naked.isEqualNode(node)
+		)
+	)
+	return ok
+}
+
 // nodeValue mocks the browser functions; reads a text or
 // break element node.
 function nodeValue(node) {
@@ -244,7 +273,7 @@ function nodeValue(node) {
 
 // innerText mocks the browser function; (recursively) reads
 // a root node.
-function innerText(rootNode) {
+function innerText(keyNode) {
 	let data = ""
 	const recurseOn = startNode => {
 		for (const currentNode of startNode.childNodes) {
@@ -253,40 +282,112 @@ function innerText(rootNode) {
 			} else {
 				recurseOn(currentNode)
 				const { nextSibling } = currentNode
-				if (isVDOMNode(currentNode) && isVDOMNode(nextSibling)) {
+				if (isKeyNode(currentNode) && isKeyNode(nextSibling)) {
 					data += "\n"
 				}
 			}
 		}
 	}
-	recurseOn(rootNode)
+	recurseOn(keyNode)
 	return data
 }
 
-// // innerText mocks the browser function; (recursively) reads
-// // a root node.
-// function innerText(rootNode) {
-// 	let data = ""
-// 	const recurseOn = startNode => {
-// 		for (const childNode of startNode.childNodes) {
-// 			if (!isTextOrBreakElementNode(childNode)) {
-// 				recurseOn(childNode)
-// 				const { nextSibling } = childNode
-// 				if (isVDOMNode(childNode) && isVDOMNode(nextSibling)) {
-// 					data += "\n"
-// 				}
-// 			}
-// 			data += nodeValue(childNode)
-// 		}
-// 	}
-// 	recurseOn(rootNode)
-// 	return data
-// }
+// findIndex finds the index of a VDOM node.
+function findIndex(documentNode, node) {
+	let index = 0
+	for (const currentNode of documentNode.childNodes) {
+		if (currentNode === node) {
+			break
+		}
+		// Compound components:
+		if (currentNode.childNodes.length && isKeyNode(currentNode.childNodes[0])) {
+			for (const childNode of currentNode.childNodes) {
+				if (childNode === node) {
+					break
+				}
+				index++
+			}
+		}
+		index++
+	}
+	return index
+}
 
-// isChildNodeOf returns whether a node is a child of a
-// parent node. This function is preferred to node.contains
-// because node.contains returns true on the same node.
-function isChildOf(parentNode, node) {
+// findPos finds the cursor position.
+function findPos(keyNode, node, offset) {
+	let pos = 0
+	while (node.childNodes && node.childNodes.length) { // (Firefox)
+		node = node.childNodes[offset]
+		offset = 0
+	}
+	const recurseOn = startNode => {
+		for (const currentNode of startNode.childNodes) {
+			if (isTextOrBreakElementNode(currentNode)) {
+				// If found, return:
+				if (currentNode === node) {
+					pos += offset
+					return true
+				}
+				const { length } = nodeValue(currentNode)
+				pos += length
+			} else {
+				// If found recursing on the current node, return:
+				if (recurseOn(currentNode)) {
+					return true
+				}
+				const { nextSibling } = currentNode
+				if (isKeyNode(currentNode) && isKeyNode(nextSibling)) {
+					// Increment one paragraph:
+					pos++
+				}
+			}
+		}
+		return false
+	}
+	recurseOn(keyNode)
+	return pos
+}
+
+// findRange finds the range (object -- not instance).
+function findRange(keyNode, pos) {
+	const range = {
+		node: null,
+		offset: 0,
+	}
+	const recurseOn = startNode => {
+		for (const currentNode of startNode.childNodes) {
+			if (isTextOrBreakElementNode(currentNode)) {
+				// If found, return:
+				const { length } = nodeValue(currentNode)
+				if (pos - length <= 0) {
+					Object.assign(range, {
+						node: currentNode,
+						offset: pos,
+					})
+					return true
+				}
+				pos -= length
+			} else {
+				// If found recursing on the current node, return:
+				if (recurseOn(currentNode)) {
+					return true
+				}
+				const { nextSibling } = currentNode
+				if (isKeyNode(currentNode) && isKeyNode(nextSibling)) {
+					// Decrement one paragraph:
+					pos--
+				}
+			}
+		}
+		return false
+	}
+	recurseOn(keyNode)
+	return range
+}
+
+// containsChildNode returns whether a parent node contains
+// a child node.
+function containsChildNode(parentNode, node) {
 	const ok = (
 		node !== parentNode &&
 		parentNode.contains(node)
@@ -310,17 +411,15 @@ function getCaretFromSelection(selection) {
 	return null
 }
 
-// getVDOMNode returns the VDOM node.
-function getVDOMNode(rootNode, node) { // eslint-disable-line no-unused-vars
-	while (!isVDOMNode(node)) {
+function getKeyNode(node) {
+	while (!isKeyNode(node)) {
 		node = node.parentNode
 	}
 	return node
 }
 
-// getVDOMRootNode returns the VDOM root node.
-function getVDOMRootNode(rootNode, node) {
-	while (node.parentNode !== rootNode) {
+function getCompoundKeyNode(keyNode, node) {
+	while (node.parentNode !== keyNode) {
 		node = node.parentNode
 	}
 	return node
@@ -328,11 +427,11 @@ function getVDOMRootNode(rootNode, node) {
 
 // getAndSortStartAndEndNodes gets the sorts the start and
 // end nodes (VDOM root nods).
-function getAndSortStartAndEndNodes(rootNode, anchorNode, focusNode) {
+function getAndSortStartAndEndNodes(keyNode, anchorNode, focusNode) {
 	if (anchorNode !== focusNode) {
-		const node1 = getVDOMRootNode(rootNode, anchorNode)
-		const node2 = getVDOMRootNode(rootNode, focusNode)
-		for (const childNode of rootNode.childNodes) {
+		const node1 = getCompoundKeyNode(keyNode, anchorNode)
+		const node2 = getCompoundKeyNode(keyNode, focusNode)
+		for (const childNode of keyNode.childNodes) {
 			if (childNode === node1) {
 				return [node1, node2]
 			} else if (childNode === node2) {
@@ -340,13 +439,13 @@ function getAndSortStartAndEndNodes(rootNode, anchorNode, focusNode) {
 			}
 		}
 	}
-	const node = getVDOMRootNode(rootNode, anchorNode)
+	const node = getCompoundKeyNode(keyNode, anchorNode)
 	return [node, node]
 }
 
 // getTargetRange gets a target range.
-function getTargetRange(rootNode, anchorNode, focusNode) {
-	let [startNode, endNode] = getAndSortStartAndEndNodes(rootNode, anchorNode, focusNode)
+function getTargetRange(keyNode, anchorNode, focusNode) {
+	let [startNode, endNode] = getAndSortStartAndEndNodes(keyNode, anchorNode, focusNode)
 	// Extend the start node:
 	let extendStart = 0
 	while (extendStart < 1 && startNode.previousSibling) {
@@ -362,6 +461,18 @@ function getTargetRange(rootNode, anchorNode, focusNode) {
 	return { startNode, endNode, extendStart, extendEnd }
 }
 
+// getCursor gets a cursor object from a document node and a
+// selection node and offset.
+function getCursor(documentNode, node, offset) {
+	const keyNode = getKeyNode(node)
+	const cursor = {
+		key: keyNode.id,
+		index: findIndex(documentNode, keyNode),
+		pos: findPos(keyNode, node, offset),
+	}
+	return cursor
+}
+
 function EditorContents(props) {
 	return props.components
 }
@@ -369,7 +480,7 @@ function EditorContents(props) {
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt u"))
+	const [state, dispatch] = useMethods(reducer, initialState, init("Hello, world!\n\nHello, world!"))
 	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
@@ -380,7 +491,7 @@ function Editor(props) {
 			const h = () => {
 				const selection = document.getSelection()
 				const { anchorNode, anchorOffset, focusNode, focusOffset } = selection
-				if (!anchorNode || !isChildOf(ref.current, anchorNode)) {
+				if (!anchorNode || !containsChildNode(ref.current, anchorNode)) {
 					// (No-op)
 					return
 				}
@@ -396,11 +507,12 @@ function Editor(props) {
 					return
 				}
 				selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
-				const caret = getCaretFromSelection(selection)
-				dispatch.commitSelect(caret)
-				// NOTE: selectionchange does not always fire when
-				// expected; onKeyDown also sets the target range as
-				// a backup.
+				const start = getCursor(ref.current, anchorNode, anchorOffset)
+				let end = { ...start }
+				if (anchorNode !== focusNode || anchorOffset !== focusOffset) {
+					end = getCursor(ref.current, focusNode, focusOffset)
+				}
+				dispatch.commitSelect(start, end)
 				targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
 			}
 			document.addEventListener("selectionchange", h)
@@ -418,24 +530,26 @@ function Editor(props) {
 					syncViews(ref.current, state.reactDOM, "data-vdom-memo")
 					return
 				}
-				let { x, y, height } = state.caret
-				if (y < 0) {
-					window.scrollBy(0, y)
-					y = 0
-				} else if (y + height > window.innerHeight) {
-					window.scrollBy(0, y + height - window.innerHeight)
-					y = window.innerHeight - height
-				}
+				// let { x, y, height } = state.caret
+				// if (y < 0) {
+				// 	window.scrollBy(0, y)
+				// 	y = 0
+				// } else if (y + height > window.innerHeight) {
+				// 	window.scrollBy(0, y + height - window.innerHeight)
+				// 	y = window.innerHeight - height
+				// }
 				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
-				const range = document.caretRangeFromPoint(x, y)
-				console.log(range)
-				if (!range.startContainer || !isChildOf(ref.current, range.startContainer)) {
-					// (No-op)
-					return
-				}
-				const selection = document.getSelection()
-				selection.removeAllRanges()
-				selection.addRange(range)
+
+				console.log(state.cursor.startPos)
+
+				// const selection = document.getSelection()
+				// const range = document.createRange()
+				// const keyNode = document.getElementById(state.startKey)
+				// const { node, offset } = findRange(keyNode, state.startPos)
+				// range.setStart(node, offset)
+				// range.collapse()
+				// selection.removeAllRanges()
+				// selection.addRange(range)
 			})
 		}, [state]),
 		[state.onRenderComponents],
@@ -488,18 +602,19 @@ function Editor(props) {
 							// 	// (No-op)
 							// 	return
 							// }
-							const { anchorNode, focusNode } = document.getSelection()
-							if (!anchorNode || !isChildOf(ref.current, anchorNode)) {
-								// (No-op)
-								return
-							}
-							targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
+
+							// const { anchorNode, focusNode } = document.getSelection()
+							// if (!anchorNode || !containsChildNode(ref.current, anchorNode)) {
+							// 	// (No-op)
+							// 	return
+							// }
+							// targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
 						},
 
 						onInput: e => {
 							let { current: { startNode, endNode, extendStart, extendEnd } } = targetRange
 							const caret = getCaretFromSelection(document.getSelection())
-							if (!startNode || !isChildOf(ref.current, startNode)) {
+							if (!startNode || !containsChildNode(ref.current, startNode)) {
 								dispatch.commitInputNoOp(caret)
 								return
 							}
