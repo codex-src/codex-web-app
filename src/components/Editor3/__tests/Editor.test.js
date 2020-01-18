@@ -1,18 +1,19 @@
+import Chrome from "puppeteer"
+import Firefox from "puppeteer-firefox"
 import fs from "fs"
-import puppeteer from "puppeteer"
 import React from "react"
 import ReactDOM from "react-dom"
-
-// TODO: Add Puppeteer for Firefox.
-//
-// https://github.com/puppeteer/puppeteer/tree/master/experimental/puppeteer-firefox
 
 const SELECTOR = "[contenteditable]" // eslint-disable-line
 const DELAY    = 16.67               // eslint-disable-line
 
 // init initializes the browser and a new page (to
 // http://localhost:3000).
-async function init() {
+async function init(useChrome = true) {
+	let puppeteer = Chrome
+	if (!useChrome) {
+		puppeteer = Firefox
+	}
 	const browser = await puppeteer.launch({ headless: process.env.HEADLESS === "true" })
 	const page = await browser.newPage()
 	await page.setViewport({ width: 1200, height: 780 })
@@ -48,16 +49,12 @@ async function innerText(page) {
 	return await page.$eval(SELECTOR, node => node.innerText)
 }
 
-test("integration", async () => {
-	jest.setTimeout(60e3)
-	const [browser, page] = await init()
-
+async function integration(browser, page) {
 	// Basic type test (1 of 2):
 	await clear(page)
 	await type(page, "hello\nhello\nhello")
 	const $1 = await innerText(page)
 	expect($1).toBe("hello\nhello\nhello")
-
 	// Basic type test (2 of 2):
 	await clear(page)
 	await type(page, "hello")
@@ -72,7 +69,6 @@ test("integration", async () => {
 	await press(page, "Enter")
 	const $2 = await innerText(page)
 	expect($2).toBe("hello\nhello\nhello")
-
 	// Repeat enter and backspace:
 	await clear(page)
 	for (const each of new Array(10)) { // 100
@@ -83,7 +79,6 @@ test("integration", async () => {
 	}
 	const $3 = await innerText(page)
 	expect($3).toBe("\n") // <div contenteditable><br></div>
-
 	// Repeat backspace:
 	await clear(page)
 	await type(page, "hello\nhello\nhello")
@@ -92,7 +87,6 @@ test("integration", async () => {
 	}
 	const $4 = await innerText(page)
 	expect($4).toBe("\n")
-
 	// Repeat backspace forward:
 	await clear(page)
 	await type(page, "hello\nhello\nhello")
@@ -104,6 +98,20 @@ test("integration", async () => {
 	}
 	const $5 = await innerText(page)
 	expect($5).toBe("\n")
+}
 
+;(function () {
+	jest.setTimeout(60e3)
+})()
+
+// test("blink", async () => {
+// 	const [browser, page] = await init(true) // Chrome
+// 	await integration(browser, page)
+// 	await close(browser)
+// })
+
+test("gecko", async () => {
+	const [browser, page] = await init(false) // Firefox
+	await integration(browser, page)
 	await close(browser)
 })

@@ -752,12 +752,14 @@ function Editor(props) {
 				{props.debug && (
 					<React.Fragment>
 						<div style={stylex.parse("h:28")} />
-						<div style={{ ...stylex.parse("pre-wrap"), tabSize: 2, font: "12px/1.375 'Monaco'" }}>
+						<div style={{ ...stylex.parse("pre-wrap"), MozTabSize: 2, tabSize: 2, font: "12px/1.375 'Monaco'" }}>
 							{JSON.stringify(
 								{
-									...state,
-									components: undefined,
-									reactDOM:   undefined,
+									data: state.nodes.map(each => each.data),
+
+									// ...state,
+									// components: undefined,
+									// reactDOM:   undefined,
 								},
 								null,
 								"\t",
