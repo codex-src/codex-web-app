@@ -181,26 +181,43 @@ const reducer = state => ({
 			hasSelection,
 		})
 	},
-	commitInput(startKey, endKey, nodes, caret) {
+
+	// commitInput(startKey, endKey, nodes, cursor) {
+	// 	this.commitOperation(OperationTypes.INPUT)
+	// 	const seenKeys = {}
+	// 	for (const node of nodes) {
+	// 		if (seenKeys[node.key]) {
+	// 			node.key = rand.newUUID()
+	// 		}
+	// 		seenKeys[node.key] = true
+	// 	}
+	// 	const x1 = state.nodes.findIndex(each => each.key === startKey)
+	// 	const x2 = state.nodes.findIndex(each => each.key === endKey)
+	// 	state.nodes.splice(x1, x2 - x1 + 1, ...nodes)
+	// 	Object.assign(state.cursors, {
+	// 		start: cursor,
+	// 		end: { ...cursor },
+	// 	})
+	// 	this.renderComponents()
+	// },
+
+	commitInput(startKey, endKey, nodes, cursor) {
 		this.commitOperation(OperationTypes.INPUT)
-		const seenKeys = {}
-		for (const node of nodes) {
-			if (seenKeys[node.key]) {
-				node.key = rand.newUUID()
-			}
-			seenKeys[node.key] = true
-		}
 		const x1 = state.nodes.findIndex(each => each.key === startKey)
 		const x2 = state.nodes.findIndex(each => each.key === endKey)
 		state.nodes.splice(x1, x2 - x1 + 1, ...nodes)
-		// ...
+		Object.assign(state.cursors, {
+			start: cursor,
+			end: { ...cursor },
+		})
 		this.renderComponents()
 	},
-	commitInputNoOp(caret) {
-		this.commitOperation(OperationTypes.INPUT_NOOP)
-		state.caret = caret
-		this.renderComponents()
-	},
+
+	// commitInputNoOp(caret) {
+	// 	this.commitOperation(OperationTypes.INPUT_NOOP)
+	// 	state.caret = caret
+	// 	this.renderComponents()
+	// },
 	renderComponents() {
 		const nodes = state.nodes.map(each => ({ ...each })) // (Read proxy)
 		state.components = parseComponents(nodes)
@@ -466,9 +483,9 @@ function getTargetRange(keyNode, anchorNode, focusNode) {
 function getCursor(documentNode, node, offset) {
 	const keyNode = getKeyNode(node)
 	const cursor = {
-		key: keyNode.id,
-		index: findIndex(documentNode, keyNode),
-		pos: findPos(keyNode, node, offset),
+		key: keyNode.id,                         // The node key.
+		index: findIndex(documentNode, keyNode), // The node index.
+		pos: findPos(keyNode, node, offset),     // The node cursor position.
 	}
 	return cursor
 }
@@ -523,6 +540,15 @@ function Editor(props) {
 		[],
 	)
 
+	// let { x, y, height } = state.caret
+	// if (y < 0) {
+	// 	window.scrollBy(0, y)
+	// 	y = 0
+	// } else if (y + height > window.innerHeight) {
+	// 	window.scrollBy(0, y + height - window.innerHeight)
+	// 	y = window.innerHeight - height
+	// }
+
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
@@ -530,26 +556,17 @@ function Editor(props) {
 					syncViews(ref.current, state.reactDOM, "data-vdom-memo")
 					return
 				}
-				// let { x, y, height } = state.caret
-				// if (y < 0) {
-				// 	window.scrollBy(0, y)
-				// 	y = 0
-				// } else if (y + height > window.innerHeight) {
-				// 	window.scrollBy(0, y + height - window.innerHeight)
-				// 	y = window.innerHeight - height
-				// }
 				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
 
-				console.log(state.cursor.startPos)
-
-				// const selection = document.getSelection()
-				// const range = document.createRange()
-				// const keyNode = document.getElementById(state.startKey)
-				// const { node, offset } = findRange(keyNode, state.startPos)
-				// range.setStart(node, offset)
-				// range.collapse()
-				// selection.removeAllRanges()
-				// selection.addRange(range)
+				const { cursors: { start: { key, pos } } } = state
+				const selection = document.getSelection()
+				const range = document.createRange()
+				const keyNode = document.getElementById(key)
+				const { node, offset } = findRange(keyNode, pos)
+				range.setStart(node, offset)
+				range.collapse()
+				selection.removeAllRanges()
+				selection.addRange(range)
 			})
 		}, [state]),
 		[state.onRenderComponents],
@@ -611,32 +628,47 @@ function Editor(props) {
 							// targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
 						},
 
+						// if (!startNode || !containsChildNode(ref.current, startNode)) {
+						// 	dispatch.commitInputNoOp(cursor) // FIXME?
+						// 	return
+						// }
+
 						onInput: e => {
 							let { current: { startNode, endNode, extendStart, extendEnd } } = targetRange
-							const caret = getCaretFromSelection(document.getSelection())
-							if (!startNode || !containsChildNode(ref.current, startNode)) {
-								dispatch.commitInputNoOp(caret)
-								return
-							}
 							// Re-extend the start node:
 							if (!extendStart && startNode.previousSibling) {
 								startNode = startNode.previousSibling
-								extendStart++
 							// Re-extend the end node:
 							} else if (!extendEnd && endNode.nextSibling) {
 								endNode = endNode.nextSibling
-								extendEnd++
 							}
+							// **startKey and endKey cannot change!**
+							const startKey = startNode.id
+							const endKey = endNode.id
+							// Remember node IDs:
+							const seenIDs = {}
+							// Iterate the start nodes:
 							const nodes = [{ key: startNode.id, data: innerText(startNode) }]
+							seenIDs[startNode.id] = true
+							// Iterate to the end node:
 							let node = startNode.nextSibling
 							while (node) {
+								// Guard repeat node IDs:
+								if (seenIDs[node.id]) {
+									node.id = rand.newUUID()
+								}
 								nodes.push({ key: node.id, data: innerText(node) })
+								seenIDs[node.id] = true
+								// Break on the end node:
 								if (node === endNode) {
 									break
 								}
 								node = node.nextSibling
 							}
-							dispatch.commitInput(startNode.id, endNode.id, nodes, caret)
+							// Get the cursor:
+							const { anchorNode, anchorOffset } = document.getSelection()
+							const cursor = getCursor(ref.current, anchorNode, anchorOffset)
+							dispatch.commitInput(startKey, endKey, nodes, cursor)
 						},
 
 						onCut:   e => e.preventDefault(),
