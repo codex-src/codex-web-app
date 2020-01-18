@@ -1,18 +1,19 @@
-// import invariant from "invariant"
+// import onKeyDown from "./onKeyDown"
 import DebugCSS from "components/DebugCSS"
 import Enum from "utils/Enum"
-import onKeyDown from "./onKeyDown"
+import invariant from "invariant"
 import rand from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
 import RenderDOM from "utils/RenderDOM"
 import stylex from "stylex"
 import syncViews from "./syncViews"
+import typeOf from "utils/typeOf"
 import useMethods from "use-methods"
 
 import "./Editor.css"
 
-// const __DEV__ = process.env.NODE_ENV !== "production"
+const __DEV__ = process.env.NODE_ENV !== "production"
 
 const Syntax = stylex.Styleable(props => (
 	<span style={stylex.parse("pre c:blue-a400")}>
@@ -118,24 +119,17 @@ const initialState = {
 	operation: "",
 	operationAt: 0,
 	hasFocus: false,
-
-	// caret: null, // DEPRECATE?
-
 	cursors: {
 		start: {
 			key: "",
-			index: 0,
 			pos: 0,
 		},
 		end: {
 			key: "",
-			index: 0,
 			pos: 0,
 		},
 		hasSelection: false,
-		// isReversed: false,
 	},
-
 	nodes: null,
 	components: null,
 	reactDOM: null,
@@ -227,6 +221,12 @@ const reducer = state => ({
 
 // newVDOMNodes parses a new VDOM nodes array and map.
 function newVDOMNodes(data) {
+	if (__DEV__) {
+		invariant(
+			typeOf.str(data),
+			"FIXME",
+		)
+	}
 	const nodes = data.split("\n").map(each => ({
 		key: rand.newUUID(),
 		data: each,
@@ -249,17 +249,35 @@ const init = initialValue => initialState => {
 
 // isTextNode returns whether a node is a text node.
 function isTextNode(node) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(node),
+			"FIXME",
+		)
+	}
 	return node.nodeType === Node.TEXT_NODE
 }
 
 // isElementNode returns whether a node is an element node.
 function isElementNode(node) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(node),
+			"FIXME",
+		)
+	}
 	return node.nodeType === Node.ELEMENT_NODE
 }
 
 // isTextOrBreakElementNode returns whether a node is a text
 // or a break element node.
 function isTextOrBreakElementNode(node) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(node),
+			"FIXME",
+		)
+	}
 	const ok = (
 		isTextNode(node) || (
 			isElementNode(node) &&
@@ -271,8 +289,13 @@ function isTextOrBreakElementNode(node) {
 
 const naked = RenderDOM(props => <div />)
 
-// isKeyNode returns whether a node is a VDOM node.
-function isKeyNode(node) {
+function isHashNode(node) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(node),
+			"FIXME",
+		)
+	}
 	const ok = (
 		isElementNode(node) && (
 			node.hasAttribute("data-vdom-node") ||
@@ -282,15 +305,25 @@ function isKeyNode(node) {
 	return ok
 }
 
-// nodeValue mocks the browser functions; reads a text or
-// break element node.
+// nodeValue mocks the browser function.
 function nodeValue(node) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(node),
+			"FIXME",
+		)
+	}
 	return node.nodeValue || ""
 }
 
-// innerText mocks the browser function; (recursively) reads
-// a root node.
-function innerText(keyNode) {
+// innerText mocks the browser function.
+function innerText(hashNode) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(hashNode),
+			"FIXME",
+		)
+	}
 	let data = ""
 	const recurseOn = startNode => {
 		for (const currentNode of startNode.childNodes) {
@@ -299,39 +332,25 @@ function innerText(keyNode) {
 			} else {
 				recurseOn(currentNode)
 				const { nextSibling } = currentNode
-				if (isKeyNode(currentNode) && isKeyNode(nextSibling)) {
+				if (isHashNode(currentNode) && isHashNode(nextSibling)) {
 					data += "\n"
 				}
 			}
 		}
 	}
-	recurseOn(keyNode)
+	recurseOn(hashNode)
 	return data
 }
 
-// findIndex finds the index of a VDOM node.
-function findIndex(documentNode, node) {
-	let index = 0
-	for (const currentNode of documentNode.childNodes) {
-		if (currentNode === node) {
-			break
-		}
-		// Compound components:
-		if (currentNode.childNodes.length && isKeyNode(currentNode.childNodes[0])) {
-			for (const childNode of currentNode.childNodes) {
-				if (childNode === node) {
-					break
-				}
-				index++
-			}
-		}
-		index++
+function findPos(hashNode, node, offset) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(hashNode) &&
+			typeOf.obj(node) &&
+			typeOf.num(offset),
+			"FIXME",
+		)
 	}
-	return index
-}
-
-// findPos finds the cursor position.
-function findPos(keyNode, node, offset) {
 	let pos = 0
 	while (node.childNodes && node.childNodes.length) { // (Firefox)
 		node = node.childNodes[offset]
@@ -353,7 +372,7 @@ function findPos(keyNode, node, offset) {
 					return true
 				}
 				const { nextSibling } = currentNode
-				if (isKeyNode(currentNode) && isKeyNode(nextSibling)) {
+				if (isHashNode(currentNode) && isHashNode(nextSibling)) {
 					// Increment one paragraph:
 					pos++
 				}
@@ -361,12 +380,18 @@ function findPos(keyNode, node, offset) {
 		}
 		return false
 	}
-	recurseOn(keyNode)
+	recurseOn(hashNode)
 	return pos
 }
 
-// findRange finds the range (object -- not instance).
-function findRange(keyNode, pos) {
+function findRange(hashNode, pos) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(hashNode) &&
+			typeOf.num(pos),
+			"FIXME",
+		)
+	}
 	const range = {
 		node: null,
 		offset: 0,
@@ -390,7 +415,7 @@ function findRange(keyNode, pos) {
 					return true
 				}
 				const { nextSibling } = currentNode
-				if (isKeyNode(currentNode) && isKeyNode(nextSibling)) {
+				if (isHashNode(currentNode) && isHashNode(nextSibling)) {
 					// Decrement one paragraph:
 					pos--
 				}
@@ -398,13 +423,18 @@ function findRange(keyNode, pos) {
 		}
 		return false
 	}
-	recurseOn(keyNode)
+	recurseOn(hashNode)
 	return range
 }
 
-// containsChildNode returns whether a parent node contains
-// a child node.
-function containsChildNode(parentNode, node) {
+function contains(parentNode, node) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(parentNode) &&
+			typeOf.obj(node),
+			"FIXME",
+		)
+	}
 	const ok = (
 		node !== parentNode &&
 		parentNode.contains(node)
@@ -412,43 +442,46 @@ function containsChildNode(parentNode, node) {
 	return ok
 }
 
-// getCaretFromSelection gets a DOMRect for the caret from
-// a selection.
-function getCaretFromSelection(selection) {
-	const range = selection.getRangeAt(0)
-	let caret = null
-	if ((caret = range.getClientRects()[0])) {
-		return caret
-	// } else if ((caret = range.getBoundingClientRect())) {
-	// 	return caret
-	// }
-	} else if ((caret = selection.anchorNode.getBoundingClientRect())) {
-		return caret
+function getHashNode(node) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(node),
+			"FIXME",
+		)
 	}
-	return null
-}
-
-function getKeyNode(node) {
-	while (!isKeyNode(node)) {
+	while (!isHashNode(node)) {
 		node = node.parentNode
 	}
 	return node
 }
 
-function getCompoundKeyNode(keyNode, node) {
-	while (node.parentNode !== keyNode) {
+function getHashRootNode(bodyNode, node) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(bodyNode) &&
+			typeOf.obj(node),
+			"FIXME",
+		)
+	}
+	while (node.parentNode !== bodyNode) {
 		node = node.parentNode
 	}
 	return node
 }
 
-// getAndSortStartAndEndNodes gets the sorts the start and
-// end nodes (VDOM root nods).
-function getAndSortStartAndEndNodes(keyNode, anchorNode, focusNode) {
+function getSortedHashRootNodes(bodyNode, anchorNode, focusNode) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(bodyNode) &&
+			typeOf.obj(anchorNode) &&
+			typeOf.obj(focusNode),
+			"FIXME",
+		)
+	}
 	if (anchorNode !== focusNode) {
-		const node1 = getCompoundKeyNode(keyNode, anchorNode)
-		const node2 = getCompoundKeyNode(keyNode, focusNode)
-		for (const childNode of keyNode.childNodes) {
+		const node1 = getHashRootNode(bodyNode, anchorNode)
+		const node2 = getHashRootNode(bodyNode, focusNode)
+		for (const childNode of bodyNode.childNodes) {
 			if (childNode === node1) {
 				return [node1, node2]
 			} else if (childNode === node2) {
@@ -456,13 +489,20 @@ function getAndSortStartAndEndNodes(keyNode, anchorNode, focusNode) {
 			}
 		}
 	}
-	const node = getCompoundKeyNode(keyNode, anchorNode)
+	const node = getHashRootNode(bodyNode, anchorNode)
 	return [node, node]
 }
 
-// getTargetRange gets a target range.
-function getTargetRange(keyNode, anchorNode, focusNode) {
-	let [startNode, endNode] = getAndSortStartAndEndNodes(keyNode, anchorNode, focusNode)
+function getInputRange(bodyNode, anchorNode, focusNode) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(bodyNode) &&
+			typeOf.obj(anchorNode) &&
+			typeOf.obj(focusNode),
+			"FIXME",
+		)
+	}
+	let [startNode, endNode] = getSortedHashRootNodes(bodyNode, anchorNode, focusNode)
 	// Extend the start node:
 	let extendStart = 0
 	while (extendStart < 1 && startNode.previousSibling) {
@@ -478,16 +518,18 @@ function getTargetRange(keyNode, anchorNode, focusNode) {
 	return { startNode, endNode, extendStart, extendEnd }
 }
 
-// getCursor gets a cursor object from a document node and a
-// selection node and offset.
-function getCursor(documentNode, node, offset) {
-	const keyNode = getKeyNode(node)
-	const cursor = {
-		key: keyNode.id,                         // The node key.
-		index: findIndex(documentNode, keyNode), // The node index.
-		pos: findPos(keyNode, node, offset),     // The node cursor position.
+function getCursor(node, offset) {
+	if (__DEV__) {
+		invariant(
+			typeOf.obj(node) &&
+			typeOf.num(offset),
+			"FIXME",
+		)
 	}
-	return cursor
+	const hashNode = getHashNode(node)
+	const key = hashNode.id
+	const pos = findPos(hashNode, node, offset)
+	return { key, pos }
 }
 
 function EditorContents(props) {
@@ -501,14 +543,14 @@ function Editor(props) {
 	// const [state, dispatch] = useMethods(reducer, initialState, init(props.initialValue))
 
 	const selectionchange = React.useRef()
-	const targetRange = React.useRef()
+	const inputRange = React.useRef()
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			const h = () => {
 				const selection = document.getSelection()
 				const { anchorNode, anchorOffset, focusNode, focusOffset } = selection
-				if (!anchorNode || !containsChildNode(ref.current, anchorNode)) {
+				if (!anchorNode || !contains(ref.current, anchorNode)) {
 					// (No-op)
 					return
 				}
@@ -524,13 +566,13 @@ function Editor(props) {
 					return
 				}
 				selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
-				const start = getCursor(ref.current, anchorNode, anchorOffset)
+				const start = getCursor(anchorNode, anchorOffset)
 				let end = { ...start }
 				if (anchorNode !== focusNode || anchorOffset !== focusOffset) {
-					end = getCursor(ref.current, focusNode, focusOffset)
+					end = getCursor(focusNode, focusOffset)
 				}
 				dispatch.commitSelect(start, end)
-				targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
+				inputRange.current = getInputRange(ref.current, anchorNode, focusNode)
 			}
 			document.addEventListener("selectionchange", h)
 			return () => {
@@ -561,8 +603,8 @@ function Editor(props) {
 				const { cursors: { start: { key, pos } } } = state
 				const selection = document.getSelection()
 				const range = document.createRange()
-				const keyNode = document.getElementById(key)
-				const { node, offset } = findRange(keyNode, pos)
+				const hashNode = document.getElementById(key)     // FIXME
+				const { node, offset } = findRange(hashNode, pos) // FIXME
 				range.setStart(node, offset)
 				range.collapse()
 				selection.removeAllRanges()
@@ -590,7 +632,7 @@ function Editor(props) {
 							// switch (true) {
 							// case onKeyDown.isBackspaceClass(e):
 							// 	// Guard the anchor node:
-							// 	if (state.pos1.pos === state.pos2.pos && (!state.pos1.pos || state.body.data[state.pos1.pos - 1] === "\n")) {
+							// 	if (state.pos1.pos === state.pos2.pos && (!state.pos1.pos || state.bodyNode.data[state.pos1.pos - 1] === "\n")) {
 							// 		e.preventDefault()
 							// 		dispatch.commitBackspace()
 							// 		return
@@ -602,7 +644,7 @@ function Editor(props) {
 							// // regardless of line breaks.
 							// case onKeyDown.isDeleteClass(e):
 							// 	// Guard the anchor node:
-							// 	if (state.pos1.pos === state.pos2.pos && (state.pos1.pos === state.body.data.length || state.body.data[state.pos1.pos] === "\n")) {
+							// 	if (state.pos1.pos === state.pos2.pos && (state.pos1.pos === state.bodyNode.data.length || state.bodyNode.data[state.pos1.pos] === "\n")) {
 							// 		e.preventDefault()
 							// 		dispatch.commitDelete()
 							// 		return
@@ -621,20 +663,20 @@ function Editor(props) {
 							// }
 
 							// const { anchorNode, focusNode } = document.getSelection()
-							// if (!anchorNode || !containsChildNode(ref.current, anchorNode)) {
+							// if (!anchorNode || !contains(ref.current, anchorNode)) {
 							// 	// (No-op)
 							// 	return
 							// }
-							// targetRange.current = getTargetRange(ref.current, anchorNode, focusNode)
+							// inputRange.current = getInputRange(ref.current, anchorNode, focusNode)
 						},
 
-						// if (!startNode || !containsChildNode(ref.current, startNode)) {
+						// if (!startNode || !contains(ref.current, startNode)) {
 						// 	dispatch.commitInputNoOp(cursor) // FIXME?
 						// 	return
 						// }
 
 						onInput: e => {
-							let { current: { startNode, endNode, extendStart, extendEnd } } = targetRange
+							let { current: { startNode, endNode, extendStart, extendEnd } } = inputRange
 							// Re-extend the start node:
 							if (!extendStart && startNode.previousSibling) {
 								startNode = startNode.previousSibling
@@ -667,7 +709,7 @@ function Editor(props) {
 							}
 							// Get the cursor:
 							const { anchorNode, anchorOffset } = document.getSelection()
-							const cursor = getCursor(ref.current, anchorNode, anchorOffset)
+							const cursor = getCursor(anchorNode, anchorOffset)
 							dispatch.commitInput(startKey, endKey, nodes, cursor)
 						},
 
