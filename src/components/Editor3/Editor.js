@@ -186,6 +186,7 @@ const reducer = state => ({
 		const syntheticAnchor = {
 			key: state.nodes[0].key,
 			pos: 0,
+			// length??
 		}
 		const syntheticFocus = {
 			key: state.nodes[state.nodes.length - 1].key,
@@ -218,6 +219,7 @@ const reducer = state => ({
 		const syntheticAnchor = {
 			key: node1.key,
 			pos: node1.data.length,
+			// length??
 		}
 		this.commitInput(node1.key, node2.key, newNodes, syntheticAnchor)
 	},
@@ -235,16 +237,18 @@ const reducer = state => ({
 		const syntheticAnchor = {
 			key: node1.key,
 			pos: node1.data.length,
+			// length??
 		}
 		this.commitInput(node1.key, node2.key, newNodes, syntheticAnchor)
 	},
-	reset() {
+	reset(data = "") {
 		const node1 = state.nodes[0]
 		const node2 = state.nodes[state.nodes.length - 1]
-		const newNodes = [{ ...node1, data: "" }]
+		const newNodes = [{ ...node1, data }]
 		const syntheticAnchor = {
 			key: node1.key,
-			pos: 0,
+			pos: data.length,
+			// length??
 		}
 		this.commitInput(node1.key, node2.key, newNodes, syntheticAnchor)
 	},
@@ -628,18 +632,20 @@ function Editor(props) {
 					// No-op
 					return
 				}
-				const { current } = selectionchange
-				if (
-					current &&                               // eslint-disable-line
-					current.anchorNode   === anchorNode   && // eslint-disable-line
-					current.anchorOffset === anchorOffset && // eslint-disable-line
-					current.focusNode    === focusNode    && // eslint-disable-line
-					current.focusOffset  === focusOffset     // eslint-disable-line
-				) {
-					// No-op
-					return
-				}
-				selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
+
+				// const { current } = selectionchange
+				// if (
+				// 	current &&                               // eslint-disable-line
+				// 	current.anchorNode   === anchorNode   && // eslint-disable-line
+				// 	current.anchorOffset === anchorOffset && // eslint-disable-line
+				// 	current.focusNode    === focusNode    && // eslint-disable-line
+				// 	current.focusOffset  === focusOffset     // eslint-disable-line
+				// ) {
+				// 	// No-op
+				// 	return
+				// }
+				// selectionchange.current = { anchorNode, anchorOffset, focusNode, focusOffset }
+
 				if (anchorNode === ref.current && focusNode === ref.current) {
 					anchorNode = ref.current.childNodes[0]
 					focusNode = ref.current.childNodes[ref.current.childNodes.length - 1]
@@ -758,6 +764,11 @@ function Editor(props) {
 						},
 
 						onInput: e => {
+							if (ref.current.childNodes.length && !isHashNode(ref.current.childNodes[0])) {
+								dispatch.reset(ref.current.innerText) // ¡SOS!
+								return
+							}
+
 							// Repeat ID (based on Chrome):
 							const { anchorNode, anchorOffset } = document.getSelection()
 							const hashNode = getHashNode(anchorNode)
