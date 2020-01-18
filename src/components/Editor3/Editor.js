@@ -133,7 +133,7 @@ const initialState = {
 	nodes: null,
 	components: null,
 	reactDOM: null,
-	onRenderComponents: 0,
+	onRender: 0,
 }
 
 // In theory, we only need to support backspace and delete
@@ -158,43 +158,18 @@ const reducer = state => ({
 		this.commitOperation(OperationTypes.BLUR)
 		state.hasFocus = false
 	},
+	// NOTE: start and end are not sorted.
 	commitSelect(start, end) {
 		if (state.operation === OperationTypes.SELECT && Date.now() - state.operationAt >= 100) {
 			this.commitOperation(OperationTypes.SELECT)
 		}
-		// let isReversed = false
-		if ((start.index === end.index && start.pos > end.pos) || start.index > end.index) {
-			;[start, end] = [end, start] // Does this work?
-			// isReversed = true
-		}
-		const hasSelection = start.index !== end.index || start.pos === end.pos
+		const hasSelection = start.key !== end.key || start.pos !== end.pos
 		Object.assign(state.cursors, {
 			start,
 			end,
-			// isReversed,
 			hasSelection,
 		})
 	},
-
-	// commitInput(startKey, endKey, nodes, cursor) {
-	// 	this.commitOperation(OperationTypes.INPUT)
-	// 	const seenKeys = {}
-	// 	for (const node of nodes) {
-	// 		if (seenKeys[node.key]) {
-	// 			node.key = rand.newUUID()
-	// 		}
-	// 		seenKeys[node.key] = true
-	// 	}
-	// 	const x1 = state.nodes.findIndex(each => each.key === startKey)
-	// 	const x2 = state.nodes.findIndex(each => each.key === endKey)
-	// 	state.nodes.splice(x1, x2 - x1 + 1, ...nodes)
-	// 	Object.assign(state.cursors, {
-	// 		start: cursor,
-	// 		end: { ...cursor },
-	// 	})
-	// 	this.renderComponents()
-	// },
-
 	commitInput(startKey, endKey, nodes, cursor) {
 		this.commitOperation(OperationTypes.INPUT)
 		const x1 = state.nodes.findIndex(each => each.key === startKey)
@@ -204,18 +179,12 @@ const reducer = state => ({
 			start: cursor,
 			end: { ...cursor },
 		})
-		this.renderComponents()
+		this.render()
 	},
-
-	// commitInputNoOp(caret) {
-	// 	this.commitOperation(OperationTypes.INPUT_NOOP)
-	// 	state.caret = caret
-	// 	this.renderComponents()
-	// },
-	renderComponents() {
+	render() {
 		const nodes = state.nodes.map(each => ({ ...each })) // (Read proxy)
 		state.components = parseComponents(nodes)
-		state.onRenderComponents++
+		state.onRender++
 	},
 })
 
@@ -223,6 +192,7 @@ const reducer = state => ({
 function newVDOMNodes(data) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 1,
 			typeOf.str(data),
 			"FIXME",
 		)
@@ -251,6 +221,7 @@ const init = initialValue => initialState => {
 function isTextNode(node) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 1,
 			typeOf.obj(node),
 			"FIXME",
 		)
@@ -262,6 +233,7 @@ function isTextNode(node) {
 function isElementNode(node) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 1,
 			typeOf.obj(node),
 			"FIXME",
 		)
@@ -274,6 +246,7 @@ function isElementNode(node) {
 function isTextOrBreakElementNode(node) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 1,
 			typeOf.obj(node),
 			"FIXME",
 		)
@@ -292,6 +265,7 @@ const naked = RenderDOM(props => <div />)
 function isHashNode(node) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 1,
 			typeOf.obj(node),
 			"FIXME",
 		)
@@ -309,6 +283,7 @@ function isHashNode(node) {
 function nodeValue(node) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 1,
 			typeOf.obj(node),
 			"FIXME",
 		)
@@ -320,6 +295,7 @@ function nodeValue(node) {
 function innerText(hashNode) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 1,
 			typeOf.obj(hashNode),
 			"FIXME",
 		)
@@ -345,6 +321,7 @@ function innerText(hashNode) {
 function findPos(hashNode, node, offset) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 3,
 			typeOf.obj(hashNode) &&
 			typeOf.obj(node) &&
 			typeOf.num(offset),
@@ -384,10 +361,11 @@ function findPos(hashNode, node, offset) {
 	return pos
 }
 
-function findRange(hashNode, pos) {
+function findRange(key, pos) {
 	if (__DEV__) {
 		invariant(
-			typeOf.obj(hashNode) &&
+			arguments.length === 2,
+			typeOf.str(pos) &&
 			typeOf.num(pos),
 			"FIXME",
 		)
@@ -396,6 +374,7 @@ function findRange(hashNode, pos) {
 		node: null,
 		offset: 0,
 	}
+	const hashNode = document.getElementById(key)
 	const recurseOn = startNode => {
 		for (const currentNode of startNode.childNodes) {
 			if (isTextOrBreakElementNode(currentNode)) {
@@ -430,6 +409,7 @@ function findRange(hashNode, pos) {
 function contains(parentNode, node) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 2,
 			typeOf.obj(parentNode) &&
 			typeOf.obj(node),
 			"FIXME",
@@ -445,6 +425,7 @@ function contains(parentNode, node) {
 function getHashNode(node) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 1,
 			typeOf.obj(node),
 			"FIXME",
 		)
@@ -458,6 +439,7 @@ function getHashNode(node) {
 function getHashRootNode(bodyNode, node) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 2,
 			typeOf.obj(bodyNode) &&
 			typeOf.obj(node),
 			"FIXME",
@@ -472,6 +454,7 @@ function getHashRootNode(bodyNode, node) {
 function getSortedHashRootNodes(bodyNode, anchorNode, focusNode) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 3,
 			typeOf.obj(bodyNode) &&
 			typeOf.obj(anchorNode) &&
 			typeOf.obj(focusNode),
@@ -496,6 +479,7 @@ function getSortedHashRootNodes(bodyNode, anchorNode, focusNode) {
 function getInputRange(bodyNode, anchorNode, focusNode) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 3,
 			typeOf.obj(bodyNode) &&
 			typeOf.obj(anchorNode) &&
 			typeOf.obj(focusNode),
@@ -521,6 +505,7 @@ function getInputRange(bodyNode, anchorNode, focusNode) {
 function getCursor(node, offset) {
 	if (__DEV__) {
 		invariant(
+			arguments.length === 2,
 			typeOf.obj(node) &&
 			typeOf.num(offset),
 			"FIXME",
@@ -582,36 +567,25 @@ function Editor(props) {
 		[],
 	)
 
-	// let { x, y, height } = state.caret
-	// if (y < 0) {
-	// 	window.scrollBy(0, y)
-	// 	y = 0
-	// } else if (y + height > window.innerHeight) {
-	// 	window.scrollBy(0, y + height - window.innerHeight)
-	// 	y = window.innerHeight - height
-	// }
-
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-				if (!state.onRenderComponents) {
-					syncViews(ref.current, state.reactDOM, "data-vdom-memo")
+				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
+				if (!state.onRender) {
+					// (No-op)
 					return
 				}
-				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
-
 				const { cursors: { start: { key, pos } } } = state
 				const selection = document.getSelection()
 				const range = document.createRange()
-				const hashNode = document.getElementById(key)     // FIXME
-				const { node, offset } = findRange(hashNode, pos) // FIXME
+				const { node, offset } = findRange(key, pos)
 				range.setStart(node, offset)
 				range.collapse()
 				selection.removeAllRanges()
 				selection.addRange(range)
 			})
 		}, [state]),
-		[state.onRenderComponents],
+		[state.onRender],
 	)
 
 	return (
@@ -677,39 +651,38 @@ function Editor(props) {
 
 						onInput: e => {
 							let { current: { startNode, endNode, extendStart, extendEnd } } = inputRange
-							// Re-extend the start node:
-							if (!extendStart && startNode.previousSibling) {
-								startNode = startNode.previousSibling
-							// Re-extend the end node:
-							} else if (!extendEnd && endNode.nextSibling) {
-								endNode = endNode.nextSibling
-							}
 							// **startKey and endKey cannot change!**
 							const startKey = startNode.id
 							const endKey = endNode.id
-							// Remember node IDs:
+							// Re-extend the start and end node:
+							if (!extendStart && startNode.previousSibling) {
+								startNode = startNode.previousSibling
+							} else if (!extendEnd && endNode.nextSibling) {
+								endNode = endNode.nextSibling
+							}
 							const seenIDs = {}
-							// Iterate the start nodes:
 							const nodes = [{ key: startNode.id, data: innerText(startNode) }]
 							seenIDs[startNode.id] = true
-							// Iterate to the end node:
 							let node = startNode.nextSibling
 							while (node) {
-								// Guard repeat node IDs:
 								if (seenIDs[node.id]) {
 									node.id = rand.newUUID()
 								}
 								nodes.push({ key: node.id, data: innerText(node) })
 								seenIDs[node.id] = true
-								// Break on the end node:
 								if (node === endNode) {
 									break
 								}
 								node = node.nextSibling
 							}
-							// Get the cursor:
 							const { anchorNode, anchorOffset } = document.getSelection()
-							const cursor = getCursor(anchorNode, anchorOffset)
+							let cursor = null
+							try {
+								cursor = getCursor(anchorNode, anchorOffset)
+							// Guard no-op (e.g. backspace on empty):
+							} catch {
+								cursor = state.cursors.start
+							}
 							dispatch.commitInput(startKey, endKey, nodes, cursor)
 						},
 
