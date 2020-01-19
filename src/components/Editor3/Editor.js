@@ -190,7 +190,7 @@ const reducer = state => ({
 			anchor.key === focus.key &&
 			anchor.pos === focus.pos
 		)
-		const areSelectingAll = computeSelectAll(anchor, focus, { ...state.nodes[0] }, { ...state.nodes[state.nodes.length - 1] })
+		const areSelectingAll = computeSelectAll(anchor, focus, state.nodes[0], state.nodes[state.nodes.length - 1])
 		Object.assign(state.cursors, {
 			anchor,
 			focus,
@@ -275,24 +275,37 @@ const reducer = state => ({
 		const next = parseComponents(nodes)
 		state.components = next
 
-		// // Guard edge case at markdown start:
-		// //
-		// //  #·H<cursor> -> ["#", " "]
-		// // //·H<cursor> -> ["/", " "]
-		// //  >·H<cursor> -> [">", " "]
-		// //
-		// const markdownStart = (
-		// 	state.pos1.pos - 3 >= 0 &&
-		// 	markdown.isSyntax(state.body.data[state.pos1.pos - 3]) &&
-		// 	state.body.data[state.pos1.pos - 2] === " "
-		// )
-
 		// Native rendering strategy:
 		state.onRenderHook += !sameTypes(components, next) // || markdownStart
 
+		// // const t1 = Date.now()
 		// const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
 		// state.components = parseComponents(nodes)
+		// // const t2 = Date.now()
+		// // console.log(t2 - t1)
 		// state.onRenderHook++
+
+		// // Get the current components and parse new components:
+		// const components = state.components.map(each => ({ ...each, type: {  ...each.type } })) // Read proxy
+		// const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
+		// const next = parseComponents(nodes)
+		// state.components = next
+		// // // Guard edge case at markdown start:
+		// // //
+		// // //  #·H<cursor> -> ["#", " "]
+		// // // //·H<cursor> -> ["/", " "]
+		// // //  >·H<cursor> -> [">", " "]
+		// // //
+		// // const markdownStart = (
+		// // 	state.pos1.pos - 3 >= 0 &&
+		// // 	markdown.isSyntax(state.body.data[state.pos1.pos - 3]) &&
+		// // 	state.body.data[state.pos1.pos - 2] === " "
+		// // )
+		// // Native rendering strategy:
+		// state.onRenderHook += !sameTypes(components, next) // || markdownStart
+		// // const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
+		// // state.components = parseComponents(nodes)
+		// // state.onRenderHook++
 	},
 })
 

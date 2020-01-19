@@ -1,0 +1,616 @@
+body {
+	nodes: [
+		{
+			key: "",
+			data: "",
+		},
+	],
+	data() {
+		const data0 = this.nodes.map(each => each.data).join("\n")
+		return data0
+	}
+}
+
+selection {
+	// ...
+}
+
+---
+
+body: {
+	data: <string>,
+	nodes: [
+		{
+			key: <string>,
+			data: <string>,
+		},
+		{
+			key: <string>,
+			data: <string>,
+		},
+	],
+}
+
+selection: {
+	start: {
+		key: <string>,
+		pos: <number>,
+	},
+	end: {
+		key: <string>,
+		pos: <number>,
+	},
+	isCollapsed,    // Are the cursors collapsed?
+	isReversed,     // Are the cursors reversed?
+	isSelectingAll, // Are the cursors selecting all?
+},
+
+---
+
+if we can query the cursor hash node, then we can query the
+key. if we can query the key, we can quickly query the
+cursor position
+
+<div id="a"> <-
+	hello<cursor>hello
+</div>
+
+once we know a, we can count the current pos and quickly
+count the aggregate pos. counting the aggregate pos isn't
+that expensive because we're just adding integers in a
+linear loop -- no inspection needed
+
+so even if a user has 1000 nodes, it's really only as
+expensive as adding 1000 numbers together, which is
+virtually free -- realistically, most users will probably
+only ever have <100 nodes if i had to guess
+
+if we have one pos, we can query the other pos either by ->
+both pos are the same; no-op or we can use a hint. though,
+a hint requires knowing which pos is first, which maybe we
+can query from the selection api
+
+it wouldn't be the craziest idea to query the order of the
+selection api by domrects ...this feels a little weird and
+breaks the abstraction model. instead, what we can do is if
+we have both keys, then we can collocate the aggregate pos
+logic
+
+if we have two keys, abc and xyz, then when we query nodes,
+we can sesarch for whichever appears first, counting pos,
+then when we find the second one, stop counting and we have
+two pos
+
+function getPosForKey(key, nodes) {
+	let pos = 0
+	let index = 0
+	while (index < nodes.length) {
+		const { key, data: { length } } = nodes[index]
+		if (key === "abc") {
+			pos += offset
+			break
+		}
+		pos += (!index ? 0 : 1) + length
+	}
+	return pos
+}
+
+// Gets a cursor position and node index for a key.
+function getPosForKey(forKey, nodes) {
+	const pos = {
+		index: 0, // The node index
+		pos: 0,   // The aggregate cursor position
+	}
+	while (pos.index < nodes.length) {
+		const { key, data: { length } } = nodes[index]
+		if (key === forKey) {
+			break
+		}
+		pos.pos += (!pos.index ? 0 : 1) + length
+		pos.index++
+	}
+	return pos
+}
+
+-> get the offset pos
+-> get the aggregate pos and index
+
+so it turns out we *can* query the order of the selection by
+inspecting the range ->
+document.getSelection().getRangeAt(0) returns start and
+container, which is far more useful than selection alone.
+start correlates to the start, independent of the order
+
+// // Gets a cursor position for a key, and from a cursor
+// // position as a shortcut.
+// function getPosFromKey(
+// 	fromKey,
+// 	nodes,
+// 	pos = {     // pos acts as a zero value or a shortcut
+// 		key: "",  // The key
+// 		index: 0, // The key-node index
+// 		pos: 0,   // The cursor position (up to)
+// 	},
+// ) {
+// 	while (pos.index < nodes.length) {
+// 		const { key, data: { length } } = nodes[index]
+// 		if (key === fromKey) {
+// 			pos.key = key // Found the key
+// 			break
+// 		}
+// 		pos.pos += (!pos.index ? 0 : 1) + length
+// 		pos.index++
+// 	}
+// 	return pos
+// }
+
+// Gets a cursor position for a key, and from a cursor
+// position as a shortcut.
+function getPosFromKey(
+	fromKey,
+	nodes,
+	pos = {      // pos acts as a zero value or a shortcut
+		key: "",   // The key
+		index: 0,  // The key-node index
+		offset: 0, // The key-node offset -- not needed for this function
+		pos: 0,    // The cursor position (up to)
+	},
+) {
+	let { key, index, _pos } = pos
+	while (index < nodes.length) {
+		const { key: _key, data: { length } } = nodes[index]
+		if (key === _key) {
+			key = _key // Found the key
+			break
+		}
+		_pos += (!index ? 0 : 1) + length
+		index++
+	}
+	return { key, index, pos: _pos }
+}
+
+so if we have a selection, we know to run getposforkey
+twice, and we can even reuse the pos from the start key so
+as to minimize cost
+
+React.useLayoutEffect(
+	React.useCallback(() => {
+		const handleSelectionChange = () => {
+			// Guard selection -- needed to get a range:
+			const selection = document.getSelection()
+			if (!selection.anchorNode) {
+				// No-op
+				return
+			}
+
+			const {
+				startContainer, // The start node (ordered)
+				startOffset,    // The start node offset
+				endContainer,   // The end node (ordered)
+				endOffset,      // The end node offset
+				collapsed,      // Does the user have a selection?
+			} = selection.getRangeAt(0)
+
+			// Get the start and end nodes and keys:
+			const startKeyNode = getKeyNode(ref.current, startContainer)
+			const startKey = startKeyNode.id
+			const endKeyNode = getKeyNode(ref.current, endContainer)
+			const endKey = endKeyNode.id
+
+			// Start cursor:
+			const start = getPosFromKey(startKey, state.nodes)
+			start.offset += getOffsetFromKeyNode(startKeyNode, startContainer, startOffset)
+			start.pos += start.offset
+
+			// End cursor:
+			let end = { ...start }
+			if (!collapsed) {
+				end = getPosFromKey(endKey, state.nodes, start)
+				end.offset = getOffsetFromKeyNode(endKeyNode, endContainer, endOffset)
+				end.pos += end.offset
+			}
+
+			// Done -- dispatch a selection operation:
+			dispatch.opSelect(start, end)
+		}
+		document.addEventListener("selectionchange", handleSelectionChange)
+		return () => {
+			document.removeEventListener("selectionchange", handleSelectionChange)
+		}
+	}, [state, dispatch]),
+	[state.nodes],
+)
+
+we're missing one thing, we probably want our selections to
+also know they're key -- can be changed later
+
+ok so now we have a model for for always knowing the editor
+pos start and pos end, with the key, key index, and
+aggregate pos. this is *very* good as a start
+
+now we need a model of our data that we can read and write
+to using this concise model
+
+ideally, our data model wouldbe as simple as a data value
+and nodes, with the ability to quickly write to both with
+limited cost. all of this would make for great debuggability
+
+state.value
+state.selection
+
+state.value = {
+	data: "",    // Needed for status bar
+	nodes: [     // Needed for React
+		{ ... },
+		{ ... },
+	],
+}
+
+state.selection = {
+	start: {
+		key: "",
+		index: 0,  // Needed for status bar
+		offset: 0, // Needed for status bar
+		pos: 0,    // Needed for status bar
+	},
+	end: {
+		key: "",
+		index: 0,  // Needed for status bar
+		offset: 0, // Needed for status bar
+		pos: 0,    // Needed for status bar
+	}
+}
+
+ok so what we can do is have a value object (or similar)
+that can be read and written to
+
+state.value = {
+	data: "",
+	nodes: [
+		{ ... },
+		{ ... },
+	]
+}
+
+here's an interesting idea -- if in oninput we only read
+data -- we don't do anything to parse data, then the model
+may be easier to work with (because theoretically, we get
+support compound components for free)
+
+the problem with the above idea is that we lose key
+identity, which leads to useless rerenders
+
+what we probably want instead is both -- discrete nodes and
+plaintext data, or at least discrete nodes we can derive
+plaintext data
+
+// state.commits.push({ commit, data, nodes, start, end })
+
+const reducer => state => ({
+	// Commits an input editing operation.
+	commitInput(data, nodes, start, end) {
+		state.opType = OperationTypes.INPUT
+		state.data = state.data.slice(0, start.pos) + data + state.data.slice(end.pos)
+		state.nodes.splice(start.index, end.index - start.index + 1, ...nodes)
+		Object.assign(state, {
+			start,
+			end,
+		})
+		this.render()
+	}
+})
+
+// // Commits an empty backspace on a line (converts to an
+// // input editing operation).
+// emptyBackspaceOnLine() {
+// 	const syntheticStart = {
+// 		...state.start,
+// 		index: state.start.index - 1,
+// 		pos: state.start.pos - 1,
+// 	}
+// 	this.commitInput("", [], syntheticStart, syntheticStart)
+// },
+// // Commits an empty delete on a line (converts to an input
+// // editing operation).
+// emptyDeleteOnLine() {
+// 	const syntheticEnd = {
+// 		...state.start,
+// 		index: state.end.index + 1,
+// 		pos: state.end.pos + 1,
+// 	}
+// 	this.commitInput("", [], syntheticEnd, syntheticEnd)
+// }
+
+The really critical idea to understand is that a target
+range is *synonymous* with a selection range -- all a user
+is technically doing is overwriting a selection, right?
+
+so start and end are actually kind of synthetic cursors.
+they represent the stable selection area -- not the actual
+selection area, right?
+
+const reducer => state => ({
+	// Commits an input editing operation.
+	commitInput(data, nodes, start, end, reset) {
+		state.opType = OperationTypes.INPUT
+		state.data = state.data.slice(0, start.pos) + data + state.data.slice(end.pos)
+		state.nodes.splice(start.index, end.index - start.index + 1, ...nodes)
+		// Object.assign(state, {
+		// 	// **start and end are now out of sync!**
+		// 	resetKey,
+		// 	resetOffset,
+		// })
+		// Object.assign(state, {
+		// 	// **start and end are now out of sync!**
+		// 	reset: {
+		// 		key: resetKey,
+		// 		offset: resetOffset,
+		// 	},
+		// })
+		state.reset = reset
+		this.render()
+	}
+}
+
+if we add a reset parameter, then start and end possibly can
+operate as a target range, and reset resets the cursors to
+where they actually are
+
+or we can use a reset key and offset -- this simply works by
+querying an id (virtually instant) and querying a range on a
+key node, e.g. getRangeFromKeyNode
+
+const selection = document.getSelection()
+const range = document.createRange()
+const { node, offset } = getRangeFromKeyAndOffset(resetKey, resetOffset)
+range.setStart(node)
+range.collapse()
+selection.removeAllRanges()
+selection.addRange(range)
+
+the important distinction here is that compound components
+cannot use an id for the parent node -- element, right?
+right, so most likely compound components get codex node
+attributes except for an id. this makes sense (but a little
+brutalist)
+
+cursors may very well not need to know the key because we're
+relying on getRangeFromKeyAndOffset to reset the cursor
+(line 147)
+
+const initialState = {
+	opType: "",  // The current editing operation type.
+	opTime: 0,   // UNIX timestamp of the current editing operation.
+	data: "",    // The VDOM data.
+	nodes: null, // The VDOM nodes.
+	start: null, // The start cursors.
+	end: null,   // The end cursor.
+	reset: null, // Reset (recover) the cursor based on a key and key-node offset
+}
+
+function isKeyNode(node) {
+	const ok = (
+		node.nodeType === Node.ELEMENT_NODE &&
+		node.getAttribute("data-vdom-node")
+	)
+	return
+}
+
+function getKeyNodeAndOffset(node, offset) {
+	while (node) {
+		if (isKeyNode(node)) {
+			break
+		}
+		node = node.parentNode
+	}
+	const offset = getOffsetFromKeyNode(node) // Now a key node
+	return { keyNode: node, offset }
+}
+
+-> chrome (incl. mobile)
+-> safari (incl. mobile)
+-> firefox (ignore mobile?)
+-> app
+-> mobile app
+
+all that's left is we need to understand the target range (
+in terms of cursors?), how to iterate nodes / compound nodes
+(querying data and nodes)
+
+then we need to understand how cut, copy, and paste works
+
+cut and copy are effectively no-ops. paste is a little wierd
+because it can intersect nodes at the center, etc.
+
+// const reducer => state => ({
+// 	// write writes nodes.
+// 	//
+// 	// Expects start and end are in bounds.
+// 	writes(data, nodes, start = state.start, end = state.end) {
+// 		state.data = state.data.slice(0, start.pos) + data + state.data.slice(end.pos)
+//
+// 		// Merge the start node:
+// 		const startNode = state.nodes[start.index]
+// 		startNode.data = startNode.data.slice(0, start.offset) + nodes[0].data
+//
+// 		// Drop and push the center nodes:
+// 		if (nodes.length >= 3) {
+// 			// ...
+// 		}
+//
+// 		// Merge the end node:
+// 		if (nodes.length === 1) {
+// 			startNode.data +=
+// 		} else if (nodes.length > 1) {
+// 			// ...
+// 		}
+//
+// 		Object.assign(state, {
+// 			reset: {
+// 				key: start.key,
+// 				offset: start.offset,
+// 			},
+// 		})
+//
+// 		// Object.assign(state, {
+// 		// 	start,
+// 		// 	end: { ...start }, // Collapse the cursors
+// 		// })
+// 		this.render()
+// 	}
+// })
+
+const reducer => state => ({
+	// write writes plain text data and nodes to a selection
+	// range (start and end).
+	writes(data, nodes, start = state.start, end = state.end) {
+		state.data = state.data.slice(0, start.pos) + data + state.data.slice(end.pos)
+		const startNode = state.nodes[start.index]
+		const endNode = state.nodes[end.index]
+		if (!nodes.length) {
+			startNode.data = startNode.data.slice(0, start.offset) + endNode.data.slice(end.offset)
+			if (start.index + 1 < end.index) {
+				const from = start.index + 1
+				const to = end.index
+				state.nodes.splice(from, to - from)
+			}
+		} else {
+			startNode.data = startNode.data.slice(0, start.offset) + nodes[0].data
+			if (start.index + 1 < end.index) {
+				const from = start.index + 1
+				const to = end.index
+				state.nodes.slice(from, to - from, ...nodes.slice(1, -1))
+			}
+			endNode.data = nodes[nodes.length - 1].data + endNode.data
+		}
+		const { key, offset } = start
+		state.reset = { key, offset }
+		this.render()
+	}
+})
+
+// ["abc", -> ["jkl",
+//  "def",     "mno",
+//  "ghi"]     "pqr"]
+
+// aaa -> ac -> adc
+// bbb
+// ccc
+//
+// aaa -> ac -> addd
+// bbb          ddd
+// ccc          dddc
+
+we now have a proposal (tested and passing) implementation
+of write
+
+// set nodes = null when data = ""
+function write(state, data, nodes, start, end) {
+	if (!data && nodes === null) {
+		const { key } = state.nodes[start.index]
+		nodes = [{ key, data }]
+	}
+	state.data = state.data.slice(0, start.pos) + data + state.data.slice(end.pos)
+	const startNode = state.nodes[start.index]
+	const endNode = { ...state.nodes[end.index] }
+	startNode.data = startNode.data.slice(0, start.offset) + nodes[0].data
+	state.nodes.splice(start.index + 1, end.index - start.index, ...nodes.slice(1))
+	if (nodes.length === 1) {
+		startNode.data += endNode.data.slice(end.offset)
+		return
+	}
+	const newEndNode = nodes[nodes.length - 1]
+	newEndNode.data += endNode.data.slice(end.offset)
+}
+
+this thould make it easier to reason about writing to our
+model. so now oninput needs to make sure it grabs all the
+data and nodes needed for a write
+
+the way oninput needs to work is actually based off of a
+target range, which we can rename to greedy -- greedy.start
+and greedy.end
+
+so every selectionchange (and keydown) event needs to queue
+a new greedy selection. a greedy selection has simple rules;
+grab the selection range up to one node before and two nodes
+after, and extend once more (if not extended) in oninput
+
+the difference here is that greedy needs to know two things:
+it needs a reference to the start node and it also needs to
+remember the cursor value. this should be simple in
+principle -- basically, we we just need to learn how to
+compute a selection for a key before and after, then we
+should have enough information to process via oninput
+
+we know how to intelligently and quickly query a cursor --
+we get the node and offset (from a range), get the key from
+the the node, and then we traverse once for the start node
+and retraverse (with a hint) the second node
+
+so now what we need to do is *traverse again*; the greedy
+end is fine -- that's more or less what we've been doing;
+once we have a key we just traverse
+
+// End cursor:
+let end = { ...start }
+if (!collapsed) {
+	end = getPosFromKey(endKey, state.nodes, start)
+	end.offset = getOffsetFromKeyNode(endKeyNode, endContainer, endOffset)
+	end.pos += end.offset
+}
+
+// Gets a cursor representation for a key. Accepts a cursor
+// as a shortcut.
+function getCursorFromKey(
+	nodes,
+	fromKey,
+	cursor = {
+		key: "",   // The key
+		index: 0,  // The key-node index
+		offset: 0, // The key-node offset -- not needed for this function
+		pos: 0,    // The cursor position (up to)
+	},
+	dir = 1, // Direction to traverse; use -1 to traverse backwards
+) {
+	while (cursor.index >= 0 && cursor.index < nodes.length) {
+		const { key, data: { length } } = nodes[cursor.index]
+		if (key === fromKey) {
+			cursor.key = key
+			break
+		}
+		cursor.pos += (!cursor.index ? 0 : 1) + length
+		cursor.index += dir
+	}
+	return cursor
+}
+
+now all we need to do is be able to change the direction
+
+so now there's a negligible cost to performance and it's
+multi-directional, rather than unidirectional
+
+this would be reasonable to test
+
+function isKeyNode(node) {
+	const ok = (
+		node.nodeType === Node.ELEMENT_NODE &&
+		node.getAttribute("data-vdom-node")
+	)
+	return
+}
+
+function getKeyNodeAndOffset(node, offset) {
+	while (node) {
+		if (isKeyNode(node)) {
+			break
+		}
+		node = node.parentNode
+	}
+	const keyNode = node
+	const offset = getOffsetFromKeyNode(keyNode)
+	return { keyNode: node, offset }
+}
+
+so this gives us the greedy selection start and end, as well
+as teh references we need
