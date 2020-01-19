@@ -20,7 +20,7 @@ function getCursorFromKey(nodes, fromKey, cursor, dir = 1) {
 			cursor.key = key
 			break
 		}
-		cursor.pos += dir * (`\n${data}`).length
+		cursor.pos += dir * `\n${data}`.length
 		cursor.index += dir
 	}
 	return cursor

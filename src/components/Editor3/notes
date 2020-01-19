@@ -595,9 +595,9 @@ this would be reasonable to test
 function isKeyNode(node) {
 	const ok = (
 		node.nodeType === Node.ELEMENT_NODE &&
-		node.getAttribute("data-vdom-node")
+		!!node.getAttribute("data-vdom-node") // Coerce
 	)
-	return
+	return ok
 }
 
 function getKeyNodeAndOffset(node, offset) {
@@ -613,4 +613,48 @@ function getKeyNodeAndOffset(node, offset) {
 }
 
 so this gives us the greedy selection start and end, as well
-as teh references we need
+as the references we need
+
+ok so now we have the new cursor, write, and greedy (based
+on selection) abstractions. now we need to parse nodes and
+data for oninput and then
+
+const { anchorNode, anchorOffset } = document.getSelection()
+const offset = getOffsetFromRange(keyNode, anchorNode, anchorOffset)
+...
+const keyNode = document.getSelection(reset.key)
+const { node, offset } = getRangeFromKeyNode(keyNode, reset.offset)
+
+<div id="a">
+	Hello, world!
+</div>
+
+Test 0, 13
+
+<div id="a">
+	<em>
+		Hello
+	</em>,{" "}
+	<strong>
+		world
+	</strong>
+	!
+</div>
+
+<CURSOR><em>
+<em><CURSOR>
+
+Hello<CURSOR>
+</em><CURSOR>
+
+,<CURSOR>
+
+<CURSOR><strong>
+<strong><CURSOR>
+
+world<CURSOR>
+</strong><CURSOR>
+
+!<CURSOR>
+
+getOffsetFromRange is now tested and passing
