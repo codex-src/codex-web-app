@@ -9,8 +9,10 @@ function isTextOrBreakElementNode(node) {
 		)
 	)
 	return ok
+
 }
 
+// Mocks the browser function.
 function nodeValue(node) {
 	return node.nodeValue || "" // Break node
 }
