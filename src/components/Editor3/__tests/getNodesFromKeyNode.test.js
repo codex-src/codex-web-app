@@ -34,7 +34,7 @@ function innerText(keyNode) {
 }
 
 // Gets parsed nodes from a compound key node or key node.
-function getNodeFromKeyNode(keyNode) {
+function getNodesFromKeyNode(keyNode) {
 	invariant(
 		keyNode.hasAttribute("data-vdom-node") || keyNode.hasAttribute("data-vdom-compound-node"),
 		"FIXME",
@@ -90,7 +90,7 @@ test("innerText: *Hello*, **world**!", () => {
 	expect(innerText(rootNode)).toBe("Hello, world!")
 })
 
-test("getNodeFromKeyNode: integration", () => {
+test("getNodesFromKeyNode: integration", () => {
 	const Component = props => (
 		<div>
 			<div id="a" data-vdom-node>
@@ -127,7 +127,7 @@ test("getNodeFromKeyNode: integration", () => {
 	const nodes = []
 	let currentNode = startNode
 	while (currentNode) {
-		nodes.push(...getNodeFromKeyNode(currentNode))
+		nodes.push(...getNodesFromKeyNode(currentNode))
 		if (currentNode === endNode) {
 			break
 		}

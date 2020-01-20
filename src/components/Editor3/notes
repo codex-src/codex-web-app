@@ -210,7 +210,7 @@ React.useLayoutEffect(
 				end.pos += end.offset
 			}
 
-			// Done -- dispatch a selection operation:
+			// Done -- dispatch:
 			dispatch.opSelect(start, end)
 		}
 		document.addEventListener("selectionchange", handleSelectionChange)
@@ -658,3 +658,103 @@ world<CURSOR>
 !<CURSOR>
 
 getOffsetFromRange is now tested and passing
+
+now we need a way to read data and parse nodes -- the hard
+part is compound components
+
+we know that the greedy selection is based off of greedy
+nodes, which means oninput will need to cater to that
+behavior as well. assuming we have a start node and we want
+to parse an area, we need to traverse key nodes, but how?
+
+// const iter = NodeIterator(startNode)
+// while (iter.next()) {
+// 	// ...
+// }
+
+const startNode = ...
+const endNode = ...
+
+const nodes = []
+
+let currentNode = startNode
+while (currentNode) {
+	nodes.push(...getNodesFromKeyNode(currentNode))
+	if (currentNode === endNode) {
+		break
+	}
+	currentNode = currentNode.nextSibling
+}
+
+function getNodesFromKeyNode(keyNode) {
+	if (keyNode.getAttribute("data-vdom-compound-node")) {
+		const nodes = []
+		for (const currentNode of keyNode.childNodes) { // Does not recurse
+			const key = currentNode.id
+			const data = innerText(currentNode)
+			nodes.push({ key, data })
+		}
+		return nodes
+	}
+	const key = keyNode.id
+	const data = innerText(keyNode)
+	return [{ key, data }]
+}
+
+<div>
+	<div id="a" data-vdom-node>
+		hello
+	</div>
+	<div data-vdom-compound-node>
+		<div id="b-1" data-vdom-node>
+			hello
+		</div>
+		<div id="b-2" data-vdom-node>
+			hello
+		</div>
+		<div id="b-3" data-vdom-node>
+			hello
+		</div>
+	</div>
+	<div id="c" data-vdom-node>
+		hello
+	</div>
+</div>
+
+const seenKeys = {}
+const newNodes = [{ key: startNode.id, data: innerText(startNode) }]
+seenKeys[startNode.id] = true
+let node = startNode.nextSibling
+while (node) {
+	if (seenKeys[node.id]) {
+		node.id = random.newUUID()
+	}
+	newNodes.push({ key: node.id, data: innerText(node) })
+	seenKeys[node.id] = true
+	if (node === endNode) {
+		break
+	}
+	node = node.nextSibling
+}
+
+ok so innertext and getNodesFromKeyNode are tested. all
+that's left is thinking about how to limit work for the
+parser. we can also extract all of these functions out to a
+helpers file
+
+one previous idea for the parser was to put the rendered
+component side-by-side. this is a little weird but i think
+the idea is right. what we probably want to do is something
+like take the greedy range, e.g. start and end and rerender
+them
+
+that basically means
+
+parseMarkdown(state.nodes.slice(start.index, end.index + 1))
+
+but the problem is that the index here doesn't correspond to
+the greedy index but i think that's the only problem
+
+const components = parseMarkdown(state.nodes, greedy)
+// decides the parse range based on greedy
+
