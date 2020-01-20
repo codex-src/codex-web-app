@@ -24,7 +24,7 @@ function getUnterminatedCodeBlockRange(nodes) {
 				//
 				// ```code```
 				const matchesA = (
-					start === end &&
+					end === start &&
 					nodes[end].data.length >= 3 &&
 					nodes[end].data.slice(-3) === "```"
 				)
@@ -34,7 +34,7 @@ function getUnterminatedCodeBlockRange(nodes) {
 				// code
 				// ```
 				const matchesB = (
-					start !== end &&
+					end !== start &&
 					nodes[end].data.length === 3 &&
 					nodes[end].data === "```"
 				)
@@ -53,98 +53,70 @@ function getUnterminatedCodeBlockRange(nodes) {
 	return { start, end }
 }
 
-// Hello, world!                 //  0
-//                               //  1
-// ```go                         //  2
-// package main                  //  3
-//                               //  4
-// import "fmt"                  //  5
-//                               //  6
-// func main() {                 //  7
-// 	fmt.Println("hello, world!") //  8
-// }                             //  9
-// ```                           // 10
-//                               // 11
-// Hello, world!                 // 12
+test("single line", () => {
+	const data = `text
 
-test("code block", () => {
-	const data = `Hello, world!
+\`\`\`code\`\`\`
 
-\`\`\`fmt.Println("hello, world!")\`\`\`
+\`\`\`code\`\`\`
 
-Hello, world!`
+text`
 	const nodes = newNodes(data)
-	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 5, end: 5 })
+	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 7, end: 7 })
 })
 
-test("unterminated code block (1 of 2)", () => {
-	const data = `Hello, world!
+test("unterminated single line", () => {
+	const data = `text
 
-\`\`\`fmt.Println("hello, world!")
+\`\`\`code
 
-Hello, world!`
+\`\`\`code
+
+text`
 	const nodes = newNodes(data)
-	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 2, end: 5 })
+	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 2, end: 7 })
 })
 
-test("unterminated code block (2 of 2)", () => {
-	const data = `Hello, world!
+test("multiline", () => {
+	const data = `text
 
-fmt.Println("hello, world!")\`\`\`
-
-Hello, world!`
-	const nodes = newNodes(data)
-	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 5, end: 5 })
-})
-
-test("multiline code block", () => {
-	const data = `Hello, world!
-
-\`\`\`go
-package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("hello, world!")
-}
+\`\`\`
+code
 \`\`\`
 
-Hello, world!`
-	const nodes = newNodes(data)
-	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 13, end: 13 })
-})
-
-test("unterminated multiline code block (1 of 2)", () => {
-	const data = `Hello, world!
-
-\`\`\`go
-package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("hello, world!")
-}
-
-Hello, world!`
-	const nodes = newNodes(data)
-	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 2, end: 12 })
-})
-
-test("unterminated multiline code block (2 of 2)", () => {
-	const data = `Hello, world!
-
-package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("hello, world!")
-}
+\`\`\`
+code
 \`\`\`
 
-Hello, world!`
+text`
 	const nodes = newNodes(data)
-	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 12, end: 12 })
+	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 11, end: 11 })
+})
+
+test("unterminated multiline", () => {
+	const data = `text
+
+\`\`\`
+code
+
+\`\`\`
+code
+
+text`
+	const nodes = newNodes(data)
+	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 9, end: 9 })
+})
+
+test("unterminated multiline with language descriptor", () => {
+	const data = `text
+
+\`\`\`lang
+code
+
+\`\`\`lang
+code
+
+text`
+	const nodes = newNodes(data)
+	expect(getUnterminatedCodeBlockRange(nodes)).toStrictEqual({ start: 2, end: 9 })
 })
