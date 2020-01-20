@@ -660,6 +660,7 @@ function getCursor(node, offset) {
 }
 
 function EditorContents(props) {
+	console.log(props.components)
 	return props.components
 }
 

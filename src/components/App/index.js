@@ -1,1 +1,1 @@
-export { default } from "./TodoApp" // "./App"
+export { default } from "./EditorApp" // "./App"
