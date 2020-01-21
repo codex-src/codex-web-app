@@ -1,8 +1,9 @@
+import Debugger from "./Debugger"
 import getOffsetFromRange from "./helpers/getOffsetFromRange"
+import getParsedNodesFromKeyNode from "./helpers/getParsedNodesFromKeyNode"
 import invariant from "invariant"
 import React from "react"
 import ReactDOM from "react-dom"
-import stylex from "stylex"
 import syncViews from "./syncViews"
 import useEditor from "./EditorReducer"
 import { getCursorFromKey } from "./helpers/getCursorFromKey"
@@ -143,18 +144,8 @@ function Editor(props) {
 					return
 				}
 				// const selection = document.getSelection()
-				// selection.removeAllRanges() // Eagerly drop range for performance reasons
-				syncViews(ref.current, state.reactDOM, SyncViewsAttr)
-				// const { cursors: { anchor: { key, pos } } } = state
-				// const range = document.createRange()
-				// let { node, offset } = findRange(key, pos)
-				// if (isBreakElementNode(node)) { // Firefox
-				// 	node = node.parentNode
-				// }
-				// range.setStart(node, offset)
-				// range.collapse()
 				// selection.removeAllRanges()
-				// selection.addRange(range)
+				// syncViews(ref.current, state.reactDOM, SyncViewsAttr)
 			})
 		}, [state]),
 		[state.shouldRenderComponents],
@@ -198,54 +189,58 @@ function Editor(props) {
 						target.current = getTarget(state.nodes, ref.current, startContainer, endContainer)
 					},
 
-					// onInput: e => {
-					// 	if (ref.current.childNodes.length && !isHashNode(ref.current.childNodes[0])) {
-					// 		dispatch.clear(ref.current.innerText) // ¡SOS!
-					// 		return
+					onInput: e => {
+						let { current: { startNode, start, endNode, end, extendedStart, extendedEnd } } = target
+						// Re-extend the start and end nodes and
+						// cursors:
+						if (!extendedStart && startNode.previousSibling) {
+							startNode = startNode.previousSibling
+							start = getCursorFromKey(state.nodes, startNode.id, start, -1)
+						} else if (!extendedEnd && endNode.nextSibling) {
+							endNode = endNode.nextSibling
+							end = getCursorFromKey(state.nodes, endNode.id, end)
+						}
+
+						// // Get the parsed nodes:
+						// const nodes = []
+						// let currentNode = startNode
+						// while (currentNode) { // TODO: seenKeys
+						// 	nodes.push(...getParsedNodesFromKeyNode(currentNode))
+						// 	if (currentNode === endNode) {
+						// 		break
+						// 	}
+						// 	const { nextSibling } = currentNode
+						// 	currentNode = nextSibling
+						// }
+
+						// Get the reset key and offset:
+						const { anchorNode, anchorOffset } = document.getSelection()
+						const keyNode = getKeyNode(anchorNode)
+						const offset = getOffsetFromRange(keyNode, anchorNode, anchorOffset)
+						const reset = { key: keyNode.id, offset }
+
+						console.log(start, end, reset)
+
+						// Done:
+						// dispatch.opInput(nodes, start, end, reset)
+					},
+
+					// // Parse the new nodes:
+					// const seenKeys = {}
+					// const newNodes = [{ key: startNode.id, data: innerText(startNode) }]
+					// seenKeys[startNode.id] = true
+					// let node = startNode.nextSibling
+					// while (node) {
+					// 	if (seenKeys[node.id]) {
+					// 		node.id = random.newUUID()
 					// 	}
-					// 	// Repeat ID (based on Chrome):
-					// 	const { anchorNode, anchorOffset } = document.getSelection()
-					// 	const hashNode = getHashNode(anchorNode)
-					// 	if (!hashNode.id && hashNode.previousSibling) { // Firefox
-					// 		hashNode.id = hashNode.previousSibling.id
+					// 	newNodes.push({ key: node.id, data: innerText(node) })
+					// 	seenKeys[node.id] = true
+					// 	if (node === endNode) {
+					// 		break
 					// 	}
-					// 	let { current: { startNode, endNode, extendStart, extendEnd } } = targetInputRange
-					// 	// Re-extend the start and end nodes:
-					// 	if (!extendStart && startNode.previousSibling) {
-					// 		startNode = startNode.previousSibling
-					// 		// extendStart++
-					// 	} else if (!extendEnd && endNode.nextSibling) {
-					// 		endNode = endNode.nextSibling
-					// 		// extendEnd++
-					// 	}
-					// 	// **startKey and endKey cannot change!**
-					// 	const startKey = startNode.id
-					// 	const endKey = endNode.id
-					// 	// Parse the new nodes:
-					// 	const seenKeys = {}
-					// 	const newNodes = [{ key: startNode.id, data: innerText(startNode) }]
-					// 	seenKeys[startNode.id] = true
-					// 	let node = startNode.nextSibling
-					// 	while (node) {
-					// 		if (seenKeys[node.id]) {
-					// 			node.id = random.newUUID()
-					// 		}
-					// 		newNodes.push({ key: node.id, data: innerText(node) })
-					// 		seenKeys[node.id] = true
-					// 		if (node === endNode) {
-					// 			break
-					// 		}
-					// 		node = node.nextSibling
-					// 	}
-					// 	let anchor = null
-					// 	try {
-					// 		anchor = getCursor(anchorNode, anchorOffset)
-					// 	// Guard no-op (e.g. backspace on empty):
-					// 	} catch {
-					// 		anchor = state.cursors.anchor // eslint-disable-line prefer-destructuring
-					// 	}
-					// 	dispatch.commitInput(startKey, endKey, newNodes, anchor)
-					// },
+					// 	node = node.nextSibling
+					// }
 
 					onCut:   e => e.preventDefault(),
 					onCopy:  e => e.preventDefault(),
@@ -255,25 +250,7 @@ function Editor(props) {
 				},
 			)}
 			{props.debug && (
-				<React.Fragment>
-					<div style={stylex.parse("h:28")} />
-					<div style={{ ...stylex.parse("pre-wrap"), tabSize: 2, font: "12px/1.375 'Monaco'" }}>
-						{JSON.stringify(
-							{
-								// opType:      state.opType,
-								// opTimestamp: state.opTimestamp,
-								// start:       state.start,
-								// end:         state.end,
-
-								...state,
-								components: undefined,
-								reactDOM:   undefined,
-							},
-							null,
-							"\t",
-						)}
-					</div>
-				</React.Fragment>
+				<Debugger state={state} />
 			)}
 		</React.Fragment>
 	)

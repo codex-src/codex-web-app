@@ -1,4 +1,4 @@
-import getNodesFromKeyNodes from "../getNodesFromKeyNodes"
+import getParsedNodesFromKeyNode from "../getParsedNodesFromKeyNode"
 import React from "react"
 import renderDOM from "utils/renderDOM"
 
@@ -35,11 +35,11 @@ test("integration", () => {
 	// Get the start and end nodes:
 	const startNode = rootNode.childNodes[0]
 	const endNode = rootNode.childNodes[rootNode.childNodes.length - 1]
-	// Parse nodes:
+	// Get the parsed nodes:
 	const nodes = []
 	let currentNode = startNode
 	while (currentNode) {
-		nodes.push(...getNodesFromKeyNodes(currentNode))
+		nodes.push(...getParsedNodesFromKeyNode(currentNode))
 		if (currentNode === endNode) {
 			break
 		}

@@ -4,7 +4,7 @@ import { innerText } from "./innerText"
 const __DEV__ = process.env.NODE_ENV !== "production"
 
 // Gets parsed nodes from a key node or compound key node.
-function getNodesFromKeyNodes(node) {
+function getParsedNodesFromKeyNode(node) {
 	if (__DEV__) {
 		invariant(
 			node.hasAttribute("data-node") ||
@@ -28,4 +28,4 @@ function getNodesFromKeyNodes(node) {
 	return [{ key, data }]
 }
 
-export default getNodesFromKeyNodes
+export default getParsedNodesFromKeyNode
