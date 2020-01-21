@@ -17,7 +17,7 @@ function parseComponents(nodes) {
 		const count = components.length    // Count the number of components
 		const { key, data } = nodes[index] // Faster access
 		const { length } = data            // Faster access
-		switch (data.slice(0)) {
+		switch (data.slice(0, 1)) {
 		// Header:
 		case "#":
 			if (
@@ -57,8 +57,8 @@ function parseComponents(nodes) {
 				to++
 				while (to < nodes.length) {
 					if (
-						(length < 2 || data.slice(0, 2) !== "> ") && // Is **not** blockquote
-						(length !== 1 && data !== ">")
+						(nodes[to].data.length < 2 || nodes[to].data.slice(0, 2) !== "> ") && // Is **not** blockquote
+						(nodes[to].data.length !== 1 || nodes[to].data !== ">")
 					) {
 						break
 					}
@@ -107,7 +107,7 @@ function parseComponents(nodes) {
 				let to = from
 				to++
 				while (to < nodes.length) {
-					if (nodes[to].length === 3 && nodes[to].data === "```") {
+					if (nodes[to].data.length === 3 && nodes[to].data === "```") {
 						break
 					}
 					to++
@@ -123,7 +123,9 @@ function parseComponents(nodes) {
 						{range.map((each, index) => (
 							{
 								key:  each.key,
-								data: index === from || index === to ? "" : each.data,
+								data: !index || index + 1 === range.length
+									? ""         // Start and end nodes
+									: each.data, // Center nodes
 							}
 						))}
 					</CodeBlock>

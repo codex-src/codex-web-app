@@ -1,57 +1,73 @@
-// import onKeyDown from "./onKeyDown"
-// import ReactDOM from "react-dom"
-// import syncViews from "./syncViews"
-import getOffsetFromKeyNode from "./helpers/getOffsetFromKeyNode"
+import getOffsetFromRange from "./helpers/getOffsetFromRange"
 import React from "react"
+import ReactDOM from "react-dom"
 import stylex from "stylex"
+import syncViews from "./syncViews"
 import useEditor from "./EditorReducer"
 import { getCursorFromKey } from "./helpers/getCursorFromKey"
 import { getKeyNode } from "./helpers/getKeyNode"
 
 import "./Editor.css"
 
+const SyncViewsAttr = "data-memo"
+
 function EditorContents(props) {
 	return props.components
 }
 
+const initialValue = `Hello, world!
+
+\`\`\`Hello, world!\`\`\`
+
+> Hello, world!
+
+---
+
+\`\`\`go
+hello, world!
+\`\`\`
+
+Hello, world!
+
+Hello, world!`
+
 function Editor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = useEditor("Hello, world!\n\nHello, world!\n\nHello, world!\n\nHello, world!\n\nHello, world!")
+	const [state, dispatch] = useEditor(initialValue)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			const h = () => {
 				// Guard selection -- needed to get a range:
 				const selection = document.getSelection()
-				if (!selection.anchorNode) {
+				if (!selection.anchorNode || !ref.current.contains(selection.anchorNode)) {
 					// No-op
 					return
 				}
 				const {
 					startContainer, // The start node (ordered)
-					startOffset,    // The start node offset
+					startOffset,    // The offset of the start node
 					endContainer,   // The end node (ordered)
-					endOffset,      // The end node offset
+					endOffset,      // The offset of the end node
 					collapsed,      // Is the range collapsed?
 				} = selection.getRangeAt(0)
-				// Get the start and end nodes and keys:
-				const startKeyNode = getKeyNode(ref.current, startContainer)
+				// Get the start cursor:
+				const startKeyNode = getKeyNode(startContainer)
 				const startKey = startKeyNode.id
-				const endKeyNode = getKeyNode(ref.current, endContainer)
-				const endKey = endKeyNode.id
-				// Start cursor:
-				const start = getCursorFromKey(startKey, state.nodes)
-				start.offset += getOffsetFromKeyNode(startKeyNode, startContainer, startOffset)
+				const start = getCursorFromKey(state.nodes, startKey)
+				start.offset += getOffsetFromRange(startKeyNode, startContainer, startOffset)
 				start.pos += start.offset
-				// End cursor:
+				// Get the end cursor:
 				let end = { ...start }
 				if (!collapsed) {
-					end = getCursorFromKey(endKey, state.nodes, start)
-					end.offset = getOffsetFromKeyNode(endKeyNode, endContainer, endOffset)
+					const endKeyNode = getKeyNode(endContainer)
+					const endKey = endKeyNode.id
+					end = getCursorFromKey(state.nodes, endKey)
+					end.offset += getOffsetFromRange(endKeyNode, endContainer, endOffset)
 					end.pos += end.offset
 				}
-				// Done -- dispatch:
+				// Done:
 				dispatch.opSelect(start, end)
 			}
 			document.addEventListener("selectionchange", h)
@@ -62,29 +78,30 @@ function Editor(props) {
 		[state.nodes],
 	)
 
-	// React.useLayoutEffect(
-	// 	React.useCallback(() => {
-	// 		ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-	// 			if (!state.onRenderHook) {
-	// 				syncViews(ref.current, state.reactDOM, "data-vdom-memo")
-	// 				return
-	// 			}
-	// 			syncViews(ref.current, state.reactDOM, "data-vdom-memo")
-	// 			const { cursors: { anchor: { key, pos } } } = state
-	// 			const selection = document.getSelection()
-	// 			const range = document.createRange()
-	// 			let { node, offset } = findRange(key, pos)
-	// 			if (isBreakElementNode(node)) { // Firefox
-	// 				node = node.parentNode
-	// 			}
-	// 			range.setStart(node, offset)
-	// 			range.collapse()
-	// 			selection.removeAllRanges()
-	// 			selection.addRange(range)
-	// 		})
-	// 	}, [state]),
-	// 	[state.shouldRenderComponents],
-	// )
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
+				if (!state.shouldRenderComponents) {
+					syncViews(ref.current, state.reactDOM, SyncViewsAttr)
+					return
+				}
+				// const selection = document.getSelection()
+				// selection.removeAllRanges() // Eagerly drop range for performance reasons
+				syncViews(ref.current, state.reactDOM, SyncViewsAttr)
+				// const { cursors: { anchor: { key, pos } } } = state
+				// const range = document.createRange()
+				// let { node, offset } = findRange(key, pos)
+				// if (isBreakElementNode(node)) { // Firefox
+				// 	node = node.parentNode
+				// }
+				// range.setStart(node, offset)
+				// range.collapse()
+				// selection.removeAllRanges()
+				// selection.addRange(range)
+			})
+		}, [state]),
+		[state.shouldRenderComponents],
+	)
 
 	return (
 		<React.Fragment>
@@ -96,8 +113,8 @@ function Editor(props) {
 					contentEditable: true,
 					suppressContentEditableWarning: true,
 
-					// onFocus: dispatch.commitFocus,
-					// onBlur:  dispatch.commitBlur,
+					onFocus: dispatch.opFocus,
+					onBlur:  dispatch.opBlur,
 
 					// onKeyDown: e => {
 					// 	if (onKeyDown.isEnter(e)) {
@@ -185,9 +202,14 @@ function Editor(props) {
 					<div style={{ ...stylex.parse("pre-wrap"), tabSize: 2, font: "12px/1.375 'Monaco'" }}>
 						{JSON.stringify(
 							{
-								...state,
-								components: undefined,
-								reactDOM:   undefined,
+								opType:      state.opType,
+								opTimestamp: state.opTimestamp,
+								start:       state.start,
+								end:         state.end,
+
+								// ...state,
+								// components: undefined,
+								// reactDOM:   undefined,
 							},
 							null,
 							"\t",

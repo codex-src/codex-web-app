@@ -1,4 +1,4 @@
-import getNodesFromKeyNodeOrRootKeyNode from "../getNodesFromKeyNodeOrRootKeyNode"
+import getNodesFromKeyNodes from "../getNodesFromKeyNodes"
 import React from "react"
 import renderDOM from "utils/renderDOM"
 
@@ -39,7 +39,7 @@ test("integration", () => {
 	const nodes = []
 	let currentNode = startNode
 	while (currentNode) {
-		nodes.push(...getNodesFromKeyNodeOrRootKeyNode(currentNode))
+		nodes.push(...getNodesFromKeyNodes(currentNode))
 		if (currentNode === endNode) {
 			break
 		}

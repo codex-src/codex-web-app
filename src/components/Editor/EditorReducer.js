@@ -2,6 +2,7 @@ import Enum from "utils/Enum"
 import newNodes from "./helpers/newNodes"
 import parseComponents from "./parseComponents"
 import useMethods from "use-methods"
+import { newCursor } from "./helpers/getCursorFromKey"
 
 const OpTypes = new Enum(
 	"INIT",
@@ -18,7 +19,7 @@ const OpTypes = new Enum(
 
 const initialState = {
 	opType: "",                // The editing operation type
-	opUnix: 0,                 // The editing operation Unix timestamp
+	opTimestamp: 0,            // The editing operation timestamp
 	hasFocus: false,           // Is the editor focused?
 	data: "",                  // The plain text data
 	nodes: null,               // The parsed nodes
@@ -26,11 +27,34 @@ const initialState = {
 	end: null,                 // The end cursor
 	components: null,          // The parsed React components
 	reactDOM: null,            // The React DOM (unmounted)
-	shouldRenderComponents: 0, // Hook
+	shouldRenderComponents: 0, // Should render components hook
 }
 
 const reducer = state => ({
-	// ...
+	// Commits an editing operation.
+	commitOp(opType) {
+		const opTimestamp = Date.now()
+		if (opType === OpTypes.SELECT && opTimestamp - state.opTimestamp < 100) {
+			// No-op
+			return
+		}
+		Object.assign(state, { opType, opTimestamp })
+	},
+	// Focuses the editor.
+	opFocus() {
+		this.commitOp(OpTypes.FOCUS)
+		state.hasFocus = true
+	},
+	// Blurs the editor.
+	opBlur() {
+		this.commitOp(OpTypes.BLUR)
+		state.hasFocus = false
+	},
+	// Selects the editor.
+	opSelect(start, end) {
+		this.commitOp(OpTypes.SELECT)
+		Object.assign(state, { start, end })
+	},
 })
 
 // Initializes the editor state.
@@ -39,21 +63,11 @@ const init = initialValue => initialState => {
 	const state = {
 		...initialState,
 		opType: OpTypes.INIT,
-		opUnix: Date.now(),
+		opTimestamp: Date.now(),
 		data: initialValue,
 		nodes,
-		start: {
-			key: "",
-			index: 0,
-			offset: 0,
-			pos: 0,
-		},
-		end: {
-			key: "",
-			index: 0,
-			offset: 0,
-			pos: 0,
-		},
+		start: newCursor(),
+		end: newCursor(),
 		components: parseComponents(nodes),
 		reactDOM: document.createElement("div"),
 	}
