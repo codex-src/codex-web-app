@@ -1,17 +1,16 @@
 import React from "react"
 
-// https://nothings.org/computer/lexing.html
-// const textMap = {}
-//
-// ;(function () => {
-// 	const anum = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
-// 	for (const each of anum) {
-// 		textMap[each] = true
-// 	}
-// })()
+import {
+	Blockquote,
+	Break,
+	CodeBlock,
+	Comment,
+	Header,
+	Paragraph,
+} from "./Components"
 
 // TODO: Unnumbered and numbered lists.
-function parse(nodes) {
+function parseComponents(nodes) {
 	const components = []
 	let index = 0
 	while (index < nodes.length) {
@@ -65,10 +64,10 @@ function parse(nodes) {
 					}
 					to++
 				}
-				const nodes = nodes.nodes.slice(from, to + 1) // Convert to from zero-based to one-based
+				const range = nodes.slice(from, to + 1) // One-based
 				components.push((
 					<Blockquote key={key} reactKey={key}>
-						{nodes.map(each => (
+						{range.map(each => (
 							{
 								key:         each.key,
 								startSyntax: each.data.slice(0, 2),
@@ -80,8 +79,9 @@ function parse(nodes) {
 				index = to
 			}
 			break
-		// Single line or multiline code block:
+		// Code block:
 		case "`":
+			// Single line:
 			if (
 				length >= 6 &&
 				data.slice(0, 3) === "```" && // Start syntax
@@ -97,6 +97,7 @@ function parse(nodes) {
 						]}
 					</CodeBlock>
 				))
+			// Multiline:
 			} else if (
 				length >= 3 &&
 				data.slice(0, 3) === "```" &&
@@ -111,14 +112,15 @@ function parse(nodes) {
 					}
 					to++
 				}
+				// Guard unterminated code blocks:
 				if (to === nodes.length) {
 					index = from
 					break
 				}
-				const nodes = nodes.slice(from, to + 1) // Convert to from zero-based to one-based
+				const range = nodes.slice(from, to + 1) // One-based
 				components.push((
 					<CodeBlock key={key} reactKey={key} startSyntax={data} endSyntax="```">
-						{nodes.map((each, index) => (
+						{range.map((each, index) => (
 							{
 								key:  each.key,
 								data: index === from || index === to ? "" : each.data,
@@ -156,3 +158,5 @@ function parse(nodes) {
 	}
 	return components
 }
+
+export default parseComponents

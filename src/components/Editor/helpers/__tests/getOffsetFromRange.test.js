@@ -1,51 +1,10 @@
+import getOffsetFromRange from "../getOffsetFromRange"
 import React from "react"
 import renderDOM from "utils/renderDOM"
 
-function isTextOrBreakElementNode(node) {
-	const ok = (
-		node.nodeType === Node.TEXT_NODE || (
-			node.nodeType === Node.ELEMENT_NODE &&
-			node.nodeName === "BR"
-		)
-	)
-	return ok
-
-}
-
-// Mocks the browser function.
-function nodeValue(node) {
-	return node.nodeValue || "" // Covers break node
-}
-
-// Gets an offset for a range.
-function getOffsetFromRange(keyNode, rangeNode, rangeOffset) {
-	let offset = 0
-	const recurseOn = startNode => {
-		for (const currentNode of startNode.childNodes) {
-			if (isTextOrBreakElementNode(currentNode)) {
-				// If found, return:
-				if (currentNode === rangeNode) {
-					offset += rangeOffset
-					return true
-				}
-				const { length } = nodeValue(currentNode)
-				offset += length
-			} else {
-				// If found recursing on the current node, return:
-				if (recurseOn(currentNode)) {
-					return true
-				}
-			}
-		}
-		return false
-	}
-	recurseOn(keyNode)
-	return offset
-}
-
 test("Hello, world!", () => {
 	const Component = props => (
-		<div id="a">
+		<div data-node>
 			Hello, world!
 		</div>
 	)
@@ -56,7 +15,7 @@ test("Hello, world!", () => {
 
 test("*Hello*, **world**!", () => {
 	const Component = props => (
-		<div id="a">
+		<div data-node>
 			<em>
 				Hello
 			</em>
