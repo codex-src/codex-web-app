@@ -28,7 +28,7 @@ export const Comment = React.memo(({ reactKey, ...props }) => (
 ))
 
 export const Blockquote = React.memo(({ reactKey, ...props }) => (
-	<div /* id={reactKey} */ data-compound-node data-memo={Date.now()}>
+	<div id={reactKey} data-compound-node data-memo={Date.now()}>
 		{props.children.map(each => (
 			<div key={each.key} id={each.key} data-node>
 				<Markdown startSyntax={each.startSyntax}>
@@ -56,7 +56,7 @@ export const CodeBlock = React.memo(({ reactKey, ...props }) => {
 
 	return (
 		<div
-			// id={reactKey}
+			id={reactKey}
 			style={{
 				...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
 				...code,

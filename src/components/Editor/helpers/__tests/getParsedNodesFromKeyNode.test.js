@@ -8,7 +8,7 @@ test("integration", () => {
 			<div id="a" data-node>
 				Hello, world!
 			</div>
-			<div data-compound-node>
+			<div id="b" data-compound-node>
 				<div id="b" data-node>
 					Hello, world!
 				</div>

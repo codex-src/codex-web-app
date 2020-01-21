@@ -3,8 +3,10 @@ import swapChildNodes from "./swapChildNodes"
 
 // replaceWith replaces a node with a clone of another node.
 function replaceWith(nodeA, nodeB, attr) {
-	if (nodeA.id === nodeB.id && areEqualTrees(nodeA, nodeB)) {
-		nodeA.setAttribute(attr, nodeB.getAttribute(attr)) // Sync number attribute
+	// FIXME: Compare attributes?
+	nodeA.setAttribute(attr, nodeB.getAttribute(attr))
+	if (nodeA.isEqualNode(nodeB) && areEqualTrees(nodeA, nodeB)) {
+		// No-op
 		return
 	}
 	nodeA.replaceWith(nodeB.cloneNode(true))
@@ -30,10 +32,12 @@ function syncViews(client, hidden, attr) {
 			} else {
 				// No -- replace them:
 				replaceWith(clientNode, hiddenNode, attr)
+				// clientNode.replaceWith(hiddenNode.cloneNode(true))
 			}
 		// Keys match but the client node is stale:
 		} else if (+clientNode.getAttribute(attr) < +hiddenNode.getAttribute(attr)) {
 			replaceWith(clientNode, hiddenNode, attr)
+			// clientNode.replaceWith(hiddenNode.cloneNode(true))
 		}
 		start++
 	}

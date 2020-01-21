@@ -13,27 +13,27 @@ import { getKeyNode } from "./helpers/getKeyNode"
 
 import "./Editor.css"
 
-const initialValue = `
-
-Hello, world!
-
-`
-
-// const initialValue = `Hello, world!
-//
-// \`\`\`Hello, world!\`\`\`
-//
-// > Hello, world!
-//
-// ---
-//
-// \`\`\`go
-// hello, world!
-// \`\`\`
+// const initialValue = `
 //
 // Hello, world!
 //
-// Hello, world!`
+// `
+
+const initialValue = `Hello, world!
+
+\`\`\`Hello, world!\`\`\`
+
+> Hello, world!
+
+---
+
+\`\`\`go
+hello, world!
+\`\`\`
+
+Hello, world!
+
+Hello, world!`
 
 function EditorContents(props) {
 	return props.components
@@ -101,7 +101,10 @@ function Editor(props) {
 				const selection = document.getSelection()
 				selection.removeAllRanges()
 				syncViews(ref.current, state.reactDOM, "data-memo")
-				const keyNode = document.getElementById(state.reset.key)
+				let keyNode = document.getElementById(state.reset.key)
+				if (keyNode.getAttribute("data-compound-node")) {
+					keyNode = keyNode.childNodes[0] // **Does not recurse**
+				}
 				const { node, offset } = getRangeFromKeyNodeAndOffset(keyNode, state.reset.offset)
 				const range = document.createRange()
 				range.setStart(node, offset)
@@ -125,22 +128,23 @@ function Editor(props) {
 					onFocus: dispatch.opFocus,
 					onBlur:  dispatch.opBlur,
 
+					// if (onKeyDown.isEnter(e)) {
+					// 	e.preventDefault()
+					// 	document.execCommand("insertParagraph", false, null)
+					// 	break
+					// } else if (onKeyDown.isTab(e)) {
+					// 	e.preventDefault()
+					// 	document.execCommand("insertText", false, "\t")
+					// 	break
+					// } else if (onKeyDown.isBold(e)) {
+					// 	e.preventDefault()
+					// 	break
+					// } else if (onKeyDown.isItalic(e)) {
+					// 	e.preventDefault()
+					// 	break
+					// }
+
 					onKeyDown: e => {
-						// if (onKeyDown.isEnter(e)) {
-						// 	e.preventDefault()
-						// 	document.execCommand("insertParagraph", false, null)
-						// 	break
-						// } else if (onKeyDown.isTab(e)) {
-						// 	e.preventDefault()
-						// 	document.execCommand("insertText", false, "\t")
-						// 	break
-						// } else if (onKeyDown.isBold(e)) {
-						// 	e.preventDefault()
-						// 	break
-						// } else if (onKeyDown.isItalic(e)) {
-						// 	e.preventDefault()
-						// 	break
-						// }
 						const selection = document.getSelection()
 						if (!selection.anchorNode || !ref.current.contains(selection.anchorNode)) {
 							// No-op
@@ -182,7 +186,9 @@ function Editor(props) {
 						const keyNode = getKeyNode(anchorNode)
 						const offset = getOffsetFromRange(keyNode, anchorNode, anchorOffset)
 						const reset = { key: keyNode.id, offset }
+
 						// Done:
+						// console.log(nodes, start, end, reset)
 						dispatch.opInput(nodes, start, end, reset)
 					},
 

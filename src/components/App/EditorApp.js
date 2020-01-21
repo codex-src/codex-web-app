@@ -1,3 +1,4 @@
+import DebugCSS from "utils/DebugCSS"
 import Editor from "components/Editor"
 import React from "react"
 import stylex from "stylex"
@@ -408,18 +409,20 @@ function EditorApp(props) {
 	// const [state, dispatch] = Editor.useEditor(data)
 
 	return (
-		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
-			<div style={stylex.parse("w:768 no-min-w")}>
-				<Editor
-					initialValue={data}
-					// state={state}
-					// dispatch={dispatch}
-					// scrollPastEnd
-					// statusBar
-					debug
-				/>
+		<DebugCSS>
+			<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
+				<div style={stylex.parse("w:768 no-min-w")}>
+					<Editor
+						initialValue={data}
+						// state={state}
+						// dispatch={dispatch}
+						// scrollPastEnd
+						// statusBar
+						debug
+					/>
+				</div>
 			</div>
-		</div>
+		</DebugCSS>
 	)
 }
 

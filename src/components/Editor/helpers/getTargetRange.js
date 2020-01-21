@@ -1,8 +1,5 @@
-import invariant from "invariant"
 import { getCompoundKeyNode } from "./getKeyNode"
 import { getCursorFromKey } from "./getCursorFromKey"
-
-const __DEV__ = process.env.NODE_ENV !== "production"
 
 // Gets a target range (for onInput).
 //
@@ -22,26 +19,32 @@ function getTargetRange(nodes, rootNode, startNode, endNode) {
 		endNode = endNode.nextSibling
 		extendedEnd++
 	}
-	// Get the start key:
-	let startKey = startNode.id
-	if (!startKey) {
-		startKey = startNode.childNodes[0].id // **Does not recurse**
-	}
-	// Get the end key:
-	let endKey = endNode.id
-	if (!endKey) {
-		endKey = endNode.childNodes[0].id // **Does not recurse**
-	}
-	if (__DEV__) {
-		invariant(
-			startKey &&
-			endKey,
-			"FIXME",
-		)
-	}
+
+	// // Get the start key:
+	// let startKey = startNode.id
+	// if (!startKey) {
+	// 	startKey = startNode.childNodes[0].id // **Does not recurse**
+	// }
+	// // Get the end key:
+	// let endKey = endNode.id
+	// if (!endKey) {
+	// 	endKey = endNode.childNodes[0].id // **Does not recurse**
+	// }
+	// if (__DEV__) {
+	// 	invariant(
+	// 		startKey &&
+	// 		endKey,
+	// 		"FIXME",
+	// 	)
+	// }
+
 	// Get the cursors:
-	const start = getCursorFromKey(nodes, startKey)
-	const end = getCursorFromKey(nodes, endKey)
+	const start = getCursorFromKey(nodes, startNode.id)
+	const end = getCursorFromKey(nodes, endNode.id)
+
+	end.offset += nodes[end.index].data.length
+	end.pos += nodes[end.index].data.length
+
 	// Done:
 	const targetRange = {
 		startNode,     // The start key node or compound key node
