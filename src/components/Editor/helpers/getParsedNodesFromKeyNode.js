@@ -12,7 +12,7 @@ function getParsedNodesFromKeyNode(node) {
 			"FIXME",
 		)
 	}
-	// Root key node:
+	// Compound key node:
 	if (node.getAttribute("data-compound-node")) {
 		const nodes = []
 		for (const currentNode of node.childNodes) { // **Does not recurse**

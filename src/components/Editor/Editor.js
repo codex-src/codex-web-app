@@ -1,71 +1,16 @@
 import Debugger from "./Debugger"
 import getOffsetFromRange from "./helpers/getOffsetFromRange"
 import getParsedNodesFromKeyNode from "./helpers/getParsedNodesFromKeyNode"
-import invariant from "invariant"
+import getTargetRange from "./helpers/getTargetRange"
+import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
 import syncViews from "./syncViews"
 import useEditor from "./EditorReducer"
 import { getCursorFromKey } from "./helpers/getCursorFromKey"
-
-import {
-	getCompoundKeyNode,
-	getKeyNode,
-} from "./helpers/getKeyNode"
+import { getKeyNode } from "./helpers/getKeyNode"
 
 import "./Editor.css"
-
-const __DEV__ = process.env.NODE_ENV !== "production"
-
-const SyncViewsAttr = "data-memo"
-
-// Gets a target range.
-function getTarget(nodes, rootNode, startNode, endNode) {
-	startNode = getCompoundKeyNode(rootNode, startNode)
-	endNode = getCompoundKeyNode(rootNode, endNode)
-	// Extend the start node:
-	let extendedStart = 0
-	while (extendedStart < 1 && startNode.previousSibling) {
-		startNode = startNode.previousSibling
-		extendedStart++
-	}
-	// Extend the end node:
-	let extendedEnd = 0
-	while (extendedEnd < 2 && endNode.nextSibling) { // extendedEnd must be 0-2
-		endNode = endNode.nextSibling
-		extendedEnd++
-	}
-	// Get the start key:
-	let startKey = startNode.id
-	if (!startKey) {
-		startKey = startNode.childNodes[0].id
-	}
-	// Get the end key:
-	let endKey = endNode.id
-	if (!endKey) {
-		endKey = endNode.childNodes[0].id
-	}
-	if (__DEV__) {
-		invariant(
-			startKey &&
-			endKey,
-			"FIXME",
-		)
-	}
-	// Get the cursors:
-	const start = getCursorFromKey(nodes, startKey)
-	const end = getCursorFromKey(nodes, endKey)
-	// Done:
-	const target = {
-		startNode,     // The start node
-		start,         // The start cursor
-		endNode,       // The end node
-		end,           // The end cursor
-		extendedStart, // Extended start count
-		extendedEnd,   // Extended end count
-	}
-	return target
-}
 
 const initialValue = `Hello, world!
 
@@ -89,7 +34,7 @@ function EditorContents(props) {
 
 function Editor(props) {
 	const ref = React.useRef()
-	const target = React.useRef()
+	const targetRange = React.useRef()
 
 	const [state, dispatch] = useEditor(initialValue)
 
@@ -126,7 +71,7 @@ function Editor(props) {
 				}
 				// Done:
 				dispatch.opSelect(start, end)
-				target.current = getTarget(state.nodes, ref.current, startKeyNode, endKeyNode)
+				targetRange.current = getTargetRange(state.nodes, ref.current, startKeyNode, endKeyNode)
 			}
 			document.addEventListener("selectionchange", h)
 			return () => {
@@ -140,12 +85,12 @@ function Editor(props) {
 		React.useCallback(() => {
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
 				if (!state.shouldRenderComponents) {
-					syncViews(ref.current, state.reactDOM, SyncViewsAttr)
+					syncViews(ref.current, state.reactDOM, "data-memo")
 					return
 				}
 				// const selection = document.getSelection()
 				// selection.removeAllRanges()
-				// syncViews(ref.current, state.reactDOM, SyncViewsAttr)
+				// syncViews(ref.current, state.reactDOM, "data-memo")
 			})
 		}, [state]),
 		[state.shouldRenderComponents],
@@ -186,13 +131,13 @@ function Editor(props) {
 							return
 						}
 						const { startContainer, endContainer } = selection.getRangeAt(0)
-						target.current = getTarget(state.nodes, ref.current, startContainer, endContainer)
+						targetRange.current = getTargetRange(state.nodes, ref.current, startContainer, endContainer)
 					},
 
 					onInput: e => {
-						let { current: { startNode, start, endNode, end, extendedStart, extendedEnd } } = target
+						let { current: { startNode, start, endNode, end, extendedStart, extendedEnd } } = targetRange
 						// Re-extend the start and end nodes and
-						// cursors:
+						// cursors (once):
 						if (!extendedStart && startNode.previousSibling) {
 							startNode = startNode.previousSibling
 							start = getCursorFromKey(state.nodes, startNode.id, start, -1)
@@ -201,17 +146,22 @@ function Editor(props) {
 							end = getCursorFromKey(state.nodes, endNode.id, end)
 						}
 
-						// // Get the parsed nodes:
-						// const nodes = []
-						// let currentNode = startNode
-						// while (currentNode) { // TODO: seenKeys
-						// 	nodes.push(...getParsedNodesFromKeyNode(currentNode))
-						// 	if (currentNode === endNode) {
-						// 		break
-						// 	}
-						// 	const { nextSibling } = currentNode
-						// 	currentNode = nextSibling
-						// }
+						// Get the parsed nodes:
+						const seenKeys = {}
+						const nodes = []
+						let currentNode = startNode
+						while (currentNode) {
+							if (seenKeys[currentNode.id]) {
+								currentNode.id = random.newUUID()
+							}
+							seenKeys[currentNode.id] = true // NOTE: Ignores parsed compound key nodes
+							nodes.push(...getParsedNodesFromKeyNode(currentNode))
+							if (currentNode === endNode) {
+								break
+							}
+							const { nextSibling } = currentNode
+							currentNode = nextSibling
+						}
 
 						// Get the reset key and offset:
 						const { anchorNode, anchorOffset } = document.getSelection()
@@ -219,7 +169,7 @@ function Editor(props) {
 						const offset = getOffsetFromRange(keyNode, anchorNode, anchorOffset)
 						const reset = { key: keyNode.id, offset }
 
-						console.log(start, end, reset)
+						console.log(nodes, start, end, reset)
 
 						// Done:
 						// dispatch.opInput(nodes, start, end, reset)

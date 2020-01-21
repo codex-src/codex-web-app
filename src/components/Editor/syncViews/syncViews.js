@@ -1,26 +1,27 @@
+import areEqualTrees from "../helpers/areEqualTrees"
 import invariant from "invariant"
 import swapChildNodes from "./swapChildNodes"
 
 const __DEV__ = process.env.NODE_ENV !== "production"
 
+// replaceWith replaces a node with a clone of another node.
+function replaceWith(nodeA, nodeB, attr) {
+	if (nodeA.id === nodeB.id && areEqualTrees(nodeA, nodeB)) {
+		nodeA.setAttribute(attr, nodeB.getAttribute(attr)) // Sync number attribute
+		return
+	}
+	nodeA.replaceWith(nodeB.cloneNode(true))
+}
+
 // Syncs two DOM trees based on a number attribute.
 function syncViews(client, hidden, attr) {
 	const clientMap = {}
-	let start = client.childNodes.length - 1 // Iterate backwards for a performance boost
-	while (start >= 0) {
-		const node = client.childNodes[start]
-		clientMap[node.id] = node
-		start--
+	for (const currentNode of client.childNodes) {
+		clientMap[currentNode.id] = currentNode
 	}
-	if (__DEV__) {
-		invariant(
-			start === -1,
-			"FIXME",
-		)
-	}
-	start++ // start = 0
-	const length = Math.min(client.childNodes.length, hidden.childNodes.length)
-	while (start < length) {
+	let start = 0
+	const minlen = Math.min(client.childNodes.length, hidden.childNodes.length)
+	while (start < minlen) {
 		const clientNode = client.childNodes[start]
 		const hiddenNode = hidden.childNodes[start]
 		// Keys **do not** match:
@@ -30,40 +31,28 @@ function syncViews(client, hidden, attr) {
 				// Yes -- swap them:
 				swapChildNodes(clientNode, clientMap[hiddenNode.id])
 			} else {
-				// No -- replace the client node (stale) with a
-				// clone of the hidden node (fresh):
-				clientNode.replaceWith(hiddenNode.cloneNode(true)) // TODO: areEqualTrees
+				// No -- replace them:
+				replaceWith(clientNode, hiddenNode, attr)
 			}
 		// Keys match but the client node is stale:
 		} else if (+clientNode.getAttribute(attr) < +hiddenNode.getAttribute(attr)) {
-			clientNode.replaceWith(hiddenNode.cloneNode(true)) // TODO: areEqualTrees
-		// Keys match and the client node is fresh:
-		} else {
-			// (No-op)
+			replaceWith(clientNode, hiddenNode, attr)
 		}
 		start++
 	}
-	// Client DOM is longer:
+	// Drop extraneous nodes:
 	if (start < client.childNodes.length) {
-		// Drop extraneous nodes:
-		let end = client.childNodes.length - 1 // Iterate backwards (do not change start)
+		let end = client.childNodes.length - 1 // Iterate backwards
 		while (end >= start) {
 			client.childNodes[end].remove()
 			end--
 		}
-	// Hidden DOM is longer:
+	// Push extraneous nodes:
 	} else if (start < hidden.childNodes.length) {
-		// Push extraneous nodes:
 		while (start < hidden.childNodes.length) {
 			client.append(hidden.childNodes[start].cloneNode(true))
 			start++
 		}
-	}
-	if (__DEV__) {
-		invariant(
-			start === Math.max(client.childNodes.length, hidden.childNodes.length),
-			"FIXME",
-		)
 	}
 }
 

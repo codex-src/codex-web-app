@@ -9,10 +9,10 @@ test("integration", () => {
 				Hello, world!
 			</div>
 			<div data-compound-node>
-				<div id="b-1" data-node>
+				<div id="b" data-node>
 					Hello, world!
 				</div>
-				<div id="b-2" data-node>
+				<div id="c" data-node>
 					<em>
 						*Hello*
 					</em>
@@ -22,11 +22,11 @@ test("integration", () => {
 					</strong>
 					!
 				</div>
-				<div id="b-3" data-node>
+				<div id="d" data-node>
 					Hello, world!
 				</div>
 			</div>
-			<div id="c" data-node>
+			<div id="e" data-node>
 				Hello, world!
 			</div>
 		</div>
@@ -47,10 +47,10 @@ test("integration", () => {
 	}
 	const expected = [
 		{ key: "a", data: "Hello, world!" },
-		{ key: "b-1", data: "Hello, world!" },
-		{ key: "b-2", data: "*Hello*, **world**!" },
-		{ key: "b-3", data: "Hello, world!" },
-		{ key: "c", data: "Hello, world!" },
+		{ key: "b", data: "Hello, world!" },
+		{ key: "c", data: "*Hello*, **world**!" },
+		{ key: "d", data: "Hello, world!" },
+		{ key: "e", data: "Hello, world!" },
 	]
 	expect(nodes).toStrictEqual(expected)
 })
