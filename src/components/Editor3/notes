@@ -231,7 +231,7 @@ aggregate pos. this is *very* good as a start
 now we need a model of our data that we can read and write
 to using this concise model
 
-ideally, our data model wouldbe as simple as a data value
+ideally, our data model would be as simple as a data value
 and nodes, with the ability to quickly write to both with
 limited cost. all of this would make for great debuggability
 
@@ -758,3 +758,128 @@ the greedy index but i think that's the only problem
 const components = parseMarkdown(state.nodes, greedy)
 // decides the parse range based on greedy
 
+so how we can actually get the greedy cursor is quite
+simple; we have a new getCursorFromKey function we can use
+to query a key from a cursor and iterate forwards or
+backwards on the vdom
+
+this means we have a very simple a convenient method of
+extracting a vdom node index from a real world key...
+truly brilliant
+
+targetInputRange = getTargetInputRange(rootNode, startKeyNode, endKeyNode, start, end)
+
+// Gets the target range for onInput and dispatch.render.
+//
+// NOTE: _start and _end need to be from *before* offset and
+// pos are incremented.
+function getTargetInputRange(nodes, startNode, endNode, _start, _end) {
+	startNode = getCompoundKeyNode(startNode)
+	endNode = getCompoundKeyNode(endNode)
+	// Extend the start node:
+	let extendStart = 0
+	while (extendStart < 1 && startNode.previousSibling) {
+		startNode = startNode.previousSibling
+		extendStart++
+	}
+	// Extend the end node:
+	let extendEnd = 0
+	while (extendEnd < 2 && endNode.nextSibling) { // extendEnd must be 0-2
+		endNode = endNode.nextSibling
+		extendEnd++
+	}
+	// Get the start and end cursors:
+	const start = getCursorFromKey(nodes, startNode.id, _start, -1)
+	const end = getCursorFromKey(nodes, endNode.id, _end)
+	// Done:
+	const targetInputRange = {
+		startNode,   // The start node
+		start,       // The start cursor
+		endNode,     // The end node
+		end,         // The end cursor
+		extendStart, // Extended start count
+		extendEnd,   // Extended end count
+	}
+	return targetInputRange
+}
+
+...
+
+const keyNode = getKeyNode(anchorNode) // Not range
+const offset = getOffsetFromKeyNode(keyNode)
+const reset = { key: keyNode.id, offset }
+
+...
+
+// Commits an input editing operation; writes to data,
+// nodes, reset, and onRenderHook.
+commitInput(nodes, start, end, reset) {
+	const imperative = { ...state, data: state.data, nodes: [...state.nodes], reset: { ...state.reset } }
+
+	this.write(nodes, start, end)
+	imperative.reset = reset
+	this.render(start, end)
+}
+
+we need to reintroduce immer
+
+the other thing we need to do is work out how parseMarkdown
+works with the new getUnterminatedCodeBlocks API
+
+last we need to figure out how to splice the components
+
+so parseMarkdown gets passed the nodes and greedy cursor
+range indexes:
+
+const fragment = parseMarkdown(nodes, start.index, end.index)
+
+...
+
+function parseMarkdown(nodes, from, to) {
+	const { start, end } = getUnterminatedCodeBlockRange(nodes)
+	if (start !== end && start < from) { // < or <=?
+		from = start // Extend to start
+	} else if (start !== end && end < from) {
+		to = end // Extend to end
+	}
+	// ...
+}
+
+and figure out native rendering -- native rendering should
+be fine if we compare types against the natively rendered
+dom; only on the memo-changed nodes; so recursively compare
+should work
+
+// Renders React components.
+render(from, to) {
+	// Incremental parsing strategy:
+	if (state.opType !== OpTypes.INPUT) {
+		from = 0
+		to = state.nodes.length
+	}
+	const nodes = state.nodes.map(each => ({ ...each }))
+	const { fromKey, toKey, components } = parseMarkdown(nodes, from, to)
+	// Reset from and to from based on nodes to components:
+	from = state.components.findIndex(each => each.key === fromKey)
+	to = state.components.findIndex(each => each.key === toKey)
+	state.components.splice(from, to - from + 1, ...components)
+	state.onRenderHook++
+}
+
+we dont care about unterminated code blocks -- we care about
+terminated code blocks and not just the first range; we want
+all of them -- nevermind, this only works for adding code
+blocks, not deleting
+
+const ranges = getCodeBlockRanges(nodes)
+
+where ranges === [{ start, end }, { start, end }]
+
+then we compare if any of the ranges intersect with the from
+to range -- if yes, we need to extend the range to match
+that range. if not, then we can basically ignore
+
+we now have a prototype of the parser that is designed for
+speed.
+
+ignoring

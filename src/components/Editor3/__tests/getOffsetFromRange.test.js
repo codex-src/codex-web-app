@@ -14,7 +14,7 @@ function isTextOrBreakElementNode(node) {
 
 // Mocks the browser function.
 function nodeValue(node) {
-	return node.nodeValue || "" // Break node
+	return node.nodeValue || "" // Covers break node
 }
 
 // Gets an offset for a range.
