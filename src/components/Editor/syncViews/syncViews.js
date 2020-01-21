@@ -1,8 +1,5 @@
 import areEqualTrees from "../helpers/areEqualTrees"
-import invariant from "invariant"
 import swapChildNodes from "./swapChildNodes"
-
-const __DEV__ = process.env.NODE_ENV !== "production"
 
 // replaceWith replaces a node with a clone of another node.
 function replaceWith(nodeA, nodeB, attr) {

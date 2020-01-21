@@ -1,6 +1,7 @@
 import Debugger from "./Debugger"
 import getOffsetFromRange from "./helpers/getOffsetFromRange"
 import getParsedNodesFromKeyNode from "./helpers/getParsedNodesFromKeyNode"
+import getRangeFromKeyNodeAndOffset from "./helpers/getRangeFromKeyNodeAndOffset"
 import getTargetRange from "./helpers/getTargetRange"
 import random from "utils/random/id"
 import React from "react"
@@ -12,21 +13,27 @@ import { getKeyNode } from "./helpers/getKeyNode"
 
 import "./Editor.css"
 
-const initialValue = `Hello, world!
-
-\`\`\`Hello, world!\`\`\`
-
-> Hello, world!
-
----
-
-\`\`\`go
-hello, world!
-\`\`\`
+const initialValue = `
 
 Hello, world!
 
-Hello, world!`
+`
+
+// const initialValue = `Hello, world!
+//
+// \`\`\`Hello, world!\`\`\`
+//
+// > Hello, world!
+//
+// ---
+//
+// \`\`\`go
+// hello, world!
+// \`\`\`
+//
+// Hello, world!
+//
+// Hello, world!`
 
 function EditorContents(props) {
 	return props.components
@@ -88,9 +95,18 @@ function Editor(props) {
 					syncViews(ref.current, state.reactDOM, "data-memo")
 					return
 				}
-				// const selection = document.getSelection()
-				// selection.removeAllRanges()
-				// syncViews(ref.current, state.reactDOM, "data-memo")
+				// Eagerly drop range for performance reasons:
+				//
+				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+				const selection = document.getSelection()
+				selection.removeAllRanges()
+				syncViews(ref.current, state.reactDOM, "data-memo")
+				const keyNode = document.getElementById(state.reset.key)
+				const { node, offset } = getRangeFromKeyNodeAndOffset(keyNode, state.reset.offset)
+				const range = document.createRange()
+				range.setStart(node, offset)
+				range.collapse()
+				selection.addRange(range)
 			})
 		}, [state]),
 		[state.shouldRenderComponents],
@@ -145,7 +161,6 @@ function Editor(props) {
 							endNode = endNode.nextSibling
 							end = getCursorFromKey(state.nodes, endNode.id, end)
 						}
-
 						// Get the parsed nodes:
 						const seenKeys = {}
 						const nodes = []
@@ -162,35 +177,14 @@ function Editor(props) {
 							const { nextSibling } = currentNode
 							currentNode = nextSibling
 						}
-
 						// Get the reset key and offset:
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const keyNode = getKeyNode(anchorNode)
 						const offset = getOffsetFromRange(keyNode, anchorNode, anchorOffset)
 						const reset = { key: keyNode.id, offset }
-
-						console.log(nodes, start, end, reset)
-
 						// Done:
-						// dispatch.opInput(nodes, start, end, reset)
+						dispatch.opInput(nodes, start, end, reset)
 					},
-
-					// // Parse the new nodes:
-					// const seenKeys = {}
-					// const newNodes = [{ key: startNode.id, data: innerText(startNode) }]
-					// seenKeys[startNode.id] = true
-					// let node = startNode.nextSibling
-					// while (node) {
-					// 	if (seenKeys[node.id]) {
-					// 		node.id = random.newUUID()
-					// 	}
-					// 	newNodes.push({ key: node.id, data: innerText(node) })
-					// 	seenKeys[node.id] = true
-					// 	if (node === endNode) {
-					// 		break
-					// 	}
-					// 	node = node.nextSibling
-					// }
 
 					onCut:   e => e.preventDefault(),
 					onCopy:  e => e.preventDefault(),

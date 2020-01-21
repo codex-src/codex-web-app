@@ -2,6 +2,7 @@ import Enum from "utils/Enum"
 import newNodes from "./helpers/newNodes"
 import parseComponents from "./parseComponents"
 import useMethods from "use-methods"
+import write from "./helpers/write"
 import { newCursor } from "./helpers/getCursorFromKey"
 
 const OpTypes = new Enum(
@@ -25,13 +26,13 @@ const initialState = {
 	nodes: null,               // The parsed nodes
 	start: null,               // The start cursor
 	end: null,                 // The end cursor
+	reset: null,               // The reset cursor key and offset
 	components: null,          // The parsed React components
 	reactDOM: null,            // The React DOM (unmounted)
 	shouldRenderComponents: 0, // Should render components hook
 }
 
 const reducer = state => ({
-	// Commits an editing operation.
 	commitOp(opType) {
 		const opTimestamp = Date.now()
 		if (opType === OpTypes.SELECT && opTimestamp - state.opTimestamp < 100) {
@@ -40,20 +41,28 @@ const reducer = state => ({
 		}
 		Object.assign(state, { opType, opTimestamp })
 	},
-	// Focuses the editor.
 	opFocus() {
 		this.commitOp(OpTypes.FOCUS)
 		state.hasFocus = true
 	},
-	// Blurs the editor.
 	opBlur() {
 		this.commitOp(OpTypes.BLUR)
 		state.hasFocus = false
 	},
-	// Selects the editor.
 	opSelect(start, end) {
 		this.commitOp(OpTypes.SELECT)
 		Object.assign(state, { start, end })
+	},
+	opInput(nodes, start, end, reset) {
+		this.commitOp(OpTypes.INPUT)
+		write(state, nodes, start, end)
+		state.reset = reset
+		this.render()
+	},
+	render() {
+		const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
+		state.components = parseComponents(nodes)
+		state.shouldRenderComponents++
 	},
 })
 
@@ -68,6 +77,10 @@ const init = initialValue => initialState => {
 		nodes,
 		start: newCursor(),
 		end: newCursor(),
+		reset: {
+			key: "",
+			offset: 0,
+		},
 		components: parseComponents(nodes),
 		reactDOM: document.createElement("div"),
 	}
