@@ -1,17 +1,6 @@
-import invariant from "invariant"
-
-const __DEV__ = process.env.NODE_ENV !== "production"
-
 // Writes plain text data and parsed nodes to a state object
 // at start and end (cursors).
 function write(state, nodes, start, end) {
-	if (__DEV__) {
-		invariant(
-			state.data &&
-			state.nodes,
-			"FIXME",
-		)
-	}
 	if (nodes === null) {
 		const { key } = state.nodes[start.index]
 		nodes = [{ key, data: "" }]

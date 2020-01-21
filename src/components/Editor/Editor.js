@@ -13,27 +13,27 @@ import { getKeyNode } from "./helpers/getKeyNode"
 
 import "./Editor.css"
 
-// const initialValue = `
-//
-// Hello, world!
-//
-// `
-
-const initialValue = `Hello, world!
-
-\`\`\`Hello, world!\`\`\`
-
-> Hello, world!
-
----
-
-\`\`\`go
-hello, world!
-\`\`\`
+const initialValue = `
 
 Hello, world!
 
-Hello, world!`
+`
+
+// const initialValue = `Hello, world!
+//
+// \`\`\`Hello, world!\`\`\`
+//
+// > Hello, world!
+//
+// ---
+//
+// \`\`\`go
+// hello, world!
+// \`\`\`
+//
+// Hello, world!
+//
+// Hello, world!`
 
 function EditorContents(props) {
 	return props.components
@@ -199,7 +199,7 @@ function Editor(props) {
 					onDrop:  e => e.preventDefault(),
 				},
 			)}
-			{props.debug && (
+			{!props.debug && (
 				<Debugger state={state} />
 			)}
 		</React.Fragment>
