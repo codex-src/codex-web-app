@@ -1,6 +1,6 @@
 import invariant from "invariant"
 import React from "react"
-import RenderDOM2 from "utils/RenderDOM2"
+import renderDOM from "utils/renderDOM"
 
 function isTextOrBreakElementNode(node) {
 	const ok = (
@@ -59,7 +59,7 @@ test("innerText: (empty)", () => {
 			<br />
 		</div>
 	)
-	const rootNode = RenderDOM2(<Component />)
+	const rootNode = renderDOM(<Component />)
 	expect(innerText(rootNode)).toBe("")
 })
 
@@ -69,7 +69,7 @@ test("innerText: Hello, world!", () => {
 			Hello, world!
 		</div>
 	)
-	const rootNode = RenderDOM2(<Component />)
+	const rootNode = renderDOM(<Component />)
 	expect(innerText(rootNode)).toBe("Hello, world!")
 })
 
@@ -86,7 +86,7 @@ test("innerText: *Hello*, **world**!", () => {
 			!
 		</div>
 	)
-	const rootNode = RenderDOM2(<Component />)
+	const rootNode = renderDOM(<Component />)
 	expect(innerText(rootNode)).toBe("Hello, world!")
 })
 
@@ -119,7 +119,7 @@ test("getNodesFromKeyNode: integration", () => {
 			</div>
 		</div>
 	)
-	const rootNode = RenderDOM2(<Component />)
+	const rootNode = renderDOM(<Component />)
 	// Get the start and end nodes:
 	const startNode = rootNode.childNodes[0]
 	const endNode = rootNode.childNodes[rootNode.childNodes.length - 1]

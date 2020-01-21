@@ -1,5 +1,5 @@
 import React from "react"
-import RenderDOM2 from "utils/RenderDOM2"
+import renderDOM from "utils/renderDOM"
 import swapChildNodes from "../swapChildNodes"
 
 test("integration", () => {
@@ -9,7 +9,7 @@ test("integration", () => {
 			<div id="b" />
 		</div>
 	)
-	const rootNode = RenderDOM2(<Component />)
+	const rootNode = renderDOM(<Component />)
 	const a = rootNode.querySelector("#a")
 	const b = rootNode.querySelector("#b")
 	swapChildNodes(a, b)

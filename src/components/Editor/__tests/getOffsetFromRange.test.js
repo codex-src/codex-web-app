@@ -1,5 +1,5 @@
 import React from "react"
-import RenderDOM2 from "utils/RenderDOM2"
+import renderDOM from "utils/renderDOM"
 
 function isTextOrBreakElementNode(node) {
 	const ok = (
@@ -49,7 +49,7 @@ test("Hello, world!", () => {
 			Hello, world!
 		</div>
 	)
-	const rootNode = RenderDOM2(<Component />)
+	const rootNode = renderDOM(<Component />)
 	expect(getOffsetFromRange(rootNode, rootNode.childNodes[0], 0)).toBe(0)
 	expect(getOffsetFromRange(rootNode, rootNode.childNodes[0], 13)).toBe(13)
 })
@@ -67,7 +67,7 @@ test("*Hello*, **world**!", () => {
 			!
 		</div>
 	)
-	const rootNode = RenderDOM2(<Component />)
+	const rootNode = renderDOM(<Component />)
 	expect(getOffsetFromRange(rootNode, rootNode.childNodes[0].childNodes[0], 0)).toBe(0)  // <cursor>Hello
 	expect(getOffsetFromRange(rootNode, rootNode.childNodes[0].childNodes[0], 5)).toBe(5)  // Hello<cursor>
 	expect(getOffsetFromRange(rootNode, rootNode.childNodes[1], 0)).toBe(5)                // <cursor>,

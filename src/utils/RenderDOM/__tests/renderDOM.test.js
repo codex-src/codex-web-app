@@ -1,9 +1,9 @@
 import React from "react"
 import ReactDOMServer from "react-dom/server"
-import RenderDOM from "../RenderDOM"
+import renderDOM from "../renderDOM"
 
-// ParseMarkupDOM parses a React component to markup (HTML)
-// and then to a DOM node.
+// Parses a React component to markup (HTML) and then to a
+// DOM node.
 function ParseMarkupDOM(Component) {
 	const parser = new DOMParser()
 	const dom = parser.parseFromString(ReactDOMServer.renderToStaticMarkup(<Component />), "text/html")
@@ -14,14 +14,14 @@ function ParseMarkupDOM(Component) {
 
 test("br", () => {
 	const Component = props => <br />
-	const rootNode = RenderDOM(<Component />)
+	const rootNode = renderDOM(<Component />)
 	const parsedRootNode = ParseMarkupDOM(Component)
 	expect(rootNode.isEqualNode(parsedRootNode)).toBe(true)
 })
 
 test("text node", () => {
 	const Component = props => "Hello, world!"
-	const rootNode = RenderDOM(<Component />)
+	const rootNode = renderDOM(<Component />)
 	const parsedRootNode = ParseMarkupDOM(Component)
 	expect(rootNode.isEqualNode(parsedRootNode)).toBe(true)
 })
@@ -32,7 +32,7 @@ test("p", () => {
 			Hello, world!
 		</p>
 	)
-	const rootNode = RenderDOM(<Component />)
+	const rootNode = renderDOM(<Component />)
 	const parsedRootNode = ParseMarkupDOM(Component)
 	expect(rootNode.isEqualNode(parsedRootNode)).toBe(true)
 })
@@ -45,7 +45,7 @@ test("div", () => {
 			</p>
 		</div>
 	)
-	const rootNode = RenderDOM(<Component />)
+	const rootNode = renderDOM(<Component />)
 	const parsedRootNode = ParseMarkupDOM(Component)
 	expect(rootNode.isEqualNode(parsedRootNode)).toBe(true)
 })
@@ -60,7 +60,7 @@ test("div#root", () => {
 			</div>
 		</div>
 	)
-	const rootNode = RenderDOM(<Component />)
+	const rootNode = renderDOM(<Component />)
 	const parsedRootNode = ParseMarkupDOM(Component)
 	expect(rootNode.isEqualNode(parsedRootNode)).toBe(true)
 })

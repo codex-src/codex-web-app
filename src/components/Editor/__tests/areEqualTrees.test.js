@@ -1,5 +1,5 @@
 import React from "react"
-import RenderDOM2 from "utils/RenderDOM2"
+import renderDOM from "utils/renderDOM"
 
 // Compares whether two DOM trees are equal -- root nodes
 // are not compared (because of data-memo).
@@ -36,8 +36,8 @@ describe("group 1", () => {
 				{/* ... */}
 			</div>
 		)
-		const rootNode1 = RenderDOM2(<Component1 />)
-		const rootNode2 = RenderDOM2(<Component2 />)
+		const rootNode1 = renderDOM(<Component1 />)
+		const rootNode2 = renderDOM(<Component2 />)
 		expect(areEqualTrees(rootNode1, rootNode2)).toBe(true)
 	})
 })
@@ -57,8 +57,8 @@ describe("group 2", () => {
 				world!
 			</div>
 		)
-		const rootNode1 = RenderDOM2(<Component1 />)
-		const rootNode2 = RenderDOM2(<Component2 />)
+		const rootNode1 = renderDOM(<Component1 />)
+		const rootNode2 = renderDOM(<Component2 />)
 		expect(areEqualTrees(rootNode1, rootNode2)).toBe(true)
 	})
 	test("", () => {
@@ -74,8 +74,8 @@ describe("group 2", () => {
 				darkness…
 			</div>
 		)
-		const rootNode1 = RenderDOM2(<Component1 />)
-		const rootNode2 = RenderDOM2(<Component2 />)
+		const rootNode1 = renderDOM(<Component1 />)
+		const rootNode2 = renderDOM(<Component2 />)
 		expect(areEqualTrees(rootNode1, rootNode2)).toBe(false)
 	})
 })
@@ -106,8 +106,8 @@ describe("group 3", () => {
 				!
 			</div>
 		)
-		const rootNode1 = RenderDOM2(<Component1 />)
-		const rootNode2 = RenderDOM2(<Component2 />)
+		const rootNode1 = renderDOM(<Component1 />)
+		const rootNode2 = renderDOM(<Component2 />)
 		expect(areEqualTrees(rootNode1, rootNode2)).toBe(true)
 	})
 	test("", () => {
@@ -135,8 +135,8 @@ describe("group 3", () => {
 				…
 			</div>
 		)
-		const rootNode1 = RenderDOM2(<Component1 />)
-		const rootNode2 = RenderDOM2(<Component2 />)
+		const rootNode1 = renderDOM(<Component1 />)
+		const rootNode2 = renderDOM(<Component2 />)
 		expect(areEqualTrees(rootNode1, rootNode2)).toBe(false)
 	})
 })

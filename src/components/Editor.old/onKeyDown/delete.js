@@ -1,4 +1,4 @@
-import platform from "utils/platform"
+import platform from "lib/platform"
 
 const keyCode = {
 	delete: 46, // Delete.

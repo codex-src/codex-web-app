@@ -1,4 +1,4 @@
-import Editor from "components/Editor3"
+import Editor from "components/Editor"
 import React from "react"
 import stylex from "stylex"
 

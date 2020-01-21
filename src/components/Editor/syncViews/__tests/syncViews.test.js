@@ -1,5 +1,5 @@
 import React from "react"
-import RenderDOM2 from "utils/RenderDOM2"
+import renderDOM from "utils/renderDOM"
 import syncViews from "../syncViews"
 
 // -  -> -
@@ -22,8 +22,8 @@ describe("group 1", () => {
 				{/* ... */}
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -38,8 +38,8 @@ describe("group 1", () => {
 				<div id="a" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -54,8 +54,8 @@ describe("group 1", () => {
 				{/* ... */}
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -70,8 +70,8 @@ describe("group 1", () => {
 				<div id="a" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -95,8 +95,8 @@ describe("group 2", () => {
 				<div id="a" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -111,8 +111,8 @@ describe("group 2", () => {
 				<div id="a" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -127,8 +127,8 @@ describe("group 2", () => {
 				<div id="a" data-memo={2} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -152,8 +152,8 @@ describe("group 3", () => {
 				<div id="b" data-memo={0} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -168,8 +168,8 @@ describe("group 3", () => {
 				<div id="b" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -184,8 +184,8 @@ describe("group 3", () => {
 				<div id="b" data-memo={2} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -214,8 +214,8 @@ describe("group 4", () => {
 				{/* ... */}
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -230,8 +230,8 @@ describe("group 4", () => {
 				<div id="a" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -247,8 +247,8 @@ describe("group 4", () => {
 				<div id="b" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -265,8 +265,8 @@ describe("group 4", () => {
 				<div id="c" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -295,8 +295,8 @@ describe("group 4 (reversed)", () => {
 				{/* ... */}
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -311,8 +311,8 @@ describe("group 4 (reversed)", () => {
 				{/* ... */}
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -328,8 +328,8 @@ describe("group 4 (reversed)", () => {
 				{/* ... */}
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -346,8 +346,8 @@ describe("group 4 (reversed)", () => {
 				{/* ... */}
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -379,8 +379,8 @@ describe("group 5", () => {
 				<div id="c" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -397,8 +397,8 @@ describe("group 5", () => {
 				<div id="c" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -415,8 +415,8 @@ describe("group 5", () => {
 				<div id="c" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -448,8 +448,8 @@ describe("group 5 (reversed)", () => {
 				<div id="a" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -466,8 +466,8 @@ describe("group 5 (reversed)", () => {
 				<div id="b" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -484,8 +484,8 @@ describe("group 5 (reversed)", () => {
 				<div id="c" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -515,8 +515,8 @@ describe("group 6", () => {
 				<div id="f" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -535,8 +535,8 @@ describe("group 6", () => {
 				<div id="c" data-memo={1} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -578,8 +578,8 @@ describe("group 7", () => {
 				<div id="c" data-memo={2} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -604,8 +604,8 @@ describe("group 7", () => {
 				<div id="z" data-memo={2} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -647,8 +647,8 @@ describe("group 8", () => {
 				<div id="c" data-memo={2} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})
@@ -673,8 +673,8 @@ describe("group 8", () => {
 				<div id="z" data-memo={2} />
 			</div>
 		)
-		const clientDOM = RenderDOM2(<ClientDOM />)
-		const hiddenDOM = RenderDOM2(<HiddenDOM />)
+		const clientDOM = renderDOM(<ClientDOM />)
+		const hiddenDOM = renderDOM(<HiddenDOM />)
 		syncViews(clientDOM, hiddenDOM, "data-memo"),
 		expect(clientDOM.outerHTML).toBe(hiddenDOM.outerHTML)
 	})

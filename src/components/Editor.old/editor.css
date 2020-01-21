@@ -1,0 +1,12 @@
+article {
+	white-space:     pre-wrap;
+	font:            19px/1.5 "system-ui"; /* (Idempotent) */
+	caret-color:     hsl(var(--black));
+	outline:         none;
+	overflow-wrap:   break-word;
+	scroll-behavior: smooth;
+}
+
+/* ::selection { */
+/* 	background: TODO; */
+/* } */

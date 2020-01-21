@@ -1,9 +1,9 @@
 import * as Router from "react-router-dom"
 import React from "react"
-import RenderDOM from "utils/RenderDOM"
+import renderDOM from "utils/renderDOM"
 import RouterLink from "../RouterLink"
 
-test("none", () => {
+test("<div>", () => {
 	const Component = props => (
 		<Router.BrowserRouter>
 			<RouterLink>
@@ -11,30 +11,30 @@ test("none", () => {
 			</RouterLink>
 		</Router.BrowserRouter>
 	)
-	const domNode = RenderDOM(Component)
-	expect(domNode.outerHTML).toBe("<div>Text</div>")
+	const rootNode = renderDOM(<Component />)
+	expect(rootNode.outerHTML).toBe("<div>Text</div>")
 })
 
-test("relative", () => {
+test("<a href=\"/...\">", () => {
 	const Component = props => (
 		<Router.BrowserRouter>
 			<RouterLink to="/...">
-				Text
+				Link
 			</RouterLink>
 		</Router.BrowserRouter>
 	)
-	const domNode = RenderDOM(Component)
-	expect(domNode.outerHTML).toBe("<a href=\"/...\">Text</a>")
+	const rootNode = renderDOM(<Component />)
+	expect(rootNode.outerHTML).toBe("<a href=\"/...\">Link</a>")
 })
 
-test("absolute", () => {
+test("<a href=\"...\">", () => {
 	const Component = props => (
 		<Router.BrowserRouter>
 			<RouterLink to="...">
-				Text
+				Link
 			</RouterLink>
 		</Router.BrowserRouter>
 	)
-	const domNode = RenderDOM(Component)
-	expect(domNode.outerHTML).toBe("<a href=\"...\">Text</a>")
+	const rootNode = renderDOM(<Component />)
+	expect(rootNode.outerHTML).toBe("<a href=\"...\">Link</a>")
 })

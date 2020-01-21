@@ -1,6 +1,5 @@
 import invariant from "invariant"
 import swapChildNodes from "./swapChildNodes"
-import typeOf from "utils/typeOf"
 
 const __DEV__ = process.env.NODE_ENV !== "production"
 
