@@ -4,7 +4,7 @@ import swapChildNodes from "./swapChildNodes"
 const __DEV__ = process.env.NODE_ENV !== "production"
 
 // Syncs two DOM trees based on a number attribute.
-function syncViews(client, hidden, dataNumAttr) {
+function syncViews(client, hidden, attr) {
 	const clientMap = {}
 	let start = client.childNodes.length - 1 // Iterate backwards for a performance boost
 	while (start >= 0) {
@@ -26,7 +26,7 @@ function syncViews(client, hidden, dataNumAttr) {
 		// Keys **do not** match:
 		if (clientNode.id !== hiddenNode.id) {
 			// Does the client DOM have a fresh node?
-			if (clientMap[hiddenNode.id] && +clientMap[hiddenNode.id].getAttribute(dataNumAttr) >= +hiddenNode.getAttribute(dataNumAttr)) {
+			if (clientMap[hiddenNode.id] && +clientMap[hiddenNode.id].getAttribute(attr) >= +hiddenNode.getAttribute(attr)) {
 				// Yes -- swap them:
 				swapChildNodes(clientNode, clientMap[hiddenNode.id])
 			} else {
@@ -35,7 +35,7 @@ function syncViews(client, hidden, dataNumAttr) {
 				clientNode.replaceWith(hiddenNode.cloneNode(true)) // TODO: areEqualTrees
 			}
 		// Keys match but the client node is stale:
-		} else if (+clientNode.getAttribute(dataNumAttr) < +hiddenNode.getAttribute(dataNumAttr)) {
+		} else if (+clientNode.getAttribute(attr) < +hiddenNode.getAttribute(attr)) {
 			clientNode.replaceWith(hiddenNode.cloneNode(true)) // TODO: areEqualTrees
 		// Keys match and the client node is fresh:
 		} else {
