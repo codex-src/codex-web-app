@@ -1,6 +1,13 @@
 import { getCompoundKeyNode } from "./getKeyNode"
 import { getCursorFromKey } from "./getCursorFromKey"
 
+//  a
+// [b
+//  c<cursor>
+//  d
+//  e]
+//  f
+
 // Gets a target range (for onInput).
 //
 // TODO: Test?
@@ -20,30 +27,15 @@ function getTargetRange(nodes, rootNode, startNode, endNode) {
 		extendedEnd++
 	}
 
-	// // Get the start key:
-	// let startKey = startNode.id
-	// if (!startKey) {
-	// 	startKey = startNode.childNodes[0].id // **Does not recurse**
-	// }
-	// // Get the end key:
-	// let endKey = endNode.id
-	// if (!endKey) {
-	// 	endKey = endNode.childNodes[0].id // **Does not recurse**
-	// }
-	// if (__DEV__) {
-	// 	invariant(
-	// 		startKey &&
-	// 		endKey,
-	// 		"FIXME",
-	// 	)
-	// }
-
 	// Get the cursors:
 	const start = getCursorFromKey(nodes, startNode.id)
 	const end = getCursorFromKey(nodes, endNode.id)
 
-	end.offset += nodes[end.index].data.length
-	end.pos += nodes[end.index].data.length
+	console.log(startNode.id)
+	console.log(endNode.id)
+
+	// end.offset += nodes[end.index].data.length // FIXME
+	// end.pos += nodes[end.index].data.length
 
 	// Done:
 	const targetRange = {

@@ -1,29 +1,38 @@
+// import getParsedNodesFromKeyNode from "./helpers/getParsedNodesFromKeyNode"
+// import getTargetRange from "./helpers/getTargetRange"
 import Debugger from "./Debugger"
 import getOffsetFromRange from "./helpers/getOffsetFromRange"
-import getParsedNodesFromKeyNode from "./helpers/getParsedNodesFromKeyNode"
 import getRangeFromKeyNodeAndOffset from "./helpers/getRangeFromKeyNodeAndOffset"
-import getTargetRange from "./helpers/getTargetRange"
-import random from "utils/random/id"
+import KeyNodeIterator from "./helpers/KeyNodeIterator"
+import random from "utils/random/id" // eslint-disable-line no-unused-vars
 import React from "react"
 import ReactDOM from "react-dom"
 import syncViews from "./syncViews"
 import useEditor from "./EditorReducer"
 import { getCursorFromKey } from "./helpers/getCursorFromKey"
 import { getKeyNode } from "./helpers/getKeyNode"
+import { innerText } from "./helpers/innerText" // eslint-disable-line no-unused-vars
 
 import "./Editor.css"
 
-const initialValue = `
+const initialValue = `Hello, world!
 
 \`\`\`
 \`\`\`
 
 Hello, world!
 
-\`\`\`
-\`\`\`
+Hello, world!`
 
-`
+// const initialValue = `Hello, world!
+//
+// Hello, world!
+//
+// Hello, world!
+//
+// Hello, world!
+//
+// Hello, world!`
 
 // const initialValue = `Hello, world!
 //
@@ -41,13 +50,39 @@ Hello, world!
 //
 // Hello, world!`
 
+// Gets a target range (for onInput).
+function getTargetRange(nodes, rootNode, startNode, endNode) {
+	const startIter = new KeyNodeIterator(startNode)
+	while (startIter.count < 2 && startIter.getPrev()) {
+		startIter.prev()
+	}
+	const endIter = new KeyNodeIterator(endNode)
+	while (endIter.count < 2 && endIter.getNext()) {
+		endIter.next()
+	}
+	const start = getCursorFromKey(nodes, startIter.currentNode.id)
+	const end = getCursorFromKey(nodes, endIter.currentNode.id, start)
+	const { length } = nodes[end.index].data
+	end.offset += length
+	end.pos += length
+	// Done:
+	const target = {
+		startIter, // The start key node iterator
+		start,     // The start cursor
+		endIter,   // The end key node iterator
+		end,       // The end cursor
+	}
+	return target
+}
+
 function EditorContents(props) {
 	return props.components
 }
 
 function Editor(props) {
 	const ref = React.useRef()
-	const targetRange = React.useRef()
+	const selectionchange = React.useRef()
+	const target = React.useRef()
 
 	const [state, dispatch] = useEditor(initialValue)
 
@@ -59,32 +94,36 @@ function Editor(props) {
 					// No-op
 					return
 				}
-				const {
-					startContainer, // The start node (ordered)
-					startOffset,    // The offset of the start node
-					endContainer,   // The end node (ordered)
-					endOffset,      // The offset of the end node
-					collapsed,      // Is the range collapsed?
-				} = selection.getRangeAt(0)
-				// Get the start and end nodes and keys.
-				const startKeyNode = getKeyNode(startContainer)
-				const startKey = startKeyNode.id
-				const endKeyNode = getKeyNode(endContainer)
-				const endKey = endKeyNode.id
+				const { startContainer, startOffset, endContainer, endOffset, collapsed } = selection.getRangeAt(0)
+				const { current } = selectionchange
+				if (
+					current                                   && // eslint-disable-line
+					current.startContainer === startContainer && // eslint-disable-line
+					current.startOffset    === startOffset    && // eslint-disable-line
+					current.endContainer   === endContainer   && // eslint-disable-line
+					current.endOffset      === endOffset         // eslint-disable-line
+				) {
+					// No-op
+					return
+				}
+				selectionchange.current = { startContainer, startOffset, endContainer, endOffset }
+				// Get the start and end key nodes:
+				const startNode = getKeyNode(startContainer)
+				const endNode = getKeyNode(endContainer)
 				// Get the start cursor:
-				const start = getCursorFromKey(state.nodes, startKey)
-				start.offset += getOffsetFromRange(startKeyNode, startContainer, startOffset)
+				const start = getCursorFromKey(state.nodes, startNode.id)
+				start.offset += getOffsetFromRange(startNode, startContainer, startOffset)
 				start.pos += start.offset
 				// Get the end cursor:
 				let end = { ...start }
 				if (!collapsed) {
-					end = getCursorFromKey(state.nodes, endKey)
-					end.offset += getOffsetFromRange(endKeyNode, endContainer, endOffset)
+					end = getCursorFromKey(state.nodes, endNode.id)
+					end.offset += getOffsetFromRange(endNode, endContainer, endOffset)
 					end.pos += end.offset
 				}
 				// Done:
 				dispatch.opSelect(start, end)
-				targetRange.current = getTargetRange(state.nodes, ref.current, startKeyNode, endKeyNode)
+				target.current = getTargetRange(state.nodes, ref.current, startNode, endNode)
 			}
 			document.addEventListener("selectionchange", h)
 			return () => {
@@ -111,6 +150,7 @@ function Editor(props) {
 				if (keyNode.getAttribute("data-compound-node")) {
 					keyNode = keyNode.childNodes[0] // **Does not recurse**
 				}
+				// const keyNode = document.querySelector(`[id='${state.reset.key}'][data-node]`)
 				const { node, offset } = getRangeFromKeyNodeAndOffset(keyNode, state.reset.offset)
 				const range = document.createRange()
 				range.setStart(node, offset)
@@ -157,44 +197,48 @@ function Editor(props) {
 							return
 						}
 						const { startContainer, endContainer } = selection.getRangeAt(0)
-						targetRange.current = getTargetRange(state.nodes, ref.current, startContainer, endContainer)
+						const startNode = getKeyNode(startContainer)
+						const endNode = getKeyNode(endContainer)
+						target.current = getTargetRange(state.nodes, ref.current, startNode, endNode)
 					},
 
 					onInput: e => {
-						let { current: { startNode, start, endNode, end, extendedStart, extendedEnd } } = targetRange
-						// Re-extend the start and end nodes and
+						let { current: { startIter, start, endIter, end } } = target
+						// Re-extend the start and end key nodes and
 						// cursors (once):
-						if (!extendedStart && startNode.previousSibling) {
-							startNode = startNode.previousSibling
-							start = getCursorFromKey(state.nodes, startNode.id, start, -1)
-						} else if (!extendedEnd && endNode.nextSibling) {
-							endNode = endNode.nextSibling
-							end = getCursorFromKey(state.nodes, endNode.id, end)
+						if (!startIter.count && startIter.getPrev()) {
+							startIter.prev()
+							start = getCursorFromKey(state.nodes, startIter.currentNode.id, start, -1)
+						} else if (!endIter.count && endIter.getNext()) {
+							endIter.next()
+							end = getCursorFromKey(state.nodes, endIter.currentNode.id, end)
+							const { length } = state.nodes[end.index].data
+							end.offset += length
+							end.pos += length
 						}
 						// Get the parsed nodes:
 						const seenKeys = {}
 						const nodes = []
-						let currentNode = startNode
-						while (currentNode) {
-							if (seenKeys[currentNode.id]) {
-								currentNode.id = random.newUUID()
+						while (startIter.currentNode) {
+							let key = startIter.currentNode.id
+							if (seenKeys[key]) {
+								key = random.newUUID()
+								startIter.currentNode.id = key
 							}
-							seenKeys[currentNode.id] = true // NOTE: Ignores parsed compound key nodes
-							nodes.push(...getParsedNodesFromKeyNode(currentNode))
-							if (currentNode === endNode) {
+							seenKeys[key] = true
+							const data = innerText(startIter.currentNode)
+							nodes.push({ key, data })
+							if (startIter.currentNode === endIter.currentNode) {
 								break
 							}
-							const { nextSibling } = currentNode
-							currentNode = nextSibling
+							startIter.next()
 						}
 						// Get the reset key and offset:
 						const { anchorNode, anchorOffset } = document.getSelection()
 						const keyNode = getKeyNode(anchorNode)
 						const offset = getOffsetFromRange(keyNode, anchorNode, anchorOffset)
 						const reset = { key: keyNode.id, offset }
-
 						// Done:
-						// console.log(nodes, start, end, reset)
 						dispatch.opInput(nodes, start, end, reset)
 					},
 
