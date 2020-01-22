@@ -7,14 +7,11 @@ const Debugger = ({ state }) => (
 		<div style={{ ...stylex.parse("pre-wrap"), tabSize: 2, font: "12px/1.375 'Monaco'" }}>
 			{JSON.stringify(
 				{
-					// opType:      state.opType,
-					// opTimestamp: state.opTimestamp,
-					// start:       state.start,
-					// end:         state.end,
-
 					...state,
 					components: undefined,
 					reactDOM:   undefined,
+
+					nodes: state.nodes.map(each => each.data)
 				},
 				null,
 				"\t",

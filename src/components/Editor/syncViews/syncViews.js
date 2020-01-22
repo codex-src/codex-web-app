@@ -23,7 +23,7 @@ function syncViews(client, hidden, attr) {
 	while (start < minlen) {
 		const clientNode = client.childNodes[start]
 		const hiddenNode = hidden.childNodes[start]
-		// Keys **do not** match:
+		// Keys do not match:
 		if (clientNode.id !== hiddenNode.id) {
 			// Does the client DOM have a fresh node?
 			if (clientMap[hiddenNode.id] && +clientMap[hiddenNode.id].getAttribute(attr) >= +hiddenNode.getAttribute(attr)) {
@@ -41,18 +41,19 @@ function syncViews(client, hidden, attr) {
 		}
 		start++
 	}
+	start = Math.min(client.childNodes.length, hidden.childNodes.length) // Reset
+	// Push extraneous nodes:
+	if (start < hidden.childNodes.length) {
+		while (start < hidden.childNodes.length) {
+			client.append(hidden.childNodes[start].cloneNode(true))
+			start++
+		}
 	// Drop extraneous nodes:
-	if (start < client.childNodes.length) {
+	} else if (start < client.childNodes.length) {
 		let end = client.childNodes.length - 1 // Iterate backwards
 		while (end >= start) {
 			client.childNodes[end].remove()
 			end--
-		}
-	// Push extraneous nodes:
-	} else if (start < hidden.childNodes.length) {
-		while (start < hidden.childNodes.length) {
-			client.append(hidden.childNodes[start].cloneNode(true))
-			start++
 		}
 	}
 }

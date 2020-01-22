@@ -15,14 +15,15 @@ import { innerText } from "./helpers/innerText" // eslint-disable-line no-unused
 
 import "./Editor.css"
 
-const initialValue = `Hello, world!
+const initialValue = `aaa
 
 \`\`\`
+bbb
 \`\`\`
 
-Hello, world!
+ccc
 
-Hello, world!`
+ddd`
 
 // const initialValue = `Hello, world!
 //
@@ -249,7 +250,7 @@ function Editor(props) {
 					onDrop:  e => e.preventDefault(),
 				},
 			)}
-			{!props.debug && (
+			{props.debug && (
 				<Debugger state={state} />
 			)}
 		</React.Fragment>
