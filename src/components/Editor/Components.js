@@ -43,7 +43,7 @@ export const Blockquote = React.memo(({ reactKey, ...props }) => (
 	</div>
 ))
 
-const code = {
+const codeStyle = {
 	tabSize: 2,
 	font: "15px/1.375 'Monaco', 'monospace'", // 14.25?
 }
@@ -59,7 +59,7 @@ export const CodeBlock = React.memo(({ reactKey, ...props }) => {
 			id={reactKey}
 			style={{
 				...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
-				...code,
+				...codeStyle,
 				boxShadow: "0px 0px 1px hsl(var(--gray))",
 			}}
 			data-compound-node
@@ -68,7 +68,7 @@ export const CodeBlock = React.memo(({ reactKey, ...props }) => {
 		>
 			{props.children.map((each, index) => (
 				<div key={each.key} id={each.key} style={stylex.parse("p-x:24")} data-node>
-					<code style={{ ...stylex.parse("m-r:-24 p-r:24"), ...code }}>
+					<code style={{ ...stylex.parse("m-r:-24 p-r:24"), ...codeStyle }}>
 						<Markdown startSyntax={getStartSyntax(index)} endSyntax={getEndSyntax(index)}>
 							{each.data || (
 								index > 0 && index + 1 < props.children.length && (

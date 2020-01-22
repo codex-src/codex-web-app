@@ -60,6 +60,7 @@ function parseComponents(nodes) {
 						(nodes[to].data.length < 2 || nodes[to].data.slice(0, 2) !== "> ") && // Is **not** blockquote
 						(nodes[to].data.length !== 1 || nodes[to].data !== ">")
 					) {
+						to-- // Decrement -- one too many
 						break
 					}
 					to++

@@ -15,7 +15,13 @@ import "./Editor.css"
 
 const initialValue = `
 
+\`\`\`
+\`\`\`
+
 Hello, world!
+
+\`\`\`
+\`\`\`
 
 `
 
