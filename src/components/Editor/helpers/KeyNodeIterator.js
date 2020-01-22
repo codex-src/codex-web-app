@@ -21,9 +21,9 @@ class KeyNodeIterator {
 			return previousSibling
 		} else if (previousSibling && previousSibling.getAttribute("data-compound-node")) {
 			return previousSibling.childNodes[previousSibling.childNodes.length - 1]
-		} else if (parentNode.previousSibling && parentNode.previousSibling.getAttribute("data-node")) {
+		} else if (parentNode && parentNode.previousSibling && parentNode.previousSibling.getAttribute("data-node")) {
 			return parentNode.previousSibling
-		} else if (parentNode.previousSibling && parentNode.previousSibling.getAttribute("data-compound-node")) {
+		} else if (parentNode && parentNode.previousSibling && parentNode.previousSibling.getAttribute("data-compound-node")) {
 			return parentNode.previousSibling.childNodes[parentNode.previousSibling.childNodes.length - 1]
 		}
 		return null
@@ -39,9 +39,9 @@ class KeyNodeIterator {
 			return nextSibling
 		} else if (nextSibling && nextSibling.getAttribute("data-compound-node")) {
 			return nextSibling.childNodes[0]
-		} else if (parentNode.nextSibling && parentNode.nextSibling.getAttribute("data-node")) {
+		} else if (parentNode && parentNode.nextSibling && parentNode.nextSibling.getAttribute("data-node")) {
 			return parentNode.nextSibling
-		} else if (parentNode.nextSibling && parentNode.nextSibling.getAttribute("data-compound-node")) {
+		} else if (parentNode && parentNode.nextSibling && parentNode.nextSibling.getAttribute("data-compound-node")) {
 			return parentNode.nextSibling.childNodes[0]
 		}
 		return null

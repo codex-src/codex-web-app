@@ -146,7 +146,11 @@ function Editor(props) {
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				const selection = document.getSelection()
 				selection.removeAllRanges()
+
 				syncViews(ref.current, state.reactDOM, "data-memo")
+				// ;[...ref.current.childNodes].map(each => each.remove())
+				// ref.current.append(...[...state.reactDOM.childNodes].map(each => each.cloneNode(true)))
+
 				let keyNode = document.getElementById(state.reset.key)
 				if (keyNode.getAttribute("data-compound-node")) {
 					keyNode = keyNode.childNodes[0] // **Does not recurse**
