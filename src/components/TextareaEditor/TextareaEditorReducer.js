@@ -1,5 +1,5 @@
 import Enum from "utils/Enum"
-import parseComponents from "./Components"
+import { parseComponents } from "./Components"
 import useMethods from "use-methods"
 
 const OperationTypes = new Enum(

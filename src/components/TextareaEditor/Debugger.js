@@ -1,5 +1,7 @@
 import React from "react"
+import reactElementReplacer from "./reactElementReplacer"
 import stylex from "stylex"
+import { componentMap } from "./Components"
 
 function Debugger({ state }) {
 	return (
@@ -9,10 +11,9 @@ function Debugger({ state }) {
 				{JSON.stringify(
 					{
 						...state,
-
-						components: undefined, // TODO
+						components: undefined,
 					},
-					null,
+					reactElementReplacer(componentMap),
 					"\t",
 				)}
 			</div>

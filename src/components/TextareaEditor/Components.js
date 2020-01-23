@@ -98,6 +98,15 @@ const Break = React.memo(props => (
 	</div>
 ))
 
+export const componentMap = {
+	[Header.type]:        "Header",
+	[Comment.type]:       "Comment",
+	// [Blockquote.type]: "Blockquote",
+	[CodeBlock.type]:     "CodeBlock",
+	[Paragraph.type]:     "Paragraph",
+	[Break.type]:         "Break",
+}
+
 // TODO:
 //
 // - Unnumbered lists
@@ -165,7 +174,7 @@ const MarkdownSyntax = [
 ]
 
 // Parses components from plain text data.
-function parseComponents(data) {
+export function parseComponents(data) {
 	const components = []
 	let end = 0
 	while (end <= data.length) { // NOTE: Use <= for parseComponents
@@ -185,5 +194,3 @@ function parseComponents(data) {
 	}
 	return components
 }
-
-export default parseComponents

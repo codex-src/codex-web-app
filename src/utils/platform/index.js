@@ -1,9 +1,9 @@
 import * as userAgent from "./userAgent"
-import isMetaOrCtrlKey from "./isMetaOrCtrlKey"
+import isCommandOrControlKey from "./isCommandOrControlKey"
 
 const exports = {
 	...userAgent,
-	isMetaOrCtrlKey,
+	isCommandOrControlKey,
 }
 
 export default exports

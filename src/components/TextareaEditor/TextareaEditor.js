@@ -1,4 +1,4 @@
-// import//  DebugCSS from "utils// /DebugCSS"
+// import DebugCSS from "utils/DebugCSS"
 import Debugger from "./Debugger"
 import React from "react"
 import stylex from "stylex"
@@ -11,10 +11,6 @@ import "./TextareaEditor.css"
 // - Undo (better)
 // - Redo (better)
 // - Parse text
-//
-// FIXME:
-//
-// - Gecko drops the cursor on command-up, command-down
 //
 function TextareaEditor(props) {
 	// const [state, dispatch] = useTextareaEditor(props.initialValue)
@@ -80,7 +76,8 @@ hello`)
 							isPointerDown.current = true
 						},
 
-						// Covers WebKit and Gecko:
+						// Covers WebKit and Gecko (used to be
+						// selectionchange and onSelect):
 						onPointerMove: e => {
 							if (!isPointerDown.current) {
 								// No-op
@@ -95,10 +92,14 @@ hello`)
 						},
 
 						onKeyDown: e => {
-							if (e.key === "Tab") {
+							switch (e.key) {
+							case "Tab":
 								e.preventDefault()
 								dispatch.tab()
-								return
+								break
+							default:
+								// No-op
+								break
 							}
 						},
 
