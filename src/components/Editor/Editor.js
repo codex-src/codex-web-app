@@ -1,29 +1,25 @@
 // import getParsedNodesFromKeyNode from "./helpers/getParsedNodesFromKeyNode"
-// import getTargetRange from "./helpers/getTargetRange"
+// import invariant from "invariant"
 import Debugger from "./Debugger"
 import getOffsetFromRange from "./helpers/getOffsetFromRange"
 import getRangeFromKeyNodeAndOffset from "./helpers/getRangeFromKeyNodeAndOffset"
 import KeyNodeIterator from "./helpers/KeyNodeIterator"
-import random from "utils/random/id" // eslint-disable-line no-unused-vars
+import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
-import syncViews from "./syncViews"
+import syncViews from "./helpers/syncViews"
 import useEditor from "./EditorReducer"
 import { getCursorFromKey } from "./helpers/getCursorFromKey"
 import { getKeyNode } from "./helpers/getKeyNode"
-import { innerText } from "./helpers/innerText" // eslint-disable-line no-unused-vars
+import { innerText } from "./helpers/innerText"
 
 import "./Editor.css"
 
 const initialValue = `aaa
 
-\`\`\`
 bbb
-\`\`\`
 
-ccc
-
-ddd`
+ccc`
 
 // const initialValue = `Hello, world!
 //
@@ -52,7 +48,7 @@ ddd`
 // Hello, world!`
 
 // Gets a target range (for onInput).
-function getTargetRange(nodes, rootNode, startNode, endNode) {
+function getTarget(nodes, rootNode, startNode, endNode) {
 	const startIter = new KeyNodeIterator(startNode)
 	while (startIter.count < 2 && startIter.getPrev()) {
 		startIter.prev()
@@ -85,18 +81,20 @@ function Editor(props) {
 	const selectionchange = React.useRef()
 	const target = React.useRef()
 
-	const [state, dispatch] = useEditor(initialValue)
+	const [state, dispatch] = useEditor(props.initialValue)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			const h = () => {
+				// Get the selection:
 				const selection = document.getSelection()
 				if (!selection.anchorNode || !ref.current.contains(selection.anchorNode)) {
 					// No-op
 					return
 				}
-				const { startContainer, startOffset, endContainer, endOffset, collapsed } = selection.getRangeAt(0)
+				// Get the range:
 				const { current } = selectionchange
+				const { startContainer, startOffset, endContainer, endOffset, collapsed } = selection.getRangeAt(0)
 				if (
 					current                                   && // eslint-disable-line
 					current.startContainer === startContainer && // eslint-disable-line
@@ -108,14 +106,13 @@ function Editor(props) {
 					return
 				}
 				selectionchange.current = { startContainer, startOffset, endContainer, endOffset }
-				// Get the start and end key nodes:
-				const startNode = getKeyNode(startContainer)
-				const endNode = getKeyNode(endContainer)
 				// Get the start cursor:
+				const startNode = getKeyNode(startContainer)
 				const start = getCursorFromKey(state.nodes, startNode.id)
 				start.offset += getOffsetFromRange(startNode, startContainer, startOffset)
 				start.pos += start.offset
 				// Get the end cursor:
+				const endNode = getKeyNode(endContainer)
 				let end = { ...start }
 				if (!collapsed) {
 					end = getCursorFromKey(state.nodes, endNode.id)
@@ -124,7 +121,7 @@ function Editor(props) {
 				}
 				// Done:
 				dispatch.opSelect(start, end)
-				target.current = getTargetRange(state.nodes, ref.current, startNode, endNode)
+				target.current = getTarget(state.nodes, ref.current, startNode, endNode)
 			}
 			document.addEventListener("selectionchange", h)
 			return () => {
@@ -136,30 +133,40 @@ function Editor(props) {
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
+			// Render the React DOM:
+			const t1 = Date.now()
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
+				const t2 = Date.now()
+				console.log(`react=${t2 - t1}`)
 				if (!state.shouldRenderComponents) {
 					syncViews(ref.current, state.reactDOM, "data-memo")
 					return
 				}
-				// Eagerly drop range for performance reasons:
-				//
-				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+				// **Update the target!**
 				const selection = document.getSelection()
-				selection.removeAllRanges()
-
-				syncViews(ref.current, state.reactDOM, "data-memo")
-				// ;[...ref.current.childNodes].map(each => each.remove())
-				// ref.current.append(...[...state.reactDOM.childNodes].map(each => each.cloneNode(true)))
-
+				const { startContainer } = selection.getRangeAt(0)
+				const startNode = getKeyNode(startContainer)
+				target.current = getTarget(state.nodes, ref.current, startNode, startNode)
+				// Sync the DOM trees:
+				const didSync = syncViews(ref.current, state.reactDOM, "data-memo")
+				if (!didSync) {
+					// No-op
+					return
+				}
+				// Reset the cursor:
 				let keyNode = document.getElementById(state.reset.key)
 				if (keyNode.getAttribute("data-compound-node")) {
 					keyNode = keyNode.childNodes[0] // **Does not recurse**
 				}
-				// const keyNode = document.querySelector(`[id='${state.reset.key}'][data-node]`)
-				const { node, offset } = getRangeFromKeyNodeAndOffset(keyNode, state.reset.offset)
 				const range = document.createRange()
+				let { node, offset } = getRangeFromKeyNodeAndOffset(keyNode, state.reset.offset)
+				if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") {
+					node = node.parentNode
+					offset = 0
+				}
 				range.setStart(node, offset)
 				range.collapse()
+				selection.removeAllRanges()
 				selection.addRange(range)
 			})
 		}, [state]),
@@ -178,34 +185,6 @@ function Editor(props) {
 
 					onFocus: dispatch.opFocus,
 					onBlur:  dispatch.opBlur,
-
-					// if (onKeyDown.isEnter(e)) {
-					// 	e.preventDefault()
-					// 	document.execCommand("insertParagraph", false, null)
-					// 	break
-					// } else if (onKeyDown.isTab(e)) {
-					// 	e.preventDefault()
-					// 	document.execCommand("insertText", false, "\t")
-					// 	break
-					// } else if (onKeyDown.isBold(e)) {
-					// 	e.preventDefault()
-					// 	break
-					// } else if (onKeyDown.isItalic(e)) {
-					// 	e.preventDefault()
-					// 	break
-					// }
-
-					onKeyDown: e => {
-						const selection = document.getSelection()
-						if (!selection.anchorNode || !ref.current.contains(selection.anchorNode)) {
-							// No-op
-							return
-						}
-						const { startContainer, endContainer } = selection.getRangeAt(0)
-						const startNode = getKeyNode(startContainer)
-						const endNode = getKeyNode(endContainer)
-						target.current = getTargetRange(state.nodes, ref.current, startNode, endNode)
-					},
 
 					onInput: e => {
 						let { current: { startIter, start, endIter, end } } = target
@@ -226,7 +205,7 @@ function Editor(props) {
 						const nodes = []
 						while (startIter.currentNode) {
 							let key = startIter.currentNode.id
-							if (seenKeys[key]) {
+							if (!key || seenKeys[key]) {
 								key = random.newUUID()
 								startIter.currentNode.id = key
 							}
@@ -239,9 +218,9 @@ function Editor(props) {
 							startIter.next()
 						}
 						// Get the reset key and offset:
-						const { anchorNode, anchorOffset } = document.getSelection()
-						const keyNode = getKeyNode(anchorNode)
-						const offset = getOffsetFromRange(keyNode, anchorNode, anchorOffset)
+						const selection = document.getSelection()
+						const keyNode = getKeyNode(selection.anchorNode)
+						const offset = getOffsetFromRange(keyNode, selection.anchorNode, selection.anchorOffset)
 						const reset = { key: keyNode.id, offset }
 						// Done:
 						dispatch.opInput(nodes, start, end, reset)
@@ -254,7 +233,7 @@ function Editor(props) {
 					onDrop:  e => e.preventDefault(),
 				},
 			)}
-			{props.debug && (
+			{!props.debugger && (
 				<Debugger state={state} />
 			)}
 		</React.Fragment>

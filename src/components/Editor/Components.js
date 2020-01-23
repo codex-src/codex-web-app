@@ -49,39 +49,45 @@ const codeStyle = {
 }
 
 // https://cdpn.io/PowjgOg
-export const CodeBlock = React.memo(({ reactKey, ...props }) => {
-	// Gets the start or end syntax.
-	const getStartSyntax = index => !index && props.startSyntax
-	const getEndSyntax = index => index + 1 === props.children.length && props.endSyntax
+export const CodeBlock = React.memo(({ reactKey, ...props }) => (
+	<div
+		id={reactKey}
+		style={{
+			...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
+			...codeStyle,
+			boxShadow: "0px 0px 1px hsl(var(--gray))",
+		}}
+		data-compound-node
+		data-memo={Date.now()}
+		spellCheck={false}
+	>
+		{props.children.map((each, index) => (
+			<div key={each.key} id={each.key} style={stylex.parse("p-x:24")} data-node>
+				<code style={{ ...stylex.parse("m-r:-24 p-r:24"), ...codeStyle }}>
+					<Markdown
+						startSyntax={!index && props.startSyntax}
+						endSyntax={index + 1 === props.children.length && props.endSyntax}
+					>
+						{each.data || (
+							index > 0 && index + 1 < props.children.length && (
+								<br />
+							)
+						)}
+					</Markdown>
+				</code>
+			</div>
+		))}
+	</div>
+))
 
-	return (
-		<div
-			id={reactKey}
-			style={{
-				...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
-				...codeStyle,
-				boxShadow: "0px 0px 1px hsl(var(--gray))",
-			}}
-			data-compound-node
-			data-memo={Date.now()}
-			spellCheck={false}
-		>
-			{props.children.map((each, index) => (
-				<div key={each.key} id={each.key} style={stylex.parse("p-x:24")} data-node>
-					<code style={{ ...stylex.parse("m-r:-24 p-r:24"), ...codeStyle }}>
-						<Markdown startSyntax={getStartSyntax(index)} endSyntax={getEndSyntax(index)}>
-							{each.data || (
-								index > 0 && index + 1 < props.children.length && (
-									<br />
-								)
-							)}
-						</Markdown>
-					</code>
-				</div>
-			))}
-		</div>
-	)
-})
+// // TODO: Add areEqual argument for compound components.
+// function areEqual(prevProps, nextProps) {
+// 	/*
+// 	return true if passing nextProps to render would return
+// 	the same result as passing prevProps to render,
+// 	otherwise return false
+// 	*/
+// }
 
 export const Paragraph = React.memo(({ reactKey, ...props }) => (
 	<div id={reactKey} data-node data-memo={Date.now()}>
