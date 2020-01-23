@@ -6,9 +6,9 @@ textarea#rw {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
-	moz-tab-size:  4;
-	tab-size:      4;
-	font:          16px/1.5 "IBM Plex Mono" !important;
+	moz-tab-size:  2;
+	tab-size:      2;
+	font:          17px/1.5 "IBM Plex Mono" !important;
 }
 
 pre {
@@ -23,6 +23,6 @@ textarea#rw {
 	color:         hsla(0, 0%, 0%, 0.1) !important;
 	caret-color:   hsl(var(--blue-a400));
 	width:         100%;
-	/* overflow-y: hidden; */ /* Not needed */
+	overflow-y:    hidden; /* Not needed -- WebKit? */
 	outline:       none;
 }
