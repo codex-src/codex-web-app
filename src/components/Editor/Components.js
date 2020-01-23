@@ -7,6 +7,23 @@ import stylex from "stylex"
 // - CompoundNode
 // - Node
 
+// https://reactjs.org/docs/react-api.html#reactmemo
+function compoundAreEqual(prevProps, nextProps) {
+	if (prevProps.children.length !== nextProps.children.length) {
+		return false
+	}
+	let index = 0
+	const { length } = prevProps
+	while (index < length) {
+		const prev = prevProps.children[index]
+		const next = nextProps.children[index]
+		if (prev.key !== next.key || prev.data !== next.data) {
+			return false
+		}
+	}
+	return true
+}
+
 export const Header = React.memo(({ reactKey, ...props }) => (
 	<div id={reactKey} style={stylex.parse("fw:700")} data-node data-memo={Date.now()}>
 		<Markdown startSyntax={props.startSyntax}>
@@ -41,7 +58,7 @@ export const Blockquote = React.memo(({ reactKey, ...props }) => (
 			</div>
 		))}
 	</div>
-))
+), compoundAreEqual)
 
 const codeStyle = {
 	tabSize: 2,
@@ -78,16 +95,7 @@ export const CodeBlock = React.memo(({ reactKey, ...props }) => (
 			</div>
 		))}
 	</div>
-))
-
-// // TODO: Add areEqual argument for compound components.
-// function areEqual(prevProps, nextProps) {
-// 	/*
-// 	return true if passing nextProps to render would return
-// 	the same result as passing prevProps to render,
-// 	otherwise return false
-// 	*/
-// }
+), compoundAreEqual)
 
 export const Paragraph = React.memo(({ reactKey, ...props }) => (
 	<div id={reactKey} data-node data-memo={Date.now()}>

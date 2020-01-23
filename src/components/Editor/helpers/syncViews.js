@@ -13,29 +13,29 @@ function replaceWith(nodeA, nodeB, attr) {
 // Syncs two DOM trees based on a number attribute.
 function syncViews(viewA, viewB, attr) {
 	let didSync = false // Did synchronize views?
-	let start = 0
+	let index = 0
 	const min = Math.min(viewA.childNodes.length, viewB.childNodes.length)
-	while (start < min) {
-		const nodeA = viewA.childNodes[start]
-		const nodeB = viewB.childNodes[start]
+	while (index < min) {
+		const nodeA = viewA.childNodes[index]
+		const nodeB = viewB.childNodes[index]
 		if (nodeA.id !== nodeB.id || +nodeA.getAttribute(attr) < +nodeB.getAttribute(attr)) {
 			if (replaceWith(nodeA, nodeB, attr)) {
 				didSync = true
 			}
 		}
-		start++
+		index++
 	}
 	// Push extraneous nodes:
-	if (start < viewB.childNodes.length) {
-		while (start < viewB.childNodes.length) {
-			viewA.append(viewB.childNodes[start].cloneNode(true))
-			start++
+	if (index < viewB.childNodes.length) {
+		while (index < viewB.childNodes.length) {
+			viewA.append(viewB.childNodes[index].cloneNode(true))
+			index++
 		}
 		didSync = true
 	// Drop extraneous nodes:
-	} else if (start < viewA.childNodes.length) {
+	} else if (index < viewA.childNodes.length) {
 		let end = viewA.childNodes.length - 1 // Iterate backwards
-		while (end >= start) {
+		while (end >= index) {
 			viewA.childNodes[end].remove()
 			end--
 		}
