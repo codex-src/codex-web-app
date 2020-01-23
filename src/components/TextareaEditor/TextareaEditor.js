@@ -13,18 +13,17 @@ import "./TextareaEditor.css"
 // - Parse text
 //
 function TextareaEditor(props) {
-	// const [state, dispatch] = useTextareaEditor(props.initialValue)
-	const [state, dispatch] = useTextareaEditor(`hello
+	const [state, dispatch] = useTextareaEditor(props.initialValue)
+	// 	const [state, dispatch] = useTextareaEditor(`hello
+	//
+	// \`\`\`hello\`\`\`
+	//
+	// \`\`\`
+	// hello
+	// \`\`\`
+	//
+	// hello`)
 
-\`\`\`hello\`\`\`
-
-\`\`\`
-hello
-\`\`\`
-
-hello`)
-
-	// const pre    = React.useRef() // eslint-disable-line
 	const readOnly  = React.useRef() // eslint-disable-line
 	const readWrite = React.useRef() // eslint-disable-line
 
@@ -97,14 +96,20 @@ hello`)
 						},
 
 						onKeyDown: e => {
-							switch (e.key) {
-							case "Tab":
+							// switch (e.key) {
+							// case "Tab":
+							// 	e.preventDefault()
+							// 	dispatch.tab()
+							// 	break
+							// default:
+							// 	// No-op
+							// 	break
+							// }
+
+							if (e.key === "Tab") {
 								e.preventDefault()
 								dispatch.tab()
-								break
-							default:
-								// No-op
-								break
+								return
 							}
 						},
 
@@ -114,7 +119,7 @@ hello`)
 					},
 				)}
 			</div>
-			{props.debugger && (
+			{!props.debugger && (
 				<Debugger state={state} />
 			)}
 		</div>

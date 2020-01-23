@@ -6,25 +6,26 @@ textarea.read-write {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
-	moz-tab-size:  2;
-	tab-size:      2;
-	font:          16px/1.5 "IBM Plex Mono" !important;
+	moz-tab-size:   2;
+	tab-size:       2;
+	font:           16px/1.5 "IBM Plex Mono" !important;
+	letter-spacing: -0.025em;
 }
 
 pre {
-	white-space:   pre-wrap;
-	caret-color:   hsl(var(--black));
-	overflow-wrap: break-word; /* Needed */
+	white-space:    pre-wrap;
+	caret-color:    hsl(var(--black));
+	overflow-wrap:  break-word; /* Needed */
 }
 
 textarea.read-only,
 textarea.read-write {
-	display:       block;
-	color:         hsla(0, 0%, 0%, 0.1) !important;
-	caret-color:   hsl(var(--blue-a400));
-	width:         100%;
-	overflow-y:    hidden; /* Not needed -- WebKit? */
-	outline:       none;
+	display:        block;
+	color:          hsla(0, 0%, 0%, 0.1) !important;
+	caret-color:    hsl(var(--blue-a400));
+	width:          100%;
+	overflow-y:     hidden; /* Not needed -- WebKit? */
+	outline:        none;
 }
 
 textarea.read-write::selection {
