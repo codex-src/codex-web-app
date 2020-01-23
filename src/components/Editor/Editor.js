@@ -81,8 +81,8 @@ function Editor(props) {
 	const selectionchange = React.useRef()
 	const target = React.useRef()
 
-	// const [state, dispatch] = useEditor(props.initialValue)
-	const [state, dispatch] = useEditor(initialValue)
+	const [state, dispatch] = useEditor(props.initialValue)
+	// const [state, dispatch] = useEditor(initialValue)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
