@@ -20,10 +20,12 @@ const initialState = {
 	actionType: "",             // The editing operation type
 	actionTimestamp: 0,         // The editing operation timestamp
 	value: "",                  // The plain text data
+	spellCheck: false,          // New
+	readOnly: false,            // New
 	hasFocus: false,            // Is the editor focused?
 	selectionStart: 0,          // The start cursor
 	selectionEnd: 0,            // The end cursor
-	shouldSetSelectionRange: 0, // Should set the selection range?
+	shouldSetSelectionRange: 0, // Should set (reset) the selection range?
 	components: null,           // The parsed React components
 }
 

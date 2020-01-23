@@ -72,6 +72,11 @@ hello`)
 						onFocus: dispatch.focus,
 						onBlur:  dispatch.blur,
 
+						onSelect: e => {
+							const { selectionStart, selectionEnd } = readWrite.current
+							dispatch.select(selectionStart, selectionEnd)
+						},
+
 						onPointerDown: e => {
 							isPointerDown.current = true
 						},
@@ -105,7 +110,7 @@ hello`)
 
 						onChange: e => dispatch.change(e.target.value),
 
-						spellCheck: false,
+						spellCheck: state.spellCheck,
 					},
 				)}
 			</div>
