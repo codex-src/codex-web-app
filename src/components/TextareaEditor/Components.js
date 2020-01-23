@@ -63,7 +63,7 @@ const Comment = React.memo(props => (
 const CodeBlock = React.memo(props => (
 	<div
 		style={{
-			...stylex.parse("m-x:-24 p-x:24 b:gray-50"),
+			...stylex.parse("m-x:-24 m-y:-4 p-x:24 p-y:4 b:gray-50"),
 			boxShadow: "0px 0px 1px hsl(var(--gray))",
 		}}
 	>

@@ -8,6 +8,7 @@ const OperationTypes = new Enum(
 	"BLUR",
 	"SELECT",
 	"CHANGE",
+	"INSERT",
 	"CUT",
 	"COPY",
 	"PASTE",
@@ -16,13 +17,14 @@ const OperationTypes = new Enum(
 )
 
 const initialState = {
-	actionType: "",     // The editing operation type
-	actionTimestamp: 0, // The editing operation timestamp
-	value: "",          // The plain text data
-	hasFocus: false,    // Is the editor focused?
-	selectionStart: 0,  // The start cursor
-	selectionEnd: 0,    // The end cursor
-	components: null,   // The parsed React components
+	actionType: "",             // The editing operation type
+	actionTimestamp: 0,         // The editing operation timestamp
+	value: "",                  // The plain text data
+	hasFocus: false,            // Is the editor focused?
+	selectionStart: 0,          // The start cursor
+	selectionEnd: 0,            // The end cursor
+	shouldSetSelectionRange: 0, // Should set the selection range?
+	components: null,           // The parsed React components
 }
 
 const reducer = state => ({
@@ -46,10 +48,24 @@ const reducer = state => ({
 		this.newAction(OperationTypes.SELECT)
 		Object.assign(state, { selectionStart, selectionEnd })
 	},
+	collapse() {
+		state.selectionEnd = state.selectionStart
+	},
 	change(value) {
 		this.newAction(OperationTypes.CHANGE)
 		state.value = value
 		this.parse()
+	},
+	insert(value) {
+		this.newAction(OperationTypes.INSERT)
+		state.value = state.value.slice(0, state.selectionStart) + value + state.value.slice(state.selectionEnd)
+		state.selectionStart += value.length
+		state.selectionEnd = state.selectionStart
+		state.shouldSetSelectionRange++
+		this.parse()
+	},
+	tab() {
+		this.insert("\t")
 	},
 	parse() {
 		state.components = parseComponents(state.value)
