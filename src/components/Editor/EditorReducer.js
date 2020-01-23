@@ -56,8 +56,8 @@ const reducer = state => ({
 	// state.nodes.splice(start.index, end.index - start.index + 1, ...nodes)
 	opInput(nodes, start, end, reset) {
 		this.commitOp(OpTypes.INPUT)
-		// state.nodes.splice(start.index, end.index - start.index + 1, ...nodes)
-		write(state, nodes, start, end)
+		state.nodes.splice(start.index, end.index - start.index + 1, ...nodes)
+		// write(state, nodes, start, end)
 		state.reset = reset
 		this.render()
 	},

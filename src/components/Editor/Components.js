@@ -7,22 +7,26 @@ import stylex from "stylex"
 // - CompoundNode
 // - Node
 
-// https://reactjs.org/docs/react-api.html#reactmemo
-function compoundAreEqual(prevProps, nextProps) {
-	if (prevProps.children.length !== nextProps.children.length) {
-		return false
-	}
-	let index = 0
-	const { length } = prevProps
-	while (index < length) {
-		const prev = prevProps.children[index]
-		const next = nextProps.children[index]
-		if (prev.key !== next.key || prev.data !== next.data) {
-			return false
-		}
-	}
-	return true
-}
+// // https://reactjs.org/docs/react-api.html#reactmemo
+// function compoundAreEqual(prev, next) {
+// 	// console.log(prev, next)
+// 	if (prev.reactKey !== next.reactKey) {
+// 		return false
+// 	} else if (prev.children.length !== next.children.length) {
+// 		return false
+// 	}
+// 	let index = 0
+// 	const { length } = prev.children
+// 	while (index < length) {
+// 		const p = prev.children[index]
+// 		const n = next.children[index]
+// 		if (p.key !== n.key || p.data !== n.data) {
+// 			return false
+// 		}
+// 		index++
+// 	}
+// 	return true
+// }
 
 export const Header = React.memo(({ reactKey, ...props }) => (
 	<div id={reactKey} style={stylex.parse("fw:700")} data-node data-memo={Date.now()}>
@@ -58,7 +62,7 @@ export const Blockquote = React.memo(({ reactKey, ...props }) => (
 			</div>
 		))}
 	</div>
-), compoundAreEqual)
+)) // , compoundAreEqual)
 
 const codeStyle = {
 	tabSize: 2,
@@ -95,7 +99,7 @@ export const CodeBlock = React.memo(({ reactKey, ...props }) => (
 			</div>
 		))}
 	</div>
-), compoundAreEqual)
+)) // , compoundAreEqual)
 
 export const Paragraph = React.memo(({ reactKey, ...props }) => (
 	<div id={reactKey} data-node data-memo={Date.now()}>
