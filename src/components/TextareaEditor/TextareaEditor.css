@@ -1,0 +1,28 @@
+@import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600,600i&display=swap&subset=latin-ext";
+
+pre,
+textarea#ro,
+textarea#rw {
+	-webkit-font-smoothing:  auto;
+	-moz-osx-font-smoothing: auto;
+
+	moz-tab-size:  4;
+	tab-size:      4;
+	font:          17px/1.5 "IBM Plex Mono" !important;
+}
+
+pre {
+	white-space:   pre-wrap;
+	caret-color:   hsl(var(--black));
+	overflow-wrap: break-word; /* Needed */
+}
+
+textarea#ro,
+textarea#rw {
+	display:       block;
+	color:         hsla(0, 0%, 0%, 0.1) !important;
+	caret-color:   hsl(var(--blue-a400));
+	width:         100%;
+	/* overflow-y: hidden; */ /* Not needed */
+	outline:       none;
+}

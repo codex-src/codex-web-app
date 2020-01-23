@@ -1,11 +1,7 @@
 html {
-	/* font-smoothing */
-	-moz-osx-font-smoothing: grayscale;   /* Firefox */
-	-webkit-font-smoothing:  antialiased; /* Safari  */
-
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 	text-size-adjust: 100%;
-
-	/* tab-size */
 	-moz-tab-size: 4;
-	tab-size:      4;
+	tab-size: 4;
 }
