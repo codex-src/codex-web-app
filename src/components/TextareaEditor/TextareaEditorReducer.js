@@ -3,18 +3,26 @@ import useMethods from "use-methods"
 import { parseComponents } from "./Components"
 
 const initialState = {
+	// Actions:
 	actionType: "",             // The editing operation type
 	actionTimestamp: 0,         // The editing operation timestamp
-	value: "",                  // The plain text data
+  //                          //
+	// Textarea:                //
+	data: "",                   // The plain text data
 	isFocused: false,           // Is the editor focused?
-	selectionStart: 0,          // The start cursor
-	selectionEnd: 0,            // The end cursor
+	pos1: 0,                    // The start cursor
+	pos2: 0,                    // The end cursor
+  //                          //
+	// Parse:                   //
 	components: null,           // The parsed React components
 	shouldSetSelectionRange: 0, // Should set (reset) the selection range?
+  //                          //
+	// Undo and redo:           //
+	didCorrectPos: false,       // Did correct the selection range on the first write?
 	history: null,              // The history state stack
 	historyIndex: 0,            // The history state stack index
-
-	// TODO: Move to props?
+  //                          //
+	// TODO: Move to props?     //
 	spellCheck: false,          // New flag
 	previewMode: false,         // New flag
 	osxFontSmoothing: false,    // New flag
@@ -39,25 +47,29 @@ const reducer = state => ({
 		this.newAction(ActionTypes.BLUR)
 		state.isFocused = false
 	},
-	select(selectionStart, selectionEnd) {
+	select(pos1, pos2) {
 		this.newAction(ActionTypes.SELECT)
-		Object.assign(state, { selectionStart, selectionEnd })
+		Object.assign(state, { pos1, pos2 })
 	},
 	collapse() {
-		state.selectionEnd = state.selectionStart
+		state.pos2 = state.pos1
 	},
-	change(value, selectionStart, selectionEnd, asActionType) {
+	change(data, pos1, pos2, asActionType) {
 		this.newAction(asActionType)
-		Object.assign(state, { value, selectionStart, selectionEnd })
+		if (!state.historyIndex && !state.didCorrectPos) {
+			state.history[0].pos1 = state.pos1
+			state.history[0].pos2 = state.pos2
+			state.didCorrectPos = true
+		}
+		this.dropRedos()
+		Object.assign(state, { data, pos1, pos2 })
 		this.parse()
 	},
-	insert(value) {
-		this.newAction(ActionTypes.INSERT)
-		state.value = state.value.slice(0, state.selectionStart) + value + state.value.slice(state.selectionEnd)
-		state.selectionStart += value.length
-		state.selectionEnd = state.selectionStart
+	insert(data) {
+		const _value = state.data.slice(0, state.pos1) + data + state.data.slice(state.pos2)
+		const pos1 = state.pos1 + data.length
+		this.change(_value, pos1, pos1, ActionTypes.INSERT)
 		state.shouldSetSelectionRange++
-		this.parse()
 	},
 	tab() {
 		this.insert("\t")
@@ -66,33 +78,33 @@ const reducer = state => ({
 		this.newAction(ActionTypes.COPY)
 	},
 	parse() {
-		state.components = parseComponents(state.value)
+		state.components = parseComponents(state.data)
 	},
 
 	storeUndo() {
-		const undoState = state.history[state.historyIndex]
-		if (undoState.value === state.value) {
+		const undo = state.history[state.historyIndex]
+		if (undo.data === state.data) {
 			// No-op
 			return
 		}
-		const { value, selectionStart, selectionEnd } = state
-		state.history.push({ value, selectionStart, selectionEnd })
+		const { data, pos1, pos2 } = state
+		state.history.push({ data, pos1, pos2 })
 		state.historyIndex++
 	},
-	// dropRedos() {
-	// 	state.history.splice(state.historyIndex + 1)
-	// },
+	dropRedos() {
+		state.history.splice(state.historyIndex + 1)
+	},
 	undo() {
 		this.newAction(ActionTypes.UNDO)
 		if (!state.historyIndex) {
 			// No-op
 			return
-		} // else if (state.historyIndex === 1 && state.didWritePos) {
-		//	state.didWritePos = false
-		// }
+		} else if (state.historyIndex === 1 && state.didCorrectPos) {
+			state.didCorrectPos = false
+		}
 		state.historyIndex--
-		const undoState = state.history[state.historyIndex]
-		Object.assign(state, undoState)
+		const undo = state.history[state.historyIndex]
+		Object.assign(state, undo)
 		state.shouldSetSelectionRange++
 		this.parse()
 	},
@@ -103,12 +115,11 @@ const reducer = state => ({
 			return
 		}
 		state.historyIndex++
-		const redoState = state.history[state.historyIndex]
-		Object.assign(state, redoState)
+		const redo = state.history[state.historyIndex]
+		Object.assign(state, redo)
 		state.shouldSetSelectionRange++
 		this.parse()
 	},
-
 })
 
 // Initializes an editor state.
@@ -117,9 +128,9 @@ const init = initialValue => initialState => {
 		...initialState,
 		actionType: ActionTypes.INIT,
 		actionTimestamp: Date.now(),
-		value: initialValue,
+		data: initialValue,
 		components: parseComponents(initialValue),
-		history: [{ value: initialValue, selectionStart: 0, selectionEnd: 0 }],
+		history: [{ data: initialValue, pos1: 0, pos2: 0 }],
 		// historyIndex
 	}
 	return state

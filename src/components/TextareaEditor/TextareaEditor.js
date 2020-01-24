@@ -49,12 +49,12 @@ hello`)
 	React.useLayoutEffect(() => {
 		const { scrollHeight } = readOnly.current // TODO: getBoundingClientRect?
 		readWrite.current.style.height = `${scrollHeight}px`
-	}, [state.value])
+	}, [state.data])
 
 	// Should set the selection range:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const { selectionStart, selectionEnd } = state
+			const { pos1: selectionStart, pos2: selectionEnd } = state
 			readWrite.current.setSelectionRange(selectionStart, selectionEnd)
 		}, [state]),
 		[state.shouldSetSelectionRange],
@@ -89,7 +89,7 @@ hello`)
 					)}
 				</pre>
 				<div style={{ ...stylex.parse("absolute -x -y no-pointer-events"), display: "hidden" }}>
-					<textarea ref={readOnly} className="read-only" value={state.value} readOnly />
+					<textarea ref={readOnly} className="read-only" value={state.data} readOnly />
 				</div>
 				<div style={stylex.parse("absolute -x -y pointer-events")}>
 					{React.createElement(
@@ -99,7 +99,7 @@ hello`)
 
 							className: "read-write",
 
-							value: state.value,
+							value: state.data,
 
 							onFocus: dispatch.focus,
 							onBlur:  dispatch.blur,

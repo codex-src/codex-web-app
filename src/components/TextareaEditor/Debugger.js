@@ -12,7 +12,7 @@ function Debugger({ state }) {
 					{
 						...state,
 
-						history: state.history.map(each => each.value),
+						// history: state.history.map(each => each.value),
 
 						components: undefined,
 					},
