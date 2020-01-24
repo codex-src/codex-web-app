@@ -13,16 +13,16 @@ import "./TextareaEditor.css"
 // - Parse text
 //
 function TextareaEditor(props) {
-	// const [state, dispatch] = useTextareaEditor(props.initialValue)
-	const [state, dispatch] = useTextareaEditor(`hello
-
-\`\`\`hello\`\`\`
-
-\`\`\`
-hello
-\`\`\`
-
-hello`)
+	const [state, dispatch] = useTextareaEditor(props.initialValue)
+	// 	const [state, dispatch] = useTextareaEditor(`hello
+	//
+	// \`\`\`hello\`\`\`
+	//
+	// \`\`\`
+	// hello
+	// \`\`\`
+	//
+	// hello`)
 
 	const readOnly  = React.useRef() // eslint-disable-line
 	const readWrite = React.useRef() // eslint-disable-line

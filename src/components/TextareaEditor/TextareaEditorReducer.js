@@ -22,6 +22,7 @@ const initialState = {
 	value: "",                  // The plain text data
 	spellCheck: false,          // New
 	readOnly: false,            // New
+	fontSmoothing: false,       // New
 	hasFocus: false,            // Is the editor focused?
 	selectionStart: 0,          // The start cursor
 	selectionEnd: 0,            // The end cursor

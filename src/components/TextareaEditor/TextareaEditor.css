@@ -1,19 +1,25 @@
+/* https://fonts.google.com/specimen/IBM+Plex+Mono */
 @import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600,600i&display=swap&subset=latin-ext";
+
+/* https://fonts.google.com/specimen/Roboto+Mono */
+@import "https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i&display=swap&subset=latin-ext";
 
 pre,
 textarea.read-only,
 textarea.read-write {
-	-webkit-font-smoothing:  auto;
-	-moz-osx-font-smoothing: auto;
+	/* -webkit-font-smoothing:  auto; */
+	/* -moz-osx-font-smoothing: auto; */
 
 	moz-tab-size:   2;
 	tab-size:       2;
-	font:           16px/1.5 "IBM Plex Mono" !important;
-	letter-spacing: -0.025em;
+	font:           15px/1.375 "Roboto Mono";
+	/* font:        15px/1.375 "IBM Plex Mono"; */
+	letter-spacing: -0.0375em;
 }
 
 pre {
 	white-space:    pre-wrap;
+	color:          hsl(var(--gray-800));
 	caret-color:    hsl(var(--black));
 	overflow-wrap:  break-word; /* Needed */
 }
@@ -21,7 +27,7 @@ pre {
 textarea.read-only,
 textarea.read-write {
 	display:        block;
-	color:          hsla(0, 0%, 0%, 0.1) !important;
+	color:          hsla(var(--black), 0.1);
 	caret-color:    hsl(var(--blue-a400));
 	width:          100%;
 	overflow-y:     hidden; /* Not needed -- WebKit? */
