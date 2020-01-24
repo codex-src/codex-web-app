@@ -65,7 +65,7 @@ const Blockquote = React.memo(props => (
 const CodeBlock = React.memo(props => (
 	<div
 		style={{
-			...stylex.parse("m-x:-24 m-y:-2 p-x:24 p-y:2 b:gray-50"),
+			...stylex.parse("m-x:-24 p-x:24 b:gray-50"),
 			boxShadow: "0px 0px 1px hsl(var(--gray))",
 		}}
 	>

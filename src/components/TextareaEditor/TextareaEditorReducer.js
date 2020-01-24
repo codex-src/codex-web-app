@@ -1,20 +1,6 @@
-import Enum from "utils/Enum"
-import { parseComponents } from "./Components"
+import ActionTypes from "./ActionTypes"
 import useMethods from "use-methods"
-
-const OperationTypes = new Enum(
-	"INIT",
-	"FOCUS",
-	"BLUR",
-	"SELECT",
-	"CHANGE",
-	"INSERT",
-	"CUT",
-	"COPY",
-	"PASTE",
-	"UNDO",
-	"REDO",
-)
+import { parseComponents } from "./Components"
 
 const initialState = {
 	actionType: "",             // The editing operation type
@@ -26,45 +12,45 @@ const initialState = {
 	shouldSetSelectionRange: 0, // Should set (reset) the selection range?
 	components: null,           // The parsed React components
 
-	// TODO: Move to props
+	// TODO: Move to props?
 	spellCheck: false,          // New flag
 	previewMode: false,         // New flag
 	osxFontSmoothing: false,    // New flag
 	textareaOnly: false,        // New flag
-	drawWhiteSpace: false,      // New flag
+	showWhiteSpace: false,      // New flag
 }
 
 const reducer = state => ({
 	newAction(actionType) {
 		const actionTimestamp = Date.now()
-		if (actionType === OperationTypes.SELECT && actionTimestamp - state.actionTimestamp < 100) {
+		if (actionType === ActionTypes.SELECT && actionTimestamp - state.actionTimestamp < 100) {
 			// No-op
 			return
 		}
 		Object.assign(state, { actionType, actionTimestamp })
 	},
 	focus() {
-		this.newAction(OperationTypes.FOCUS)
+		this.newAction(ActionTypes.FOCUS)
 		state.hasFocus = true
 	},
 	blur() {
-		this.newAction(OperationTypes.BLUR)
+		this.newAction(ActionTypes.BLUR)
 		state.hasFocus = false
 	},
 	select(selectionStart, selectionEnd) {
-		this.newAction(OperationTypes.SELECT)
+		this.newAction(ActionTypes.SELECT)
 		Object.assign(state, { selectionStart, selectionEnd })
 	},
 	collapse() {
 		state.selectionEnd = state.selectionStart
 	},
-	change(value) {
-		this.newAction(OperationTypes.CHANGE)
-		state.value = value
+	change(value, selectionStart, selectionEnd, asActionType) {
+		this.newAction(asActionType)
+		Object.assign(state, { value, selectionStart, selectionEnd })
 		this.parse()
 	},
 	insert(value) {
-		this.newAction(OperationTypes.INSERT)
+		this.newAction(ActionTypes.INSERT)
 		state.value = state.value.slice(0, state.selectionStart) + value + state.value.slice(state.selectionEnd)
 		state.selectionStart += value.length
 		state.selectionEnd = state.selectionStart
@@ -74,6 +60,15 @@ const reducer = state => ({
 	tab() {
 		this.insert("\t")
 	},
+	// cut() {
+	// 	this.newAction(ActionTypes.CUT)
+	// },
+	copy() {
+		this.newAction(ActionTypes.COPY)
+	},
+	// paste() {
+	// 	this.newAction(ActionTypes.PASTE)
+	// },
 	parse() {
 		state.components = parseComponents(state.value)
 	},
@@ -83,7 +78,7 @@ const reducer = state => ({
 const init = initialValue => initialState => {
 	const state = {
 		...initialState,
-		actionType: OperationTypes.INIT,
+		actionType: ActionTypes.INIT,
 		actionTimestamp: Date.now(),
 		value: initialValue,
 		components: parseComponents(initialValue),
