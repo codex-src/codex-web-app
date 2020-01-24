@@ -10,10 +10,27 @@ import "./TextareaEditor.css"
 
 const Context = React.createContext()
 
+// function useHistory() {
+// 	React.useEffect(
+// 		React.useCallback(() => {
+// 			if (!state.isFocused) {
+// 				// No-op
+// 				return
+// 			}
+// 			const id = setInterval(() => {
+// 				dispatch.storeUndo()
+// 			}, 1e3)
+// 			return () => {
+// 				setTimeout(() => {
+// 					clearInterval(id)
+// 				}, 1e3)
+// 			}
+// 		}, [state, dispatch]),
+// 	[state.isFocused])
+// }
+
 // TODO:
 //
-// - Undo (better)
-// - Redo (better)
 // - Text components
 // - Preview mode (rename from read-only mode)
 // - Support for StatusBar
@@ -54,8 +71,7 @@ hello`)
 	// Should set the selection range:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const { pos1: selectionStart, pos2: selectionEnd } = state
-			readWrite.current.setSelectionRange(selectionStart, selectionEnd)
+			readWrite.current.setSelectionRange(state.pos1, state.pos2)
 		}, [state]),
 		[state.shouldSetSelectionRange],
 	)
@@ -105,8 +121,8 @@ hello`)
 							onBlur:  dispatch.blur,
 
 							onSelect: e => {
-								const { selectionStart, selectionEnd } = readWrite.current
-								dispatch.select(selectionStart, selectionEnd)
+								const { selectionStart: pos1, selectionEnd: pos2 } = readWrite.current
+								dispatch.select(pos1, pos2)
 							},
 
 							onPointerDown: e => {
@@ -120,8 +136,8 @@ hello`)
 									// No-op
 									return
 								}
-								const { selectionStart, selectionEnd } = readWrite.current
-								dispatch.select(selectionStart, selectionEnd)
+								const { selectionStart: pos1, selectionEnd: pos2 } = readWrite.current
+								dispatch.select(pos1, pos2)
 							},
 
 							onPointerUp: e => {
@@ -169,8 +185,8 @@ hello`)
 									// No-op
 									break
 								}
-								const { value, selectionStart, selectionEnd } = e.target
-								dispatch.change(value, selectionStart, selectionEnd, actionType)
+								const { value: data, selectionStart: pos1, selectionEnd: pos2 } = e.target
+								dispatch.change(data, pos1, pos2, actionType)
 							},
 
 							onCopy: dispatch.copy,
@@ -179,7 +195,7 @@ hello`)
 						},
 					)}
 				</div>
-				{props.debugger && (
+				{!props.debugger && (
 					<Debugger state={state} />
 				)}
 			</div>

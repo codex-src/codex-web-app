@@ -13,7 +13,7 @@ const initialState = {
 	pos1: 0,                    // The start cursor
 	pos2: 0,                    // The end cursor
   //                          //
-	// Parse:                   //
+	// Parser:                  //
 	components: null,           // The parsed React components
 	shouldSetSelectionRange: 0, // Should set (reset) the selection range?
   //                          //
@@ -21,16 +21,18 @@ const initialState = {
 	didCorrectPos: false,       // Did correct the selection range on the first write?
 	history: null,              // The history state stack
 	historyIndex: 0,            // The history state stack index
-  //                          //
-	// TODO: Move to props?     //
-	spellCheck: false,          // New flag
-	previewMode: false,         // New flag
-	osxFontSmoothing: false,    // New flag
-	textareaOnly: false,        // New flag
-	showWhiteSpace: false,      // New flag
+
+  // //                          //
+	// // TODO: Move to props?     //
+	// spellCheck: false,          // New flag
+	// previewMode: false,         // New flag
+	// osxFontSmoothing: false,    // New flag
+	// textareaOnly: false,        // New flag
+	// showWhiteSpace: false,      // New flag
 }
 
 const reducer = state => ({
+	// Actions:
 	newAction(actionType) {
 		const actionTimestamp = Date.now()
 		if (actionType === ActionTypes.SELECT && actionTimestamp - state.actionTimestamp < 100) {
@@ -39,6 +41,8 @@ const reducer = state => ({
 		}
 		Object.assign(state, { actionType, actionTimestamp })
 	},
+	//
+	// Textarea:
 	focus() {
 		this.newAction(ActionTypes.FOCUS)
 		state.isFocused = true
@@ -77,10 +81,13 @@ const reducer = state => ({
 	copy() {
 		this.newAction(ActionTypes.COPY)
 	},
+	//
+	// Parser:
 	parse() {
 		state.components = parseComponents(state.data)
 	},
-
+	//
+	// Undo and redo:
 	storeUndo() {
 		const undo = state.history[state.historyIndex]
 		if (undo.data === state.data) {
