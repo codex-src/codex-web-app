@@ -12,8 +12,8 @@ textarea.read-write {
 
 	moz-tab-size:   2;
 	tab-size:       2;
-	font:           15px/1.375 "Roboto Mono";
-	/* font:        15px/1.375 "IBM Plex Mono"; */
+	font:           17px/1.375 "Roboto Mono", "monospace", "system-ui";
+	/* font:        17px/1.375 "IBM Plex Mono", "monospace", "system-ui"; */
 	letter-spacing: -0.0375em;
 }
 

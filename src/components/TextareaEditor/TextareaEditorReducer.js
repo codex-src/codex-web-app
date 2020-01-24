@@ -20,14 +20,18 @@ const initialState = {
 	actionType: "",             // The editing operation type
 	actionTimestamp: 0,         // The editing operation timestamp
 	value: "",                  // The plain text data
-	spellCheck: false,          // New
-	readOnly: false,            // New
-	fontSmoothing: false,       // New
 	hasFocus: false,            // Is the editor focused?
 	selectionStart: 0,          // The start cursor
 	selectionEnd: 0,            // The end cursor
 	shouldSetSelectionRange: 0, // Should set (reset) the selection range?
 	components: null,           // The parsed React components
+
+	// TODO: Move to props
+	spellCheck: false,          // New flag
+	previewMode: false,         // New flag
+	osxFontSmoothing: false,    // New flag
+	textareaOnly: false,        // New flag
+	drawWhiteSpace: false,      // New flag
 }
 
 const reducer = state => ({

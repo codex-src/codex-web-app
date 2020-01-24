@@ -10,7 +10,13 @@ import "./TextareaEditor.css"
 //
 // - Undo (better)
 // - Redo (better)
-// - Parse text
+// - Text components
+// - Preview mode (rename from read-only mode)
+// - Support for StatusBar
+// - Parse Unicode horizontal spaces?
+// - Parse emoji?
+// - Preview components
+// - HTML components
 //
 function TextareaEditor(props) {
 	const [state, dispatch] = useTextareaEditor(props.initialValue)
@@ -29,8 +35,15 @@ function TextareaEditor(props) {
 
 	const isPointerDown = React.useRef()
 
+	// Set dynamic height for read-only textarea (once):
+	React.useEffect(() => {
+		const px = window.getComputedStyle(readWrite.current)["line-height"]
+		readOnly.current.style.height = px
+	}, [])
+
+	// Set dynamic height for read-write textarea:
 	React.useLayoutEffect(() => {
-		const { scrollHeight } = readOnly.current // TODO: Use getBoundingClientRect?
+		const { scrollHeight } = readOnly.current // TODO: getBoundingClientRect?
 		readWrite.current.style.height = `${scrollHeight}px`
 	}, [state.value])
 
@@ -52,7 +65,7 @@ function TextareaEditor(props) {
 				)}
 			</pre>
 			<div style={{ ...stylex.parse("absolute -x -y no-pointer-events"), display: "hidden" }}>
-				<textarea className="read-only" ref={readOnly} style={stylex.parse("h:24")} value={state.value} readOnly />
+				<textarea ref={readOnly} className="read-only" value={state.value} readOnly />
 			</div>
 			<div style={stylex.parse("absolute -x -y pointer-events")}>
 				{React.createElement(
@@ -62,9 +75,9 @@ function TextareaEditor(props) {
 
 						className: "read-write",
 
-						style: {
-							transform: state.hasFocus && "translateZ(0px)",
-						},
+						// style: {
+						// 	transform: state.hasFocus && "translateZ(0px)",
+						// },
 
 						value: state.value,
 
