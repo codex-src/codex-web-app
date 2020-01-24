@@ -6,11 +6,13 @@ const initialState = {
 	actionType: "",             // The editing operation type
 	actionTimestamp: 0,         // The editing operation timestamp
 	value: "",                  // The plain text data
-	hasFocus: false,            // Is the editor focused?
+	isFocused: false,           // Is the editor focused?
 	selectionStart: 0,          // The start cursor
 	selectionEnd: 0,            // The end cursor
-	shouldSetSelectionRange: 0, // Should set (reset) the selection range?
 	components: null,           // The parsed React components
+	shouldSetSelectionRange: 0, // Should set (reset) the selection range?
+	history: null,              // The history state stack
+	historyIndex: 0,            // The history state stack index
 
 	// TODO: Move to props?
 	spellCheck: false,          // New flag
@@ -31,11 +33,11 @@ const reducer = state => ({
 	},
 	focus() {
 		this.newAction(ActionTypes.FOCUS)
-		state.hasFocus = true
+		state.isFocused = true
 	},
 	blur() {
 		this.newAction(ActionTypes.BLUR)
-		state.hasFocus = false
+		state.isFocused = false
 	},
 	select(selectionStart, selectionEnd) {
 		this.newAction(ActionTypes.SELECT)
@@ -60,18 +62,53 @@ const reducer = state => ({
 	tab() {
 		this.insert("\t")
 	},
-	// cut() {
-	// 	this.newAction(ActionTypes.CUT)
-	// },
 	copy() {
 		this.newAction(ActionTypes.COPY)
 	},
-	// paste() {
-	// 	this.newAction(ActionTypes.PASTE)
-	// },
 	parse() {
 		state.components = parseComponents(state.value)
 	},
+
+	storeUndo() {
+		const undoState = state.history[state.historyIndex]
+		if (undoState.value === state.value) {
+			// No-op
+			return
+		}
+		const { value, selectionStart, selectionEnd } = state
+		state.history.push({ value, selectionStart, selectionEnd })
+		state.historyIndex++
+	},
+	// dropRedos() {
+	// 	state.history.splice(state.historyIndex + 1)
+	// },
+	undo() {
+		this.newAction(ActionTypes.UNDO)
+		if (!state.historyIndex) {
+			// No-op
+			return
+		} // else if (state.historyIndex === 1 && state.didWritePos) {
+		//	state.didWritePos = false
+		// }
+		state.historyIndex--
+		const undoState = state.history[state.historyIndex]
+		Object.assign(state, undoState)
+		state.shouldSetSelectionRange++
+		this.parse()
+	},
+	redo() {
+		this.newAction(ActionTypes.REDO)
+		if (state.historyIndex + 1 === state.history.length) {
+			// No-op
+			return
+		}
+		state.historyIndex++
+		const redoState = state.history[state.historyIndex]
+		Object.assign(state, redoState)
+		state.shouldSetSelectionRange++
+		this.parse()
+	},
+
 })
 
 // Initializes an editor state.
@@ -82,6 +119,8 @@ const init = initialValue => initialState => {
 		actionTimestamp: Date.now(),
 		value: initialValue,
 		components: parseComponents(initialValue),
+		history: [{ value: initialValue, selectionStart: 0, selectionEnd: 0 }],
+		// historyIndex
 	}
 	return state
 }

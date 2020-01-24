@@ -11,6 +11,9 @@ function Debugger({ state }) {
 				{JSON.stringify(
 					{
 						...state,
+
+						history: state.history.map(each => each.value),
+
 						components: undefined,
 					},
 					reactElementReplacer(componentMap),

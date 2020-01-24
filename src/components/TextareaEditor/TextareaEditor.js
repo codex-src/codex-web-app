@@ -1,6 +1,7 @@
 // import DebugCSS from "utils/DebugCSS"
 import ActionTypes from "./ActionTypes"
 import Debugger from "./Debugger"
+import onKeyDown from "./onKeyDown"
 import React from "react"
 import stylex from "stylex"
 import useTextareaEditor from "./TextareaEditorReducer"
@@ -59,11 +60,29 @@ hello`)
 		[state.shouldSetSelectionRange],
 	)
 
+	// TODO: Refactor to useHistory()?
+	React.useEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				// No-op
+				return
+			}
+			const id = setInterval(() => {
+				dispatch.storeUndo()
+			}, 1e3)
+			return () => {
+				setTimeout(() => {
+					clearInterval(id)
+				}, 1e3)
+			}
+		}, [state, dispatch]),
+	[state.isFocused])
+
 	const { Provider } = Context
 	return (
 		// <DebugCSS>
 		<Provider value={[state, dispatch]}>
-			<div style={{ ...stylex.parse("relative"), transform: state.hasFocus && "translateZ(0px)" }}>
+			<div style={{ ...stylex.parse("relative"), transform: state.isFocused && "translateZ(0px)" }}>
 				<pre style={stylex.parse("no-pointer-events")}>
 					{state.components || (
 						<br /> // Needed
@@ -110,16 +129,18 @@ hello`)
 							},
 
 							onKeyDown: e => {
-								// if (e.key === "Tab") {
-								// 	e.preventDefault()
-								// 	dispatch.tab()
-								// 	return
-								// }
-
-								switch (e.key) {
-								case "Tab":
+								switch (true) {
+								case onKeyDown.isTab(e):
 									e.preventDefault()
 									dispatch.tab()
+									break
+								case onKeyDown.isUndo(e):
+									e.preventDefault()
+									dispatch.undo()
+									break
+								case onKeyDown.isRedo(e):
+									e.preventDefault()
+									dispatch.redo()
 									break
 								default:
 									// No-op
@@ -138,9 +159,11 @@ hello`)
 									break
 								// case "historyUndo":
 								// 	e.preventDefault()
+								// 	dispatch.undo()
 								// 	return
 								// case "historyRedo":
 								// 	e.preventDefault()
+								// 	dispatch.redo()
 								// 	return
 								default:
 									// No-op

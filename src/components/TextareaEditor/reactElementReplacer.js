@@ -27,7 +27,7 @@ function destructure(value, componentMap) {
 	// Guard memoized components (React.memo):
 	let { type, props } = value
 	if (type.type) {
-		type = type.type
+		type = type.type // eslint-disable-line prefer-destructuring
 	}
 	return { Component: componentMap[type], props }
 }
