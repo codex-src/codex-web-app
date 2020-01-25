@@ -48,7 +48,6 @@ hello`)
 	React.useLayoutEffect(() => {
 		const { height } = pre.current.getBoundingClientRect()
 		textarea.current.style.height = `${height}px`
-		// TODO: scrollIntoViewIfNeeded
 	}, [state.data])
 
 	// Should render React components:
@@ -89,6 +88,28 @@ hello`)
 		[state.pos1, state.pos2],
 	)
 
+	React.useEffect(() => {
+		// TODO: scrollIntoViewIfNeeded
+
+		const pos1 = state.coords.pos1.y
+		const pos2 = state.coords.pos1.y
+		const { scrollY, innerHeight } = window
+
+		// if (scrollY < innerHeight + pos1) {
+		// 	console.log("a")
+		// } else (scrollY > innerHeight + pos2) {
+		// 	console.log("b")
+		// }
+
+		// if (window.scrollY > bounds.t) {
+		// 	coords.y = bounds.t
+		// } else if (window.scrollY < bounds.b) {
+		// 	coords.y = bounds.b
+		// }
+
+		console.log({ pos1, pos2, scrollY, innerHeight })
+	}, [state.coords])
+
 	React.useEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -113,7 +134,7 @@ hello`)
 		<Provider value={[state, dispatch]}>
 			{/* transform: state.isFocused && "translateZ(0px)" */}
 			<article style={stylex.parse("relative")}>
-				{/* React DOM: */}
+				{/* reactDOM: */}
 				<pre ref={reactDOM} style={stylex.parse("no-pointer-events")} />
 				{/* pre: */}
 				<div style={{ ...stylex.parse("absolute -x -y no-pointer-events"), visibility: "hidden" }}>
@@ -133,7 +154,7 @@ hello`)
 						{
 							ref: textarea,
 
-							style: stylex.parse("c:red -a:1%"),
+							style: stylex.parse("c:black -a:5%"),
 
 							value: state.data,
 
@@ -217,7 +238,7 @@ hello`)
 							onCopy: dispatch.copy,
 
 							// spellCheck: state.spellCheck,
-							spellCheck: false,
+							// spellCheck: false,
 						},
 					)}
 				</div>
