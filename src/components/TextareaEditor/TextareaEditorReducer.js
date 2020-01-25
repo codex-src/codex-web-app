@@ -76,10 +76,10 @@ const reducer = state => ({
 	},
 	//
 	parse() {
-		const t1 = Date.now()
+		// const t1 = Date.now()
 		state.components = parseComponents(state.data)
-		const t2 = Date.now()
-		console.log(`parser=${t2 - t1}`)
+		// const t2 = Date.now()
+		// console.log(`parser=${t2 - t1}`)
 		state.shouldRenderComponents++
 	},
 	storeUndo() {
@@ -148,7 +148,6 @@ const init = initialValue => initialState => {
 				pos2: 0,
 			},
 		],
-		// historyIndex
 	}
 	return state
 }

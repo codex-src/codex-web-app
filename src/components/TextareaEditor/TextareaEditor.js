@@ -26,10 +26,10 @@ function TextareaComponents(props) {
 // - HTML components
 //
 function TextareaEditor(props) {
-	const reactDOM = React.useRef() // eslint-disable-line
-	const pre      = React.useRef() // eslint-disable-line
-	const span     = React.useRef() // eslint-disable-line
-	const textarea = React.useRef() // eslint-disable-line
+	const reactDOM = React.useRef()
+	const pre = React.useRef()
+	const span = React.useRef()
+	const textarea = React.useRef()
 
 	const isPointerDown = React.useRef()
 
@@ -48,15 +48,16 @@ hello`)
 	React.useLayoutEffect(() => {
 		const { height } = pre.current.getBoundingClientRect()
 		textarea.current.style.height = `${height}px`
+		// TODO: scrollIntoViewIfNeeded
 	}, [state.data])
 
 	// Should render React components:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const t1 = Date.now()
+			// const t1 = Date.now()
 			ReactDOM.render(<TextareaComponents components={state.components} />, reactDOM.current, () => {
-				const t2 = Date.now()
-				console.log(`render=${t2 - t1}`)
+				// const t2 = Date.now()
+				// console.log(`render=${t2 - t1}`)
 			})
 		}, [state]),
 		[state.shouldRenderComponents],
@@ -109,118 +110,122 @@ hello`)
 	const { Provider } = Context
 	return (
 		// <CSSDebugger>
-			<Provider value={[state, dispatch]}>
-				{/* transform: state.isFocused && "translateZ(0px)" */}
-				<article style={stylex.parse("relative")}>
-					{/* React DOM: */}
-					<pre ref={reactDOM} style={stylex.parse("no-pointer-events")} />
-					{/* pre: */}
-					<div style={{ ...stylex.parse("absolute -x -y no-pointer-events"), visibility: "hidden" }}>
-						<pre ref={pre} style={stylex.parse("c:blue -a:10%")}>
-							{state.data.slice(0, state.pos1)}
-							{/* span: */}
-							<span ref={span}>
-								{state.data.slice(state.pos1, state.pos2)}
-							</span>
-							{`${state.data.slice(state.pos2)}\n`}
-						</pre>
-					</div>
-					{/* textarea: */}
-					<div style={stylex.parse("absolute -x -y pointer-events")}>
-						{React.createElement(
-							"textarea",
-							{
-								ref: textarea,
+		<Provider value={[state, dispatch]}>
+			{/* transform: state.isFocused && "translateZ(0px)" */}
+			<article style={stylex.parse("relative")}>
+				{/* React DOM: */}
+				<pre ref={reactDOM} style={stylex.parse("no-pointer-events")} />
+				{/* pre: */}
+				<div style={{ ...stylex.parse("absolute -x -y no-pointer-events"), visibility: "hidden" }}>
+					<pre ref={pre} style={stylex.parse("c:blue -a:10%")}>
+						{state.data.slice(0, state.pos1)}
+						{/* span: */}
+						<span ref={span}>
+							{state.data.slice(state.pos1, state.pos2)}
+						</span>
+						{`${state.data.slice(state.pos2)}\n`}
+					</pre>
+				</div>
+				{/* textarea: */}
+				<div style={stylex.parse("absolute -x -y pointer-events")}>
+					{React.createElement(
+						"textarea",
+						{
+							ref: textarea,
 
-								style: stylex.parse("c:red -a:1%"),
+							style: stylex.parse("c:red -a:1%"),
 
-								value: state.data,
+							value: state.data,
 
-								onFocus: dispatch.focus,
-								onBlur:  dispatch.blur,
+							onFocus: dispatch.focus,
+							onBlur:  dispatch.blur,
 
-								onSelect: e => {
-									const { selectionStart, selectionEnd } = textarea.current
-									dispatch.select(selectionStart, selectionEnd)
-								},
-
-								onPointerDown: e => {
-									isPointerDown.current = true
-								},
-
-								// Covers WebKit and Gecko (used to be
-								// selectionchange and onSelect):
-								onPointerMove: e => {
-									if (!isPointerDown.current) {
-									// No-op
-										return
-									}
-									const { selectionStart, selectionEnd } = textarea.current
-									dispatch.select(selectionStart, selectionEnd)
-								},
-
-								onPointerUp: e => {
-									isPointerDown.current = false
-								},
-
-								onKeyDown: e => {
-									switch (true) {
-									case onKeyDown.isTab(e):
-										e.preventDefault()
-										document.execCommand("insertText", false, "\t")
-										return
-									case onKeyDown.isUndo(e):
-										e.preventDefault()
-										dispatch.undo()
-										return
-									case onKeyDown.isRedo(e):
-										e.preventDefault()
-										dispatch.redo()
-										return
-									default:
-									// No-op
-										break
-									}
-								},
-
-								// case "historyUndo":
-								// 	e.preventDefault()
-								// 	dispatch.undo()
-								// 	return
-								// case "historyRedo":
-								// 	e.preventDefault()
-								// 	dispatch.redo()
-								// 	return
-
-								onChange: e => {
-									let actionType = ActionTypes.CHANGE
-									switch (e.nativeEvent.inputType) {
-									case "deleteByCut":
-										actionType = ActionTypes.CUT
-										break
-									case "insertFromPaste":
-										actionType = ActionTypes.PASTE
-										break
-									default:
-									// No-op
-										break
-									}
-									const { selectionStart, selectionEnd } = textarea.current
-									dispatch.change(actionType, e.target.value, selectionStart, selectionEnd)
-								},
-
-								onCopy: dispatch.copy,
-
-								// spellCheck: state.spellCheck,
-								spellCheck: false,
+							onSelect: e => {
+								const { selectionStart, selectionEnd } = textarea.current
+								dispatch.select(selectionStart, selectionEnd)
 							},
-						)}
-					</div>
-				</article>
-				{!props.debugger && (
-					<Debugger state={state} />
-				)}
-			</Provider>
+
+							onPointerDown: e => {
+								isPointerDown.current = true
+							},
+
+							// Covers WebKit and Gecko (used to be
+							// selectionchange and onSelect):
+							onPointerMove: e => {
+								if (!isPointerDown.current) {
+									// No-op
+									return
+								}
+								const { selectionStart, selectionEnd } = textarea.current
+								dispatch.select(selectionStart, selectionEnd)
+							},
+
+							onPointerUp: e => {
+								isPointerDown.current = false
+							},
+
+							onKeyDown: e => {
+								switch (true) {
+								case onKeyDown.isTab(e):
+									e.preventDefault()
+									document.execCommand("insertText", false, "\t")
+									return
+								case onKeyDown.isUndo(e):
+									e.preventDefault()
+									dispatch.undo()
+									return
+								case onKeyDown.isRedo(e):
+									e.preventDefault()
+									dispatch.redo()
+									return
+								default:
+									// No-op
+									break
+								}
+							},
+
+							onChange: e => {
+								// Guard undo and redo:
+								switch (e.nativeEvent.inputType) {
+								case "historyUndo":
+									dispatch.undo()
+									return
+								case "historyRedo":
+									dispatch.redo()
+									return
+								default:
+									// No-op
+									break
+								}
+								// Get the action type:
+								let actionType = ActionTypes.CHANGE
+								switch (e.nativeEvent.inputType) {
+								case "deleteByCut":
+									actionType = ActionTypes.CUT
+									break
+								case "insertFromPaste":
+									actionType = ActionTypes.PASTE
+									break
+								default:
+									// No-op
+									break
+								}
+								const { selectionStart, selectionEnd } = textarea.current
+								dispatch.change(actionType, e.target.value, selectionStart, selectionEnd)
+							},
+
+							onCopy: dispatch.copy,
+
+							// spellCheck: state.spellCheck,
+							spellCheck: false,
+						},
+					)}
+				</div>
+			</article>
+			{!props.debugger && (
+				<Debugger state={state} />
+			)}
+		</Provider>
 		// </CSSDebugger>
 	)
 }
