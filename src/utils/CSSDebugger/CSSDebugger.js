@@ -1,10 +1,10 @@
 import React from "react"
 
-function DebugCSS(props) {
+function CSSDebugger(props) {
 	React.useEffect(() => {
 		document.body.classList.toggle("debug-css")
 	}, [])
 	return props.children
 }
 
-export default DebugCSS
+export default CSSDebugger

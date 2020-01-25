@@ -137,6 +137,8 @@ function Editor(props) {
 			// Render the React DOM:
 			const t1 = Date.now()
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
+				ref.current.contentEditable = true // New
+
 				const t2 = Date.now()
 				console.log(`react=${t2 - t1}`)
 				if (!state.shouldRenderComponents) {
@@ -149,11 +151,11 @@ function Editor(props) {
 				const startNode = getKeyNode(startContainer)
 				target.current = getTarget(state.nodes, ref.current, startNode, startNode)
 				// Sync the DOM trees:
-				const didSync = syncViews(ref.current, state.reactDOM, "data-memo")
-				if (!didSync) {
-					// No-op
-					return
-				}
+				syncViews(ref.current, state.reactDOM, "data-memo")
+				// if (!didSync) {
+				// 	// No-op
+				// 	return
+				// }
 				// Reset the cursor:
 				let keyNode = document.getElementById(state.reset.key)
 				if (keyNode.getAttribute("data-compound-node")) {
@@ -188,6 +190,22 @@ function Editor(props) {
 					onBlur:  dispatch.opBlur,
 
 					onInput: e => {
+						switch (e.nativeEvent.inputType) {
+						case "historyUndo":
+							// TODO
+							dispatch.render()
+							return
+						case "historyRedo":
+							// TODO
+							dispatch.render()
+							return
+						default:
+							// No-op
+							break
+						}
+
+						ref.current.contentEditable = false // New
+
 						let { current: { startIter, start, endIter, end } } = target
 						// Re-extend the start and end key nodes and
 						// cursors (once):

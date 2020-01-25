@@ -14,6 +14,7 @@ function Debugger({ state }) {
 
 						// history: state.history.map(each => each.value),
 
+						history:    undefined,
 						components: undefined,
 					},
 					reactElementReplacer(componentMap),

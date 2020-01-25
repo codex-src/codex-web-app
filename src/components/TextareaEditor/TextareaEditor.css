@@ -1,39 +1,36 @@
-/* https://fonts.google.com/specimen/IBM+Plex+Mono */
-@import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600,600i&display=swap&subset=latin-ext";
-
 /* https://fonts.google.com/specimen/Roboto+Mono */
 @import "https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i&display=swap&subset=latin-ext";
 
-pre,
-textarea.read-only,
-textarea.read-write {
-	/* -webkit-font-smoothing:  auto; */
-	/* -moz-osx-font-smoothing: auto; */
+/* https://fonts.google.com/specimen/IBM+Plex+Mono */
+@import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600,600i&display=swap&subset=latin-ext";
 
-	moz-tab-size:   2;
-	tab-size:       2;
-	font:           17px/1.375 "Roboto Mono", "monospace", "system-ui";
-	/* font:        17px/1.375 "IBM Plex Mono", "monospace", "system-ui"; */
-	letter-spacing: -0.0375em;
+pre,
+textarea {
+	-webkit-font-smoothing:  auto !important;
+	-moz-osx-font-smoothing: auto !important;
+
+	moz-tab-size:   2 !important;
+	tab-size:       2 !important;
+	font:           500 16px/1.625 "IBM Plex Mono", "monospace", "system-ui" !important;
 }
 
 pre {
-	white-space:    pre-wrap;
-	color:          hsl(var(--gray-800));
-	caret-color:    hsl(var(--black));
-	overflow-wrap:  break-word; /* Needed */
+	white-space:    pre-wrap !important;
+	color:          hsl(var(--gray-800)) !important;
+	overflow-wrap:  break-word !important;
+}
+pre::selection,
+pre *::selection {
+  background: hsla(var(--blue-a400), 0) !important;
 }
 
-textarea.read-only,
-textarea.read-write {
-	display:        block;
-	color:          hsla(var(--black), 0.1);
-	caret-color:    hsl(var(--blue-a400));
-	width:          100%;
-	overflow-y:     hidden; /* Not needed -- WebKit? */
-	outline:        none;
+/* overflow-y: hidden; */
+textarea {
+	display:        block !important;
+	caret-color:    hsl(var(--blue-a400)) !important;
+	width:          100% !important;
+	outline:        none !important;
 }
-
-textarea.read-write::selection {
-  background: hsla(var(--blue-a400), 0.25);
+textarea::selection {
+  background: hsla(var(--blue-a400), 0.25) !important;
 }

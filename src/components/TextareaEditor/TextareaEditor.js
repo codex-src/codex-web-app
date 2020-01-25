@@ -1,5 +1,5 @@
-// import DebugCSS from "utils/DebugCSS"
 import ActionTypes from "./ActionTypes"
+import CSSDebugger from "utils/CSSDebugger"
 import Debugger from "./Debugger"
 import onKeyDown from "./onKeyDown"
 import React from "react"
@@ -9,25 +9,6 @@ import useTextareaEditor from "./TextareaEditorReducer"
 import "./TextareaEditor.css"
 
 const Context = React.createContext()
-
-// function useHistory() {
-// 	React.useEffect(
-// 		React.useCallback(() => {
-// 			if (!state.isFocused) {
-// 				// No-op
-// 				return
-// 			}
-// 			const id = setInterval(() => {
-// 				dispatch.storeUndo()
-// 			}, 1e3)
-// 			return () => {
-// 				setTimeout(() => {
-// 					clearInterval(id)
-// 				}, 1e3)
-// 			}
-// 		}, [state, dispatch]),
-// 	[state.isFocused])
-// }
 
 // TODO:
 //
@@ -43,6 +24,7 @@ function TextareaEditor(props) {
 	const readOnly  = React.useRef() // eslint-disable-line
 	const readWrite = React.useRef() // eslint-disable-line
 
+	const span = React.useRef()
 	const isPointerDown = React.useRef()
 
 	// const [state, dispatch] = useTextareaEditor(props.initialValue)
@@ -56,16 +38,10 @@ hello
 
 hello`)
 
-	// Set initial height for read-only textarea:
-	React.useEffect(() => {
-		const px = window.getComputedStyle(readWrite.current)["line-height"]
-		readOnly.current.style.height = px
-	}, [])
-
 	// Set dynamic height for read-write textarea:
 	React.useLayoutEffect(() => {
-		const { scrollHeight } = readOnly.current // TODO: getBoundingClientRect?
-		readWrite.current.style.height = `${scrollHeight}px`
+		const { height } = readOnly.current.getBoundingClientRect()
+		readWrite.current.style.height = `${height}px`
 	}, [state.data])
 
 	// Should set the selection range:
@@ -74,6 +50,30 @@ hello`)
 			readWrite.current.setSelectionRange(state.pos1, state.pos2)
 		}, [state]),
 		[state.shouldSetSelectionRange],
+	)
+
+	// Update coords **after** updating pos1 and pos2:
+	React.useEffect(
+		React.useCallback(() => {
+			// NOTE: Does not recurse because pos1 and pos2 do not
+			// change.
+			const rects = span.current.getClientRects()
+			const start = rects[0]              // Top left; start
+			const end = rects[rects.length - 1] // Bottom right; end
+			const coords = {
+				pos1: {
+					x: start.x,
+					y: start.y,
+				},
+				pos2: {
+					x: end.x + end.width,
+					y: end.y + end.height,
+					// y: end.y + (end.height || 16 * 1.375), // Fix for WebKit/Safari,
+				},
+			}
+			dispatch.select(state.pos1, state.pos2, coords)
+		}, [state, dispatch]),
+		[state.pos1, state.pos2],
 	)
 
 	// TODO: Refactor to useHistory()?
@@ -92,87 +92,89 @@ hello`)
 				}, 1e3)
 			}
 		}, [state, dispatch]),
-	[state.isFocused])
+		[state.isFocused],
+	)
 
 	const { Provider } = Context
 	return (
-		// <DebugCSS>
-		<Provider value={[state, dispatch]}>
-			<div style={{ ...stylex.parse("relative"), transform: state.isFocused && "translateZ(0px)" }}>
-				<pre style={stylex.parse("no-pointer-events")}>
-					{state.components || (
-						<br /> // Needed
-					)}
-				</pre>
-				<div style={{ ...stylex.parse("absolute -x -y no-pointer-events"), display: "hidden" }}>
-					<textarea ref={readOnly} className="read-only" value={state.data} readOnly />
-				</div>
-				<div style={stylex.parse("absolute -x -y pointer-events")}>
-					{React.createElement(
-						"textarea",
-						{
-							ref: readWrite,
+		// <CSSDebugger>
+			<Provider value={[state, dispatch]}>
+				<article
+					style={{
+						...stylex.parse("relative"),
+						// transform: state.isFocused && "translateZ(0px)",
+					}}
+				>
+					{/* Components: */}
+					<pre style={stylex.parse("no-pointer-events")}>
+						{state.components}
+					</pre>
+					<div style={{ ...stylex.parse("absolute -x -y no-pointer-events"), visibility: "hidden" }}>
+						<pre ref={readOnly} style={stylex.parse("c:blue -a:10%")}>
+							{state.data.slice(0, state.pos1)}
+							<span ref={span}>
+								{state.data.slice(state.pos1, state.pos2)}
+							</span>
+							{`${state.data.slice(state.pos2)}\n`}
+						</pre>
+					</div>
+					<div style={stylex.parse("absolute -x -y pointer-events")}>
+						{React.createElement(
+							"textarea",
+							{
+								ref: readWrite,
 
-							className: "read-write",
+								style: stylex.parse("c:red -a:1%"),
 
-							value: state.data,
+								value: state.data,
 
-							onFocus: dispatch.focus,
-							onBlur:  dispatch.blur,
+								onFocus: dispatch.focus,
+								onBlur:  dispatch.blur,
 
-							onSelect: e => {
-								const { selectionStart: pos1, selectionEnd: pos2 } = readWrite.current
-								dispatch.select(pos1, pos2)
-							},
+								onSelect: e => {
+									const { selectionStart, selectionEnd } = readWrite.current
+									dispatch.select(selectionStart, selectionEnd)
+								},
 
-							onPointerDown: e => {
-								isPointerDown.current = true
-							},
+								onPointerDown: e => {
+									isPointerDown.current = true
+								},
 
-							// Covers WebKit and Gecko (used to be
-							// selectionchange and onSelect):
-							onPointerMove: e => {
-								if (!isPointerDown.current) {
+								// Covers WebKit and Gecko (used to be
+								// selectionchange and onSelect):
+								onPointerMove: e => {
+									if (!isPointerDown.current) {
 									// No-op
-									return
-								}
-								const { selectionStart: pos1, selectionEnd: pos2 } = readWrite.current
-								dispatch.select(pos1, pos2)
-							},
+										return
+									}
+									const { selectionStart, selectionEnd } = readWrite.current
+									dispatch.select(selectionStart, selectionEnd)
+								},
 
-							onPointerUp: e => {
-								isPointerDown.current = false
-							},
+								onPointerUp: e => {
+									isPointerDown.current = false
+								},
 
-							onKeyDown: e => {
-								switch (true) {
-								case onKeyDown.isTab(e):
-									e.preventDefault()
-									dispatch.tab()
-									break
-								case onKeyDown.isUndo(e):
-									e.preventDefault()
-									dispatch.undo()
-									break
-								case onKeyDown.isRedo(e):
-									e.preventDefault()
-									dispatch.redo()
-									break
-								default:
+								onKeyDown: e => {
+									switch (true) {
+									// case onKeyDown.isTab(e):
+									// 	e.preventDefault()
+									// 	dispatch.tab()
+									// 	break
+									case onKeyDown.isUndo(e):
+										e.preventDefault()
+										dispatch.undo()
+										break
+									case onKeyDown.isRedo(e):
+										e.preventDefault()
+										dispatch.redo()
+										break
+									default:
 									// No-op
-									break
-								}
-							},
+										break
+									}
+								},
 
-							onChange: e => {
-								let actionType = ActionTypes.CHANGE
-								switch (e.nativeEvent.inputType) {
-								case "deleteByCut":
-									actionType = ActionTypes.CUT
-									break
-								case "insertFromPaste":
-									actionType = ActionTypes.PASTE
-									break
 								// case "historyUndo":
 								// 	e.preventDefault()
 								// 	dispatch.undo()
@@ -181,26 +183,37 @@ hello`)
 								// 	e.preventDefault()
 								// 	dispatch.redo()
 								// 	return
-								default:
+
+								onChange: e => {
+									let actionType = ActionTypes.CHANGE
+									switch (e.nativeEvent.inputType) {
+									case "deleteByCut":
+										actionType = ActionTypes.CUT
+										break
+									case "insertFromPaste":
+										actionType = ActionTypes.PASTE
+										break
+									default:
 									// No-op
-									break
-								}
-								const { value: data, selectionStart: pos1, selectionEnd: pos2 } = e.target
-								dispatch.change(data, pos1, pos2, actionType)
+										break
+									}
+									const { selectionStart, selectionEnd } = readWrite.current
+									dispatch.change(actionType, e.target.value, selectionStart, selectionEnd)
+								},
+
+								onCopy: dispatch.copy,
+
+								// spellCheck: state.spellCheck,
+								spellCheck: false,
 							},
-
-							onCopy: dispatch.copy,
-
-							spellCheck: state.spellCheck,
-						},
-					)}
-				</div>
-				{!props.debugger && (
+						)}
+					</div>
+				</article>
+				{props.debugger && (
 					<Debugger state={state} />
 				)}
-			</div>
-		</Provider>
-		// </DebugCSS>
+			</Provider>
+		// </CSSDebugger>
 	)
 }
 
