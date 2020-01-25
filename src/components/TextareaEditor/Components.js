@@ -1,29 +1,8 @@
 import React from "react"
 import stylex from "stylex"
+import { Markdown } from "./ComponentsText"
 
-const Syntax = stylex.Styleable(props => (
-	<span style={stylex.parse("pre c:blue-a400")}>
-		{props.children}
-	</span>
-))
-
-const Markdown = ({ style, ...props }) => (
-	<React.Fragment>
-		{props.start && (
-			<Syntax style={style}>
-				{props.start}
-			</Syntax>
-		)}
-		{props.children}
-		{props.end && (
-			<Syntax style={style}>
-				{props.end}
-			</Syntax>
-		)}
-	</React.Fragment>
-)
-
-const Header = React.memo(props => (
+export const Header = props => (
 	<div style={stylex.parse("fw:700")}>
 		<Markdown start={props.start}>
 			{props.children || (
@@ -31,9 +10,9 @@ const Header = React.memo(props => (
 			)}
 		</Markdown>
 	</div>
-))
+)
 
-const Comment = React.memo(props => (
+export const Comment = props => (
 	<div style={stylex.parse("c:gray")}>
 		<Markdown style={stylex.parse("c:gray")} start={props.start}>
 			{props.children || (
@@ -41,7 +20,7 @@ const Comment = React.memo(props => (
 			)}
 		</Markdown>
 	</div>
-))
+)
 
 // {each || (
 // 	!(each.start + each) && (
@@ -49,7 +28,7 @@ const Comment = React.memo(props => (
 // 	)
 // )}
 
-const Blockquote = React.memo(props => (
+export const Blockquote = props => (
 	<div>
 		{props.children.map((each, index) => (
 			<div key={index}>
@@ -59,10 +38,10 @@ const Blockquote = React.memo(props => (
 			</div>
 		))}
 	</div>
-))
+)
 
 // https://cdpn.io/PowjgOg
-const CodeBlock = React.memo(props => (
+export const CodeBlock = props => (
 	<div
 		style={{
 			...stylex.parse("m-x:-24 p-x:24 b:gray-50"),
@@ -84,21 +63,21 @@ const CodeBlock = React.memo(props => (
 			</div>
 		))}
 	</div>
-))
+)
 
-const Paragraph = React.memo(props => (
+export const Paragraph = props => (
 	<div>
 		{props.children || (
 			<br />
 		)}
 	</div>
-))
+)
 
-const Break = React.memo(props => (
+export const Break = props => (
 	<div style={stylex.parse("c:gray")}>
 		<Markdown start={props.start} />
 	</div>
-))
+)
 
 export const componentMap = {
 	[Header.type]:     "Header",
@@ -109,73 +88,35 @@ export const componentMap = {
 	[Break.type]:      "Break",
 }
 
-// const MarkdownSyntax = [
+// // Comment (asterisk):
+// { regex: /^\/\*(.*?(?:.*\n)*?.*?)\*\/(.*)/,
+// parse: (offset, key, matches) =>
+// 	<AsteriskComment key={key} children={[matches[1].split("\n"), parseText(offset + matches[0].length - matches[2].length, matches[2])]} /> },
 //
-// 	// Header:
-// 	{ regex: /^(#{1,6} )(.*)/,
-// 		parse: (key, matches) => <Header key={key} start={matches[1]} children={matches[2]} /> },
+// // List
+// // { regex: /^((?:\t*[*+\-•] .*\n?)*\t*[*+\-•] .*)/,
+// { regex: /^((?:\t*[*•] .*\n?)*\t*[*•] .*)/,
+// parse: (offset, key, matches) =>
+// 	<List key={key} children={parseList(offset, matches[1])} /> },
 //
-// 	// Comment:
-// 	{ regex: /^(\/\/)(.*)/,
-// 		parse: (key, matches) => <Comment key={key} start={matches[1]} children={matches[2]} /> },
+// // List isNumbered
+// { regex: /^((?:\t*\d+[.)] .*\n?)*\t*\d+[.)] .*)/,
+// parse: (offset, key, matches) =>
+// 	<List key={key} isNumbered children={parseList(offset, matches[1], true)} /> },
 //
-// 	// // Comment (asterisk):
-// 	// { regex: /^\/\*(.*?(?:.*\n)*?.*?)\*\/(.*)/,
-// 	// parse: (offset, key, matches) =>
-// 	// 	<AsteriskComment key={key} children={[matches[1].split("\n"), parseText(offset + matches[0].length - matches[2].length, matches[2])]} /> },
-//
-// 	// // Code block (single line):
-// 	// { regex: /^(```)(.*?)(```)(?:\n|$)/,
-// 	// 	parse: (key, matches) => <CodeBlock key={key} start={matches[1]} end={matches[3]} children={[matches[2]]} /> },
-//
-// 	// // Code block:
-// 	// { regex: /^(```.*)(\n(?:.*\n)*?)(```)(?:\n|$)/,
-// 	// 	parse: (key, matches) => <CodeBlock key={key} start={matches[1]} end={matches[3]} children={matches[2].split("\n")} /> },
-//
-// 	// // Blockquote:
-// 	// { regex: /^((?:>.*\n)*>.*)/,
-// 	// 	parse: (offset, key, matches) => <Blockquote key={key} children={
-// 	// 		matches[1].split("\n").map(each => {
-// 	// 			const ret = parseText(offset + 1, each.slice(1))
-// 	// 			offset += (`${each}\n`).length
-// 	// 			return ret
-// 	// 		})
-// 	// 	} /> },
-//
-// 	// // List
-// 	// //
-// 	// // { regex: /^((?:\t*[*+\-•] .*\n?)*\t*[*+\-•] .*)/,
-// 	// { regex: /^((?:\t*[*•] .*\n?)*\t*[*•] .*)/,
-// 	// parse: (offset, key, matches) =>
-// 	// 	<List key={key} children={parseList(offset, matches[1])} /> },
-//
-// 	// // List isNumbered
-// 	// { regex: /^((?:\t*\d+[.)] .*\n?)*\t*\d+[.)] .*)/,
-// 	// parse: (offset, key, matches) =>
-// 	// 	<List key={key} isNumbered children={parseList(offset, matches[1], true)} /> },
-//
-// 	// // Checklist
-// 	// { regex: /^((?:\t*[+-] .*\n?)*\t*[+-] .*)/,
-// 	// parse: (offset, key, matches) =>
-// 	// 	<Checklist key={key} children={parseList(offset, matches[1])} /> },
-//
-// 	// Break:
-// 	{ regex: /^(\*\*\*|---)(?:\n|$)/,
-// 		parse: (key, matches) => <Break key={key} start={matches[1]} /> },
-//
-// 	// Paragraph:
-// 	{ regex: /^(.*)/,
-// 		parse: (key, matches) => <Paragraph key={key} children={matches[1]} /> },
-//
-// ]
+// // Checklist
+// { regex: /^((?:\t*[+-] .*\n?)*\t*[+-] .*)/,
+// parse: (offset, key, matches) =>
+// 	<Checklist key={key} children={parseList(offset, matches[1])} /> },
 
 // Parses an array of React components from plain text data.
 //
 // TODO:
 //
+// - Multiline comments (asterisk)? (must be end-to-end)
 // - Unnumbered lists
 // - Numbered lists
-// - Multiline comments?
+// - Checklists (use GFM syntax)
 //
 export function parseComponents(data) {
 	// const t1 = Date.now() // DELETEME
@@ -275,6 +216,7 @@ export function parseComponents(data) {
 				substr.slice(0, 3) === "```" &&
 				index + 1 < nodes.length // Has more nodes
 			) {
+				// TODO: Lex extension
 				const from = index
 				let to = from
 				to++

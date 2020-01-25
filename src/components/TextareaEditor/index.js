@@ -1,1 +1,1 @@
-export { default } from "./TextareaEditor"
+export { TextareaEditor as default } from "./TextareaEditor"

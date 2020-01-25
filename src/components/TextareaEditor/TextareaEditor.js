@@ -4,12 +4,13 @@ import Debugger from "./Debugger"
 import onKeyDown from "./onKeyDown"
 import React from "react"
 import ReactDOM from "react-dom"
+import StatusBar from "./StatusBar"
 import stylex from "stylex"
 import useTextareaEditor from "./TextareaEditorReducer"
 
 import "./TextareaEditor.css"
 
-const Context = React.createContext()
+export const Context = React.createContext()
 
 function TextareaComponents(props) {
 	return props.components
@@ -25,7 +26,7 @@ function TextareaComponents(props) {
 // - Preview components
 // - HTML components
 //
-function TextareaEditor(props) {
+export function TextareaEditor(props) {
 	const reactDOM = React.useRef()
 	const pre = React.useRef()
 	const span = React.useRef()
@@ -34,15 +35,17 @@ function TextareaEditor(props) {
 	const isPointerDown = React.useRef()
 
 	// const [state, dispatch] = useTextareaEditor(props.initialValue)
-	const [state, dispatch] = useTextareaEditor(`hello
+	const [state, dispatch] = useTextareaEditor(`Hello, world!
 
-\`\`\`hello\`\`\`
-
+\`\`\`jsx
+const HelloWorld = props => (
+	<p>
+		Hello, world!
+	</p>
+)
 \`\`\`
-hello
-\`\`\`
 
-hello`)
+Hello, world!`)
 
 	// https://github.com/facebook/react/issues/8514
 	React.useLayoutEffect(
@@ -72,7 +75,6 @@ hello`)
 	React.useEffect( // TODO: useLayoutEffect?
 		React.useCallback(() => {
 			let [pos1, pos2] = getCoords()
-			console.log(pos1.y, pos2.y)
 			if (pos1.y < 0 && pos2.y >= window.innerHeight) { // XOR
 				// No-op
 			} else if (pos1.y < 0) {
@@ -103,7 +105,7 @@ hello`)
 	return (
 		// <CSSDebugger>
 		<Provider value={[state, dispatch]}>
-			{/* <div style={stylex.parse("m-x:-32 p-x:32 p-y:16 b:gray-50 br:8")}> */}
+			{/* <div style={stylex.parse("m-x:-32 p-x:32 p-y:24 b:gray-50 br:12")}> */}
 			<article style={stylex.parse("relative")}>
 				{/* reactDOM: */}
 				<pre ref={reactDOM} style={stylex.parse("no-pointer-events")} />
@@ -192,8 +194,9 @@ hello`)
 					)}
 				</div>
 			</article>
+			<StatusBar />
 			{/* </div> */}
-			{props.debugger && (
+			{!props.debugger && (
 				<Debugger state={state} />
 			)}
 		</Provider>
@@ -201,4 +204,3 @@ hello`)
 	)
 }
 
-export default TextareaEditor
