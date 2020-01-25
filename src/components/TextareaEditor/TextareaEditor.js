@@ -44,8 +44,6 @@ hello
 
 hello`)
 
-	// Set textarea initial value:
-	//
 	// https://github.com/facebook/react/issues/8514
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -54,23 +52,34 @@ hello`)
 		[],
 	)
 
-	// Set textarea height:
+	// Set textarea height (dynamic -- from pre):
 	React.useLayoutEffect(() => {
 		const { height } = pre.current.getBoundingClientRect()
 		textarea.current.style.height = `${height}px`
 	}, [state.data])
 
+	// Gets cursor position coordinates.
+	const getCoords = () => {
+		const rects = span.current.getClientRects()
+		const start = rects[0]
+		const end = rects[rects.length - 1]
+		const pos1 = { x: start.left, y: start.top }
+		const pos2 = { x: end.right, y: end.bottom }
+		return [pos1, pos2]
+	}
+
 	// Update coords **after** updating pos1 and pos2:
 	React.useEffect( // TODO: useLayoutEffect?
 		React.useCallback(() => {
-			const rects = span.current.getClientRects()
-			const start = rects[0]
-			const end = rects[rects.length - 1]
-			const coords = {
-				pos1: { x: start.left, y: start.top },
-				pos2: { x: end.right, y: end.bottom },
+			let [pos1, pos2] = getCoords()
+			if (pos1.y < 0) {
+				window.scrollBy(0, pos1.y)
+				;[pos1, pos2] = getCoords() // Refresh
+			} else if (pos2.y > window.innerHeight) {
+				window.scrollBy(0, pos2.y - window.innerHeight)
+				;[pos1, pos2] = getCoords() // Refresh
 			}
-			dispatch.select(state.pos1, state.pos2, coords)
+			dispatch.select(state.pos1, state.pos2, { pos1, pos2 })
 		}, [state, dispatch]),
 		[state.pos1, state.pos2],
 	)
@@ -86,24 +95,6 @@ hello`)
 		}, [state]),
 		[state.shouldRender],
 	)
-
-	// React.useLayoutEffect(() => {
-	// 	// TODO: scrollIntoViewIfNeeded
-	// 	const pos1 = state.coords.pos1.y
-	// 	const pos2 = state.coords.pos1.y
-	// 	const { scrollY, innerHeight } = window
-	// 	// if (scrollY < innerHeight + pos1) {
-	// 	// 	console.log("a")
-	// 	// } else (scrollY > innerHeight + pos2) {
-	// 	// 	console.log("b")
-	// 	// }
-	// 	// if (window.scrollY > bounds.t) {
-	// 	// 	coords.y = bounds.t
-	// 	// } else if (window.scrollY < bounds.b) {
-	// 	// 	coords.y = bounds.b
-	// 	// }
-	// 	console.log({ pos1, pos2, scrollY, innerHeight })
-	// }, [state.coords])
 
 	const { Provider } = Context
 	return (
