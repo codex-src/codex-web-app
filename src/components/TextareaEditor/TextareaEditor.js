@@ -44,14 +44,39 @@ hello
 
 hello`)
 
-	// Set dynamic height textarea:
+	// Set textarea initial value:
+	//
+	// https://github.com/facebook/react/issues/8514
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			textarea.current.value = state.data
+		}, [state]),
+		[],
+	)
+
+	// Set textarea height:
 	React.useLayoutEffect(() => {
 		const { height } = pre.current.getBoundingClientRect()
 		textarea.current.style.height = `${height}px`
 	}, [state.data])
 
+	// Update coords **after** updating pos1 and pos2:
+	React.useEffect( // TODO: useLayoutEffect?
+		React.useCallback(() => {
+			const rects = span.current.getClientRects()
+			const start = rects[0]
+			const end = rects[rects.length - 1]
+			const coords = {
+				pos1: { x: start.left, y: start.top },
+				pos2: { x: end.right, y: end.bottom },
+			}
+			dispatch.select(state.pos1, state.pos2, coords)
+		}, [state, dispatch]),
+		[state.pos1, state.pos2],
+	)
+
 	// Should render React components:
-	React.useLayoutEffect(
+	React.useEffect( // TODO: useLayoutEffect?
 		React.useCallback(() => {
 			// const t1 = Date.now()
 			ReactDOM.render(<TextareaComponents components={state.components} />, reactDOM.current, () => {
@@ -59,80 +84,32 @@ hello`)
 				// console.log(`render=${t2 - t1}`)
 			})
 		}, [state]),
-		[state.shouldRenderComponents],
+		[state.shouldRender],
 	)
 
-	// Should render the DOM cursor:
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			textarea.current.setSelectionRange(state.pos1, state.pos2)
-		}, [state]),
-		[state.shouldRenderCursor],
-	)
-
-	// Update coords **after** updating pos1 and pos2:
-	React.useEffect(
-		React.useCallback(() => {
-			// NOTE: Does not recurse because pos1 and pos2 do not
-			// change.
-			const rects = span.current.getClientRects()
-			const start = rects[0]              // Top left; start
-			const end = rects[rects.length - 1] // Bottom right; end
-			const coords = {
-				pos1: { x: start.x, y: start.y },
-				pos2: { x: end.x + end.width, y: end.y + end.height },
-				// y: end.y + (end.height || ...), // Fix for WebKit/Safari,
-			}
-			dispatch.select(state.pos1, state.pos2, coords)
-		}, [state, dispatch]),
-		[state.pos1, state.pos2],
-	)
-
-	React.useEffect(() => {
-		// TODO: scrollIntoViewIfNeeded
-
-		const pos1 = state.coords.pos1.y
-		const pos2 = state.coords.pos1.y
-		const { scrollY, innerHeight } = window
-
-		// if (scrollY < innerHeight + pos1) {
-		// 	console.log("a")
-		// } else (scrollY > innerHeight + pos2) {
-		// 	console.log("b")
-		// }
-
-		// if (window.scrollY > bounds.t) {
-		// 	coords.y = bounds.t
-		// } else if (window.scrollY < bounds.b) {
-		// 	coords.y = bounds.b
-		// }
-
-		console.log({ pos1, pos2, scrollY, innerHeight })
-	}, [state.coords])
-
-	React.useEffect(
-		React.useCallback(() => {
-			if (!state.isFocused) {
-				// No-op
-				return
-			}
-			const id = setInterval(() => {
-				dispatch.storeUndo()
-			}, 1e3)
-			return () => {
-				setTimeout(() => {
-					clearInterval(id)
-				}, 1e3)
-			}
-		}, [state, dispatch]),
-		[state.isFocused],
-	)
+	// React.useLayoutEffect(() => {
+	// 	// TODO: scrollIntoViewIfNeeded
+	// 	const pos1 = state.coords.pos1.y
+	// 	const pos2 = state.coords.pos1.y
+	// 	const { scrollY, innerHeight } = window
+	// 	// if (scrollY < innerHeight + pos1) {
+	// 	// 	console.log("a")
+	// 	// } else (scrollY > innerHeight + pos2) {
+	// 	// 	console.log("b")
+	// 	// }
+	// 	// if (window.scrollY > bounds.t) {
+	// 	// 	coords.y = bounds.t
+	// 	// } else if (window.scrollY < bounds.b) {
+	// 	// 	coords.y = bounds.b
+	// 	// }
+	// 	console.log({ pos1, pos2, scrollY, innerHeight })
+	// }, [state.coords])
 
 	const { Provider } = Context
 	return (
 		// <CSSDebugger>
 		<Provider value={[state, dispatch]}>
-			{/* transform: state.isFocused && "translateZ(0px)" */}
+			{/* <div style={stylex.parse("m-x:-32 p-x:32 p-y:16 b:gray-50 br:8")}> */}
 			<article style={stylex.parse("relative")}>
 				{/* reactDOM: */}
 				<pre ref={reactDOM} style={stylex.parse("no-pointer-events")} />
@@ -155,8 +132,6 @@ hello`)
 							ref: textarea,
 
 							style: stylex.parse("c:black -a:5%"),
-
-							value: state.data,
 
 							onFocus: dispatch.focus,
 							onBlur:  dispatch.blur,
@@ -191,14 +166,6 @@ hello`)
 									e.preventDefault()
 									document.execCommand("insertText", false, "\t")
 									return
-								case onKeyDown.isUndo(e):
-									e.preventDefault()
-									dispatch.undo()
-									return
-								case onKeyDown.isRedo(e):
-									e.preventDefault()
-									dispatch.redo()
-									return
 								default:
 									// No-op
 									break
@@ -206,18 +173,6 @@ hello`)
 							},
 
 							onChange: e => {
-								// Guard undo and redo:
-								switch (e.nativeEvent.inputType) {
-								case "historyUndo":
-									dispatch.undo()
-									return
-								case "historyRedo":
-									dispatch.redo()
-									return
-								default:
-									// No-op
-									break
-								}
 								// Get the action type:
 								let actionType = ActionTypes.CHANGE
 								switch (e.nativeEvent.inputType) {
@@ -243,7 +198,8 @@ hello`)
 					)}
 				</div>
 			</article>
-			{!props.debugger && (
+			{/* </div> */}
+			{props.debugger && (
 				<Debugger state={state} />
 			)}
 		</Provider>
