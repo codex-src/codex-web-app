@@ -2,6 +2,80 @@ import React from "react"
 import stylex from "stylex"
 import { Markdown } from "./ComponentsText"
 
+// TODO: <script src="prism.js" defer></script>
+
+import "./prismjs.1.9.0.min.js"
+import "./Components.css"
+
+// ABAP            - abap
+// Arduino         - arduino
+// Bash            - bash
+// BASIC           - basic
+// C               - c
+// Clojure         - clojure
+// CoffeeScript    - coffeescript
+// C++             - cpp
+// C#              - csharp
+// CSS             - css
+// Dart            - dart
+// Diff            - diff
+// Docker          - docker
+// Elixir          - elixir
+// Elm             - elm
+// Erlang          - erlang
+// Flow            - flow
+// Fortran         - fortran
+// F#              - fsharp
+// Gherkin         - gherkin
+// GLSL            - glsl
+// Go              - go
+// GraphQL         - graphql
+// Groovy          - groovy
+// Haskell         - haskell
+// HTML            - markup
+// Java            - java
+// JavaScript      - javascript
+// JSON            - json
+// Kotlin          - kotlin
+// LaTeX           - latex
+// Less            - less
+// Lisp            - lisp
+// LiveScript      - livescript
+// Lua             - lua
+// Makefile        - makefile
+// Markdown        - markdown
+// Markup          - ?? markup?
+// MATLAB          - matlab
+// Nix             - nix
+// Objective-C     - objectivec
+// OCaml           - ocaml
+// Pascal          - pascal
+// Perl            - perl
+// PHP             - php
+// Plain Text      - ??
+// PowerShell      - powershell
+// Prolog          - prolog
+// Python          - python
+// R               - r
+// Reason          - reason
+// Ruby            - ruby
+// Rust            - rust
+// Sass            - sass
+// Scala           - scala
+// Scheme          - scheme
+// Scss            - scss
+// Shell           - ?? shell-session or powershell?
+// SQL             - sql
+// Swift           - swift
+// TypeScript      - typescript
+// VB.Net          - vbnet
+// Verilog         - verilog
+// VHDL            - vhdl
+// Visual Basic    - visual-basic
+// WebAssembly     - wasm
+// XML             - ?? markup?
+// YAML            - yaml
+
 export const Header = props => (
 	<div style={stylex.parse("fw:700")}>
 		<Markdown start={props.start}>
@@ -41,29 +115,82 @@ export const Blockquote = props => (
 )
 
 // https://cdpn.io/PowjgOg
-export const CodeBlock = props => (
-	<div
-		style={{
-			...stylex.parse("m-x:-24 p-x:24 b:gray-50"),
-			boxShadow: "0px 0px 1px hsl(var(--gray))",
-		}}
-	>
-		{props.children.map((each, index) => (
-			<div key={index}>
-				<Markdown
-					start={!index && props.start}
-					end={index + 1 === props.children.length && props.end}
-				>
-					{each.data || (
-						index > 0 && index + 1 < props.children.length && (
-							<br />
-						)
-					)}
+export function CodeBlock(props) {
+	let html = ""
+	if (props.lang && window.Prism.languages[props.lang]) {
+		html = window.Prism.highlight(props.code, window.Prism.languages[props.lang], props.lang)
+	}
+	const className = `language-${props.lang}`
+	return (
+		<div
+			className="prismjs"
+			style={{
+				...stylex.parse("m-x:-24 p-x:24"),
+				boxShadow: "0px 0px 1px hsl(var(--gray))",
+			}}
+		>
+			<div>
+				<Markdown style={stylex.parse("c:gray")} start={props.start + props.lang} end={props.end}>
+					<div>
+						{!html && (
+							<span>
+								{props.code}
+							</span>
+						) || (
+							<code className={className} dangerouslySetInnerHTML={{
+								__html: html,
+							}} />
+						)}
+						<br />
+					</div>
 				</Markdown>
 			</div>
-		))}
-	</div>
-)
+		</div>
+	)
+}
+
+// // https://cdpn.io/PowjgOg
+// export const CodeBlock = props => (
+// 	<div
+// 		style={{
+// 			...stylex.parse("m-x:-24 p-x:24 b:gray-50"),
+// 			boxShadow: "0px 0px 1px hsl(var(--gray))",
+// 		}}
+// 	>
+// 		<Markdown start={props.start + props.lang} end={props.end}>
+// 			<div>
+// 				{props.children || (
+// 					<br />
+// 				)}
+// 			</div>
+// 		</Markdown>
+// 	</div>
+// )
+
+// // https://cdpn.io/PowjgOg
+// export const CodeBlock = props => (
+// 	<div
+// 		style={{
+// 			...stylex.parse("m-x:-24 p-x:24 b:gray-50"),
+// 			boxShadow: "0px 0px 1px hsl(var(--gray))",
+// 		}}
+// 	>
+// 		{props.children.map((each, index) => (
+// 			<div key={index}>
+// 				<Markdown
+// 					start={!index && props.start}
+// 					end={index + 1 === props.children.length && props.end}
+// 				>
+// 					{each.data || (
+// 						index > 0 && index + 1 < props.children.length && (
+// 							<br />
+// 						)
+// 					)}
+// 				</Markdown>
+// 			</div>
+// 		))}
+// 	</div>
+// )
 
 export const Paragraph = props => (
 	<div>
@@ -78,15 +205,6 @@ export const Break = props => (
 		<Markdown start={props.start} />
 	</div>
 )
-
-export const componentMap = {
-	[Header.type]:     "Header",
-	[Comment.type]:    "Comment",
-	[Blockquote.type]: "Blockquote",
-	[CodeBlock.type]:  "CodeBlock",
-	[Paragraph.type]:  "Paragraph",
-	[Break.type]:      "Break",
-}
 
 // // Comment (asterisk):
 // { regex: /^\/\*(.*?(?:.*\n)*?.*?)\*\/(.*)/,
@@ -203,11 +321,9 @@ export function parseComponents(data) {
 			) {
 				components.push((
 					<CodeBlock key={key} start="```" end="```">
-						{[
-							{
-								data: substr.slice(3, -3),
-							},
-						]}
+						{substr.slice(3, -3)}{/* || ( */}
+							{/* <br /> */}
+						{/* )} */}
 					</CodeBlock>
 				))
 			// Multiline code block:
@@ -216,7 +332,7 @@ export function parseComponents(data) {
 				substr.slice(0, 3) === "```" &&
 				index + 1 < nodes.length // Has more nodes
 			) {
-				// TODO: Lex extension
+				const lang = substr.slice(3)
 				const from = index
 				let to = from
 				to++
@@ -231,18 +347,19 @@ export function parseComponents(data) {
 					index = from
 					break
 				}
-				const slice = nodes.slice(from, to + 1) // One-based
+				const code = nodes.slice(from + 1, to).join("\n")
 				components.push((
-					<CodeBlock key={key} start={substr} end="```">
-						{slice.map((each, index) => (
-							{
-								// TODO: Add start and end.
-								data: !index || index + 1 === slice.length
-									? ""    // Start and end nodes
-									: each, // Center nodes
-							}
-						))}
-					</CodeBlock>
+					// <CodeBlock key={key} start={substr} end="```" lang={lang}>
+					// 	{slice.map((each, index) => (
+					// 		{
+					// 			// TODO: Add start and end.
+					// 			data: !index || index + 1 === slice.length
+					// 				? ""    // Start and end nodes
+					// 				: each, // Center nodes
+					// 		}
+					// 	))}
+					// </CodeBlock>
+					<CodeBlock key={key} start="```" end="```" lang={lang} code={code} />
 				))
 				index = to
 				break

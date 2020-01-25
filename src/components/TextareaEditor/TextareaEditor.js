@@ -1,10 +1,10 @@
 // import CSSDebugger from "utils/CSSDebugger"
+// import StatusBar from "./StatusBar"
 import ActionTypes from "./ActionTypes"
 import Debugger from "./Debugger"
 import onKeyDown from "./onKeyDown"
 import React from "react"
 import ReactDOM from "react-dom"
-import StatusBar from "./StatusBar"
 import stylex from "stylex"
 import useTextareaEditor from "./TextareaEditorReducer"
 
@@ -35,17 +35,36 @@ export function TextareaEditor(props) {
 	const isPointerDown = React.useRef()
 
 	// const [state, dispatch] = useTextareaEditor(props.initialValue)
-	const [state, dispatch] = useTextareaEditor(`Hello, world!
+	const [state, dispatch] = useTextareaEditor(`# Hello, world!
 
 \`\`\`jsx
-const HelloWorld = props => (
-	<p>
-		Hello, world!
-	</p>
+const AppContainer = props => (
+	<DebugCSS>
+		<div style={stylex.parse("flex -c -y:between h:max")}>
+			<div style={stylex.parse("b:white")}>
+				<Nav />
+				<main style={stylex.parse("p-x:24 p-y:80 flex -r -x:center")}>
+					<div style={stylex.parse("w:1024 no-min-w")}>
+						{props.children}
+					</div>
+				</main>
+			</div>
+			<Footer />
+		</div>
+	</DebugCSS>
 )
 \`\`\`
 
-Hello, world!`)
+## Hello, world!
+
+\`\`\`js
+{
+  "compilerOptions": { "baseUrl": "src" },
+  "include": ["src"]
+}
+\`\`\`
+
+### Hello, world!`)
 
 	// https://github.com/facebook/react/issues/8514
 	React.useLayoutEffect(
@@ -157,6 +176,7 @@ Hello, world!`)
 							},
 
 							onKeyDown: e => {
+								// TODO: Add detab.
 								switch (true) {
 								case onKeyDown.isTab(e):
 									e.preventDefault()
@@ -172,9 +192,11 @@ Hello, world!`)
 								// Get the action type:
 								let actionType = ActionTypes.CHANGE
 								switch (e.nativeEvent.inputType) {
+								case "cut":
 								case "deleteByCut":
 									actionType = ActionTypes.CUT
 									break
+								case "paste":
 								case "insertFromPaste":
 									actionType = ActionTypes.PASTE
 									break
@@ -189,12 +211,12 @@ Hello, world!`)
 							onCopy: dispatch.copy,
 
 							// spellCheck: state.spellCheck,
-							// spellCheck: false,
+							spellCheck: false,
 						},
 					)}
 				</div>
 			</article>
-			<StatusBar />
+			{/* <StatusBar /> */}
 			{/* </div> */}
 			{!props.debugger && (
 				<Debugger state={state} />

@@ -31,7 +31,7 @@ function getDuration(state) {
 	return { count, desc: "minute" }
 }
 
-// TODO: Upgrade to UTF-8.
+// TODO: Upgrade getters to count UTF-8 characters.
 function getStatusInfo(state) {
 	const metrics = {
 		// line: getLine(state),                   // TODO

@@ -11,6 +11,7 @@
 @import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600,600i&display=swap&subset=latin-ext";
 
 pre,
+code,
 textarea {
 	-webkit-font-smoothing:  auto !important;
 	-moz-osx-font-smoothing: auto !important;

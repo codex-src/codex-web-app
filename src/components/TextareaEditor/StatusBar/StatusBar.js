@@ -14,19 +14,19 @@ function pluralFormat({ count, desc }) {
 	return `${commaFormat({ count })} ${desc}${count === 1 ? "" : "s"}`
 }
 
-// Computes left-hand side (LHS).
-function computeLHS({ line, column, selectedLines, selectedCharacters }) {
-	if (selectedCharacters.count) {
-		if (selectedLines.count < 2) {
-			return `Selected ${pluralFormat(selectedCharacters)}`
-		}
-		return `Selected ${pluralFormat(selectedLines)}, ${pluralFormat(selectedCharacters)}`
-	}
-	return `Line ${commaFormat(line)}, column ${commaFormat(column)}`
-}
+// // Gets left-hand side (LHS) status info.
+// function getLHSStatusInfo({ line, column, selectedLines, selectedCharacters }) {
+// 	if (selectedCharacters.count) {
+// 		if (selectedLines.count < 2) {
+// 			return `Selected ${pluralFormat(selectedCharacters)}`
+// 		}
+// 		return `Selected ${pluralFormat(selectedLines)}, ${pluralFormat(selectedCharacters)}`
+// 	}
+// 	return `Line ${commaFormat(line)}, column ${commaFormat(column)}`
+// }
 
-// Computes right-hand side (RHS).
-function computeRHS({ words, duration }) {
+// Gets right-hand side (RHS) status info.
+function getRHSStatusInfo({ words, duration }) {
 	if (duration.count < 2) {
 		return pluralFormat(words)
 	}
@@ -59,12 +59,12 @@ function StatusBar(props) {
 						<Text>
 							TODO
 						</Text>
-						{/* TODO: Add the current editing operation? */}
+						{/* TODO: Add the current operation? */}
 					</div>
 
 					<div style={stylex.parse("flex -r -y:center")}>
 						<Text>
-							{computeRHS(status)}
+							{getRHSStatusInfo(status)}
 						</Text>
 						<div style={stylex.parse("w:6.25")} />
 						<Icon icon={Feather.Hash} />
