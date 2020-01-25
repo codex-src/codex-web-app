@@ -51,7 +51,7 @@ hello`)
 	}, [state.data])
 
 	// Should render React components:
-	React.useEffect(
+	React.useLayoutEffect(
 		React.useCallback(() => {
 			const t1 = Date.now()
 			ReactDOM.render(<TextareaComponents components={state.components} />, reactDOM.current, () => {

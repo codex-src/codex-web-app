@@ -76,7 +76,10 @@ const reducer = state => ({
 	},
 	//
 	parse() {
+		const t1 = Date.now()
 		state.components = parseComponents(state.data)
+		const t2 = Date.now()
+		console.log(`parser=${t2 - t1}`)
 		state.shouldRenderComponents++
 	},
 	storeUndo() {
