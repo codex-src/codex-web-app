@@ -1,3 +1,5 @@
+/* https://fonts.google.com/specimen/Fira+Code */
+
 /* https://fonts.google.com/specimen/Roboto+Mono */
 @import "https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i&display=swap&subset=latin-ext";
 
@@ -6,12 +8,12 @@
 
 pre,
 textarea {
-	-webkit-font-smoothing:  auto !important;
-	-moz-osx-font-smoothing: auto !important;
+	/* -webkit-font-smoothing:  auto !important; */
+	/* -moz-osx-font-smoothing: auto !important; */
 
 	moz-tab-size:   2 !important;
 	tab-size:       2 !important;
-	font:           500 16px/1.625 "IBM Plex Mono", "monospace", "system-ui" !important;
+	font:           500 14px/1.625 "Fira Code", "IBM Plex Mono", "monospace", "system-ui" !important;
 }
 
 pre {

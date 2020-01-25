@@ -72,10 +72,13 @@ hello`)
 	React.useEffect( // TODO: useLayoutEffect?
 		React.useCallback(() => {
 			let [pos1, pos2] = getCoords()
-			if (pos1.y < 0) {
+			console.log(pos1.y, pos2.y)
+			if (pos1.y < 0 && pos2.y >= window.innerHeight) { // XOR
+				// No-op
+			} else if (pos1.y < 0) {
 				window.scrollBy(0, pos1.y)
 				;[pos1, pos2] = getCoords() // Refresh
-			} else if (pos2.y > window.innerHeight) {
+			} else if (pos2.y >= window.innerHeight) {
 				window.scrollBy(0, pos2.y - window.innerHeight)
 				;[pos1, pos2] = getCoords() // Refresh
 			}
