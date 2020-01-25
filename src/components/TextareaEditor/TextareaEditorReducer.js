@@ -3,37 +3,31 @@ import useMethods from "use-methods"
 import { parseComponents } from "./Components"
 
 const initialState = {
-	// Actions:
 	actionType: "",             // The editing operation type
 	actionTimestamp: 0,         // The editing operation timestamp
-	//                          //
-	// Textarea:                //
+	                            //
 	isFocused: false,           // Is the editor focused?
 	data: "",                   // The plain text data
 	pos1: 0,                    // The start cursor
 	pos2: 0,                    // The end cursor
 	coords: null,               // The cursor coordinates
-	//                          //
-	// Parser:                  //
+	                            //
 	components: null,           // The parsed React components
-	shouldSetSelectionRange: 0, // Should set (reset) the selection range?
-	//                          //
-	// Undo and redo:           //
-	didCorrectPos: false,       // Did correct the selection range on the first write?
+	shouldRenderComponents: 0,  // Should render React components? (hook)
+	shouldRenderCursor: 0,      // Should render the DOM cursor? (hook)
+	                            //
+	didOffsetPos: false,        // Did offset the selection range? (once)
 	history: null,              // The history state stack
 	historyIndex: 0,            // The history state stack index
-
-	// //                          //
-	// // TODO: Move to props?     //
-	// spellCheck: false,          // New flag
-	// previewMode: false,         // New flag
-	// osxFontSmoothing: false,    // New flag
-	// textareaOnly: false,        // New flag
-	// showWhiteSpace: false,      // New flag
+	                            //
+	// spellCheck: false,       // New flag
+	// previewMode: false,      // New flag
+	// osxFontSmoothing: false, // New flag
+	// textareaOnly: false,     // New flag
+	// showWhiteSpace: false,   // New flag
 }
 
 const reducer = state => ({
-	// Actions:
 	newAction(actionType) {
 		const actionTimestamp = Date.now()
 		if (actionType === ActionTypes.SELECT && actionTimestamp - state.actionTimestamp < 100) {
@@ -42,8 +36,6 @@ const reducer = state => ({
 		}
 		Object.assign(state, { actionType, actionTimestamp })
 	},
-	//
-	// Textarea:
 	focus() {
 		this.newAction(ActionTypes.FOCUS)
 		state.isFocused = true
@@ -61,11 +53,11 @@ const reducer = state => ({
 	},
 	change(actionType, data, pos1, pos2) {
 		this.newAction(actionType)
-		// if (!state.historyIndex && !state.didCorrectPos) {
-		// 	state.history[0].pos1 = state.pos1
-		// 	state.history[0].pos2 = state.pos2
-		// 	state.didCorrectPos = true
-		// }
+		if (!state.historyIndex && !state.didOffsetPos) {
+			state.history[0].pos1 = state.pos1
+			state.history[0].pos2 = state.pos2
+			state.didOffsetPos = true
+		}
 		this.dropRedos()
 		Object.assign(state, { data, pos1, pos2 })
 		this.parse()
@@ -74,7 +66,7 @@ const reducer = state => ({
 	// 	const _value = state.data.slice(0, state.pos1) + data + state.data.slice(state.pos2)
 	// 	const pos1 = state.pos1 + data.length
 	// 	this.change(ActionTypes.INSERT, _value, pos1, pos1)
-	// 	state.shouldSetSelectionRange++
+	// 	state.shouldRenderCursor++
 	// },
 	tab() {
 		this.insert("\t")
@@ -83,12 +75,10 @@ const reducer = state => ({
 		this.newAction(ActionTypes.COPY)
 	},
 	//
-	// Parser:
 	parse() {
 		state.components = parseComponents(state.data)
+		state.shouldRenderComponents++
 	},
-	//
-	// Undo and redo:
 	storeUndo() {
 		const undo = state.history[state.historyIndex]
 		if (undo.data === state.data) {
@@ -107,13 +97,13 @@ const reducer = state => ({
 		if (!state.historyIndex) {
 			// No-op
 			return
-		} // else if (state.historyIndex === 1 && state.didCorrectPos) {
-		// 	state.didCorrectPos = false
-		// }
+		} else if (state.historyIndex === 1 && state.didOffsetPos) {
+			state.didOffsetPos = false
+		}
 		state.historyIndex--
 		const undo = state.history[state.historyIndex]
 		Object.assign(state, undo)
-		state.shouldSetSelectionRange++
+		state.shouldRenderCursor++
 		this.parse()
 	},
 	redo() {
@@ -125,7 +115,7 @@ const reducer = state => ({
 		state.historyIndex++
 		const redo = state.history[state.historyIndex]
 		Object.assign(state, redo)
-		state.shouldSetSelectionRange++
+		state.shouldRenderCursor++
 		this.parse()
 	},
 })

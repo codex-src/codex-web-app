@@ -1,14 +1,19 @@
+// import CSSDebugger from "utils/CSSDebugger"
 import ActionTypes from "./ActionTypes"
-import CSSDebugger from "utils/CSSDebugger"
 import Debugger from "./Debugger"
 import onKeyDown from "./onKeyDown"
 import React from "react"
+import ReactDOM from "react-dom"
 import stylex from "stylex"
 import useTextareaEditor from "./TextareaEditorReducer"
 
 import "./TextareaEditor.css"
 
 const Context = React.createContext()
+
+function TextareaComponents(props) {
+	return props.components
+}
 
 // TODO:
 //
@@ -21,10 +26,11 @@ const Context = React.createContext()
 // - HTML components
 //
 function TextareaEditor(props) {
-	const readOnly  = React.useRef() // eslint-disable-line
-	const readWrite = React.useRef() // eslint-disable-line
+	const reactDOM = React.useRef() // eslint-disable-line
+	const pre      = React.useRef() // eslint-disable-line
+	const span     = React.useRef() // eslint-disable-line
+	const textarea = React.useRef() // eslint-disable-line
 
-	const span = React.useRef()
 	const isPointerDown = React.useRef()
 
 	// const [state, dispatch] = useTextareaEditor(props.initialValue)
@@ -38,18 +44,30 @@ hello
 
 hello`)
 
-	// Set dynamic height for read-write textarea:
+	// Set dynamic height textarea:
 	React.useLayoutEffect(() => {
-		const { height } = readOnly.current.getBoundingClientRect()
-		readWrite.current.style.height = `${height}px`
+		const { height } = pre.current.getBoundingClientRect()
+		textarea.current.style.height = `${height}px`
 	}, [state.data])
 
-	// Should set the selection range:
+	// Should render React components:
+	React.useEffect(
+		React.useCallback(() => {
+			const t1 = Date.now()
+			ReactDOM.render(<TextareaComponents components={state.components} />, reactDOM.current, () => {
+				const t2 = Date.now()
+				console.log(`render=${t2 - t1}`)
+			})
+		}, [state]),
+		[state.shouldRenderComponents],
+	)
+
+	// Should render the DOM cursor:
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			readWrite.current.setSelectionRange(state.pos1, state.pos2)
+			textarea.current.setSelectionRange(state.pos1, state.pos2)
 		}, [state]),
-		[state.shouldSetSelectionRange],
+		[state.shouldRenderCursor],
 	)
 
 	// Update coords **after** updating pos1 and pos2:
@@ -61,22 +79,15 @@ hello`)
 			const start = rects[0]              // Top left; start
 			const end = rects[rects.length - 1] // Bottom right; end
 			const coords = {
-				pos1: {
-					x: start.x,
-					y: start.y,
-				},
-				pos2: {
-					x: end.x + end.width,
-					y: end.y + end.height,
-					// y: end.y + (end.height || 16 * 1.375), // Fix for WebKit/Safari,
-				},
+				pos1: { x: start.x, y: start.y },
+				pos2: { x: end.x + end.width, y: end.y + end.height },
+				// y: end.y + (end.height || ...), // Fix for WebKit/Safari,
 			}
 			dispatch.select(state.pos1, state.pos2, coords)
 		}, [state, dispatch]),
 		[state.pos1, state.pos2],
 	)
 
-	// TODO: Refactor to useHistory()?
 	React.useEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -99,30 +110,27 @@ hello`)
 	return (
 		// <CSSDebugger>
 			<Provider value={[state, dispatch]}>
-				<article
-					style={{
-						...stylex.parse("relative"),
-						// transform: state.isFocused && "translateZ(0px)",
-					}}
-				>
-					{/* Components: */}
-					<pre style={stylex.parse("no-pointer-events")}>
-						{state.components}
-					</pre>
+				{/* transform: state.isFocused && "translateZ(0px)" */}
+				<article style={stylex.parse("relative")}>
+					{/* React DOM: */}
+					<pre ref={reactDOM} style={stylex.parse("no-pointer-events")} />
+					{/* pre: */}
 					<div style={{ ...stylex.parse("absolute -x -y no-pointer-events"), visibility: "hidden" }}>
-						<pre ref={readOnly} style={stylex.parse("c:blue -a:10%")}>
+						<pre ref={pre} style={stylex.parse("c:blue -a:10%")}>
 							{state.data.slice(0, state.pos1)}
+							{/* span: */}
 							<span ref={span}>
 								{state.data.slice(state.pos1, state.pos2)}
 							</span>
 							{`${state.data.slice(state.pos2)}\n`}
 						</pre>
 					</div>
+					{/* textarea: */}
 					<div style={stylex.parse("absolute -x -y pointer-events")}>
 						{React.createElement(
 							"textarea",
 							{
-								ref: readWrite,
+								ref: textarea,
 
 								style: stylex.parse("c:red -a:1%"),
 
@@ -132,7 +140,7 @@ hello`)
 								onBlur:  dispatch.blur,
 
 								onSelect: e => {
-									const { selectionStart, selectionEnd } = readWrite.current
+									const { selectionStart, selectionEnd } = textarea.current
 									dispatch.select(selectionStart, selectionEnd)
 								},
 
@@ -147,7 +155,7 @@ hello`)
 									// No-op
 										return
 									}
-									const { selectionStart, selectionEnd } = readWrite.current
+									const { selectionStart, selectionEnd } = textarea.current
 									dispatch.select(selectionStart, selectionEnd)
 								},
 
@@ -157,18 +165,18 @@ hello`)
 
 								onKeyDown: e => {
 									switch (true) {
-									// case onKeyDown.isTab(e):
-									// 	e.preventDefault()
-									// 	dispatch.tab()
-									// 	break
+									case onKeyDown.isTab(e):
+										e.preventDefault()
+										document.execCommand("insertText", false, "\t")
+										return
 									case onKeyDown.isUndo(e):
 										e.preventDefault()
 										dispatch.undo()
-										break
+										return
 									case onKeyDown.isRedo(e):
 										e.preventDefault()
 										dispatch.redo()
-										break
+										return
 									default:
 									// No-op
 										break
@@ -197,7 +205,7 @@ hello`)
 									// No-op
 										break
 									}
-									const { selectionStart, selectionEnd } = readWrite.current
+									const { selectionStart, selectionEnd } = textarea.current
 									dispatch.change(actionType, e.target.value, selectionStart, selectionEnd)
 								},
 
@@ -209,7 +217,7 @@ hello`)
 						)}
 					</div>
 				</article>
-				{props.debugger && (
+				{!props.debugger && (
 					<Debugger state={state} />
 				)}
 			</Provider>
