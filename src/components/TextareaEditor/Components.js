@@ -114,40 +114,36 @@ export const Blockquote = props => (
 	</div>
 )
 
-// https://cdpn.io/PowjgOg
-export function CodeBlock(props) {
+export const CodeBlock = React.memo(props => {
 	let html = ""
-	if (props.lang && window.Prism.languages[props.lang]) {
-		html = window.Prism.highlight(props.code, window.Prism.languages[props.lang], props.lang)
+	if (window.Prism && props.lang && window.Prism.languages[props.lang]) {
+		try {
+			html = window.Prism.highlight(props.children, window.Prism.languages[props.lang], props.lang)
+		} catch (e) {
+			console.warn(e)
+		}
 	}
-	const className = `language-${props.lang}`
 	return (
-		<div
-			className="prismjs"
-			style={{
-				...stylex.parse("m-x:-24 p-x:24"),
-				boxShadow: "0px 0px 1px hsl(var(--gray))",
-			}}
-		>
-			<div>
-				<Markdown style={stylex.parse("c:gray")} start={props.start + props.lang} end={props.end}>
-					<div>
-						{!html && (
-							<span>
-								{props.code}
-							</span>
-						) || (
-							<code className={className} dangerouslySetInnerHTML={{
-								__html: html,
-							}} />
-						)}
-						<br />
-					</div>
-				</Markdown>
-			</div>
+		<div style={{ ...stylex.parse("m-x:-24 p-x:24"), boxShadow: "0px 0px 1px hsl(var(--gray))" }}>
+			<Markdown style={stylex.parse("c:gray")} start={"```" + props.lang} end="```">
+				<div>
+					{!html ? (
+						// Plain text:
+						<code>
+							{props.children}
+						</code>
+					) : (
+						// Code:
+						<code dangerouslySetInnerHTML={{
+							__html: html,
+						}} />
+					)}
+					<br />
+				</div>
+			</Markdown>
 		</div>
 	)
-}
+})
 
 // // https://cdpn.io/PowjgOg
 // export const CodeBlock = props => (
@@ -319,6 +315,7 @@ export function parseComponents(data) {
 				substr.slice(0, 3) === "```" && // Start syntax
 				substr.slice(-3) === "```"      // End syntax
 			) {
+				// TODO
 				components.push((
 					<CodeBlock key={key} start="```" end="```">
 						{substr.slice(3, -3)}{/* || ( */}
@@ -344,23 +341,11 @@ export function parseComponents(data) {
 				}
 				// Guard unterminated code blocks:
 				if (to === nodes.length) {
-					index = from
+					index = from // Reset
 					break
 				}
 				const code = nodes.slice(from + 1, to).join("\n")
-				components.push((
-					// <CodeBlock key={key} start={substr} end="```" lang={lang}>
-					// 	{slice.map((each, index) => (
-					// 		{
-					// 			// TODO: Add start and end.
-					// 			data: !index || index + 1 === slice.length
-					// 				? ""    // Start and end nodes
-					// 				: each, // Center nodes
-					// 		}
-					// 	))}
-					// </CodeBlock>
-					<CodeBlock key={key} start="```" end="```" lang={lang} code={code} />
-				))
+				components.push(<CodeBlock key={key} lang={lang}>{code}</CodeBlock>)
 				index = to
 				break
 			}

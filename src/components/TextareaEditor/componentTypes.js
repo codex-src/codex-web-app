@@ -8,12 +8,12 @@ import {
 } from "./Components"
 
 const componentTypes = {
-	[Header.type]:     "Header",
-	[Comment.type]:    "Comment",
-	[Blockquote.type]: "Blockquote",
-	[CodeBlock.type]:  "CodeBlock",
-	[Paragraph.type]:  "Paragraph",
-	[Break.type]:      "Break",
+	[Header]:     "Header",
+	[Comment]:    "Comment",
+	[Blockquote]: "Blockquote",
+	[CodeBlock]:  "CodeBlock",
+	[Paragraph]:  "Paragraph",
+	[Break]:      "Break",
 }
 
 export default componentTypes

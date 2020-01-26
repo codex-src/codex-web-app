@@ -1,13 +1,24 @@
 import componentTypes from "./componentTypes"
+import CSSDebugger from "utils/CSSDebugger"
 import React from "react"
 import reactElementReplacer from "./reactElementReplacer"
 import stylex from "stylex"
+import { Context } from "./TextareaEditor"
 
-function Debugger({ state }) {
+const style = {
+	whiteSpace: "pre-wrap",
+	MozTabSize: 2,
+	tabSize: 2,
+	font: "12px/1.375 'Monaco'",
+	overflowWrap: "break-word",
+}
+
+function Debugger(props) {
+	const [state] = React.useContext(Context)
 	return (
-		<React.Fragment>
-			<div style={stylex.parse("h:24")} />
-			<div style={{ ...stylex.parse("pre-wrap"), MozTabSize: 2, tabSize: 2, font: "12px/1.375 'Monaco'", overflowWrap: "break-word" }}>
+		<CSSDebugger>
+			{props.children}
+			<div style={{ ...stylex.parse("m-t:24"), ...style }}>
 				{JSON.stringify(
 					{
 						...state,
@@ -17,7 +28,7 @@ function Debugger({ state }) {
 					"\t",
 				)}
 			</div>
-		</React.Fragment>
+		</CSSDebugger>
 	)
 }
 
