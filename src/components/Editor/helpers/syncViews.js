@@ -1,6 +1,6 @@
 import areEqualTrees from "./areEqualTrees"
 
-// replaceWith replaces a node with a clone of another node.
+// Replaces a node with a clone of another node (if needed).
 function replaceWith(nodeA, nodeB, attr) {
 	nodeA.setAttribute(attr, nodeB.getAttribute(attr))
 	if (nodeA.isEqualNode(nodeB) && areEqualTrees(nodeA, nodeB)) {

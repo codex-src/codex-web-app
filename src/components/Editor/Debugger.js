@@ -1,32 +1,45 @@
+import CSSDebugger from "utils/CSSDebugger"
 import React from "react"
 import stylex from "stylex"
 
-function Debugger({ state }) {
-	const isInSync = state.data === state.nodes.map(each => each.data).join("\n")
-	if (!isInSync) {
-		alert("data and state.nodes are out of sync")
-	}
-	return (
-		<React.Fragment>
-			<div style={stylex.parse("h:28")} />
-			<div style={{ ...stylex.parse("pre-wrap"), tabSize: 2, font: "12px/1.375 'Monaco'" }}>
+// const isInSync = props.state.data === props.state.nodes.map(each => each.data).join("\n")
+// if (!isInSync) {
+// 	alert("`data` and `nodes` are out of sync!")
+// }
+
+const Debugger = props => (
+	!props.on ? (
+		props.children
+	) : (
+		<CSSDebugger>
+			{props.children}
+			<div style={{ ...stylex.parse("m-t:28 pre-wrap"), MozTabSize: 2, tabSize: 2, font: "12px/1.375 'Monaco'" }}>
 				{JSON.stringify(
 					{
-						__isInSync__: isInSync,
-
-						...state,
-
-						components: undefined,
-						reactDOM:   undefined,
-
-						nodes: state.nodes.map(each => each.data)
+						nodes: props.state.nodes,
+						start: props.state.start,
+						end:   props.state.end,
+						reset: props.state.reset,
 					},
 					null,
 					"\t",
 				)}
 			</div>
-		</React.Fragment>
+		</CSSDebugger>
 	)
-}
+)
+
+// {JSON.stringify(
+// 	{
+// 		...props.state,
+//
+// 		components: undefined,
+// 		reactDOM:   undefined,
+//
+// 		// nodes: undefined, // props.state.nodes.map(each => each.data)
+// 	},
+// 	null,
+// 	"\t",
+// )}
 
 export default Debugger

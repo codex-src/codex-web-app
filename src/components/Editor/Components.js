@@ -65,6 +65,7 @@ export const Blockquote = React.memo(({ reactKey, ...props }) => (
 )) // , compoundAreEqual)
 
 const codeStyle = {
+	MozTabSize: 2,
 	tabSize: 2,
 	font: "15px/1.375 'Monaco', 'monospace'", // 14.25?
 }
@@ -74,7 +75,7 @@ export const CodeBlock = React.memo(({ reactKey, ...props }) => (
 	<div
 		id={reactKey}
 		style={{
-			...stylex.parse("m-x:-24 p-y:16 pre b:gray-50 overflow -x:scroll"),
+			...stylex.parse("m-x:-24 p-x:24 pre b:gray-50 overflow -x:scroll"),
 			...codeStyle,
 			boxShadow: "0px 0px 1px hsl(var(--gray))",
 		}}
@@ -83,8 +84,8 @@ export const CodeBlock = React.memo(({ reactKey, ...props }) => (
 		spellCheck={false}
 	>
 		{props.children.map((each, index) => (
-			<div key={each.key} id={each.key} style={stylex.parse("p-x:24")} data-node>
-				<code style={{ ...stylex.parse("m-r:-24 p-r:24"), ...codeStyle }}>
+			<div key={each.key} id={each.key} data-node>
+				<span style={{ ...stylex.parse("m-r:-24 p-r:24"), ...codeStyle }}>
 					<Markdown
 						startSyntax={!index && props.startSyntax}
 						endSyntax={index + 1 === props.children.length && props.endSyntax}
@@ -95,7 +96,7 @@ export const CodeBlock = React.memo(({ reactKey, ...props }) => (
 							)
 						)}
 					</Markdown>
-				</code>
+				</span>
 			</div>
 		))}
 	</div>

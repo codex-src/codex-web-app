@@ -15,6 +15,9 @@ const style = {
 
 function Debugger(props) {
 	const [state] = React.useContext(Context)
+	if (props.off) {
+		return props.children
+	}
 	return (
 		<CSSDebugger>
 			{props.children}

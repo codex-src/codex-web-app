@@ -1,1 +1,1 @@
-export { default } from "./TextareaEditorApp" // "./App"
+export { default } from "./EditorApp" // "./App"

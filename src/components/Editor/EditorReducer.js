@@ -19,17 +19,17 @@ const OpTypes = new Enum(
 )
 
 const initialState = {
-	opType: "",                // The editing operation type
-	opTimestamp: 0,            // The editing operation timestamp
-	hasFocus: false,           // Is the editor focused?
-	data: "",                  // The plain text data
-	nodes: null,               // The parsed nodes
-	start: null,               // The start cursor
-	end: null,                 // The end cursor
-	reset: null,               // The reset cursor key and offset
-	components: null,          // The parsed React components
-	reactDOM: null,            // The React DOM (unmounted)
-	shouldRenderComponents: 0, // Should render components hook
+	opType: "",       // The editing operation type
+	opTimestamp: 0,   // The editing operation timestamp
+	hasFocus: false,  // Is the editor focused?
+	data: "",         // The plain text data
+	nodes: null,      // The parsed nodes
+	start: null,      // The start cursor
+	end: null,        // The end cursor
+	reset: null,      // The reset cursor key and offset
+	components: null, // The parsed React components
+	reactDOM: null,   // The React DOM (unmounted)
+	shouldRender: 0,  // Should render? (hook)
 }
 
 const reducer = state => ({
@@ -64,7 +64,7 @@ const reducer = state => ({
 	render() {
 		const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
 		state.components = parseComponents(nodes)
-		state.shouldRenderComponents++
+		state.shouldRender++
 	},
 })
 

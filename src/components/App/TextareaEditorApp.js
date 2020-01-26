@@ -366,20 +366,18 @@ function TextareaEditorApp(props) {
 	// const [state, dispatch] = Editor.useEditor(data)
 
 	return (
-		// <DebugCSS>
-			<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
-				<div style={stylex.parse("w:768 no-min-w")}>
-					<TextareaEditor
-						initialValue={data}
-						// state={state}
-						// dispatch={dispatch}
-						// scrollPastEnd
-						// statusBar
-						debugger
-					/>
-				</div>
+		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
+			<div style={{ ...stylex.parse("no-min-w"), width: "120ch" }}>
+				<TextareaEditor
+					initialValue={data}
+					// state={state}
+					// dispatch={dispatch}
+					// scrollPastEnd
+					// statusBar
+					debugger
+				/>
 			</div>
-		// </DebugCSS>
+		</div>
 	)
 }
 

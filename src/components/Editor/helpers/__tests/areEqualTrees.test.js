@@ -21,6 +21,46 @@ describe("group 1", () => {
 })
 
 describe("group 2", () => {
+	test("", () => {
+		const Component1 = props => (
+			<div memo={0}>
+				<br />
+			</div>
+		)
+		const Component2 = props => (
+			<div memo={1}>
+				<br />
+			</div>
+		)
+		const rootNode1 = renderDOM(<Component1 />)
+		const rootNode2 = renderDOM(<Component2 />)
+		expect(areEqualTrees(rootNode1, rootNode2)).toBe(true)
+	})
+})
+
+// describe("group 3", () => {
+// 	test("", () => {
+// 		const Component1 = props => (
+// 			<div memo={0}>
+// 				<br>
+// 					<br />
+// 				</br>
+// 			</div>
+// 		)
+// 		const Component2 = props => (
+// 			<div memo={1}>
+// 				<br>
+// 					<br />
+// 				</br>
+// 			</div>
+// 		)
+// 		const rootNode1 = renderDOM(<Component1 />)
+// 		const rootNode2 = renderDOM(<Component2 />)
+// 		expect(areEqualTrees(rootNode1, rootNode2)).toBe(true)
+// 	})
+// })
+
+describe("group 4", () => {
 	// NOTE: Use {" "} to create three text nodes.
 	test("", () => {
 		const Component1 = props => (
@@ -58,7 +98,7 @@ describe("group 2", () => {
 	})
 })
 
-describe("group 3", () => {
+describe("group 5", () => {
 	test("", () => {
 		const Component1 = props => (
 			<div>
