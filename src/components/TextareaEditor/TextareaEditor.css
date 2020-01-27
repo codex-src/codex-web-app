@@ -1,14 +1,8 @@
-/* https://fonts.google.com/specimen/Source+Code+Pro */
-@import "https://fonts.googleapis.com/css?family=Source+Code+Pro:400,400i,600,600i&display=block&subset=latin-ext";
+/* @import "https://fonts.googleapis.com/css?family=Source+Code+Pro:400,400i,600,600i&display=block&subset=latin-ext"; */
+/* @import "https://fonts.googleapis.com/css?family=Fira+Code:400,600&display=block&subset=latin-ext"; */
+/* @import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600,600i&display=block&subset=latin-ext"; */
 
-/* https://fonts.google.com/specimen/Fira+Code */
-@import "https://fonts.googleapis.com/css?family=Fira+Code:400,600&display=block&subset=latin-ext";
-
-/* https://fonts.google.com/specimen/Roboto+Mono */
-@import "https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,600,600i&display=block&subset=latin-ext";
-
-/* https://fonts.google.com/specimen/IBM+Plex+Mono */
-@import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600,600i&display=block&subset=latin-ext";
+@import "https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i&display=block&subset=latin-ext";
 
 pre,
 code,
@@ -16,15 +10,17 @@ textarea {
 	-webkit-font-smoothing:  auto !important;
 	-moz-osx-font-smoothing: auto !important;
 
-	moz-tab-size:   2 !important;
-	tab-size:       2 !important;
-	font:           400 16px/1.5 "Fira Code", "Roboto Mono", "IBM Plex Mono", "monospace", "system-ui" !important;
+	moz-tab-size:  2 !important;
+	tab-size:      2 !important;
+	/* font:       400 16px/1.5 "Fira Code", "Roboto Mono", "IBM Plex Mono", "monospace", "system-ui" !important; */
+	font:          400 16px/1.5 "Roboto Mono", "monospace" !important;
+	/*letter-spacing: 0 !important;*/
 }
 
 pre {
-	white-space:    pre-wrap !important;
-	color:          hsl(var(--gray-800)) !important;
-	overflow-wrap:  break-word !important;
+	white-space:   pre-wrap !important;
+	color:         hsl(var(--gray-800)) !important;
+	overflow-wrap: break-word !important;
 }
 pre::selection,
 pre *::selection {
@@ -33,10 +29,10 @@ pre *::selection {
 
 /* overflow-y: hidden; */
 textarea {
-	display:        block !important;
-	caret-color:    hsl(var(--blue-a400)) !important;
-	width:          100% !important;
-	outline:        none !important;
+	display:       block !important;
+	caret-color:   hsl(var(--blue-a400)) !important;
+	width:         100% !important;
+	outline:       none !important;
 }
 textarea::selection {
   background: hsla(var(--blue-a400), 0.25) !important;

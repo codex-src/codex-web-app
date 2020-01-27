@@ -170,7 +170,7 @@ function Editor(props) {
 	)
 
 	return (
-		<Debugger state={state}>
+		<Debugger state={state} on>
 			{React.createElement(
 				"div",
 				{
@@ -268,7 +268,6 @@ function Editor(props) {
 						}
 						// Get the reset key and offset:
 						const selection = document.getSelection()
-						console.log(selection)
 						const keyNode = getKeyNode(selection.anchorNode)
 						const offset = getOffsetFromRange(keyNode, selection.anchorNode, selection.anchorOffset)
 						const reset = { key: keyNode.id, offset }

@@ -43,7 +43,7 @@ function EditorApp(props) {
 
 	return (
 		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
-			<div style={{ ...stylex.parse("no-min-w"), width: "100ch" }}>
+			<div style={{ ...stylex.parse("no-min-w"), width: "80ch" }}>
 				<Editor
 					initialValue={data}
 					// state={state}

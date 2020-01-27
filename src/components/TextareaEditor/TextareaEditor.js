@@ -1,4 +1,3 @@
-// import StatusBar from "./StatusBar"
 import ActionTypes from "./ActionTypes"
 import Debugger from "./Debugger"
 import onKeyDown from "./onKeyDown"
@@ -68,6 +67,16 @@ const AppContainer = props => (
 
 ### Hello, world!`)
 
+	React.useLayoutEffect(() => {
+		window.addEventListener("resize", () => {
+			console.log("test")
+		})
+	}, [])
+
+	// React.useLayoutEffect(() => {
+	// 	console.log(window.devicePixelRatio)
+	// }, [window.devicePixelRatio])
+
 	// https://github.com/facebook/react/issues/8514
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -133,7 +142,7 @@ const AppContainer = props => (
 					<pre ref={reactDOM} style={stylex.parse("no-pointer-events")} />
 					{/* pre: */}
 					<div style={{ ...stylex.parse("absolute -x -y no-pointer-events"), visibility: "hidden" }}>
-						<pre ref={pre} style={stylex.parse("c:blue -a:10%")}>
+						<pre ref={pre}>
 							{state.data.slice(0, state.pos1)}
 							<span ref={span}>
 								{state.data.slice(state.pos1, state.pos2)}
@@ -149,7 +158,7 @@ const AppContainer = props => (
 								ref: textarea,
 
 								// style: { color: "transparent" },
-								style: stylex.parse("c:red -a:10%"),
+								style: stylex.parse("c:black -a:5%"),
 
 								onFocus: dispatch.focus,
 								onBlur:  dispatch.blur,
@@ -179,9 +188,8 @@ const AppContainer = props => (
 								},
 
 								onKeyDown: e => {
-									// TODO: Add detab.
 									switch (true) {
-									case onKeyDown.isTab(e):
+									case !e.ctrlKey && e.key === "Tab":
 										e.preventDefault()
 										document.execCommand("insertText", false, "\t")
 										return
