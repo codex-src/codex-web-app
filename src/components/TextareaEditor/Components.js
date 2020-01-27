@@ -116,7 +116,7 @@ export const Blockquote = props => (
 
 export const CodeBlock = React.memo(props => {
 	let html = ""
-	if (window.Prism && props.lang && window.Prism.languages[props.lang]) {
+	if (props.lang && window.Prism && window.Prism.languages[props.lang]) {
 		try {
 			html = window.Prism.highlight(props.children, window.Prism.languages[props.lang], props.lang)
 		} catch (e) {
@@ -125,21 +125,16 @@ export const CodeBlock = React.memo(props => {
 	}
 	return (
 		<div style={{ ...stylex.parse("m-x:-24 p-x:24"), boxShadow: "0px 0px 1px hsl(var(--gray))" }}>
-			<Markdown style={stylex.parse("c:gray")} start={"```" + props.lang} end="```">
-				<div>
-					{!html ? (
-						// Plain text:
-						<code>
-							{props.children}
-						</code>
-					) : (
-						// Code:
-						<code dangerouslySetInnerHTML={{
-							__html: html,
-						}} />
-					)}
-					<br />
-				</div>
+			<Markdown style={stylex.parse("c:gray")} start={`\`\`\`${props.lang}`} end="```">
+				{!html ? (
+					<code>
+						{props.children}
+					</code>
+				) : (
+					<code dangerouslySetInnerHTML={{
+						__html: html,
+					}} />
+				)}
 			</Markdown>
 		</div>
 	)
@@ -317,10 +312,8 @@ export function parseComponents(data) {
 			) {
 				// TODO
 				components.push((
-					<CodeBlock key={key} start="```" end="```">
-						{substr.slice(3, -3)}{/* || ( */}
-							{/* <br /> */}
-						{/* )} */}
+					<CodeBlock key={key} lang="">
+						{substr.slice(3, -3)}
 					</CodeBlock>
 				))
 			// Multiline code block:
@@ -344,7 +337,8 @@ export function parseComponents(data) {
 					index = from // Reset
 					break
 				}
-				const code = nodes.slice(from + 1, to).join("\n")
+				// const code = nodes.slice(from + 1, to).join("\n")
+				const code = nodes.slice(from, to + 1).join("\n").slice(3 + lang.length, -3)
 				components.push(<CodeBlock key={key} lang={lang}>{code}</CodeBlock>)
 				index = to
 				break
