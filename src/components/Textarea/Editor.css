@@ -1,9 +1,8 @@
-/* @import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,700,700i&display=block&subset=latin-ext"; */
+@import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,700,700i&display=block&subset=latin-ext";
+/* @import "https://fonts.googleapis.com/css?family=Fira+Code:400,700&display=block&subset=latin-ext"; */
+/* @import "https://fonts.googleapis.com/css?family=Fira+Mono:400,700&display=block&subset=latin-ext"; */
 /* @import "https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i&display=block&subset=latin-ext"; */
 /* @import "https://fonts.googleapis.com/css?family=Source+Code+Pro:400,400i,700,700i&display=block&subset=latin-ext"; */
-
-/* @import "https://fonts.googleapis.com/css?family=Fira+Mono:400,700&display=block&subset=latin-ext"; */
-@import "https://fonts.googleapis.com/css?family=Fira+Code:400,700&display=block&subset=latin-ext";
 
 pre,
 code,
@@ -13,7 +12,7 @@ textarea {
 
 	moz-tab-size:  2 !important;
 	tab-size:      2 !important;
-	font:          16px/1.5 "Fira Code", "monospace" !important;
+	font:          16px/1.5 "IBM Plex Mono", "monospace" !important;
 }
 
 pre {

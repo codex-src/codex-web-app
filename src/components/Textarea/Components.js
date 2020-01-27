@@ -211,9 +211,16 @@ export function parseComponents(data) {
 				break
 			}
 			break
-		// Break:
+		// Break (1):
 		case "-":
 			if (length === 3 && substr.slice(0, 3) === "---") {
+				const start = substr
+				components.push(<Break key={key} start={start} />)
+			}
+			break
+		// Break (2):
+		case "*":
+			if (length === 3 && substr.slice(0, 3) === "***") {
 				const start = substr
 				components.push(<Break key={key} start={start} />)
 			}
