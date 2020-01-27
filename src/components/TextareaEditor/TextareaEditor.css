@@ -7,14 +7,12 @@
 pre,
 code,
 textarea {
-	-webkit-font-smoothing:  auto !important;
-	-moz-osx-font-smoothing: auto !important;
+	/*-webkit-font-smoothing:  auto !important;*/
+	/*-moz-osx-font-smoothing: auto !important;*/
 
 	moz-tab-size:  2 !important;
 	tab-size:      2 !important;
-	/* font:       400 16px/1.5 "Fira Code", "Roboto Mono", "IBM Plex Mono", "monospace", "system-ui" !important; */
 	font:          400 16px/1.5 "Roboto Mono", "monospace" !important;
-	/*letter-spacing: 0 !important;*/
 }
 
 pre {

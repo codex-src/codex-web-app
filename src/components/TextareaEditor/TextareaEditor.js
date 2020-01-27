@@ -1,6 +1,6 @@
+// import onKeyDown from "./onKeyDown"
 import ActionTypes from "./ActionTypes"
 import Debugger from "./Debugger"
-import onKeyDown from "./onKeyDown"
 import React from "react"
 import ReactDOM from "react-dom"
 import stylex from "stylex"
@@ -67,15 +67,17 @@ const AppContainer = props => (
 
 ### Hello, world!`)
 
-	React.useLayoutEffect(() => {
-		window.addEventListener("resize", () => {
-			console.log("test")
-		})
-	}, [])
+	const [onresize, setonresize] = React.useState(0)
 
-	// React.useLayoutEffect(() => {
-	// 	console.log(window.devicePixelRatio)
-	// }, [window.devicePixelRatio])
+	React.useLayoutEffect(() => {
+		const h = () => {
+			setonresize(onresize => onresize + 1)
+		}
+		window.addEventListener("resize", h)
+		return () => {
+			window.removeEventListener("resize", h)
+		}
+	}, [])
 
 	// https://github.com/facebook/react/issues/8514
 	React.useLayoutEffect(
@@ -89,7 +91,7 @@ const AppContainer = props => (
 	React.useLayoutEffect(() => {
 		const { height } = pre.current.getBoundingClientRect()
 		textarea.current.style.height = `${height}px`
-	}, [state.data])
+	}, [state.data, onresize])
 
 	// Gets cursor position coordinates.
 	const getCoords = () => {
