@@ -170,7 +170,7 @@ function Editor(props) {
 	)
 
 	return (
-		<Debugger state={state} on>
+		<Debugger state={state}>
 			{React.createElement(
 				"div",
 				{
