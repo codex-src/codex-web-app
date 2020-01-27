@@ -69,6 +69,7 @@ const AppContainer = props => (
 
 	const [onresize, setonresize] = React.useState(0)
 
+	// Force resize textarea -- once:
 	React.useLayoutEffect(() => {
 		const h = () => {
 			setonresize(onresize => onresize + 1)
@@ -78,6 +79,17 @@ const AppContainer = props => (
 			window.removeEventListener("resize", h)
 		}
 	}, [])
+
+	// Force render (syntax highlighting) -- once:
+	React.useLayoutEffect(() => {
+		const h = () => {
+			dispatch.render()
+		}
+		window.addEventListener("DOMContentLoaded", h)
+		return () => {
+			window.removeEventListener("DOMContentLoaded", h)
+		}
+	}, [dispatch])
 
 	// https://github.com/facebook/react/issues/8514
 	React.useLayoutEffect(

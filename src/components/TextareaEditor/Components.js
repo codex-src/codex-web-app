@@ -2,79 +2,7 @@ import React from "react"
 import stylex from "stylex"
 import { Markdown } from "./ComponentsText"
 
-// TODO: <script src="prism.js" defer></script>
-
-import "./prismjs.1.9.0.min.js"
 import "./Components.css"
-
-// ABAP            - abap
-// Arduino         - arduino
-// Bash            - bash
-// BASIC           - basic
-// C               - c
-// Clojure         - clojure
-// CoffeeScript    - coffeescript
-// C++             - cpp
-// C#              - csharp
-// CSS             - css
-// Dart            - dart
-// Diff            - diff
-// Docker          - docker
-// Elixir          - elixir
-// Elm             - elm
-// Erlang          - erlang
-// Flow            - flow
-// Fortran         - fortran
-// F#              - fsharp
-// Gherkin         - gherkin
-// GLSL            - glsl
-// Go              - go
-// GraphQL         - graphql
-// Groovy          - groovy
-// Haskell         - haskell
-// HTML            - markup
-// Java            - java
-// JavaScript      - javascript
-// JSON            - json
-// Kotlin          - kotlin
-// LaTeX           - latex
-// Less            - less
-// Lisp            - lisp
-// LiveScript      - livescript
-// Lua             - lua
-// Makefile        - makefile
-// Markdown        - markdown
-// Markup          - ?? markup?
-// MATLAB          - matlab
-// Nix             - nix
-// Objective-C     - objectivec
-// OCaml           - ocaml
-// Pascal          - pascal
-// Perl            - perl
-// PHP             - php
-// Plain Text      - ??
-// PowerShell      - powershell
-// Prolog          - prolog
-// Python          - python
-// R               - r
-// Reason          - reason
-// Ruby            - ruby
-// Rust            - rust
-// Sass            - sass
-// Scala           - scala
-// Scheme          - scheme
-// Scss            - scss
-// Shell           - ?? shell-session or powershell?
-// SQL             - sql
-// Swift           - swift
-// TypeScript      - typescript
-// VB.Net          - vbnet
-// Verilog         - verilog
-// VHDL            - vhdl
-// Visual Basic    - visual-basic
-// WebAssembly     - wasm
-// XML             - ?? markup?
-// YAML            - yaml
 
 export const Header = props => (
 	<div style={stylex.parse("fw:700")}>
@@ -95,12 +23,6 @@ export const Comment = props => (
 		</Markdown>
 	</div>
 )
-
-// {each || (
-// 	!(each.start + each) && (
-// 		<br />
-// 	)
-// )}
 
 export const Blockquote = props => (
 	<div>
@@ -312,7 +234,7 @@ export function parseComponents(data) {
 			) {
 				// TODO
 				components.push((
-					<CodeBlock key={key} lang="">
+					<CodeBlock key={key} ready={!!window.Prism} lang="">
 						{substr.slice(3, -3)}
 					</CodeBlock>
 				))
@@ -339,7 +261,7 @@ export function parseComponents(data) {
 				}
 				// const code = nodes.slice(from + 1, to).join("\n")
 				const code = nodes.slice(from, to + 1).join("\n").slice(3 + lang.length, -3)
-				components.push(<CodeBlock key={key} lang={lang}>{code}</CodeBlock>)
+				components.push(<CodeBlock key={key} ready={!!window.Prism} lang={lang}>{code}</CodeBlock>)
 				index = to
 				break
 			}

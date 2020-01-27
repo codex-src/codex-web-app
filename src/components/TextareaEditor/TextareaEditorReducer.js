@@ -49,7 +49,7 @@ const reducer = state => ({
 	change(actionType, data, pos1, pos2) {
 		this.newAction(actionType)
 		Object.assign(state, { data, pos1, pos2 })
-		this.parse()
+		this.render()
 	},
 	tab() {
 		this.insert("\t")
@@ -58,7 +58,7 @@ const reducer = state => ({
 		this.newAction(ActionTypes.COPY)
 	},
 	//
-	parse() {
+	render() {
 		// const t1 = Date.now()
 		state.components = parseComponents(state.data)
 		// const t2 = Date.now()
