@@ -23,6 +23,9 @@
 .token.deleted {
 	color: #905;
 }
+.language-diff .token.deleted {
+	background: #9051;
+}
 
 .token.selector,
 .token.attr-name,
@@ -32,6 +35,9 @@
 .token.inserted {
 	color: #690;
 }
+.language-diff .token.inserted {
+	background: #6901;
+}
 
 .token.operator,
 .token.entity,
@@ -39,7 +45,6 @@
 .language-css .token.string,
 .style .token.string {
 	color: #9a6e3a;
-	background: hsla(0, 0%, 100%, .5);
 }
 
 .token.atrule,

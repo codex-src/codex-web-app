@@ -3,7 +3,7 @@ import CSSDebugger from "utils/CSSDebugger"
 import React from "react"
 import reactElementReplacer from "./reactElementReplacer"
 import stylex from "stylex"
-import { Context } from "./TextareaEditor"
+import { Context } from "./Editor"
 
 const style = {
 	whiteSpace: "pre-wrap",

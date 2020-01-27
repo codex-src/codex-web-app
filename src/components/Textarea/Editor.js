@@ -4,16 +4,25 @@ import Debugger from "./Debugger"
 import React from "react"
 import ReactDOM from "react-dom"
 import stylex from "stylex"
-import useTextareaEditor from "./TextareaEditorReducer"
 
-import "./TextareaEditor.css"
+import "./Editor.css"
 
 // // https://overreacted.io/how-does-the-development-mode-work
 // const __DEV__ = process.env.NODE_ENV !== "production"
 
 export const Context = React.createContext()
 
-function TextareaComponents(props) {
+// Gets cursor coordinates from a span.
+const getCoords = span => {
+	const rects = span.getClientRects()
+	const start = rects[0]
+	const end = rects[rects.length - 1]
+	const pos1 = { x: start.left, y: start.top }
+	const pos2 = { x: end.right, y: end.bottom }
+	return [pos1, pos2]
+}
+
+function Components(props) {
 	return props.components
 }
 
@@ -26,46 +35,14 @@ function TextareaComponents(props) {
 // - Parse emoji?
 // - Preview components
 // - HTML components
+// - Custom cursor?
 //
-export function TextareaEditor(props) {
+export function Editor({ state, dispatch, ...props }) {
 	const reactDOM = React.useRef()
 	const pre = React.useRef()
 	const span = React.useRef()
 	const textarea = React.useRef()
-
 	const isPointerDown = React.useRef()
-
-	// const [state, dispatch] = useTextareaEditor(props.initialValue)
-	const [state, dispatch] = useTextareaEditor(`# Hello, world!
-
-\`\`\`jsx
-const AppContainer = props => (
-	<DebugCSS>
-		<div style={stylex.parse("flex -c -y:between h:max")}>
-			<div style={stylex.parse("b:white")}>
-				<Nav />
-				<main style={stylex.parse("p-x:24 p-y:80 flex -r -x:center")}>
-					<div style={stylex.parse("w:1024 no-min-w")}>
-						{props.children}
-					</div>
-				</main>
-			</div>
-			<Footer />
-		</div>
-	</DebugCSS>
-)
-\`\`\`
-
-## Hello, world!
-
-\`\`\`js
-{
-  "compilerOptions": { "baseUrl": "src" },
-  "include": ["src"]
-}
-\`\`\`
-
-### Hello, world!`)
 
 	const [onresize, setonresize] = React.useState(0)
 
@@ -105,16 +82,6 @@ const AppContainer = props => (
 		textarea.current.style.height = `${height}px`
 	}, [state.data, onresize])
 
-	// Gets cursor position coordinates.
-	const getCoords = () => {
-		const rects = span.current.getClientRects()
-		const start = rects[0]
-		const end = rects[rects.length - 1]
-		const pos1 = { x: start.left, y: start.top }
-		const pos2 = { x: end.right, y: end.bottom }
-		return [pos1, pos2]
-	}
-
 	// Update coords **after** updating pos1 and pos2:
 	React.useEffect( // TODO: useLayoutEffect?
 		React.useCallback(() => {
@@ -122,13 +89,13 @@ const AppContainer = props => (
 				// No-op
 				return
 			}
-			let [pos1, pos2] = getCoords()
+			let [pos1, pos2] = getCoords(span.current)
 			if (pos1.y < 0) {
 				window.scrollBy(0, pos1.y)
-				;[pos1, pos2] = getCoords()
+				;[pos1, pos2] = getCoords(span.current)
 			} else if (pos2.y >= window.innerHeight) {
 				window.scrollBy(0, pos2.y - window.innerHeight)
-				;[pos1, pos2] = getCoords()
+				;[pos1, pos2] = getCoords(span.current)
 			}
 			dispatch.select(state.pos1, state.pos2, { pos1, pos2 })
 		}, [state, dispatch]),
@@ -139,7 +106,7 @@ const AppContainer = props => (
 	React.useEffect( // TODO: useLayoutEffect?
 		React.useCallback(() => {
 			// const t1 = Date.now()
-			ReactDOM.render(<TextareaComponents components={state.components} />, reactDOM.current, () => {
+			ReactDOM.render(<Components components={state.components} />, reactDOM.current, () => {
 				// const t2 = Date.now()
 				// console.log(`render=${t2 - t1}`)
 			})
@@ -186,8 +153,6 @@ const AppContainer = props => (
 									isPointerDown.current = true
 								},
 
-								// Covers WebKit and Gecko (used to be
-								// selectionchange and onSelect):
 								onPointerMove: e => {
 									if (!isPointerDown.current) {
 										// No-op
