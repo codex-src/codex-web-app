@@ -85,18 +85,18 @@ export function Editor({ state, dispatch, ...props }) {
 	// Update coords **after** updating pos1 and pos2:
 	React.useEffect( // TODO: useLayoutEffect?
 		React.useCallback(() => {
-			if (state.pos1 !== state.pos2) {
-				// No-op
-				return
-			}
-			let [pos1, pos2] = getCoords(span.current)
-			if (pos1.y < 0) {
-				window.scrollBy(0, pos1.y)
-				;[pos1, pos2] = getCoords(span.current)
-			} else if (pos2.y >= window.innerHeight) {
-				window.scrollBy(0, pos2.y - window.innerHeight)
-				;[pos1, pos2] = getCoords(span.current)
-			}
+			// if (state.pos1 !== state.pos2) {
+			// 	// No-op
+			// 	return
+			// }
+			const [pos1, pos2] = getCoords(span.current)
+			// if (pos1.y < 0) {
+			// 	window.scrollBy(0, pos1.y)
+			// 	;[pos1, pos2] = getCoords(span.current)
+			// } else if (pos2.y >= window.innerHeight) {
+			// 	window.scrollBy(0, pos2.y - window.innerHeight)
+			// 	;[pos1, pos2] = getCoords(span.current)
+			// }
 			dispatch.select(state.pos1, state.pos2, { pos1, pos2 })
 		}, [state, dispatch]),
 		[state.pos1, state.pos2],
