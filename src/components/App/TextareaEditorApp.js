@@ -46,7 +46,7 @@ function TextareaEditorApp(props) {
 
 	return (
 		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
-			<div style={stylex.parse("w:768 no-min-w")}>
+			<div style={stylex.parse("w:834 no-min-w")}>
 				<Textarea.Editor
 					state={state}
 					dispatch={dispatch}
