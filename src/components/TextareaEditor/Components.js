@@ -36,6 +36,7 @@ export const Blockquote = props => (
 	</div>
 )
 
+// https://cdpn.io/PowjgOg
 export const CodeBlock = React.memo(props => {
 	let html = ""
 	if (props.lang && window.Prism && window.Prism.languages[props.lang]) {
@@ -61,49 +62,6 @@ export const CodeBlock = React.memo(props => {
 		</div>
 	)
 })
-
-// // https://cdpn.io/PowjgOg
-// export const CodeBlock = props => (
-// 	<div
-// 		style={{
-// 			...stylex.parse("m-x:-24 p-x:24 b:gray-50"),
-// 			boxShadow: "0px 0px 1px hsl(var(--gray))",
-// 		}}
-// 	>
-// 		<Markdown start={props.start + props.lang} end={props.end}>
-// 			<div>
-// 				{props.children || (
-// 					<br />
-// 				)}
-// 			</div>
-// 		</Markdown>
-// 	</div>
-// )
-
-// // https://cdpn.io/PowjgOg
-// export const CodeBlock = props => (
-// 	<div
-// 		style={{
-// 			...stylex.parse("m-x:-24 p-x:24 b:gray-50"),
-// 			boxShadow: "0px 0px 1px hsl(var(--gray))",
-// 		}}
-// 	>
-// 		{props.children.map((each, index) => (
-// 			<div key={index}>
-// 				<Markdown
-// 					start={!index && props.start}
-// 					end={index + 1 === props.children.length && props.end}
-// 				>
-// 					{each.data || (
-// 						index > 0 && index + 1 < props.children.length && (
-// 							<br />
-// 						)
-// 					)}
-// 				</Markdown>
-// 			</div>
-// 		))}
-// 	</div>
-// )
 
 export const Paragraph = props => (
 	<div>
@@ -169,26 +127,16 @@ export function parseComponents(data) {
 				(length >= 6 && substr.slice(0, 6) === "##### ") ||
 				(length >= 7 && substr.slice(0, 7) === "###### ")
 			) {
-				const offset = substr.indexOf(" ") + 1
-				components.push((
-					<Header key={key} start={substr.slice(0, offset)}>
-						{substr.slice(offset) || (
-							<br />
-						)}
-					</Header>
-				))
+				const start = substr.slice(0, substr.indexOf(" ") + 1)
+				const children = substr.slice(start.length)
+				components.push(<Header key={key} start={start}>{children}</Header>)
 			}
 			break
 		// Comment:
 		case "/":
 			if (length >= 2 && substr.slice(0, 2) === "//") {
-				components.push((
-					<Comment key={key} start="//">
-						{substr.slice(2) || (
-							<br />
-						)}
-					</Comment>
-				))
+				const children = substr.slice(2)
+				components.push(<Comment key={key} start="//">{children}</Comment>)
 			}
 			break
 		// Single line or multiline blockquote:
@@ -210,6 +158,7 @@ export function parseComponents(data) {
 					}
 					to++
 				}
+				// TODO
 				const slice = nodes.slice(from, to + 1) // One-based
 				components.push((
 					<Blockquote key={key}>
@@ -232,19 +181,14 @@ export function parseComponents(data) {
 				substr.slice(0, 3) === "```" && // Start syntax
 				substr.slice(-3) === "```"      // End syntax
 			) {
-				// TODO
-				components.push((
-					<CodeBlock key={key} ready={!!window.Prism} lang="">
-						{substr.slice(3, -3)}
-					</CodeBlock>
-				))
+				const children = substr.slice(3, -3)
+				components.push(<CodeBlock key={key} defer={!window.Prism} lang="">{children}</CodeBlock>)
 			// Multiline code block:
 			} else if (
 				length >= 3 &&
 				substr.slice(0, 3) === "```" &&
 				index + 1 < nodes.length // Has more nodes
 			) {
-				const lang = substr.slice(3)
 				const from = index
 				let to = from
 				to++
@@ -259,9 +203,9 @@ export function parseComponents(data) {
 					index = from // Reset
 					break
 				}
-				// const code = nodes.slice(from + 1, to).join("\n")
-				const code = nodes.slice(from, to + 1).join("\n").slice(3 + lang.length, -3)
-				components.push(<CodeBlock key={key} ready={!!window.Prism} lang={lang}>{code}</CodeBlock>)
+				const lang = substr.slice(3)
+				const children = nodes.slice(from, to + 1).join("\n").slice(3 + lang.length, -3)
+				components.push(<CodeBlock key={key} defer={!window.Prism} lang={lang}>{children}</CodeBlock>)
 				index = to
 				break
 			}
@@ -269,7 +213,8 @@ export function parseComponents(data) {
 		// Break:
 		case "-":
 			if (length === 3 && substr.slice(0, 3) === "---") {
-				components.push(<Break key={key} start={substr} />)
+				const start = substr
+				components.push(<Break key={key} start={start} />)
 			}
 			break
 		default:
@@ -278,13 +223,8 @@ export function parseComponents(data) {
 		}
 		// Paragraph:
 		if (key === components.length) {
-			components.push((
-				<Paragraph key={key}>
-					{substr || (
-						<br />
-					)}
-				</Paragraph>
-			))
+			const children = substr
+			components.push(<Paragraph key={key}>{children}</Paragraph>)
 		}
 		index++
 	}

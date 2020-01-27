@@ -1,18 +1,17 @@
-/* @import "https://fonts.googleapis.com/css?family=Source+Code+Pro:400,400i,600,600i&display=block&subset=latin-ext"; */
-/* @import "https://fonts.googleapis.com/css?family=Fira+Code:400,600&display=block&subset=latin-ext"; */
-/* @import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,600,600i&display=block&subset=latin-ext"; */
-
-@import "https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i&display=block&subset=latin-ext";
+@import "https://fonts.googleapis.com/css?family=Fira+Code:400,700&display=block&subset=latin-ext";
+/* @import "https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,400i,700,700i&display=block&subset=latin-ext"; */
+/* @import "https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i&display=block&subset=latin-ext"; */
+/* @import "https://fonts.googleapis.com/css?family=Source+Code+Pro:400,400i,700,700i&display=block&subset=latin-ext"; */
 
 pre,
 code,
 textarea {
-	/*-webkit-font-smoothing:  auto !important;*/
-	/*-moz-osx-font-smoothing: auto !important;*/
+	/* -webkit-font-smoothing:  auto !important; */
+	/* -moz-osx-font-smoothing: auto !important; */
 
 	moz-tab-size:  2 !important;
 	tab-size:      2 !important;
-	font:          400 16px/1.5 "Roboto Mono", "monospace" !important;
+	font:          16px/1.5 "Fira Code", "monospace" !important;
 }
 
 pre {
@@ -25,7 +24,6 @@ pre *::selection {
   background: hsla(var(--blue-a400), 0) !important;
 }
 
-/* overflow-y: hidden; */
 textarea {
 	display:       block !important;
 	caret-color:   hsl(var(--blue-a400)) !important;

@@ -150,7 +150,7 @@ const AppContainer = props => (
 	const { Provider } = Context
 	return (
 		<Provider value={[state, dispatch]}>
-			<Debugger off={false}>
+			<Debugger off>
 				<article style={stylex.parse("relative")}>
 					{/* reactDOM: */}
 					<pre ref={reactDOM} style={stylex.parse("no-pointer-events")} />
