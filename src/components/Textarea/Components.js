@@ -1,9 +1,7 @@
-import getPrismJSLang from "./getPrismJSLang"
+import getPrismLang from "./getPrismLang"
 import React from "react"
 import stylex from "stylex"
 import { Markdown } from "./ComponentsText"
-
-import "./Components.css"
 
 export const Header = props => (
 	<div>
@@ -42,7 +40,7 @@ export const Blockquote = props => (
 // NOTE: Uses React.memo because of PrismJS.
 export const CodeBlock = React.memo(props => {
 	let html = ""
-	const lang = getPrismJSLang(props.lang)
+	const lang = getPrismLang(props.lang)
 	if (lang) {
 		try {
 			html = window.Prism.highlight(props.children, lang, props.lang)

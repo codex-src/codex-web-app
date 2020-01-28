@@ -2,7 +2,7 @@
 // language extensions.
 const langMap = {}
 
-function getPrismJSLang(lang) {
+function getPrismLang(lang) {
 	if (!window.Prism || !lang || !langMap[lang]) {
 		return null
 	}
@@ -56,4 +56,4 @@ function getPrismJSLang(lang) {
 	})
 })()
 
-export default getPrismJSLang
+export default getPrismLang
