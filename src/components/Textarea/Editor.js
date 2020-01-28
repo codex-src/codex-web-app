@@ -199,5 +199,3 @@ export function Editor({ state, dispatch, ...props }) {
 		</Provider>
 	)
 }
-
-// <StatusBar />

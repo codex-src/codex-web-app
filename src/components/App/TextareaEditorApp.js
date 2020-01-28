@@ -85,6 +85,37 @@ RETURNING note_id
 + There is no death, there is the Force.
 \`\`\`
 
+All of the following programming languages support syntax highlighting:
+
+- Bash        → \`bash\`
+- C           → \`c\`
+- C++         → \`cpp\`
+- CSS         → \`css\`
+- D           → \`d\`
+- diff        → \`diff\`
+- Docker      → \`docker\`, \`dockerfile\`
+- git         → \`git\`
+- Go          → \`go\`
+- GraphQL     → \`gql\`, \`graphql\`
+- HTML        → \`htm\`, \`html\`
+- HTTP        → \`http\`
+- JavaScript  → \`js\`
+- JSON        → \`json\`
+- Kotlin      → \`kotlin\`
+- PHP         → \`php\`
+- Python      → \`py\`
+- Ruby        → \`rb\`, \`ruby\`
+- Rust        → \`rust\`
+- Sass        → \`sass\`
+- Shell       → \`shell\`
+- SQL         → \`sql\`
+- SVG         → \`svg\`
+- Swift       → \`swift\`
+- TypeScript  → \`ts\`
+- WebAssembly → \`wasm\`
+- XML         → \`xml\`
+- YAML        → \`yml\`, \`yaml\`
+
 ## 📝 Unordered, ordered lists, and checklists
 
 - foo
@@ -111,11 +142,10 @@ RETURNING note_id
 # 📏 Section breaks
 
 ---
-***
-`
+***`
 
-const url = new URL(window.location.href)      // Parse a new URL
-const key = url.searchParams.get("key") // Get the URL key
+const url = new URL(window.location.href) // Parse a new URL
+const key = url.searchParams.get("key")   // Get the URL key
 
 const noteKey = LOCALSTORAGE_KEY + (!key ? "" : `?key=${key}`)
 
