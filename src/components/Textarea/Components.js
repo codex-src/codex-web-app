@@ -29,16 +29,17 @@ export const Comment = props => (
 
 export const Blockquote = props => (
 	<div>
-		{props.children.map((each, index) => (
+		{props.children.split("\n").map((each, index) => (
 			<div key={index}>
-				<Markdown start={each.start}>
-					{each.data}
+				<Markdown start={each.slice(0, 2)}>
+					{each.slice(2)}
 				</Markdown>
 			</div>
 		))}
 	</div>
 )
 
+// NOTE: Uses React.memo because of PrismJS.
 export const CodeBlock = React.memo(props => {
 	let html = ""
 	const lang = getPrismJSLang(props.lang)
@@ -163,17 +164,8 @@ export function parseComponents(data) {
 					to++
 				}
 				// TODO
-				const slice = nodes.slice(from, to + 1) // One-based
-				components.push((
-					<Blockquote key={key}>
-						{slice.map(each => (
-							{
-								start: each.slice(0, 2),
-								data:  each.slice(2),
-							}
-						))}
-					</Blockquote>
-				))
+				const children = nodes.slice(from, to + 1).join("\n") // One-based
+				components.push(<Blockquote key={key}>{children}</Blockquote>)
 				index = to
 			}
 			break
@@ -208,7 +200,7 @@ export function parseComponents(data) {
 					break
 				}
 				const lang = substr.slice(3)
-				const children = nodes.slice(from, to + 1).join("\n").slice(3 + lang.length, -3)
+				const children = nodes.slice(from, to + 1).join("\n").slice(3 + lang.length, -3) // One-based
 				components.push(<CodeBlock key={key} defer={!window.Prism} lang={lang}>{children}</CodeBlock>)
 				index = to
 				break

@@ -128,7 +128,7 @@ export function Editor({ state, dispatch, ...props }) {
 								ref: textarea,
 
 								// style: { color: "transparent" },
-								style: stylex.parse("c:black -a:5%"),
+								style: stylex.parse("c:black -a:2.5%"),
 
 								onFocus: dispatch.focus,
 								onBlur:  dispatch.blur,

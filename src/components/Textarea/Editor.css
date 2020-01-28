@@ -10,7 +10,7 @@ textarea {
 
 	moz-tab-size:  2 !important;
 	tab-size:      2 !important;
-	font:          16px/1.5 "IBM Plex Mono", "monospace" !important;
+	font:          16px/1.5 "IBM Plex Mono", "monospace", "system-ui" !important;
 }
 
 pre {
