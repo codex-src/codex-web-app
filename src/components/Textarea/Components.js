@@ -5,12 +5,14 @@ import { Markdown } from "./ComponentsText"
 import "./Components.css"
 
 export const Header = props => (
-	<div style={stylex.parse("fw:700")}>
-		<Markdown start={props.start}>
-			{props.children || (
-				<br />
-			)}
-		</Markdown>
+	<div>
+		<strong>
+			<Markdown start={props.start}>
+				{props.children || (
+					<br />
+				)}
+			</Markdown>
+		</strong>
 	</div>
 )
 
