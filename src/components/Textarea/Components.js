@@ -102,14 +102,6 @@ export const Break = props => (
 // 	<Checklist key={key} children={parseList(offset, matches[1])} /> },
 
 // Parses an array of React components from plain text data.
-//
-// TODO:
-//
-// - Multiline comments (asterisk)? (must be end-to-end)
-// - Unnumbered lists
-// - Numbered lists
-// - Checklists (use GFM syntax)
-//
 export function parseComponents(data) {
 	// const t1 = Date.now() // DELETEME
 	const components = []

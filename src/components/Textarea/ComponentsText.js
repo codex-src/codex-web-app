@@ -22,3 +22,7 @@ export const Markdown = ({ style, ...props }) => (
 		)}
 	</React.Fragment>
 )
+
+// function parseTextComponents(data) {
+// 	return data
+// }
