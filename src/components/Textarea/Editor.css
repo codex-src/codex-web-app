@@ -28,6 +28,7 @@ textarea {
 	caret-color:   hsl(var(--blue-a400)) !important;
 	width:         100% !important;
 	outline:       none !important;
+	overflow-y:    hidden !important; /* Needed */
 }
 textarea::selection {
   background: hsla(var(--blue-a400), 0.25) !important;
