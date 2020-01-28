@@ -26,17 +26,6 @@ function Components(props) {
 	return props.components
 }
 
-// TODO:
-//
-// - Text components
-// - Preview mode (rename from read-only mode)
-// - Support for StatusBar
-// - Parse Unicode horizontal spaces?
-// - Parse emoji?
-// - Preview components
-// - HTML components
-// - Custom cursor?
-//
 export function Editor({ state, dispatch, ...props }) {
 	const reactDOM = React.useRef()
 	const pre = React.useRef()

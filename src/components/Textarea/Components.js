@@ -1,3 +1,4 @@
+import getPrismJSLang from "./getPrismJSLang"
 import React from "react"
 import stylex from "stylex"
 import { Markdown } from "./ComponentsText"
@@ -38,12 +39,12 @@ export const Blockquote = props => (
 	</div>
 )
 
-// https://cdpn.io/PowjgOg
 export const CodeBlock = React.memo(props => {
 	let html = ""
-	if (props.lang && window.Prism && window.Prism.languages[props.lang]) {
+	const lang = getPrismJSLang(props.lang)
+	if (lang) {
 		try {
-			html = window.Prism.highlight(props.children, window.Prism.languages[props.lang], props.lang)
+			html = window.Prism.highlight(props.children, lang, props.lang)
 		} catch (e) {
 			console.warn(e)
 		}
