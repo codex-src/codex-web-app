@@ -1,7 +1,11 @@
 import getPrismLang from "./getPrismLang"
 import React from "react"
 import stylex from "stylex"
-import { Markdown } from "./ComponentsText"
+
+import {
+	Markdown,
+	parseTextComponents as recurse,
+} from "./ComponentsText"
 
 export const Header = props => (
 	<div>
@@ -27,10 +31,10 @@ export const Comment = props => (
 
 export const Blockquote = props => (
 	<div>
-		{props.children.split("\n").map((each, index) => (
+		{props.children.map((each, index) => (
 			<div key={index}>
-				<Markdown start={each.slice(0, 2)}>
-					{each.slice(2)}
+				<Markdown start={each.start}>
+					{each.data}
 				</Markdown>
 			</div>
 		))}
@@ -123,7 +127,7 @@ export function parseComponents(data) {
 				(length >= 7 && substr.slice(0, 7) === "###### ")
 			) {
 				const start = substr.slice(0, substr.indexOf(" ") + 1)
-				const children = substr.slice(start.length)
+				const children = recurse(substr.slice(start.length))
 				components.push(<Header key={key} start={start}>{children}</Header>)
 			}
 			break
@@ -153,9 +157,17 @@ export function parseComponents(data) {
 					}
 					to++
 				}
-				// TODO
-				const children = nodes.slice(from, to + 1).join("\n") // One-based
-				components.push(<Blockquote key={key}>{children}</Blockquote>)
+				const slice = nodes.slice(from, to + 1) // One-based
+				components.push((
+					<Blockquote key={key}>
+						{slice.map(each => (
+							{
+								start: each.slice(0, 2),
+								data:  recurse(each.slice(2)),
+							}
+						))}
+					</Blockquote>
+				))
 				index = to
 			}
 			break
@@ -216,7 +228,7 @@ export function parseComponents(data) {
 		}
 		// Paragraph:
 		if (key === components.length) {
-			const children = substr
+			const children = recurse(substr)
 			components.push(<Paragraph key={key}>{children}</Paragraph>)
 		}
 		index++
