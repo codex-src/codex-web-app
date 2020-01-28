@@ -1,6 +1,7 @@
 // import onKeyDown from "./onKeyDown"
 import ActionTypes from "./ActionTypes"
 import Debugger from "./Debugger"
+import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
 import stylex from "stylex"
@@ -64,6 +65,18 @@ export function Editor({ state, dispatch, ...props }) {
 		}, [state]),
 		[],
 	)
+
+	// WebKit/Chrome progressively jumps to the bottom of the
+	// document when zoomed and not already at the start of
+	// the document; span.getClientRects().
+	React.useEffect(() => {
+		if (!platform.isChrome) {
+			// No-op
+			return
+		}
+		window.scrollBy(0, +1)
+		window.scrollBy(0, -1)
+	}, [])
 
 	// Set textarea height (dynamic -- from pre):
 	React.useLayoutEffect(() => {

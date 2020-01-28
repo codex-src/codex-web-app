@@ -24,7 +24,6 @@ export const Markdown = ({ style, ...props }) => (
 	</React.Fragment>
 )
 
-// TODO: Add to componentTypes?
 export const Emphasis = props => (
 	// <em style={stylex.parse("b:blue-a400 -a:5%")}>
 	<em>
@@ -34,7 +33,6 @@ export const Emphasis = props => (
 	</em>
 )
 
-// TODO: Add to componentTypes?
 export const Strong = props => (
 	// <strong style={stylex.parse("b:blue-a400 -a:5%")}>
 	<strong>
@@ -44,7 +42,6 @@ export const Strong = props => (
 	</strong>
 )
 
-// TODO: Add to componentTypes?
 export const StrongEmphasis = props => (
 	// <strong style={stylex.parse("b:blue-a400 -a:5%")}>
 	<strong>
@@ -56,8 +53,7 @@ export const StrongEmphasis = props => (
 	</strong>
 )
 
-// TODO: Add to componentTypes?
-const Code = props => (
+export const Code = props => (
 	<code style={{ ...stylex.parse("c:blue-a200 br:0.1"), boxShadow: "0px 0px 1px hsl(var(--gray))" }}>
 		<Markdown style={stylex.parse("c:gray")} start="`" end="`" >
 			{props.children}

@@ -7,6 +7,13 @@ import {
 	Paragraph,
 } from "./Components"
 
+import {
+	Code,
+	Emphasis,
+	Strong,
+	StrongEmphasis,
+} from "./ComponentsText"
+
 const componentTypes = {
 	[Header]:         "Header",
 	[Comment]:        "Comment",
@@ -14,6 +21,10 @@ const componentTypes = {
 	[CodeBlock.type]: "CodeBlock",
 	[Paragraph]:      "Paragraph",
 	[Break]:          "Break",
+	[Emphasis]:       "Emphasis",
+	[Strong]:         "Strong",
+	[StrongEmphasis]: "StrongEmphasis",
+	[Code]:           "Code",
 }
 
 export default componentTypes
