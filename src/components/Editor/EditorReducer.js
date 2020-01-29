@@ -62,21 +62,31 @@ const reducer = state => ({
 		Object.assign(state, { coords, reset })
 		this.render()
 	},
-	mozBackspaceNode() {
-		const { key, data: { length: offset } } = state.nodes[state.start.index - 1]
-		const syntheticStart = {
+	FFBackspaceNode() {
+		const { key, data } = state.nodes[state.start.index - 1]
+		const start = {
 			key,
 			index: state.start.index - 1,
-			offset,
+			offset: data.length,
 			pos: state.start.pos - 1,
 		}
-		const reset = { key, offset }
-		write(state, null, syntheticStart, state.end)
+		const reset = { key, offset: data.length }
+		write(state, null, start, state.end)
 		Object.assign(state, { reset })
 		this.render()
 	},
-	mozDeleteNode() {
-		// ...
+	FFDeleteNode() {
+		const { key, data } = state.nodes[state.start.index + 1]
+		const end = {
+			key,
+			index: state.start.index + 1,
+			offset: 0, // Reset
+			pos: state.start.pos + 1,
+		}
+		const reset = { key: state.start.key, offset: state.start.offset } // Idempotent
+		write(state, null, state.start, end)
+		Object.assign(state, { reset })
+		this.render()
 	},
 	render() {
 		const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
@@ -85,7 +95,7 @@ const reducer = state => ({
 	},
 	rendered() {
 		state.didRender++
-	}
+	},
 })
 
 const init = initialValue => initialState => {

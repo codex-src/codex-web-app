@@ -215,18 +215,18 @@ function Editor({ state, dispatch, ...props }) {
 								document.execCommand("insertParagraph", false, null)
 								return
 							// Guard RTL backspace (Gecko/Firefox):
-							case platform.isFirefox && e.key === "Backspace":
-								if (state.start.pos === state.end.pos && state.data[state.start.pos - 1] === "\n") {
+							case platform.isFirefox && state.start.pos === state.end.pos && e.key === "Backspace":
+								if (state.start.pos && state.data[state.start.pos - 1] === "\n") {
 									e.preventDefault()
-									dispatch.mozBackspaceNode()
+									dispatch.FFBackspaceNode()
 									return
 								}
 								break
 							// Guard LTR backspace (Gecko/Firefox):
-							case platform.isFirefox && (isDeleteMacOS(e) || e.key === "Delete"):
-								if (state.start.pos === state.end.pos && state.data[state.start.pos] === "\n") {
+							case platform.isFirefox && state.start.pos === state.end.pos && (isDeleteMacOS(e) || e.key === "Delete"):
+								if (state.start.pos < state.data.length && state.data[state.start.pos] === "\n") {
 									e.preventDefault()
-									dispatch.mozDeleteNode()
+									dispatch.FFDeleteNode()
 									return
 								}
 								break
