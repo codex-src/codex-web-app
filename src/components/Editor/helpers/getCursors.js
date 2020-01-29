@@ -3,7 +3,7 @@ import { getCursorFromKey } from "./getCursorFromKey"
 import { getKeyNode } from "./getKeyNode"
 
 // Gets cursor coordinates from a range.
-function getCoordsFromRange(range) {
+export function getCoordsFromRange(range) {
 	const { left, right, top, bottom } = range.getBoundingClientRect()
 	if (!left && !right && !top && !bottom) {
 		let { startContainer, endContainer } = range
@@ -28,7 +28,7 @@ function getCoordsFromRange(range) {
 
 // Gets the start and end key nodes, (synthetic) cursors,
 // and cursor coordinates.
-function getCursors(nodes) {
+export function getCursors(nodes) {
 	const selection = document.getSelection()
 	const range = selection.getRangeAt(0)
 	// Get the start key node and cursor:
@@ -54,5 +54,3 @@ function getCursors(nodes) {
 	}
 	return cursors
 }
-
-export default getCursors

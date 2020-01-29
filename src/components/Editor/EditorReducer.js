@@ -56,11 +56,11 @@ const reducer = state => ({
 		Object.assign(state, { start, end, coords })
 	},
 	// state.nodes.splice(start.index, end.index - start.index + 1, ...nodes)
-	opInput(nodes, start, end, reset) { // TODO: coords
+	opInput(nodes, start, end, coords, reset) { // TODO: coords
 		this.commitOp(OpTypes.INPUT)
-		// state.nodes.splice(start.index, end.index - start.index + 1, ...nodes)
 		write(state, nodes, start, end)
-		state.reset = reset
+		// state.reset = reset
+		Object.assign(state, { coords, reset })
 		this.render()
 	},
 	render() {

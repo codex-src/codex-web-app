@@ -12,7 +12,7 @@ function replaceWith(nodeA, nodeB, attr) {
 
 // Syncs two DOM trees based on a number attribute.
 function syncViews(viewA, viewB, attr) {
-	let didSync = false // Did synchronize views?
+	let didMutate = false // Did mutate the DOM (viewA)?
 	let index = 0
 	const min = Math.min(viewA.childNodes.length, viewB.childNodes.length)
 	while (index < min) {
@@ -20,7 +20,7 @@ function syncViews(viewA, viewB, attr) {
 		const nodeB = viewB.childNodes[index]
 		if (nodeA.id !== nodeB.id || +nodeA.getAttribute(attr) < +nodeB.getAttribute(attr)) {
 			if (replaceWith(nodeA, nodeB, attr)) {
-				didSync = true
+				didMutate = true
 			}
 		}
 		index++
@@ -31,7 +31,7 @@ function syncViews(viewA, viewB, attr) {
 			viewA.append(viewB.childNodes[index].cloneNode(true))
 			index++
 		}
-		didSync = true
+		didMutate = true
 	// Drop extraneous nodes:
 	} else if (index < viewA.childNodes.length) {
 		let end = viewA.childNodes.length - 1 // Iterate backwards
@@ -39,9 +39,9 @@ function syncViews(viewA, viewB, attr) {
 			viewA.childNodes[end].remove()
 			end--
 		}
-		didSync = true
+		didMutate = true
 	}
-	return didSync
+	return didMutate
 }
 
 export default syncViews

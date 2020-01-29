@@ -1,7 +1,6 @@
-import areEqualTrees from "./helpers/areEqualTrees"
+// import areEqualTrees from "./helpers/areEqualTrees"
 import Context from "./Context"
 import Debugger from "./Debugger"
-import getCursors from "./helpers/getCursors"
 import getOffsetFromRange from "./helpers/getOffsetFromRange"
 import getRangeFromKeyNodeAndOffset from "./helpers/getRangeFromKeyNodeAndOffset"
 import getTarget from "./helpers/getTarget"
@@ -15,52 +14,70 @@ import { getCursorFromKey } from "./helpers/getCursorFromKey"
 import { getKeyNode } from "./helpers/getKeyNode"
 import { innerText } from "./helpers/innerText"
 
+import {
+	getCoordsFromRange,
+	getCursors,
+} from "./helpers/getCursors"
+
 import "./Editor.css"
 
-const SHOW_REACT_PERF = 1
-const SHOW_EQUAL_PERF = 0
+const SCROLL_BUFFER_T = 28.5
+const SCROLL_BUFFER_B = 20 + 28.5
+
+// ;[...ref.current.childNodes].map(each => each.remove())
+// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 
 function EditorContents(props) {
 	return props.components
 }
-
-// ;[...ref.current.childNodes].map(each => each.remove())
-// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 
 function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const isPointerDown = React.useRef()
 	const target = React.useRef()
 
-	// Should render:
+	// E.g. scrollIntoViewIfNeeded
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.hasFocus) {
+				// No-op
+				return
+			}
+			let { coords } = state
+			if (coords.pos1.y < 0) {
+				window.scrollBy(0, -coords.pos1.y - SCROLL_BUFFER_T)
+			} else if (coords.pos2.y >= window.innerHeight - SCROLL_BUFFER_B) {
+				window.scrollBy(0, +coords.pos2.y - window.innerHeight + SCROLL_BUFFER_B)
+			}
+		}, [state]),
+		[state.coords],
+	)
+
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			// Render the React DOM:
-			const t1 = Date.now()
+			// const t1 = Date.now()
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-				const t2 = Date.now()
-				if (SHOW_REACT_PERF) {
-					console.log(`ReactDOM.render=${t2 - t1}`)
-				}
+				// const t2 = Date.now()
+				// console.log(`ReactDOM.render=${t2 - t1}`)
 				if (!state.shouldRender) {
 					syncViews(ref.current, state.reactDOM, "data-memo")
 					return
 				}
-				// Sync the DOM trees:
-				const didSync = syncViews(ref.current, state.reactDOM, "data-memo")
-				if (!didSync) {
-					dispatch.rendered()
+				// Sync the DOM trees (user and React):
+				const didMutate = syncViews(ref.current, state.reactDOM, "data-memo")
+				if (!didMutate) {
+					// No-op
 					return
 				}
-				// Reset the cursor:
 				let keyNode = document.getElementById(state.reset.key)
-				if (platform.isFirefox && keyNode.getAttribute("data-compound-node")) { // Gecko/Firefox
-					keyNode = keyNode.childNodes[0] // **Does not recurse**
+				if (keyNode.getAttribute("data-compound-node")) { // Gecko/Firefox
+					keyNode = keyNode.childNodes[0]
 				}
 				const selection = document.getSelection()
 				const range = document.createRange()
 				let { node, offset } = getRangeFromKeyNodeAndOffset(keyNode, state.reset.offset)
-				if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") {
+				if (platform.isFirefox && node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") {
 					node = node.parentNode
 					offset = 0
 				}
@@ -68,42 +85,39 @@ function Editor({ state, dispatch, ...props }) {
 				range.collapse()
 				selection.removeAllRanges()
 				selection.addRange(range)
-				dispatch.rendered()
 			})
-		}, [state, dispatch]),
+		}, [state]),
 		[state.shouldRender],
 	)
 
-	// Did render (1):
-	React.useEffect(
-		React.useCallback(() => {
-			const t1 = Date.now()
-			const areEqual = areEqualTrees(ref.current, state.reactDOM)
-			const t2 = Date.now()
-			if (SHOW_EQUAL_PERF) {
-				console.log(`areEqualTrees=${t2 - t1}`)
-			}
-			if (areEqual) {
-				// No-op
-				return
-			}
-			throw new Error("Fatal: DOMs are out of sync!")
-		}, [state]),
-		[state.didRender],
-	)
-
-	// Did render (2):
-	React.useEffect(
-		React.useCallback(() => {
-			const data = state.nodes.map(each => each.data).join("\n")
-			if (data === state.data) {
-				// No-op
-				return
-			}
-			throw new Error("Fatal: Plain text data is out of sync!")
-		}, [state]),
-		[state.didRender],
-	)
+	// // Did render (1):
+	// React.useEffect(
+	// 	React.useCallback(() => {
+	// 		// const t1 = Date.now()
+	// 		const areEqual = areEqualTrees(ref.current, state.reactDOM)
+	// 		// const t2 = Date.now()
+	// 		// console.log(`areEqualTrees=${t2 - t1}`)
+	// 		if (areEqual) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		throw new Error("Fatal: DOMs are out of sync!")
+	// 	}, [state]),
+	// 	[state.didRender],
+	// )
+	//
+	// // Did render (2):
+	// React.useEffect(
+	// 	React.useCallback(() => {
+	// 		const data = state.nodes.map(each => each.data).join("\n")
+	// 		if (data === state.data) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		throw new Error("Fatal: Plain text data is out of sync!")
+	// 	}, [state]),
+	// 	[state.didRender],
+	// )
 
 	const { Provider } = Context
 	return (
@@ -210,13 +224,14 @@ function Editor({ state, dispatch, ...props }) {
 								}
 								startIter.next()
 							}
-							// Get the reset key and offset:
+							// Get the cursor coords and cursor reset:
 							const selection = document.getSelection()
 							const keyNode = getKeyNode(selection.anchorNode)
 							const offset = getOffsetFromRange(keyNode, selection.anchorNode, selection.anchorOffset)
 							const reset = { key: keyNode.id, offset }
+							const coords = getCoordsFromRange(selection.getRangeAt(0))
 							// OK:
-							dispatch.opInput(nodes, start, end, reset)
+							dispatch.opInput(nodes, start, end, coords, reset)
 						},
 
 						onCut:   e => e.preventDefault(),
