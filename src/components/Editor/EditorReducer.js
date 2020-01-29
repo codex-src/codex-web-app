@@ -62,6 +62,22 @@ const reducer = state => ({
 		Object.assign(state, { coords, reset })
 		this.render()
 	},
+	mozBackspaceNode() {
+		const { key, data: { length: offset } } = state.nodes[state.start.index - 1]
+		const syntheticStart = {
+			key,
+			index: state.start.index - 1,
+			offset,
+			pos: state.start.pos - 1,
+		}
+		const reset = { key, offset }
+		write(state, null, syntheticStart, state.end)
+		Object.assign(state, { reset })
+		this.render()
+	},
+	mozDeleteNode() {
+		// ...
+	},
 	render() {
 		const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
 		state.components = parseComponents(nodes)
@@ -72,7 +88,6 @@ const reducer = state => ({
 	}
 })
 
-// Initializes the editor state.
 const init = initialValue => initialState => {
 	const nodes = newNodes(initialValue)
 	const state = {

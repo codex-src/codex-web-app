@@ -57,16 +57,16 @@ class KeyNodeIterator {
 			selection.removeAllRanges()
 			// Create a new node:
 			const node = document.createTextNode(nodeValue(nextSibling))
-			const _nextSibling = this.currentNode.cloneNode()
-			_nextSibling.appendChild(node)
-			nextSibling.replaceWith(_nextSibling)
+			const newNextSibling = this.currentNode.cloneNode()
+			newNextSibling.appendChild(node)
+			nextSibling.replaceWith(newNextSibling)
 			// Create and add a range:
 			const range = document.createRange()
 			range.setStart(node, 0)
 			range.collapse()
 			selection.addRange(range)
 			// OK:
-			return _nextSibling
+			return newNextSibling
 		} else if (nextSibling && nextSibling.getAttribute("data-node")) {
 			return nextSibling
 		} else if (nextSibling && nextSibling.getAttribute("data-compound-node")) {

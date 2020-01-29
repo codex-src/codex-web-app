@@ -24,6 +24,23 @@ import "./Editor.css"
 const SCROLL_BUFFER_T = 20 + 28.5
 const SCROLL_BUFFER_B = 28.5 + 20
 
+// const deleteBackwardRegex = /^delete(Content|Word|(Soft|Hard)Line)Backward$/ // eslint-disable no-multi-spaces
+// const deleteForwardRegex  = /^delete(Content|Word|(Soft|Hard)Line)Forward$/  // eslint-disable no-multi-spaces
+
+function isDeleteMacOS(e) {
+	if (!platform.isMacOS) {
+		return false
+	}
+	const ok = (
+		!e.shiftKey &&   // Negate
+		e.ctrlKey &&     // Accept
+		!e.altKey &&     // Negate
+		!e.metaKey &&    // Negate
+		e.keyCode === 68 // 68: D
+	)
+	return ok
+}
+
 // ;[...ref.current.childNodes].map(each => each.remove())
 // ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 
@@ -183,25 +200,36 @@ function Editor({ state, dispatch, ...props }) {
 							} catch (e) {
 								console.warn(e)
 							}
-
-							// TODO: Prevent default on backspace and
-							// delete (with modifier) for Gecko/Firefox
-							// zero value on all browsers -- does mobile
-							// even support modifiers?
-							//
-							// TODO: Arrow down (not touch) at the start
-							// of a multiline code block does not enter a
-							// the first line on Gecko/Firefox
-							//
+							// TODO: Arrow down at the start of a
+							// multiline code block does not enter a the
+							// first line on Gecko/Firefox
 							switch (true) {
-							case !e.shiftKey && e.key === "Tab":
+							// Guard tab:
+							case /* !e.shiftKey && */ e.key === "Tab":
 								e.preventDefault()
-								document.execCommand("insertText", null, "\t")
+								document.execCommand("insertText", false, "\t")
 								return
-							case e.shiftKey && e.key === "Enter":
+							// Guard enter:
+							case /* e.shiftKey && */ e.key === "Enter":
 								e.preventDefault()
-								document.execCommand("insertParagraph", null)
+								document.execCommand("insertParagraph", false, null)
 								return
+							// Guard RTL backspace (Gecko/Firefox):
+							case platform.isFirefox && e.key === "Backspace":
+								if (state.start.pos === state.end.pos && state.data[state.start.pos - 1] === "\n") {
+									e.preventDefault()
+									dispatch.mozBackspaceNode()
+									return
+								}
+								break
+							// Guard LTR backspace (Gecko/Firefox):
+							case platform.isFirefox && (isDeleteMacOS(e) || e.key === "Delete"):
+								if (state.start.pos === state.end.pos && state.data[state.start.pos] === "\n") {
+									e.preventDefault()
+									dispatch.mozDeleteNode()
+									return
+								}
+								break
 							default:
 								// No-op
 								break
@@ -209,13 +237,27 @@ function Editor({ state, dispatch, ...props }) {
 						},
 
 						onInput: e => {
-							let { current: { startIter, start, endIter, end } } = target
+							// switch (true) {
+							// case platform.isFirefox && deleteBackwardRegex.test(e.nativeEvent.inputType):
+							// 	if (state.data[state.start.pos - 1] === "\n") {
+							// 		dispatch.render()
+							// 	}
+							// 	return
+							// case platform.isFirefox && deleteForwardRegex.test(e.nativeEvent.inputType):
+							// 	if (state.data[state.end.pos] === "\n") {
+							// 		dispatch.render()
+							// 	}
+							// 	return
+							// default:
+							// 	// No-op
+							// 	break
+							// }
+							let { startIter, start, endIter, end } = target.current
 							if (platform.isFirefox && !startIter.currentNode.parentNode) { // Gecko/Firefox
 								startIter.currentNode = ref.current.childNodes[0]
 								startIter.currentNode.id = start.key
 							}
-							// Re-extend the start and end key nodes and
-							// cursors (once):
+							// Re-extend the target cursors (once):
 							if (!startIter.count && startIter.getPrev()) {
 								startIter.prev()
 								start = getCursorFromKey(state.nodes, startIter.currentNode.id, start, -1)
