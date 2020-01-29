@@ -3,7 +3,7 @@ import stylex from "stylex"
 
 // FIXME: Is pre needed?
 const Syntax = stylex.Styleable(props => (
-	<span style={stylex.parse("pre c:blue-a400")}>
+	<span style={stylex.parse("pre c:blue-a200")}>
 		{props.children}
 	</span>
 ))
@@ -25,8 +25,8 @@ export const Markdown = ({ style, ...props }) => (
 )
 
 export const Emphasis = props => (
-	// <em style={stylex.parse("b:blue-a400 -a:5%")}>
-	<em>
+	// <em>
+	<em style={stylex.parse("b:blue-a200 -a:5%")}>
 		<Markdown start={props.syntax} end={props.syntax}>
 			{props.children}
 		</Markdown>
@@ -34,8 +34,8 @@ export const Emphasis = props => (
 )
 
 export const Strong = props => (
-	// <strong style={stylex.parse("b:blue-a400 -a:5%")}>
-	<strong>
+	// <strong>
+	<strong style={stylex.parse("b:blue-a200 -a:5%")}>
 		<Markdown start={props.syntax} end={props.syntax}>
 			{props.children}
 		</Markdown>
@@ -43,8 +43,8 @@ export const Strong = props => (
 )
 
 export const StrongEmphasis = props => (
-	// <strong style={stylex.parse("b:blue-a400 -a:5%")}>
-	<strong>
+	// <strong>
+	<strong style={stylex.parse("b:blue-a200 -a:5%")}>
 		<Markdown start={props.syntax.slice(0, 2)} end={props.syntax.slice(1)}>
 			<Markdown start={props.syntax.slice(-1)} end={props.syntax.slice(0, 1)}>
 				{props.children}

@@ -1,15 +1,16 @@
-import invariant from "invariant"
+// import invariant from "invariant"
+import platform from "utils/platform"
 
-const __DEV__ = process.env.NODE_ENV !== "production"
+// const __DEV__ = process.env.NODE_ENV !== "production"
 
 class KeyNodeIterator {
 	constructor(currentNode) {
-		if (__DEV__) {
-			invariant(
-				currentNode.getAttribute("data-node"),
-				"FIXME",
-			)
-		}
+		// if (__DEV__) {
+		// 	invariant(
+		// 		currentNode.getAttribute("data-node"),
+		// 		"FIXME",
+		// 	)
+		// }
 		Object.assign(this, {
 			currentNode, // The current node
 			count: 0,    // The iterated count
@@ -35,7 +36,23 @@ class KeyNodeIterator {
 	}
 	getNext() {
 		const { nextSibling, parentNode } = this.currentNode
-		if (nextSibling && nextSibling.getAttribute("data-node")) {
+		if (platform.isFirefox && nextSibling && nextSibling.nodeType === Node.TEXT_NODE) { // Gecko/Firefox
+			// Get the selection and eagerly drop the range:
+			const selection = document.getSelection()
+			selection.removeAllRanges()
+			// Create a new node:
+			const node = document.createTextNode(nextSibling.nodeValue)
+			const _nextSibling = this.currentNode.cloneNode()
+			_nextSibling.appendChild(node)
+			nextSibling.replaceWith(_nextSibling)
+			// Create and add a range:
+			const range = document.createRange()
+			range.setStart(node, 0)
+			range.collapse()
+			selection.addRange(range)
+			// OK:
+			return _nextSibling
+		} else if (nextSibling && nextSibling.getAttribute("data-node")) {
 			return nextSibling
 		} else if (nextSibling && nextSibling.getAttribute("data-compound-node")) {
 			return nextSibling.childNodes[0]

@@ -118,10 +118,10 @@ function Editor(props) {
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			// Render the React DOM:
-			const t1 = Date.now()
+			// const t1 = Date.now()
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-				const t2 = Date.now()
-				console.log(`react=${t2 - t1}`)
+				// const t2 = Date.now()
+				// console.log(`react=${t2 - t1}`)
 				if (!state.shouldRender) {
 					syncViews(ref.current, state.reactDOM, "data-memo")
 					return
@@ -132,15 +132,18 @@ function Editor(props) {
 				// const startNode = getKeyNode(startContainer)
 				// target.current = getTarget(state.nodes, ref.current, startNode, startNode)
 
-				;[...ref.current.childNodes].map(each => each.remove())
-				ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+				// ;[...ref.current.childNodes].map(each => each.remove())
+				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 
-				// // Sync the DOM trees:
-				// const didSync = syncViews(ref.current, state.reactDOM, "data-memo")
-				// if (!didSync) {
-				// 	// No-op
-				// 	return
-				// }
+				// Sync the DOM trees:
+				const didSync = syncViews(ref.current, state.reactDOM, "data-memo")
+				if (!didSync) {
+					// No-op
+					return
+				}
+
+				// let keyNode0 = document.getElementById(state.reset.key)
+				// console.log(keyNode0)
 
 				// Reset the cursor:
 				let keyNode = document.getElementById(state.reset.key)
@@ -207,6 +210,10 @@ function Editor(props) {
 					},
 
 					onKeyDown: e => {
+						const { startNode, start, endNode, end } = getCursors(state.nodes)
+						dispatch.opSelect(start, end)
+						target.current = getTarget(state.nodes, ref.current, startNode, endNode)
+
 						switch (true) {
 						case e.key === "Tab":
 							e.preventDefault()
