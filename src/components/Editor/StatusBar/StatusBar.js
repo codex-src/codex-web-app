@@ -29,10 +29,10 @@ function getLHSString({ line, column, selectedLines, selectedCharacters }) {
 function getRHSString({ words, duration }) {
 	if (duration.count < 2) {
 		// return `Est. ${pluralFormat(words)}`
-		return pluralFormat(words)
+		return `Est. ${pluralFormat(words)}`
 	}
 	// return `Est. ${pluralFormat(words)}, ${pluralFormat(duration)}`
-	return `${pluralFormat(words)}, ${pluralFormat(duration)}`
+	return `Est. ${pluralFormat(words)}, ${pluralFormat(duration)}`
 }
 
 // const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (

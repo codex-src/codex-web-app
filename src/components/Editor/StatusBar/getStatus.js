@@ -4,7 +4,7 @@ function getLine(state) {
 }
 
 function getColumn(state) {
-	const count = state.end.index + 1
+	const count = state.end.offset + 1
 	return { count, desc: "column" }
 }
 

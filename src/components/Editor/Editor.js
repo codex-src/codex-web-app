@@ -36,18 +36,6 @@ function Editor({ state, dispatch, ...props }) {
 	const isPointerDown = React.useRef()
 	const target = React.useRef()
 
-	// const selection = document.getSelection()
-	// const range = selection.getRangeAt(0)
-	// const coords = getCoordsFromRange(range)
-	// const { start, end } = state.coords
-	// if (
-	// 		start.x === coords.start.x && end.x === coords.end.x &&
-	// 		start.y === coords.start.y && end.y === coords.end.y
-	// 	) {
-	// 	// No-op
-	// 	return
-	// }
-
 	// scrollIntoViewIfNeeded
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -141,7 +129,7 @@ function Editor({ state, dispatch, ...props }) {
 	const { Provider } = Context
 	return (
 		<Provider value={[state, dispatch]}>
-			<Debugger on>
+			<Debugger /* on */>
 				{React.createElement(
 					"div",
 					{
