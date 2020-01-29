@@ -1,6 +1,12 @@
 // import invariant from "invariant"
 import platform from "utils/platform"
 
+import {
+	// innerText,
+	isTextOrBreakElementNode,
+	nodeValue,
+} from "./innerText"
+
 // const __DEV__ = process.env.NODE_ENV !== "production"
 
 class KeyNodeIterator {
@@ -36,12 +42,12 @@ class KeyNodeIterator {
 	}
 	getNext() {
 		const { nextSibling, parentNode } = this.currentNode
-		if (platform.isFirefox && nextSibling && nextSibling.nodeType === Node.TEXT_NODE) { // Gecko/Firefox
+		if (platform.isFirefox && nextSibling && isTextOrBreakElementNode(nextSibling)) { // Gecko/Firefox
 			// Get the selection and eagerly drop the range:
 			const selection = document.getSelection()
 			selection.removeAllRanges()
 			// Create a new node:
-			const node = document.createTextNode(nextSibling.nodeValue)
+			const node = document.createTextNode(nodeValue(nextSibling))
 			const _nextSibling = this.currentNode.cloneNode()
 			_nextSibling.appendChild(node)
 			nextSibling.replaceWith(_nextSibling)

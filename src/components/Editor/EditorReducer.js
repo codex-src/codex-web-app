@@ -30,6 +30,7 @@ const initialState = {
 	components: null, // The parsed React components
 	reactDOM: null,   // The React DOM (unmounted)
 	shouldRender: 0,  // Should render? (hook)
+	didRender: 0,     // Did render? (hook)
 }
 
 const reducer = state => ({
@@ -66,6 +67,9 @@ const reducer = state => ({
 		state.components = parseComponents(nodes)
 		state.shouldRender++
 	},
+	rendered() {
+		state.didRender++
+	}
 })
 
 // Initializes the editor state.
