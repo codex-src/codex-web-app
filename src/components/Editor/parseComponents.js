@@ -135,13 +135,15 @@ function parseComponents(nodes) {
 				break
 			}
 			break
-		// Break:
+		// Break (1):
 		case "-":
-			if (
-				length === 3 && (
-					data.slice(0, 3) === "---" || // Markdown stage 1
-					data.slice(0, 3) === "***"    // Markdown stage 2
-				)) {
+			if (length === 3 && data.slice(0, 3) === "---") {
+				components.push(<Break key={key} reactKey={key} startSyntax={data} />)
+			}
+			break
+		// Break (2):
+		case "*":
+			if (length === 3 && data.slice(0, 3) === "***") {
 				components.push(<Break key={key} reactKey={key} startSyntax={data} />)
 			}
 			break

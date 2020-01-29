@@ -157,7 +157,7 @@ All of the following programming languages support syntax highlighting:
 // const [state, dispatch] = Editor.useEditor(initialValue)
 const EditorApp = props => (
 	<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
-		<div style={{ ...stylex.parse("no-min-w"), width: "80ch" }}>
+		<div style={stylex.parse("w:834 no-min-w")}>
 			<Editor
 				initialValue={initialValue}
 				// state={state}

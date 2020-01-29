@@ -17,8 +17,8 @@ import { innerText } from "./helpers/innerText"
 
 import "./Editor.css"
 
-const SHOW_REACT_PERF = false
-const SHOW_EQUAL_PERF = true
+const SHOW_REACT_PERF = 0
+const SHOW_EQUAL_PERF = 0
 
 // Returns the cursors and start and end key nodes.
 function getCursors(nodes) {
@@ -171,6 +171,8 @@ function Editor(props) {
 					{
 						ref,
 
+						style: { transform: state.hasFocus && "translateZ(0px)" },
+
 						contentEditable: true,
 						suppressContentEditableWarning: true,
 
@@ -178,13 +180,9 @@ function Editor(props) {
 						onBlur:  dispatch.opBlur,
 
 						onSelect: e => {
-							// try { // DELETEME
 							const { startNode, start, endNode, end } = getCursors(state.nodes)
 							dispatch.opSelect(start, end)
 							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
-							// } catch (e) {
-							// 	console.warn(e)
-							// }
 						},
 
 						onPointerDown: e => {
@@ -192,17 +190,13 @@ function Editor(props) {
 						},
 
 						onPointerMove: e => {
-							if (!isPointerDown.current || !state.hasFocus) { // Guard smartphone
+							if (!isPointerDown.current || !state.hasFocus) { // Guard smartphone; touch
 								// No-op
 								return
 							}
-							// try {
 							const { startNode, start, endNode, end } = getCursors(state.nodes)
 							dispatch.opSelect(start, end)
 							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
-							// } catch (e) { // DELETEME
-							// 	console.warn(e)
-							// }
 						},
 
 						onPointerUp: e => {
@@ -210,14 +204,14 @@ function Editor(props) {
 						},
 
 						onKeyDown: e => {
-							// try { // DELETEME
 							const { startNode, start, endNode, end } = getCursors(state.nodes)
 							dispatch.opSelect(start, end)
 							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
-							// } catch (e) {
-							// 	console.warn(e)
-							// }
 
+							// TODO: Prevent default on backspace and
+							// delete (with modifier) for Gecko/Firefox
+							// zero value on all browsers -- does mobile
+							// even support modifiers?
 							switch (true) {
 							case !e.shiftKey && e.key === "Tab":
 								e.preventDefault()
@@ -235,7 +229,6 @@ function Editor(props) {
 
 						onInput: e => {
 							let { current: { startIter, start, endIter, end } } = target
-							// 7b05b73
 							if (platform.isFirefox && !startIter.currentNode.parentNode) { // Gecko/Firefox
 								startIter.currentNode = ref.current.childNodes[0]
 								startIter.currentNode.id = start.key
@@ -276,57 +269,6 @@ function Editor(props) {
 							const reset = { key: keyNode.id, offset }
 							// OK:
 							dispatch.opInput(nodes, start, end, reset)
-
-							// switch (e.nativeEvent.inputType) {
-							// case "historyUndo":
-							// 	// TODO
-							// 	dispatch.render()
-							// 	return
-							// case "historyRedo":
-							// 	// TODO
-							// 	dispatch.render()
-							// 	return
-							// default:
-							// 	// No-op
-							// 	break
-							// }
-							// let { current: { startIter, start, endIter, end } } = target
-							// // Re-extend the start and end key nodes and
-							// // cursors (once):
-							// if (!startIter.count && startIter.getPrev()) {
-							// 	startIter.prev()
-							// 	start = getCursorFromKey(state.nodes, startIter.currentNode.id, start, -1)
-							// } else if (!endIter.count && endIter.getNext()) {
-							// 	endIter.next()
-							// 	end = getCursorFromKey(state.nodes, endIter.currentNode.id, end)
-							// 	const { length } = state.nodes[end.index].data
-							// 	end.offset += length
-							// 	end.pos += length
-							// }
-							// // Get the parsed nodes:
-							// const seenKeys = {}
-							// const nodes = []
-							// while (startIter.currentNode) {
-							// 	let key = startIter.currentNode.id
-							// 	if (!key || seenKeys[key]) {
-							// 		key = random.newUUID()
-							// 		startIter.currentNode.id = key
-							// 	}
-							// 	seenKeys[key] = true
-							// 	const data = innerText(startIter.currentNode)
-							// 	nodes.push({ key, data })
-							// 	if (startIter.currentNode === endIter.currentNode) {
-							// 		break
-							// 	}
-							// 	startIter.next()
-							// }
-							// // Get the reset key and offset:
-							// const selection = document.getSelection()
-							// const keyNode = getKeyNode(selection.anchorNode)
-							// const offset = getOffsetFromRange(keyNode, selection.anchorNode, selection.anchorOffset)
-							// const reset = { key: keyNode.id, offset }
-							// // OK:
-							// dispatch.opInput(nodes, start, end, reset)
 						},
 
 						onCut:   e => e.preventDefault(),

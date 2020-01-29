@@ -1,4 +1,4 @@
-import * as Feather from "react-feather"
+// import * as Feather from "react-feather"
 import Context from "../Context"
 import getStatus from "./getStatus"
 import React from "react"
@@ -28,35 +28,40 @@ function getLHSString({ line, column, selectedLines, selectedCharacters }) {
 // Gets the RHS string.
 function getRHSString({ words, duration }) {
 	if (duration.count < 2) {
-		return `Est. ${pluralFormat(words)}`
+		// return `Est. ${pluralFormat(words)}`
+		return pluralFormat(words)
 	}
-	return `Est. ${pluralFormat(words)}, ${pluralFormat(duration)}`
+	// return `Est. ${pluralFormat(words)}, ${pluralFormat(duration)}`
+	return `${pluralFormat(words)}, ${pluralFormat(duration)}`
 }
 
-const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
-	<Icon style={stylex.parse("wh:12.5")} />
-))
+// const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
+// 	<Icon style={stylex.parse("sw:600 wh:12 c:white")} />
+// ))
 
+// TODO: Does **not** render the same font-weight on Gecko/
+// Firefox
 const Text = stylex.Styleable(props => (
-	<p style={stylex.parse("tnum fs:12.5 ls:0.625% lh:100%")} {...props}>
+	<p style={stylex.parse("tnum fw:600 fs:12 lh:100% c:white")} {...props}>
 		{props.children}
 	</p>
 ))
 
+// boxShadow: "0px -1px hsl(var(--gray-200))"
 function StatusBar(props) {
 	const [state] = React.useContext(Context)
 
 	const status = getStatus(state)
 
 	return (
-		<aside style={{ ...stylex.parse("fixed -x -b b:gray-100 z:1"), boxShadow: "0px -1px hsl(var(--gray-200))" }}>
+		<aside style={stylex.parse("fixed -x -b b:blue-a200 z:1")}>
 			<div style={stylex.parse("p-x:24 flex -r -x:center")}>
-				<div style={stylex.parse("flex -r -x:between w:1440 h:24")}>
+				<div style={stylex.parse("p-y:4 flex -r -x:between w:1440")}>
 
 					{/* LHS: */}
 					<div style={stylex.parse("flex -r -y:center")}>
-						<Icon icon={Feather.Scissors} />
-						<div style={stylex.parse("w:6.25")} />
+						{/* <Icon icon={Feather.Scissors} /> */}
+						{/* <div style={stylex.parse("w:6")} /> */}
 						<Text>
 							{getLHSString(status)}
 						</Text>
@@ -67,8 +72,8 @@ function StatusBar(props) {
 						<Text>
 							{getRHSString(status)}
 						</Text>
-						<div style={stylex.parse("w:6.25")} />
-						<Icon icon={Feather.Bookmark} />
+						{/* <div style={stylex.parse("w:6")} /> */}
+						{/* <Icon icon={Feather.Bookmark} /> */}
 					</div>
 
 				</div>
