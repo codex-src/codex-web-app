@@ -76,7 +76,7 @@ const reducer = state => ({
 		this.render()
 	},
 	FFDeleteNode() {
-		const { key, data } = state.nodes[state.start.index + 1]
+		const { key } = state.nodes[state.start.index + 1]
 		const end = {
 			key,
 			index: state.start.index + 1,
@@ -88,7 +88,10 @@ const reducer = state => ({
 		Object.assign(state, { reset })
 		this.render()
 	},
-	render() {
+	render(reset) {
+		if (reset) {
+			Object.assign(state, { reset })
+		}
 		const nodes = state.nodes.map(each => ({ ...each })) // Read proxy
 		state.components = parseComponents(nodes)
 		state.shouldRender++

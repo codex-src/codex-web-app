@@ -24,7 +24,7 @@ import "./Editor.css"
 const SCROLL_BUFFER_T = 20 + 28.5
 const SCROLL_BUFFER_B = 28.5 + 20
 
-// const deleteBackwardRegex = /^delete(Content|Word|(Soft|Hard)Line)Backward$/ // eslint-disable no-multi-spaces
+const deleteBackwardRegex = /^delete(Content|Word|(Soft|Hard)Line)Backward$/ // eslint-disable no-multi-spaces
 // const deleteForwardRegex  = /^delete(Content|Word|(Soft|Hard)Line)Forward$/  // eslint-disable no-multi-spaces
 
 function isDeleteMacOS(e) {
@@ -237,21 +237,12 @@ function Editor({ state, dispatch, ...props }) {
 						},
 
 						onInput: e => {
-							// switch (true) {
-							// case platform.isFirefox && deleteBackwardRegex.test(e.nativeEvent.inputType):
-							// 	if (state.data[state.start.pos - 1] === "\n") {
-							// 		dispatch.render()
-							// 	}
-							// 	return
-							// case platform.isFirefox && deleteForwardRegex.test(e.nativeEvent.inputType):
-							// 	if (state.data[state.end.pos] === "\n") {
-							// 		dispatch.render()
-							// 	}
-							// 	return
-							// default:
-							// 	// No-op
-							// 	break
-							// }
+							// Guard contenteditable, dammit!
+							if (deleteBackwardRegex.test(e.nativeEvent.inputType) && state.start.pos === state.end.pos && !state.start.pos) {
+								const reset = { key: state.start.key, offset: 0 } // Idempotent
+								dispatch.render(reset)
+								return
+							}
 							let { startIter, start, endIter, end } = target.current
 							if (platform.isFirefox && !startIter.currentNode.parentNode) { // Gecko/Firefox
 								startIter.currentNode = ref.current.childNodes[0]
