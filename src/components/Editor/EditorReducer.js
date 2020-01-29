@@ -85,11 +85,11 @@ const init = initialValue => initialState => {
 		start: newCursor(),
 		end: newCursor(),
 		coords: {
-			pos1: {
+			start: {
 				x: 0,
 				y: 0,
 			},
-			pos2: {
+			end: {
 				x: 0,
 				y: 0,
 			},

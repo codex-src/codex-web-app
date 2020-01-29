@@ -7,23 +7,23 @@ export function getCoordsFromRange(range) {
 	const { left, right, top, bottom } = range.getBoundingClientRect()
 	if (!left && !right && !top && !bottom) {
 		let { startContainer, endContainer } = range
-		// Get the innermost start node:
+		// Get the innermost start node (from the range):
 		while (startContainer.childNodes.length) {
 			startContainer = startContainer.childNodes[0]
 		}
-		// Get the innermost end node:
+		// Get the innermost end node (from the range):
 		while (endContainer.childNodes.length) {
 			endContainer = endContainer.childNodes[0]
 		}
 		const startRect = startContainer.getClientRects()[0]
 		const endRect = endContainer.getClientRects()[0]
-		const pos1 = { x: startRect.left, y: startRect.top }
-		const pos2 = { x: endRect.right, y: endRect.bottom }
-		return { pos1, pos2 }
+		const start = { x: startRect.left, y: startRect.top }
+		const end = { x: endRect.right, y: endRect.bottom }
+		return { start, end }
 	}
-	const pos1 = { x: left, y: top }
-	const pos2 = { x: right, y: bottom }
-	return { pos1, pos2 }
+	const start = { x: left, y: top }
+	const end = { x: right, y: bottom }
+	return { start, end }
 }
 
 // Gets the start and end key nodes, (synthetic) cursors,

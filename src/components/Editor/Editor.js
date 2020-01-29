@@ -21,7 +21,7 @@ import {
 
 import "./Editor.css"
 
-const SCROLL_BUFFER_T = 28.5
+// const SCROLL_BUFFER_T = 28.5
 const SCROLL_BUFFER_B = 20 + 28.5
 
 // ;[...ref.current.childNodes].map(each => each.remove())
@@ -35,23 +35,6 @@ function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const isPointerDown = React.useRef()
 	const target = React.useRef()
-
-	// E.g. scrollIntoViewIfNeeded
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			if (!state.hasFocus) {
-				// No-op
-				return
-			}
-			let { coords } = state
-			if (coords.pos1.y < 0) {
-				window.scrollBy(0, -coords.pos1.y - SCROLL_BUFFER_T)
-			} else if (coords.pos2.y >= window.innerHeight - SCROLL_BUFFER_B) {
-				window.scrollBy(0, +coords.pos2.y - window.innerHeight + SCROLL_BUFFER_B)
-			}
-		}, [state]),
-		[state.coords],
-	)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -89,6 +72,41 @@ function Editor({ state, dispatch, ...props }) {
 		}, [state]),
 		[state.shouldRender],
 	)
+
+	// Update coords **after** updating pos1 and pos2:
+	React.useLayoutEffect( // TODO: useLayoutEffect?
+		React.useCallback(() => {
+			if (!state.hasFocus) {
+				// No-op
+				return
+			}
+			const { start, end } = state.coords
+			if (start.y < 0) { // SCROLL_BUFFER_T
+				window.scrollBy(0, start.y) // - SCROLL_BUFFER_T
+			} else if (end.y > window.innerHeight - SCROLL_BUFFER_B) {
+				window.scrollBy(0, end.y - window.innerHeight + SCROLL_BUFFER_B)
+			}
+		}, [state]),
+		[state.coords],
+	)
+
+	// // E.g. scrollIntoViewIfNeeded
+	// React.useLayoutEffect(
+	// 	React.useCallback(() => {
+	// 		if (!state.hasFocus) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		const { pos1, pos2 } = state.coords
+	// 		console.log(pos1.y)
+	// 		// if (pos1.y < 0) {
+	// 		// 	window.scrollBy(0, -pos1.y - SCROLL_BUFFER_T)
+	// 		// } else if (pos2.y >= window.innerHeight - SCROLL_BUFFER_B) {
+	// 		// 	window.scrollBy(0, +pos2.y - window.innerHeight + SCROLL_BUFFER_B)
+	// 		// }
+	// 	}, [state]),
+	// 	[state.pos1, pos2],
+	// )
 
 	// // Did render (1):
 	// React.useEffect(
