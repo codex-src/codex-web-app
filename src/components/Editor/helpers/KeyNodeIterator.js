@@ -7,7 +7,16 @@ import {
 	nodeValue,
 } from "./innerText"
 
-// const __DEV__ = process.env.NODE_ENV !== "production"
+function isStrictKeyNode(node) {
+	if (isTextOrBreakElementNode(node)) {
+		return false
+	}
+	const ok = (
+		node.nodeType === Node.ELEMENT_NODE &&
+		node.getAttribute("data-node")
+	)
+	return ok
+}
 
 class KeyNodeIterator {
 	constructor(currentNode) {
@@ -42,7 +51,7 @@ class KeyNodeIterator {
 	}
 	getNext() {
 		const { nextSibling, parentNode } = this.currentNode
-		if (platform.isFirefox && nextSibling && isTextOrBreakElementNode(nextSibling)) { // Gecko/Firefox
+		if (platform.isFirefox && nextSibling && !isStrictKeyNode(nextSibling)) {
 			// Get the selection and eagerly drop the range:
 			const selection = document.getSelection()
 			selection.removeAllRanges()

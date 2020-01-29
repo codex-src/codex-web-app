@@ -129,7 +129,7 @@ function Editor({ state, dispatch, ...props }) {
 	const { Provider } = Context
 	return (
 		<Provider value={[state, dispatch]}>
-			<Debugger /* on */>
+			<Debugger on>
 				{React.createElement(
 					"div",
 					{
