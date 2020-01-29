@@ -1,4 +1,4 @@
-// import areEqualTrees from "./helpers/areEqualTrees"
+import areEqualTrees from "./helpers/areEqualTrees"
 import Context from "./Context"
 import Debugger from "./Debugger"
 import getOffsetFromRange from "./helpers/getOffsetFromRange"
@@ -21,8 +21,8 @@ import {
 
 import "./Editor.css"
 
-// const SCROLL_BUFFER_T = 28.5
-const SCROLL_BUFFER_B = 20 + 28.5
+const SCROLL_BUFFER_T = 20 + 28.5
+const SCROLL_BUFFER_B = 28.5 + 20
 
 // ;[...ref.current.childNodes].map(each => each.remove())
 // ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
@@ -35,6 +35,38 @@ function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const isPointerDown = React.useRef()
 	const target = React.useRef()
+
+	// const selection = document.getSelection()
+	// const range = selection.getRangeAt(0)
+	// const coords = getCoordsFromRange(range)
+	// const { start, end } = state.coords
+	// if (
+	// 		start.x === coords.start.x && end.x === coords.end.x &&
+	// 		start.y === coords.start.y && end.y === coords.end.y
+	// 	) {
+	// 	// No-op
+	// 	return
+	// }
+
+	// scrollIntoViewIfNeeded
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.hasFocus) {
+				// No-op
+				return
+			}
+			const { start, end } = state.coords
+			// 8fbcc29
+			if (start.y < SCROLL_BUFFER_T && end.y > window.innerHeight - SCROLL_BUFFER_B) { // XOR
+				// No-op
+			} else if (start.y < SCROLL_BUFFER_T) {
+				window.scrollBy(0, start.y - SCROLL_BUFFER_T)
+			} else if (end.y > window.innerHeight - SCROLL_BUFFER_B) {
+				window.scrollBy(0, end.y - window.innerHeight + SCROLL_BUFFER_B)
+			}
+		}, [state]),
+		[state.coords],
+	)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -50,7 +82,7 @@ function Editor({ state, dispatch, ...props }) {
 				// Sync the DOM trees (user and React):
 				const didMutate = syncViews(ref.current, state.reactDOM, "data-memo")
 				if (!didMutate) {
-					// No-op
+					dispatch.rendered()
 					return
 				}
 				let keyNode = document.getElementById(state.reset.key)
@@ -68,74 +100,43 @@ function Editor({ state, dispatch, ...props }) {
 				range.collapse()
 				selection.removeAllRanges()
 				selection.addRange(range)
+				dispatch.rendered()
 			})
-		}, [state]),
+		}, [state, dispatch]),
 		[state.shouldRender],
 	)
 
-	// Update coords **after** updating pos1 and pos2:
-	React.useLayoutEffect( // TODO: useLayoutEffect?
+	// Did render (data):
+	React.useEffect(
 		React.useCallback(() => {
-			if (!state.hasFocus) {
+			// const t1 = Date.now()
+			const data = state.nodes.map(each => each.data).join("\n")
+			// const t2 = Date.now()
+			// console.log(`data=${t2 - t1}`)
+			if (data === state.data) {
 				// No-op
 				return
 			}
-			const { start, end } = state.coords
-			if (start.y < 0) { // SCROLL_BUFFER_T
-				window.scrollBy(0, start.y) // - SCROLL_BUFFER_T
-			} else if (end.y > window.innerHeight - SCROLL_BUFFER_B) {
-				window.scrollBy(0, end.y - window.innerHeight + SCROLL_BUFFER_B)
-			}
+			throw new Error("App Error: Plain text data is out of sync!")
 		}, [state]),
-		[state.coords],
+		[state.didRender],
 	)
 
-	// // E.g. scrollIntoViewIfNeeded
-	// React.useLayoutEffect(
-	// 	React.useCallback(() => {
-	// 		if (!state.hasFocus) {
-	// 			// No-op
-	// 			return
-	// 		}
-	// 		const { pos1, pos2 } = state.coords
-	// 		console.log(pos1.y)
-	// 		// if (pos1.y < 0) {
-	// 		// 	window.scrollBy(0, -pos1.y - SCROLL_BUFFER_T)
-	// 		// } else if (pos2.y >= window.innerHeight - SCROLL_BUFFER_B) {
-	// 		// 	window.scrollBy(0, +pos2.y - window.innerHeight + SCROLL_BUFFER_B)
-	// 		// }
-	// 	}, [state]),
-	// 	[state.pos1, pos2],
-	// )
-
-	// // Did render (1):
-	// React.useEffect(
-	// 	React.useCallback(() => {
-	// 		// const t1 = Date.now()
-	// 		const areEqual = areEqualTrees(ref.current, state.reactDOM)
-	// 		// const t2 = Date.now()
-	// 		// console.log(`areEqualTrees=${t2 - t1}`)
-	// 		if (areEqual) {
-	// 			// No-op
-	// 			return
-	// 		}
-	// 		throw new Error("Fatal: DOMs are out of sync!")
-	// 	}, [state]),
-	// 	[state.didRender],
-	// )
-	//
-	// // Did render (2):
-	// React.useEffect(
-	// 	React.useCallback(() => {
-	// 		const data = state.nodes.map(each => each.data).join("\n")
-	// 		if (data === state.data) {
-	// 			// No-op
-	// 			return
-	// 		}
-	// 		throw new Error("Fatal: Plain text data is out of sync!")
-	// 	}, [state]),
-	// 	[state.didRender],
-	// )
+	// Did render (areEqualTrees):
+	React.useEffect(
+		React.useCallback(() => {
+			// const t1 = Date.now()
+			const areEqual = areEqualTrees(ref.current, state.reactDOM)
+			// const t2 = Date.now()
+			// console.log(`areEqualTrees=${t2 - t1}`)
+			if (areEqual) {
+				// No-op
+				return
+			}
+			throw new Error("App Error: DOMs are out of sync!")
+		}, [state]),
+		[state.didRender],
+	)
 
 	const { Provider } = Context
 	return (
@@ -151,13 +152,13 @@ function Editor({ state, dispatch, ...props }) {
 						contentEditable: true,
 						suppressContentEditableWarning: true,
 
-						onFocus: dispatch.opFocus,
-						onBlur:  dispatch.opBlur,
+						onFocus: dispatch.actionFocus,
+						onBlur:  dispatch.actionBlur,
 
 						onSelect: e => {
 							const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
-							dispatch.opSelect(start, end, coords)
-							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
+							target.current = getTarget(state.nodes, startNode, endNode)
+							dispatch.actionSelect(start, end, coords)
 						},
 
 						onPointerDown: e => {
@@ -170,8 +171,8 @@ function Editor({ state, dispatch, ...props }) {
 								return
 							}
 							const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
-							dispatch.opSelect(start, end, coords)
-							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
+							target.current = getTarget(state.nodes, startNode, endNode)
+							dispatch.actionSelect(start, end, coords)
 						},
 
 						onPointerUp: e => {
@@ -180,8 +181,8 @@ function Editor({ state, dispatch, ...props }) {
 
 						onKeyDown: e => {
 							const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
-							dispatch.opSelect(start, end, coords)
-							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
+							target.current = getTarget(state.nodes, startNode, endNode)
+							dispatch.actionSelect(start, end, coords)
 
 							// TODO: Prevent default on backspace and
 							// delete (with modifier) for Gecko/Firefox
@@ -249,7 +250,7 @@ function Editor({ state, dispatch, ...props }) {
 							const reset = { key: keyNode.id, offset }
 							const coords = getCoordsFromRange(selection.getRangeAt(0))
 							// OK:
-							dispatch.opInput(nodes, start, end, coords, reset)
+							dispatch.actionInput(nodes, start, end, coords, reset)
 						},
 
 						onCut:   e => e.preventDefault(),

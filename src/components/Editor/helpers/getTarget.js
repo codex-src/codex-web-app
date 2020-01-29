@@ -2,7 +2,7 @@ import KeyNodeIterator from "./KeyNodeIterator"
 import { getCursorFromKey } from "./getCursorFromKey"
 
 // Gets a target range (for onInput).
-function getTarget(nodes, rootNode, startNode, endNode) {
+function getTarget(nodes, startNode, endNode) {
 	// Get the start iterator:
 	const startIter = new KeyNodeIterator(startNode)
 	while (startIter.count < 2 && startIter.getPrev()) {
