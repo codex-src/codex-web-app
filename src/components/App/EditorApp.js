@@ -2,6 +2,8 @@ import Editor from "components/Editor"
 import React from "react"
 import stylex from "stylex"
 
+const LOCALSTORAGE_KEY = "codex-html-app-0-1-0"
+
 const initialValue = `foo
 
 bar
@@ -154,14 +156,25 @@ coorge`
 // ---
 // ***`
 
+const url = new URL(window.location.href) // Parse a new URL
+const key = url.searchParams.get("key")   // Get the URL key
+
+const noteKey = LOCALSTORAGE_KEY + (!key ? "" : `?key=${key}`)
+
+const data = localStorage.getItem(noteKey) || initialValue
+
 function EditorApp(props) {
-	const [state, dispatch] = Editor.useEditor(initialValue)
+	const [state, dispatch] = Editor.useEditor(data)
+
+	React.useEffect(() => {
+		localStorage.setItem(noteKey, state.data)
+	}, [state.data])
 
 	return (
 		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
 			<div style={stylex.parse("w:834 no-min-w")}>
 				<Editor.Editor
-					initialValue={initialValue}
+					initialValue={data}
 					state={state}
 					dispatch={dispatch}
 					// scrollPastEnd

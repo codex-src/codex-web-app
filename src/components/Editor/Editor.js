@@ -144,9 +144,13 @@ function Editor({ state, dispatch, ...props }) {
 						onBlur:  dispatch.actionBlur,
 
 						onSelect: e => {
-							const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
-							target.current = getTarget(state.nodes, startNode, endNode)
-							dispatch.actionSelect(start, end, coords)
+							try {
+								const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
+								target.current = getTarget(state.nodes, startNode, endNode)
+								dispatch.actionSelect(start, end, coords)
+							} catch (e) {
+								console.warn(e)
+							}
 						},
 
 						onPointerDown: e => {
@@ -158,9 +162,13 @@ function Editor({ state, dispatch, ...props }) {
 								// No-op
 								return
 							}
-							const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
-							target.current = getTarget(state.nodes, startNode, endNode)
-							dispatch.actionSelect(start, end, coords)
+							try {
+								const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
+								target.current = getTarget(state.nodes, startNode, endNode)
+								dispatch.actionSelect(start, end, coords)
+							} catch (e) {
+								console.warn(e)
+							}
 						},
 
 						onPointerUp: e => {
@@ -168,9 +176,13 @@ function Editor({ state, dispatch, ...props }) {
 						},
 
 						onKeyDown: e => {
-							const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
-							target.current = getTarget(state.nodes, startNode, endNode)
-							dispatch.actionSelect(start, end, coords)
+							try {
+								const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
+								target.current = getTarget(state.nodes, startNode, endNode)
+								dispatch.actionSelect(start, end, coords)
+							} catch (e) {
+								console.warn(e)
+							}
 
 							// TODO: Prevent default on backspace and
 							// delete (with modifier) for Gecko/Firefox
