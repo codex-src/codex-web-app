@@ -3,7 +3,7 @@ import {
 	nodeValue,
 } from "./innerText"
 
-// Gets a range for a key node and offset..
+// Gets a range for a key node and offset.
 function getRangeFromKeyNodeAndOffset(keyNode, offset) {
 	const range = {
 		node: null,

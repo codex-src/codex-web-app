@@ -42,7 +42,7 @@ function getRHSString({ words, duration }) {
 // TODO: Does **not** render the same font-weight on Gecko/
 // Firefox
 const Text = stylex.Styleable(props => (
-	<p style={stylex.parse("tnum fw:600 fs:12 lh:100% c:white")} {...props}>
+	<p style={stylex.parse("tnum fs:12 lh:100%")} {...props}>
 		{props.children}
 	</p>
 ))
@@ -54,7 +54,7 @@ function StatusBar(props) {
 	const status = getStatus(state)
 
 	return (
-		<aside style={stylex.parse("fixed -x -b b:blue-a200 z:1")}>
+		<aside style={stylex.parse("fixed -x -b b:gray-100 z:1")}>
 			<div style={stylex.parse("p-x:24 flex -r -x:center")}>
 				<div style={stylex.parse("p-y:4 flex -r -x:between w:1440")}>
 

@@ -1,93 +1,36 @@
 import areEqualTrees from "./helpers/areEqualTrees"
 import Context from "./Context"
 import Debugger from "./Debugger"
+import getCursors from "./helpers/getCursors"
 import getOffsetFromRange from "./helpers/getOffsetFromRange"
 import getRangeFromKeyNodeAndOffset from "./helpers/getRangeFromKeyNodeAndOffset"
-import KeyNodeIterator from "./helpers/KeyNodeIterator"
+import getTarget from "./helpers/getTarget"
 import platform from "utils/platform"
 import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
 import StatusBar from "./StatusBar"
 import syncViews from "./helpers/syncViews"
-import useEditor from "./EditorReducer"
 import { getCursorFromKey } from "./helpers/getCursorFromKey"
 import { getKeyNode } from "./helpers/getKeyNode"
 import { innerText } from "./helpers/innerText"
 
 import "./Editor.css"
 
-const SHOW_REACT_PERF = 0
+const SHOW_REACT_PERF = 1
 const SHOW_EQUAL_PERF = 0
-
-// Returns the cursors and start and end key nodes.
-function getCursors(nodes) {
-	const selection = document.getSelection()
-	const {
-		startContainer, // The ordered start node
-		startOffset,    // The ordered start (text) node
-		endContainer,   // The ordered end node
-		endOffset,      // The ordered end node (text) offset
-		collapsed,      // Are the cursors collapsed?
-	} = selection.getRangeAt(0)
-	const startNode = getKeyNode(startContainer)
-	const start = getCursorFromKey(nodes, startNode.id)
-	start.offset += getOffsetFromRange(startNode, startContainer, startOffset)
-	start.pos += start.offset
-	const endNode = getKeyNode(endContainer)
-	let end = { ...start }
-	if (!collapsed) {
-		end = getCursorFromKey(nodes, endNode.id)
-		end.offset += getOffsetFromRange(endNode, endContainer, endOffset)
-		end.pos += end.offset
-	}
-	const range = {
-		startNode, // The start key node
-		start,     // The start cursor
-		endNode,   // The end key node
-		end,       // The end cursor
-	}
-	return range
-}
-
-// Gets a target range (for onInput).
-function getTarget(nodes, rootNode, startNode, endNode) {
-	const startIter = new KeyNodeIterator(startNode)
-	while (startIter.count < 2 && startIter.getPrev()) {
-		startIter.prev()
-	}
-	const endIter = new KeyNodeIterator(endNode)
-	while (endIter.count < 2 && endIter.getNext()) {
-		endIter.next()
-	}
-	const start = getCursorFromKey(nodes, startIter.currentNode.id)
-	const end = getCursorFromKey(nodes, endIter.currentNode.id, start)
-	const { length } = nodes[end.index].data
-	end.offset += length
-	end.pos += length
-	// OK:
-	const target = {
-		startIter, // The start key node iterator
-		start,     // The start cursor
-		endIter,   // The end key node iterator
-		end,       // The end cursor
-	}
-	return target
-}
 
 function EditorContents(props) {
 	return props.components
 }
 
-function Editor(props) {
+// ;[...ref.current.childNodes].map(each => each.remove())
+// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+
+function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const isPointerDown = React.useRef()
 	const target = React.useRef()
-
-	const [state, dispatch] = useEditor(props.initialValue)
-
-	// ;[...ref.current.childNodes].map(each => each.remove())
-	// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 
 	// Should render:
 	React.useLayoutEffect(
@@ -165,7 +108,7 @@ function Editor(props) {
 	const { Provider } = Context
 	return (
 		<Provider value={[state, dispatch]}>
-			<Debugger /* on */>
+			<Debugger on>
 				{React.createElement(
 					"div",
 					{
@@ -180,8 +123,8 @@ function Editor(props) {
 						onBlur:  dispatch.opBlur,
 
 						onSelect: e => {
-							const { startNode, start, endNode, end } = getCursors(state.nodes)
-							dispatch.opSelect(start, end)
+							const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
+							dispatch.opSelect(start, end, coords)
 							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
 						},
 
@@ -194,8 +137,8 @@ function Editor(props) {
 								// No-op
 								return
 							}
-							const { startNode, start, endNode, end } = getCursors(state.nodes)
-							dispatch.opSelect(start, end)
+							const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
+							dispatch.opSelect(start, end, coords)
 							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
 						},
 
@@ -204,14 +147,19 @@ function Editor(props) {
 						},
 
 						onKeyDown: e => {
-							const { startNode, start, endNode, end } = getCursors(state.nodes)
-							dispatch.opSelect(start, end)
+							const { startNode, start, endNode, end, coords } = getCursors(state.nodes)
+							dispatch.opSelect(start, end, coords)
 							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
 
 							// TODO: Prevent default on backspace and
 							// delete (with modifier) for Gecko/Firefox
 							// zero value on all browsers -- does mobile
 							// even support modifiers?
+							//
+							// TODO: Arrow down (not touch) at the start
+							// of a multiline code block does not enter a
+							// the first line on Gecko/Firefox
+							//
 							switch (true) {
 							case !e.shiftKey && e.key === "Tab":
 								e.preventDefault()

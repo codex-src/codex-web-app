@@ -15,9 +15,11 @@ function Debugger(props) {
 			<div style={{ ...stylex.parse("m-t:28 pre-wrap"), MozTabSize: 2, tabSize: 2, font: "12px/1.375 'Monaco'" }}>
 				{JSON.stringify(
 					{
-						...state,
-						components: undefined,
-						reactDOM:   undefined,
+						...state.coords,
+
+						// ...state,
+						// components: undefined,
+						// reactDOM:   undefined,
 					},
 					null,
 					"\t",

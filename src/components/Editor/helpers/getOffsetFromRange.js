@@ -3,7 +3,7 @@ import {
 	nodeValue,
 } from "./innerText"
 
-// Gets an offset for a range.
+// Gets an offset for a range (node and offset).
 function getOffsetFromRange(keyNode, node, offset) {
 	let _offset = 0
 	const recurseOn = startNode => {

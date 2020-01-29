@@ -26,6 +26,7 @@ const initialState = {
 	nodes: null,      // The parsed nodes
 	start: null,      // The start cursor
 	end: null,        // The end cursor
+	coords: null,     // The cursor coordinates
 	reset: null,      // The reset cursor key and offset
 	components: null, // The parsed React components
 	reactDOM: null,   // The React DOM (unmounted)
@@ -50,12 +51,12 @@ const reducer = state => ({
 		this.commitOp(OpTypes.BLUR)
 		state.hasFocus = false
 	},
-	opSelect(start, end) {
+	opSelect(start, end, coords) {
 		this.commitOp(OpTypes.SELECT)
-		Object.assign(state, { start, end })
+		Object.assign(state, { start, end, coords })
 	},
 	// state.nodes.splice(start.index, end.index - start.index + 1, ...nodes)
-	opInput(nodes, start, end, reset) {
+	opInput(nodes, start, end, reset) { // TODO: coords
 		this.commitOp(OpTypes.INPUT)
 		// state.nodes.splice(start.index, end.index - start.index + 1, ...nodes)
 		write(state, nodes, start, end)
@@ -83,6 +84,16 @@ const init = initialValue => initialState => {
 		nodes,
 		start: newCursor(),
 		end: newCursor(),
+		coords: {
+			pos1: {
+				x: 0,
+				y: 0,
+			},
+			pos2: {
+				x: 0,
+				y: 0,
+			},
+		},
 		reset: {
 			key: "",
 			offset: 0,
