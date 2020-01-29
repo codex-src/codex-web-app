@@ -1,7 +1,10 @@
+
+
 [contenteditable] {
 	white-space:     pre-wrap;
 	tab-size:        4;
-	font:            19px/1.5 "system-ui";
+	/* font:         19px/1.5 "system-ui"; */
+	font:            16px/1.5 "Roboto Mono", "monospace", "system-ui";
 	caret-color:     hsl(var(--black));
 	outline:         none;
 	overflow-wrap:   break-word;

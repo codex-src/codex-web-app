@@ -1,10 +1,11 @@
-// import invariant from "invariant"
 import areEqualTrees from "./helpers/areEqualTrees"
 import Debugger from "./Debugger"
 import getOffsetFromRange from "./helpers/getOffsetFromRange"
 import getRangeFromKeyNodeAndOffset from "./helpers/getRangeFromKeyNodeAndOffset"
+import invariant from "invariant"
 import KeyNodeIterator from "./helpers/KeyNodeIterator"
 import onKeyDown from "./onKeyDown"
+import platform from "utils/platform"
 import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
@@ -15,38 +16,6 @@ import { getKeyNode } from "./helpers/getKeyNode"
 import { innerText } from "./helpers/innerText"
 
 import "./Editor.css"
-
-const initialValue = `aaa
-
-bbb
-
-ccc`
-
-// const initialValue = `Hello, world!
-//
-// Hello, world!
-//
-// Hello, world!
-//
-// Hello, world!
-//
-// Hello, world!`
-
-// const initialValue = `Hello, world!
-//
-// \`\`\`Hello, world!\`\`\`
-//
-// > Hello, world!
-//
-// ---
-//
-// \`\`\`go
-// hello, world!
-// \`\`\`
-//
-// Hello, world!
-//
-// Hello, world!`
 
 // Returns the cursors and start and end key nodes.
 function getCursors(nodes) {
@@ -113,24 +82,25 @@ function Editor(props) {
 	const target = React.useRef()
 
 	const [state, dispatch] = useEditor(props.initialValue)
-	// const [state, dispatch] = useEditor(initialValue)
+
+	// // **Update the target!**
+	// const selection = document.getSelection()
+	// const { startContainer } = selection.getRangeAt(0)
+	// const startNode = getKeyNode(startContainer)
+	// target.current = getTarget(state.nodes, ref.current, startNode, startNode)
+
+	// const t1 = Date.now()
+	// const t2 = Date.now()
+	// console.log(`react=${t2 - t1}`)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			// Render the React DOM:
-			// const t1 = Date.now()
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-				// const t2 = Date.now()
-				// console.log(`react=${t2 - t1}`)
 				if (!state.shouldRender) {
 					syncViews(ref.current, state.reactDOM, "data-memo")
 					return
 				}
-				// // **Update the target!**
-				// const selection = document.getSelection()
-				// const { startContainer } = selection.getRangeAt(0)
-				// const startNode = getKeyNode(startContainer)
-				// target.current = getTarget(state.nodes, ref.current, startNode, startNode)
 
 				// ;[...ref.current.childNodes].map(each => each.remove())
 				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
@@ -141,10 +111,6 @@ function Editor(props) {
 					// No-op
 					return
 				}
-
-				// let keyNode0 = document.getElementById(state.reset.key)
-				// console.log(keyNode0)
-
 				// Reset the cursor:
 				let keyNode = document.getElementById(state.reset.key)
 				if (keyNode.getAttribute("data-compound-node")) {
@@ -161,6 +127,7 @@ function Editor(props) {
 				range.collapse()
 				selection.removeAllRanges()
 				selection.addRange(range)
+
 				// Compare DOMs:
 				if (areEqualTrees(ref.current, state.reactDOM)) {
 					// No-op
@@ -173,7 +140,7 @@ function Editor(props) {
 	)
 
 	return (
-		<Debugger state={state}>
+		<Debugger state={state} /* on */>
 			{React.createElement(
 				"div",
 				{
@@ -186,9 +153,13 @@ function Editor(props) {
 					onBlur:  dispatch.opBlur,
 
 					onSelect: e => {
-						const { startNode, start, endNode, end } = getCursors(state.nodes)
-						dispatch.opSelect(start, end)
-						target.current = getTarget(state.nodes, ref.current, startNode, endNode)
+						try { // DELETEME
+							const { startNode, start, endNode, end } = getCursors(state.nodes)
+							dispatch.opSelect(start, end)
+							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
+						} catch (e) {
+							console.warn(e)
+						}
 					},
 
 					onPointerDown: e => {
@@ -196,13 +167,17 @@ function Editor(props) {
 					},
 
 					onPointerMove: e => {
-						if (!isPointerDown.current) {
+						if (!isPointerDown.current || !state.hasFocus) { // Guard smartphone
 							// No-op
 							return
 						}
-						const { startNode, start, endNode, end } = getCursors(state.nodes)
-						dispatch.opSelect(start, end)
-						target.current = getTarget(state.nodes, ref.current, startNode, endNode)
+						try {
+							const { startNode, start, endNode, end } = getCursors(state.nodes)
+							dispatch.opSelect(start, end)
+							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
+						} catch (e) { // DELETEME
+							console.warn(e)
+						}
 					},
 
 					onPointerUp: e => {
@@ -210,9 +185,13 @@ function Editor(props) {
 					},
 
 					onKeyDown: e => {
-						const { startNode, start, endNode, end } = getCursors(state.nodes)
-						dispatch.opSelect(start, end)
-						target.current = getTarget(state.nodes, ref.current, startNode, endNode)
+						try { // DELETEME
+							const { startNode, start, endNode, end } = getCursors(state.nodes)
+							dispatch.opSelect(start, end)
+							target.current = getTarget(state.nodes, ref.current, startNode, endNode)
+						} catch (e) {
+							console.warn(e)
+						}
 
 						switch (true) {
 						case e.key === "Tab":
@@ -230,20 +209,19 @@ function Editor(props) {
 					},
 
 					onInput: e => {
-						switch (e.nativeEvent.inputType) {
-						case "historyUndo":
-							// TODO
-							dispatch.render()
-							return
-						case "historyRedo":
-							// TODO
-							dispatch.render()
-							return
-						default:
-							// No-op
-							break
-						}
 						let { current: { startIter, start, endIter, end } } = target
+
+						// Guard unmounted:
+						if (platform.isFirefox && !startIter.currentNode.parentNode) { // Gecko/Firefox
+							startIter.currentNode = ref.current.childNodes[0]
+							startIter.currentNode.id = start.key
+						}
+
+						invariant(
+							startIter.currentNode.parentNode,
+							"FIXME",
+						)
+
 						// Re-extend the start and end key nodes and
 						// cursors (once):
 						if (!startIter.count && startIter.getPrev()) {
@@ -280,6 +258,57 @@ function Editor(props) {
 						const reset = { key: keyNode.id, offset }
 						// OK:
 						dispatch.opInput(nodes, start, end, reset)
+
+						// switch (e.nativeEvent.inputType) {
+						// case "historyUndo":
+						// 	// TODO
+						// 	dispatch.render()
+						// 	return
+						// case "historyRedo":
+						// 	// TODO
+						// 	dispatch.render()
+						// 	return
+						// default:
+						// 	// No-op
+						// 	break
+						// }
+						// let { current: { startIter, start, endIter, end } } = target
+						// // Re-extend the start and end key nodes and
+						// // cursors (once):
+						// if (!startIter.count && startIter.getPrev()) {
+						// 	startIter.prev()
+						// 	start = getCursorFromKey(state.nodes, startIter.currentNode.id, start, -1)
+						// } else if (!endIter.count && endIter.getNext()) {
+						// 	endIter.next()
+						// 	end = getCursorFromKey(state.nodes, endIter.currentNode.id, end)
+						// 	const { length } = state.nodes[end.index].data
+						// 	end.offset += length
+						// 	end.pos += length
+						// }
+						// // Get the parsed nodes:
+						// const seenKeys = {}
+						// const nodes = []
+						// while (startIter.currentNode) {
+						// 	let key = startIter.currentNode.id
+						// 	if (!key || seenKeys[key]) {
+						// 		key = random.newUUID()
+						// 		startIter.currentNode.id = key
+						// 	}
+						// 	seenKeys[key] = true
+						// 	const data = innerText(startIter.currentNode)
+						// 	nodes.push({ key, data })
+						// 	if (startIter.currentNode === endIter.currentNode) {
+						// 		break
+						// 	}
+						// 	startIter.next()
+						// }
+						// // Get the reset key and offset:
+						// const selection = document.getSelection()
+						// const keyNode = getKeyNode(selection.anchorNode)
+						// const offset = getOffsetFromRange(keyNode, selection.anchorNode, selection.anchorOffset)
+						// const reset = { key: keyNode.id, offset }
+						// // OK:
+						// dispatch.opInput(nodes, start, end, reset)
 					},
 
 					onCut:   e => e.preventDefault(),

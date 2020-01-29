@@ -64,11 +64,11 @@ export const Blockquote = React.memo(({ reactKey, ...props }) => (
 	</div>
 )) // , compoundAreEqual)
 
-const codeStyle = {
-	MozTabSize: 2,
-	tabSize: 2,
-	font: "15px/1.375 'Monaco', 'monospace'", // 14.25?
-}
+// const codeStyle = {
+// 	MozTabSize: 2,
+// 	tabSize: 2,
+// 	font: "15px/1.375 'Monaco', 'monospace'", // 14.25?
+// }
 
 // https://cdpn.io/PowjgOg
 export const CodeBlock = React.memo(({ reactKey, ...props }) => (
@@ -76,7 +76,7 @@ export const CodeBlock = React.memo(({ reactKey, ...props }) => (
 		id={reactKey}
 		style={{
 			...stylex.parse("m-x:-24 p-x:24 pre b:gray-50 overflow -x:scroll"),
-			...codeStyle,
+			// ...codeStyle,
 			boxShadow: "0px 0px 1px hsl(var(--gray))",
 		}}
 		data-compound-node
@@ -85,7 +85,7 @@ export const CodeBlock = React.memo(({ reactKey, ...props }) => (
 	>
 		{props.children.map((each, index) => (
 			<div key={each.key} id={each.key} data-node>
-				<span style={{ ...stylex.parse("m-r:-24 p-r:24"), ...codeStyle }}>
+				<span style={{ ...stylex.parse("m-r:-24 p-r:24") /* , ...codeStyle */ }}>
 					<Markdown
 						startSyntax={!index && props.startSyntax}
 						endSyntax={index + 1 === props.children.length && props.endSyntax}

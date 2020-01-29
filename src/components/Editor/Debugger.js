@@ -7,7 +7,7 @@ import stylex from "stylex"
 // 	alert("`data` and `nodes` are out of sync!")
 // }
 
-const Debugger = props => (
+const Debugger = ({ state, ...props }) => (
 	!props.on ? (
 		props.children
 	) : (
@@ -16,10 +16,14 @@ const Debugger = props => (
 			<div style={{ ...stylex.parse("m-t:28 pre-wrap"), MozTabSize: 2, tabSize: 2, font: "12px/1.375 'Monaco'" }}>
 				{JSON.stringify(
 					{
-						nodes: props.state.nodes,
-						start: props.state.start,
-						end:   props.state.end,
-						reset: props.state.reset,
+						...state,
+						components: undefined,
+						reactDOM: undefined,
+
+						// nodes: props.state.nodes,
+						// start: props.state.start,
+						// end:   props.state.end,
+						// reset: props.state.reset,
 					},
 					null,
 					"\t",
