@@ -90,8 +90,18 @@ function Editor({ state, dispatch, ...props }) {
 					return
 				}
 
+				// NOTE: When mutating the DOM and **not** eagerly
+				// dropping the range, Gecko/Firefox is known to
+				// create (and select) an empty text node at the
+				// start of the root node.
+				//
+				// bbf3516
 				const selection = document.getSelection()
 				selection.removeAllRanges()
+
+				// if (platform.isFirefox) {
+				// 	selection.removeAllRanges()
+				// }
 
 				;[...ref.current.childNodes].map(each => each.remove())
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
@@ -104,23 +114,22 @@ function Editor({ state, dispatch, ...props }) {
 				// // 	return
 				// // }
 
-				// // TODO: getKeyNodeByID(state.reset.key)
-				// let startNode = document.getElementById(state.reset.key)
-				// if (startNode.getAttribute("data-compound-node")) { // Gecko/Firefox
-				// 	startNode = startNode.childNodes[0] // Does not recurse
-				// }
-				// const selection = document.getSelection()
-				// const range = document.createRange()
-				// let { node, offset } = getRangeFromKeyNodeAndOffset(startNode, state.reset.offset)
-				// if (platform.isFirefox && node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") {
-				// 	node = node.parentNode
-				// 	offset = 0
-				// }
-				// range.setStart(node, offset)
-				// range.collapse()
+				// TODO: getKeyNodeByID(state.reset.key)
+				let startNode = document.getElementById(state.reset.key)
+				if (startNode.getAttribute("data-compound-node")) { // Gecko/Firefox
+					startNode = startNode.childNodes[0] // Does not recurse
+				}
+				const range = document.createRange()
+				let { node, offset } = getRangeFromKeyNodeAndOffset(startNode, state.reset.offset)
+				if (platform.isFirefox && node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") {
+					node = node.parentNode
+					offset = 0
+				}
+				range.setStart(node, offset)
+				range.collapse()
 				// selection.removeAllRanges()
 				// selection.addRange(range)
-				// // dispatch.rendered()
+				// dispatch.rendered()
 			})
 		}, [state]),
 		[state.shouldRender],
