@@ -19,6 +19,7 @@ function getTargetFromKeyNodes(nodes, startNode, endNode) {
 	// Get the end cursor:
 	const end = getCursorFromKey(nodes, endIter.currentNode.id) // , start)
 	const { data } = nodes[end.index]
+	console.log({ data })
 	end.offset += data.length
 	end.pos += data.length
 	// OK:

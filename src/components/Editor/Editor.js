@@ -83,6 +83,15 @@ function Editor({ state, dispatch, ...props }) {
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
+
+			if (state.shouldRender) {
+				// **Update the target!**
+				const selection = document.getSelection()
+				const { startContainer } = selection.getRangeAt(0)
+				const startNode = getKeyNode(startContainer)
+				target.current = getTargetFromKeyNodes(state.nodes, startNode, startNode)
+			}
+
 			// Render the React DOM:
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
 				if (!state.shouldRender) {
@@ -90,35 +99,50 @@ function Editor({ state, dispatch, ...props }) {
 					return
 				}
 
-				// NOTE: When mutating the DOM and **not** eagerly
-				// dropping the range, Gecko/Firefox is known to
-				// create (and select) an empty text node at the
-				// start of the root node.
-				//
-				// bbf3516
-				const selection = document.getSelection()
-				selection.removeAllRanges()
+				// // NOTE: When mutating the DOM and **not** eagerly
+				// // dropping the range, Gecko/Firefox is known to
+				// // create (and select) an empty text node at the
+				// // start of the root node.
+				// //
+				// // bbf3516
+				// const selection = document.getSelection()
+				// selection.removeAllRanges()
 
 				// if (platform.isFirefox) {
 				// 	selection.removeAllRanges()
 				// }
 
-				;[...ref.current.childNodes].map(each => each.remove())
-				ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+				// ;[...ref.current.childNodes].map(each => each.remove())
+				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 
-				// // // Sync the DOM trees (user and React):
-				// // const didMutate = syncViews(ref.current, state.reactDOM, "data-memo")
-				// // // console.log({ didMutate })
-				// // if (!didMutate) {
-				// // 	dispatch.rendered()
-				// // 	return
-				// // }
+				// const selection = document.getSelection()
+				// const range = selection.getRangeAt(0)
+				// const { x, y } = range.getBoundingClientRect()
+
+				// Sync the DOM trees (user and React):
+				const didMutate = syncViews(ref.current, state.reactDOM, "data-memo")
+				if (!didMutate) {
+					// dispatch.rendered()
+					return
+				}
+
+				// const newRange = document.createRange()
+				// const { offset, offsetNode } = document.caretPositionFromPoint(x, y)
+				// newRange.setStart(offsetNode, offset)
+				// newRange.collapse()
+				// selection.removeAllRanges()
+				// selection.addRange(newRange)
+
+				// console.log(offset, offsetNode)
+
+				// selection.addRange(range)
 
 				// TODO: getKeyNodeByID(state.reset.key)
 				let startNode = document.getElementById(state.reset.key)
 				if (startNode.getAttribute("data-compound-node")) { // Gecko/Firefox
 					startNode = startNode.childNodes[0] // Does not recurse
 				}
+				const selection = document.getSelection()
 				const range = document.createRange()
 				let { node, offset } = getRangeFromKeyNodeAndOffset(startNode, state.reset.offset)
 				if (platform.isFirefox && node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") {
@@ -127,8 +151,8 @@ function Editor({ state, dispatch, ...props }) {
 				}
 				range.setStart(node, offset)
 				range.collapse()
-				// selection.removeAllRanges()
-				// selection.addRange(range)
+				selection.removeAllRanges()
+				selection.addRange(range)
 				// dispatch.rendered()
 			})
 		}, [state]),
@@ -301,6 +325,13 @@ function Editor({ state, dispatch, ...props }) {
 						// // 	startIter.currentNode.id = start.key
 						// // }
 
+						onKeyDown: e => {
+							// **Update the target!**
+							const selection = document.getSelection()
+							const { startContainer } = selection.getRangeAt(0)
+							const startNode = getKeyNode(startContainer)
+							target.current = getTargetFromKeyNodes(state.nodes, startNode, startNode)
+						},
 
 						onCompositionEnd: e => {
 							// NOTE: Gecko/Firefox emits a composition end
@@ -323,7 +354,6 @@ function Editor({ state, dispatch, ...props }) {
 						// }
 
 						onInput: e => {
-							console.log("onInput")
 							if (platform.isFirefox && FFDedupeCompositionEnd.current) {
 								FFDedupeCompositionEnd.current = false // Reset
 								return
@@ -335,7 +365,7 @@ function Editor({ state, dispatch, ...props }) {
 								start = getCursorFromKey(state.nodes, startIter.currentNode.id) //, start, -1)
 							// Extend the target end (once):
 							} else if (!endIter.count && endIter.getNext()) {
-								startIter.next()
+								endIter.next()
 								end = getCursorFromKey(state.nodes, endIter.currentNode.id)
 								const data = state.nodes[end.index]
 								end.offset += data.length
