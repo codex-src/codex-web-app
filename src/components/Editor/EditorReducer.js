@@ -75,7 +75,7 @@ const reducer = state => ({
 		Object.assign(state, { reset })
 		this.render()
 	},
-	FFDeleteNode() {
+	FFBackspaceForwardsNode() {
 		const { key } = state.nodes[state.start.index + 1]
 		const end = {
 			key,

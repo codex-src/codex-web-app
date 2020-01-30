@@ -1,34 +1,9 @@
 // import invariant from "invariant"
-import platform from "utils/platform"
-
-import {
-	// innerText,
-	isTextOrBreakElementNode,
-	nodeValue,
-} from "./innerText"
-
-function isStrictKeyNode(node) {
-	if (isTextOrBreakElementNode(node)) {
-		return false
-	}
-	const ok = (
-		node.nodeType === Node.ELEMENT_NODE &&
-		node.getAttribute("data-node")
-	)
-	return ok
-}
-
 class KeyNodeIterator {
 	constructor(currentNode) {
-		// if (__DEV__) {
-		// 	invariant(
-		// 		currentNode.getAttribute("data-node"),
-		// 		"FIXME",
-		// 	)
-		// }
 		Object.assign(this, {
 			currentNode, // The current node
-			count: 0,    // The iterated count
+			count: 0,    // The iterated count (prev and or next)
 		})
 	}
 	getPrev() {
@@ -51,23 +26,7 @@ class KeyNodeIterator {
 	}
 	getNext() {
 		const { nextSibling, parentNode } = this.currentNode
-		if (platform.isFirefox && nextSibling && !isStrictKeyNode(nextSibling)) {
-			// Get the selection and eagerly drop the range:
-			const selection = document.getSelection()
-			selection.removeAllRanges()
-			// Create a new node:
-			const node = document.createTextNode(nodeValue(nextSibling))
-			const newNextSibling = this.currentNode.cloneNode()
-			newNextSibling.appendChild(node)
-			nextSibling.replaceWith(newNextSibling)
-			// Create and add a range:
-			const range = document.createRange()
-			range.setStart(node, 0)
-			range.collapse()
-			selection.addRange(range)
-			// OK:
-			return newNextSibling
-		} else if (nextSibling && nextSibling.getAttribute("data-node")) {
+		if (nextSibling && nextSibling.getAttribute("data-node")) {
 			return nextSibling
 		} else if (nextSibling && nextSibling.getAttribute("data-compound-node")) {
 			return nextSibling.childNodes[0]

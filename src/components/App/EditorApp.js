@@ -2,20 +2,8 @@ import Editor from "components/Editor"
 import React from "react"
 import stylex from "stylex"
 
-const LOCALSTORAGE_KEY = "codex-html-app-0-1-0"
-
-const initialValue = `foo
-
-bar
-
-baz
-
-qux
-
-quux
-
-coorge`
-
+// const LOCALSTORAGE_KEY = "codex-html-app-0-1-0"
+//
 // const initialValue = `# Hello, Codex!
 //
 // // The following is preamble, scroll down to see what this editor can do!
@@ -155,26 +143,36 @@ coorge`
 //
 // ---
 // ***`
-
-const url = new URL(window.location.href) // Parse a new URL
-const key = url.searchParams.get("key")   // Get the URL key
-
-const noteKey = LOCALSTORAGE_KEY + (!key ? "" : `?key=${key}`)
-
-const data = localStorage.getItem(noteKey) || initialValue
+//
+// const url = new URL(window.location.href) // Parse a new URL
+// const key = url.searchParams.get("key")   // Get the URL key
+//
+// const noteKey = LOCALSTORAGE_KEY + (!key ? "" : `?key=${key}`)
+//
+// const data = localStorage.getItem(noteKey) || initialValue
 
 function EditorApp(props) {
-	const [state, dispatch] = Editor.useEditor(data)
+	// const [state, dispatch] = Editor.useEditor(data)
+	const [state, dispatch] = Editor.useEditor(`foo
 
-	React.useEffect(() => {
-		localStorage.setItem(noteKey, state.data)
-	}, [state.data])
+bar
+
+baz
+
+qux
+
+quux
+
+coorge`)
+
+	// React.useEffect(() => {
+	// 	localStorage.setItem(noteKey, state.data)
+	// }, [state.data])
 
 	return (
 		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
 			<div style={stylex.parse("w:834 no-min-w")}>
 				<Editor.Editor
-					initialValue={data}
 					state={state}
 					dispatch={dispatch}
 					// scrollPastEnd

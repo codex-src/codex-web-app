@@ -1,5 +1,5 @@
 import {
-	isTextOrBreakElementNode,
+	isTextOrBreakNode,
 	nodeValue,
 } from "./innerText"
 
@@ -8,7 +8,7 @@ function getOffsetFromRange(keyNode, node, offset) {
 	let _offset = 0
 	const recurseOn = startNode => {
 		for (const currentNode of startNode.childNodes) {
-			if (isTextOrBreakElementNode(currentNode)) {
+			if (isTextOrBreakNode(currentNode)) {
 				// If found, return:
 				if (currentNode === node) {
 					_offset += offset

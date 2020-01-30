@@ -21,24 +21,29 @@ import {
 
 import "./Editor.css"
 
-const SCROLL_BUFFER_T = 20 + 28.5
-const SCROLL_BUFFER_B = 28.5 + 20
+const SCROLL_BUFFER_T = 24
+const SCROLL_BUFFER_B = 24 + 20
 
-const deleteBackwardRegex = /^delete(Content|Word|(Soft|Hard)Line)Backward$/ // eslint-disable no-multi-spaces
-// const deleteForwardRegex  = /^delete(Content|Word|(Soft|Hard)Line)Forward$/  // eslint-disable no-multi-spaces
+const deleteBackwardRegex = /^delete(Content|Word|(Soft|Hard)Line)Backward$/
 
-function isDeleteMacOS(e) {
-	if (!platform.isMacOS) {
-		return false
+function isBackspace(e) {
+	return e.key === "Backspace"
+}
+
+const KEY_CODE_D = 68
+
+function isBackspaceForwards(e) {
+	if (platform.isMacOS) {
+		const ok = (
+			!e.shiftKey && // Must be off
+			e.ctrlKey &&   // Must be on
+			!e.altKey &&   // Must be off
+			!e.metaKey &&  // Must be off
+			e.keyCode === KEY_CODE_D
+		)
+		return ok
 	}
-	const ok = (
-		!e.shiftKey &&   // Negate
-		e.ctrlKey &&     // Accept
-		!e.altKey &&     // Negate
-		!e.metaKey &&    // Negate
-		e.keyCode === 68 // 68: D
-	)
-	return ok
+	return e.key === "Delete"
 }
 
 // ;[...ref.current.childNodes].map(each => each.remove())
@@ -90,9 +95,10 @@ function Editor({ state, dispatch, ...props }) {
 					dispatch.rendered()
 					return
 				}
+				// TODO: getKeyNodeByID(state.reset.key)
 				let keyNode = document.getElementById(state.reset.key)
 				if (keyNode.getAttribute("data-compound-node")) { // Gecko/Firefox
-					keyNode = keyNode.childNodes[0]
+					keyNode = keyNode.childNodes[0] // Does not recurse
 				}
 				const selection = document.getSelection()
 				const range = document.createRange()
@@ -203,19 +209,20 @@ function Editor({ state, dispatch, ...props }) {
 							// TODO: Arrow down at the start of a
 							// multiline code block does not enter a the
 							// first line on Gecko/Firefox
+							const isCollapsed = state.start.pos === state.end.pos
 							switch (true) {
 							// Guard tab:
-							case /* !e.shiftKey && */ e.key === "Tab":
+							case e.key === "Tab":
 								e.preventDefault()
 								document.execCommand("insertText", false, "\t")
 								return
 							// Guard enter:
-							case /* e.shiftKey && */ e.key === "Enter":
+							case e.key === "Enter":
 								e.preventDefault()
 								document.execCommand("insertParagraph", false, null)
 								return
 							// Guard RTL backspace (Gecko/Firefox):
-							case platform.isFirefox && state.start.pos === state.end.pos && e.key === "Backspace":
+							case platform.isFirefox && isCollapsed && isBackspace(e):
 								if (state.start.pos && state.data[state.start.pos - 1] === "\n") {
 									e.preventDefault()
 									dispatch.FFBackspaceNode()
@@ -223,10 +230,10 @@ function Editor({ state, dispatch, ...props }) {
 								}
 								break
 							// Guard LTR backspace (Gecko/Firefox):
-							case platform.isFirefox && state.start.pos === state.end.pos && (isDeleteMacOS(e) || e.key === "Delete"):
+							case platform.isFirefox && isCollapsed && isBackspaceForwards(e):
 								if (state.start.pos < state.data.length && state.data[state.start.pos] === "\n") {
 									e.preventDefault()
-									dispatch.FFDeleteNode()
+									dispatch.FFBackspaceForwardsNode()
 									return
 								}
 								break
@@ -236,16 +243,27 @@ function Editor({ state, dispatch, ...props }) {
 							}
 						},
 
+						// // TODO
+						// //
+						// // [-  -> enter
+						// //  -]
+						// //
+						// console.log(selection.anchorNode, selection.anchorOffset)
+
 						onInput: e => {
 							// Guard contenteditable, dammit!
-							if (deleteBackwardRegex.test(e.nativeEvent.inputType) && state.start.pos === state.end.pos && !state.start.pos) {
+							const isCollapsed = state.start.pos === state.end.pos
+							if (deleteBackwardRegex.test(e.nativeEvent.inputType) && isCollapsed && !state.start.pos) {
 								const reset = { key: state.start.key, offset: 0 } // Idempotent
 								dispatch.render(reset)
 								return
 							}
+
+							// ...
+
 							let { startIter, start, endIter, end } = target.current
 							if (platform.isFirefox && !startIter.currentNode.parentNode) { // Gecko/Firefox
-								startIter.currentNode = ref.current.childNodes[0]
+								startIter.currentNode = ref.current.childNodes[0] // Does not recurse
 								startIter.currentNode.id = start.key
 							}
 							// Re-extend the target cursors (once):
