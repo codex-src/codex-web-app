@@ -2,8 +2,8 @@ import Editor from "components/Editor"
 import React from "react"
 import stylex from "stylex"
 
-// const LOCALSTORAGE_KEY = "codex-html-app-0-1-0"
-//
+// // const LOCALSTORAGE_KEY = "codex-html-app-0-1-0"
+// //
 // const initialValue = `# Hello, Codex!
 //
 // // The following is preamble, scroll down to see what this editor can do!
@@ -143,7 +143,7 @@ import stylex from "stylex"
 //
 // ---
 // ***`
-//
+
 // const url = new URL(window.location.href) // Parse a new URL
 // const key = url.searchParams.get("key")   // Get the URL key
 //
@@ -152,18 +152,12 @@ import stylex from "stylex"
 // const data = localStorage.getItem(noteKey) || initialValue
 
 function EditorApp(props) {
-	// const [state, dispatch] = Editor.useEditor(data)
+	// const [state, dispatch] = Editor.useEditor(initialValue)
 	const [state, dispatch] = Editor.useEditor(`foo
 
 bar
 
-baz
-
-qux
-
-quux
-
-coorge`)
+baz`)
 
 	// React.useEffect(() => {
 	// 	localStorage.setItem(noteKey, state.data)

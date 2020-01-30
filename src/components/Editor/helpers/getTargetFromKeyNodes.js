@@ -1,8 +1,9 @@
 import KeyNodeIterator from "./KeyNodeIterator"
 import { getCursorFromKey } from "./getCursorFromKey"
 
-// Gets a target range (for onInput).
-function getTarget(nodes, startNode, endNode) {
+// Gets a target (start end end key node iterators and
+// cursors) for key nodes.
+function getTargetFromKeyNodes(nodes, startNode, endNode) {
 	// Get the start iterator:
 	const startIter = new KeyNodeIterator(startNode)
 	while (startIter.count < 2 && startIter.getPrev()) {
@@ -13,20 +14,21 @@ function getTarget(nodes, startNode, endNode) {
 	while (endIter.count < 2 && endIter.getNext()) {
 		endIter.next()
 	}
-	// Get the start and end cursors:
+	// Get the start cursor:
 	const start = getCursorFromKey(nodes, startIter.currentNode.id)
-	const end = getCursorFromKey(nodes, endIter.currentNode.id, start)
-	const { length } = nodes[end.index].data
-	end.offset += length
-	end.pos += length
+	// Get the end cursor:
+	const end = getCursorFromKey(nodes, endIter.currentNode.id) // , start)
+	const { data } = nodes[end.index]
+	end.offset += data.length
+	end.pos += data.length
 	// OK:
 	const target = {
 		startIter, // The start key node iterator
-		start,     // The start cursor
 		endIter,   // The end key node iterator
+		start,     // The start cursor
 		end,       // The end cursor
 	}
 	return target
 }
 
-export default getTarget
+export default getTargetFromKeyNodes

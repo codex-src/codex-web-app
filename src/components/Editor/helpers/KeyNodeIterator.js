@@ -1,6 +1,14 @@
-// import invariant from "invariant"
+// import platform from "utils/platform"
+// import random from "utils/random/id"
+//
+// // Used to compare unkeyed nodes.
+// const DIV = document.createElement("div")
+
 class KeyNodeIterator {
 	constructor(currentNode) {
+		// if (!currentNode || currentNode.nodeType !== Node.ELEMENT_NODE || !currentNode.getAttribute("data-node")) {
+		// 	throw new Error("currentNode is not a key node")
+		// }
 		Object.assign(this, {
 			currentNode, // The current node
 			count: 0,    // The iterated count (prev and or next)
@@ -26,6 +34,36 @@ class KeyNodeIterator {
 	}
 	getNext() {
 		const { nextSibling, parentNode } = this.currentNode
+
+		// // Guard unkeyed nodes (Gecko/Firefox):
+		// //
+		// // FIXME: data-memo?
+		// if (platform.isFirefox && nextSibling && nextSibling.isEqualNode(DIV)) {
+		// 	nextSibling.id = random.newUUID()
+		// 	return nextSibling
+		// } else if (platform.isFirefox && parentNode && parentNode.nextSibling && parentNode.nextSibling.isEqualNode(DIV)) {
+		// 	parentNode.nextSibling.id = random.newUUID()
+		// 	return parentNode.nextSibling
+		// }
+
+		// if (platform.isFirefox && nextSibling && !isStrictKeyNode(nextSibling)) {
+		// 	// Get the selection and eagerly drop the range:
+		// 	const selection = document.getSelection()
+		// 	selection.removeAllRanges()
+		// 	// Create a new node:
+		// 	const node = document.createTextNode(nodeValue(nextSibling)) // TODO: Need to support more more than one nextSibling
+		// 	const newNextSibling = this.currentNode.cloneNode()
+		// 	newNextSibling.appendChild(node)
+		// 	nextSibling.replaceWith(newNextSibling)
+		// 	// Create and add a range:
+		// 	const range = document.createRange()
+		// 	range.setStart(node, 0)
+		// 	range.collapse()
+		// 	selection.addRange(range)
+		// 	// OK:
+		// 	return newNextSibling
+
+
 		if (nextSibling && nextSibling.getAttribute("data-node")) {
 			return nextSibling
 		} else if (nextSibling && nextSibling.getAttribute("data-compound-node")) {

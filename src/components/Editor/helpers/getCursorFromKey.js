@@ -9,7 +9,7 @@ export function newCursor() {
 	return cursor
 }
 
-// Gets a cursor for a key. Accepts a cursor as a shortcut.
+// Gets a cursor for a key; accepts a cursor as a shortcut.
 export function getCursorFromKey(nodes, key, cursor, dir = 1) {
 	if (!cursor) {
 		cursor = newCursor()

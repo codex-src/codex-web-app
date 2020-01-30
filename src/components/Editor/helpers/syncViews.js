@@ -12,7 +12,7 @@ function replaceWith(nodeA, nodeB, attr) {
 
 // Syncs two DOM trees based on a number attribute.
 function syncViews(viewA, viewB, attr) {
-	let didMutate = false // Did mutate the DOM (viewA)?
+	let didMutate = false
 	let index = 0
 	const min = Math.min(viewA.childNodes.length, viewB.childNodes.length)
 	while (index < min) {

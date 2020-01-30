@@ -1,5 +1,5 @@
+// import { getCursorFromKey } from "./getCursorFromKey"
 import getOffsetFromRange from "./getOffsetFromRange"
-import { getCursorFromKey } from "./getCursorFromKey"
 import { getKeyNode } from "./getKeyNode"
 
 // Gets cursor coordinates from a range.
@@ -26,31 +26,47 @@ export function getCoordsFromRange(range) {
 	return { start, end }
 }
 
-// Gets the start and end key nodes, (synthetic) cursors,
-// and cursor coordinates.
-export function getCursors(nodes) {
-	const selection = document.getSelection()
-	const range = selection.getRangeAt(0)
+// Gets a cursor for a key; accepts a cursor as a shortcut.
+export function getCursorFromKey(nodes, key) {
+	const cursor = { // New cursor
+		key: "",
+		index: 0,
+		offset: 0,
+		pos: 0,
+	}
+	for (const each of nodes) {
+		if (each.key === key) {
+			cursor.key = each.key
+			break
+		}
+		cursor.index++
+		cursor.pos += each.data.length + 1 // 1: Paragraph
+	}
+	return cursor
+}
+
+// Gets the cursors and key nodes for a range.
+export function getCursorsFromRange(nodes, range) {
 	// Get the start key node and cursor:
 	const startNode = getKeyNode(range.startContainer)
 	const start = getCursorFromKey(nodes, startNode.id)
 	start.offset += getOffsetFromRange(startNode, range.startContainer, range.startOffset)
 	start.pos += start.offset
 	// Get the end key node and cursor:
-	const endNode = getKeyNode(range.endContainer)
+	let endNode = startNode
 	let end = { ...start }
 	if (!range.collapsed) {
+		endNode = getKeyNode(range.endContainer)
 		end = getCursorFromKey(nodes, endNode.id)
 		end.offset += getOffsetFromRange(endNode, range.endContainer, range.endOffset)
 		end.pos += end.offset
 	}
-	const coords = getCoordsFromRange(range)
+	// OK:
 	const cursors = {
-		startNode, // The start key node
 		start,     // The start cursor
-		endNode,   // The end key node
 		end,       // The end cursor
-		coords,    // The cursor coordinates
+		startNode, // The start key node
+		endNode,   // The end key node
 	}
 	return cursors
 }

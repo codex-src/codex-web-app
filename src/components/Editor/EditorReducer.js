@@ -26,7 +26,8 @@ const initialState = {
 	nodes: null,        // The parsed nodes
 	start: null,        // The start cursor
 	end: null,          // The end cursor
-	coords: null,       // The cursor coordinates
+	// target: null,    // The target cursors (onInput)
+	// coords: null,    // The cursor coordinates
 	reset: null,        // The reset cursor key and offset
 	components: null,   // The parsed React components
 	reactDOM: null,     // The React DOM (unmounted)
@@ -51,43 +52,43 @@ const reducer = state => ({
 		this.newAction(ActionTypes.BLUR)
 		state.hasFocus = false
 	},
-	actionSelect(start, end, coords) {
+	actionSelect(start, end) {
 		this.newAction(ActionTypes.SELECT)
-		Object.assign(state, { start, end, coords })
+		Object.assign(state, { start, end })
 	},
 	// state.nodes.splice(start.index, end.index - start.index + 1, ...nodes)
-	actionInput(nodes, start, end, coords, reset) { // TODO: coords
+	actionInput(nodes, start, end, /* coords, */ reset) { // TODO: coords
 		this.newAction(ActionTypes.INPUT)
 		write(state, nodes, start, end)
-		Object.assign(state, { coords, reset })
+		Object.assign(state, { /* coords, */ reset })
 		this.render()
 	},
-	FFBackspaceNode() {
-		const { key, data } = state.nodes[state.start.index - 1]
-		const start = {
-			key,
-			index: state.start.index - 1,
-			offset: data.length,
-			pos: state.start.pos - 1,
-		}
-		const reset = { key, offset: data.length }
-		write(state, null, start, state.end)
-		Object.assign(state, { reset })
-		this.render()
-	},
-	FFBackspaceForwardsNode() {
-		const { key } = state.nodes[state.start.index + 1]
-		const end = {
-			key,
-			index: state.start.index + 1,
-			offset: 0, // Reset
-			pos: state.start.pos + 1,
-		}
-		const reset = { key: state.start.key, offset: state.start.offset } // Idempotent
-		write(state, null, state.start, end)
-		Object.assign(state, { reset })
-		this.render()
-	},
+	// FFBackspaceNode() {
+	// 	const { key, data } = state.nodes[state.start.index - 1]
+	// 	const start = {
+	// 		key,
+	// 		index: state.start.index - 1,
+	// 		offset: data.length,
+	// 		pos: state.start.pos - 1,
+	// 	}
+	// 	const reset = { key, offset: data.length }
+	// 	write(state, null, start, state.end)
+	// 	Object.assign(state, { reset })
+	// 	this.render()
+	// },
+	// FFBackspaceForwardsNode() {
+	// 	const { key } = state.nodes[state.start.index + 1]
+	// 	const end = {
+	// 		key,
+	// 		index: state.start.index + 1,
+	// 		offset: 0, // Reset
+	// 		pos: state.start.pos + 1,
+	// 	}
+	// 	const reset = { key: state.start.key, offset: state.start.offset } // Idempotent
+	// 	write(state, null, state.start, end)
+	// 	Object.assign(state, { reset })
+	// 	this.render()
+	// },
 	render(reset) {
 		if (reset) {
 			Object.assign(state, { reset })
@@ -111,16 +112,20 @@ const init = initialValue => initialState => {
 		nodes,
 		start: newCursor(),
 		end: newCursor(),
-		coords: {
-			start: {
-				x: 0,
-				y: 0,
-			},
-			end: {
-				x: 0,
-				y: 0,
-			},
-		},
+		// target: {
+		// 	start: newCursor(),
+		// 	end: newCursor(),
+		// },
+		// coords: {
+		// 	start: {
+		// 		x: 0,
+		// 		y: 0,
+		// 	},
+		// 	end: {
+		// 		x: 0,
+		// 		y: 0,
+		// 	},
+		// },
 		reset: {
 			key: "",
 			offset: 0,
