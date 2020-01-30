@@ -52,9 +52,6 @@ import "./Editor.css"
 // 	return e.key === KEY_DELETE
 // }
 
-// ;[...ref.current.childNodes].map(each => each.remove())
-// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-
 function EditorContents(props) {
 	return props.components
 }
@@ -86,50 +83,46 @@ function Editor({ state, dispatch, ...props }) {
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-
-			if (state.shouldRender) {
-				const selection = document.getSelection()
-				const { startContainer } = selection.getRangeAt(0)
-				const startNode = getKeyNode(startContainer)
-				target.current = getTargetFromKeyNodes(state.nodes, startNode, startNode)
-			}
-
 			// Render the React DOM:
 			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
 				if (!state.shouldRender) {
 					syncViews(ref.current, state.reactDOM, "data-memo")
 					return
 				}
-				// Sync the DOM trees (user and React):
-				const didMutate = syncViews(ref.current, state.reactDOM, "data-memo")
-				// console.log({ didMutate })
-				if (!didMutate) {
-					dispatch.rendered()
-					return
-				}
-				// TODO: getKeyNodeByID(state.reset.key)
-				let startNode = document.getElementById(state.reset.key)
-				if (startNode.getAttribute("data-compound-node")) { // Gecko/Firefox
-					startNode = startNode.childNodes[0] // Does not recurse
-				}
+
 				const selection = document.getSelection()
-				const range = document.createRange()
-				let { node, offset } = getRangeFromKeyNodeAndOffset(startNode, state.reset.offset)
-				if (platform.isFirefox && node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") {
-					node = node.parentNode
-					offset = 0
-				}
-				try {
-					range.setStart(node, offset)
-					range.collapse()
-					selection.removeAllRanges()
-					selection.addRange(range)
-					// dispatch.rendered()
-				} catch (e) {
-					console.warn(e)
-				}
+				selection.removeAllRanges()
+
+				;[...ref.current.childNodes].map(each => each.remove())
+				ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+
+				// // // Sync the DOM trees (user and React):
+				// // const didMutate = syncViews(ref.current, state.reactDOM, "data-memo")
+				// // // console.log({ didMutate })
+				// // if (!didMutate) {
+				// // 	dispatch.rendered()
+				// // 	return
+				// // }
+
+				// // TODO: getKeyNodeByID(state.reset.key)
+				// let startNode = document.getElementById(state.reset.key)
+				// if (startNode.getAttribute("data-compound-node")) { // Gecko/Firefox
+				// 	startNode = startNode.childNodes[0] // Does not recurse
+				// }
+				// const selection = document.getSelection()
+				// const range = document.createRange()
+				// let { node, offset } = getRangeFromKeyNodeAndOffset(startNode, state.reset.offset)
+				// if (platform.isFirefox && node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") {
+				// 	node = node.parentNode
+				// 	offset = 0
+				// }
+				// range.setStart(node, offset)
+				// range.collapse()
+				// selection.removeAllRanges()
+				// selection.addRange(range)
+				// // dispatch.rendered()
 			})
-		}, [state, dispatch]),
+		}, [state]),
 		[state.shouldRender],
 	)
 
@@ -195,6 +188,9 @@ function Editor({ state, dispatch, ...props }) {
 						onBlur:  dispatch.actionBlur,
 
 						onSelect: e => {
+							if (state.shouldRender) {
+								return
+							}
 							const selection = document.getSelection()
 							const range = selection.getRangeAt(0)
 							const { start, end, startNode, endNode } = getCursorsFromRange(state.nodes, range)
@@ -318,6 +314,7 @@ function Editor({ state, dispatch, ...props }) {
 						// }
 
 						onInput: e => {
+							console.log("onInput")
 							if (platform.isFirefox && FFDedupeCompositionEnd.current) {
 								FFDedupeCompositionEnd.current = false // Reset
 								return
@@ -359,7 +356,6 @@ function Editor({ state, dispatch, ...props }) {
 							const offset = getOffsetFromRange(startNode, startContainer, startOffset)
 							const reset = { key: startNode.id, offset }
 							// OK:
-							console.log(nodes)
 							dispatch.actionInput(nodes, start, end, /* coords, */ reset)
 						},
 
