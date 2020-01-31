@@ -1,9 +1,9 @@
+// import stylex from "stylex"
 import CSSDebugger from "utils/CSSDebugger"
 import Enum from "utils/Enum"
 import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
-import stylex from "stylex"
 import useMethods from "use-methods"
 
 import "./Editor.css"
@@ -203,7 +203,7 @@ function areEqualTrees(treeA, treeB) {
 }
 
 const Paragraph = React.memo(props => (
-	<div id={props.reactKey} style={stylex.parse("pre-wrap")} data-node>
+	<div id={props.reactKey} style={{ whiteSpace: "pre-wrap" }} data-node>
 		{props.children || (
 			<br />
 		)}
