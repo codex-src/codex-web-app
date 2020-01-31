@@ -114,30 +114,39 @@ function parseComponents(data) {
 	return components
 }
 
-// const rangeRef = React.useRef()
-//
-// if (
-// 	rangeRef.current                                 && // eslint-disable-line no-multi-spaces
-// 	rangeRef.startContainer === range.startContainer && // eslint-disable-line no-multi-spaces
-// 	rangeRef.startOffset    === range.startOffset    && // eslint-disable-line no-multi-spaces
-// 	rangeRef.endContainer   === range.endContainer   && // eslint-disable-line no-multi-spaces
-// 	rangeRef.endOffset      === range.endOffset      && // eslint-disable-line no-multi-spaces
-// 	rangeRef.collapsed      === range.collapsed         // eslint-disable-line no-multi-spaces
-// ) {
-// 	return [state.pos1, state.pos2]
-// }
-// rangeRef.current = { ...range }
+const KEY_BACKSPACE = "Backspace" // eslint-disable-line no-multi-spaces
+const KEY_DELETE    = "Delete"    // eslint-disable-line no-multi-spaces
+const KEY_CODE_D    = 68          // eslint-disable-line no-multi-spaces
+
+function isControlDMacOS(e) {
+	const ok = (
+		!e.shiftKey && // Must negate
+		e.ctrlKey &&   // Must accept
+		!e.altKey &&   // Must negate
+		!e.metaKey &&  // Must negate
+		e.keyCode === KEY_CODE_D
+	)
+	return ok
+}
 
 function FirefoxEditor(props) {
 	const rootNodeRef = React.useRef()
 	const isPointerDownRef = React.useRef()
 	const FFDedupeCompositionEndRef = React.useRef()
 
-	const [state, dispatch] = useMethods(reducer, initialState, init(`Hello, world!
+	const [state, dispatch] = useMethods(reducer, initialState, init(`Hello, world! 1
 
-Hello, world!
+Hello, world! 2
 
-Hello, world!`))
+Hello, world! 3
+
+Hello, world! 4
+
+Hello, world! 5
+
+Hello, world! 6
+
+Hello, world! 7`))
 
 	// Gets cursors.
 	//
@@ -192,6 +201,26 @@ Hello, world!`))
 					onKeyDown: e => {
 						const [pos1, pos2] = getPos()
 						dispatch.actionSelect(pos1, pos2)
+
+						switch (true) {
+						case e.key === KEY_BACKSPACE:
+							if (state.collapsed && state.pos1 && state.data[state.pos1 - 1] === "\n") {
+								e.preventDefault()
+								// TODO
+								return
+							}
+							break
+						case (e.key === KEY_DELETE || isControlDMacOS(e)):
+							if (state.collapsed && state.pos1 < state.data.length && state.data[state.pos1] === "\n") {
+								e.preventDefault()
+								// TODO
+								return
+							}
+							break
+						default:
+							// No-op:
+							break
+						}
 					},
 					onCompositionEnd: e => {
 						FFDedupeCompositionEndRef.current = true
