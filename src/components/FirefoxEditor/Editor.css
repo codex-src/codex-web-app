@@ -1,0 +1,19 @@
+@import "https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,700,700i&display=block&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese";
+
+[contenteditable="true"] {
+	white-space:   pre-wrap;
+	-moz-tab-size: 2;
+	tab-size:      2;
+	font:          16px/1.5 "Roboto Mono", "monospace", "system-ui";
+	caret-color:   hsl(var(--black));
+	outline:       none;
+	overflow-wrap: break-word;
+}
+
+[contenteditable="true"] *::selection {
+  background: hsla(var(--blue-a400), 0.25) !important;
+}
+
+[data-node]:empty::before {
+	content: " ";
+}
