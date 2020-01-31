@@ -1,5 +1,6 @@
 import CSSDebugger from "utils/CSSDebugger"
 import Enum from "utils/Enum"
+import platform from "utils/platform"
 import React from "react"
 import stylex from "stylex"
 import useMethods from "use-methods"
@@ -120,10 +121,11 @@ const KEY_CODE_D    = 68          // eslint-disable-line no-multi-spaces
 
 function isControlDMacOS(e) {
 	const ok = (
-		!e.shiftKey && // Must negate
-		e.ctrlKey &&   // Must accept
-		!e.altKey &&   // Must negate
-		!e.metaKey &&  // Must negate
+		platform.isMacOS && // Takes precedence
+		!e.shiftKey &&      // Must negate
+		e.ctrlKey &&        // Must accept
+		!e.altKey &&        // Must negate
+		!e.metaKey &&       // Must negate
 		e.keyCode === KEY_CODE_D
 	)
 	return ok
@@ -138,15 +140,7 @@ function FirefoxEditor(props) {
 
 Hello, world! 2
 
-Hello, world! 3
-
-Hello, world! 4
-
-Hello, world! 5
-
-Hello, world! 6
-
-Hello, world! 7`))
+Hello, world! 3`))
 
 	// Gets cursors.
 	//
@@ -180,6 +174,31 @@ Hello, world! 7`))
 					},
 
 					onSelect: e => {
+						const selection = document.getSelection()
+						const range = selection.getRangeAt(0)
+						// NOTE: Select all (command-a or control-a) in
+						// Gecko/Firefox selects the root node instead
+						// of the innermost start and end nodes
+						if (range.commonAncestorContainer === rootNodeRef.current) {
+							// Iterate to the innermost start node:
+							let startNode = rootNodeRef.current.childNodes[0]
+							while (startNode.childNodes.length) {
+								startNode = startNode.childNodes[0]
+							}
+							// Iterate to the innermost end node:
+							let endNode = rootNodeRef.current.childNodes[rootNodeRef.current.childNodes.length - 1]
+							while (endNode.childNodes.length) {
+								endNode = endNode.childNodes[endNode.childNodes.length - 1]
+							}
+							// Reset the range:
+							const range = document.createRange()
+							// NOTE: setStartBefore and setEndAfter do not
+							// work as expected
+							range.setStart(startNode, 0)
+							range.setEnd(endNode, (endNode.nodeValue || "").length)
+							selection.removeAllRanges()
+							selection.addRange(range)
+						}
 						const [pos1, pos2] = getPos()
 						dispatch.actionSelect(pos1, pos2)
 					},
@@ -233,6 +252,9 @@ Hello, world! 7`))
 						}
 						// console.log(e.nativeEvent)
 					},
+
+					onDrag: e => e.preventDefault(),
+					onDrop: e => e.preventDefault(),
 
 					// ...
 				},
