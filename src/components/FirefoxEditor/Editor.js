@@ -249,19 +249,19 @@ Hello`)
 					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 					return
 				}
-				const selection = document.getSelection()
-				selection.removeAllRanges()
-
-				;[...ref.current.childNodes].map(each => each.remove())
-				ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-
-				const { node, offset } = getRangeFromPos(ref.current, state.pos1) // FIXME: state.pos2?
 				// const selection = document.getSelection()
-				const range = document.createRange()
-				range.setStart(node, offset)
-				range.collapse()
 				// selection.removeAllRanges()
-				selection.addRange(range)
+				//
+				// ;[...ref.current.childNodes].map(each => each.remove())
+				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+				//
+				// const { node, offset } = getRangeFromPos(ref.current, state.pos1) // FIXME: state.pos2?
+				// // const selection = document.getSelection()
+				// const range = document.createRange()
+				// range.setStart(node, offset)
+				// range.collapse()
+				// // selection.removeAllRanges()
+				// selection.addRange(range)
 			})
 		}, [state]),
 		[state.shouldRender],
@@ -344,6 +344,8 @@ Hello`)
 						isPointerDownRef.current = false
 					},
 
+					// NOTE: Backspace and delete (incl. modifiers)
+					// are not well-behaved in Gecko/Firefox
 					onKeyDown: e => {
 						try {
 							const [pos1, pos2] = getPos()
@@ -383,14 +385,23 @@ Hello`)
 						}
 					},
 					onCompositionEnd: e => {
+						// https://github.com/w3c/uievents/issues/202#issue-316461024
 						FFDedupeCompositionEndRef.current = true
+						// Input:
+						const data = getData(ref.current)
+						const [pos1, pos2] = getPos()
+						dispatch.actionInput(data, pos1, pos2)
 					},
 					onInput: e => {
-						// https://github.com/w3c/uievents/issues/202#issue-316461024
 						if (FFDedupeCompositionEndRef.current) {
 							FFDedupeCompositionEndRef.current = false // Reset
 							return
 						}
+						if (e.nativeEvent.isComposing) {
+							// No-op
+							return
+						}
+						// Input:
 						const data = getData(ref.current)
 						const [pos1, pos2] = getPos()
 						dispatch.actionInput(data, pos1, pos2)
