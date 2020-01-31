@@ -28,7 +28,6 @@ const initialState = {
 	pos1: 0,
 	pos2: 0,
 	collapsed: false,
-	reset: null,
 	components: null,
 	shouldRender: 0,
 	reactDOM: null,
@@ -56,9 +55,9 @@ const reducer = state => ({
 		const collapsed = pos1 === pos2
 		Object.assign(state, { pos1, pos2, collapsed })
 	},
-	actionInput(data, pos1, pos2, reset) {
+	actionInput(data, pos1, pos2) {
 		this.newAction(ActionTypes.INPUT)
-		Object.assign(state, { data, pos1, pos2, reset })
+		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
 	// NOTE: dropL and dropR are expected to be >= 0
@@ -89,10 +88,6 @@ const init = initialValue => initialState => ({
 	actionType: ActionTypes.INIT,
 	actionTimeStamp: Date.now(),
 	data: initialValue,
-	reset: {
-		id: "",
-		textOffset: 0,
-	},
 	components: parseComponents(initialValue),
 	reactDOM: document.createElement("div"),
 })
@@ -158,56 +153,29 @@ function getData(rootNode) {
 	return data
 }
 
-// Gets the text offset from a (of a) range; code based on
+// Gets the range from a cursor; code based on
 // getPosFromRange.
-function getTextOffsetFromRange(rootNode, node, offset) {
-	let textOffset = 0
-	const recurse = startNode => {
-		const { childNodes } = startNode
-		let index = 0
-		while (index < childNodes.length) {
-			if (childNodes[index] === node) {
-				textOffset += offset
-				return true
-			}
-			textOffset += (childNodes[index].nodeValue || "").length
-			if (recurse(childNodes[index])) {
-				return true
-			}
-			const { nextSibling } = childNodes[index]
-			if (nextSibling && nextSibling.hasAttribute("data-node")) {
-				textOffset++
-			}
-			index++
-		}
-		return false
-	}
-	recurse(rootNode)
-	return textOffset
-}
-
-// Gets the range from a text offset; code based on
-// getPosFromRange.
-function getRangeFromTextOffset(rootNode, textOffset) {
+function getRangeFromPos(rootNode, pos) {
 	let node = null
 	let offset = 0
 	const recurse = startNode => {
 		const { childNodes } = startNode
 		let index = 0
 		while (index < childNodes.length) {
+			// const nodeValue = childNodes[index].nodeValue || ""
 			const { length } = childNodes[index].nodeValue || ""
-			if (textOffset - length <= 0) {
-				node = childNodes[index] // Set
-				offset = textOffset      // Reset
+			if (pos - length <= 0) {
+				node = childNodes[index]
+				offset = pos
 				return true
 			}
-			textOffset -= length
+			pos -= length
 			if (recurse(childNodes[index])) {
 				return true
 			}
 			const { nextSibling } = childNodes[index]
 			if (nextSibling && nextSibling.hasAttribute("data-node")) {
-				textOffset--
+				pos--
 			}
 			index++
 		}
@@ -216,38 +184,6 @@ function getRangeFromTextOffset(rootNode, textOffset) {
 	recurse(rootNode)
 	return { node, offset }
 }
-
-// // Gets a range for a key node and offset.
-// function getRangeFromKeyNodeAndOffset(keyNode, offset) {
-// 	const range = {
-// 		node: null,
-// 		offset: 0,
-// 	}
-// 	const recurseOn = startNode => {
-// 		for (const currentNode of startNode.childNodes) {
-// 			if (isTextOrBreakNode(currentNode)) {
-// 				// If found, return:
-// 				const { length } = nodeValue(currentNode)
-// 				if (offset - length <= 0) {
-// 					Object.assign(range, {
-// 						node: currentNode,
-// 						offset,
-// 					})
-// 					return true
-// 				}
-// 				offset -= length
-// 			} else {
-// 				// If found recursing on the current node, return:
-// 				if (recurseOn(currentNode)) {
-// 					return true
-// 				}
-// 			}
-// 		}
-// 		return false
-// 	}
-// 	recurseOn(keyNode)
-// 	return range
-// }
 
 const Paragraph = props => (
 	<div id={props.reactKey} data-node>
@@ -313,17 +249,18 @@ Hello`)
 					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 					return
 				}
+				const selection = document.getSelection()
+				selection.removeAllRanges()
+
 				;[...ref.current.childNodes].map(each => each.remove())
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 
-				const rootNode = document.getElementById(state.reset.id) // FIXME: Compound components
-				const { node, offset } = getRangeFromTextOffset(rootNode, state.reset.textOffset)
-
-				const selection = document.getSelection()
+				const { node, offset } = getRangeFromPos(ref.current, state.pos1) // FIXME: state.pos2?
+				// const selection = document.getSelection()
 				const range = document.createRange()
 				range.setStart(node, offset)
-				range.collapse() // FIXME: range.setEnd(...)
-				selection.removeAllRanges()
+				range.collapse()
+				// selection.removeAllRanges()
 				selection.addRange(range)
 			})
 		}, [state]),
@@ -342,21 +279,27 @@ Hello`)
 		return [pos1, pos2]
 	}
 
-	// Gets the reset (ID and text offset).
-	const getReset = () => {
-		const selection = document.getSelection()
-		const range = selection.getRangeAt(0)
-		let node = range.startContainer
-		while (node) {
-			if (node.nodeType === Node.ELEMENT_NODE && node.hasAttribute("data-node")) {
-				break
-			}
-			node = node.parentNode
-		}
-		const { id } = node
-		const textOffset = getTextOffsetFromRange(node, range.startContainer, range.startOffset)
-		return { id, textOffset }
-	}
+	// // Gets the reset (ID and text offset).
+	// const getReset = () => {
+	// 	const selection = document.getSelection()
+	// 	const range = selection.getRangeAt(0)
+	// 	let node = range.startContainer
+	// 	while (node) {
+	// 		if (node.nodeType === Node.ELEMENT_NODE && node.hasAttribute("data-node")) {
+	// 			break
+	// 		}
+	// 		node = node.parentNode
+	// 	}
+	// 	let { id } = node
+	// 	if (!id) { // FIXME: Compound components
+	// 		if (!node.previousSibling) {
+	// 			throw new Error("getReset: FIXME")
+	// 		}
+	// 		id = +node.previousSibling.id + 1
+	// 	}
+	// 	const textOffset = getTextOffsetFromRange(node, range.startContainer, range.startOffset)
+	// 	return { id, textOffset }
+	// }
 
 	return (
 		<CSSDebugger>
@@ -376,33 +319,37 @@ Hello`)
 					},
 
 					onSelect: e => {
-						const selection = document.getSelection()
-						const range = selection.getRangeAt(0)
-						// NOTE: Select all (command-a or control-a) in
-						// Gecko/Firefox selects the root node instead
-						// of the innermost start and end nodes
-						if (range.commonAncestorContainer === ref.current) {
-							// Iterate to the innermost start node:
-							let startNode = ref.current.childNodes[0]
-							while (startNode.childNodes.length) {
-								startNode = startNode.childNodes[0]
+						try { // DELETEME
+							const selection = document.getSelection()
+							const range = selection.getRangeAt(0)
+							// NOTE: Select all (command-a or control-a) in
+							// Gecko/Firefox selects the root node instead
+							// of the innermost start and end nodes
+							if (range.commonAncestorContainer === ref.current) {
+								// Iterate to the innermost start node:
+								let startNode = ref.current.childNodes[0]
+								while (startNode.childNodes.length) {
+									startNode = startNode.childNodes[0]
+								}
+								// Iterate to the innermost end node:
+								let endNode = ref.current.childNodes[ref.current.childNodes.length - 1]
+								while (endNode.childNodes.length) {
+									endNode = endNode.childNodes[endNode.childNodes.length - 1]
+								}
+								// Reset the range:
+								const range = document.createRange()
+								// NOTE: setStartBefore and setEndAfter do not
+								// work as expected
+								range.setStart(startNode, 0)
+								range.setEnd(endNode, (endNode.nodeValue || "").length)
+								selection.removeAllRanges()
+								selection.addRange(range)
 							}
-							// Iterate to the innermost end node:
-							let endNode = ref.current.childNodes[ref.current.childNodes.length - 1]
-							while (endNode.childNodes.length) {
-								endNode = endNode.childNodes[endNode.childNodes.length - 1]
-							}
-							// Reset the range:
-							const range = document.createRange()
-							// NOTE: setStartBefore and setEndAfter do not
-							// work as expected
-							range.setStart(startNode, 0)
-							range.setEnd(endNode, (endNode.nodeValue || "").length)
-							selection.removeAllRanges()
-							selection.addRange(range)
+							const [pos1, pos2] = getPos()
+							dispatch.actionSelect(pos1, pos2)
+						} catch (e) {
+							console.warn(e)
 						}
-						const [pos1, pos2] = getPos()
-						dispatch.actionSelect(pos1, pos2)
 					},
 					onPointerDown: e => {
 						isPointerDownRef.current = true
@@ -420,8 +367,12 @@ Hello`)
 					},
 
 					onKeyDown: e => {
-						const [pos1, pos2] = getPos()
-						dispatch.actionSelect(pos1, pos2)
+						try { // DELETEME
+							const [pos1, pos2] = getPos()
+							dispatch.actionSelect(pos1, pos2)
+						} catch (e) {
+							console.warn(e)
+						}
 
 						switch (true) {
 						case e.key === KEY_TAB:
@@ -464,8 +415,7 @@ Hello`)
 						}
 						const data = getData(ref.current)
 						const [pos1, pos2] = getPos()
-						const reset = getReset()
-						dispatch.actionInput(data, pos1, pos2, reset)
+						dispatch.actionInput(data, pos1, pos2)
 					},
 
 					onDrag: e => e.preventDefault(),
