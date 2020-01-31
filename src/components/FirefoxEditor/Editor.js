@@ -185,6 +185,23 @@ function getRangeFromPos(rootNode, pos) {
 	return { node, offset }
 }
 
+// Compares whether two DOM trees are equal -- root nodes
+// **are not** compared.
+function areEqualTrees(treeA, treeB) {
+	if (treeA.childNodes.length !== treeB.childNodes.length) {
+		return false
+	}
+	let index = 0
+	while (index < treeA.childNodes.length) {
+		if (!treeA.childNodes[index].isEqualNode(treeB.childNodes[index])) {
+			console.log(treeA.childNodes[index].outerHTML, treeB.childNodes[index].outerHTML)
+			return false
+		}
+		index++
+	}
+	return true
+}
+
 const Paragraph = props => (
 	<div id={props.reactKey} data-node>
 		{props.children || (
@@ -251,17 +268,26 @@ Hello`)
 				}
 				// const selection = document.getSelection()
 				// selection.removeAllRanges()
-				//
-				// ;[...ref.current.childNodes].map(each => each.remove())
-				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-				//
-				// const { node, offset } = getRangeFromPos(ref.current, state.pos1) // FIXME: state.pos2?
-				// // const selection = document.getSelection()
-				// const range = document.createRange()
-				// range.setStart(node, offset)
-				// range.collapse()
-				// // selection.removeAllRanges()
-				// selection.addRange(range)
+
+				// NOTE: Gecko/Firefox mysteriously adds up to one
+				// <br> after a space
+				if (areEqualTrees(ref.current, state.reactDOM)) {
+					// No-op
+					console.log("a")
+					return
+				}
+				console.log("b")
+
+				;[...ref.current.childNodes].map(each => each.remove())
+				ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+
+				const { node, offset } = getRangeFromPos(ref.current, state.pos1) // FIXME: state.pos2?
+				const selection = document.getSelection()
+				const range = document.createRange()
+				range.setStart(node, offset)
+				range.collapse()
+				selection.removeAllRanges()
+				selection.addRange(range)
 			})
 		}, [state]),
 		[state.shouldRender],
