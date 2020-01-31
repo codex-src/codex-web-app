@@ -279,28 +279,6 @@ Hello`)
 		return [pos1, pos2]
 	}
 
-	// // Gets the reset (ID and text offset).
-	// const getReset = () => {
-	// 	const selection = document.getSelection()
-	// 	const range = selection.getRangeAt(0)
-	// 	let node = range.startContainer
-	// 	while (node) {
-	// 		if (node.nodeType === Node.ELEMENT_NODE && node.hasAttribute("data-node")) {
-	// 			break
-	// 		}
-	// 		node = node.parentNode
-	// 	}
-	// 	let { id } = node
-	// 	if (!id) { // FIXME: Compound components
-	// 		if (!node.previousSibling) {
-	// 			throw new Error("getReset: FIXME")
-	// 		}
-	// 		id = +node.previousSibling.id + 1
-	// 	}
-	// 	const textOffset = getTextOffsetFromRange(node, range.startContainer, range.startOffset)
-	// 	return { id, textOffset }
-	// }
-
 	return (
 		<CSSDebugger>
 			{React.createElement(
@@ -319,10 +297,10 @@ Hello`)
 					},
 
 					onSelect: e => {
-						try { // DELETEME
+						try {
 							const selection = document.getSelection()
 							const range = selection.getRangeAt(0)
-							// NOTE: Select all (command-a or control-a) in
+							// NOTE: Select all (e.g. cmd-a or ctrl-a) in
 							// Gecko/Firefox selects the root node instead
 							// of the innermost start and end nodes
 							if (range.commonAncestorContainer === ref.current) {
@@ -367,7 +345,7 @@ Hello`)
 					},
 
 					onKeyDown: e => {
-						try { // DELETEME
+						try {
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
