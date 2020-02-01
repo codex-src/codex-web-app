@@ -415,10 +415,6 @@ F`)
 						isPointerDownRef.current = false
 					},
 
-					// NOTE: Backspace and delete with modifiers are
-					// not well-behaved in Gecko/Firefox; delete word
-					// is not well-behaved in Chromium/Chrome
-					//
 					// TODO:
 					//
 					// s.modify("extend", "backward", "character")
