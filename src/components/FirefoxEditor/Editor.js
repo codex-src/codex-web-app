@@ -3,12 +3,18 @@ import Enum from "utils/Enum"
 import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
-import stylex from "stylex"
+// import stylex from "stylex"
 import useMethods from "use-methods"
 
 import "./Editor.css"
 
 // https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
+//
+// deleteContentBackward
+// deleteWordBackward
+// deleteSoftLineBackward
+// deleteHardLineBackward
+//
 const backspaceRe = /^delete(Content|Word|(Soft|Hard)Line)Backward$/
 
 // Discretionary timers (16.67ms -> 33.34ms)
@@ -267,13 +273,12 @@ function syncTrees(treeA, treeB) {
 
 // NOTE: Gecko/Firefox needs white-space: pre-wrap to use
 // inline-styles
-const style = {
-	whiteSpace: "pre-wrap",
-	overflowWrap: "break-word",
-}
+//
+// overflowWrap: "break-word",
+const preWrap = { whiteSpace: "pre-wrap" }
 
 const Paragraph = React.memo(props => (
-	<div style={{ ...style }} data-node>
+	<div style={preWrap} data-node>
 		{props.children || (
 			<br />
 		)}
@@ -432,7 +437,7 @@ F`)
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
-							console.warn({ onSelect: e })
+							console.warn({ "onSelect/catch": e })
 						}
 					},
 					onPointerDown: e => {
@@ -447,7 +452,7 @@ F`)
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
-							console.warn({ onPointerMove: e })
+							console.warn({ "onPointerMove/catch": e })
 						}
 					},
 					onPointerUp: e => {
@@ -462,7 +467,7 @@ F`)
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
-							console.warn({ onKeyDown: e })
+							console.warn({ "onKeyDown/catch": e })
 						}
 						switch (true) {
 						case e.key === KEY_TAB:
