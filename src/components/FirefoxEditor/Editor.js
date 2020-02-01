@@ -330,6 +330,9 @@ F`)
 	)
 
 	// Gets the cursors.
+	//
+	// TODO: getPos can be optimized with coords;
+	// e.g. return [pos1, pos2, coords]
 	const getPos = () => {
 		const t1 = Date.now()
 		const selection = document.getSelection()
@@ -416,6 +419,12 @@ F`)
 					// not well-behaved in Gecko/Firefox; delete word
 					// is not well-behaved in Chromium/Chrome
 					//
+					// TODO:
+					//
+					// s.modify("extend", "backward", "character")
+					// s.modify("extend", "backward", "word")
+					// s.modify("extend", "backward", "lineboundary")
+					//
 					onKeyDown: e => {
 						const { keyCode, timeStamp } = e
 						const mutex = onKeyDownMutex.current
@@ -428,8 +437,8 @@ F`)
 							return
 						}
 						onKeyDownMutex.current = {
-							keyCode,
-							timeStamp,
+							keyCode,   // The key code
+							timeStamp, // The timestamp, accurate to 1ms or 5μs
 						}
 						try {
 							const [pos1, pos2] = getPos()
