@@ -215,21 +215,99 @@ function getRangeFromPos(rootNode, pos) {
 	return { node, offset }
 }
 
-// Compares whether two DOM trees are equal -- root nodes
-// **are not** compared.
-function areEqualTrees(treeA, treeB) {
-	if (treeA.childNodes.length !== treeB.childNodes.length) {
-		return false
-	}
-	let index = 0
-	while (index < treeA.childNodes.length) {
-		if (!treeA.childNodes[index].isEqualNode(treeB.childNodes[index])) {
-			return false
+// // Compares whether two DOM trees are equal -- root nodes
+// // **are not** compared.
+// function areEqualTrees(treeA, treeB) {
+// 	if (treeA.childNodes.length !== treeB.childNodes.length) {
+// 		return false
+// 	}
+// 	let index = 0
+// 	while (index < treeA.childNodes.length) {
+// 		if (!treeA.childNodes[index].isEqualNode(treeB.childNodes[index])) {
+// 			return false
+// 		}
+// 		index++
+// 	}
+// 	return true
+// }
+
+// Syncs two trees -- root nodes are not synced.
+function syncTrees(treeA, treeB) {
+	let didMutate = false
+	let start = 0
+	const min = Math.min(treeA.childNodes.length, treeB.childNodes.length)
+	while (start < min) {
+		if (!treeA.childNodes[start].isEqualNode(treeB.childNodes[start])) {
+			treeA.childNodes[start].replaceWith(treeB.childNodes[start].cloneNode(true))
+			didMutate = true
 		}
-		index++
+		start++
 	}
-	return true
+	// Push extraneous nodes:
+	if (start < treeB.childNodes.length) {
+		while (start < treeB.childNodes.length) {
+			treeA.append(treeB.childNodes[start].cloneNode(true))
+			start++
+		}
+		didMutate = true
+	// Drop extraneous nodes:
+	} else if (start < treeA.childNodes.length) {
+		let end = treeA.childNodes.length - 1 // Iterate backwards
+		while (end >= start) {
+			treeA.childNodes[end].remove()
+			end--
+		}
+		didMutate = true
+	}
+	return didMutate
 }
+
+// // Syncs two trees -- root nodes are not synced.
+// function syncTrees(treeA, treeB) {
+// 	let didMutate = false
+// 	// Iterate forwards (before replkaceWith):
+// 	let start = 0
+// 	const min = Math.min(treeA.childNodes.length, treeB.childNodes.length)
+// 	while (start < min) {
+// 		if (!treeA.childNodes[start].isEqualNode(treeB.childNodes[start])) {
+// 			treeA.childNodes[start].replaceWith(treeB.childNodes[start].cloneNode(true))
+// 			didMutate = true
+// 			start++ // Increment because of break
+// 			break
+// 		}
+// 		start++
+// 	}
+// 	// Iterate backwards (after replaceWith):
+// 	let end1 = treeA.childNodes.length - 1
+// 	let end2 = treeB.childNodes.length - 1
+// 	while (end1 > start && end2 > start) {
+// 		if (!treeA.childNodes[end1].isEqualNode(treeB.childNodes[end2])) {
+// 			treeA.childNodes[end1].replaceWith(treeB.childNodes[end2].cloneNode(true))
+// 			didMutate = true
+// 		}
+// 		end1--
+// 		end2--
+// 	}
+// 	if (end1 !== start && end2 !== start) {
+// 		throw new Error(`FIXME: start=${start} end=${end1} end=${end2}`)
+// 	}
+// 	// Push extraneous nodes:
+// 	if (end1 < end2) {
+// 		while (end1 < end2) {
+// 			treeA.append(treeB.childNodes[end1].cloneNode(true))
+// 			end1++
+// 		}
+// 		didMutate = true
+// 	// Drop extraneous nodes:
+// 	} else if (end2 > end1) {
+// 		while (end2 > end1) {
+// 			treeA.childNodes[end2].remove()
+// 			end2--
+// 		}
+// 		didMutate = true
+// 	}
+// 	return didMutate
+// }
 
 const Paragraph = React.memo(props => (
 	<div style={{ whiteSpace: "pre-wrap" }} data-node>
@@ -238,12 +316,6 @@ const Paragraph = React.memo(props => (
 		)}
 	</div>
 ))
-
-// const components = data.split("\n").map((each, index) => (
-// 	<Paragraph { ...key(index) }>
-// 		{each}
-// 	</Paragraph>
-// ))
 
 // Parses an array of React components from plain text data.
 function parseComponentsFromData(data) {
@@ -289,11 +361,11 @@ function Editor(props) {
 
 	const [forceRender, setForceRender] = React.useState(false)
 
-	const [state, dispatch] = useEditor(`hello
+	const [state, dispatch] = useEditor(`hello a
 
-hello
+hello b
 
-hello`)
+hello c`)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -313,23 +385,24 @@ hello`)
 				// <br> after a space
 				//
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=414223
-				if (!forceRender && areEqualTrees(ref.current, state.reactDOM)) {
+				// const _t1 = Date.now()
+				if (!forceRender && !syncTrees(ref.current, state.reactDOM)) {
 					// No-op
 					return
 				}
-				// Eagerly drop the range for performance reasons:
-				//
-				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
-				const selection = document.getSelection()
-				selection.removeAllRanges()
-				// Patch the DOM:
-				const _t1 = Date.now()
-				;[...ref.current.childNodes].reverse().map(each => each.remove()) // TODO
-				ref.current.append(...state.reactDOM.cloneNode(true).childNodes)  // TODO
-				const _t2 = Date.now()
-				console.log(`append=${_t2 - _t1}`)
+				// const _t2 = Date.now()
+				// console.log(`append=${_t2 - _t1}`)
+
+				// // Patch the DOM:
+				// const _t1 = Date.now()
+				// ;[...ref.current.childNodes].reverse().map(each => each.remove()) // TODO
+				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)  // TODO
+				// const _t2 = Date.now()
+				// console.log(`append=${_t2 - _t1}`)
+
 				// Reset the cursor:
 				const t3 = Date.now()
+				const selection = document.getSelection()
 				const range = document.createRange()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1)
 				range.setStart(node, offset)
@@ -338,11 +411,12 @@ hello`)
 					const { node, offset } = getRangeFromPos(ref.current, state.pos2) // TODO: Shortcut
 					range.setEnd(node, offset)
 				}
+				selection.removeAllRanges()
+				selection.addRange(range)
 				const t4 = Date.now()
 				if (t4 - t3 >= discTimer.range) {
 					console.log(`range=${t4 - t3}`)
 				}
-				selection.addRange(range)
 				setForceRender(false) // Reset
 			})
 		}, [forceRender, state]),
@@ -400,8 +474,8 @@ hello`)
 								}
 								// Reset the range:
 								const range = document.createRange()
-								// NOTE: setStartBefore and setEndAfter do not
-								// work as expected
+								// NOTE: setStartBefore and setEndAfter do
+								// not work as expected
 								range.setStart(startNode, 0)
 								range.setEnd(endNode, (endNode.nodeValue || "").length)
 								selection.removeAllRanges()
