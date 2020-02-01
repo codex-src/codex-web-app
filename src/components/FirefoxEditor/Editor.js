@@ -282,10 +282,12 @@ function isBackspaceRMacOS(e) {
 	return ok
 }
 
-function FirefoxEditor(props) {
+function Editor(props) {
 	const ref = React.useRef()
 	const isPointerDownRef = React.useRef()
 	const dedupeCompositionEndRef = React.useRef()
+
+	const [forceRender, setForceRender] = React.useState(false)
 
 	const [state, dispatch] = useEditor(`hello
 
@@ -301,32 +303,32 @@ hello`)
 				if (t2 - t1 >= discTimer.render) {
 					console.log(`render=${t2 - t1}`)
 				}
+				// Reset the DOM:
 				if (!state.shouldRender) {
+					;[...ref.current.childNodes].reverse().map(each => each.remove())
 					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 					return
 				}
-
 				// NOTE: Gecko/Firefox mysteriously adds up to one
 				// <br> after a space
 				//
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=414223
-				if (areEqualTrees(ref.current, state.reactDOM)) {
+				if (!forceRender && areEqualTrees(ref.current, state.reactDOM)) {
 					// No-op
 					return
 				}
-
-				// Eagerly drop range for performance reasons:
+				// Eagerly drop the range for performance reasons:
 				//
 				// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 				const selection = document.getSelection()
 				selection.removeAllRanges()
-
+				// Patch the DOM:
 				const _t1 = Date.now()
-				;[...ref.current.childNodes].map(each => each.remove())          // TODO
-				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+				;[...ref.current.childNodes].reverse().map(each => each.remove()) // TODO
+				ref.current.append(...state.reactDOM.cloneNode(true).childNodes)  // TODO
 				const _t2 = Date.now()
 				console.log(`append=${_t2 - _t1}`)
-
+				// Reset the cursor:
 				const t3 = Date.now()
 				const range = document.createRange()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1)
@@ -336,13 +338,14 @@ hello`)
 					const { node, offset } = getRangeFromPos(ref.current, state.pos2) // TODO: Shortcut
 					range.setEnd(node, offset)
 				}
-				selection.addRange(range)
 				const t4 = Date.now()
 				if (t4 - t3 >= discTimer.range) {
 					console.log(`range=${t4 - t3}`)
 				}
+				selection.addRange(range)
+				setForceRender(false) // Reset
 			})
-		}, [state]),
+		}, [forceRender, state]),
 		[state.shouldRender],
 	)
 
@@ -407,7 +410,7 @@ hello`)
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
-							console.warn(e)
+							console.warn({ onSelect: e })
 						}
 					},
 					onPointerDown: e => {
@@ -422,7 +425,7 @@ hello`)
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
-							console.warn(e)
+							console.warn({ onPointerMove: e })
 						}
 					},
 					onPointerUp: e => {
@@ -437,9 +440,8 @@ hello`)
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
-							console.warn(e)
+							console.warn({ onKeyDown: e })
 						}
-
 						switch (true) {
 						case e.key === KEY_TAB:
 							e.preventDefault()
@@ -524,6 +526,8 @@ hello`)
 							// No-op
 							return
 						}
+						// Use the force, Luke!
+						setForceRender(true)
 						dispatch.write(substr)
 					},
 
@@ -548,4 +552,4 @@ hello`)
 	)
 }
 
-export default FirefoxEditor
+export default Editor
