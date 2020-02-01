@@ -4,8 +4,8 @@ import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
 import stylex from "stylex"
-import syncTrees from "./syncTrees"
 import useMethods from "use-methods"
+import { naiveSyncTrees as syncTrees } from "./syncTrees"
 
 import "./Editor.css"
 
@@ -414,7 +414,13 @@ F`)
 					// NOTE: Backspace and delete with modifiers are
 					// not well-behaved in Gecko/Firefox; delete word
 					// is not well-behaved in Chromium/Chrome
+					//
+					// NOTE: We can use onKeyDown to create a mutex
+					// for events that are sooner than 16.67ms
+					//
 					onKeyDown: e => {
+						// console.log(e.timeStamp)
+
 						try {
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
@@ -469,6 +475,9 @@ F`)
 							// No-op
 							return
 						}
+
+						console.log(e.nativeEvent.inputType)
+
 						// **DEFEND YOUR KING**
 						if (backspaceRe.test(e.nativeEvent.inputType) && state.collapsed && !state.pos1) {
 							dispatch.render()

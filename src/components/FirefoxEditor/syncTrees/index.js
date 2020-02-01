@@ -1,1 +1,1 @@
-export { default } from "./syncTrees"
+export * from "./syncTrees"
