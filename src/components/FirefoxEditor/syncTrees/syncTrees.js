@@ -17,40 +17,48 @@ function eagerlyDropRange() {
 
 // Syncs two trees -- root nodes are not synced.
 export function naiveSyncTrees(treeA, treeB) {
-	let mutations = 0
-	let start = 0
-	const min = Math.min(treeA.childNodes.length, treeB.childNodes.length)
-	for (; start < min; start++) {
-		if (!treeA.childNodes[start].isEqualNode(treeB.childNodes[start])) {
-			if (!mutations) {
-				eagerlyDropRange()
-			}
-			treeA.childNodes[start].replaceWith(treeB.childNodes[start].cloneNode(true))
-			mutations++
-		}
-	}
-	// Drop extraneous nodes:
-	if (start < treeA.childNodes.length) {
-		let end = treeA.childNodes.length - 1
-		for (; end >= start; end--) { // Iterate backwards
-			if (!mutations) {
-				eagerlyDropRange()
-			}
-			treeA.childNodes[end].remove()
-			mutations++
-		}
-	// Push extraneous nodes:
-	} else if (start < treeB.childNodes.length) {
-		for (; start < treeB.childNodes.length; start++) {
-			if (!mutations) {
-				eagerlyDropRange()
-			}
-			treeA.append(treeB.childNodes[start].cloneNode(true))
-			mutations++
-		}
-	}
-	return mutations
+	eagerlyDropRange()
+	;[...treeA.childNodes].reverse().map(each => each.remove())
+	treeA.append(...treeB.cloneNode(true).childNodes)
+	return treeA.childNodes.length
 }
+
+// // Syncs two trees -- root nodes are not synced.
+// export function naiveSyncTrees(treeA, treeB) {
+// 	let mutations = 0
+// 	let start = 0
+// 	const min = Math.min(treeA.childNodes.length, treeB.childNodes.length)
+// 	for (; start < min; start++) {
+// 		if (!treeA.childNodes[start].isEqualNode(treeB.childNodes[start])) {
+// 			if (!mutations) {
+// 				eagerlyDropRange()
+// 			}
+// 			treeA.childNodes[start].replaceWith(treeB.childNodes[start].cloneNode(true))
+// 			mutations++
+// 		}
+// 	}
+// 	// Drop extraneous nodes:
+// 	if (start < treeA.childNodes.length) {
+// 		let end = treeA.childNodes.length - 1
+// 		for (; end >= start; end--) { // Iterate backwards
+// 			if (!mutations) {
+// 				eagerlyDropRange()
+// 			}
+// 			treeA.childNodes[end].remove()
+// 			mutations++
+// 		}
+// 	// Push extraneous nodes:
+// 	} else if (start < treeB.childNodes.length) {
+// 		for (; start < treeB.childNodes.length; start++) {
+// 			if (!mutations) {
+// 				eagerlyDropRange()
+// 			}
+// 			treeA.append(treeB.childNodes[start].cloneNode(true))
+// 			mutations++
+// 		}
+// 	}
+// 	return mutations
+// }
 
 // Syncs two trees -- root nodes are not synced.
 export function syncTrees(treeA, treeB) {

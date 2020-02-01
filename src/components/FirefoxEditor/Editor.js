@@ -5,7 +5,8 @@ import React from "react"
 import ReactDOM from "react-dom"
 import stylex from "stylex"
 import useMethods from "use-methods"
-import { naiveSyncTrees as syncTrees } from "./syncTrees"
+import { syncTrees } from "./syncTrees"
+// import { naiveSyncTrees as syncTrees } from "./syncTrees"
 
 import "./Editor.css"
 
@@ -273,6 +274,7 @@ function isBackspaceRMacOS(e) {
 function Editor(props) {
 	const ref = React.useRef()
 	const isPointerDownRef = React.useRef()
+	const onKeyDownMutex = React.useRef({ keyCode: 0, timeStamp: 0 })
 	const dedupeCompositionEndRef = React.useRef()
 
 	const [state, dispatch] = useEditor(`A
@@ -295,6 +297,7 @@ F`)
 					syncTrees(ref.current, state.reactDOM)
 					return
 				}
+				// Patch the DOM:
 				const syncT1 = Date.now()
 				const mutations = syncTrees(ref.current, state.reactDOM)
 				if (!mutations) {
@@ -316,13 +319,11 @@ F`)
 					const { node, offset } = getRangeFromPos(ref.current, state.pos2) // TODO: Shortcut
 					range.setEnd(node, offset)
 				}
-				selection.removeAllRanges()
 				selection.addRange(range)
 				const rangeT2 = Date.now()
 				if (rangeT2 - rangeT1 >= discTimer.range) {
 					console.log(`cursor=${rangeT2 - rangeT1}`)
 				}
-				// setForceRender(false) // Reset
 			})
 		}, [state]),
 		[state.shouldRender],
@@ -415,18 +416,28 @@ F`)
 					// not well-behaved in Gecko/Firefox; delete word
 					// is not well-behaved in Chromium/Chrome
 					//
-					// NOTE: We can use onKeyDown to create a mutex
-					// for events that are sooner than 16.67ms
-					//
 					onKeyDown: e => {
-						// console.log(e.timeStamp)
-
+						const { keyCode, timeStamp } = e
+						const mutex = onKeyDownMutex.current
+						if (keyCode === mutex.keyCode && timeStamp - mutex.timeStamp < 16.67) {
+							e.preventDefault()
+							onKeyDownMutex.current = {
+								keyCode,
+								timeStamp,
+							}
+							return
+						}
+						onKeyDownMutex.current = {
+							keyCode,
+							timeStamp,
+						}
 						try {
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
 							console.warn({ "onKeyDown/catch": e })
 						}
+						// Key down:
 						switch (true) {
 						case e.key === KEY_TAB:
 							e.preventDefault()
@@ -475,10 +486,7 @@ F`)
 							// No-op
 							return
 						}
-
-						console.log(e.nativeEvent.inputType)
-
-						// **DEFEND YOUR KING**
+						// Guard the contenteditable node (root node):
 						if (backspaceRe.test(e.nativeEvent.inputType) && state.collapsed && !state.pos1) {
 							dispatch.render()
 							return
