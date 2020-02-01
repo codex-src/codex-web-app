@@ -8,11 +8,15 @@ import useMethods from "use-methods"
 
 import "./Editor.css"
 
-const DISC_TIMER_DATA   = 2   // eslint-disable-line no-multi-spaces
-const DISC_TIMER_POS    = 2.5 // eslint-disable-line no-multi-spaces
-const DISC_TIMER_PARSER = 5   // eslint-disable-line no-multi-spaces
-const DISC_TIMER_RENDER = 5   // eslint-disable-line no-multi-spaces
-const DISC_TIMER_RANGE  = 2.5 // eslint-disable-line no-multi-spaces
+const DISC_TIMER_DATA   = 2     // eslint-disable-line no-multi-spaces
+const DISC_TIMER_POS    = 2.5   // eslint-disable-line no-multi-spaces
+const DISC_TIMER_PARSER = 5     // eslint-disable-line no-multi-spaces
+const DISC_TIMER_RENDER = 5     // eslint-disable-line no-multi-spaces
+const DISC_TIMER_RANGE  = 2.5   // eslint-disable-line no-multi-spaces
+const DISC_TIMER_INPUT  = 16.67 // eslint-disable-line no-multi-spaces
+
+let t1Input = 0
+let t2Input = 0
 
 const ActionTypes = new Enum(
 	"INIT",
@@ -270,9 +274,13 @@ function isBackspaceRMacOS(e) {
 function FirefoxEditor(props) {
 	const ref = React.useRef()
 	const isPointerDownRef = React.useRef()
-	const FFDedupeCompositionEndRef = React.useRef()
+	const dedupeCompositionEndRef = React.useRef()
 
-	const [state, dispatch] = useEditor("")
+	const [state, dispatch] = useEditor(`hello
+
+hello
+
+hello`)
 
 	// function FirefoxEditorComponents(props) {
 	// 	return props.components
@@ -298,7 +306,10 @@ function FirefoxEditor(props) {
 				//
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=414223
 				if (areEqualTrees(ref.current, state.reactDOM)) {
-					// No-op
+					t2Input = Date.now()
+					if (t2Input - t1Input >= DISC_TIMER_INPUT) {
+						console.log(`input=${t2Input - t1Input}`)
+					}
 					return
 				}
 
@@ -324,6 +335,10 @@ function FirefoxEditor(props) {
 				const t4 = Date.now()
 				if (t4 - t3 >= DISC_TIMER_RANGE) {
 					console.log(`range=${t4 - t3}`)
+				}
+				t2Input = Date.now()
+				if (t2Input - t1Input >= DISC_TIMER_INPUT) {
+					console.log(`input=${t2Input - t1Input}`)
 				}
 			})
 		}, [state]),
@@ -357,12 +372,8 @@ function FirefoxEditor(props) {
 					contentEditable: true,
 					suppressContentEditableWarning: true,
 
-					onFocus: e => {
-						dispatch.actionFocus()
-					},
-					onBlur: e => {
-						dispatch.actionBlur()
-					},
+					onFocus: dispatch.actionFocus,
+					onBlur:  dispatch.actionBlur,
 
 					onSelect: e => {
 						try {
@@ -457,22 +468,24 @@ function FirefoxEditor(props) {
 					},
 					onCompositionEnd: e => {
 						// https://github.com/w3c/uievents/issues/202#issue-316461024
-						FFDedupeCompositionEndRef.current = true
-						// Input:
+						dedupeCompositionEndRef.current = true
+						// Input action:
+						t1Input = Date.now()
 						const data = getData(ref.current)
 						const [pos1, pos2] = getPos()
 						dispatch.actionInput(data, pos1, pos2)
 					},
 					onInput: e => {
-						if (FFDedupeCompositionEndRef.current) {
-							FFDedupeCompositionEndRef.current = false // Reset
+						if (dedupeCompositionEndRef.current) {
+							dedupeCompositionEndRef.current = false // Reset
 							return
 						}
 						if (e.nativeEvent.isComposing) {
 							// No-op
 							return
 						}
-						// Input:
+						// Input action:
+						t1Input = Date.now()
 						const data = getData(ref.current)
 						const [pos1, pos2] = getPos()
 						dispatch.actionInput(data, pos1, pos2)
