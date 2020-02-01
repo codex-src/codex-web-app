@@ -11,13 +11,14 @@ import "./Editor.css"
 // https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
 const backspaceRe = /^delete(Content|Word|(Soft|Hard)Line)Backward$/
 
-// Discretionary timers (17ms)
+// Discretionary timers (16.67ms)
 const discTimer = {
-	data:   2,   // data=x
-	pos:    2.5, // pos=x
-	parser: 5,   // parser=x
-	render: 5,   // render=x
-	range:  2.5, // range=x
+	data:   1.945, // data=x
+	pos:    1.945, // pos=x
+	parser: 4.945, // parser=x
+	render: 4.945, // render=x
+	sync:   0.945, // sync=x
+	range:  1.945, // range=x
 }
 
 const ActionTypes = new Enum(
@@ -215,22 +216,6 @@ function getRangeFromPos(rootNode, pos) {
 	return { node, offset }
 }
 
-// // Compares whether two DOM trees are equal -- root nodes
-// // **are not** compared.
-// function areEqualTrees(treeA, treeB) {
-// 	if (treeA.childNodes.length !== treeB.childNodes.length) {
-// 		return false
-// 	}
-// 	let index = 0
-// 	while (index < treeA.childNodes.length) {
-// 		if (!treeA.childNodes[index].isEqualNode(treeB.childNodes[index])) {
-// 			return false
-// 		}
-// 		index++
-// 	}
-// 	return true
-// }
-
 // Syncs two trees -- root nodes are not synced.
 function syncTrees(treeA, treeB) {
 	let didMutate = false
@@ -262,55 +247,15 @@ function syncTrees(treeA, treeB) {
 	return didMutate
 }
 
-// // Syncs two trees -- root nodes are not synced.
-// function syncTrees(treeA, treeB) {
-// 	let didMutate = false
-// 	// Iterate forwards (before replkaceWith):
-// 	let start = 0
-// 	const min = Math.min(treeA.childNodes.length, treeB.childNodes.length)
-// 	while (start < min) {
-// 		if (!treeA.childNodes[start].isEqualNode(treeB.childNodes[start])) {
-// 			treeA.childNodes[start].replaceWith(treeB.childNodes[start].cloneNode(true))
-// 			didMutate = true
-// 			start++ // Increment because of break
-// 			break
-// 		}
-// 		start++
-// 	}
-// 	// Iterate backwards (after replaceWith):
-// 	let end1 = treeA.childNodes.length - 1
-// 	let end2 = treeB.childNodes.length - 1
-// 	while (end1 > start && end2 > start) {
-// 		if (!treeA.childNodes[end1].isEqualNode(treeB.childNodes[end2])) {
-// 			treeA.childNodes[end1].replaceWith(treeB.childNodes[end2].cloneNode(true))
-// 			didMutate = true
-// 		}
-// 		end1--
-// 		end2--
-// 	}
-// 	if (end1 !== start && end2 !== start) {
-// 		throw new Error(`FIXME: start=${start} end=${end1} end=${end2}`)
-// 	}
-// 	// Push extraneous nodes:
-// 	if (end1 < end2) {
-// 		while (end1 < end2) {
-// 			treeA.append(treeB.childNodes[end1].cloneNode(true))
-// 			end1++
-// 		}
-// 		didMutate = true
-// 	// Drop extraneous nodes:
-// 	} else if (end2 > end1) {
-// 		while (end2 > end1) {
-// 			treeA.childNodes[end2].remove()
-// 			end2--
-// 		}
-// 		didMutate = true
-// 	}
-// 	return didMutate
-// }
+// NOTE: Gecko/Firefox needs white-space: pre-wrap to use
+// inline-styles
+const style = {
+	whiteSpace: "pre-wrap",
+	overflowWrap: "break-word",
+}
 
 const Paragraph = React.memo(props => (
-	<div style={{ whiteSpace: "pre-wrap" }} data-node>
+	<div style={{ ...style }} data-node>
 		{props.children || (
 			<br />
 		)}
@@ -361,47 +306,37 @@ function Editor(props) {
 
 	const [forceRender, setForceRender] = React.useState(false)
 
-	const [state, dispatch] = useEditor(`hello a
-
-hello b
-
-hello c`)
+	const [state, dispatch] = useEditor(`A
+B
+C
+D
+E
+F`)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const t1 = Date.now()
+			const renderT1 = Date.now()
 			ReactDOM.render(state.components, state.reactDOM, () => {
-				const t2 = Date.now()
-				if (t2 - t1 >= discTimer.render) {
-					console.log(`render=${t2 - t1}`)
+				const renderT2 = Date.now()
+				if (renderT2 - renderT1 >= discTimer.render) {
+					console.log(`render=${renderT2 - renderT1}`)
 				}
-				// Reset the DOM:
+				// Reset the DOM (once):
 				if (!state.shouldRender) {
-					;[...ref.current.childNodes].reverse().map(each => each.remove())
-					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
+					syncTrees(ref.current, state.reactDOM)
 					return
 				}
-				// NOTE: Gecko/Firefox mysteriously adds up to one
-				// <br> after a space
-				//
-				// https://bugzilla.mozilla.org/show_bug.cgi?id=414223
-				// const _t1 = Date.now()
+				const syncT1 = Date.now()
 				if (!forceRender && !syncTrees(ref.current, state.reactDOM)) {
 					// No-op
 					return
 				}
-				// const _t2 = Date.now()
-				// console.log(`append=${_t2 - _t1}`)
-
-				// // Patch the DOM:
-				// const _t1 = Date.now()
-				// ;[...ref.current.childNodes].reverse().map(each => each.remove()) // TODO
-				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)  // TODO
-				// const _t2 = Date.now()
-				// console.log(`append=${_t2 - _t1}`)
-
+				const syncT2 = Date.now()
+				if (syncT2 - syncT1 >= discTimer.sync) {
+					console.log(`sync=${syncT2 - syncT1}`)
+				}
 				// Reset the cursor:
-				const t3 = Date.now()
+				const rangeT1 = Date.now()
 				const selection = document.getSelection()
 				const range = document.createRange()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1)
@@ -413,9 +348,9 @@ hello c`)
 				}
 				selection.removeAllRanges()
 				selection.addRange(range)
-				const t4 = Date.now()
-				if (t4 - t3 >= discTimer.range) {
-					console.log(`range=${t4 - t3}`)
+				const rangeT2 = Date.now()
+				if (rangeT2 - rangeT1 >= discTimer.range) {
+					console.log(`cursor=${rangeT2 - rangeT1}`)
 				}
 				setForceRender(false) // Reset
 			})
