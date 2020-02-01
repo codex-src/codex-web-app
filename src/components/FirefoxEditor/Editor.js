@@ -384,7 +384,7 @@ hello`)
 							// NOTE: Select all (e.g. cmd-a or ctrl-a) in
 							// Gecko/Firefox selects the root node instead
 							// of the innermost start and end nodes
-							if (range.commonAncestorContainer === ref.current) {
+							if (range.startContainer === ref.current || range.endContainer === ref.current) {
 								// Iterate to the innermost start node:
 								let startNode = ref.current.childNodes[0]
 								while (startNode.childNodes.length) {
@@ -487,7 +487,7 @@ hello`)
 							// No-op
 							return
 						}
-						// **DEFEND YOUR KING!!**
+						// **DEFEND YOUR KING**
 						if (backspaceRe.test(e.nativeEvent.inputType) && state.collapsed && !state.pos1) {
 							dispatch.render()
 							return
@@ -496,6 +496,35 @@ hello`)
 						const data = getData(ref.current)
 						const [pos1, pos2] = getPos()
 						dispatch.actionInput(data, pos1, pos2)
+					},
+
+					onCut: e => {
+						e.preventDefault()
+						if (state.collapsed) {
+							// No-op
+							return
+						}
+						const substr = state.data.slice(state.pos1, state.pos2)
+						e.clipboardData.setData("text/plain", substr)
+						dispatch.write("")
+					},
+					onCopy: e => {
+						e.preventDefault()
+						if (state.collapsed) {
+							// No-op
+							return
+						}
+						const substr = state.data.slice(state.pos1, state.pos2)
+						e.clipboardData.setData("text/plain", substr)
+					},
+					onPaste: e => {
+						e.preventDefault()
+						const substr = e.clipboardData.getData("text/plain")
+						if (!substr) {
+							// No-op
+							return
+						}
+						dispatch.write(substr)
 					},
 
 					onDrag: e => e.preventDefault(),
