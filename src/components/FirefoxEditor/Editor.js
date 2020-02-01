@@ -304,8 +304,6 @@ function Editor(props) {
 	const isPointerDownRef = React.useRef()
 	const dedupeCompositionEndRef = React.useRef()
 
-	const [forceRender, setForceRender] = React.useState(false)
-
 	const [state, dispatch] = useEditor(`A
 B
 C
@@ -327,10 +325,11 @@ F`)
 					return
 				}
 				const syncT1 = Date.now()
-				if (!forceRender && !syncTrees(ref.current, state.reactDOM)) {
-					// No-op
-					return
-				}
+				/* const didMutate = */ syncTrees(ref.current, state.reactDOM)
+				// if (!didMutate) {
+				// 	// No-op
+				// 	return
+				// }
 				const syncT2 = Date.now()
 				if (syncT2 - syncT1 >= discTimer.sync) {
 					console.log(`sync=${syncT2 - syncT1}`)
@@ -352,9 +351,9 @@ F`)
 				if (rangeT2 - rangeT1 >= discTimer.range) {
 					console.log(`cursor=${rangeT2 - rangeT1}`)
 				}
-				setForceRender(false) // Reset
+				// setForceRender(false) // Reset
 			})
-		}, [forceRender, state]),
+		}, [/* forceRender, */ state]),
 		[state.shouldRender],
 	)
 
@@ -535,8 +534,6 @@ F`)
 							// No-op
 							return
 						}
-						// Use the force, Luke!
-						setForceRender(true)
 						dispatch.write(substr)
 					},
 
