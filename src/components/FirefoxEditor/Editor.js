@@ -11,14 +11,14 @@ import "./Editor.css"
 // https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
 const backspaceRe = /^delete(Content|Word|(Soft|Hard)Line)Backward$/
 
-// Discretionary timers (16.67ms)
+// Discretionary timers (16.67ms -> 33.34ms)
 const discTimer = {
-	data:   1.945, // data=x
-	pos:    1.945, // pos=x
-	parser: 4.945, // parser=x
-	render: 4.945, // render=x
-	sync:   0.945, // sync=x
-	range:  1.945, // range=x
+	data:   2 * 1.945, // data=x
+	pos:    2 * 1.945, // pos=x
+	parser: 2 * 4.945, // parser=x
+	render: 2 * 4.945, // render=x
+	sync:   2 * 0.945, // sync=x
+	range:  2 * 1.945, // range=x
 }
 
 const ActionTypes = new Enum(
@@ -216,35 +216,53 @@ function getRangeFromPos(rootNode, pos) {
 	return { node, offset }
 }
 
+// Eagerly drops the range for performance reasons.
+//
+// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
+function eagerlyDropRange() {
+	const selection = document.getSelection()
+	if (!selection.rangeCount) {
+		// No-op
+		return
+	}
+	selection.removeAllRanges()
+}
+
 // Syncs two trees -- root nodes are not synced.
 function syncTrees(treeA, treeB) {
-	let didMutate = false
+	let mutations = 0
 	let start = 0
 	const min = Math.min(treeA.childNodes.length, treeB.childNodes.length)
-	while (start < min) {
+	for (; start < min; start++) {
 		if (!treeA.childNodes[start].isEqualNode(treeB.childNodes[start])) {
+			if (!mutations) {
+				eagerlyDropRange()
+			}
 			treeA.childNodes[start].replaceWith(treeB.childNodes[start].cloneNode(true))
-			didMutate = true
+			mutations++
 		}
-		start++
 	}
-	// Push extraneous nodes:
-	if (start < treeB.childNodes.length) {
-		while (start < treeB.childNodes.length) {
-			treeA.append(treeB.childNodes[start].cloneNode(true))
-			start++
-		}
-		didMutate = true
 	// Drop extraneous nodes:
-	} else if (start < treeA.childNodes.length) {
-		let end = treeA.childNodes.length - 1 // Iterate backwards
-		while (end >= start) {
+	if (start < treeA.childNodes.length) {
+		let end = treeA.childNodes.length - 1
+		for (; end >= start; end--) { // Iterate backwards
+			if (!mutations) {
+				eagerlyDropRange()
+			}
 			treeA.childNodes[end].remove()
-			end--
+			mutations++
 		}
-		didMutate = true
+	// Push extraneous nodes:
+	} else if (start < treeB.childNodes.length) {
+		for (; start < treeB.childNodes.length; start++) {
+			if (!mutations) {
+				eagerlyDropRange()
+			}
+			treeA.append(treeB.childNodes[start].cloneNode(true))
+			mutations++
+		}
 	}
-	return didMutate
+	return mutations
 }
 
 // NOTE: Gecko/Firefox needs white-space: pre-wrap to use
@@ -325,11 +343,11 @@ F`)
 					return
 				}
 				const syncT1 = Date.now()
-				/* const didMutate = */ syncTrees(ref.current, state.reactDOM)
-				// if (!didMutate) {
-				// 	// No-op
-				// 	return
-				// }
+				const mutations = syncTrees(ref.current, state.reactDOM)
+				if (!mutations) {
+					// No-op
+					return
+				}
 				const syncT2 = Date.now()
 				if (syncT2 - syncT1 >= discTimer.sync) {
 					console.log(`sync=${syncT2 - syncT1}`)
@@ -353,7 +371,7 @@ F`)
 				}
 				// setForceRender(false) // Reset
 			})
-		}, [/* forceRender, */ state]),
+		}, [state]),
 		[state.shouldRender],
 	)
 
