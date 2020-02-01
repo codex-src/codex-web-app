@@ -285,12 +285,8 @@ function parseComponentsFromData(data) {
 	const t1 = Date.now()
 	const components = []
 	const nodes = data.split("\n")
-	let index = 0
-	while (index < nodes.length) {
-		components.push(<Paragraph key={index}>
-			{nodes[index]}
-		</Paragraph>)
-		index++
+	for (let index = 0; index < nodes.length; index++) {
+		components.push(<Paragraph key={index}>{nodes[index]}</Paragraph>)
 	}
 	const t2 = Date.now()
 	if (t2 - t1 >= discTimer.parser) {
@@ -559,19 +555,19 @@ F`)
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			<div style={stylex.parse("m-t:24")}>
-				<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
-					{JSON.stringify(
-						{
-							...state,
-							components: undefined,
-							reactDOM: undefined,
-						},
-						null,
-						"\t",
-					)}
-				</pre>
-			</div>
+			{/* <div style={stylex.parse("m-t:24")}> */}
+			{/* 	<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}> */}
+			{/* 		{JSON.stringify( */}
+			{/* 			{ */}
+			{/* 				...state, */}
+			{/* 				components: undefined, */}
+			{/* 				reactDOM: undefined, */}
+			{/* 			}, */}
+			{/* 			null, */}
+			{/* 			"\t", */}
+			{/* 		)} */}
+			{/* 	</pre> */}
+			{/* </div> */}
 		</CSSDebugger>
 	)
 }
