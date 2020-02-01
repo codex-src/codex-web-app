@@ -64,21 +64,35 @@ const reducer = state => ({
 		this.render()
 	},
 	// NOTE: dropL and dropR are expected to be >= 0
-	actionInputDropBytes(dropL, dropR) {
-		if (!state.collapsed) {
-			dropL = 0
-			dropR = 0
-		}
-		const data = state.data.slice(0, state.pos1 - dropL) + state.data.slice(state.pos2 + dropR)
-		const pos1 = state.pos1 - dropL
+	write(substr, dropL = 0, dropR = 0) {
+		// if (!state.collapsed) {
+		// 	dropL = 0
+		// 	dropR = 0
+		// }
+		const data = state.data.slice(0, state.pos1 - dropL) + substr + state.data.slice(state.pos2 + dropR)
+		const pos1 = state.pos1 - dropL + substr.length
 		const pos2 = pos1
 		this.actionInput(data, pos1, pos2)
 	},
 	backspaceL() {
-		this.actionInputDropBytes(1, 0)
+		let dropL = 1
+		if (!state.collapsed) {
+			dropL = 0
+		}
+		this.write("", dropL, 0)
 	},
 	backspaceR() {
-		this.actionInputDropBytes(0, 1)
+		let dropR = 1
+		if (!state.collapsed) {
+			dropR = 0
+		}
+		this.write("", 0, dropR)
+	},
+	tab() {
+		this.write("\t")
+	},
+	enter() {
+		this.write("\n")
 	},
 	render() {
 		state.components = parseComponentsFromData(state.data)
@@ -203,17 +217,12 @@ function areEqualTrees(treeA, treeB) {
 }
 
 const Paragraph = React.memo(props => (
-	<div id={props.reactKey} style={{ whiteSpace: "pre-wrap" }} data-node>
+	<div style={{ whiteSpace: "pre-wrap" }} data-node>
 		{props.children || (
 			<br />
 		)}
 	</div>
 ))
-
-const key = index => ({
-	key: index,
-	reactKey: index,
-})
 
 // const components = data.split("\n").map((each, index) => (
 // 	<Paragraph { ...key(index) }>
@@ -224,15 +233,13 @@ const key = index => ({
 // Parses an array of React components from plain text data.
 function parseComponentsFromData(data) {
 	const t1 = Date.now()
-	let components = []
+	const components = []
 	const nodes = data.split("\n")
 	let index = 0
 	while (index < nodes.length) {
-		components.push(
-			<Paragraph { ...key(index) }>
-				{nodes[index]}
-			</Paragraph>
-		)
+		components.push(<Paragraph key={index}>
+			{nodes[index]}
+		</Paragraph>)
 		index++
 	}
 	const t2 = Date.now()
@@ -282,7 +289,6 @@ function FirefoxEditor(props) {
 					console.log(`render=${t2 - t1}`)
 				}
 				if (!state.shouldRender) {
-					// ;[...ref.current.childNodes].map(each => each.remove())
 					ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
 					return
 				}
@@ -306,14 +312,14 @@ function FirefoxEditor(props) {
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
 
 				const t3 = Date.now()
-				const start = getRangeFromPos(ref.current, state.pos1)
-				let end = { ...start }
-				if (!state.collapsed) {
-					end = getRangeFromPos(ref.current, state.pos2)
-				}
 				const range = document.createRange()
-				range.setStart(start.node, start.offset)
-				range.setEnd(end.node, end.offset)
+				const { node, offset } = getRangeFromPos(ref.current, state.pos1)
+				range.setStart(node, offset)
+				range.collapse()
+				if (!state.collapsed) {
+					const { node, offset } = getRangeFromPos(ref.current, state.pos2)
+					range.setEnd(node, offset)
+				}
 				selection.addRange(range)
 				const t4 = Date.now()
 				if (t4 - t3 >= DISC_TIMER_RANGE) {
@@ -388,7 +394,7 @@ function FirefoxEditor(props) {
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
-							console.log(e)
+							console.warn(e)
 						}
 					},
 					onPointerDown: e => {
@@ -399,33 +405,36 @@ function FirefoxEditor(props) {
 							// No-op
 							return
 						}
-						const [pos1, pos2] = getPos()
-						dispatch.actionSelect(pos1, pos2)
+						try {
+							const [pos1, pos2] = getPos()
+							dispatch.actionSelect(pos1, pos2)
+						} catch (e) {
+							console.warn(e)
+						}
 					},
 					onPointerUp: e => {
 						isPointerDownRef.current = false
 					},
 
-					// NOTE: Backspace and delete (incl. modifiers)
-					// are not well-behaved in Gecko/Firefox
+					// NOTE: Backspace and delete with modifiers are
+					// not well-behaved in Gecko/Firefox; delete word
+					// is not well-behaved in Chromium/Chrome
 					onKeyDown: e => {
 						try {
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
-							console.log(e)
+							console.warn(e)
 						}
 
 						switch (true) {
 						case e.key === KEY_TAB:
-							// Defer to onInput:
 							e.preventDefault()
-							document.execCommand("insertText", null, "\t")
+							dispatch.tab()
 							return
 						case e.key === KEY_ENTER:
-							// Defer to onInput:
 							e.preventDefault()
-							document.execCommand("insertParagraph", null, false)
+							dispatch.enter()
 							return
 						case e.key === KEY_BACKSPACE:
 							if (state.collapsed && state.pos1 && state.data[state.pos1 - 1] === "\n") {
