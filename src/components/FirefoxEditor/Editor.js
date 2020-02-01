@@ -3,7 +3,8 @@ import Enum from "utils/Enum"
 import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
-// import stylex from "stylex"
+import stylex from "stylex"
+import syncTrees from "./syncTrees"
 import useMethods from "use-methods"
 
 import "./Editor.css"
@@ -17,14 +18,14 @@ import "./Editor.css"
 //
 const backspaceRe = /^delete(Content|Word|(Soft|Hard)Line)Backward$/
 
-// Discretionary timers (16.67ms -> 33.34ms)
+// Discretionary timers (16.5ms -> 33ms)
 const discTimer = {
-	data:   2 * 1.945, // data=x
-	pos:    2 * 1.945, // pos=x
-	parser: 2 * 4.945, // parser=x
-	render: 2 * 4.945, // render=x
-	sync:   2 * 0.945, // sync=x
-	range:  2 * 1.945, // range=x
+	data:   2 * 2,   // data=x
+	pos:    2 * 2,   // pos=x
+	parser: 2 * 3.5, // parser=x
+	render: 2 * 3.5, // render=x
+	sync:   2 * 3.5, // sync=x
+	range:  2 * 2,   // range=x
 }
 
 const ActionTypes = new Enum(
@@ -222,55 +223,6 @@ function getRangeFromPos(rootNode, pos) {
 	return { node, offset }
 }
 
-// Eagerly drops the range for performance reasons.
-//
-// https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
-function eagerlyDropRange() {
-	const selection = document.getSelection()
-	if (!selection.rangeCount) {
-		// No-op
-		return
-	}
-	selection.removeAllRanges()
-}
-
-// Syncs two trees -- root nodes are not synced.
-function syncTrees(treeA, treeB) {
-	let mutations = 0
-	let start = 0
-	const min = Math.min(treeA.childNodes.length, treeB.childNodes.length)
-	for (; start < min; start++) {
-		if (!treeA.childNodes[start].isEqualNode(treeB.childNodes[start])) {
-			if (!mutations) {
-				eagerlyDropRange()
-			}
-			treeA.childNodes[start].replaceWith(treeB.childNodes[start].cloneNode(true))
-			mutations++
-		}
-	}
-	// Drop extraneous nodes:
-	if (start < treeA.childNodes.length) {
-		let end = treeA.childNodes.length - 1
-		for (; end >= start; end--) { // Iterate backwards
-			if (!mutations) {
-				eagerlyDropRange()
-			}
-			treeA.childNodes[end].remove()
-			mutations++
-		}
-	// Push extraneous nodes:
-	} else if (start < treeB.childNodes.length) {
-		for (; start < treeB.childNodes.length; start++) {
-			if (!mutations) {
-				eagerlyDropRange()
-			}
-			treeA.append(treeB.childNodes[start].cloneNode(true))
-			mutations++
-		}
-	}
-	return mutations
-}
-
 // NOTE: Gecko/Firefox needs white-space: pre-wrap to use
 // inline-styles
 //
@@ -351,7 +303,7 @@ F`)
 				}
 				const syncT2 = Date.now()
 				if (syncT2 - syncT1 >= discTimer.sync) {
-					console.log(`sync=${syncT2 - syncT1}`)
+					console.log(`sync=${syncT2 - syncT1} (${mutations} mutations)`)
 				}
 				// Reset the cursor:
 				const rangeT1 = Date.now()
@@ -507,6 +459,7 @@ F`)
 						const [pos1, pos2] = getPos()
 						dispatch.actionInput(data, pos1, pos2)
 					},
+					// TODO: Guard all delete/selection events
 					onInput: e => {
 						if (dedupeCompositionEndRef.current) {
 							dedupeCompositionEndRef.current = false // Reset
@@ -560,19 +513,19 @@ F`)
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			{/* <div style={stylex.parse("m-t:24")}> */}
-			{/* 	<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}> */}
-			{/* 		{JSON.stringify( */}
-			{/* 			{ */}
-			{/* 				...state, */}
-			{/* 				components: undefined, */}
-			{/* 				reactDOM: undefined, */}
-			{/* 			}, */}
-			{/* 			null, */}
-			{/* 			"\t", */}
-			{/* 		)} */}
-			{/* 	</pre> */}
-			{/* </div> */}
+			<div style={stylex.parse("m-t:24")}>
+				<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
+					{JSON.stringify(
+						{
+							...state,
+							components: undefined,
+							reactDOM: undefined,
+						},
+						null,
+						"\t",
+					)}
+				</pre>
+			</div>
 		</CSSDebugger>
 	)
 }
