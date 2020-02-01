@@ -1,22 +1,24 @@
-// import stylex from "stylex"
 import CSSDebugger from "utils/CSSDebugger"
 import Enum from "utils/Enum"
 import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
+import stylex from "stylex"
 import useMethods from "use-methods"
 
 import "./Editor.css"
 
-const DISC_TIMER_DATA   = 2     // eslint-disable-line no-multi-spaces
-const DISC_TIMER_POS    = 2.5   // eslint-disable-line no-multi-spaces
-const DISC_TIMER_PARSER = 5     // eslint-disable-line no-multi-spaces
-const DISC_TIMER_RENDER = 5     // eslint-disable-line no-multi-spaces
-const DISC_TIMER_RANGE  = 2.5   // eslint-disable-line no-multi-spaces
-const DISC_TIMER_INPUT  = 16.67 // eslint-disable-line no-multi-spaces
+// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
+const backspaceRe = /^delete(Content|Word|(Soft|Hard)Line)Backward$/
 
-let t1Input = 0
-let t2Input = 0
+// Discretionary timers (17ms)
+const discTimer = {
+	data:   2,   // data=x
+	pos:    2.5, // pos=x
+	parser: 5,   // parser=x
+	render: 5,   // render=x
+	range:  2.5, // range=x
+}
 
 const ActionTypes = new Enum(
 	"INIT",
@@ -26,8 +28,8 @@ const ActionTypes = new Enum(
 	"INPUT",
 )
 
-// TODO: nodes?
 const initialState = {
+	epoch: 0,
 	actionType: "",
 	actionTimeStamp: 0,
 	focused: false,
@@ -42,7 +44,7 @@ const initialState = {
 
 const reducer = state => ({
 	newAction(actionType) {
-		const actionTimeStamp = Date.now()
+		const actionTimeStamp = Date.now() - state.epoch
 		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 100) {
 			// No-op
 			return
@@ -69,9 +71,13 @@ const reducer = state => ({
 	},
 	// NOTE: dropL and dropR are expected to be >= 0
 	write(substr, dropL = 0, dropR = 0) {
-		// if (!state.collapsed) {
-		// 	dropL = 0
-		// 	dropR = 0
+		// if (!state.pos1 && dropL) {
+		// 	// No-op
+		// 	return
+		// }
+		// if (state.pos2 === state.data.length && dropR) {
+		// 	// No-op
+		// 	return
 		// }
 		const data = state.data.slice(0, state.pos1 - dropL) + substr + state.data.slice(state.pos2 + dropR)
 		const pos1 = state.pos1 - dropL + substr.length
@@ -104,14 +110,19 @@ const reducer = state => ({
 	},
 })
 
-const init = initialValue => initialState => ({
-	...initialState,
-	actionType: ActionTypes.INIT,
-	actionTimeStamp: Date.now(),
-	data: initialValue,
-	components: parseComponentsFromData(initialValue),
-	reactDOM: document.createElement("div"),
-})
+const init = initialValue => initialState => {
+	const epoch = Date.now()
+	const state = {
+		...initialState,
+		epoch,
+		actionType: ActionTypes.INIT,
+		actionTimeStamp: Date.now() - epoch,
+		data: initialValue,
+		components: parseComponentsFromData(initialValue),
+		reactDOM: document.createElement("div"),
+	}
+	return state
+}
 
 const useEditor = initialValue => useMethods(reducer, initialState, init(initialValue))
 
@@ -141,7 +152,7 @@ function getPosFromRange(rootNode, node, offset) {
 	}
 	recurse(rootNode)
 	// const t2 = Date.now()
-	// if (t2 - t1 >= DISC_TIMER_POS) {
+	// if (t2 - t1 >= discTimer.pos) {
 	// 	console.log(`pos=${t2 - t1}`)
 	// }
 	return pos
@@ -166,7 +177,7 @@ function getData(rootNode) {
 	}
 	recurse(rootNode)
 	const t2 = Date.now()
-	if (t2 - t1 >= DISC_TIMER_DATA) {
+	if (t2 - t1 >= discTimer.data) {
 		console.log(`data=${t2 - t1}`)
 	}
 	return data
@@ -247,7 +258,7 @@ function parseComponentsFromData(data) {
 		index++
 	}
 	const t2 = Date.now()
-	if (t2 - t1 >= DISC_TIMER_PARSER) {
+	if (t2 - t1 >= discTimer.parser) {
 		console.log(`parser=${t2 - t1}`)
 	}
 	return components
@@ -282,18 +293,12 @@ hello
 
 hello`)
 
-	// function FirefoxEditorComponents(props) {
-	// 	return props.components
-	// }
-	//
-	// ReactDOM.render(<FirefoxEditorComponents components={state.components} />, state.reactDOM, () => {
-
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			const t1 = Date.now()
 			ReactDOM.render(state.components, state.reactDOM, () => {
 				const t2 = Date.now()
-				if (t2 - t1 >= DISC_TIMER_RENDER) {
+				if (t2 - t1 >= discTimer.render) {
 					console.log(`render=${t2 - t1}`)
 				}
 				if (!state.shouldRender) {
@@ -306,10 +311,7 @@ hello`)
 				//
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=414223
 				if (areEqualTrees(ref.current, state.reactDOM)) {
-					t2Input = Date.now()
-					if (t2Input - t1Input >= DISC_TIMER_INPUT) {
-						console.log(`input=${t2Input - t1Input}`)
-					}
+					// No-op
 					return
 				}
 
@@ -319,8 +321,11 @@ hello`)
 				const selection = document.getSelection()
 				selection.removeAllRanges()
 
+				const _t1 = Date.now()
 				;[...ref.current.childNodes].map(each => each.remove())          // TODO
 				ref.current.append(...state.reactDOM.cloneNode(true).childNodes) // TODO
+				const _t2 = Date.now()
+				console.log(`append=${_t2 - _t1}`)
 
 				const t3 = Date.now()
 				const range = document.createRange()
@@ -328,17 +333,13 @@ hello`)
 				range.setStart(node, offset)
 				range.collapse()
 				if (!state.collapsed) {
-					const { node, offset } = getRangeFromPos(ref.current, state.pos2)
+					const { node, offset } = getRangeFromPos(ref.current, state.pos2) // TODO: Shortcut
 					range.setEnd(node, offset)
 				}
 				selection.addRange(range)
 				const t4 = Date.now()
-				if (t4 - t3 >= DISC_TIMER_RANGE) {
+				if (t4 - t3 >= discTimer.range) {
 					console.log(`range=${t4 - t3}`)
-				}
-				t2Input = Date.now()
-				if (t2Input - t1Input >= DISC_TIMER_INPUT) {
-					console.log(`input=${t2Input - t1Input}`)
 				}
 			})
 		}, [state]),
@@ -353,10 +354,10 @@ hello`)
 		const pos1 = getPosFromRange(ref.current, range.startContainer, range.startOffset)
 		let pos2 = pos1
 		if (!range.collapsed) {
-			pos2 = getPosFromRange(ref.current, range.endContainer, range.endOffset)
+			pos2 = getPosFromRange(ref.current, range.endContainer, range.endOffset) // TODO: Shortcut
 		}
 		const t2 = Date.now()
-		if (t2 - t1 >= DISC_TIMER_POS) {
+		if (t2 - t1 >= discTimer.pos) {
 			console.log(`pos=${t2 - t1}`)
 		}
 		return [pos1, pos2]
@@ -371,6 +372,7 @@ hello`)
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
+					spellCheck: true,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,
@@ -447,6 +449,7 @@ hello`)
 							e.preventDefault()
 							dispatch.enter()
 							return
+						// FIXME
 						case e.key === KEY_BACKSPACE:
 							if (state.collapsed && state.pos1 && state.data[state.pos1 - 1] === "\n") {
 								e.preventDefault()
@@ -454,6 +457,7 @@ hello`)
 								return
 							}
 							break
+						// FIXME
 						case (e.key === KEY_DELETE || isBackspaceRMacOS(e)):
 							if (state.collapsed && state.pos1 < state.data.length && state.data[state.pos1] === "\n") {
 								e.preventDefault()
@@ -469,8 +473,7 @@ hello`)
 					onCompositionEnd: e => {
 						// https://github.com/w3c/uievents/issues/202#issue-316461024
 						dedupeCompositionEndRef.current = true
-						// Input action:
-						t1Input = Date.now()
+						// Input:
 						const data = getData(ref.current)
 						const [pos1, pos2] = getPos()
 						dispatch.actionInput(data, pos1, pos2)
@@ -484,8 +487,12 @@ hello`)
 							// No-op
 							return
 						}
-						// Input action:
-						t1Input = Date.now()
+						// **DEFEND YOUR KING!!**
+						if (backspaceRe.test(e.nativeEvent.inputType) && state.collapsed && !state.pos1) {
+							dispatch.render()
+							return
+						}
+						// Input:
 						const data = getData(ref.current)
 						const [pos1, pos2] = getPos()
 						dispatch.actionInput(data, pos1, pos2)
@@ -493,23 +500,21 @@ hello`)
 
 					onDrag: e => e.preventDefault(),
 					onDrop: e => e.preventDefault(),
-
-					// ...
 				},
 			)}
-			{/* <div style={stylex.parse("m-t:24")}> */}
-			{/* 	<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}> */}
-			{/* 		{JSON.stringify( */}
-			{/* 			{ */}
-			{/* 				...state, */}
-			{/* 				components: undefined, */}
-			{/* 				reactDOM: undefined, */}
-			{/* 			}, */}
-			{/* 			null, */}
-			{/* 			"\t", */}
-			{/* 		)} */}
-			{/* 	</pre> */}
-			{/* </div> */}
+			<div style={stylex.parse("m-t:24")}>
+				<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
+					{JSON.stringify(
+						{
+							...state,
+							components: undefined,
+							reactDOM: undefined,
+						},
+						null,
+						"\t",
+					)}
+				</pre>
+			</div>
 		</CSSDebugger>
 	)
 }
