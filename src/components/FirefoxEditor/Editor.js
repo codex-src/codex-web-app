@@ -6,17 +6,8 @@ import ReactDOM from "react-dom"
 import stylex from "stylex"
 import useMethods from "use-methods"
 import { syncTrees } from "./syncTrees"
-// import { naiveSyncTrees as syncTrees } from "./syncTrees"
 
 import "./Editor.css"
-
-// function INSERT_TEXT() {
-// 	document.execCommand("insertText", false, "\t")
-// }
-//
-// function INSERT_PARAGRAPH() {
-// 	document.execCommand("insertParagraph", false, null)
-// }
 
 // https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
 //
@@ -82,7 +73,7 @@ const reducer = state => ({
 		const collapsed = pos1 === pos2
 		Object.assign(state, { pos1, pos2, coords, collapsed })
 	},
-	actionInput(data, pos1, pos2, coords) {
+	actionInput(data, pos1, pos2, coords = state.coords) {
 		this.newAction(ActionTypes.INPUT)
 		Object.assign(state, { data, pos1, pos2, coords })
 		this.render()
@@ -94,6 +85,7 @@ const reducer = state => ({
 		const pos2 = pos1
 		this.actionInput(data, pos1, pos2)
 	},
+	// Backspaces (backwards) at most one character.
 	backspaceL() {
 		let dropL = 1
 		if (!state.collapsed) {
@@ -101,6 +93,7 @@ const reducer = state => ({
 		}
 		this.write("", dropL, 0)
 	},
+	// Backspaces (forwards) at most one character.
 	backspaceR() {
 		let dropR = 1
 		if (!state.collapsed) {
@@ -108,12 +101,12 @@ const reducer = state => ({
 		}
 		this.write("", 0, dropR)
 	},
-	// tab() {
-	// 	this.write("\t")
-	// },
-	// enter() {
-	// 	this.write("\n")
-	// },
+	tab() {
+		this.write("\t")
+	},
+	enter() {
+		this.write("\n")
+	},
 	cut() {
 		this.write("")
 	},
@@ -273,9 +266,7 @@ const preWrap = { whiteSpace: "pre-wrap" }
 
 const Paragraph = React.memo(props => (
 	<div style={preWrap} data-node>
-		{props.children || (
-			<br />
-		)}
+		{props.children}
 	</div>
 ))
 
@@ -370,9 +361,6 @@ F`)
 	)
 
 	// Gets the cursors.
-	//
-	// TODO: getPos can be optimized with coords;
-	// e.g. return [pos1, pos2, coords]
 	const getPos = () => {
 		const t1 = Date.now()
 		const selection = document.getSelection()
@@ -472,28 +460,24 @@ F`)
 							e.preventDefault()
 							dispatch.tab()
 							return
-						case e.shiftKey && e.key === KEY_ENTER:
-							e.preventDefault()
-							dispatch.enter()
-							return
-						// Backspace L:
-						case e.key === KEY_BACKSPACE:
-							// TODO
-							if (state.collapsed && state.pos1 && state.data[state.pos1 - 1] === "\n") {
-								e.preventDefault()
-								dispatch.backspaceL()
-								return
-							}
-							break
-						// Backspace R:
-						case (e.key === KEY_DELETE || isBackspaceRMacOS(e)):
-							// TODO
-							if (state.collapsed && state.pos1 < state.data.length && state.data[state.pos1] === "\n") {
-								e.preventDefault()
-								dispatch.backspaceR()
-								return
-							}
-							break
+						// // Backspace L:
+						// case e.key === KEY_BACKSPACE:
+						// 	// TODO
+						// 	if (state.collapsed && state.pos1 && state.data[state.pos1 - 1] === "\n") {
+						// 		e.preventDefault()
+						// 		dispatch.backspaceL()
+						// 		return
+						// 	}
+						// 	break
+						// // Backspace R:
+						// case (e.key === KEY_DELETE || isBackspaceRMacOS(e)):
+						// 	// TODO
+						// 	if (state.collapsed && state.pos1 < state.data.length && state.data[state.pos1] === "\n") {
+						// 		e.preventDefault()
+						// 		dispatch.backspaceR()
+						// 		return
+						// 	}
+						// 	break
 						default:
 							// No-op:
 							break
@@ -504,10 +488,9 @@ F`)
 						dedupeCompositionEndRef.current = true
 						// Input:
 						const data = getData(ref.current)
-						const [pos1, pos2, coords] = getPos()
-						dispatch.actionInput(data, pos1, pos2, coords)
+						const [pos1, pos2] = getPos()
+						dispatch.actionInput(data, pos1, pos2) // No coords
 					},
-					// TODO: Guard all delete/selection events
 					onInput: e => {
 						if (dedupeCompositionEndRef.current) {
 							dedupeCompositionEndRef.current = false // Reset
@@ -518,6 +501,48 @@ F`)
 							return
 						}
 
+						switch (e.nativeEvent.inputType) {
+						// Soft enter:
+						case "insertLineBreak":
+							dispatch.enter()
+							return
+						// Backspace (backwards):
+						case "deleteContentBackward":
+						case "deleteWordBackward":
+						case "deleteSoftLineBackward":
+						case "deleteHardLineBackward":
+							// Guard backspace on a node:
+							if (state.collapsed && state.pos1 && state.data[state.pos1 - 1] === "\n") {
+								console.log("a")
+								dispatch.backspaceL()
+								return
+							} else if (!state.collapsed) {
+								console.log("b")
+								dispatch.backspaceL()
+								return
+							}
+							// No-op
+							break
+						// Backspace (forwards):
+						case "deleteContentForward":
+						case "deleteWordForward":
+						case "deleteSoftLineForward":
+						case "deleteHardLineForward":
+							// Guard backspace on a node:
+							if (state.collapsed && state.pos1 < state.data.length && state.data[state.pos1] === "\n") {
+								dispatch.backspaceR()
+								return
+							} else if (!state.collapsed) {
+								dispatch.backspaceR()
+								return
+							}
+							// No-op
+							break
+						default:
+							// No-op
+							break
+						}
+
 						// // Guard the contenteditable node (root node):
 						// if (backspaceRe.test(e.nativeEvent.inputType) && state.collapsed && !state.pos1) {
 						// 	dispatch.render()
@@ -526,8 +551,8 @@ F`)
 
 						// Input:
 						const data = getData(ref.current)
-						const [pos1, pos2, coords] = getPos()
-						dispatch.actionInput(data, pos1, pos2, coords)
+						const [pos1, pos2] = getPos()
+						dispatch.actionInput(data, pos1, pos2) // No coords
 					},
 
 					onCut: e => {

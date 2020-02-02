@@ -34,7 +34,7 @@ export function syncTrees(treeA, treeB) {
 			const newNode = treeB.childNodes[start].cloneNode(true)
 			treeA.childNodes[start].replaceWith(newNode)
 			mutations++
-			start++
+			start++ // Increment start because of break
 			break
 		}
 	}
