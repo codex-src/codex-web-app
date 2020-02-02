@@ -10,10 +10,15 @@ import { syncTrees } from "./syncTrees"
 
 import "./Editor.css"
 
-// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
+// function INSERT_TEXT() {
+// 	document.execCommand("insertText", false, "\t")
+// }
 //
-const INSERT_TEXT      = "insertText"       // eslint-disable-line no-multi-spaces
-const INSERT_PARAGRAPH = "insertParagraph"  // eslint-disable-line no-multi-spaces
+// function INSERT_PARAGRAPH() {
+// 	document.execCommand("insertParagraph", false, null)
+// }
+
+// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
 //
 // deleteContentBackward
 // deleteWordBackward
@@ -48,6 +53,7 @@ const initialState = {
 	data: "",
 	pos1: 0,
 	pos2: 0,
+	coords: null,
 	collapsed: false,
 	components: null,
 	shouldRender: 0,
@@ -71,14 +77,14 @@ const reducer = state => ({
 		this.newAction(ActionTypes.BLUR)
 		state.focused = false
 	},
-	actionSelect(pos1, pos2) {
+	actionSelect(pos1, pos2, coords) {
 		this.newAction(ActionTypes.SELECT)
 		const collapsed = pos1 === pos2
-		Object.assign(state, { pos1, pos2, collapsed })
+		Object.assign(state, { pos1, pos2, coords, collapsed })
 	},
-	actionInput(data, pos1, pos2) {
+	actionInput(data, pos1, pos2, coords) {
 		this.newAction(ActionTypes.INPUT)
-		Object.assign(state, { data, pos1, pos2 })
+		Object.assign(state, { data, pos1, pos2, coords })
 		this.render()
 	},
 	// NOTE: dropL and dropR are expected to be >= 0
@@ -102,6 +108,18 @@ const reducer = state => ({
 		}
 		this.write("", 0, dropR)
 	},
+	// tab() {
+	// 	this.write("\t")
+	// },
+	// enter() {
+	// 	this.write("\n")
+	// },
+	cut() {
+		this.write("")
+	},
+	paste(substr) {
+		this.write(substr)
+	},
 	render() {
 		state.components = parseComponentsFromData(state.data)
 		state.shouldRender++
@@ -116,6 +134,16 @@ const init = initialValue => initialState => {
 		actionType: ActionTypes.INIT,
 		actionTimeStamp: Date.now() - epoch,
 		data: initialValue,
+		coords: {
+			pos1: {
+				x: 0,
+				y: 0,
+			},
+			pos2: {
+				x: 0,
+				y: 0,
+			},
+		},
 		components: parseComponentsFromData(initialValue),
 		reactDOM: document.createElement("div"),
 	}
@@ -154,6 +182,30 @@ function getPosFromRange(rootNode, node, offset) {
 	// 	console.log(`pos=${t2 - t1}`)
 	// }
 	return pos
+}
+
+// Gets coords from a range.
+function getCoordsFromRange(range) {
+	const { left, right, top, bottom } = range.getBoundingClientRect()
+	if (!left && !right && !top && !bottom) {
+		let { startContainer, endContainer } = range
+		// Get the innermost start node (element):
+		while (startContainer.children.length) {
+			startContainer = startContainer.children[0]
+		}
+		// Get the innermost end node (element):
+		while (endContainer.children.length) {
+			endContainer = endContainer.children[0]
+		}
+		const start = startContainer.getClientRects()[0]
+		const end = endContainer.getClientRects()[0]
+		const pos1 = { x: start.left, y: start.top }
+		const pos2 = { x: end.right, y: end.bottom }
+		return { pos1, pos2 }
+	}
+	const pos1 = { x: left, y: top }
+	const pos2 = { x: right, y: bottom }
+	return { pos1, pos2 }
 }
 
 // Gets (recursively reads) plain text data.
@@ -334,7 +386,8 @@ F`)
 		if (t2 - t1 >= discTimer.pos) {
 			console.log(`pos=${t2 - t1}`)
 		}
-		return [pos1, pos2]
+		const coords = getCoordsFromRange(range)
+		return [pos1, pos2, coords]
 	}
 
 	return (
@@ -378,8 +431,8 @@ F`)
 								selection.removeAllRanges()
 								selection.addRange(range)
 							}
-							const [pos1, pos2] = getPos()
-							dispatch.actionSelect(pos1, pos2)
+							const [pos1, pos2, coords] = getPos()
+							dispatch.actionSelect(pos1, pos2, coords)
 						} catch (e) {
 							console.warn({ "onSelect/catch": e })
 						}
@@ -393,8 +446,8 @@ F`)
 							return
 						}
 						try {
-							const [pos1, pos2] = getPos()
-							dispatch.actionSelect(pos1, pos2)
+							const [pos1, pos2, coords] = getPos()
+							dispatch.actionSelect(pos1, pos2, coords)
 						} catch (e) {
 							console.warn({ "onPointerMove/catch": e })
 						}
@@ -411,25 +464,16 @@ F`)
 					//
 					// https://developer.mozilla.org/en-US/docs/Web/API/Selection/modify
 					onKeyDown: e => {
-						try {
-							const [pos1, pos2] = getPos()
-							dispatch.actionSelect(pos1, pos2)
-						} catch (e) {
-							console.warn({ "onKeyDown/catch": e })
-						}
-						/*
-						 * Key down
-						 */
 						switch (true) {
 						// Tab:
 						case e.key === KEY_TAB:
 							e.preventDefault()
-							document.execCommand(INSERT_TEXT, false, "\t")
+							document.execCommand("insertText", false, "\t")
 							return
 						// Soft enter:
-						case e.shiftKey && e.key === KEY_ENTER:
+						case e.shiftKey && e.key === KEY_ENTER: // FIXME
 							e.preventDefault()
-							document.execCommand(INSERT_PARAGRAPH, false, null)
+							document.execCommand("insertParagraph", false, null)
 							return
 						// Backspace L:
 						case e.key === KEY_BACKSPACE:
@@ -457,8 +501,8 @@ F`)
 						dedupeCompositionEndRef.current = true
 						// Input:
 						const data = getData(ref.current)
-						const [pos1, pos2] = getPos()
-						dispatch.actionInput(data, pos1, pos2)
+						const [pos1, pos2, coords] = getPos()
+						dispatch.actionInput(data, pos1, pos2, coords)
 					},
 					// TODO: Guard all delete/selection events
 					onInput: e => {
@@ -477,8 +521,8 @@ F`)
 						}
 						// Input:
 						const data = getData(ref.current)
-						const [pos1, pos2] = getPos()
-						dispatch.actionInput(data, pos1, pos2)
+						const [pos1, pos2, coords] = getPos()
+						dispatch.actionInput(data, pos1, pos2, coords)
 					},
 
 					onCut: e => {
@@ -489,7 +533,7 @@ F`)
 						}
 						const substr = state.data.slice(state.pos1, state.pos2)
 						e.clipboardData.setData("text/plain", substr)
-						dispatch.write("")
+						dispatch.cut()
 					},
 					onCopy: e => {
 						e.preventDefault()
@@ -507,14 +551,14 @@ F`)
 							// No-op
 							return
 						}
-						dispatch.write(substr)
+						dispatch.paste(substr)
 					},
 
 					onDrag: e => e.preventDefault(),
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			{false && (
+			{true && (
 				<div style={stylex.parse("m-t:24")}>
 					<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
 						{JSON.stringify(
