@@ -12,6 +12,9 @@ import "./Editor.css"
 
 // https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
 //
+const INSERT_TEXT      = "insertText"       // eslint-disable-line no-multi-spaces
+const INSERT_PARAGRAPH = "insertParagraph"  // eslint-disable-line no-multi-spaces
+//
 // deleteContentBackward
 // deleteWordBackward
 // deleteSoftLineBackward
@@ -80,14 +83,6 @@ const reducer = state => ({
 	},
 	// NOTE: dropL and dropR are expected to be >= 0
 	write(substr, dropL = 0, dropR = 0) {
-		// if (!state.pos1 && dropL) {
-		// 	// No-op
-		// 	return
-		// }
-		// if (state.pos2 === state.data.length && dropR) {
-		// 	// No-op
-		// 	return
-		// }
 		const data = state.data.slice(0, state.pos1 - dropL) + substr + state.data.slice(state.pos2 + dropR)
 		const pos1 = state.pos1 - dropL + substr.length
 		const pos2 = pos1
@@ -106,12 +101,6 @@ const reducer = state => ({
 			dropR = 0
 		}
 		this.write("", 0, dropR)
-	},
-	tab() {
-		this.write("\t")
-	},
-	enter() {
-		this.write("\n")
 	},
 	render() {
 		state.components = parseComponentsFromData(state.data)
@@ -274,7 +263,6 @@ function isBackspaceRMacOS(e) {
 function Editor(props) {
 	const ref = React.useRef()
 	const isPointerDownRef = React.useRef()
-	const onKeyDownMutex = React.useRef({ keyCode: 0, timeStamp: 0 })
 	const dedupeCompositionEndRef = React.useRef()
 
 	const [state, dispatch] = useEditor(`A
@@ -421,38 +409,29 @@ F`)
 					// s.modify("extend", "backward", "word")
 					// s.modify("extend", "backward", "lineboundary")
 					//
+					// https://developer.mozilla.org/en-US/docs/Web/API/Selection/modify
 					onKeyDown: e => {
-						const { keyCode, timeStamp } = e
-						const mutex = onKeyDownMutex.current
-						if (keyCode === mutex.keyCode && timeStamp - mutex.timeStamp < 16.67) {
-							e.preventDefault()
-							onKeyDownMutex.current = {
-								keyCode,
-								timeStamp,
-							}
-							return
-						}
-						onKeyDownMutex.current = {
-							keyCode,   // The key code
-							timeStamp, // The timestamp, accurate to 1ms or 5μs
-						}
 						try {
 							const [pos1, pos2] = getPos()
 							dispatch.actionSelect(pos1, pos2)
 						} catch (e) {
 							console.warn({ "onKeyDown/catch": e })
 						}
-						// Key down:
+						/*
+						 * Key down
+						 */
 						switch (true) {
+						// Tab:
 						case e.key === KEY_TAB:
 							e.preventDefault()
-							dispatch.tab()
+							document.execCommand(INSERT_TEXT, false, "\t")
 							return
-						case e.key === KEY_ENTER:
+						// Soft enter:
+						case e.shiftKey && e.key === KEY_ENTER:
 							e.preventDefault()
-							dispatch.enter()
+							document.execCommand(INSERT_PARAGRAPH, false, null)
 							return
-						// FIXME
+						// Backspace L:
 						case e.key === KEY_BACKSPACE:
 							if (state.collapsed && state.pos1 && state.data[state.pos1 - 1] === "\n") {
 								e.preventDefault()
@@ -460,7 +439,7 @@ F`)
 								return
 							}
 							break
-						// FIXME
+						// Backspace R:
 						case (e.key === KEY_DELETE || isBackspaceRMacOS(e)):
 							if (state.collapsed && state.pos1 < state.data.length && state.data[state.pos1] === "\n") {
 								e.preventDefault()
@@ -535,19 +514,21 @@ F`)
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			<div style={stylex.parse("m-t:24")}>
-				<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
-					{JSON.stringify(
-						{
-							...state,
-							components: undefined,
-							reactDOM: undefined,
-						},
-						null,
-						"\t",
-					)}
-				</pre>
-			</div>
+			{false && (
+				<div style={stylex.parse("m-t:24")}>
+					<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
+						{JSON.stringify(
+							{
+								...state,
+								components: undefined,
+								reactDOM: undefined,
+							},
+							null,
+							"\t",
+						)}
+					</pre>
+				</div>
+			)}
 		</CSSDebugger>
 	)
 }
