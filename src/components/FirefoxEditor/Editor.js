@@ -456,6 +456,9 @@ F`)
 						isPointerDownRef.current = false
 					},
 
+					// document.execCommand("insertText", false, "\t")
+					// document.execCommand("insertParagraph", false, null)
+
 					// TODO:
 					//
 					// s.modify("extend", "backward", "character")
@@ -465,18 +468,17 @@ F`)
 					// https://developer.mozilla.org/en-US/docs/Web/API/Selection/modify
 					onKeyDown: e => {
 						switch (true) {
-						// Tab:
 						case e.key === KEY_TAB:
 							e.preventDefault()
-							document.execCommand("insertText", false, "\t")
+							dispatch.tab()
 							return
-						// Soft enter:
-						case e.shiftKey && e.key === KEY_ENTER: // FIXME
+						case e.shiftKey && e.key === KEY_ENTER:
 							e.preventDefault()
-							document.execCommand("insertParagraph", false, null)
+							dispatch.enter()
 							return
 						// Backspace L:
 						case e.key === KEY_BACKSPACE:
+							// TODO
 							if (state.collapsed && state.pos1 && state.data[state.pos1 - 1] === "\n") {
 								e.preventDefault()
 								dispatch.backspaceL()
@@ -485,6 +487,7 @@ F`)
 							break
 						// Backspace R:
 						case (e.key === KEY_DELETE || isBackspaceRMacOS(e)):
+							// TODO
 							if (state.collapsed && state.pos1 < state.data.length && state.data[state.pos1] === "\n") {
 								e.preventDefault()
 								dispatch.backspaceR()
@@ -514,11 +517,13 @@ F`)
 							// No-op
 							return
 						}
-						// Guard the contenteditable node (root node):
-						if (backspaceRe.test(e.nativeEvent.inputType) && state.collapsed && !state.pos1) {
-							dispatch.render()
-							return
-						}
+
+						// // Guard the contenteditable node (root node):
+						// if (backspaceRe.test(e.nativeEvent.inputType) && state.collapsed && !state.pos1) {
+						// 	dispatch.render()
+						// 	return
+						// }
+
 						// Input:
 						const data = getData(ref.current)
 						const [pos1, pos2, coords] = getPos()
@@ -547,10 +552,10 @@ F`)
 					onPaste: e => {
 						e.preventDefault()
 						const substr = e.clipboardData.getData("text/plain")
-						if (!substr) {
-							// No-op
-							return
-						}
+						// if (!substr) {
+						// 	// No-op
+						// 	return
+						// }
 						dispatch.paste(substr)
 					},
 
