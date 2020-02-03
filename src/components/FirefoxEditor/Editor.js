@@ -1,4 +1,5 @@
 import CSSDebugger from "utils/CSSDebugger"
+import emojiTrie from "emoji-trie"
 import Enum from "utils/Enum"
 import platform from "utils/platform"
 import React from "react"
@@ -17,6 +18,23 @@ import "./Editor.css"
 // deleteHardLineBackward
 //
 const backspaceRe = /^delete(Content|Word|(Soft|Hard)Line)Backward$/
+
+const KEY_CODE_BACKSPACE = 8 // eslint-disable-line no-multi-spaces
+const KEY_CODE_TAB       = 9 // eslint-disable-line no-multi-spaces
+
+// const KEY_CODE_D = 68
+//
+// function isBackspaceRMacOS(e) {
+// 	const ok = (
+// 		platform.isMacOS && // Takes precedence
+// 		!e.shiftKey &&      // Must negate
+// 		e.ctrlKey &&        // Must accept
+// 		!e.altKey &&        // Must negate
+// 		!e.metaKey &&       // Must negate
+// 		e.keyCode === KEY_CODE_D
+// 	)
+// 	return ok
+// }
 
 // Discretionary timers (16.5ms -> 33ms)
 const discTimer = {
@@ -78,29 +96,52 @@ const reducer = state => ({
 		Object.assign(state, { data, pos1, pos2, coords })
 		this.render()
 	},
-	// NOTE: dropL and dropR are expected to be >= 0
-	write(substr, dropL = 0, dropR = 0) {
+	write(substr, dropL = 0, dropR = 0) { // dropL and dropR are expected to be >= 0
 		const data = state.data.slice(0, state.pos1 - dropL) + substr + state.data.slice(state.pos2 + dropR)
 		const pos1 = state.pos1 - dropL + substr.length
 		const pos2 = pos1
 		this.actionInput(data, pos1, pos2)
 	},
-	// Backspaces (backwards) at most one character.
-	backspaceL() {
-		let dropL = 1
-		if (!state.collapsed) {
-			dropL = 0
+	backspaceCharL() {
+		let dropL = 0
+		if (state.collapsed) {
+			const emoji = emojiTrie.atEnd(state.data.slice(0, state.pos1))
+			dropL = emoji.length || 1
 		}
 		this.write("", dropL, 0)
 	},
-	// Backspaces (forwards) at most one character.
-	backspaceR() {
-		let dropR = 1
-		if (!state.collapsed) {
-			dropR = 0
-		}
-		this.write("", 0, dropR)
+	backspaceWordL() {
+		// TODO
 	},
+	backspaceLineL() {
+		// TODO
+	},
+	backspaceCharR() {
+		// TODO
+	},
+	backspaceWordR() {
+		// TODO
+	},
+	backspaceLineR() {
+		// TODO
+	},
+
+	// // Backspaces (backwards) at most one character.
+	// backspaceL() {
+	// 	let dropL = 1
+	// 	if (!state.collapsed) {
+	// 		dropL = 0
+	// 	}
+	// 	this.write("", dropL, 0)
+	// },
+	// // Backspaces (forwards) at most one character.
+	// backspaceR() {
+	// 	let dropR = 1
+	// 	if (!state.collapsed) {
+	// 		dropR = 0
+	// 	}
+	// 	this.write("", 0, dropR)
+	// },
 	tab() {
 		this.write("\t")
 	},
@@ -266,7 +307,9 @@ const preWrap = { whiteSpace: "pre-wrap" }
 
 const Paragraph = React.memo(props => (
 	<div style={preWrap} data-node>
-		{props.children}
+		{props.children || (
+			<br />
+		)}
 	</div>
 ))
 
@@ -285,35 +328,16 @@ function parseComponentsFromData(data) {
 	return components
 }
 
-const KEY_BACKSPACE = "Backspace" // eslint-disable-line no-multi-spaces
-const KEY_DELETE    = "Delete"    // eslint-disable-line no-multi-spaces
-const KEY_ENTER     = "Enter"     // eslint-disable-line no-multi-spaces
-const KEY_TAB       = "Tab"       // eslint-disable-line no-multi-spaces
-const KEY_CODE_D    = 68          // eslint-disable-line no-multi-spaces
-
-function isBackspaceRMacOS(e) {
-	const ok = (
-		platform.isMacOS && // Takes precedence
-		!e.shiftKey &&      // Must negate
-		e.ctrlKey &&        // Must accept
-		!e.altKey &&        // Must negate
-		!e.metaKey &&       // Must negate
-		e.keyCode === KEY_CODE_D
-	)
-	return ok
-}
-
 function Editor(props) {
 	const ref = React.useRef()
 	const isPointerDownRef = React.useRef()
 	const dedupeCompositionEndRef = React.useRef()
 
-	const [state, dispatch] = useEditor(`A
-B
-C
-D
-E
-F`)
+	const [state, dispatch] = useEditor(`hello
+
+hello hello 🙋🏿‍♀️🙋🏿‍♀️🙋🏿‍♀️ 🙋🏿‍♀️🙋🏿‍♀️🙋🏿‍♀️
+
+hello`)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -444,40 +468,12 @@ F`)
 						isPointerDownRef.current = false
 					},
 
-					// document.execCommand("insertText", false, "\t")
-					// document.execCommand("insertParagraph", false, null)
-
-					// TODO:
-					//
-					// s.modify("extend", "backward", "character")
-					// s.modify("extend", "backward", "word")
-					// s.modify("extend", "backward", "lineboundary")
-					//
-					// https://developer.mozilla.org/en-US/docs/Web/API/Selection/modify
 					onKeyDown: e => {
 						switch (true) {
-						case e.key === KEY_TAB:
+						case e.keyCode === KEY_CODE_TAB:
 							e.preventDefault()
 							dispatch.tab()
 							return
-						// // Backspace L:
-						// case e.key === KEY_BACKSPACE:
-						// 	// TODO
-						// 	if (state.collapsed && state.pos1 && state.data[state.pos1 - 1] === "\n") {
-						// 		e.preventDefault()
-						// 		dispatch.backspaceL()
-						// 		return
-						// 	}
-						// 	break
-						// // Backspace R:
-						// case (e.key === KEY_DELETE || isBackspaceRMacOS(e)):
-						// 	// TODO
-						// 	if (state.collapsed && state.pos1 < state.data.length && state.data[state.pos1] === "\n") {
-						// 		e.preventDefault()
-						// 		dispatch.backspaceR()
-						// 		return
-						// 	}
-						// 	break
 						default:
 							// No-op:
 							break
@@ -500,55 +496,43 @@ F`)
 							// No-op
 							return
 						}
-
 						switch (e.nativeEvent.inputType) {
-						// Soft enter:
-						case "insertLineBreak":
+						case "insertLineBreak": // Soft enter
+						case "insertParagraph": // Enter
 							dispatch.enter()
 							return
 						// Backspace (backwards):
 						case "deleteContentBackward":
+							dispatch.backspaceCharL()
+							return
 						case "deleteWordBackward":
+							dispatch.backspaceWordL()
+							return
 						case "deleteSoftLineBackward":
 						case "deleteHardLineBackward":
-							// Guard backspace on a node:
-							if (state.collapsed && state.pos1 && state.data[state.pos1 - 1] === "\n") {
-								console.log("a")
-								dispatch.backspaceL()
-								return
-							} else if (!state.collapsed) {
-								console.log("b")
-								dispatch.backspaceL()
-								return
-							}
-							// No-op
-							break
+							dispatch.backspaceLineL()
+							return
 						// Backspace (forwards):
 						case "deleteContentForward":
+							dispatch.backspaceCharR()
+							return
 						case "deleteWordForward":
+							dispatch.backspaceWordR()
+							return
 						case "deleteSoftLineForward":
 						case "deleteHardLineForward":
-							// Guard backspace on a node:
-							if (state.collapsed && state.pos1 < state.data.length && state.data[state.pos1] === "\n") {
-								dispatch.backspaceR()
-								return
-							} else if (!state.collapsed) {
-								dispatch.backspaceR()
-								return
-							}
-							// No-op
-							break
+							dispatch.backspaceLineR()
+							return
 						default:
 							// No-op
 							break
 						}
-
+						// FIXME?
 						// // Guard the contenteditable node (root node):
 						// if (backspaceRe.test(e.nativeEvent.inputType) && state.collapsed && !state.pos1) {
 						// 	dispatch.render()
 						// 	return
 						// }
-
 						// Input:
 						const data = getData(ref.current)
 						const [pos1, pos2] = getPos()
@@ -594,6 +578,7 @@ F`)
 						{JSON.stringify(
 							{
 								...state,
+								length: state.data.length,
 								components: undefined,
 								reactDOM: undefined,
 							},

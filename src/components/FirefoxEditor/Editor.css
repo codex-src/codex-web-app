@@ -3,9 +3,12 @@
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Quattro/Webfonts/index.css";
 
 [contenteditable="true"] {
+	-webkit-font-smoothing:  auto;
+	-moz-osx-font-smoothing: auto;
+
 	-moz-tab-size: 2;
 	tab-size:      2;
-	font:          16px/1.5 "iA Writer Duo", "monospace", "system-ui";
+	font:          16px/1.5 "iA Writer Duo", monospace;
 	caret-color:   hsl(var(--black));
 	outline:       none;
 	overflow-wrap: break-word;
@@ -14,6 +17,6 @@
   background: hsla(var(--blue-a400), 0.25) !important;
 }
 
-[data-node="true"]:empty::before {
-	content: " ";
-}
+/* [data-node="true"]:empty::before { */
+/* 	content: " "; */
+/* } */

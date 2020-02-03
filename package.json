@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.1.2",
     "debug.css": "codex-src/debug.css",
     "document-title": "codex-src/DocumentTitle.js",
+    "emoji-trie": "https://github.com/codex-src/emoji-trie.js",
     "material-colors.css": "codex-src/material-colors.css",
     "minireset.css": "^0.0.6",
     "react": "^16.12.0",
