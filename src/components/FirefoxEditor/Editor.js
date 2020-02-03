@@ -120,7 +120,20 @@ const reducer = state => ({
 		this.write("", dropL, 0)
 	},
 	backspaceLineL() {
-		// TODO
+		if (!state.collapsed || !state.pos1) {
+			this.write("", 0, 0)
+			return
+		}
+		let index = state.pos1
+		while (index) {
+			const rune = utf8.endRune(state.data.slice(0, index))
+			if (utf8.isVWhiteSpace(rune)) {
+				break
+			}
+			index -= rune.length
+		}
+		const dropL = state.pos1 - index || 1
+		this.write("", dropL, 0)
 	},
 	backspaceCharR() {
 		let dropR = 0
@@ -136,23 +149,6 @@ const reducer = state => ({
 	backspaceLineR() {
 		// TODO
 	},
-
-	// // Backspaces (backwards) at most one character.
-	// backspaceL() {
-	// 	let dropL = 1
-	// 	if (!state.collapsed) {
-	// 		dropL = 0
-	// 	}
-	// 	this.write("", dropL, 0)
-	// },
-	// // Backspaces (forwards) at most one character.
-	// backspaceR() {
-	// 	let dropR = 1
-	// 	if (!state.collapsed) {
-	// 		dropR = 0
-	// 	}
-	// 	this.write("", 0, dropR)
-	// },
 	tab() {
 		this.write("\t")
 	},
