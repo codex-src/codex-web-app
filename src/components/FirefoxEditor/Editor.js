@@ -76,7 +76,7 @@ const reducer = state => ({
 		const data = state.data.slice(0, state.pos1 - dropL) + substr + state.data.slice(state.pos2 + dropR)
 		const pos1 = state.pos1 - dropL + substr.length
 		const pos2 = pos1
-		this.actionInput(data, pos1, pos2)
+		this.actionInput(data, pos1, pos2, state.coords) // Synthetic coords
 	},
 	backspaceCharL() {
 		let dropL = 0
@@ -365,6 +365,15 @@ function parseComponentsFromData(data) {
 	return components
 }
 
+// TODO
+//
+// - Undo
+// - Redo
+// - Components
+// - localStorage
+// - Demo
+// - etc.
+//
 function Editor(props) {
 	const ref = React.useRef()
 	const isPointerDownRef = React.useRef()
@@ -527,8 +536,8 @@ hello`)
 						dedupeCompositionEndRef.current = true
 						// Input:
 						const data = getData(ref.current)
-						const [pos1, pos2] = getPos()
-						dispatch.actionInput(data, pos1, pos2) // No coords
+						const [pos1, pos2, coords] = getPos()
+						dispatch.actionInput(data, pos1, pos2, coords)
 					},
 					onInput: e => {
 						if (dedupeCompositionEndRef.current) {
@@ -573,8 +582,8 @@ hello`)
 						}
 						// Input:
 						const data = getData(ref.current)
-						const [pos1, pos2] = getPos()
-						dispatch.actionInput(data, pos1, pos2) // No coords
+						const [pos1, pos2, coords] = getPos()
+						dispatch.actionInput(data, pos1, pos2, coords)
 					},
 
 					onCut: e => {
