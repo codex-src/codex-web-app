@@ -37,24 +37,23 @@
 // 0x205f   MEDIUM MATHEMATICAL SPACE   h s
 // 0x3000           IDEOGRAPHIC SPACE   h s
 
-// `isHWhiteSpace` returns whether a character is a UTF-8
-// encoded Unicode horizontal white space character.
+// Returns whether a rune is a horizontal white space rune.
 export function isHWhiteSpace(rune) {
 	if (!rune) {
 		return false
 	}
-	// Fast pass:
-	const codePoint = rune.codePointAt(0)
-	if ((codePoint > 0x0020 && codePoint < 0x00a0) ||
-			(codePoint > 0x00a0 && codePoint < 0x1680)) {
-		return false
-	}
+	// // Fast pass:
+	// const codePoint = rune.codePointAt(0)
+	// if ((codePoint > 0x0020 && codePoint < 0x00A0) ||
+	// 		(codePoint > 0x00A0 && codePoint < 0x1680)) {
+	// 	return false
+	// }
 	const ok = (
 		rune === "\u0009" || //      9
 		rune === "\u0020" || //     32 *Fast pass
-		rune === "\u00a0" || //    160 *Fast pass
+		rune === "\u00A0" || //    160 *Fast pass
 		rune === "\u1680" || //  5,760 *Fast pass
-		rune === "\u180e" || //  6,158
+		rune === "\u180E" || //  6,158
 		rune === "\u2000" || //  8,192
 		rune === "\u2001" || //  8,193
 		rune === "\u2002" || //  8,194
@@ -65,31 +64,30 @@ export function isHWhiteSpace(rune) {
 		rune === "\u2007" || //  8,199
 		rune === "\u2008" || //  8,200
 		rune === "\u2009" || //  8,201
-		rune === "\u200a" || //  8,202
-		rune === "\u202f" || //  8,239
-		rune === "\u205f" || //  8,287
+		rune === "\u200A" || //  8,202
+		rune === "\u202F" || //  8,239
+		rune === "\u205F" || //  8,287
 		rune === "\u3000"    // 12,288
 	)
 	return ok
 }
 
-// `isVWhiteSpace` returns whether a character is a UTF-8
-// encoded Unicode vertical white space character.
+// Returns whether a rune is a vertical white space rune.
 export function isVWhiteSpace(rune) {
 	if (!rune) {
 		return false
 	}
-	// Fast pass:
-	const codePoint = rune.codePointAt(0)
-	if ((codePoint > 0x000d && codePoint < 0x0085) ||
-			(codePoint > 0x0085 && codePoint < 0x2028)) {
-		return false
-	}
+	// // Fast pass:
+	// const codePoint = rune.codePointAt(0)
+	// if ((codePoint > 0x000D && codePoint < 0x0085) ||
+	// 		(codePoint > 0x0085 && codePoint < 0x2028)) {
+	// 	return false
+	// }
 	const ok = (
-		rune === "\u000a" || //    10
-		rune === "\u000b" || //    11
-		rune === "\u000c" || //    12
-		rune === "\u000d" || //    13 *Fast pass
+		rune === "\u000A" || //    10
+		rune === "\u000B" || //    11
+		rune === "\u000C" || //    12
+		rune === "\u000D" || //    13 *Fast pass
 		rune === "\u0085" || //   133 *Fast pass
 		rune === "\u2028" || // 8,232 *Fast pass
 		rune === "\u2029"    // 8,233
@@ -97,8 +95,8 @@ export function isVWhiteSpace(rune) {
 	return ok
 }
 
-// `isWhiteSpace` returns whether a character is a UTF-8
-// encoded Unicode white space character.
+// Returns whether a rune is a horizontal or vertical white
+// space rune.
 export function isWhiteSpace(rune) {
 	if (!rune) {
 		return false

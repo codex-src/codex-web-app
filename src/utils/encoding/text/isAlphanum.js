@@ -1,5 +1,4 @@
-// `isAlphanum` returns whether a character is an
-// alphanumeric character.
+// Returns whether a character is an alphanumeric character.
 function isAlphanum(char) {
 	if (!char) {
 		return false
