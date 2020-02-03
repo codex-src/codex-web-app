@@ -144,11 +144,41 @@ const reducer = state => ({
 		this.write("", 0, dropR)
 	},
 	backspaceWordR() {
-		// TODO
+		if (!state.collapsed || state.pos1 === state.data.length) {
+			this.write("", 0, 0)
+			return
+		}
+		// Iterate spaces:
+		let index = state.pos1
+		while (index < state.data.length) {
+			const rune = utf8.startRune(state.data.slice(index))
+			if (!utf8.isHWhiteSpace(rune)) {
+				break
+			}
+			index += rune.length
+		}
+		// Iterate non-word characters:
+		while (index < state.data.length) {
+			const rune = utf8.startRune(state.data.slice(index))
+			if (utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+				break
+			}
+			index += rune.length
+		}
+		// Iterate word characters:
+		while (index < state.data.length) {
+			const rune = utf8.startRune(state.data.slice(index))
+			if (!utf8.isAlphanum(rune)) {
+				break
+			}
+			index += rune.length
+		}
+		const dropR = index - state.pos1 || 1
+		this.write("", 0, dropR)
 	},
-	backspaceLineR() {
-		// TODO
-	},
+	// backspaceLineR() {
+	// 	// TODO
+	// },
 	tab() {
 		this.write("\t")
 	},
@@ -533,10 +563,10 @@ hello`)
 						case "deleteWordForward":
 							dispatch.backspaceWordR()
 							return
-						case "deleteSoftLineForward":
-						case "deleteHardLineForward":
-							dispatch.backspaceLineR()
-							return
+						// case "deleteSoftLineForward":
+						// case "deleteHardLineForward":
+						// 	dispatch.backspaceLineR()
+						// 	return
 						default:
 							// No-op
 							break
