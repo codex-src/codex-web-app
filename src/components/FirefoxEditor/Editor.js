@@ -288,12 +288,12 @@ function getPosFromRange(rootNode, node, offset) {
 function getCoordsFromRange(range) {
 	const { left, right, top, bottom } = range.getBoundingClientRect()
 	if (!left && !right && !top && !bottom) {
+		// Iterate to the innermost start node (element):
 		let { startContainer, endContainer } = range
-		// Get the innermost start node (element):
 		while (startContainer.children.length) {
 			startContainer = startContainer.children[0]
 		}
-		// Get the innermost end node (element):
+		// Iterate to the innermost end node (element):
 		while (endContainer.children.length) {
 			endContainer = endContainer.children[0]
 		}
