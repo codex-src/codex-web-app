@@ -10,8 +10,6 @@ import { syncTrees } from "./syncTrees"
 
 import "./Editor.css"
 
-const KEY_CODE_TAB = 9
-
 // Discretionary timers (16.5ms -> 33ms)
 const discTimer = {
 	data:   2 * 2,   // data=x
@@ -19,7 +17,7 @@ const discTimer = {
 	parser: 2 * 3.5, // parser=x
 	render: 2 * 3.5, // render=x
 	sync:   2 * 3.5, // sync=x
-	range:  2 * 2,   // range=x
+	cursor: 2 * 2,   // cursor=x
 }
 
 const ActionTypes = new Enum(
@@ -50,7 +48,7 @@ const initialState = {
 const reducer = state => ({
 	newAction(actionType) {
 		const actionTimeStamp = Date.now() - state.epoch
-		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 100) {
+		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
 			// No-op
 			return
 		}
@@ -66,7 +64,7 @@ const reducer = state => ({
 	},
 	actionSelect(pos1, pos2, coords) {
 		this.newAction(ActionTypes.SELECT)
-		const collapsed = pos1 === pos2
+		const collapsed = pos1 === pos2 // Takes precedence
 		const atStart = collapsed && !pos1
 		const atEnd = collapsed && pos1 === state.data.length
 		Object.assign(state, { pos1, pos2, coords, atStart, atEnd, collapsed })
@@ -237,7 +235,7 @@ const init = initialValue => initialState => {
 		...initialState,
 		epoch,
 		actionType: ActionTypes.INIT,
-		actionTimeStamp: Date.now() - epoch,
+		// actionTimeStamp: Date.now() - epoch,
 		data: initialValue,
 		coords: {
 			pos1: {
@@ -432,7 +430,7 @@ hello`)
 					console.log(`sync=${syncT2 - syncT1} (${mutations} mutations)`)
 				}
 				// Reset the cursor:
-				const rangeT1 = Date.now()
+				const cursorT1 = Date.now()
 				const selection = document.getSelection()
 				const range = document.createRange()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1)
@@ -444,9 +442,9 @@ hello`)
 					range.setEnd(node, offset)
 				}
 				selection.addRange(range)
-				const rangeT2 = Date.now()
-				if (rangeT2 - rangeT1 >= discTimer.range) {
-					console.log(`cursor=${rangeT2 - rangeT1}`)
+				const cursorT2 = Date.now()
+				if (cursorT2 - cursorT1 >= discTimer.cursor) {
+					console.log(`cursor=${cursorT2 - cursorT1}`)
 				}
 			})
 		}, [state]),
@@ -538,7 +536,7 @@ hello`)
 
 					onKeyDown: e => {
 						switch (true) {
-						case e.keyCode === KEY_CODE_TAB:
+						case e.keyCode === 9: // Tab
 							e.preventDefault()
 							dispatch.tab()
 							return
@@ -589,6 +587,12 @@ hello`)
 						case "deleteWordForward":
 							dispatch.backspaceWordR()
 							return
+						// case "historyUndo":
+						// 	dispatch.undo()
+						// 	return
+						// case "historyRedo":
+						// 	dispatch.redo()
+						// 	return
 						default:
 							// No-op
 							break

@@ -1,11 +1,11 @@
 import text from "utils/encoding/text"
 
-const ASCIILow                       = 0x000000 // eslint-disable-line no-multi-spaces
-const ASCIIHigh                      = 0x00007F // eslint-disable-line no-multi-spaces
-const UTF8BasicMultilingualPlaneLow  = 0x000080 // eslint-disable-line no-multi-spaces
-const UTF8BasicMultilingualPlaneHigh = 0x00FFFF // eslint-disable-line no-multi-spaces
-const UTF8AstralPlaneLow             = 0x010000 // eslint-disable-line no-multi-spaces
-const UTF8AstralPlaneHigh            = 0x10FFFF // eslint-disable-line no-multi-spaces
+const ASCIILow                          = 0x000000 // eslint-disable-line no-multi-spaces
+const ASCIIHigh                         = 0x00007F // eslint-disable-line no-multi-spaces
+const UnicodeBasicMultilingualPlaneLow  = 0x000080 // eslint-disable-line no-multi-spaces
+const UnicodeBasicMultilingualPlaneHigh = 0x00FFFF // eslint-disable-line no-multi-spaces
+const UnicodeAstralPlaneLow             = 0x010000 // eslint-disable-line no-multi-spaces
+const UnicodeAstralPlaneHigh            = 0x10FFFF // eslint-disable-line no-multi-spaces
 
 // https://github.com/slevithan/xregexp/blob/master/tools/output/properties.js#L8 (20ab3d7)
 //
@@ -24,9 +24,9 @@ function isAlphanum(rune) {
 	switch (true) {
 	case codePoint >= ASCIILow && codePoint <= ASCIIHigh:
 		return text.isAlphanum(rune)
-	case codePoint >= UTF8BasicMultilingualPlaneLow && codePoint <= UTF8BasicMultilingualPlaneHigh:
+	case codePoint >= UnicodeBasicMultilingualPlaneLow && codePoint <= UnicodeBasicMultilingualPlaneHigh:
 		return isAlphabeticBMPRe.test(rune)
-	case codePoint >= UTF8AstralPlaneLow && codePoint <= UTF8AstralPlaneHigh:
+	case codePoint >= UnicodeAstralPlaneLow && codePoint <= UnicodeAstralPlaneHigh:
 		return isAlphabeticAstralPlaneRe.test(rune)
 	default:
 		// No-op.
