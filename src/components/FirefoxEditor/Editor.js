@@ -219,6 +219,10 @@ const reducer = state => ({
 		this.write("")
 	},
 	paste(substr) {
+		if (!substr) {
+			// No-op
+			return
+		}
 		this.write(substr)
 	},
 	render() {
@@ -423,15 +427,10 @@ hello`)
 				if (renderT2 - renderT1 >= discTimer.render) {
 					console.log(`render=${renderT2 - renderT1}`)
 				}
-				// Reset the DOM (once):
-				if (!state.shouldRender) {
-					syncTrees(ref.current, state.reactDOM)
-					return
-				}
-				// Patch the DOM:
+				// Sync the user DOM to the React DOM:
 				const syncT1 = Date.now()
 				const mutations = syncTrees(ref.current, state.reactDOM)
-				if (!mutations) {
+				if (!state.shouldRender || !mutations) {
 					// No-op
 					return
 				}
@@ -447,7 +446,8 @@ hello`)
 				range.setStart(node, offset)
 				range.collapse()
 				if (!state.collapsed) {
-					const { node, offset } = getRangeFromPos(ref.current, state.pos2) // TODO: Shortcut
+					// TODO: Add state.pos1 as a shortcut
+					const { node, offset } = getRangeFromPos(ref.current, state.pos2)
 					range.setEnd(node, offset)
 				}
 				selection.addRange(range)
@@ -460,7 +460,7 @@ hello`)
 		[state.shouldRender],
 	)
 
-	// Gets the cursors.
+	// Gets the cursors (and coords).
 	const getPos = () => {
 		const t1 = Date.now()
 		const selection = document.getSelection()
@@ -468,7 +468,8 @@ hello`)
 		const pos1 = getPosFromRange(ref.current, range.startContainer, range.startOffset)
 		let pos2 = pos1
 		if (!range.collapsed) {
-			pos2 = getPosFromRange(ref.current, range.endContainer, range.endOffset) // TODO: Shortcut
+			// TODO: Add state.pos1 as a shortcut
+			pos2 = getPosFromRange(ref.current, range.endContainer, range.endOffset)
 		}
 		const t2 = Date.now()
 		if (t2 - t1 >= discTimer.pos) {
@@ -512,8 +513,6 @@ hello`)
 								}
 								// Reset the range:
 								const range = document.createRange()
-								// NOTE: setStartBefore and setEndAfter do
-								// not work as expected
 								range.setStart(startNode, 0)
 								range.setEnd(endNode, (endNode.nodeValue || "").length)
 								selection.removeAllRanges()
@@ -543,12 +542,6 @@ hello`)
 					onPointerUp: e => {
 						isPointerDownRef.current = false
 					},
-
-					// // Guard the contenteditable node (root node):
-					// if (backspaceRe.test(e.nativeEvent.inputType) && state.collapsed && !state.pos1) {
-					// 	dispatch.render()
-					// 	return
-					// }
 
 					onKeyDown: e => {
 						switch (true) {
@@ -584,10 +577,9 @@ hello`)
 						// deleteHardLineForward are not supported
 						switch (e.nativeEvent.inputType) {
 						case "insertLineBreak": // Soft enter
-						case "insertParagraph": // Enter
+						case "insertParagraph":
 							dispatch.enter()
 							return
-						// Backspace (backwards):
 						case "deleteContentBackward":
 							dispatch.backspaceRuneL()
 							return
@@ -598,7 +590,6 @@ hello`)
 						case "deleteHardLineBackward":
 							dispatch.backspaceLineL()
 							return
-						// Backspace (forwards):
 						case "deleteContentForward":
 							dispatch.backspaceRuneR()
 							return
@@ -637,10 +628,6 @@ hello`)
 					onPaste: e => {
 						e.preventDefault()
 						const substr = e.clipboardData.getData("text/plain")
-						// if (!substr) {
-						// 	// No-op
-						// 	return
-						// }
 						dispatch.paste(substr)
 					},
 
@@ -654,7 +641,6 @@ hello`)
 						{JSON.stringify(
 							{
 								...state,
-								length: state.data.length,
 								components: undefined,
 								reactDOM: undefined,
 							},
