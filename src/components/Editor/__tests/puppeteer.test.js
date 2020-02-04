@@ -18,15 +18,7 @@ import {
 	type,
 } from "./puppeteer"
 
-const header          = fs.readFileSync("./src/components/Editor/__tests/markdown/header.md", "utf8")           // eslint-disable-line no-multi-spaces
-const asteriskComment = fs.readFileSync("./src/components/Editor/__tests/markdown/asterisk-comment.md", "utf8") // eslint-disable-line no-multi-spaces
-const comment         = fs.readFileSync("./src/components/Editor/__tests/markdown/comment.md", "utf8")          // eslint-disable-line no-multi-spaces
-const paragraph       = fs.readFileSync("./src/components/Editor/__tests/markdown/paragraph.md", "utf8")        // eslint-disable-line no-multi-spaces
-const codeBlock       = fs.readFileSync("./src/components/Editor/__tests/markdown/code-block.md", "utf8")       // eslint-disable-line no-multi-spaces
-const blockquote      = fs.readFileSync("./src/components/Editor/__tests/markdown/blockquote.md", "utf8")       // eslint-disable-line no-multi-spaces
-const unorderedList   = fs.readFileSync("./src/components/Editor/__tests/markdown/unordered-list.md", "utf8")   // eslint-disable-line no-multi-spaces
-const orderedList     = fs.readFileSync("./src/components/Editor/__tests/markdown/ordered-list.md", "utf8")     // eslint-disable-line no-multi-spaces
-const sectionBreak    = fs.readFileSync("./src/components/Editor/__tests/markdown/break.md", "utf8")            // eslint-disable-line no-multi-spaces
+const stressTest = fs.readFileSync("./src/components/Editor/__tests/stress-test.md", "utf8")
 
 let page = null
 let exit = null
@@ -42,7 +34,7 @@ let exit = null
 // - readme.md
 //
 beforeAll(async () => {
-	jest.setTimeout(60e3)
+	jest.setTimeout(180e3)
 	let browser = null
 	switch (process.env.BROWSER) {
 	case "CHROMIUM":
@@ -61,9 +53,6 @@ afterAll(async () => {
 	await exit()
 })
 
-/*
- * Type
- */
 test("can type hello, world (1 of 2)", async () => {
 	await reset(page)
 	await type(page, "Hello, world! 😀")
@@ -151,68 +140,9 @@ test("can type enter (2 of 2)", async () => {
 	expect(data).toBe("")
 })
 
-/*
- * Markdown
- */
-test("header.md", async () => {
+test("stress test", async () => {
 	await reset(page)
-	await type(page, header)
+	await type(page, stressTest)
 	let data = await innerText(page)
-	expect(data).toBe(header)
-})
-
-test("asterisk-comment.md", async () => {
-	await reset(page)
-	await type(page, asteriskComment)
-	let data = await innerText(page)
-	expect(data).toBe(asteriskComment)
-})
-
-test("comment.md", async () => {
-	await reset(page)
-	await type(page, comment)
-	let data = await innerText(page)
-	expect(data).toBe(comment)
-})
-
-test("paragraph.md", async () => {
-	await reset(page)
-	await type(page, paragraph)
-	let data = await innerText(page)
-	expect(data).toBe(paragraph)
-})
-
-test("code-block.md", async () => {
-	await reset(page)
-	await type(page, codeBlock)
-	let data = await innerText(page)
-	expect(data).toBe(codeBlock)
-})
-
-test("blockquote.md", async () => {
-	await reset(page)
-	await type(page, blockquote)
-	let data = await innerText(page)
-	expect(data).toBe(blockquote)
-})
-
-test("unordered-list.md", async () => {
-	await reset(page)
-	await type(page, unorderedList)
-	let data = await innerText(page)
-	expect(data).toBe(unorderedList)
-})
-
-test("ordered-list.md", async () => {
-	await reset(page)
-	await type(page, orderedList)
-	let data = await innerText(page)
-	expect(data).toBe(orderedList)
-})
-
-test("break.md", async () => {
-	await reset(page)
-	await type(page, sectionBreak)
-	let data = await innerText(page)
-	expect(data).toBe(sectionBreak)
+	expect(data).toBe(stressTest)
 })
