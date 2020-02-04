@@ -16,10 +16,10 @@ import "./Editor.css"
 //
 // - Undo
 // - Redo
+// - New pos (StatusBar)
 // - Components
 // - localStorage
 // - Demo
-// - etc.
 //
 function Editor(props) {
 	const ref = React.useRef()
@@ -142,7 +142,10 @@ hello`)
 						isPointerDownRef.current = true
 					},
 					onPointerMove: e => {
-						if (!isPointerDownRef.current) {
+						if (!state.focused) {
+							isPointerDownRef.current = false // Reset
+							return
+						} else if (!isPointerDownRef.current) {
 							// No-op
 							return
 						}

@@ -25,10 +25,13 @@ let exit = null
 
 // TODO:
 //
-// - Backspace and delete rune (incl. emojis)
-// - Backspace and delete word
-// - Backspace and delete line
+// - Backspace rune (incl. emojis)
+// - Backspace word
+// - Backspace line
 // - IME
+// - Cut
+// - Copy
+// - Paste
 // - Undo?
 // - Redo?
 // - readme.md
