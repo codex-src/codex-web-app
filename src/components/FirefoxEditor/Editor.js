@@ -1,5 +1,5 @@
 import CSSDebugger from "utils/CSSDebugger"
-import emojiTrie from "emoji-trie"
+import emoji from "emoji-trie"
 import Enum from "utils/Enum"
 import React from "react"
 import ReactDOM from "react-dom"
@@ -31,18 +31,20 @@ const ActionTypes = new Enum(
 )
 
 const initialState = {
-	epoch: 0,
-	actionType: "",
-	actionTimeStamp: 0,
-	focused: false,
-	data: "",
-	pos1: 0,
-	pos2: 0,
-	coords: null,
-	collapsed: false,
-	components: null,
-	shouldRender: 0,
-	reactDOM: null,
+	epoch: 0,           // The epoch (time stamp) of the editor
+	actionType: "",     // The type of the current action
+	actionTimeStamp: 0, // The time stamp (since epoch) of the current action
+	focused: false,     // Is the editor focused?
+	data: "",           // The plain text data
+	pos1: 0,            // The start cursor
+	pos2: 0,            // The end cursor
+	coords: null,       // The cursor coords
+	atStart: false,     // Are the cursors exclusively at the start?
+	atEnd: false,       // Are the cursors exclusively at the end?
+	collapsed: false,   // Are the cursors collapsed?
+	components: null,   // The React components
+	shouldRender: 0,    // Should render the DOM and or cursor?
+	reactDOM: null,     // The React DOM (not what the user sees)
 }
 
 const reducer = state => ({
@@ -65,7 +67,9 @@ const reducer = state => ({
 	actionSelect(pos1, pos2, coords) {
 		this.newAction(ActionTypes.SELECT)
 		const collapsed = pos1 === pos2
-		Object.assign(state, { pos1, pos2, coords, collapsed })
+		const atStart = collapsed && !pos1
+		const atEnd = collapsed && pos1 === state.data.length
+		Object.assign(state, { pos1, pos2, coords, atStart, atEnd, collapsed })
 	},
 	actionInput(data, pos1, pos2, coords = state.coords) {
 		this.newAction(ActionTypes.INPUT)
@@ -78,107 +82,133 @@ const reducer = state => ({
 		const pos2 = pos1
 		this.actionInput(data, pos1, pos2, state.coords) // Synthetic coords
 	},
-	backspaceCharL() {
+	backspaceRuneL() {
 		let dropL = 0
-		if (state.collapsed && state.pos1) {
-			const emoji = emojiTrie.atEnd(state.data.slice(0, state.pos1))
-			dropL = emoji.length || 1
+		if (state.collapsed && !state.atStart) {
+			// Get the rune at the end:
+			const substr = state.data.slice(0, state.pos1)
+			let rune = emoji.atEnd(substr)
+			if (!rune) {
+				rune = utf8.atEnd(substr)
+			}
+			dropL = rune.length
 		}
 		this.write("", dropL, 0)
 	},
 	backspaceWordL() {
-		if (!state.collapsed || !state.pos1) {
+		if (!state.collapsed || state.atStart) {
 			this.write("", 0, 0)
 			return
 		}
-		// Iterate spaces:
+		// Iterate (h.) white space:
 		let index = state.pos1
 		while (index) {
-			const rune = utf8.endRune(state.data.slice(0, index))
+			const rune = utf8.atEnd(state.data.slice(0, index))
 			if (!utf8.isHWhiteSpace(rune)) {
+				// No-op
 				break
 			}
 			index -= rune.length
 		}
-		// Iterate non-word characters:
+		// Iterate non-word runes:
 		while (index) {
-			const rune = utf8.endRune(state.data.slice(0, index))
+			const rune = utf8.atEnd(state.data.slice(0, index))
 			if (utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+				// No-op
 				break
 			}
 			index -= rune.length
 		}
-		// Iterate word characters:
+		// Iterate word runes:
 		while (index) {
-			const rune = utf8.endRune(state.data.slice(0, index))
+			const rune = utf8.atEnd(state.data.slice(0, index))
 			if (!utf8.isAlphanum(rune)) {
+				// No-op
 				break
 			}
 			index -= rune.length
 		}
-		const dropL = state.pos1 - index || 1
+		// Get the number of bytes to drop:
+		let dropL = state.pos1 - index
+		if (!dropL && state.data[index - 1] === "\n") {
+			dropL = 1
+		}
 		this.write("", dropL, 0)
 	},
 	backspaceLineL() {
-		if (!state.collapsed || !state.pos1) {
+		if (!state.collapsed || state.atStart) {
 			this.write("", 0, 0)
 			return
 		}
 		let index = state.pos1
 		while (index) {
-			const rune = utf8.endRune(state.data.slice(0, index))
+			const rune = utf8.atEnd(state.data.slice(0, index))
 			if (utf8.isVWhiteSpace(rune)) {
+				// No-op
 				break
 			}
 			index -= rune.length
 		}
-		const dropL = state.pos1 - index || 1
+		// Get the number of bytes to drop:
+		let dropL = state.pos1 - index
+		if (!dropL && state.data[index - 1] === "\n") {
+			dropL = 1
+		}
 		this.write("", dropL, 0)
 	},
-	backspaceCharR() {
+	backspaceRuneR() {
 		let dropR = 0
-		if (state.collapsed && state.pos1 < state.data.length) {
-			const emoji = emojiTrie.atStart(state.data.slice(state.pos1))
-			dropR = emoji.length || 1
+		if (state.collapsed && !state.atEnd) {
+			// Get the rune at the start:
+			const substr = state.data.slice(state.pos1)
+			let rune = emoji.atStart(substr)
+			if (!rune) {
+				rune = utf8.atStart(substr)
+			}
+			dropR = rune.length
 		}
 		this.write("", 0, dropR)
 	},
 	backspaceWordR() {
-		if (!state.collapsed || state.pos1 === state.data.length) {
+		if (!state.collapsed || state.atEnd) {
 			this.write("", 0, 0)
 			return
 		}
-		// Iterate spaces:
+		// Iterate (h.) white space:
 		let index = state.pos1
 		while (index < state.data.length) {
-			const rune = utf8.startRune(state.data.slice(index))
+			const rune = utf8.atStart(state.data.slice(index))
 			if (!utf8.isHWhiteSpace(rune)) {
+				// No-op
 				break
 			}
 			index += rune.length
 		}
-		// Iterate non-word characters:
+		// Iterate non-word runes:
 		while (index < state.data.length) {
-			const rune = utf8.startRune(state.data.slice(index))
+			const rune = utf8.atStart(state.data.slice(index))
 			if (utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+				// No-op
 				break
 			}
 			index += rune.length
 		}
-		// Iterate word characters:
+		// Iterate word runes:
 		while (index < state.data.length) {
-			const rune = utf8.startRune(state.data.slice(index))
+			const rune = utf8.atStart(state.data.slice(index))
 			if (!utf8.isAlphanum(rune)) {
+				// No-op
 				break
 			}
 			index += rune.length
 		}
-		const dropR = index - state.pos1 || 1
+		// Get the number of bytes to drop:
+		let dropR = index - state.pos1
+		if (!dropR && state.data[index] === "\n") {
+			dropR = 1
+		}
 		this.write("", 0, dropR)
 	},
-	// backspaceLineR() {
-	// 	// TODO
-	// },
 	tab() {
 		this.write("\t")
 	},
@@ -549,6 +579,9 @@ hello`)
 							return
 						}
 						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
+						//
+						// NOTE: deleteSoftLineForward and
+						// deleteHardLineForward are not supported
 						switch (e.nativeEvent.inputType) {
 						case "insertLineBreak": // Soft enter
 						case "insertParagraph": // Enter
@@ -556,7 +589,7 @@ hello`)
 							return
 						// Backspace (backwards):
 						case "deleteContentBackward":
-							dispatch.backspaceCharL()
+							dispatch.backspaceRuneL()
 							return
 						case "deleteWordBackward":
 							dispatch.backspaceWordL()
@@ -567,15 +600,11 @@ hello`)
 							return
 						// Backspace (forwards):
 						case "deleteContentForward":
-							dispatch.backspaceCharR()
+							dispatch.backspaceRuneR()
 							return
 						case "deleteWordForward":
 							dispatch.backspaceWordR()
 							return
-						// case "deleteSoftLineForward":
-						// case "deleteHardLineForward":
-						// 	dispatch.backspaceLineR()
-						// 	return
 						default:
 							// No-op
 							break

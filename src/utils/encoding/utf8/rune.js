@@ -1,10 +1,10 @@
 // Counts the number of runes.
-export function runeCount(str) {
+export function count(str) {
 	return [...str].length
 }
 
 // Returns the rune at the start of a string.
-export function startRune(str) {
+export function atStart(str) {
 	if (!str) {
 		return "" // EOF
 	}
@@ -13,7 +13,7 @@ export function startRune(str) {
 }
 
 // Returns the rune at the end of a string.
-export function endRune(str) {
+export function atEnd(str) {
 	if (!str) {
 		return "" // EOF
 	}

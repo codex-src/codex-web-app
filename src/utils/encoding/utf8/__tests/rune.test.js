@@ -1,26 +1,26 @@
 import {
-	endRune,
-	runeCount,
-	startRune,
+	atEnd,
+	atStart,
+	count,
 } from "../rune"
 
-test("runeCount", () => {
-	expect(runeCount("")).toBe(0)
-	expect(runeCount("😀")).toBe(1)
-	expect(runeCount("😀😃")).toBe(2)
-	expect(runeCount("😀😃😄")).toBe(3)
+test("count", () => {
+	expect(count("")).toBe(0)
+	expect(count("😀")).toBe(1)
+	expect(count("😀😃")).toBe(2)
+	expect(count("😀😃😄")).toBe(3)
 })
 
-test("startRune", () => {
-	expect(startRune("")).toBe("")
-	expect(startRune("😀😃😄")).toBe("😀")
-	expect(startRune("😃😄😀")).toBe("😃")
-	expect(startRune("😄😀😃")).toBe("😄")
+test("atStart", () => {
+	expect(atStart("")).toBe("")
+	expect(atStart("😀😃😄")).toBe("😀")
+	expect(atStart("😃😄😀")).toBe("😃")
+	expect(atStart("😄😀😃")).toBe("😄")
 })
 
-test("endRune", () => {
-	expect(endRune("")).toBe("")
-	expect(endRune("😀😃😄")).toBe("😄")
-	expect(endRune("😃😄😀")).toBe("😀")
-	expect(endRune("😄😀😃")).toBe("😃")
+test("atEnd", () => {
+	expect(atEnd("")).toBe("")
+	expect(atEnd("😀😃😄")).toBe("😄")
+	expect(atEnd("😃😄😀")).toBe("😀")
+	expect(atEnd("😄😀😃")).toBe("😃")
 })

@@ -37,7 +37,7 @@
 // 0x205f   MEDIUM MATHEMATICAL SPACE   h s
 // 0x3000           IDEOGRAPHIC SPACE   h s
 
-// Returns whether a rune is a horizontal white space rune.
+// Returns whether a rune is a (h.) white space rune.
 export function isHWhiteSpace(rune) {
 	if (!rune) {
 		return false
@@ -72,7 +72,7 @@ export function isHWhiteSpace(rune) {
 	return ok
 }
 
-// Returns whether a rune is a vertical white space rune.
+// Returns whether a rune is a (v.) white space rune.
 export function isVWhiteSpace(rune) {
 	if (!rune) {
 		return false
@@ -95,8 +95,7 @@ export function isVWhiteSpace(rune) {
 	return ok
 }
 
-// Returns whether a rune is a horizontal or vertical white
-// space rune.
+// Returns whether a rune is a white space rune.
 export function isWhiteSpace(rune) {
 	if (!rune) {
 		return false
