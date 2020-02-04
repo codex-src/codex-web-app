@@ -53,6 +53,18 @@ let page  = null // eslint-disable-line no-multi-spaces
 let close = null // eslint-disable-line no-multi-spaces
 let data  = ""   // eslint-disable-line no-multi-spaces
 
+// TODO:
+//
+// - Backspace and delete rune (incl. emojis)
+// - Backspace and delete word
+// - Backspace and delete line
+// - Undo?
+// - Redo?
+// - stress-test.md
+// - readme.md
+//
+// const data = fs.readFileSync("./src/tests/Editor.test.md", "utf8")
+//
 beforeAll(async () => {
 	let browser = null
 	switch (process.env.BROWSER) {
