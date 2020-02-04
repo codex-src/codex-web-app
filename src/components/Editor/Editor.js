@@ -1,413 +1,653 @@
-// import areEqualTrees from "./helpers/areEqualTrees"
-import Context from "./Context"
-import Debugger from "./Debugger"
-import getOffsetFromRange from "./helpers/getOffsetFromRange"
-import getRangeFromKeyNodeAndOffset from "./helpers/getRangeFromKeyNodeAndOffset"
-import getTargetFromKeyNodes from "./helpers/getTargetFromKeyNodes"
-import platform from "utils/platform"
-import random from "utils/random/id"
+import CSSDebugger from "utils/CSSDebugger"
+import emoji from "emoji-trie"
+import Enum from "utils/Enum"
 import React from "react"
 import ReactDOM from "react-dom"
-import StatusBar from "./StatusBar"
-import syncViews from "./helpers/syncViews"
-import { getCursorFromKey } from "./helpers/getCursorFromKey"
-import { getKeyNode } from "./helpers/getKeyNode"
-import { innerText } from "./helpers/innerText"
-
-import {
-	// KEY_BACKSPACE,
-	// KEY_CODE_D,
-	// KEY_DELETE,
-	// KEY_ENTER,
-	// KEY_TAB,
-} from "./constants"
-
-import {
-	// getCoordsFromRange,
-	getCursorsFromRange,
-} from "./helpers/getCursorsFromRange"
+import stylex from "stylex"
+import useMethods from "use-methods"
+import utf8 from "utils/encoding/utf8"
+import { syncTrees } from "./syncTrees"
 
 import "./Editor.css"
 
-// const SCROLL_BUFFER_T = 24
-// const SCROLL_BUFFER_B = 24 + 20
-
-// const deleteBackwardRegex = /^delete(Content|Word|(Soft|Hard)Line)Backward$/
-
-// function isBackspace(e) {
-// 	return e.key === KEY_BACKSPACE
-// }
-//
-// function isBackspaceForwards(e) {
-// 	if (platform.isMacOS) {
-// 		const ok = (
-// 			!e.shiftKey && // Must be off
-// 			e.ctrlKey &&   // Must be on
-// 			!e.altKey &&   // Must be off
-// 			!e.metaKey &&  // Must be off
-// 			e.keyCode === KEY_CODE_D
-// 		)
-// 		return ok
-// 	}
-// 	return e.key === KEY_DELETE
-// }
-
-function EditorContents(props) {
-	return props.components
+// Discretionary timers (16.5ms -> 33ms)
+const discTimer = {
+	data:   2 * 2,   // data=x
+	pos:    2 * 2,   // pos=x
+	parser: 2 * 3.5, // parser=x
+	render: 2 * 3.5, // render=x
+	sync:   2 * 3.5, // sync=x
+	cursor: 2 * 2,   // cursor=x
 }
 
-function Editor({ state, dispatch, ...props }) {
-	const ref = React.useRef()
-	// const isPointerDown = React.useRef()
-	const target = React.useRef()
-	const FFDedupeCompositionEnd = React.useRef()
+const ActionTypes = new Enum(
+	"INIT",
+	"FOCUS",
+	"BLUR",
+	"SELECT",
+	"INPUT",
+)
 
-	// // scrollIntoViewIfNeeded
-	// React.useLayoutEffect(
-	// 	React.useCallback(() => {
-	// 		if (!state.hasFocus) {
-	// 			// No-op
-	// 			return
-	// 		}
-	// 		const { start, end } = state.coords
-	// 		if (start.y < SCROLL_BUFFER_T && end.y > window.innerHeight - SCROLL_BUFFER_B) { // XOR
-	// 			// No-op
-	// 		} else if (start.y < SCROLL_BUFFER_T) {
-	// 			window.scrollBy(0, start.y - SCROLL_BUFFER_T)
-	// 		} else if (end.y > window.innerHeight - SCROLL_BUFFER_B) {
-	// 			window.scrollBy(0, end.y - window.innerHeight + SCROLL_BUFFER_B)
-	// 		}
-	// 	}, [state]),
-	// 	[state.coords],
-	// )
+const initialState = {
+	epoch: 0,           // The epoch (time stamp) of the editor
+	actionType: "",     // The type of the current action
+	actionTimeStamp: 0, // The time stamp (since epoch) of the current action
+	focused: false,     // Is the editor focused?
+	data: "",           // The plain text data
+	pos1: 0,            // The start cursor
+	pos2: 0,            // The end cursor
+	coords: null,       // The cursor coords
+	atStart: false,     // Are the cursors exclusively at the start?
+	atEnd: false,       // Are the cursors exclusively at the end?
+	collapsed: false,   // Are the cursors collapsed?
+	components: null,   // The React components
+	shouldRender: 0,    // Should render the DOM and or cursor?
+	reactDOM: null,     // The React DOM (not what the user sees)
+}
+
+const reducer = state => ({
+	newAction(actionType) {
+		const actionTimeStamp = Date.now() - state.epoch
+		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
+			// No-op
+			return
+		}
+		Object.assign(state, { actionType, actionTimeStamp })
+	},
+	actionFocus() {
+		this.newAction(ActionTypes.FOCUS)
+		state.focused = true
+	},
+	actionBlur() {
+		this.newAction(ActionTypes.BLUR)
+		state.focused = false
+	},
+	actionSelect(pos1, pos2, coords) {
+		this.newAction(ActionTypes.SELECT)
+		const collapsed = pos1 === pos2 // Takes precedence
+		const atStart = collapsed && !pos1
+		const atEnd = collapsed && pos1 === state.data.length
+		Object.assign(state, { pos1, pos2, coords, atStart, atEnd, collapsed })
+	},
+	actionInput(data, pos1, pos2, coords = state.coords) {
+		this.newAction(ActionTypes.INPUT)
+		Object.assign(state, { data, pos1, pos2, coords })
+		this.render()
+	},
+	write(substr, dropL = 0, dropR = 0) { // dropL and dropR are expected to be >= 0
+		const data = state.data.slice(0, state.pos1 - dropL) + substr + state.data.slice(state.pos2 + dropR)
+		const pos1 = state.pos1 - dropL + substr.length
+		const pos2 = pos1
+		this.actionInput(data, pos1, pos2, state.coords) // Synthetic coords
+	},
+	backspaceRuneL() {
+		let dropL = 0
+		if (state.collapsed && !state.atStart) {
+			// Get the rune at the end:
+			const substr = state.data.slice(0, state.pos1)
+			let rune = emoji.atEnd(substr)
+			if (!rune) {
+				rune = utf8.atEnd(substr)
+			}
+			dropL = rune.length
+		}
+		this.write("", dropL, 0)
+	},
+	backspaceWordL() {
+		if (!state.collapsed || state.atStart) {
+			this.write("", 0, 0)
+			return
+		}
+		// Iterate (h.) white space:
+		let index = state.pos1
+		while (index) {
+			const rune = utf8.atEnd(state.data.slice(0, index))
+			if (!utf8.isHWhiteSpace(rune)) {
+				// No-op
+				break
+			}
+			index -= rune.length
+		}
+		// Iterate non-word runes:
+		while (index) {
+			const rune = utf8.atEnd(state.data.slice(0, index))
+			if (utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+				// No-op
+				break
+			}
+			index -= rune.length
+		}
+		// Iterate word runes:
+		while (index) {
+			const rune = utf8.atEnd(state.data.slice(0, index))
+			if (!utf8.isAlphanum(rune)) {
+				// No-op
+				break
+			}
+			index -= rune.length
+		}
+		// Get the number of bytes to drop:
+		let dropL = state.pos1 - index
+		if (!dropL && state.data[index - 1] === "\n") {
+			dropL = 1
+		}
+		this.write("", dropL, 0)
+	},
+	backspaceLineL() {
+		if (!state.collapsed || state.atStart) {
+			this.write("", 0, 0)
+			return
+		}
+		let index = state.pos1
+		while (index) {
+			const rune = utf8.atEnd(state.data.slice(0, index))
+			if (utf8.isVWhiteSpace(rune)) {
+				// No-op
+				break
+			}
+			index -= rune.length
+		}
+		// Get the number of bytes to drop:
+		let dropL = state.pos1 - index
+		if (!dropL && state.data[index - 1] === "\n") {
+			dropL = 1
+		}
+		this.write("", dropL, 0)
+	},
+	backspaceRuneR() {
+		let dropR = 0
+		if (state.collapsed && !state.atEnd) {
+			// Get the rune at the start:
+			const substr = state.data.slice(state.pos1)
+			let rune = emoji.atStart(substr)
+			if (!rune) {
+				rune = utf8.atStart(substr)
+			}
+			dropR = rune.length
+		}
+		this.write("", 0, dropR)
+	},
+	backspaceWordR() {
+		if (!state.collapsed || state.atEnd) {
+			this.write("", 0, 0)
+			return
+		}
+		// Iterate (h.) white space:
+		let index = state.pos1
+		while (index < state.data.length) {
+			const rune = utf8.atStart(state.data.slice(index))
+			if (!utf8.isHWhiteSpace(rune)) {
+				// No-op
+				break
+			}
+			index += rune.length
+		}
+		// Iterate non-word runes:
+		while (index < state.data.length) {
+			const rune = utf8.atStart(state.data.slice(index))
+			if (utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+				// No-op
+				break
+			}
+			index += rune.length
+		}
+		// Iterate word runes:
+		while (index < state.data.length) {
+			const rune = utf8.atStart(state.data.slice(index))
+			if (!utf8.isAlphanum(rune)) {
+				// No-op
+				break
+			}
+			index += rune.length
+		}
+		// Get the number of bytes to drop:
+		let dropR = index - state.pos1
+		if (!dropR && state.data[index] === "\n") {
+			dropR = 1
+		}
+		this.write("", 0, dropR)
+	},
+	tab() {
+		this.write("\t")
+	},
+	enter() {
+		this.write("\n")
+	},
+	cut() {
+		this.write("")
+	},
+	paste(substr) {
+		if (!substr) {
+			// No-op
+			return
+		}
+		this.write(substr)
+	},
+	render() {
+		state.components = parseComponentsFromData(state.data)
+		state.shouldRender++
+	},
+})
+
+const init = initialValue => initialState => {
+	const epoch = Date.now()
+	const state = {
+		...initialState,
+		epoch,
+		actionType: ActionTypes.INIT,
+		// actionTimeStamp: Date.now() - epoch,
+		data: initialValue,
+		coords: {
+			pos1: {
+				x: 0,
+				y: 0,
+			},
+			pos2: {
+				x: 0,
+				y: 0,
+			},
+		},
+		components: parseComponentsFromData(initialValue),
+		reactDOM: document.createElement("div"),
+	}
+	return state
+}
+
+const useEditor = initialValue => useMethods(reducer, initialState, init(initialValue))
+
+// Gets cursors from a range.
+function getPosFromRange(rootNode, node, offset) {
+	let pos = 0
+	const recurse = startNode => {
+		const { childNodes } = startNode
+		let index = 0
+		while (index < childNodes.length) {
+			if (childNodes[index] === node) {
+				pos += offset
+				return true
+			}
+			pos += (childNodes[index].nodeValue || "").length
+			if (recurse(childNodes[index])) {
+				return true
+			}
+			const { nextSibling } = childNodes[index]
+			if (nextSibling && nextSibling.hasAttribute("data-node")) {
+				pos++
+			}
+			index++
+		}
+		return false
+	}
+	recurse(rootNode)
+	return pos
+}
+
+// Gets coords from a range.
+function getCoordsFromRange(range) {
+	const { left, right, top, bottom } = range.getBoundingClientRect()
+	if (!left && !right && !top && !bottom) {
+		// Iterate to the innermost start node (element):
+		let { startContainer, endContainer } = range
+		while (startContainer.children.length) {
+			startContainer = startContainer.children[0]
+		}
+		// Iterate to the innermost end node (element):
+		while (endContainer.children.length) {
+			endContainer = endContainer.children[0]
+		}
+		const start = startContainer.getClientRects()[0]
+		const end = endContainer.getClientRects()[0]
+		const pos1 = { x: start.left, y: start.top }
+		const pos2 = { x: end.right, y: end.bottom }
+		return { pos1, pos2 }
+	}
+	const pos1 = { x: left, y: top }
+	const pos2 = { x: right, y: bottom }
+	return { pos1, pos2 }
+}
+
+// Gets plain text data; recursively reads from a root node.
+function getData(rootNode) {
+	const t1 = Date.now()
+	let data = ""
+	const recurse = startNode => {
+		const { childNodes } = startNode
+		let index = 0
+		while (index < childNodes.length) {
+			data += childNodes[index].nodeValue || ""
+			recurse(childNodes[index])
+			const { nextSibling } = childNodes[index]
+			if (nextSibling && nextSibling.hasAttribute("data-node")) {
+				data += "\n"
+			}
+			index++
+		}
+	}
+	recurse(rootNode)
+	const t2 = Date.now()
+	if (t2 - t1 >= discTimer.data) {
+		console.log(`data=${t2 - t1}`)
+	}
+	return data
+}
+
+// Gets the range from a cursor; code based on
+// getPosFromRange.
+function getRangeFromPos(rootNode, pos) {
+	let node = null
+	let offset = 0
+	const recurse = startNode => {
+		const { childNodes } = startNode
+		let index = 0
+		while (index < childNodes.length) {
+			// const nodeValue = childNodes[index].nodeValue || ""
+			const { length } = childNodes[index].nodeValue || ""
+			if (pos - length <= 0) {
+				node = childNodes[index]
+				offset = pos
+				return true
+			}
+			pos -= length
+			if (recurse(childNodes[index])) {
+				return true
+			}
+			const { nextSibling } = childNodes[index]
+			if (nextSibling && nextSibling.hasAttribute("data-node")) {
+				pos--
+			}
+			index++
+		}
+		return false
+	}
+	recurse(rootNode)
+	return { node, offset }
+}
+
+// NOTE: Gecko/Firefox needs white-space: pre-wrap to be an
+// inline style
+const preWrap = { whiteSpace: "pre-wrap" }
+
+const Paragraph = React.memo(props => (
+	<div style={preWrap} data-node>
+		{props.children || (
+			<br />
+		)}
+	</div>
+))
+
+// Parses an array of React components from plain text data.
+function parseComponentsFromData(data) {
+	const t1 = Date.now()
+	const components = []
+	const nodes = data.split("\n")
+	for (let index = 0; index < nodes.length; index++) {
+		components.push(<Paragraph key={index}>{nodes[index]}</Paragraph>)
+	}
+	const t2 = Date.now()
+	if (t2 - t1 >= discTimer.parser) {
+		console.log(`parser=${t2 - t1}`)
+	}
+	return components
+}
+
+// TODO
+//
+// - Undo
+// - Redo
+// - Components
+// - localStorage
+// - Demo
+// - etc.
+//
+function Editor(props) {
+	const ref = React.useRef()
+	const isPointerDownRef = React.useRef()
+	const dedupeCompositionEndRef = React.useRef()
+
+	const [state, dispatch] = useEditor(`hello
+
+hello hello 🙋🏿‍♀️🙋🏿‍♀️🙋🏿‍♀️ 🙋🏿‍♀️🙋🏿‍♀️🙋🏿‍♀️
+
+hello`)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-
-			if (state.shouldRender) {
-				// **Update the target!**
-				const selection = document.getSelection()
-				const { startContainer } = selection.getRangeAt(0)
-				const startNode = getKeyNode(startContainer)
-				target.current = getTargetFromKeyNodes(state.nodes, startNode, startNode)
-			}
-
-			// Render the React DOM:
-			ReactDOM.render(<EditorContents components={state.components} />, state.reactDOM, () => {
-				if (!state.shouldRender) {
-					syncViews(ref.current, state.reactDOM, "data-memo")
+			const renderT1 = Date.now()
+			ReactDOM.render(state.components, state.reactDOM, () => {
+				const renderT2 = Date.now()
+				if (renderT2 - renderT1 >= discTimer.render) {
+					console.log(`render=${renderT2 - renderT1}`)
+				}
+				// Sync the user DOM to the React DOM:
+				const syncT1 = Date.now()
+				const mutations = syncTrees(ref.current, state.reactDOM)
+				if (!state.shouldRender || !mutations) {
+					// No-op
 					return
 				}
-
-				// // NOTE: When mutating the DOM and **not** eagerly
-				// // dropping the range, Gecko/Firefox is known to
-				// // create (and select) an empty text node at the
-				// // start of the root node.
-				// //
-				// // bbf3516
-				// const selection = document.getSelection()
-				// selection.removeAllRanges()
-
-				// if (platform.isFirefox) {
-				// 	selection.removeAllRanges()
-				// }
-
-				// ;[...ref.current.childNodes].map(each => each.remove())
-				// ref.current.append(...state.reactDOM.cloneNode(true).childNodes)
-
-				// const selection = document.getSelection()
-				// const range = selection.getRangeAt(0)
-				// const { x, y } = range.getBoundingClientRect()
-
-				// Sync the DOM trees (user and React):
-				const didMutate = syncViews(ref.current, state.reactDOM, "data-memo")
-				if (!didMutate) {
-					// dispatch.rendered()
-					return
+				const syncT2 = Date.now()
+				if (syncT2 - syncT1 >= discTimer.sync) {
+					console.log(`sync=${syncT2 - syncT1} (${mutations} mutations)`)
 				}
-
-				// const newRange = document.createRange()
-				// const { offset, offsetNode } = document.caretPositionFromPoint(x, y)
-				// newRange.setStart(offsetNode, offset)
-				// newRange.collapse()
-				// selection.removeAllRanges()
-				// selection.addRange(newRange)
-
-				// console.log(offset, offsetNode)
-
-				// selection.addRange(range)
-
-				// TODO: getKeyNodeByID(state.reset.key)
-				let startNode = document.getElementById(state.reset.key)
-				if (startNode.getAttribute("data-compound-node")) { // Gecko/Firefox
-					startNode = startNode.childNodes[0] // Does not recurse
-				}
+				// Reset the cursor:
+				const cursorT1 = Date.now()
 				const selection = document.getSelection()
 				const range = document.createRange()
-				let { node, offset } = getRangeFromKeyNodeAndOffset(startNode, state.reset.offset)
-				if (platform.isFirefox && node.nodeType === Node.ELEMENT_NODE && node.nodeName === "BR") {
-					node = node.parentNode
-					offset = 0
-				}
+				const { node, offset } = getRangeFromPos(ref.current, state.pos1)
 				range.setStart(node, offset)
 				range.collapse()
-				selection.removeAllRanges()
+				if (!state.collapsed) {
+					// TODO: Add state.pos1 as a shortcut
+					const { node, offset } = getRangeFromPos(ref.current, state.pos2)
+					range.setEnd(node, offset)
+				}
 				selection.addRange(range)
-				// dispatch.rendered()
+				const cursorT2 = Date.now()
+				if (cursorT2 - cursorT1 >= discTimer.cursor) {
+					console.log(`cursor=${cursorT2 - cursorT1}`)
+				}
 			})
 		}, [state]),
 		[state.shouldRender],
 	)
 
-	// // Did render:
-	// React.useEffect( // TODO: Make asynchronous?
-	// 	React.useCallback(() => {
-	// 		const data = state.nodes.map(each => each.data).join("\n")
-	// 		if (data !== state.data) {
-	// 			throw new Error("Plain text data is out of sync!")
-	// 		}
-	// 		// const areEqual = areEqualTrees(ref.current, state.reactDOM)
-	// 		// if (!areEqual) {
-	// 		// 	throw new Error("DOMs are out of sync!")
-	// 		// }
-	// 	}, [state]),
-	// 	[state.didRender],
-	// )
+	// Gets the cursors (and coords).
+	const getPos = () => {
+		const t1 = Date.now()
+		const selection = document.getSelection()
+		const range = selection.getRangeAt(0)
+		const pos1 = getPosFromRange(ref.current, range.startContainer, range.startOffset)
+		let pos2 = pos1
+		if (!range.collapsed) {
+			// TODO: Add state.pos1 as a shortcut
+			pos2 = getPosFromRange(ref.current, range.endContainer, range.endOffset)
+		}
+		const t2 = Date.now()
+		if (t2 - t1 >= discTimer.pos) {
+			console.log(`pos=${t2 - t1}`)
+		}
+		const coords = getCoordsFromRange(range)
+		return [pos1, pos2, coords]
+	}
 
-	// const timeStamp = React.useRef()
-	// if (timeStamp.current && e.nativeEvent.timeStamp - timeStamp.current < 10) {
-	// 	// console.log("wtf")
-	// } else {
-	// 	console.log("ok")
-	// }
-	// timeStamp.current = e.nativeEvent.timeStamp
-
-	const { Provider } = Context
 	return (
-		<Provider value={[state, dispatch]}>
-			<Debugger on>
-				{React.createElement(
-					"div",
-					{
-						ref,
+		<CSSDebugger>
+			{React.createElement(
+				"div",
+				{
+					ref,
 
-						style: { transform: state.hasFocus && "translateZ(0px)" },
+					contentEditable: true,
+					suppressContentEditableWarning: true,
+					spellCheck: true,
 
-						contentEditable: true,
-						suppressContentEditableWarning: true,
+					onFocus: dispatch.actionFocus,
+					onBlur:  dispatch.actionBlur,
 
-						// // onFocus:          e => console.log("onFocus"),
-						// // onSelect:         e => console.log("onSelect"),
-						// // onBlur:           e => console.log("onBlur"),
-						// onKeyPress:          e => console.log("onKeyPress"),
-						// onKeyDown:           e => console.log("onKeyDown"),
-						// onKeyUp:             e => console.log("onKeyUp"),
-						// onCompositionStart:  e => console.log("onCompositionStart"),
-						// onCompositionUpdate: e => console.log("onCompositionUpdate"),
-						// onCompositionEnd:    e => console.log("onCompositionEnd"),
-						// onBeforeInput:       e => console.log("onBeforeInput"),
-						// onInput:             e => console.log("onInput"),
-
-						// onSelect: e => {
-						// 	const selection = document.getSelection()
-						// 	console.log(selection.anchorOffset)
-						// },
-						// onInput: e => {
-						// 	const selection = document.getSelection()
-						// 	console.log(selection.anchorOffset)
-						// },
-
-						onFocus: dispatch.actionFocus,
-						onBlur:  dispatch.actionBlur,
-
-						onSelect: e => {
-							if (state.shouldRender) {
-								return
-							}
+					onSelect: e => {
+						try {
 							const selection = document.getSelection()
 							const range = selection.getRangeAt(0)
-							const { start, end, startNode, endNode } = getCursorsFromRange(state.nodes, range)
-							target.current = getTargetFromKeyNodes(state.nodes, startNode, endNode)
-							dispatch.actionSelect(start, end)
-						},
-
-						// onKeyDown: e => {
-						// 	const selection = document.getSelection()
-						// 	const { startContainer, endContainer, collapsed } = selection.getRangeAt(0)
-						// 	const startNode = getKeyNode(startContainer)
-						// 	let endNode = startNode
-						// 	if (!collapsed) {
-						// 		endNode = getKeyNode(endContainer)
-						// 	}
-						// 	target.current = getTargetFromKeyNodes(state.nodes, startNode, endNode)
-						// },
-
-						// // onPointerDown: e => {
-						// // 	isPointerDown.current = true
-						// // },
-						// // onPointerMove: e => {
-						// // 	// Guard smartphone (touch):
-						// // 	if (!isPointerDown.current || !state.hasFocus) {
-						// // 		// No-op
-						// // 		return
-						// // 	}
-						// // 	const { startNode, start, endNode, end, coords } = getCursorsFromRange(state.nodes)
-						// // 	target.current = getTargetFromKeyNodes(state.nodes, startNode, endNode)
-						// // 	dispatch.actionSelect(start, end, coords)
-						// // },
-						// // onPointerUp: e => {
-						// // 	isPointerDown.current = false
-						// // },
-						//
-						// // TODO: Arrow down at the start of a
-						// // multiline code block does not enter a the
-						// // first line on Gecko/Firefox
-						// onKeyDown: e => {
-						// 	// const { startNode, start, endNode, end, coords } = getCursorsFromRange(state.nodes)
-						// 	// target.current = getTargetFromKeyNodes(state.nodes, startNode, endNode)
-						// 	// dispatch.actionSelect(start, end, coords)
-						//
-						// 	// const isCollapsed = state.start.pos === state.end.pos
-						// 	switch (true) {
-						// 	case e.key === KEY_TAB:
-						// 		e.preventDefault()
-						// 		document.execCommand("insertText", false, "\t")
-						// 		return
-						// 	case e.key === KEY_ENTER:
-						// 		e.preventDefault()
-						// 		document.execCommand("insertParagraph", false, null)
-						// 		return
-						// 	// // Guard RTL backspace (Gecko/Firefox):
-						// 	// case platform.isFirefox && isBackspace(e):
-						// 	// 	if (state.start.pos === state.end.pos) {
-						// 	// 		e.preventDefault()
-						// 	// 		// ...
-						// 	// 		return
-						// 	// 	} else if (state.start.pos && state.data[state.start.pos - 1] === "\n") {
-						// 	// 		e.preventDefault()
-						// 	// 		dispatch.FFBackspaceNode()
-						// 	// 		return
-						// 	// 	}
-						// 	// 	break
-						// 	// // Guard LTR backspace (Gecko/Firefox):
-						// 	// case platform.isFirefox && isBackspaceForwards(e):
-						// 	// 	if (state.start.pos === state.end.pos) {
-						// 	// 		e.preventDefault()
-						// 	// 		// ...
-						// 	// 		return
-						// 	// 	} else if (state.start.pos < state.data.length && state.data[state.start.pos] === "\n") {
-						// 	// 		e.preventDefault()
-						// 	// 		dispatch.FFBackspaceForwardsNode()
-						// 	// 		return
-						// 	// 	}
-						// 	// 	break
-						// 	default:
-						// 		// No-op
-						// 		break
-						// 	}
-						// },
-						//
-						// // onCompositionStart: e => {
-						// // 	const { startNode, endNode } = getCursorsFromRange(state.nodes)
-						// // 	target.current = getTargetFromKeyNodes(state.nodes, startNode, endNode)
-						// // },
-						// // onCompositionUpdate: e => {
-						// // 	const { startNode, endNode } = getCursorsFromRange(state.nodes)
-						// // 	target.current = getTargetFromKeyNodes(state.nodes, startNode, endNode)
-						// // },
-						// // onCompositionEnd: e => {
-						// // 	const { startNode, endNode } = getCursorsFromRange(state.nodes)
-						// // 	target.current = getTargetFromKeyNodes(state.nodes, startNode, endNode)
-						// // },
-						//
-						// // if (platform.isFirefox && !startIter.currentNode.parentNode) { // Gecko/Firefox
-						// // 	startIter.currentNode = ref.current.childNodes[0] // Does not recurse
-						// // 	startIter.currentNode.id = start.key
-						// // }
-
-						onKeyDown: e => {
-							// **Update the target!**
-							const selection = document.getSelection()
-							const { startContainer } = selection.getRangeAt(0)
-							const startNode = getKeyNode(startContainer)
-							target.current = getTargetFromKeyNodes(state.nodes, startNode, startNode)
-						},
-
-						onCompositionEnd: e => {
-							// NOTE: Gecko/Firefox emits a composition end
-							// **and then** an input event. These events
-							// need to be deduped.
-							//
-							// https://github.com/w3c/uievents/issues/202#issue-316461024
-							if (!platform.isFirefox) {
-								// No-op
-								return
-							}
-							FFDedupeCompositionEnd.current = true
-						},
-
-						// // Guard the contenteditable node:
-						// if (deleteBackwardRegex.test(e.nativeEvent.inputType) && state.start.pos === state.end.pos && !state.start.pos) {
-						// 	const reset = { key: state.start.key, offset: 0 } // Idempotent
-						// 	dispatch.render(reset)
-						// 	return
-						// }
-
-						onInput: e => {
-							if (platform.isFirefox && FFDedupeCompositionEnd.current) {
-								FFDedupeCompositionEnd.current = false // Reset
-								return
-							}
-							// Extend the target start (once):
-							let { startIter, endIter, start, end } = target.current
-							if (!startIter.count && startIter.getPrev()) {
-								startIter.prev()
-								start = getCursorFromKey(state.nodes, startIter.currentNode.id) //, start, -1)
-							// Extend the target end (once):
-							} else if (!endIter.count && endIter.getNext()) {
-								endIter.next()
-								end = getCursorFromKey(state.nodes, endIter.currentNode.id)
-								const data = state.nodes[end.index]
-								end.offset += data.length
-								end.pos += data.length
-							}
-							// Get the parsed nodes:
-							const seenKeys = {}
-							const nodes = []
-							while (startIter.currentNode) {
-								let key = startIter.currentNode.id
-								if ((platform.isFirefox && !key) || seenKeys[key]) {
-									key = random.newUUID()
-									startIter.currentNode.id = key
+							// NOTE: Select all (e.g. cmd-a or ctrl-a) in
+							// Gecko/Firefox selects the root node instead
+							// of the innermost start and end nodes
+							if (range.startContainer === ref.current || range.endContainer === ref.current) {
+								// Iterate to the innermost start node:
+								let startNode = ref.current.childNodes[0]
+								while (startNode.childNodes.length) {
+									startNode = startNode.childNodes[0]
 								}
-								seenKeys[key] = true
-								const data = innerText(startIter.currentNode)
-								nodes.push({ key, data })
-								if (startIter.currentNode === endIter.currentNode) {
-									break
+								// Iterate to the innermost end node:
+								let endNode = ref.current.childNodes[ref.current.childNodes.length - 1]
+								while (endNode.childNodes.length) {
+									endNode = endNode.childNodes[endNode.childNodes.length - 1]
 								}
-								startIter.next()
+								// Reset the range:
+								const range = document.createRange()
+								range.setStart(startNode, 0)
+								range.setEnd(endNode, (endNode.nodeValue || "").length)
+								selection.removeAllRanges()
+								selection.addRange(range)
 							}
-							// Get the cursor coords and cursor reset:
-							const selection = document.getSelection()
-							const { startContainer, startOffset } = selection.getRangeAt(0)
-							const startNode = getKeyNode(startContainer)
-							const offset = getOffsetFromRange(startNode, startContainer, startOffset)
-							const reset = { key: startNode.id, offset }
-							// OK:
-							dispatch.actionInput(nodes, start, end, /* coords, */ reset)
-						},
-
-						// onCut:   e => e.preventDefault(),
-						// onCopy:  e => e.preventDefault(),
-						// onPaste: e => e.preventDefault(),
-						// onDrag:  e => e.preventDefault(),
-						// onDrop:  e => e.preventDefault(),
+							const [pos1, pos2, coords] = getPos()
+							dispatch.actionSelect(pos1, pos2, coords)
+						} catch (e) {
+							console.warn({ "onSelect/catch": e })
+						}
 					},
-				)}
-			</Debugger>
-			<StatusBar />
-		</Provider>
+					onPointerDown: e => {
+						isPointerDownRef.current = true
+					},
+					onPointerMove: e => {
+						if (!isPointerDownRef.current) {
+							// No-op
+							return
+						}
+						try {
+							const [pos1, pos2, coords] = getPos()
+							dispatch.actionSelect(pos1, pos2, coords)
+						} catch (e) {
+							console.warn({ "onPointerMove/catch": e })
+						}
+					},
+					onPointerUp: e => {
+						isPointerDownRef.current = false
+					},
+
+					onKeyDown: e => {
+						switch (true) {
+						case e.keyCode === 9: // Tab
+							e.preventDefault()
+							dispatch.tab()
+							return
+						default:
+							// No-op:
+							break
+						}
+					},
+					onCompositionEnd: e => {
+						// https://github.com/w3c/uievents/issues/202#issue-316461024
+						dedupeCompositionEndRef.current = true
+						// Input:
+						const data = getData(ref.current)
+						const [pos1, pos2, coords] = getPos()
+						dispatch.actionInput(data, pos1, pos2, coords)
+					},
+					onInput: e => {
+						if (dedupeCompositionEndRef.current) {
+							dedupeCompositionEndRef.current = false // Reset
+							return
+						}
+						if (e.nativeEvent.isComposing) {
+							// No-op
+							return
+						}
+						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
+						//
+						// NOTE: deleteSoftLineForward and
+						// deleteHardLineForward are not supported
+						switch (e.nativeEvent.inputType) {
+						case "insertLineBreak": // Soft enter
+						case "insertParagraph":
+							dispatch.enter()
+							return
+						case "deleteContentBackward":
+							dispatch.backspaceRuneL()
+							return
+						case "deleteWordBackward":
+							dispatch.backspaceWordL()
+							return
+						case "deleteSoftLineBackward":
+						case "deleteHardLineBackward":
+							dispatch.backspaceLineL()
+							return
+						case "deleteContentForward":
+							dispatch.backspaceRuneR()
+							return
+						case "deleteWordForward":
+							dispatch.backspaceWordR()
+							return
+						// case "historyUndo":
+						// 	dispatch.undo()
+						// 	return
+						// case "historyRedo":
+						// 	dispatch.redo()
+						// 	return
+						default:
+							// No-op
+							break
+						}
+						// Input:
+						const data = getData(ref.current)
+						const [pos1, pos2, coords] = getPos()
+						dispatch.actionInput(data, pos1, pos2, coords)
+					},
+
+					onCut: e => {
+						e.preventDefault()
+						if (state.collapsed) {
+							// No-op
+							return
+						}
+						const substr = state.data.slice(state.pos1, state.pos2)
+						e.clipboardData.setData("text/plain", substr)
+						dispatch.cut()
+					},
+					onCopy: e => {
+						e.preventDefault()
+						if (state.collapsed) {
+							// No-op
+							return
+						}
+						const substr = state.data.slice(state.pos1, state.pos2)
+						e.clipboardData.setData("text/plain", substr)
+					},
+					onPaste: e => {
+						e.preventDefault()
+						const substr = e.clipboardData.getData("text/plain")
+						dispatch.paste(substr)
+					},
+
+					onDrag: e => e.preventDefault(),
+					onDrop: e => e.preventDefault(),
+				},
+			)}
+			{true && (
+				<div style={stylex.parse("m-t:24")}>
+					<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
+						{JSON.stringify(
+							{
+								...state,
+								components: undefined,
+								reactDOM: undefined,
+							},
+							null,
+							"\t",
+						)}
+					</pre>
+				</div>
+			)}
+		</CSSDebugger>
 	)
 }
 

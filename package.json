@@ -26,8 +26,8 @@
     "start": "react-scripts start",
     "start-build": "yarn build && PORT=3000 serve --no-clipboard -s build",
     "test": "react-scripts test",
-    "test-once": "yarn test --watchAll=false",
-    "test-editor": "HEADLESS=false yarn test --watchAll=false Editor.test.js",
+    "test-editor-chrome": "BROWSER=CHROMIUM yarn test --watchAll=false Editor/__tests/",
+    "test-editor-firefox": "BROWSER=GECKO yarn test --watchAll=false Editor/__tests/",
     "build": "react-scripts build",
     "eject": "react-scripts eject"
   },

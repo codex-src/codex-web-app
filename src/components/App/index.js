@@ -1,1 +1,1 @@
-export { default } from "./FirefoxEditorApp" // "./App"
+export { default } from "./EditorApp" // "./App"
