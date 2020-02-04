@@ -40,7 +40,7 @@ hello`)
 				if (renderT2 - renderT1 >= stopwatch.render) {
 					console.log(`render=${renderT2 - renderT1}`)
 				}
-				// Sync the user DOM to the React DOM:
+				// Sync the DOMs:
 				const syncT1 = Date.now()
 				const mutations = syncTrees(ref.current, state.reactDOM)
 				if (!state.shouldRender || !mutations) {
@@ -59,7 +59,7 @@ hello`)
 				range.setStart(node, offset)
 				range.collapse()
 				if (!state.collapsed) {
-					// TODO: Add state.pos1 as a shortcut
+					// TODO: Use state.pos1 as a shortcut
 					const { node, offset } = getRangeFromPos(ref.current, state.pos2)
 					range.setEnd(node, offset)
 				}
@@ -81,7 +81,7 @@ hello`)
 		const pos1 = getPosFromRange(ref.current, range.startContainer, range.startOffset)
 		let pos2 = pos1
 		if (!range.collapsed) {
-			// TODO: Add state.pos1 as a shortcut
+			// TODO: Use state.pos1 as a shortcut
 			pos2 = getPosFromRange(ref.current, range.endContainer, range.endOffset)
 		}
 		const t2 = Date.now()
