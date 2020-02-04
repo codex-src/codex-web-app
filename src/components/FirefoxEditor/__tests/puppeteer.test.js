@@ -6,7 +6,7 @@ import ReactDOM from "react-dom"
 
 const URL      = "http://localhost:3000" // eslint-disable-line no-multi-spaces
 const SELECTOR = "[contenteditable]"     // eslint-disable-line no-multi-spaces
-const DELAY    = 25                      // eslint-disable-line no-multi-spaces
+const DELAY    = 16.67                   // eslint-disable-line no-multi-spaces
 
 ;(function () {
 	jest.setTimeout(180e3)
@@ -49,75 +49,186 @@ async function innerText(page) {
 	return await page.$eval(SELECTOR, node => innerText(node))
 }
 
-/*
- * Tests
- */
-async function helloWorld(page) {
-	await reset(page)
-	await type(page, "Hello, world!")
-	const data = await innerText(page)
-	expect(data).toBe("Hello, world!")
-}
-
+// /*
+//  * Tests
+//  */
 // async function runTestSuite(page) {
-// 	// Basic type test (1 of 2):
+// 	let data = ""
+//
 // 	await reset(page)
-// 	await type(page, "hello\nhello\nhello")
-// 	const $1 = await innerText(page)
-// 	expect($1).toBe("hello\nhello\nhello")
-// 	// Basic type test (2 of 2):
-// 	await reset(page)
-// 	await type(page, "hello")
-// 	await press(page, "ArrowLeft")
-// 	await press(page, "ArrowLeft")
-// 	await press(page, "ArrowLeft")
-// 	await press(page, "ArrowLeft")
-// 	await press(page, "ArrowLeft")
-// 	await type(page, "hello")
-// 	await press(page, "Enter")
-// 	await type(page, "hello")
-// 	await press(page, "Enter")
-// 	const $2 = await innerText(page)
-// 	expect($2).toBe("hello\nhello\nhello")
-// 	// Repeat enter and backspace:
-// 	await reset(page)
-// 	for (const each of new Array(10)) { // 100
-// 		await press(page, "Enter")
-// 	}
-// 	for (const each of new Array(10)) { // 100
+// 	await type(page, "Hello, world!")
+// 	data = await innerText(page)
+// 	expect(data).toBe("Hello, world!")
+// 	for (let index = 0; index < 13; index++) {
 // 		await press(page, "Backspace")
 // 	}
-// 	const $3 = await innerText(page)
-// 	expect($3).toBe("\n") // <div contenteditable><br></div>
-// 	// Repeat backspace:
-// 	await reset(page)
-// 	await type(page, "hello\nhello\nhello")
-// 	for (const each of new Array(17)) {
-// 		await press(page, "Backspace")
-// 	}
-// 	const $4 = await innerText(page)
-// 	expect($4).toBe("\n")
-// 	// Repeat backspace forward:
-// 	await reset(page)
-// 	await type(page, "hello\nhello\nhello")
-// 	for (const each of new Array(17)) {
-// 		await press(page, "ArrowLeft")
-// 	}
-// 	for (const each of new Array(17)) {
-// 		await press(page, "Delete")
-// 	}
-// 	const $5 = await innerText(page)
-// 	expect($5).toBe("\n")
+// 	await press(page, "Backspace")
+//
+// 	// await reset(page)
+// 	// await type(page, "Hello, world! 😀")
+// 	// data = await innerText(page)
+// 	// expect(data).toBe("Hello, world! 😀")
+//
+// 	// await reset(page)
+// 	// await type(page, "😀 Hello, world!")
+// 	// data = await innerText(page)
+// 	// expect(data).toBe("😀 Hello, world!")
+//
 // }
+//
+// // async function runTestSuite(page) {
+// // 	// Basic type test (1 of 2):
+// // 	await reset(page)
+// // 	await type(page, "hello\nhello\nhello")
+// // 	const $1 = await innerText(page)
+// // 	expect($1).toBe("hello\nhello\nhello")
+// // 	// Basic type test (2 of 2):
+// // 	await reset(page)
+// // 	await type(page, "hello")
+// // 	await press(page, "ArrowLeft")
+// // 	await press(page, "ArrowLeft")
+// // 	await press(page, "ArrowLeft")
+// // 	await press(page, "ArrowLeft")
+// // 	await press(page, "ArrowLeft")
+// // 	await type(page, "hello")
+// // 	await press(page, "Enter")
+// // 	await type(page, "hello")
+// // 	await press(page, "Enter")
+// // 	const $2 = await innerText(page)
+// // 	expect($2).toBe("hello\nhello\nhello")
+// // 	// Repeat enter and backspace:
+// // 	await reset(page)
+// // 	for (const each of new Array(10)) { // 100
+// // 		await press(page, "Enter")
+// // 	}
+// // 	for (const each of new Array(10)) { // 100
+// // 		await press(page, "Backspace")
+// // 	}
+// // 	const $3 = await innerText(page)
+// // 	expect($3).toBe("\n") // <div contenteditable><br></div>
+// // 	// Repeat backspace:
+// // 	await reset(page)
+// // 	await type(page, "hello\nhello\nhello")
+// // 	for (const each of new Array(17)) {
+// // 		await press(page, "Backspace")
+// // 	}
+// // 	const $4 = await innerText(page)
+// // 	expect($4).toBe("\n")
+// // 	// Repeat backspace forward:
+// // 	await reset(page)
+// // 	await type(page, "hello\nhello\nhello")
+// // 	for (const each of new Array(17)) {
+// // 		await press(page, "ArrowLeft")
+// // 	}
+// // 	for (const each of new Array(17)) {
+// // 		await press(page, "Delete")
+// // 	}
+// // 	const $5 = await innerText(page)
+// // 	expect($5).toBe("\n")
+// // }
 
-test("Chromium", async () => {
-	const [page, close] = await openNewPage(Chromium, URL)
-	await helloWorld(page)
-	await close()
+let page  = null // eslint-disable-line no-multi-spaces
+let close = null // eslint-disable-line no-multi-spaces
+let data  = ""   // eslint-disable-line no-multi-spaces
+
+describe("Chromium", () => {
+	test("(start)", async () => {
+		;[page, close] = await openNewPage(Chromium, URL) // TODO: Use env?
+	})
+	// Group 1:
+	//
+	// FIXME
+	test("can type hello, world (1 of 2)", async () => {
+		await reset(page)
+		await type(page, "Hello, world! 😀")
+		data = await innerText(page)
+		expect(data).toBe("Hello, world! 😀")
+		for (let index = 0; index < 15; index++) {
+			await press(page, "Backspace")
+		}
+		await press(page, "Backspace")
+		data = await innerText(page)
+		expect(data).toBe("")
+	})
+	test("can type hello, world (2 of 2)", async () => {
+		await reset(page)
+		await type(page, "Hello, world! 😀")
+		data = await innerText(page)
+		expect(data).toBe("Hello, world! 😀")
+		for (let index = 0; index < 15; index++) {
+			await press(page, "ArrowLeft")
+		}
+		for (let index = 0; index < 15; index++) {
+			await press(page, "Delete")
+		}
+		await press(page, "Delete")
+		data = await innerText(page)
+		expect(data).toBe("")
+	})
+	test("can type multiline hello, world! (1 of 2)", async () => {
+		await reset(page)
+		await type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
+		data = await innerText(page)
+		expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
+		for (let index = 0; index < 49; index++) {
+			await press(page, "Backspace")
+		}
+		await press(page, "Backspace")
+		data = await innerText(page)
+		expect(data).toBe("")
+	})
+	test("can type multiline hello, world! (2 of 2)", async () => {
+		await reset(page)
+		await type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
+		data = await innerText(page)
+		expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
+		for (let index = 0; index < 49; index++) {
+			await press(page, "ArrowLeft")
+		}
+		for (let index = 0; index < 49; index++) {
+			await press(page, "Delete")
+		}
+		await press(page, "Delete")
+		data = await innerText(page)
+		expect(data).toBe("")
+	})
+	// Group 2:
+	//
+	// FIXME
+	test("can enter (1 of 2)", async () => {
+		await reset(page)
+		await type(page, "\n".repeat(100))
+		data = await innerText(page)
+		expect(data).toBe("\n".repeat(100))
+		for (let index = 0; index < 100; index++) {
+			await press(page, "Backspace")
+		}
+		await press(page, "Backspace")
+		data = await innerText(page)
+		expect(data).toBe("")
+	})
+	test("can enter (2 of 2)", async () => {
+		await reset(page)
+		await type(page, "\n".repeat(100))
+		data = await innerText(page)
+		expect(data).toBe("\n".repeat(100))
+		for (let index = 0; index < 100; index++) {
+			await press(page, "ArrowLeft")
+		}
+		for (let index = 0; index < 100; index++) {
+			await press(page, "Delete")
+		}
+		await press(page, "Delete")
+		data = await innerText(page)
+		expect(data).toBe("")
+	})
+	test("(end)", async () => {
+		await close()
+	})
 })
 
-test("Gecko", async () => {
-	const [page, close] = await openNewPage(Chromium, URL)
-	await helloWorld(page)
-	await close()
-})
+// test("Gecko", async () => {
+// 	const [page, close] = await openNewPage(Chromium, URL)
+// 	await runTestSuite(page)
+// 	await close()
+// })
