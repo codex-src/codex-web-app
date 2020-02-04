@@ -259,7 +259,6 @@ const useEditor = initialValue => useMethods(reducer, initialState, init(initial
 
 // Gets cursors from a range.
 function getPosFromRange(rootNode, node, offset) {
-	// const t1 = Date.now()
 	let pos = 0
 	const recurse = startNode => {
 		const { childNodes } = startNode
@@ -282,10 +281,6 @@ function getPosFromRange(rootNode, node, offset) {
 		return false
 	}
 	recurse(rootNode)
-	// const t2 = Date.now()
-	// if (t2 - t1 >= discTimer.pos) {
-	// 	console.log(`pos=${t2 - t1}`)
-	// }
 	return pos
 }
 
@@ -313,7 +308,7 @@ function getCoordsFromRange(range) {
 	return { pos1, pos2 }
 }
 
-// Gets (recursively reads) plain text data.
+// Gets plain text data; recursively reads from a root node.
 function getData(rootNode) {
 	const t1 = Date.now()
 	let data = ""
@@ -370,10 +365,8 @@ function getRangeFromPos(rootNode, pos) {
 	return { node, offset }
 }
 
-// NOTE: Gecko/Firefox needs white-space: pre-wrap to use
-// inline-styles
-//
-// overflowWrap: "break-word",
+// NOTE: Gecko/Firefox needs white-space: pre-wrap to be an
+// inline style
 const preWrap = { whiteSpace: "pre-wrap" }
 
 const Paragraph = React.memo(props => (
