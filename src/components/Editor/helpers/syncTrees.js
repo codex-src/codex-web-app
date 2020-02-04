@@ -10,18 +10,18 @@ function eagerlyDropRange() {
 	selection.removeAllRanges()
 }
 
-// Naively syncs two trees -- root nodes are not synced.
-export function naiveSyncTrees(treeA, treeB) {
-	eagerlyDropRange()
-	;[...treeA.childNodes].reverse().map(each => each.remove())
-	treeA.append(...treeB.cloneNode(true).childNodes)
-	return treeA.childNodes.length
-}
+// // Naively syncs two trees -- root nodes are not synced.
+// function naiveSyncTrees(treeA, treeB) {
+// 	eagerlyDropRange()
+// 	;[...treeA.childNodes].reverse().map(each => each.remove())
+// 	treeA.append(...treeB.cloneNode(true).childNodes)
+// 	return treeA.childNodes.length
+// }
 
 // Syncs two trees -- root nodes are not synced.
 //
 // TODO: Reduce max mutations (for 90% case) from 2 to 1
-export function syncTrees(treeA, treeB) {
+function syncTrees(treeA, treeB) {
 	let mutations = 0
 	// Iterate forwards (before replaceWith):
 	let start = 0
@@ -75,3 +75,5 @@ export function syncTrees(treeA, treeB) {
 	}
 	return mutations
 }
+
+export default syncTrees

@@ -6,7 +6,7 @@ import ReactDOM from "react-dom"
 
 const URL      = "http://localhost:3000" // eslint-disable-line no-multi-spaces
 const SELECTOR = "[contenteditable]"     // eslint-disable-line no-multi-spaces
-const DELAY    = 10                      // eslint-disable-line no-multi-spaces
+const DELAY    = 0                       // eslint-disable-line no-multi-spaces
 
 ;(function() {
 	jest.setTimeout(180e3)
@@ -19,10 +19,9 @@ async function openNewPage(ChromiumOrGecko, pageURL) {
 	// Create a new page:
 	const page = await browser.newPage()
 	await page.setViewport({ width: 1200, height: 780 })
-	page.on("pageerror", error => expect(error).toBeNull())
+	page.on("pageerror", error => expect(error).toBeNull()) // FIXME?
 	// Open the URL:
 	await page.goto(pageURL, { timeout: 5e3 })
-	// await page.addScriptTag({ path: "./innerText.js" })
 	await page.addScriptTag({ path: "./src/components/Editor/__tests/innerText.js" })
 	return [page, () => browser.close()]
 }
@@ -49,9 +48,8 @@ async function innerText(page) {
 	return await page.$eval(SELECTOR, node => innerText(node))
 }
 
-let page  = null // eslint-disable-line no-multi-spaces
-let close = null // eslint-disable-line no-multi-spaces
-let data  = ""   // eslint-disable-line no-multi-spaces
+let page = null
+let exit = null
 
 // TODO:
 //
@@ -77,17 +75,17 @@ beforeAll(async () => {
 	default:
 		throw new Error("Try BROWSER=CHROMIUM or BROWSER=GECKO yarn test ...")
 	}
-	;[page, close] = await openNewPage(browser, URL)
+	;[page, exit] = await openNewPage(browser, URL)
 })
 
 afterAll(async () => {
-	await close()
+	await exit()
 })
 
 test("can type hello, world (1 of 2)", async () => {
 	await reset(page)
 	await type(page, "Hello, world! 😀")
-	data = await innerText(page)
+	let data = await innerText(page)
 	expect(data).toBe("Hello, world! 😀")
 	for (let index = 0; index < 15; index++) {
 		await press(page, "Backspace")
@@ -100,7 +98,7 @@ test("can type hello, world (1 of 2)", async () => {
 test("can type hello, world (2 of 2)", async () => {
 	await reset(page)
 	await type(page, "Hello, world! 😀")
-	data = await innerText(page)
+	let data = await innerText(page)
 	expect(data).toBe("Hello, world! 😀")
 	for (let index = 0; index < 15; index++) {
 		await press(page, "ArrowLeft")
@@ -116,7 +114,7 @@ test("can type hello, world (2 of 2)", async () => {
 test("can type multiline hello, world! (1 of 2)", async () => {
 	await reset(page)
 	await type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
-	data = await innerText(page)
+	let data = await innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	for (let index = 0; index < 49; index++) {
 		await press(page, "Backspace")
@@ -129,7 +127,7 @@ test("can type multiline hello, world! (1 of 2)", async () => {
 test("can type multiline hello, world! (2 of 2)", async () => {
 	await reset(page)
 	await type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
-	data = await innerText(page)
+	let data = await innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	for (let index = 0; index < 49; index++) {
 		await press(page, "ArrowLeft")
@@ -145,7 +143,7 @@ test("can type multiline hello, world! (2 of 2)", async () => {
 test("can enter (1 of 2)", async () => {
 	await reset(page)
 	await type(page, "\n".repeat(50))
-	data = await innerText(page)
+	let data = await innerText(page)
 	expect(data).toBe("\n".repeat(50))
 	for (let index = 0; index < 50; index++) {
 		await press(page, "Backspace")
@@ -158,7 +156,7 @@ test("can enter (1 of 2)", async () => {
 test("can enter (2 of 2)", async () => {
 	await reset(page)
 	await type(page, "\n".repeat(50))
-	data = await innerText(page)
+	let data = await innerText(page)
 	expect(data).toBe("\n".repeat(50))
 	for (let index = 0; index < 50; index++) {
 		await press(page, "ArrowLeft")

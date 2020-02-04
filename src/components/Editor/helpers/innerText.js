@@ -1,5 +1,8 @@
-// ./src/components/Editor/helpers/innerText.js
+import discTimers from "./discTimers"
+
+// Mocks the browser; recursively reads from a root node.
 function innerText(rootNode) {
+	const t1 = Date.now()
 	let data = ""
 	const recurse = startNode => {
 		const { childNodes } = startNode
@@ -16,5 +19,11 @@ function innerText(rootNode) {
 		}
 	}
 	recurse(rootNode)
+	const t2 = Date.now()
+	if (t2 - t1 >= discTimers.data) {
+		console.log(`data=${t2 - t1}`)
+	}
 	return data
 }
+
+export default innerText

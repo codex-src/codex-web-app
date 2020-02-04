@@ -1,6 +1,6 @@
 import React from "react"
 import renderDOM from "utils/renderDOM"
-import { syncTrees } from "../syncTrees"
+import syncTrees from "../syncTrees"
 
 document.getSelection = () => ({
 	rangeCount: 1,
