@@ -1,12 +1,12 @@
-import CSSDebugger from "utils/CSSDebugger"
-import discTimers from "./helpers/discTimers"
+import Context from "./Context"
+import Debugger from "./Debugger"
 import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange from "./helpers/getPosFromRange"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
 import React from "react"
 import ReactDOM from "react-dom"
-import stylex from "stylex"
+import stopwatch from "./helpers/stopwatch"
 import syncTrees from "./helpers/syncTrees"
 import useEditor from "./EditorReducer"
 
@@ -37,7 +37,7 @@ hello`)
 			const renderT1 = Date.now()
 			ReactDOM.render(state.components, state.reactDOM, () => {
 				const renderT2 = Date.now()
-				if (renderT2 - renderT1 >= discTimers.render) {
+				if (renderT2 - renderT1 >= stopwatch.render) {
 					console.log(`render=${renderT2 - renderT1}`)
 				}
 				// Sync the user DOM to the React DOM:
@@ -48,7 +48,7 @@ hello`)
 					return
 				}
 				const syncT2 = Date.now()
-				if (syncT2 - syncT1 >= discTimers.sync) {
+				if (syncT2 - syncT1 >= stopwatch.sync) {
 					console.log(`sync=${syncT2 - syncT1} (${mutations} mutations)`)
 				}
 				// Reset the cursor:
@@ -65,7 +65,7 @@ hello`)
 				}
 				selection.addRange(range)
 				const cursorT2 = Date.now()
-				if (cursorT2 - cursorT1 >= discTimers.cursor) {
+				if (cursorT2 - cursorT1 >= stopwatch.cursor) {
 					console.log(`cursor=${cursorT2 - cursorT1}`)
 				}
 			})
@@ -85,15 +85,16 @@ hello`)
 			pos2 = getPosFromRange(ref.current, range.endContainer, range.endOffset)
 		}
 		const t2 = Date.now()
-		if (t2 - t1 >= discTimers.pos) {
+		if (t2 - t1 >= stopwatch.pos) {
 			console.log(`pos=${t2 - t1}`)
 		}
 		const coords = getCoordsFromRange(range)
 		return [pos1, pos2, coords]
 	}
 
+	const { Provider } = Context
 	return (
-		<CSSDebugger>
+		<Provider value={[state, dispatch]}>
 			{React.createElement(
 				"div",
 				{
@@ -254,22 +255,8 @@ hello`)
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			{true && (
-				<div style={stylex.parse("m-t:24")}>
-					<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
-						{JSON.stringify(
-							{
-								...state,
-								components: undefined,
-								reactDOM: undefined,
-							},
-							null,
-							"\t",
-						)}
-					</pre>
-				</div>
-			)}
-		</CSSDebugger>
+			<Debugger />
+		</Provider>
 	)
 }
 

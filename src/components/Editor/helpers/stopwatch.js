@@ -1,5 +1,5 @@
-// Discretionary timers (16.5ms -> 33ms).
-const discTimers = {
+// 16.5ms -> 33ms
+const stopwatch = {
 	data:   2 * 2,   // data=x
 	pos:    2 * 2,   // pos=x
 	parser: 2 * 3.5, // parser=x
@@ -8,4 +8,4 @@ const discTimers = {
 	cursor: 2 * 2,   // cursor=x
 }
 
-export default discTimers
+export default stopwatch

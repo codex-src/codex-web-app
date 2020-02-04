@@ -1,8 +1,7 @@
-import discTimers from "./helpers/discTimers"
 import React from "react"
+import stopwatch from "./helpers/stopwatch"
 
-// NOTE: Gecko/Firefox needs white-space: pre-wrap to be an
-// inline style
+// NOTE: Gecko/Firefox needs pre-wrap to be an inline style
 const preWrap = { whiteSpace: "pre-wrap" }
 
 const Paragraph = React.memo(props => (
@@ -22,7 +21,7 @@ function parseComponents(data) {
 		components.push(<Paragraph key={index}>{nodes[index]}</Paragraph>)
 	}
 	const t2 = Date.now()
-	if (t2 - t1 >= discTimers.parser) {
+	if (t2 - t1 >= stopwatch.parser) {
 		console.log(`parser=${t2 - t1}`)
 	}
 	return components
