@@ -30,7 +30,7 @@ const initialState = {
 	atEnd: false,       // Are the cursors exclusively at the end?
 	collapsed: false,   // Are the cursors collapsed?
 	components: null,   // The React components
-	shouldRender: 0,    // Should render the DOM and or cursor?
+	shouldRender: 0,    // Should render the DOM and cursor?
 	reactDOM: null,     // The React DOM (not what the user sees)
 }
 
@@ -202,17 +202,14 @@ const reducer = state => ({
 	enter() {
 		this.write("\n")
 	},
-	// NOTE: newAction(...) uses reverse order
 	cut() {
 		this.write("")
 		this.newAction(ActionTypes.CUT)
 	},
-	// NOTE: newAction(...) uses reverse order
 	copy() {
 		// Idempotent
 		this.newAction(ActionTypes.COPY)
 	},
-	// NOTE: newAction(...) uses reverse order
 	paste(substr) {
 		if (!substr) {
 			// No-op

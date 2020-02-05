@@ -31,33 +31,23 @@ function Editor(props) {
 hello hello 🙋🏿‍♀️🙋🏿‍♀️🙋🏿‍♀️ 🙋🏿‍♀️🙋🏿‍♀️🙋🏿‍♀️
 
 hello`)
-
-	React.useEffect(() => {
-		console.log(state.actionType)
-	}, [state.actionType])
+	const [forceRender, setForceRender] = React.useState(false)
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const renderT1 = Date.now()
 			ReactDOM.render(state.components, state.reactDOM, () => {
-				const renderT2 = Date.now()
-				if (renderT2 - renderT1 >= stopwatch.render) {
-					console.log(`render=${renderT2 - renderT1}`)
-				}
 				// Sync the DOMs:
-				const syncT1 = Date.now()
 				const mutations = syncTrees(ref.current, state.reactDOM)
-				if (!state.shouldRender || !mutations) {
+				if ((!state.shouldRender || !mutations) && !forceRender) {
 					// No-op
 					return
 				}
-				const syncT2 = Date.now()
-				if (syncT2 - syncT1 >= stopwatch.sync) {
-					console.log(`sync=${syncT2 - syncT1} (${mutations} mutations)`)
-				}
+				setForceRender(false) // Reset
 				// Reset the cursor:
-				const cursorT1 = Date.now()
 				const selection = document.getSelection()
+				if (selection.rangeCount) {
+					selection.removeAllRanges()
+				}
 				const range = document.createRange()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1)
 				range.setStart(node, offset)
@@ -68,12 +58,8 @@ hello`)
 					range.setEnd(node, offset)
 				}
 				selection.addRange(range)
-				const cursorT2 = Date.now()
-				if (cursorT2 - cursorT1 >= stopwatch.cursor) {
-					console.log(`cursor=${cursorT2 - cursorT1}`)
-				}
 			})
-		}, [state]),
+		}, [state, forceRender]),
 		[state.shouldRender],
 	)
 
@@ -256,6 +242,8 @@ hello`)
 					onPaste: e => {
 						e.preventDefault()
 						const substr = e.clipboardData.getData("text/plain")
+						// Use the Force, Luke!
+						setForceRender(true)
 						dispatch.paste(substr)
 					},
 
