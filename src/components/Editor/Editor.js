@@ -179,14 +179,13 @@ Hello, world! 😀`)
 							return
 						}
 						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
-						console.log({ ...e })
 						switch (e.nativeEvent.inputType) {
 						case "insertLineBreak":
 						case "insertParagraph":
 							dispatch.enter()
 							return
 						case "deleteContentBackward":
-							dispatch.backspaceRune()
+							dispatch.backspaceChar()
 							return
 						case "deleteWordBackward":
 							dispatch.backspaceWord()
@@ -196,7 +195,7 @@ Hello, world! 😀`)
 							dispatch.backspaceLine()
 							return
 						case "deleteContentForward":
-							dispatch.backspaceRuneForwards()
+							dispatch.backspaceCharForwards()
 							return
 						case "deleteWordForward":
 							dispatch.backspaceWordForwards()

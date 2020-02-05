@@ -70,7 +70,7 @@ const reducer = state => ({
 		const pos2 = pos1
 		this.actionInput(data, pos1, pos2, state.coords) // Synthetic coords
 	},
-	backspaceRune() {
+	backspaceChar() {
 		let dropL = 0
 		if (state.collapsed && state.pos1) { // Inverse
 			const substr = state.data.slice(0, state.pos1)
@@ -85,23 +85,21 @@ const reducer = state => ({
 			return
 		}
 		// Iterate to an alphanumeric rune:
-		//
-		// NOTE: Use index not index >= 0
 		let index = state.pos1
-		while (index) {
+		while (index >= 0) {
 			const substr = state.data.slice(0, index)
 			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
-			if (utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
+			if (!rune || utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
 				// No-op
 				break
 			}
 			index -= rune.length
 		}
 		// Iterate to a non-alphanumeric rune:
-		while (index) {
+		while (index >= 0) {
 			const substr = state.data.slice(0, index)
 			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
-			if (!utf8.isAlphanum(rune)) {
+			if (!rune || !utf8.isAlphanum(rune)) {
 				// No-op
 				break
 			}
@@ -121,10 +119,10 @@ const reducer = state => ({
 		}
 		// Iterate to a v. white space rune:
 		let index = state.pos1
-		while (index) {
+		while (index >= 0) {
 			const substr = state.data.slice(0, index)
 			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
-			if (utf8.isVWhiteSpace(rune)) {
+			if (!rune || utf8.isVWhiteSpace(rune)) {
 				// No-op
 				break
 			}
@@ -137,7 +135,7 @@ const reducer = state => ({
 		}
 		this.write("", dropL, 0)
 	},
-	backspaceRuneForwards() {
+	backspaceCharForwards() {
 		let dropR = 0
 		if (state.collapsed && state.pos1 < state.data.length) { // Inverse
 			const substr = state.data.slice(state.pos1)
