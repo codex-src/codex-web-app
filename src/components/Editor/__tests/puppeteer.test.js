@@ -223,8 +223,7 @@ test("can type and delete (forwards) 100x paragraphs", async () => {
 	expect(data).toBe("")
 })
 
-// TODO: can undo and overwrite redo
-test("can undo and redo (up to 20x)", async () => {
+test("can undo and redo", async () => {
 	// https://stackoverflow.com/a/39914235
 	await new Promise(r => setTimeout(r, 1e3)) // Store the current undo
 	const currentValue = await ppt.innerText(page)
@@ -238,4 +237,18 @@ test("can undo and redo (up to 20x)", async () => {
 	}
 	data = await ppt.innerText(page)
 	expect(data).toBe(currentValue)
+})
+
+test("can undo and overwrite redo", async () => {
+	for (let index = 0; index < 20; index++) {
+		await ppt.undo(page)
+	}
+	let data = await ppt.innerText(page)
+	expect(data).toBe(initialValue)
+	await ppt.type(page, "Hello, world! 😀")
+	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! 😀")
+	await ppt.redo(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! 😀")
 })
