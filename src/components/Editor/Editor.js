@@ -50,7 +50,8 @@ Hello, world! 😀`)
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1)
 				range.setStart(node, offset)
 				range.collapse()
-				if (!state.collapsed) {
+				// NOTE: Use pos1 and pos2
+				if (state.pos1 !== state.pos2) {
 					// TODO: Use state.pos1 as a shortcut
 					const { node, offset } = getRangeFromPos(ref.current, state.pos2)
 					range.setEnd(node, offset)

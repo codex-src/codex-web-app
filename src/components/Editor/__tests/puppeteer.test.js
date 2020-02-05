@@ -2,17 +2,7 @@ import * as ppt from "./ppt"
 import React from "react"
 import ReactDOM from "react-dom"
 
-// import fs from "fs"
-//
-// const stressTest = fs.readFileSync("./src/components/Editor/__tests/stress-test.md", "utf8")
-//
-// test("stress test", async () => {
-// 	await ppt.clear(page)
-// 	await ppt.type(page, stressTest)
-// 	const data = await ppt.innerText(page)
-// 	expect(data).toBe(stressTest)
-// })
-
+let initialValue = ""
 let page = null
 let exit = null
 
@@ -22,8 +12,6 @@ let exit = null
 // x Copy
 // x Paste
 // - IME
-// - Undo
-// - Redo
 // - stress-test.md
 // - readme.md
 //
@@ -31,6 +19,7 @@ beforeAll(async () => {
 	jest.setTimeout(180e3)
 	const product = process.env.BROWSER
 	;[page, exit] = await ppt.newPage(product, "http://localhost:3000")
+	initialValue = await ppt.innerText(page)
 })
 
 afterAll(async () => {
@@ -38,7 +27,7 @@ afterAll(async () => {
 })
 
 test("cannot delete contenteditable", async () => {
-	await ppt.clear(page)
+	await ppt.reset(page)
 	await ppt.backspace(page)
 	await ppt.backspaceWord(page)
 	await ppt.backspaceForwards(page)
@@ -51,7 +40,7 @@ test("cannot delete contenteditable", async () => {
 //
 // https://unicode.org/Public/emoji/13.0/emoji-test.txt
 test("can type and delete emojis (1 of 3)", async () => {
-	await ppt.clear(page)
+	await ppt.reset(page)
 	await ppt.type(page, "😀😃😄😁😆😅🤣😂🙂🙃😉😊😇")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("😀😃😄😁😆😅🤣😂🙂🙃😉😊😇")
@@ -66,7 +55,7 @@ test("can type and delete emojis (1 of 3)", async () => {
 //
 // https://unicode.org/Public/emoji/13.0/emoji-test.txt
 test("can type and delete emojis (2 of 3)", async () => {
-	await ppt.clear(page)
+	await ppt.reset(page)
 	await ppt.type(page, "🧑‍🤝‍🧑🧑🏻‍🤝‍🧑🏻🧑🏻‍🤝‍🧑🏼🧑🏻‍🤝‍🧑🏽🧑🏻‍🤝‍🧑🏾🧑🏻‍🤝‍🧑🏿🧑🏼‍🤝‍🧑🏻🧑🏼‍🤝‍🧑🏼🧑🏼‍🤝‍🧑🏽🧑🏼‍🤝‍🧑🏾🧑🏼‍🤝‍🧑🏿🧑🏽‍🤝‍🧑🏻🧑🏽‍🤝‍🧑🏼🧑🏽‍🤝‍🧑🏽🧑🏽‍🤝‍🧑🏾🧑🏽‍🤝‍🧑🏿🧑🏾‍🤝‍🧑🏻🧑🏾‍🤝‍🧑🏼🧑🏾‍🤝‍🧑🏽🧑🏾‍🤝‍🧑🏾🧑🏾‍🤝‍🧑🏿🧑🏿‍🤝‍🧑🏻🧑🏿‍🤝‍🧑🏼🧑🏿‍🤝‍🧑🏽🧑🏿‍🤝‍🧑🏾🧑🏿‍🤝‍🧑🏿")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("🧑‍🤝‍🧑🧑🏻‍🤝‍🧑🏻🧑🏻‍🤝‍🧑🏼🧑🏻‍🤝‍🧑🏽🧑🏻‍🤝‍🧑🏾🧑🏻‍🤝‍🧑🏿🧑🏼‍🤝‍🧑🏻🧑🏼‍🤝‍🧑🏼🧑🏼‍🤝‍🧑🏽🧑🏼‍🤝‍🧑🏾🧑🏼‍🤝‍🧑🏿🧑🏽‍🤝‍🧑🏻🧑🏽‍🤝‍🧑🏼🧑🏽‍🤝‍🧑🏽🧑🏽‍🤝‍🧑🏾🧑🏽‍🤝‍🧑🏿🧑🏾‍🤝‍🧑🏻🧑🏾‍🤝‍🧑🏼🧑🏾‍🤝‍🧑🏽🧑🏾‍🤝‍🧑🏾🧑🏾‍🤝‍🧑🏿🧑🏿‍🤝‍🧑🏻🧑🏿‍🤝‍🧑🏼🧑🏿‍🤝‍🧑🏽🧑🏿‍🤝‍🧑🏾🧑🏿‍🤝‍🧑🏿")
@@ -81,7 +70,7 @@ test("can type and delete emojis (2 of 3)", async () => {
 //
 // https://unicode.org/Public/emoji/13.0/emoji-test.txt
 test("can type and delete emojis (3 of 3)", async () => {
-	await ppt.clear(page)
+	await ppt.reset(page)
 	await ppt.type(page, "\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}")
@@ -93,7 +82,7 @@ test("can type and delete emojis (3 of 3)", async () => {
 })
 
 test("can type and delete characters", async () => {
-	await ppt.clear(page)
+	await ppt.reset(page)
 	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
@@ -105,7 +94,7 @@ test("can type and delete characters", async () => {
 })
 
 test("can type and delete words", async () => {
-	await ppt.clear(page)
+	await ppt.reset(page)
 	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
@@ -142,7 +131,7 @@ test("can type and delete words", async () => {
 })
 
 test("can type and delete (forwards) characters", async () => {
-	await ppt.clear(page)
+	await ppt.reset(page)
 	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
@@ -157,7 +146,7 @@ test("can type and delete (forwards) characters", async () => {
 })
 
 test("can type and delete (forwards) words", async () => {
-	await ppt.clear(page)
+	await ppt.reset(page)
 	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
@@ -206,7 +195,7 @@ test("can type and delete (forwards) words", async () => {
 })
 
 test("can type and delete 100x paragraphs", async () => {
-	await ppt.clear(page)
+	await ppt.reset(page)
 	await ppt.type(page, "\n".repeat(100))
 	let data = await ppt.innerText(page)
 	expect(data).toBe("\n".repeat(100))
@@ -219,7 +208,7 @@ test("can type and delete 100x paragraphs", async () => {
 })
 
 test("can type and delete (forwards) 100x paragraphs", async () => {
-	await ppt.clear(page)
+	await ppt.reset(page)
 	await ppt.type(page, "\n".repeat(100))
 	let data = await ppt.innerText(page)
 	expect(data).toBe("\n".repeat(100))
@@ -232,4 +221,21 @@ test("can type and delete (forwards) 100x paragraphs", async () => {
 	await ppt.press(page, "Delete")
 	data = await ppt.innerText(page)
 	expect(data).toBe("")
+})
+
+// TODO: can undo and overwrite redo
+test("can undo and redo (up to 20x)", async () => {
+	// https://stackoverflow.com/a/39914235
+	await new Promise(r => setTimeout(r, 1e3)) // Store the current undo
+	const currentValue = await ppt.innerText(page)
+	for (let index = 0; index < 20; index++) {
+		await ppt.undo(page)
+	}
+	let data = await ppt.innerText(page)
+	expect(data).toBe(initialValue)
+	for (let index = 0; index < 20; index++) {
+		await ppt.redo(page)
+	}
+	data = await ppt.innerText(page)
+	expect(data).toBe(currentValue)
 })

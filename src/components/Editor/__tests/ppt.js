@@ -4,8 +4,6 @@ const SELECTOR = "[contenteditable]" // eslint-disable-line no-multi-spaces
 const DELAY    = 0                   // eslint-disable-line no-multi-spaces
 
 // Opens a URL from a product string.
-//
-// NOTE: Firefox Nightly crashes on emoji input 🙄
 export async function newPage(product, url) {
 	const config = {
 		headless: false,
@@ -13,67 +11,74 @@ export async function newPage(product, url) {
 		// executablePath: product === "firefox" && "/Applications/Firefox Nightly.app/Contents/MacOS/firefox",
 	}
 	const browser = await puppeteer.launch(config)
-	const page = await browser.newPage()
-	// await page.setViewport({ width: 1200, height: 780 })
-	page.on("pageerror", error => expect(error).toBeNull()) // FIXME?
-	await page.goto(url, { timeout: 5e3 })
-	await page.addScriptTag({ path: "./src/components/Editor/__tests/innerText.js" })
-	return [page, () => browser.close()]
+	const p = await browser.newPage()
+	// await p.setViewport({ width: 1200, height: 780 })
+	p.on("pageerror", error => expect(error).toBeNull()) // FIXME?
+	await p.goto(url, { timeout: 5e3 })
+	await p.addScriptTag({ path: "./src/components/Editor/__tests/innerText.js" })
+	return [p, () => browser.close()]
 }
 
-// Clears character data.
-export async function clear(page) {
-	await page.focus(SELECTOR)
-	await page.evaluate(() => document.execCommand("selectall", false, null))
-	await page.keyboard.press("Backspace", { delay: DELAY })
+// ./src/components/Editor/helpers/innerText.js
+export async function innerText(p) {
+	return await p.$eval(SELECTOR, node => innerText(node))
+}
+
+// Resets character data.
+export async function reset(p) {
+	await p.focus(SELECTOR)
+	await p.evaluate(() => document.execCommand("selectall", false, null))
+	await p.keyboard.press("Backspace", { delay: DELAY })
 }
 
 // Types character data.
-export async function type(page, data) {
-	await page.keyboard.type(data, { delay: DELAY })
+export async function type(p, data) {
+	await p.keyboard.type(data, { delay: DELAY })
 }
 
 // Presses a key (e.g. keydown).
-export async function press(page, key) {
-	await page.keyboard.press(key, { delay: DELAY })
+export async function press(p, key) {
+	await p.keyboard.press(key, { delay: DELAY })
 }
 
 // Backspaces one character.
-export async function backspace(page) {
-	await page.keyboard.press("Backspace", { delay: DELAY })
+export async function backspace(p) {
+	await p.keyboard.press("Backspace", { delay: DELAY })
 }
 
 // Backspaces one word.
 //
 // NOTE: Backspace paragraph does not work because of Meta
-export async function backspaceWord(page) {
-	await page.keyboard.down("Alt")
-	await page.keyboard.press("Backspace", { delay: DELAY })
-	await page.keyboard.up("Alt")
+export async function backspaceWord(p) {
+	await p.keyboard.down("Alt")
+	await p.keyboard.press("Backspace", { delay: DELAY })
+	await p.keyboard.up("Alt")
 }
 
 // Backspaces one character (forwards).
-export async function backspaceForwards(page) {
-	await page.keyboard.press("Delete", { delay: DELAY })
+export async function backspaceForwards(p) {
+	await p.keyboard.press("Delete", { delay: DELAY })
 }
 
 // Backspaces one word (forwards).
-export async function backspaceWordForwards(page) {
-	await page.keyboard.down("Alt")
-	await page.keyboard.press("Delete", { delay: DELAY })
-	await page.keyboard.up("Alt")
+export async function backspaceWordForwards(p) {
+	await p.keyboard.down("Alt")
+	await p.keyboard.press("Delete", { delay: DELAY })
+	await p.keyboard.up("Alt")
 }
 
-// ./src/components/Editor/helpers/innerText.js
-export async function innerText(page) {
-	return await page.$eval(SELECTOR, node => innerText(node))
+// Undos (once).
+export async function undo(p) {
+	await p.keyboard.down("Meta")
+	await p.keyboard.press("z", { delay: DELAY })
+	await p.keyboard.up("Meta")
 }
 
-// // Copies and reads from the OS clipboard (uses clipboardy).
-// export async function copyAndRead(page) {
-// 	await page.evaluate(() => {
-// 		document.execCommand("selectall", false, null)
-// 		document.execCommand("copy", false, null)
-// 	})
-// 	return clipboardy.readSync()
-// }
+// Redos (once).
+export async function redo(p) {
+	await p.keyboard.down("Meta")
+	await p.keyboard.down("Shift")
+	await p.keyboard.press("z", { delay: DELAY })
+	await p.keyboard.up("Meta")
+	await p.keyboard.up("Shift")
+}
