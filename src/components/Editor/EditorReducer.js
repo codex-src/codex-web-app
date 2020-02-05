@@ -60,21 +60,23 @@ const reducer = state => ({
 	actionInput(data, pos1, pos2) {
 		this.newAction(ActionTypes.INPUT)
 		if (!state.historyIndex && !state.didCorrectPos) {
-			state.history[0].pos1 = state.pos1
-			state.history[0].pos1 = state.pos2
+			const [undo] = state.history
+			undo.pos1 = state.pos1
+			undo.pos2 = state.pos2
 			state.didCorrectPos = true
 		}
-		// TODO: this.dropRedos()
+		this.dropRedos()
 		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
 	write(substr, dropL = 0, dropR = 0) {
 		if (!state.historyIndex && !state.didCorrectPos) {
-			state.history[0].pos1 = state.pos1
-			state.history[0].pos1 = state.pos2
+			const [undo] = state.history
+			undo.pos1 = state.pos1
+			undo.pos2 = state.pos2
 			state.didCorrectPos = true
 		}
-		// TODO: this.dropRedos()
+		this.dropRedos()
 		const data = state.data.slice(0, state.pos1 - dropL) + substr + state.data.slice(state.pos2 + dropR)
 		const pos1 = state.pos1 - dropL + substr.length
 		const pos2 = pos1
@@ -217,31 +219,31 @@ const reducer = state => ({
 		state.historyIndex++
 	},
 	dropRedos() {
-		// ...
+		state.history.splice(state.historyIndex + 1)
 	},
 	undo() {
-		// this.newAction(ActionTypes.UNDO)
-		// if (!state.historyIndex) {
-		// 	// No-op.
-		// 	return
-		// } // } else if (state.historyIndex === 1 && state.didWritePos) {
-		// // 	state.didWritePos = false
-		// // }
-		// state.historyIndex--
-		// const undoState = state.history[state.historyIndex]
-		// Object.assign(state, undoState)
-		// this.render()
+		this.newAction(ActionTypes.UNDO)
+		if (!state.historyIndex) {
+			// No-op
+			return
+		} else if (state.historyIndex === 1 && state.didCorrectPos) {
+			state.didCorrectPos = false
+		}
+		state.historyIndex--
+		const undo = state.history[state.historyIndex]
+		Object.assign(state, undo)
+		this.render()
 	},
 	redo() {
-		// this.newAction(ActionTypes.REDO)
-		// if (state.historyIndex + 1 === state.history.length) {
-		// 	// No-op.
-		// 	return
-		// }
-		// state.historyIndex++
-		// const redoState = state.history[state.historyIndex]
-		// Object.assign(state, redoState)
-		// this.render()
+		this.newAction(ActionTypes.REDO)
+		if (state.historyIndex + 1 === state.history.length) {
+			// No-op
+			return
+		}
+		state.historyIndex++
+		const redo = state.history[state.historyIndex]
+		Object.assign(state, redo)
+		this.render()
 	},
 	render() {
 		state.components = parseComponents(state.data)

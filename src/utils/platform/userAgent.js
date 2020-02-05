@@ -1,11 +1,16 @@
+// Tests the user agent for a substring.
+//
 // https://css-tricks.com/snippets/javascript/test-mac-pc-javascript
-function sniffUserAgent(substr) {
+function testUserAgent(substr) {
 	return navigator.userAgent.indexOf(substr) !== -1
 }
 
-export const isChrome  = sniffUserAgent("Chrome")   // eslint-disable-line
-export const isSafari  = sniffUserAgent("Safari")   // eslint-disable-line
-export const isFirefox = sniffUserAgent("Firefox")  // eslint-disable-line
-export const isMacOS   = sniffUserAgent("Mac OS X") // eslint-disable-line
-export const isWindows = sniffUserAgent("Windows")  // eslint-disable-line
-export const isLinux   = sniffUserAgent("Linux")    // eslint-disable-line
+// Browsers:
+export const isChrome  = testUserAgent("Chrome")   // eslint-disable-line no-multi-spaces
+export const isFirefox = testUserAgent("Firefox")  // eslint-disable-line no-multi-spaces
+export const isSafari  = testUserAgent("Safari")   // eslint-disable-line no-multi-spaces
+
+// OSs:
+export const isLinux   = testUserAgent("Linux")    // eslint-disable-line no-multi-spaces
+export const isMacOS   = testUserAgent("Mac OS X") // eslint-disable-line no-multi-spaces
+export const isWindows = testUserAgent("Windows")  // eslint-disable-line no-multi-spaces

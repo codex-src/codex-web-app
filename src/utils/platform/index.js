@@ -1,9 +1,2 @@
-import * as userAgent from "./userAgent"
-import isCommandOrControlKey from "./isCommandOrControlKey"
-
-const exports = {
-	...userAgent,
-	isCommandOrControlKey,
-}
-
+import * as exports from "./detectUndo"
 export default exports

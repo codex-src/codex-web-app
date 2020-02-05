@@ -1,8 +1,5 @@
-import stopwatch from "./stopwatch"
-
 // Mocks the browser; recursively reads from a root node.
 function innerText(rootNode) {
-	const t1 = Date.now()
 	let data = ""
 	const recurse = startNode => {
 		const { childNodes } = startNode
@@ -19,10 +16,6 @@ function innerText(rootNode) {
 		}
 	}
 	recurse(rootNode)
-	const t2 = Date.now()
-	if (t2 - t1 >= stopwatch.data) {
-		console.log(`data=${t2 - t1}`)
-	}
 	return data
 }
 

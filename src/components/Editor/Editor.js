@@ -4,9 +4,9 @@ import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange from "./helpers/getPosFromRange"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
+import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
-import stopwatch from "./helpers/stopwatch"
 import syncTrees from "./helpers/syncTrees"
 import useEditor from "./EditorReducer"
 
@@ -14,9 +14,7 @@ import "./Editor.css"
 
 // TODO
 //
-// - Undo
-// - Redo
-// - New pos (StatusBar)
+// - StatusBar?
 // - Components
 // - localStorage
 // - Demo
@@ -82,8 +80,7 @@ Hello, world! 😀`)
 	)
 
 	// Gets the cursors (and coords).
-	const getPos = () => {
-		const t1 = Date.now()
+	const getPos = ({ andCoords } = { andCoords: true }) => {
 		const selection = document.getSelection()
 		const range = selection.getRangeAt(0)
 		const pos1 = getPosFromRange(ref.current, range.startContainer, range.startOffset)
@@ -92,11 +89,10 @@ Hello, world! 😀`)
 			// TODO: Use state.pos1 as a shortcut
 			pos2 = getPosFromRange(ref.current, range.endContainer, range.endOffset)
 		}
-		const t2 = Date.now()
-		if (t2 - t1 >= stopwatch.pos) {
-			console.log(`pos=${t2 - t1}`)
+		let coords = null
+		if (andCoords) {
+			coords = getCoordsFromRange(range)
 		}
-		const coords = getCoordsFromRange(range)
 		return [pos1, pos2, coords]
 	}
 
@@ -170,12 +166,23 @@ Hello, world! 😀`)
 
 					onKeyDown: e => {
 						switch (true) {
+						// Tab:
 						case e.keyCode === 9: // Tab
 							e.preventDefault()
 							dispatch.tab()
 							return
+						// Undo:
+						case platform.detectUndo(e):
+							e.preventDefault()
+							dispatch.undo()
+							return
+						// Redo:
+						case platform.detectRedo(e):
+							e.preventDefault()
+							dispatch.redo()
+							return
 						default:
-							// No-op:
+							// No-op
 							break
 						}
 					},
@@ -184,7 +191,7 @@ Hello, world! 😀`)
 						dedupeCompositionEndRef.current = true
 						// Input:
 						const data = innerText(ref.current)
-						const [pos1, pos2] = getPos() // FIXME: Deprecate coords
+						const [pos1, pos2] = getPos({ andCoords: false })
 						dispatch.actionInput(data, pos1, pos2)
 					},
 					onInput: e => {
@@ -230,7 +237,7 @@ Hello, world! 😀`)
 						}
 						// Input:
 						const data = innerText(ref.current)
-						const [pos1, pos2] = getPos() // FIXME: Deprecate coords
+						const [pos1, pos2] = getPos({ andCoords: false })
 						dispatch.actionInput(data, pos1, pos2)
 					},
 
