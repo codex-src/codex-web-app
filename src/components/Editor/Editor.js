@@ -63,6 +63,24 @@ Hello, world! 😀`)
 		[state.shouldRender],
 	)
 
+	React.useEffect(
+		React.useCallback(() => {
+			if (!state.focused) {
+				// No-op
+				return
+			}
+			const id = setInterval(() => {
+				dispatch.storeUndo()
+			}, 1e3)
+			return () => {
+				setTimeout(() => {
+					clearInterval(id)
+				}, 1e3)
+			}
+		}, [state, dispatch]),
+		[state.focused],
+	)
+
 	// Gets the cursors (and coords).
 	const getPos = () => {
 		const t1 = Date.now()
@@ -166,8 +184,8 @@ Hello, world! 😀`)
 						dedupeCompositionEndRef.current = true
 						// Input:
 						const data = innerText(ref.current)
-						const [pos1, pos2, coords] = getPos()
-						dispatch.actionInput(data, pos1, pos2, coords)
+						const [pos1, pos2] = getPos() // FIXME: Deprecate coords
+						dispatch.actionInput(data, pos1, pos2)
 					},
 					onInput: e => {
 						if (dedupeCompositionEndRef.current) {
@@ -212,8 +230,8 @@ Hello, world! 😀`)
 						}
 						// Input:
 						const data = innerText(ref.current)
-						const [pos1, pos2, coords] = getPos()
-						dispatch.actionInput(data, pos1, pos2, coords)
+						const [pos1, pos2] = getPos() // FIXME: Deprecate coords
+						dispatch.actionInput(data, pos1, pos2)
 					},
 
 					onCut: e => {
@@ -239,6 +257,10 @@ Hello, world! 😀`)
 					onPaste: e => {
 						e.preventDefault()
 						const substr = e.clipboardData.getData("text/plain")
+						if (!substr) {
+							// No-op
+							return
+						}
 						setForceRender(true) // Use the Force, Luke
 						dispatch.paste(substr)
 					},

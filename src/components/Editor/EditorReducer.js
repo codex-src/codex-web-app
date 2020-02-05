@@ -17,24 +17,22 @@ const ActionTypes = new Enum(
 	"REDO",
 )
 
-// didWritePos: false,
 const initialState = {
-	epoch:           0,     // The epoch (time stamp) of the editor
-	actionType:      "",    // The type of the current action
-	actionTimeStamp: 0,     // The time stamp (since epoch) of the current action
-	focused:         false, // Is the editor focused?
-	data:            "",    // The plain text data
-	pos1:            0,     // The start cursor
-	pos2:            0,     // The end cursor
-	coords:          null,  // The cursor coords
-	// atStart:      false, // Are the cursors exclusively at the start?
-	// atEnd:        false, // Are the cursors exclusively at the end?
-	collapsed:       false, // Are the cursors collapsed?
-	history:         [],    // The history state stack
-	historyIndex:    0,     // The history state stack index
-	components:      null,  // The React components
-	shouldRender:    0,     // Should render the DOM and cursor?
-	reactDOM:        null,  // The React DOM (not what the user sees)
+	epoch: 0,             // The epoch (time stamp) of the editor
+	actionType: "",       // The type of the current action
+	actionTimeStamp: 0,   // The time stamp (since epoch) of the current action
+	focused: false,       // Is the editor focused?
+	data: "",             // The plain text data
+	pos1: 0,              // The start cursor
+	pos2: 0,              // The end cursor
+	coords: null,         // The cursor coords
+	collapsed: false,     // Are the cursors collapsed?
+	components: null,     // The React components
+	shouldRender: 0,      // Should render the DOM and cursor?
+	reactDOM: null,       // The React DOM (not what the user sees)
+	history: [],          // The history state stack
+	historyIndex: 0,      // The history state stack index
+	didCorrectPos: false, // Did correct the cursors?
 }
 
 const reducer = state => ({
@@ -59,16 +57,29 @@ const reducer = state => ({
 		const collapsed = pos1 === pos2
 		Object.assign(state, { pos1, pos2, coords, collapsed })
 	},
-	actionInput(data, pos1, pos2, coords = state.coords) {
+	actionInput(data, pos1, pos2) {
 		this.newAction(ActionTypes.INPUT)
-		Object.assign(state, { data, pos1, pos2, coords })
+		if (!state.historyIndex && !state.didCorrectPos) {
+			state.history[0].pos1 = state.pos1
+			state.history[0].pos1 = state.pos2
+			state.didCorrectPos = true
+		}
+		// TODO: this.dropRedos()
+		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
-	write(substr, dropL = 0, dropR = 0) { // dropL and dropR are expected to be >= 0
+	write(substr, dropL = 0, dropR = 0) {
+		if (!state.historyIndex && !state.didCorrectPos) {
+			state.history[0].pos1 = state.pos1
+			state.history[0].pos1 = state.pos2
+			state.didCorrectPos = true
+		}
+		// TODO: this.dropRedos()
 		const data = state.data.slice(0, state.pos1 - dropL) + substr + state.data.slice(state.pos2 + dropR)
 		const pos1 = state.pos1 - dropL + substr.length
 		const pos2 = pos1
-		this.actionInput(data, pos1, pos2, state.coords) // Synthetic coords
+		Object.assign(state, { data, pos1, pos2 })
+		this.render()
 	},
 	backspaceChar() {
 		let dropL = 0
@@ -184,20 +195,29 @@ const reducer = state => ({
 		this.write("\n")
 	},
 	cut() {
-		this.write("")
 		this.newAction(ActionTypes.CUT)
+		this.write("")
 	},
 	copy() {
-		// Idempotent
 		this.newAction(ActionTypes.COPY)
+		// Idempotent
 	},
 	paste(substr) {
-		if (!substr) {
+		this.newAction(ActionTypes.PASTE)
+		this.write(substr)
+	},
+	storeUndo() {
+		const undo = state.history[state.historyIndex]
+		if (undo.data === state.data) {
 			// No-op
 			return
 		}
-		this.write(substr)
-		this.newAction(ActionTypes.PASTE)
+		const { data, pos1, pos2 } = state
+		state.history.push({ data, pos1, pos2 })
+		state.historyIndex++
+	},
+	dropRedos() {
+		// ...
 	},
 	undo() {
 		// this.newAction(ActionTypes.UNDO)
@@ -235,7 +255,6 @@ const init = initialValue => initialState => {
 		...initialState,
 		epoch,
 		actionType: ActionTypes.INIT,
-		// actionTimeStamp: Date.now() - epoch,
 		data: initialValue,
 		coords: {
 			pos1: {
@@ -249,6 +268,13 @@ const init = initialValue => initialState => {
 		},
 		components: parseComponents(initialValue),
 		reactDOM: document.createElement("div"),
+		history: [
+			{
+				data: initialValue,
+				pos1: 0,
+				pos2: 0,
+			},
+		],
 	}
 	return state
 }
