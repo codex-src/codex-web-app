@@ -17,21 +17,24 @@ const ActionTypes = new Enum(
 	"REDO",
 )
 
+// didWritePos: false,
 const initialState = {
-	epoch: 0,           // The epoch (time stamp) of the editor
-	actionType: "",     // The type of the current action
-	actionTimeStamp: 0, // The time stamp (since epoch) of the current action
-	focused: false,     // Is the editor focused?
-	data: "",           // The plain text data
-	pos1: 0,            // The start cursor
-	pos2: 0,            // The end cursor
-	coords: null,       // The cursor coords
-	atStart: false,     // Are the cursors exclusively at the start?
-	atEnd: false,       // Are the cursors exclusively at the end?
-	collapsed: false,   // Are the cursors collapsed?
-	components: null,   // The React components
-	shouldRender: 0,    // Should render the DOM and cursor?
-	reactDOM: null,     // The React DOM (not what the user sees)
+	epoch:           0,     // The epoch (time stamp) of the editor
+	actionType:      "",    // The type of the current action
+	actionTimeStamp: 0,     // The time stamp (since epoch) of the current action
+	focused:         false, // Is the editor focused?
+	data:            "",    // The plain text data
+	pos1:            0,     // The start cursor
+	pos2:            0,     // The end cursor
+	coords:          null,  // The cursor coords
+	// atStart:      false, // Are the cursors exclusively at the start?
+	// atEnd:        false, // Are the cursors exclusively at the end?
+	collapsed:       false, // Are the cursors collapsed?
+	history:         [],    // The history state stack
+	historyIndex:    0,     // The history state stack index
+	components:      null,  // The React components
+	shouldRender:    0,     // Should render the DOM and cursor?
+	reactDOM:        null,  // The React DOM (not what the user sees)
 }
 
 const reducer = state => ({
@@ -53,10 +56,8 @@ const reducer = state => ({
 	},
 	actionSelect(pos1, pos2, coords) {
 		this.newAction(ActionTypes.SELECT)
-		const collapsed = pos1 === pos2 // Takes precedence
-		const atStart = collapsed && !pos1
-		const atEnd = collapsed && pos1 === state.data.length
-		Object.assign(state, { pos1, pos2, coords, atStart, atEnd, collapsed })
+		const collapsed = pos1 === pos2
+		Object.assign(state, { pos1, pos2, coords, collapsed })
 	},
 	actionInput(data, pos1, pos2, coords = state.coords) {
 		this.newAction(ActionTypes.INPUT)
@@ -69,46 +70,37 @@ const reducer = state => ({
 		const pos2 = pos1
 		this.actionInput(data, pos1, pos2, state.coords) // Synthetic coords
 	},
-	backspaceRuneL() {
+	backspaceRune() {
 		let dropL = 0
-		if (state.collapsed && !state.atStart) {
-			// Get the rune at the end:
+		if (state.collapsed && state.pos1) { // Inverse
 			const substr = state.data.slice(0, state.pos1)
-			let rune = emoji.atEnd(substr)
-			if (!rune) {
-				rune = utf8.atEnd(substr)
-			}
+			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
 			dropL = rune.length
 		}
 		this.write("", dropL, 0)
 	},
-	backspaceWordL() {
-		if (!state.collapsed || state.atStart) {
-			this.write("", 0, 0)
+	backspaceWord() {
+		if (!state.collapsed) {
+			this.write("")
 			return
 		}
-		// Iterate (h.) white space:
+		// Iterate to an alphanumeric rune:
+		//
+		// NOTE: Use index not index >= 0
 		let index = state.pos1
 		while (index) {
-			const rune = utf8.atEnd(state.data.slice(0, index))
-			if (!utf8.isHWhiteSpace(rune)) {
+			const substr = state.data.slice(0, index)
+			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+			if (utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
 				// No-op
 				break
 			}
 			index -= rune.length
 		}
-		// Iterate non-word runes:
+		// Iterate to a non-alphanumeric rune:
 		while (index) {
-			const rune = utf8.atEnd(state.data.slice(0, index))
-			if (utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
-				// No-op
-				break
-			}
-			index -= rune.length
-		}
-		// Iterate word runes:
-		while (index) {
-			const rune = utf8.atEnd(state.data.slice(0, index))
+			const substr = state.data.slice(0, index)
+			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
 			if (!utf8.isAlphanum(rune)) {
 				// No-op
 				break
@@ -117,19 +109,21 @@ const reducer = state => ({
 		}
 		// Get the number of bytes to drop:
 		let dropL = state.pos1 - index
-		if (!dropL && state.data[index - 1] === "\n") {
+		if (!dropL && index - 1 >= 0 && state.data[index - 1] === "\n") {
 			dropL = 1
 		}
 		this.write("", dropL, 0)
 	},
-	backspaceLineL() {
-		if (!state.collapsed || state.atStart) {
-			this.write("", 0, 0)
+	backspaceLine() {
+		if (!state.collapsed) {
+			this.write("")
 			return
 		}
+		// Iterate to a v. white space rune:
 		let index = state.pos1
 		while (index) {
-			const rune = utf8.atEnd(state.data.slice(0, index))
+			const substr = state.data.slice(0, index)
+			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
 			if (utf8.isVWhiteSpace(rune)) {
 				// No-op
 				break
@@ -138,51 +132,40 @@ const reducer = state => ({
 		}
 		// Get the number of bytes to drop:
 		let dropL = state.pos1 - index
-		if (!dropL && state.data[index - 1] === "\n") {
+		if (!dropL && index - 1 >= 0 && state.data[index - 1] === "\n") {
 			dropL = 1
 		}
 		this.write("", dropL, 0)
 	},
-	backspaceRuneR() {
+	backspaceRuneForwards() {
 		let dropR = 0
-		if (state.collapsed && !state.atEnd) {
-			// Get the rune at the start:
+		if (state.collapsed && state.pos1 < state.data.length) { // Inverse
 			const substr = state.data.slice(state.pos1)
-			let rune = emoji.atStart(substr)
-			if (!rune) {
-				rune = utf8.atStart(substr)
-			}
+			const rune = emoji.atStart(substr) || utf8.atStart(substr)
 			dropR = rune.length
 		}
 		this.write("", 0, dropR)
 	},
-	backspaceWordR() {
-		if (!state.collapsed || state.atEnd) {
-			this.write("", 0, 0)
+	backspaceWordForwards() {
+		if (!state.collapsed) { // || state.pos1 === state.data.length) {
+			this.write("")
 			return
 		}
-		// Iterate (h.) white space:
+		// Iterate to an alphanumeric rune:
 		let index = state.pos1
 		while (index < state.data.length) {
-			const rune = utf8.atStart(state.data.slice(index))
-			if (!utf8.isHWhiteSpace(rune)) {
+			const substr = state.data.slice(index)
+			const rune = emoji.atStart(substr) || utf8.atStart(substr)
+			if (utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
 				// No-op
 				break
 			}
 			index += rune.length
 		}
-		// Iterate non-word runes:
+		// Iterate to a non-alphanumeric rune:
 		while (index < state.data.length) {
-			const rune = utf8.atStart(state.data.slice(index))
-			if (utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
-				// No-op
-				break
-			}
-			index += rune.length
-		}
-		// Iterate word runes:
-		while (index < state.data.length) {
-			const rune = utf8.atStart(state.data.slice(index))
+			const substr = state.data.slice(index)
+			const rune = emoji.atStart(substr) || utf8.atStart(substr)
 			if (!utf8.isAlphanum(rune)) {
 				// No-op
 				break
@@ -191,7 +174,7 @@ const reducer = state => ({
 		}
 		// Get the number of bytes to drop:
 		let dropR = index - state.pos1
-		if (!dropR && state.data[index] === "\n") {
+		if (!dropR && index < state.data.length && state.data[index] === "\n") {
 			dropR = 1
 		}
 		this.write("", 0, dropR)
@@ -217,6 +200,30 @@ const reducer = state => ({
 		}
 		this.write(substr)
 		this.newAction(ActionTypes.PASTE)
+	},
+	undo() {
+		// this.newAction(ActionTypes.UNDO)
+		// if (!state.historyIndex) {
+		// 	// No-op.
+		// 	return
+		// } // } else if (state.historyIndex === 1 && state.didWritePos) {
+		// // 	state.didWritePos = false
+		// // }
+		// state.historyIndex--
+		// const undoState = state.history[state.historyIndex]
+		// Object.assign(state, undoState)
+		// this.render()
+	},
+	redo() {
+		// this.newAction(ActionTypes.REDO)
+		// if (state.historyIndex + 1 === state.history.length) {
+		// 	// No-op.
+		// 	return
+		// }
+		// state.historyIndex++
+		// const redoState = state.history[state.historyIndex]
+		// Object.assign(state, redoState)
+		// this.render()
 	},
 	render() {
 		state.components = parseComponents(state.data)

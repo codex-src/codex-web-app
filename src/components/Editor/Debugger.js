@@ -13,6 +13,7 @@ function Debugger(props) {
 					{JSON.stringify(
 						{
 							...state,
+							coords: undefined,
 							components: undefined,
 							reactDOM: undefined,
 						},

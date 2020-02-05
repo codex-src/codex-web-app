@@ -26,11 +26,11 @@ function Editor(props) {
 	const isPointerDownRef = React.useRef()
 	const dedupeCompositionEndRef = React.useRef()
 
-	const [state, dispatch] = useEditor(`hello
+	const [state, dispatch] = useEditor(`Hello, world! 😀
 
-hello hello 🙋🏿‍♀️🙋🏿‍♀️🙋🏿‍♀️ 🙋🏿‍♀️🙋🏿‍♀️🙋🏿‍♀️
+Hello, world! 😀
 
-hello`)
+Hello, world! 😀`)
 	const [forceRender, setForceRender] = React.useState(false)
 
 	React.useLayoutEffect(
@@ -42,8 +42,8 @@ hello`)
 					// No-op
 					return
 				}
-				setForceRender(false) // Reset
 				// Reset the cursor:
+				setForceRender(false) // Reset
 				const selection = document.getSelection()
 				if (selection.rangeCount) {
 					selection.removeAllRanges()
@@ -179,36 +179,34 @@ hello`)
 							return
 						}
 						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
-						//
-						// NOTE: deleteSoftLineForward and
-						// deleteHardLineForward are not supported
+						console.log({ ...e })
 						switch (e.nativeEvent.inputType) {
-						case "insertLineBreak": // Soft enter
+						case "insertLineBreak":
 						case "insertParagraph":
 							dispatch.enter()
 							return
 						case "deleteContentBackward":
-							dispatch.backspaceRuneL()
+							dispatch.backspaceRune()
 							return
 						case "deleteWordBackward":
-							dispatch.backspaceWordL()
+							dispatch.backspaceWord()
 							return
 						case "deleteSoftLineBackward":
 						case "deleteHardLineBackward":
-							dispatch.backspaceLineL()
+							dispatch.backspaceLine()
 							return
 						case "deleteContentForward":
-							dispatch.backspaceRuneR()
+							dispatch.backspaceRuneForwards()
 							return
 						case "deleteWordForward":
-							dispatch.backspaceWordR()
+							dispatch.backspaceWordForwards()
 							return
-						// case "historyUndo":
-						// 	dispatch.undo()
-						// 	return
-						// case "historyRedo":
-						// 	dispatch.redo()
-						// 	return
+						case "historyUndo":
+							dispatch.undo()
+							return
+						case "historyRedo":
+							dispatch.redo()
+							return
 						default:
 							// No-op
 							break
@@ -242,8 +240,7 @@ hello`)
 					onPaste: e => {
 						e.preventDefault()
 						const substr = e.clipboardData.getData("text/plain")
-						// Use the Force, Luke!
-						setForceRender(true)
+						setForceRender(true) // Use the Force, Luke
 						dispatch.paste(substr)
 					},
 
