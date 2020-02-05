@@ -7,12 +7,13 @@ const DELAY    = 0                   // eslint-disable-line no-multi-spaces
 export async function newPage(product, url) {
 	const config = {
 		headless: false,
-		// product,
-		// executablePath: product === "firefox" && "/Applications/Firefox Nightly.app/Contents/MacOS/firefox",
+		product,
+		executablePath: product === "firefox" && "/Applications/Firefox Nightly.app/Contents/MacOS/firefox",
+		args: ["--window-size=1440,900"],
 	}
 	const browser = await puppeteer.launch(config)
 	const p = await browser.newPage()
-	// await p.setViewport({ width: 1200, height: 780 })
+	await p.setViewport({ width: 1440, height: 900 })
 	p.on("pageerror", error => expect(error).toBeNull()) // FIXME?
 	await p.goto(url, { timeout: 5e3 })
 	await p.addScriptTag({ path: "./src/components/Editor/__tests/innerText.js" })
