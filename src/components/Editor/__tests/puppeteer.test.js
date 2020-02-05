@@ -1,8 +1,9 @@
 import * as ppt from "./ppt"
-import fs from "fs"
 import React from "react"
 import ReactDOM from "react-dom"
 
+// import fs from "fs"
+//
 // const stressTest = fs.readFileSync("./src/components/Editor/__tests/stress-test.md", "utf8")
 //
 // test("stress test", async () => {

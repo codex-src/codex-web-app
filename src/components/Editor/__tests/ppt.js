@@ -44,20 +44,13 @@ export async function backspace(page) {
 }
 
 // Backspaces one word.
+//
+// NOTE: Backspace paragraph does not work because of Meta
 export async function backspaceWord(page) {
 	await page.keyboard.down("Alt")
 	await page.keyboard.press("Backspace", { delay: DELAY })
 	await page.keyboard.up("Alt")
 }
-
-// // Backspaces one paragraph (untested).
-// export async function backspaceLine(page) {
-// 	await page.keyboard.down("Meta")
-// 	await sleep(50)
-// 	await page.keyboard.press("Backspace", { delay: DELAY })
-// 	await sleep(50)
-// 	await page.keyboard.up("Meta")
-// }
 
 // Backspaces one character (forwards).
 export async function backspaceForwards(page) {
@@ -76,17 +69,11 @@ export async function innerText(page) {
 	return await page.$eval(SELECTOR, node => innerText(node))
 }
 
-// // Cuts character data from the page.
-// export async function cut(page) {
-// 	await page.evaluate(() => document.execCommand("cut", false, null))
-// }
-//
-// // Copies character data from the page.
-// export async function copy(page) {
-// 	await page.evaluate(() => document.execCommand("copy", false, null))
-// }
-//
-// // Pastes character data to the page.
-// export async function paste(page, data) {
-// 	await page.evaluate(() => document.execCommand("paste", false, null))
+// // Copies and reads from the OS clipboard (uses clipboardy).
+// export async function copyAndRead(page) {
+// 	await page.evaluate(() => {
+// 		document.execCommand("selectall", false, null)
+// 		document.execCommand("copy", false, null)
+// 	})
+// 	return clipboardy.readSync()
 // }
