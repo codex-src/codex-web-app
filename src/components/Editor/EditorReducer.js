@@ -10,6 +10,11 @@ const ActionTypes = new Enum(
 	"BLUR",
 	"SELECT",
 	"INPUT",
+	"CUT",
+	"COPY",
+	"PASTE",
+	"UNDO",
+	"REDO",
 )
 
 const initialState = {
@@ -197,15 +202,24 @@ const reducer = state => ({
 	enter() {
 		this.write("\n")
 	},
+	// NOTE: newAction(...) uses reverse order
 	cut() {
 		this.write("")
+		this.newAction(ActionTypes.CUT)
 	},
+	// NOTE: newAction(...) uses reverse order
+	copy() {
+		// Idempotent
+		this.newAction(ActionTypes.COPY)
+	},
+	// NOTE: newAction(...) uses reverse order
 	paste(substr) {
 		if (!substr) {
 			// No-op
 			return
 		}
 		this.write(substr)
+		this.newAction(ActionTypes.PASTE)
 	},
 	render() {
 		state.components = parseComponents(state.data)

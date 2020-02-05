@@ -32,6 +32,10 @@ hello hello 🙋🏿‍♀️🙋🏿‍♀️🙋🏿‍♀️ 🙋🏿‍♀�
 
 hello`)
 
+	React.useEffect(() => {
+		console.log(state.actionType)
+	}, [state.actionType])
+
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			const renderT1 = Date.now()
@@ -247,6 +251,7 @@ hello`)
 						}
 						const substr = state.data.slice(state.pos1, state.pos2)
 						e.clipboardData.setData("text/plain", substr)
+						dispatch.copy()
 					},
 					onPaste: e => {
 						e.preventDefault()
