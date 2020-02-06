@@ -85,10 +85,15 @@ code {
 	padding-right: var(--padding-x);
 }
 
-.strong,
+.em {
+	font-style: italic;
+}
+.strong {
+	font-weight: bold;
+}
 .em,
-.strong-em {
-	background: hsla(var(--blue-a200), 0.055);
+.strong {
+	background: hsla(var(--blue-a200), 0.05);
 }
 
 .code {

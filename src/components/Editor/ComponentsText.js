@@ -1,34 +1,35 @@
 import Markdown from "./Markdown"
 import React from "react"
 
-const Emphasis = props => (
-	<em className="em">
+// TODO: Deprecate semantic elements?
+const Em = props => (
+	<span className="em">
 		<Markdown start={props.syntax} end={props.syntax}>
 			{props.children}
 		</Markdown>
-	</em>
+	</span>
 )
 
 const Strong = props => (
-	<strong className="strong">
+	<span className="strong">
 		<Markdown start={props.syntax} end={props.syntax}>
 			{props.children}
 		</Markdown>
-	</strong>
+	</span>
 )
 
-const StrongEmphasis = props => (
-	<strong className="strong-em">
+const StrongEm = props => (
+	<span className="strong em">
 		<Markdown start={props.syntax.slice(0, 2)} end={props.syntax.slice(1)}>
 			<Markdown start={props.syntax.slice(-1)} end={props.syntax.slice(0, 1)}>
 				{props.children}
 			</Markdown>
 		</Markdown>
-	</strong>
+	</span>
 )
 
 const Code = props => (
-	<code className="code" spellCheck={false}>
+	<code spellCheck={false}>
 		<Markdown start="`" end="`" >
 			{props.children}
 		</Markdown>
@@ -65,7 +66,7 @@ function parseTextComponents(data) {
 				}
 				index += syntax.length
 				const children = recurse(data.slice(index, index + offset))
-				components.push(<StrongEmphasis key={key} syntax={syntax}>{children}</StrongEmphasis>)
+				components.push(<StrongEm key={key} syntax={syntax}>{children}</StrongEm>)
 				index += offset + syntax.length - 1
 				break
 			// Strong (takes precedence):
@@ -89,7 +90,7 @@ function parseTextComponents(data) {
 				}
 				index += syntax.length
 				const children = recurse(data.slice(index, index + offset))
-				components.push(<Emphasis key={key} syntax={syntax}>{children}</Emphasis>)
+				components.push(<Em key={key} syntax={syntax}>{children}</Em>)
 				index += offset // + syntax.length - 1
 				break
 			}
