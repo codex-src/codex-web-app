@@ -19,7 +19,7 @@ const Strong = props => (
 )
 
 const StrongEm = props => (
-	<span className="strong em">
+	<span className="strong">
 		<Markdown start={props.syntax.slice(0, 2)} end={props.syntax.slice(1)}>
 			<Markdown start={props.syntax.slice(-1)} end={props.syntax.slice(0, 1)}>
 				{props.children}

@@ -1,4 +1,4 @@
-// import Debugger from "./Debugger"
+import Debugger from "./Debugger"
 import Context from "./Context"
 import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange from "./helpers/getPosFromRange"
@@ -135,6 +135,7 @@ function Editor({ state, dispatch, ...props }) {
 								selection.addRange(range)
 							}
 							const [pos1, pos2, coords] = getPos()
+							console.log(range, pos1)
 							dispatch.actionSelect(pos1, pos2, coords)
 						} catch (e) {
 							console.warn({ "onSelect/catch": e })
@@ -275,7 +276,7 @@ function Editor({ state, dispatch, ...props }) {
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			{/* <Debugger /> */}
+			<Debugger />
 		</Provider>
 	)
 }
