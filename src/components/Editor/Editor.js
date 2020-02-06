@@ -9,13 +9,12 @@ import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
 
-// TODO
-//
-// - StatusBar?
-// - Components
-// - localStorage
-// - Demo
-//
+const imperativeStyles = {
+	whiteSpace:   "pre-wrap",
+	outline:      "none",
+	overflowWrap: "break-word",
+}
+
 function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const isPointerDownRef = React.useRef()
@@ -96,6 +95,8 @@ function Editor({ state, dispatch, ...props }) {
 				"article",
 				{
 					ref,
+
+					style: imperativeStyles,
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,

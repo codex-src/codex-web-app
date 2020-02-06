@@ -1,6 +1,5 @@
 import Markdown from "./Markdown"
 import React from "react"
-import stylex from "stylex"
 
 const Emphasis = props => (
 	<em className="em">
@@ -30,7 +29,7 @@ const StrongEmphasis = props => (
 
 const Code = props => (
 	<code className="code" spellCheck={false}>
-		<Markdown style={stylex.parse("c:gray")} start="`" end="`" >
+		<Markdown start="`" end="`" >
 			{props.children}
 		</Markdown>
 	</code>

@@ -4,26 +4,33 @@
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 
 article {
-	--margin-x: 24px;
-	--margin-y:  8px;
-
+	--tabs:       4;
+	--code-tabs:  2;
+	--font:       19px/1.50 system-ui;
+	--code-font:  16px/1.25 "iA Writer Mono", monospace;
+	--padding-x:  24px;
+	--padding-y:  8px;
 	--box-shadow: 0px 0px 1px hsl(var(--gray));
 }
 
 article {
-	-moz-tab-size: 2;
-	tab-size:      2;
-	font:          19px/1.5 system-ui;
+	-moz-tab-size: var(--tabs);
+	tab-size:      var(--tabs);
+	font:          var(--font);
 	color:         hsl(var(--gray-900));
 	caret-color:   hsl(var(--black));
-	outline:       none;
-	overflow-wrap: break-word;
 }
 article *::selection {
   background: hsla(var(--blue-a400), 0.25) !important;
 }
+
 code {
-	font: 17px/1.25 "iA Writer Mono";
+	-webkit-font-smoothing:  auto;
+	-moz-osx-font-smoothing: auto;
+
+	-moz-tab-size: var(--code-tabs);
+	tab-size:      var(--code-tabs);
+	font:          var(--code-font);
 }
 
 .header {
@@ -55,38 +62,32 @@ code {
 }
 
 .blockquote {
-	margin:  0px calc(-1 * var(--margin-x));
-	padding: var(--margin-y) var(--margin-x);
-
+	margin: 0px calc(-1 * var(--padding-x));
+	padding: var(--padding-y) var(--padding-x);
 	box-shadow: var(--box-shadow);
 }
-.blockquote > .each {}
 
 .code-block {
-	margin:  0px calc(-1 * var(--margin-x));
-	padding: var(--margin-y) var(--margin-x);
-
+	margin: 0px calc(-1 * var(--padding-x));
+	padding: var(--padding-y) var(--padding-x);
 	box-shadow: var(--box-shadow);
-
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
-.code-block > .each {
-	white-space: pre !important;
+.code-block > .node {
+	font: var(--code-font);
 }
-.code-block > .each > .overflow-x {
-	margin-right:  calc(-1 * var(--margin-x));
-	padding-right: var(--margin-x);
+.code-block > .node > code {
+	margin-right: calc(-1 * var(--padding-x));
+	padding-right: var(--padding-x);
 }
-
-.paragraph {}
-.break {}
 
 .strong,
 .em,
 .strong-em {
 	background: hsla(var(--blue-a200), 0.055);
 }
+
 .code {
 	box-shadow: var(--box-shadow);
 }

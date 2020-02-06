@@ -1,26 +1,25 @@
 import Markdown from "./Markdown"
 import React from "react"
 import recurse from "./ComponentsText"
-import stylex from "stylex"
 
 import "./Components.css"
 
 // NOTE: Gecko/Firefox needs pre-wrap to be an inline style
-const preWrap = { whiteSpace: "pre-wrap" }
+const imperativeStyles = { whiteSpace: "pre-wrap" }
 
 // TODO: CompoundNode?
-const Node = stylex.Styleable(props => (
-	<div style={preWrap} data-node {...props}>
-		{props.children}
+const Node = props => (
+	<div className="node" style={imperativeStyles} data-node {...props}>
+		{props.children || (
+			<br />
+		)}
 	</div>
-))
+)
 
 const Header = React.memo(props => (
 	<Node className={`header h${props.start.length - 1}`}>
 		<Markdown start={props.start}>
-			{props.children || (
-				<br />
-			)}
+			{props.children}
 		</Markdown>
 	</Node>
 ))
@@ -28,9 +27,7 @@ const Header = React.memo(props => (
 const Comment = React.memo(props => (
 	<Node className="comment" spellCheck={false}>
 		<Markdown start={props.start}>
-			{props.children || (
-				<br />
-			)}
+			{props.children}
 		</Markdown>
 	</Node>
 ))
@@ -39,7 +36,7 @@ const Comment = React.memo(props => (
 const Blockquote = React.memo(props => (
 	<Node className="blockquote">
 		{props.children.map((each, index) => (
-			<Node key={index} className="each">
+			<Node key={index}>
 				<Markdown start={each.start}>
 					{each.data}
 				</Markdown>
@@ -83,17 +80,13 @@ const Blockquote = React.memo(props => (
 const CodeBlock = React.memo(props => (
 	<Node className="code-block" spellCheck={false}>
 		{props.children.map((each, index) => (
-			<Node key={index} className="each">
-				<code className="overflow-x">
+			<Node key={index}>
+				<code>
 					<Markdown
-						start={!index && props.start}
-						end={index + 1 === props.children.length && props.end}
+						start={!index && props.start}                          // Start
+						end={index + 1 === props.children.length && props.end} // End
 					>
-						{each || (
-							index > 0 && index + 1 < props.children.length && (
-								<br />
-							)
-						)}
+						{each}
 					</Markdown>
 				</code>
 			</Node>
@@ -103,9 +96,7 @@ const CodeBlock = React.memo(props => (
 
 const Paragraph = React.memo(props => (
 	<Node className="paragraph">
-		{props.children || (
-			<br />
-		)}
+		{props.children}
 	</Node>
 ))
 
