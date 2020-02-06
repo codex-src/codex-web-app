@@ -9,8 +9,6 @@ import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
 
-import "./Editor.css"
-
 // TODO
 //
 // - StatusBar?
@@ -95,13 +93,13 @@ function Editor({ state, dispatch, ...props }) {
 	return (
 		<Provider value={[state, dispatch]}>
 			{React.createElement(
-				"div",
+				"article",
 				{
 					ref,
 
 					contentEditable: true,
 					suppressContentEditableWarning: true,
-					spellCheck: true,
+					// spellCheck: true,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,

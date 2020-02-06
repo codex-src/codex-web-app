@@ -3,8 +3,7 @@ import React from "react"
 import stylex from "stylex"
 
 const Emphasis = props => (
-	// <em>
-	<em style={stylex.parse("b:blue-a200 -a:5%")}>
+	<em className="em">
 		<Markdown start={props.syntax} end={props.syntax}>
 			{props.children}
 		</Markdown>
@@ -12,8 +11,7 @@ const Emphasis = props => (
 )
 
 const Strong = props => (
-	// <strong>
-	<strong style={stylex.parse("b:blue-a200 -a:5%")}>
+	<strong className="strong">
 		<Markdown start={props.syntax} end={props.syntax}>
 			{props.children}
 		</Markdown>
@@ -21,8 +19,7 @@ const Strong = props => (
 )
 
 const StrongEmphasis = props => (
-	// <strong>
-	<strong style={stylex.parse("b:blue-a200 -a:5%")}>
+	<strong className="strong-em">
 		<Markdown start={props.syntax.slice(0, 2)} end={props.syntax.slice(1)}>
 			<Markdown start={props.syntax.slice(-1)} end={props.syntax.slice(0, 1)}>
 				{props.children}
@@ -32,7 +29,7 @@ const StrongEmphasis = props => (
 )
 
 const Code = props => (
-	<code style={{ ...stylex.parse("c:blue-a200 br:0.1"), boxShadow: "0px 0px 1px hsl(var(--gray))" }}>
+	<code className="code" spellCheck={false}>
 		<Markdown style={stylex.parse("c:gray")} start="`" end="`" >
 			{props.children}
 		</Markdown>

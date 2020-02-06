@@ -1,37 +1,37 @@
 /* @import "https://fonts.googleapis.com/css?family=Fira+Code&display=block"; */
 /* @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Duo/Webfonts/index.css"; */
 /* @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Quattro/Webfonts/index.css"; */
- @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
+@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 
-[contenteditable] {
-	-webkit-font-smoothing:  auto;
-	-moz-osx-font-smoothing: auto;
-
-	-moz-tab-size: 2;
-	tab-size:      2;
-	/* font:       16px/1.5 "iA Writer Duo", "iA Writer Mono", monospace; */
-	font:          19px/1.5 system-ui;
-	caret-color:   hsl(var(--black));
-	outline:       none;
-	overflow-wrap: break-word;
-}
-[contenteditable] *::selection {
-  background: hsla(var(--blue-a400), 0.25) !important;
-}
-
-code {
-	font: 17px/1.25 "iA Writer Mono";
-}
-
-html {
+article {
 	--margin-x: 24px;
 	--margin-y:  8px;
 
 	--box-shadow: 0px 0px 1px hsl(var(--gray));
 }
 
+article {
+	-moz-tab-size: 2;
+	tab-size:      2;
+	font:          19px/1.5 system-ui;
+	color:         hsl(var(--gray-900));
+	caret-color:   hsl(var(--black));
+	outline:       none;
+	overflow-wrap: break-word;
+}
+article *::selection {
+  background: hsla(var(--blue-a400), 0.25) !important;
+}
+code {
+	font: 17px/1.25 "iA Writer Mono";
+}
+
+.header {
+	font-weight: bold;
+	color: hsl(var(--black));
+}
 .header.h1 {
-	font-size: 1.50em;
+	font-size: 1.75em;
 }
 .header.h2 {
 	font-size: 1.25em;
@@ -50,9 +50,8 @@ html {
 }
 
 .comment,
-.comment * {
-	/* NOTE: Remove !important */
-	color: hsl(var(--gray)) !important;
+.comment > .markdown {
+	color: hsl(var(--gray));
 }
 
 .blockquote {
@@ -61,9 +60,7 @@ html {
 
 	box-shadow: var(--box-shadow);
 }
-.blockquote > .each {
-	/* No-op */
-}
+.blockquote > .each {}
 
 .code-block {
 	margin:  0px calc(-1 * var(--margin-x));
@@ -82,9 +79,19 @@ html {
 	padding-right: var(--margin-x);
 }
 
-.paragraph {
-	/* No-op */
+.paragraph {}
+.break {}
+
+.strong,
+.em,
+.strong-em {
+	background: hsla(var(--blue-a200), 0.055);
 }
-.break {
-	/* No-op */
+.code {
+	box-shadow: var(--box-shadow);
+}
+
+.markdown {
+	white-space: pre;
+	color: hsl(var(--blue-a200));
 }

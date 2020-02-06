@@ -1,7 +1,9 @@
 import Markdown from "./Markdown"
 import React from "react"
-import recurse from "./parseTextComponents"
+import recurse from "./ComponentsText"
 import stylex from "stylex"
+
+import "./Components.css"
 
 // NOTE: Gecko/Firefox needs pre-wrap to be an inline style
 const preWrap = { whiteSpace: "pre-wrap" }
@@ -15,18 +17,16 @@ const Node = stylex.Styleable(props => (
 
 const Header = React.memo(props => (
 	<Node className={`header h${props.start.length - 1}`}>
-		<strong>
-			<Markdown start={props.start}>
-				{props.children || (
-					<br />
-				)}
-			</Markdown>
-		</strong>
+		<Markdown start={props.start}>
+			{props.children || (
+				<br />
+			)}
+		</Markdown>
 	</Node>
 ))
 
 const Comment = React.memo(props => (
-	<Node className="comment">
+	<Node className="comment" spellCheck={false}>
 		<Markdown start={props.start}>
 			{props.children || (
 				<br />
@@ -136,7 +136,7 @@ function parseComponents(data) {
 				(length >= 7 && substr.slice(0, 7) === "###### ")
 			) {
 				const start = substr.slice(0, substr.indexOf(" ") + 1)
-				const children = substr.slice(start.length) // recurse(substr.slice(start.length))
+				const children = recurse(substr.slice(start.length))
 				components.push(<Header key={key} start={start}>{children}</Header>)
 			}
 			break
@@ -172,7 +172,7 @@ function parseComponents(data) {
 						{slice.map(each => (
 							{
 								start: each.slice(0, 2),
-								data:  each.slice(2), // recurse(each.slice(2)),
+								data:  recurse(each.slice(2)),
 							}
 						))}
 					</Blockquote>

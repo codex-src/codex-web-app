@@ -1,6 +1,6 @@
 import emoji from "emoji-trie"
 import Enum from "utils/Enum"
-import parseComponents from "./parseComponents"
+import parseComponents from "./Components"
 import useMethods from "use-methods"
 import utf8 from "utils/encoding/utf8"
 
