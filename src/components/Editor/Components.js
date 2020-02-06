@@ -6,7 +6,7 @@ import "./Components.css"
 
 // NOTE: Gecko/Firefox needs pre-wrap to be an inline style
 const Node = props => (
-	<div className="node" data-node {...props}>
+	<div data-node {...props}>
 		{props.children || (
 			<br />
 		)}

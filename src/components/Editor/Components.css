@@ -73,18 +73,18 @@ code {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
 	box-shadow: var(--box-shadow);
-	-webkit-overflow-scrolling: touch;
-	overflow-x: scroll;
+	/*-webkit-overflow-scrolling: touch;*/
+	/*overflow-x: scroll;*/
 }
-.code-block > .node {
+.code-block > [data-node] {
 	white-space: pre !important;
 	font: var(--font-code);
 }
-.code-block > .node > code {
+.code-block > [data-node] > code {
 	margin-right: calc(-1 * var(--padding-x));
 	padding-right: var(--padding-x);
 }
-.code-block > .node > code > .markdown {
+.code-block > [data-node] > code > .markdown {
 	color: hsl(var(--gray));
 }
 
