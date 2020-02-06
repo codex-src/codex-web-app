@@ -1,5 +1,5 @@
+// import Debugger from "./Debugger"
 import Context from "./Context"
-import Debugger from "./Debugger"
 import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange from "./helpers/getPosFromRange"
 import getRangeFromPos from "./helpers/getRangeFromPos"
@@ -8,7 +8,6 @@ import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
-import useEditor from "./EditorReducer"
 
 import "./Editor.css"
 

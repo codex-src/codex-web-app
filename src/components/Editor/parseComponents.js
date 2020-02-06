@@ -1,5 +1,6 @@
-import Markdown from "./ComponentsText"
+import Markdown from "./Markdown"
 import React from "react"
+import recurse from "./parseTextComponents"
 import stylex from "stylex"
 
 // NOTE: Gecko/Firefox needs pre-wrap to be an inline style
@@ -13,12 +14,12 @@ const Node = stylex.Styleable(props => (
 ))
 
 const headerStyles = {
-	"# ":      { fontSize: "1.5em" },
-	"## ":     { fontSize: "1.4em" },
-	"### ":    { fontSize: "1.3em" },
-	"#### ":   { fontSize: "1.2em" },
-	"##### ":  { fontSize: "1.1em" },
-	"###### ": { fontSize: "1em" },
+	"# ":      { fontSize: "1.50em" },
+	"## ":     { fontSize: "1.25em" },
+	"### ":    { fontSize: "1.20em" },
+	"#### ":   { fontSize: "1.15em" },
+	"##### ":  { fontSize: "1.10em" },
+	"###### ": { fontSize: "1.05em" },
 }
 
 const Header = React.memo(props => (
@@ -85,10 +86,9 @@ const Blockquote = React.memo(props => (
 // 	)
 // })
 
+// NOTE: line-height: 1.25
 const codeStyle = {
-	...stylex.parse("m-x:-24 p-x:24 p-y:8 overflow -x:scroll"),
-	// font: "0.875em/1.25 'iA Writer Mono'",
-	font: "16px/1.25 'Fira Code'",
+	...stylex.parse("m-x:-24 p-x:24 p-y:8 lh:125% overflow -x:scroll"),
 	boxShadow: "0px 0px 1px hsl(var(--gray))",
 }
 
@@ -99,7 +99,7 @@ const CodeBlock = React.memo(props => (
 	<Node style={codeStyle} spellCheck={false}>
 		{props.children.map((each, index) => (
 			<Node key={index} style={stylex.parse("pre")}>
-				<span style={stylex.parse("m-r:-24 p-r:24")}>
+				<code style={stylex.parse("m-r:-24 p-r:24")}>
 					<Markdown
 						start={!index && props.start}
 						end={index + 1 === props.children.length && props.end}
@@ -110,7 +110,7 @@ const CodeBlock = React.memo(props => (
 							)
 						)}
 					</Markdown>
-				</span>
+				</code>
 			</Node>
 		))}
 	</Node>
@@ -252,7 +252,7 @@ function parseComponents(data) {
 		}
 		// Paragraph:
 		if (key === components.length) {
-			const children = substr // recurse(substr)
+			const children = recurse(substr)
 			components.push(<Paragraph key={key}>{children}</Paragraph>)
 		}
 		index++
