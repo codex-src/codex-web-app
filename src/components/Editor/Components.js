@@ -77,22 +77,25 @@ const Blockquote = React.memo(props => (
 // https://cdpn.io/PowjgOg
 //
 // NOTE: Compound component
-const CodeBlock = React.memo(props => (
-	<Node className="code-block" spellCheck={false}>
-		{props.children.map((each, index) => (
-			<Node key={index}>
-				<code>
-					<Markdown
-						start={!index && props.start}                          // Start
-						end={index + 1 === props.children.length && props.end} // End
-					>
-						{each}
-					</Markdown>
-				</code>
-			</Node>
-		))}
-	</Node>
-))
+const CodeBlock = React.memo(props => {
+	const children = props.children.split("\n")
+	return (
+		<Node className="code-block" spellCheck={false}>
+			{children.map((each, index) => (
+				<Node key={index}>
+					<code>
+						<Markdown
+							start={!index ? `\`\`\`${props.lang}` : ""}
+							end={index + 1 === children.length ? "```" : ""}
+						>
+							{each}
+						</Markdown>
+					</code>
+				</Node>
+			))}
+		</Node>
+	)
+})
 
 const Paragraph = React.memo(props => (
 	<Node className="paragraph">
@@ -179,8 +182,8 @@ function parseComponents(data) {
 				substr.slice(0, 3) === "```" && // Start syntax
 				substr.slice(-3) === "```"      // End syntax
 			) {
-				const children = [substr] // substr.slice(3, -3)
-				components.push(<CodeBlock key={key} /* defer={!window.Prism} lang="" */>{children}</CodeBlock>)
+				const children = substr.slice(3, -3)
+				components.push(<CodeBlock key={key} /* defer={!window.Prism} */ lang="">{children}</CodeBlock>)
 			// Multiline code block:
 			} else if (
 				length >= 3 &&
@@ -202,8 +205,8 @@ function parseComponents(data) {
 					break
 				}
 				const lang = substr.slice(3)
-				const children = nodes.slice(from, to + 1) // .join("\n").slice(3 + lang.length, -3)
-				components.push(<CodeBlock key={key} /* defer={!window.Prism} lang={lang} */>{children}</CodeBlock>)
+				const children = nodes.slice(from, to + 1).join("\n").slice(3 + lang.length, -3)
+				components.push(<CodeBlock key={key} /* defer={!window.Prism} */ lang={lang}>{children}</CodeBlock>)
 				index = to
 				break
 			}

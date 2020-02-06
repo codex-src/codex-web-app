@@ -10,7 +10,7 @@ article {
 	--tabs:       4;
 	--tabs-code:  2;
 	--font:       19px/1.50 system-ui;
-	--font-code:  16px/1.25 "iA Writer Mono", monospace;
+	--font-code:  17px/1.25 "iA Writer Mono", monospace;
 
 	--box-shadow: 0px 0px 1px hsl(var(--gray));
 }
@@ -84,6 +84,9 @@ code {
 	margin-right: calc(-1 * var(--padding-x));
 	padding-right: var(--padding-x);
 }
+.code-block > .node > code > .markdown {
+	color: hsl(var(--gray));
+}
 
 .em {
 	font-style: italic;
@@ -97,7 +100,11 @@ code {
 }
 
 .code {
+	color: hsl(var(--blue-a400));
 	box-shadow: var(--box-shadow);
+}
+.code > .markdown {
+	color: hsl(var(--gray));
 }
 
 .markdown {

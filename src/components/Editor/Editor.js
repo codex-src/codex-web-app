@@ -47,7 +47,11 @@ function Editor({ state, dispatch, ...props }) {
 					const { node, offset } = getRangeFromPos(ref.current, state.pos2)
 					range.setEnd(node, offset)
 				}
-				selection.addRange(range)
+				try {
+					selection.addRange(range)
+				} catch (e) {
+					console.warn({ "shouldRender/catch": e })
+				}
 			})
 		}, [state, forceRender]),
 		[state.shouldRender],
@@ -198,6 +202,7 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
+						console.log(e.nativeEvent.inputType) // DELETEME
 						switch (e.nativeEvent.inputType) {
 						case "insertLineBreak":
 						case "insertParagraph":

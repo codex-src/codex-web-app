@@ -29,7 +29,7 @@ const StrongEm = props => (
 )
 
 const Code = props => (
-	<code spellCheck={false}>
+	<code className="code" spellCheck={false}>
 		<Markdown start="`" end="`" >
 			{props.children}
 		</Markdown>

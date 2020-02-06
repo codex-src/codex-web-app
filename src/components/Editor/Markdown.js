@@ -1,5 +1,4 @@
 import React from "react"
-import stylex from "stylex"
 
 const Syntax = props => (
 	<span className="markdown" {...props}>
