@@ -1,22 +1,26 @@
-@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
-@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Duo/Webfonts/index.css";
-@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Quattro/Webfonts/index.css";
+@import "https://fonts.googleapis.com/css?family=Fira+Code&display=block";
 
-[contenteditable="true"] {
+/* @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css"; */
+/* @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Duo/Webfonts/index.css"; */
+/* @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Quattro/Webfonts/index.css"; */
+
+/* "iA Writer Quattro" */
+[contenteditable] {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
 	-moz-tab-size: 2;
 	tab-size:      2;
-	font:          16px/1.5 "iA Writer Duo", monospace;
+	/* font:       16px/1.5 "iA Writer Duo", "iA Writer Mono", monospace; */
+	font:          19px/1.5 system-ui;
 	caret-color:   hsl(var(--black));
 	outline:       none;
 	overflow-wrap: break-word;
 }
-[contenteditable="true"] *::selection {
+[contenteditable] *::selection {
   background: hsla(var(--blue-a400), 0.25) !important;
 }
 
-/* [data-node="true"]:empty::before { */
+/* [data-node]:empty::before { */
 /* 	content: " "; */
 /* } */

@@ -19,16 +19,11 @@ import "./Editor.css"
 // - localStorage
 // - Demo
 //
-function Editor(props) {
+function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const isPointerDownRef = React.useRef()
 	const dedupeCompositionEndRef = React.useRef()
 
-	const [state, dispatch] = useEditor(`Hello, world! 😀
-
-Hello, world! 😀
-
-Hello, world! 😀`)
 	const [forceRender, setForceRender] = React.useState(false)
 
 	React.useLayoutEffect(
@@ -269,7 +264,7 @@ Hello, world! 😀`)
 							// No-op
 							return
 						}
-						setForceRender(true) // Use the Force, Luke
+						setForceRender(true) // *Use the Force, Luke*
 						dispatch.paste(substr)
 					},
 
@@ -277,7 +272,7 @@ Hello, world! 😀`)
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			<Debugger />
+			{/* <Debugger /> */}
 		</Provider>
 	)
 }
