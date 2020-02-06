@@ -4,12 +4,14 @@
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 
 article {
-	--tabs:       4;
-	--code-tabs:  2;
-	--font:       19px/1.50 system-ui;
-	--code-font:  16px/1.25 "iA Writer Mono", monospace;
 	--padding-x:  24px;
 	--padding-y:  8px;
+
+	--tabs:       4;
+	--tabs-code:  2;
+	--font:       19px/1.50 system-ui;
+	--font-code:  16px/1.25 "iA Writer Mono", monospace;
+
 	--box-shadow: 0px 0px 1px hsl(var(--gray));
 }
 
@@ -28,9 +30,9 @@ code {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
-	-moz-tab-size: var(--code-tabs);
-	tab-size:      var(--code-tabs);
-	font:          var(--code-font);
+	-moz-tab-size: var(--tabs-code);
+	tab-size:      var(--tabs-code);
+	font:          var(--font-code);
 }
 
 .header {
@@ -75,7 +77,8 @@ code {
 	overflow-x: scroll;
 }
 .code-block > .node {
-	font: var(--code-font);
+	white-space: pre !important;
+	font: var(--font-code);
 }
 .code-block > .node > code {
 	margin-right: calc(-1 * var(--padding-x));
