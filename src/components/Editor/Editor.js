@@ -113,9 +113,7 @@ function Editor({ state, dispatch, ...props }) {
 						try {
 							const selection = document.getSelection()
 							const range = selection.getRangeAt(0)
-							// NOTE: Select all (e.g. cmd-a or ctrl-a) in
-							// Gecko/Firefox selects the root node instead
-							// of the innermost start and end nodes
+							// Guard the root node:
 							if (range.startContainer === ref.current || range.endContainer === ref.current) {
 								// Iterate to the innermost start node:
 								let startNode = ref.current.childNodes[0]

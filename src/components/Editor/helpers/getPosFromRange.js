@@ -1,17 +1,11 @@
 // Gets the cursor from a range. Code based on innerText.
 function getPosFromRange(rootNode, node, offset) {
 	let pos = 0
-
-	// // Gecko/Firefox selects
-	// // Iterate to the innermost node at the start or end:
-	// //
-	// // Guard break nodes: the selection API sometimes selects
-	// // a break node’s parent instead of the break node.
-	// if (node.nodeType === Node.ELEMENT_NODE && !isBreakNode(node)) {
-	// 	node = node.childNodes[offset]
-	// 	offset = 0
-	// }
-
+	// NOTE: Gecko/Firefox can select the end element node
+	if (node.nodeType === Node.ELEMENT_NODE && !(offset < node.childNodes.length)) {
+		node = null
+		offset = 0
+	}
 	const recurse = startNode => {
 		const { childNodes } = startNode
 		let index = 0

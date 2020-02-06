@@ -38,7 +38,7 @@ export async function openPage(browserType, url) {
 		args.push("-width 1440 -height 900") // Not working
 	}
 	const config = {
-		headless: false,
+		headless: true, // false,
 		args,
 	}
 	const browser = await browserType.launch(config)
