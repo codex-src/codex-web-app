@@ -13,17 +13,8 @@ const Node = stylex.Styleable(props => (
 	</div>
 ))
 
-const headerStyles = {
-	"# ":      { fontSize: "1.50em" },
-	"## ":     { fontSize: "1.25em" },
-	"### ":    { fontSize: "1.20em" },
-	"#### ":   { fontSize: "1.15em" },
-	"##### ":  { fontSize: "1.10em" },
-	"###### ": { fontSize: "1.05em" },
-}
-
 const Header = React.memo(props => (
-	<Node style={headerStyles[props.start]}>
+	<Node className={`header h${props.start.length - 1}`}>
 		<strong>
 			<Markdown start={props.start}>
 				{props.children || (
@@ -35,8 +26,8 @@ const Header = React.memo(props => (
 ))
 
 const Comment = React.memo(props => (
-	<Node style={stylex.parse("c:gray")}>
-		<Markdown style={stylex.parse("c:gray")} start={props.start}>
+	<Node className="comment">
+		<Markdown start={props.start}>
 			{props.children || (
 				<br />
 			)}
@@ -46,9 +37,9 @@ const Comment = React.memo(props => (
 
 // NOTE: Compound component
 const Blockquote = React.memo(props => (
-	<Node style={{ ...stylex.parse("m-x:-24 p-x:24 p-y:8"), boxShadow: "0px 0px 1px hsl(var(--gray))" }}>
+	<Node className="blockquote">
 		{props.children.map((each, index) => (
-			<Node key={index} /* style={{ fontSize: "1.1em" }} */>
+			<Node key={index} className="each">
 				<Markdown start={each.start}>
 					{each.data}
 				</Markdown>
@@ -86,20 +77,14 @@ const Blockquote = React.memo(props => (
 // 	)
 // })
 
-// NOTE: line-height: 1.25
-const codeStyle = {
-	...stylex.parse("m-x:-24 p-x:24 p-y:8 lh:125% overflow -x:scroll"),
-	boxShadow: "0px 0px 1px hsl(var(--gray))",
-}
-
 // https://cdpn.io/PowjgOg
 //
 // NOTE: Compound component
 const CodeBlock = React.memo(props => (
-	<Node style={codeStyle} spellCheck={false}>
+	<Node className="code-block" spellCheck={false}>
 		{props.children.map((each, index) => (
-			<Node key={index} style={stylex.parse("pre")}>
-				<code style={stylex.parse("m-r:-24 p-r:24")}>
+			<Node key={index} className="each">
+				<code className="overflow-x">
 					<Markdown
 						start={!index && props.start}
 						end={index + 1 === props.children.length && props.end}
@@ -117,7 +102,7 @@ const CodeBlock = React.memo(props => (
 ))
 
 const Paragraph = React.memo(props => (
-	<Node>
+	<Node className="paragraph">
 		{props.children || (
 			<br />
 		)}
@@ -125,7 +110,7 @@ const Paragraph = React.memo(props => (
 ))
 
 const Break = React.memo(props => (
-	<Node>
+	<Node className="break">
 		<Markdown start={props.start} />
 	</Node>
 ))

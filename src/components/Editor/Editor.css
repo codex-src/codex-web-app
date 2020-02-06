@@ -20,5 +20,71 @@
 }
 
 code {
-	font: 16px/1.25 "iA Writer Mono";
+	font: 17px/1.25 "iA Writer Mono";
+}
+
+html {
+	--margin-x: 24px;
+	--margin-y:  8px;
+
+	--box-shadow: 0px 0px 1px hsl(var(--gray));
+}
+
+.header.h1 {
+	font-size: 1.50em;
+}
+.header.h2 {
+	font-size: 1.25em;
+}
+.header.h3 {
+	font-size: 1.20em;
+}
+.header.h4 {
+	font-size: 1.15em;
+}
+.header.h5 {
+	font-size: 1.10em;
+}
+.header.h6 {
+	font-size: 1.05em;
+}
+
+.comment,
+.comment * {
+	/* NOTE: Remove !important */
+	color: hsl(var(--gray)) !important;
+}
+
+.blockquote {
+	margin:  0px calc(-1 * var(--margin-x));
+	padding: var(--margin-y) var(--margin-x);
+
+	box-shadow: var(--box-shadow);
+}
+.blockquote > .each {
+	/* No-op */
+}
+
+.code-block {
+	margin:  0px calc(-1 * var(--margin-x));
+	padding: var(--margin-y) var(--margin-x);
+
+	box-shadow: var(--box-shadow);
+
+	-webkit-overflow-scrolling: touch;
+	overflow-x: scroll;
+}
+.code-block > .each {
+	white-space: pre !important;
+}
+.code-block > .each > .overflow-x {
+	margin-right:  calc(-1 * var(--margin-x));
+	padding-right: var(--margin-x);
+}
+
+.paragraph {
+	/* No-op */
+}
+.break {
+	/* No-op */
 }
