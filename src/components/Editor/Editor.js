@@ -9,11 +9,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
 
-const imperativeStyles = {
-	whiteSpace:   "pre-wrap",
-	outline:      "none",
-	overflowWrap: "break-word",
-}
+import "./Editor.css"
 
 function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
@@ -100,8 +96,6 @@ function Editor({ state, dispatch, ...props }) {
 				{
 					ref,
 
-					style: imperativeStyles,
-
 					contentEditable: true,
 					suppressContentEditableWarning: true,
 					// spellCheck: true,
@@ -133,7 +127,6 @@ function Editor({ state, dispatch, ...props }) {
 								selection.addRange(range)
 							}
 							const [pos1, pos2, coords] = getPos()
-							console.log(range, pos1)
 							dispatch.actionSelect(pos1, pos2, coords)
 						} catch (e) {
 							console.warn({ "onSelect/catch": e })

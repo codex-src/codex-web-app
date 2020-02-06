@@ -216,7 +216,6 @@ test("can type and delete 100x paragraphs", async () => {
 	for (let index = 0; index < 100; index++) {
 		await ppt.press(page, "Backspace")
 	}
-	await ppt.press(page, "Backspace")
 	data = await ppt.innerText(page)
 	expect(data).toBe("")
 })
@@ -232,7 +231,6 @@ test("can type and delete (forwards) 100x paragraphs", async () => {
 	for (let index = 0; index < 100; index++) {
 		await ppt.press(page, "Delete")
 	}
-	await ppt.press(page, "Delete")
 	data = await ppt.innerText(page)
 	expect(data).toBe("")
 })

@@ -2,7 +2,7 @@
 function getPosFromRange(rootNode, node, offset) {
 	let pos = 0
 	// NOTE: Gecko/Firefox can select the end element node
-	if (node.nodeType === Node.ELEMENT_NODE && !(offset < node.childNodes.length)) {
+	if (node.nodeType === Node.ELEMENT_NODE && offset && !(offset < node.childNodes.length)) {
 		node = null
 		offset = 0
 	}

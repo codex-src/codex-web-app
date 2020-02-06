@@ -5,11 +5,8 @@ import recurse from "./ComponentsText"
 import "./Components.css"
 
 // NOTE: Gecko/Firefox needs pre-wrap to be an inline style
-const imperativeStyles = { whiteSpace: "pre-wrap" }
-
-// TODO: CompoundNode?
 const Node = props => (
-	<div className="node" style={imperativeStyles} data-node {...props}>
+	<div className="node" data-node {...props}>
 		{props.children || (
 			<br />
 		)}
@@ -32,7 +29,6 @@ const Comment = React.memo(props => (
 	</Node>
 ))
 
-// NOTE: Compound component
 const Blockquote = React.memo(props => (
 	<Node className="blockquote">
 		{props.children.map((each, index) => (
@@ -76,7 +72,8 @@ const Blockquote = React.memo(props => (
 
 // https://cdpn.io/PowjgOg
 //
-// NOTE: Compound component
+// NOTE: Do not use start={... ? ... : ""} because
+// Gecko/Firefox creates an empty text node
 const CodeBlock = React.memo(props => {
 	const children = props.children.split("\n")
 	return (
@@ -85,10 +82,14 @@ const CodeBlock = React.memo(props => {
 				<Node key={index}>
 					<code>
 						<Markdown
-							start={!index ? `\`\`\`${props.lang}` : ""}
-							end={index + 1 === children.length ? "```" : ""}
+							start={!index ? `\`\`\`${props.lang}` : null}
+							end={index + 1 === children.length ? "```" : null}
 						>
-							{each}
+							{each || (
+								index > 0 && index + 1 < children.length && (
+									<br />
+								)
+							)}
 						</Markdown>
 					</code>
 				</Node>
