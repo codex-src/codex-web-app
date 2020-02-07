@@ -64,6 +64,13 @@
 	color: hsl(var(--gray));
 }
 
+.flag-stylesheet-mono .emoji {
+	/* padding: 0px 2px; */
+	font-size: 1.2em;
+	line-height: 1;
+	vertical-align: -0.1em;
+}
+
 .flag-stylesheet-mono .em {
 	font-style: italic;
 }
