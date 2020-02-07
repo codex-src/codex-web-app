@@ -203,6 +203,11 @@ function Editor({ state, dispatch, ...props }) {
 							e.preventDefault()
 							dispatch.tab()
 							return
+						// Enter:
+						case e.keyCode === 13: // Enter
+							e.preventDefault()
+							dispatch.enter()
+							return
 						// Undo:
 						case platform.detectUndo(e):
 							e.preventDefault()
@@ -236,6 +241,7 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
+						// console.log(e.nativeEvent.inputType) // DELETEME
 						switch (e.nativeEvent.inputType) {
 						case "insertLineBreak":
 						case "insertParagraph":
