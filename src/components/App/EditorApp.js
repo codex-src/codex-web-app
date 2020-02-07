@@ -1,31 +1,34 @@
 import Editor from "components/Editor"
 import React from "react"
 import stylex from "stylex"
+import { DocumentTitle } from "utils/DocumentTitle"
 
-const LSKey = "codex-app"
+const localStorageKey = "codex-app"
 
-const initialValue = localStorage.getItem(LSKey) || "// Hello, world!"
+const initialValue = localStorage.getItem(localStorageKey) || "Hello, world!"
 
 // TODO: Add placeholder
 function EditorApp(props) {
 	const [state, dispatch] = Editor.useEditor(initialValue)
 
 	React.useEffect(() => {
-		localStorage.setItem(LSKey, state.data)
+		localStorage.setItem(localStorageKey, state.data)
 	}, [state.data])
 
 	return (
-		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
-			<div style={stylex.parse("w:834 no-min-w")}>
-				<Editor.Editor
-					state={state}
-					dispatch={dispatch}
-					// scrollPastEnd
-					// statusBar
-					// debugger
-				/>
+		<DocumentTitle title={state.data.split("\n", 1)[0]}>
+			<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
+				<div style={stylex.parse("w:834 no-min-w")}>
+					<Editor.Editor
+						state={state}
+						dispatch={dispatch}
+						// scrollPastEnd
+						// statusBar
+						// debugger
+					/>
+				</div>
 			</div>
-		</div>
+		</DocumentTitle>
 	)
 }
 

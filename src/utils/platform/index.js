@@ -1,2 +1,2 @@
-import * as exports from "./detectUndo"
+import * as exports from "./detect"
 export default exports

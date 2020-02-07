@@ -71,6 +71,25 @@ function Editor({ state, dispatch, ...props }) {
 		[state.focused],
 	)
 
+	// Shortcuts:
+	React.useEffect(() => {
+		const onKeyDown = e => {
+			switch (true) {
+			// Read-only mode:
+			case platform.detectKeyCode(e, 191):
+				e.preventDefault()
+				dispatch.toggleReadOnly()
+			default:
+				// No-op
+				break
+			}
+		}
+		document.addEventListener("keydown", onKeyDown)
+		return () => {
+			document.removeEventListener("keydown", onKeyDown)
+		}
+	}, [])
+
 	// Gets the cursors (and coords).
 	const getPos = ({ andCoords } = { andCoords: true }) => {
 		const selection = document.getSelection()
@@ -96,8 +115,10 @@ function Editor({ state, dispatch, ...props }) {
 				{
 					ref,
 
-					contentEditable: true,
-					suppressContentEditableWarning: true,
+					className: !state.readOnly ? "read-write" : "read-only",
+
+					contentEditable: !state.readOnly && true,
+					suppressContentEditableWarning: !state.readOnly && true,
 					// spellCheck: true,
 
 					onFocus: dispatch.actionFocus,
@@ -194,7 +215,6 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
-						console.log(e.nativeEvent.inputType) // DELETEME
 						switch (e.nativeEvent.inputType) {
 						case "insertLineBreak":
 						case "insertParagraph":
@@ -267,7 +287,7 @@ function Editor({ state, dispatch, ...props }) {
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			<Debugger />
+			{/* <Debugger /> */}
 		</Provider>
 	)
 }

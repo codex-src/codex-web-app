@@ -80,18 +80,16 @@ const CodeBlock = React.memo(props => {
 		<Node className="code-block" spellCheck={false}>
 			{children.map((each, index) => (
 				<Node key={index}>
-					<code>
-						<Markdown
-							start={!index ? `\`\`\`${props.lang}` : null}
-							end={index + 1 === children.length ? "```" : null}
-						>
-							{each || (
-								index > 0 && index + 1 < children.length && (
-									<br />
-								)
-							)}
-						</Markdown>
-					</code>
+					<Markdown
+						start={!index ? `\`\`\`${props.lang}` : null}
+						end={index + 1 === children.length ? "```" : null}
+					>
+						{each || (
+							index > 0 && index + 1 < children.length && (
+								<br />
+							)
+						)}
+					</Markdown>
 				</Node>
 			))}
 		</Node>

@@ -18,6 +18,8 @@ const ActionTypes = new Enum(
 )
 
 const initialState = {
+	readOnly: false,      // Is the editor read-only?
+
 	epoch: 0,             // The epoch (time stamp) of the editor
 	actionType: "",       // The type of the current action
 	actionTimeStamp: 0,   // The time stamp (since epoch) of the current action
@@ -36,6 +38,9 @@ const initialState = {
 }
 
 const reducer = state => ({
+	toggleReadOnly() {
+		state.readOnly = !state.readOnly
+	},
 	newAction(actionType) {
 		const actionTimeStamp = Date.now() - state.epoch
 		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {

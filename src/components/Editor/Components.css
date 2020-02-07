@@ -26,7 +26,8 @@ article *::selection {
   background: hsla(var(--blue-a400), 0.25) !important;
 }
 
-code {
+.code-block,
+.code {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
@@ -72,19 +73,15 @@ code {
 .code-block {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
+	border-radius: 1px;
 	box-shadow: var(--box-shadow);
-	/*-webkit-overflow-scrolling: touch;*/
-	/*overflow-x: scroll;*/
+	-webkit-overflow-scrolling: touch;
+	overflow-x: scroll;
 }
 .code-block > [data-node] {
 	white-space: pre !important;
-	font: var(--font-code);
 }
-.code-block > [data-node] > code {
-	margin-right: calc(-1 * var(--padding-x));
-	padding-right: var(--padding-x);
-}
-.code-block > [data-node] > code > .markdown {
+.code-block > [data-node] > .markdown {
 	color: hsl(var(--gray));
 }
 
@@ -94,14 +91,15 @@ code {
 .strong {
 	font-weight: bold;
 }
-.em,
-.strong {
-	background: hsla(var(--blue-a200), 0.05);
+.read-write .em,
+.read-write .strong {
+	background: hsla(var(--blue-a400), 0.05);
 }
 
 .code {
 	vertical-align: 1px;
 	color: hsl(var(--blue-a400));
+	border-radius: 1px;
 	box-shadow: var(--box-shadow);
 }
 .code > .markdown {
@@ -110,5 +108,8 @@ code {
 
 .markdown {
 	white-space: pre;
-	color: hsl(var(--blue-a200));
+	color: hsl(var(--blue-a400));
+}
+.read-only .markdown {
+	display: none;
 }
