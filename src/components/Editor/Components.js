@@ -97,11 +97,23 @@ const CodeBlock = React.memo(props => {
 	)
 })
 
-const Paragraph = React.memo(props => (
-	<Node className="paragraph">
-		{props.children}
-	</Node>
-))
+const Paragraph = React.memo(props => {
+	const isEmojis = (
+		props.children.length &&
+		props.children.length <= 3 &&
+		props.children.every(each => each && each.type && each.type.name === "Emoji")
+	)
+	return (
+		<Node
+			className={[
+				"paragraph",
+				isEmojis && "emojis",
+			].filter(Boolean).join(" ")}
+		>
+			{props.children}
+		</Node>
+	)
+})
 
 const Break = React.memo(props => (
 	<Node className="break">

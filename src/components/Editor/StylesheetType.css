@@ -80,6 +80,9 @@
 	color: hsl(var(--gray));
 }
 
+.flag-stylesheet-type .paragraph.emojis {
+	font-size: 1.5em;
+}
 .flag-stylesheet-type .emoji {
 	/* padding: 0px 2px; */
 	font-size: 1.2em;
