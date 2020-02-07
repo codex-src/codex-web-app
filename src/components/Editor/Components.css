@@ -98,6 +98,7 @@ article *::selection {
 }
 
 .code {
+	padding: 0px 2px;
 	vertical-align: 1px;
 	color: hsl(var(--blue-a400));
 	border-radius: 1px;

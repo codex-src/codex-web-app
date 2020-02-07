@@ -1,4 +1,4 @@
-import Debugger from "./Debugger"
+// import Debugger from "./Debugger"
 import Context from "./Context"
 import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange from "./helpers/getPosFromRange"
@@ -33,17 +33,17 @@ function Editor({ state, dispatch, ...props }) {
 				if (selection.rangeCount) {
 					selection.removeAllRanges()
 				}
-				const range = document.createRange()
-				const { node, offset } = getRangeFromPos(ref.current, state.pos1)
-				range.setStart(node, offset)
-				range.collapse()
-				// NOTE: Use pos1 and pos2
-				if (state.pos1 !== state.pos2) {
-					// TODO: Use state.pos1 as a shortcut
-					const { node, offset } = getRangeFromPos(ref.current, state.pos2)
-					range.setEnd(node, offset)
-				}
 				try {
+					const range = document.createRange()
+					const { node, offset } = getRangeFromPos(ref.current, state.pos1)
+					range.setStart(node, offset)
+					range.collapse()
+					// NOTE: Use pos1 and pos2
+					if (state.pos1 !== state.pos2) {
+						// TODO: Use state.pos1 as a shortcut
+						const { node, offset } = getRangeFromPos(ref.current, state.pos2)
+						range.setEnd(node, offset)
+					}
 					selection.addRange(range)
 				} catch (e) {
 					console.warn({ "shouldRender/catch": e })

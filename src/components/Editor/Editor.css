@@ -3,12 +3,3 @@ article {
 	outline: none;
 	overflow-wrap: break-word;
 }
-
-/*
-
-[data-node]:empty::before {
-	display: block;
-	content: " ";
-}
-
-*/
