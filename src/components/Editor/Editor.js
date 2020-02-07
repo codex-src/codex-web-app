@@ -72,23 +72,32 @@ function Editor({ state, dispatch, ...props }) {
 	)
 
 	// Shortcuts:
-	React.useEffect(() => {
-		const onKeyDown = e => {
-			switch (true) {
-			// Read-only mode:
-			case platform.detectKeyCode(e, 191):
-				e.preventDefault()
-				dispatch.toggleReadOnly()
-			default:
-				// No-op
-				break
+	React.useEffect(
+		React.useCallback(() => {
+			const onKeyDown = e => {
+				switch (true) {
+				// Show markdown background:
+				case platform.detectKeyCode(e, 186): // ;:
+					e.preventDefault()
+					dispatch.toggleFlagShowMarkdownBackground()
+					return
+				// Read-only mode:
+				case platform.detectKeyCode(e, 222): // "'
+					e.preventDefault()
+					dispatch.toggleFlagReadOnlyMode()
+					return
+				default:
+					// No-op
+					break
+				}
 			}
-		}
-		document.addEventListener("keydown", onKeyDown)
-		return () => {
-			document.removeEventListener("keydown", onKeyDown)
-		}
-	}, [])
+			document.addEventListener("keydown", onKeyDown)
+			return () => {
+				document.removeEventListener("keydown", onKeyDown)
+			}
+		}, [dispatch]),
+		[],
+	)
 
 	// Gets the cursors (and coords).
 	const getPos = ({ andCoords } = { andCoords: true }) => {
@@ -115,11 +124,13 @@ function Editor({ state, dispatch, ...props }) {
 				{
 					ref,
 
-					className: !state.readOnly ? "read-write" : "read-only",
+					className: [
+						state.flagShowMarkdownBackground && "flag-show-markdown-background",
+						!state.flagReadOnlyMode ? "flag-read-write-mode" : "flag-read-only-mode",
+					].filter(Boolean).join(" "),
 
-					contentEditable: !state.readOnly && true,
-					suppressContentEditableWarning: !state.readOnly && true,
-					// spellCheck: true,
+					contentEditable: !state.flagReadOnlyMode && true,
+					suppressContentEditableWarning: !state.flagReadOnlyMode && true,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,

@@ -18,7 +18,8 @@ const ActionTypes = new Enum(
 )
 
 const initialState = {
-	readOnly: false,      // Is the editor read-only?
+	flagShowMarkdownBackground: false, // Show markdown background (e.g. strong, em, etc.)?
+	flagReadOnlyMode: false,           // Is the editor read-only?
 
 	epoch: 0,             // The epoch (time stamp) of the editor
 	actionType: "",       // The type of the current action
@@ -38,8 +39,11 @@ const initialState = {
 }
 
 const reducer = state => ({
-	toggleReadOnly() {
-		state.readOnly = !state.readOnly
+	toggleFlagShowMarkdownBackground() {
+		state.flagShowMarkdownBackground = !state.flagShowMarkdownBackground
+	},
+	toggleFlagReadOnlyMode() {
+		state.flagReadOnlyMode = !state.flagReadOnlyMode
 	},
 	newAction(actionType) {
 		const actionTimeStamp = Date.now() - state.epoch

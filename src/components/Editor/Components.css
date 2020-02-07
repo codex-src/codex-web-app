@@ -91,9 +91,10 @@ article *::selection {
 .strong {
 	font-weight: bold;
 }
-.read-write .em,
-.read-write .strong {
+.flag-read-write-mode.flag-show-markdown-background .em,
+.flag-read-write-mode.flag-show-markdown-background .strong {
 	background: hsla(var(--blue-a400), 0.05);
+	border-radius: 1px;
 }
 
 .code {
@@ -110,6 +111,6 @@ article *::selection {
 	white-space: pre;
 	color: hsl(var(--blue-a400));
 }
-.read-only .markdown {
+.flag-read-only-mode .markdown {
 	display: none;
 }
