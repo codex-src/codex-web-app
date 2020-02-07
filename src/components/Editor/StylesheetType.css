@@ -1,33 +1,28 @@
-/* @import "https://fonts.googleapis.com/css?family=Fira+Code&display=block"; */
-/* @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Duo/Webfonts/index.css"; */
-/* @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Quattro/Webfonts/index.css"; */
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 
-article {
-	--padding-x:  24px;
-	--padding-y:  8px;
-
-	--tabs:       4;
-	--tabs-code:  2;
-	--font:       19px/1.50 system-ui;
-	--font-code:  17px/1.25 "iA Writer Mono", monospace;
-
-	--box-shadow: 0px 0px 1px hsl(var(--gray));
+.flag-stylesheet-type {
+	--padding-x:   24px;
+	--padding-y:   8px;
+	--tabs:        4;
+	--tabs-code:   2;
+	--font:        19px/1.50 system-ui;
+	--font-code:   17px/1.25 "iA Writer Mono", monospace;
+	--box-shadow:  0px 0px 1px hsl(var(--gray));
 }
 
-article {
+.flag-stylesheet-type {
 	-moz-tab-size: var(--tabs);
 	tab-size:      var(--tabs);
 	font:          var(--font);
 	color:         hsl(var(--gray-900));
 	caret-color:   hsl(var(--black));
 }
-article *::selection {
+.flag-stylesheet-type *::selection {
   background: hsla(var(--blue-a400), 0.25) !important;
 }
 
-.code-block,
-.code {
+.flag-stylesheet-type .code-block,
+.flag-stylesheet-type .code {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
@@ -36,41 +31,41 @@ article *::selection {
 	font:          var(--font-code);
 }
 
-.header {
+.flag-stylesheet-type .header {
 	font-weight: bold;
 	color: hsl(var(--black));
 }
-.header.h1 {
+.flag-stylesheet-type .header.h1 {
 	font-size: 1.75em;
 }
-.header.h2 {
+.flag-stylesheet-type .header.h2 {
 	font-size: 1.25em;
 }
-.header.h3 {
+.flag-stylesheet-type .header.h3 {
 	font-size: 1.20em;
 }
-.header.h4 {
+.flag-stylesheet-type .header.h4 {
 	font-size: 1.15em;
 }
-.header.h5 {
+.flag-stylesheet-type .header.h5 {
 	font-size: 1.10em;
 }
-.header.h6 {
+.flag-stylesheet-type .header.h6 {
 	font-size: 1.05em;
 }
 
-.comment,
-.comment > .markdown {
+.flag-stylesheet-type .comment,
+.flag-stylesheet-type .comment > .markdown {
 	color: hsl(var(--gray));
 }
 
-.blockquote {
+.flag-stylesheet-type .blockquote {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
 	box-shadow: var(--box-shadow);
 }
 
-.code-block {
+.flag-stylesheet-type .code-block {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
 	border-radius: 1px;
@@ -78,40 +73,40 @@ article *::selection {
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
-.code-block > [data-node] {
+.flag-stylesheet-type .code-block > [data-node] {
 	white-space: pre !important;
 }
-.code-block > [data-node] > .markdown {
+.flag-stylesheet-type .code-block > [data-node] > .markdown {
 	color: hsl(var(--gray));
 }
 
-.em {
+.flag-stylesheet-type .em {
 	font-style: italic;
 }
-.strong {
+.flag-stylesheet-type .strong {
 	font-weight: bold;
 }
-.flag-read-write-mode.flag-show-markdown-background .em,
-.flag-read-write-mode.flag-show-markdown-background .strong {
+.flag-stylesheet-type.flag-read-write-mode.flag-show-markdown-background .em,
+.flag-stylesheet-type.flag-read-write-mode.flag-show-markdown-background .strong {
 	background: hsla(var(--blue-a400), 0.05);
 	border-radius: 1px;
 }
 
-.code {
+.flag-stylesheet-type .code {
 	padding: 0px 2px;
 	vertical-align: 1px;
 	color: hsl(var(--blue-a400));
 	border-radius: 1px;
 	box-shadow: var(--box-shadow);
 }
-.code > .markdown {
+.flag-stylesheet-type .code > .markdown {
 	color: hsl(var(--gray));
 }
 
-.markdown {
+.flag-stylesheet-type .markdown {
 	white-space: pre;
 	color: hsl(var(--blue-a400));
 }
-.flag-read-only-mode .markdown {
+.flag-stylesheet-type.flag-read-only-mode .markdown {
 	display: none;
 }

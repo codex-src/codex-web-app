@@ -2,7 +2,8 @@ import Markdown from "./Markdown"
 import React from "react"
 import recurse from "./ComponentsText"
 
-import "./Components.css"
+import "./StylesheetMono.css"
+import "./StylesheetType.css"
 
 // NOTE: Gecko/Firefox needs pre-wrap to be an inline style
 const Node = props => (

@@ -53,6 +53,7 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
+	// TODO: Idle timeout
 	React.useEffect(
 		React.useCallback(() => {
 			if (!state.focused) {
@@ -76,13 +77,21 @@ function Editor({ state, dispatch, ...props }) {
 		React.useCallback(() => {
 			const onKeyDown = e => {
 				switch (true) {
+				case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
+					e.preventDefault()
+					dispatch.setFlagStylesheetType()
+					return
+				case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
+					e.preventDefault()
+					dispatch.setFlagStylesheetMono()
+					return
 				// Show markdown background:
-				case platform.detectKeyCode(e, 186): // ;:
+				case platform.detectKeyCode(e, 186): // 186: ;
 					e.preventDefault()
 					dispatch.toggleFlagShowMarkdownBackground()
 					return
 				// Read-only mode:
-				case platform.detectKeyCode(e, 222): // "'
+				case platform.detectKeyCode(e, 222): // 222: '
 					e.preventDefault()
 					dispatch.toggleFlagReadOnlyMode()
 					return
@@ -125,6 +134,7 @@ function Editor({ state, dispatch, ...props }) {
 					ref,
 
 					className: [
+						!state.flagReadOnlyMode ? `flag-stylesheet-${state.flagStylesheet}` : "flag-stylesheet-type",
 						state.flagShowMarkdownBackground && "flag-show-markdown-background",
 						!state.flagReadOnlyMode ? "flag-read-write-mode" : "flag-read-only-mode",
 					].filter(Boolean).join(" "),

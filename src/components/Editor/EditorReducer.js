@@ -5,7 +5,7 @@ import useMethods from "use-methods"
 import utf8 from "utils/encoding/utf8"
 
 const ActionTypes = new Enum(
-	"INIT",
+	// "INIT",
 	"FOCUS",
 	"BLUR",
 	"SELECT",
@@ -20,6 +20,7 @@ const ActionTypes = new Enum(
 const initialState = {
 	flagShowMarkdownBackground: false, // Show markdown background (e.g. strong, em, etc.)?
 	flagReadOnlyMode: false,           // Is the editor read-only?
+	flagStylesheet: "type",            // Stylesheet to use
 
 	epoch: 0,             // The epoch (time stamp) of the editor
 	actionType: "",       // The type of the current action
@@ -39,6 +40,15 @@ const initialState = {
 }
 
 const reducer = state => ({
+	//  toggleFlagStylesheet() {
+	//  	state.flagStylesheet = state.flagStylesheet !== "type" ? "type" : "mono"
+	//  },
+	setFlagStylesheetType() {
+		state.flagStylesheet = "type"
+	},
+	setFlagStylesheetMono() {
+		state.flagStylesheet = "mono"
+	},
 	toggleFlagShowMarkdownBackground() {
 		state.flagShowMarkdownBackground = !state.flagShowMarkdownBackground
 	},
@@ -46,7 +56,7 @@ const reducer = state => ({
 		state.flagReadOnlyMode = !state.flagReadOnlyMode
 	},
 	newAction(actionType) {
-		const actionTimeStamp = Date.now() - state.epoch
+		const actionTimeStamp = Date.now() // - state.epoch
 		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
 			// No-op
 			return
@@ -261,11 +271,11 @@ const reducer = state => ({
 })
 
 const init = initialValue => initialState => {
-	const epoch = Date.now()
+	// const epoch = Date.now()
 	const state = {
 		...initialState,
-		epoch,
-		actionType: ActionTypes.INIT,
+		// epoch,
+		// actionType: ActionTypes.INIT,
 		data: initialValue,
 		coords: {
 			pos1: {
