@@ -40,13 +40,12 @@ const initialState = {
 }
 
 const reducer = state => ({
-	//  toggleFlagStylesheet() {
-	//  	state.flagStylesheet = state.flagStylesheet !== "type" ? "type" : "mono"
-	//  },
 	setFlagStylesheetType() {
+		state.flagReadOnlyMode = false // Force read-write mode
 		state.flagStylesheet = "type"
 	},
 	setFlagStylesheetMono() {
+		state.flagReadOnlyMode = false // Force read-write mode
 		state.flagStylesheet = "mono"
 	},
 	toggleFlagShowMarkdownBackground() {

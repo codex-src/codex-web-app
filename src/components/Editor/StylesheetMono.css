@@ -37,28 +37,6 @@
 	font-weight: bold;
 	color: hsl(var(--black));
 }
-/*
-
-.flag-stylesheet-mono .header.h1 {
-	font-size: 1.75em;
-}
-.flag-stylesheet-mono .header.h2 {
-	font-size: 1.25em;
-}
-.flag-stylesheet-mono .header.h3 {
-	font-size: 1.20em;
-}
-.flag-stylesheet-mono .header.h4 {
-	font-size: 1.15em;
-}
-.flag-stylesheet-mono .header.h5 {
-	font-size: 1.10em;
-}
-.flag-stylesheet-mono .header.h6 {
-	font-size: 1.05em;
-}
-
-*/
 
 .flag-stylesheet-mono .comment,
 .flag-stylesheet-mono .comment > .markdown {

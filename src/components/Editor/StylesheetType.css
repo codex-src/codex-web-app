@@ -80,6 +80,13 @@
 	color: hsl(var(--gray));
 }
 
+.flag-stylesheet-type .emoji {
+	/* padding: 0px 2px; */
+	font-size: 1.2em;
+	line-height: 1;
+	vertical-align: -0.1em;
+}
+
 .flag-stylesheet-type .em {
 	font-style: italic;
 }

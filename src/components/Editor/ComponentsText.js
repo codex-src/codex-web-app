@@ -1,7 +1,13 @@
+import emojiTrie from "emoji-trie"
 import Markdown from "./Markdown"
 import React from "react"
 
-// TODO: Deprecate semantic elements?
+const Emoji = props => (
+	<span className="emoji">
+		{props.children}
+	</span>
+)
+
 const Em = props => (
 	<span className="em">
 		<Markdown start={props.syntax} end={props.syntax}>
@@ -54,14 +60,15 @@ function parseTextComponents(data) {
 		const char = data[index]           // Faster access
 		const length = data.length - index // Faster access
 		switch (true) {
-		// Strong and or emphasis:
+		// Emphasis and or strong:
 		case char === "*" || char === "_":
-			syntax = char
+			syntax = char // DELETEME?
 			// Strong and emphasis (takes precedence):
 			if (length >= "***x***".length && data.slice(index, index + 3) === syntax.repeat(3)) {
 				syntax = syntax.repeat(3)
 				const offset = data.slice(index + syntax.length).indexOf(syntax)
 				if (offset <= 0) {
+					// No-op
 					break
 				}
 				index += syntax.length
@@ -74,6 +81,7 @@ function parseTextComponents(data) {
 				syntax = syntax.repeat(2)
 				const offset = data.slice(index + syntax.length).indexOf(syntax)
 				if (offset <= 0) {
+					// No-op
 					break
 				}
 				index += syntax.length
@@ -86,6 +94,7 @@ function parseTextComponents(data) {
 				// syntax = syntax.repeat(1)
 				const offset = data.slice(index + syntax.length).indexOf(syntax)
 				if (offset <= 0) {
+					// No-op
 					break
 				}
 				index += syntax.length
@@ -100,6 +109,7 @@ function parseTextComponents(data) {
 			if (length >= "`x`".length) {
 				const offset = data.slice(index + 1).indexOf("`")
 				if (offset <= 0) {
+					// No-op
 					break
 				}
 				index += "`".length
@@ -109,11 +119,38 @@ function parseTextComponents(data) {
 				break
 			}
 			break
+
+		// // 🍾🎉🎊
+		// case char >= "\u{1F600}" && char <= "\u{1F3F4}":
+		// 	if (length) {
+		// 		const emoji = emojiTrie.atStart(data.slice(index))
+		// 		if (!emoji) {
+		// 			// No-op
+		// 			break
+		// 		}
+		// 		// const children = emoji
+		// 		components.push(<Emoji key={key}>{emoji}</Emoji>)
+		// 		index += emoji.length - 1
+		// 		break
+		// 	}
+		// 	break
+
 		default:
+			// No-op
 			break
 		}
 		// Text:
 		if (key === components.length) {
+
+			// 🍾🎉🎊
+			// const codePoint = char.codePointAt(0)
+			const emoji = emojiTrie.atStart(data.slice(index))
+			if (emoji) {
+				components.push(<Emoji key={key}>{emoji}</Emoji>)
+				index += emoji.length
+				continue
+			}
+
 			// Push new string component:
 			if (!components.length || typeof components[components.length - 1] !== "string") {
 				components.push(char)
