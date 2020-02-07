@@ -84,7 +84,6 @@
 	font-size: 1.5em;
 }
 .flag-stylesheet-type .emoji {
-	/* padding: 0px 2px; */
 	font-size: 1.2em;
 	line-height: 1;
 	vertical-align: -0.1em;
@@ -103,6 +102,7 @@
 }
 
 .flag-stylesheet-type .code {
+	box-decoration-break: clone;
 	padding: 0px 2px;
 	vertical-align: 1px;
 	color: hsl(var(--blue-a400));

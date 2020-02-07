@@ -35,7 +35,9 @@ const Blockquote = React.memo(props => (
 		{props.children.map((each, index) => (
 			<Node key={index}>
 				<Markdown start={each.start}>
-					{each.data}
+					{each.data || (
+						<br />
+					)}
 				</Markdown>
 			</Node>
 		))}
