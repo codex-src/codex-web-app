@@ -11,12 +11,17 @@
 
 	-moz-tab-size:   2;
 	tab-size:        2;
-	font:            16px/1.5 "iA Writer Mono", sans-serif;
+	font:            16px/1.6 "iA Writer Mono", sans-serif;
 	color:           hsl(var(--gray-900));
 	caret-color:     hsl(var(--black));
 }
 .prefers-code-stylesheet *::selection {
   background: hsla(218, 100%, 58.0392%, 0.25) !important;
+}
+
+pre,
+code {
+	line-height: 1.25;
 }
 
 pre,
@@ -115,6 +120,6 @@ pre > [data-node] > code {
 }
 
 .prefers-code-stylesheet .markdown {
-	white-space: pre;
+	/* white-space: pre; */
 	color: hsl(var(--blue-a400));
 }

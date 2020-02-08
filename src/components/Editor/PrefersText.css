@@ -34,6 +34,10 @@ pre > [data-node] {
 pre > [data-node] > code {
 	padding-right: var(--offset-x);
 }
+.prefers-text-stylesheet.prefers-read-only-mode pre > [data-node-start],
+.prefers-text-stylesheet.prefers-read-only-mode pre > [data-node-end] {
+	display: none;
+}
 
 .prefers-text-stylesheet .header {
 	font-weight: bold;
@@ -155,7 +159,7 @@ pre > [data-node] > code {
 }
 
 .prefers-text-stylesheet .markdown {
-	white-space: pre;
+	/* white-space: pre; */
 	color: hsl(var(--blue-a400));
 }
 .prefers-text-stylesheet.prefers-read-only-mode .markdown {

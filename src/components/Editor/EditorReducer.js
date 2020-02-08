@@ -45,7 +45,7 @@ const reducer = state => ({
 	updatedPrefs() {
 		const classNames = []
 		// Prefers code stylesheet:
-		if (state.prefersCodeStylesheet) {
+		if (!state.prefersReadOnlyMode && state.prefersCodeStylesheet) {
 			classNames.push("prefers-code-stylesheet")
 		} else {
 			classNames.push("prefers-text-stylesheet")

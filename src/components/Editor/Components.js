@@ -84,18 +84,22 @@ const Blockquote = React.memo(props => (
 // NOTE: Do not use start={... ? ... : ""} because
 // Gecko/Firefox creates an empty text node
 const CodeBlock = React.memo(props => {
-	const children = props.children.split("\n")
+	const components = props.children.split("\n")
 	return (
 		<Node tagName="pre" className="code-block" spellCheck={false}>
-			{children.map((each, index) => (
-				<Node key={index}>
+			{components.map((each, index) => (
+				<Node
+					key={index}
+					data-node-start={components.length > 1 && !index ? true : null}
+					data-node-end={components.length > 1 && index + 1 === components.length ? true : null}
+				>
 					<code>
 						<Markdown
 							start={!index ? `\`\`\`${props.lang}` : null}
-							end={index + 1 === children.length ? "```" : null}
+							end={index + 1 === components.length ? "```" : null}
 						>
 							{each || (
-								index > 0 && index + 1 < children.length && (
+								index > 0 && index + 1 < components.length && (
 									<br />
 								)
 							)}
