@@ -157,7 +157,7 @@ function parseComponents(data) {
 		// Comment:
 		case "/":
 			if (length >= 2 && substr.slice(0, 2) === "//") {
-				const children = substr.slice(2)
+				const children = recurse(substr.slice(2))
 				components.push(<Comment key={key} start="//">{children}</Comment>)
 			}
 			break

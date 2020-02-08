@@ -64,9 +64,13 @@ pre > [data-node] > code {
 	font-size: 1.05em;
 	/* letter-spacing: -0.0166em; */
 }
+.prefers-text-stylesheet .header.h5 .markdown,
+.prefers-text-stylesheet .header.h6 .markdown {
+	color: hsl(var(--gray));
+}
 
-.prefers-text-stylesheet .comment,
-.prefers-text-stylesheet .comment > .markdown {
+.prefers-text-stylesheet .comment {
+	--blue-a400: var(--gray);
 	color: hsl(var(--gray));
 }
 
@@ -76,7 +80,7 @@ pre > [data-node] > code {
 .prefers-text-stylesheet.prefers-read-only-mode .blockquote {
 	padding-left: var(--offset-x);
 	font-size: 1.05em;
-	line-height: 1.75;
+	/* line-height: 1.75; */
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
 }
 
@@ -120,7 +124,7 @@ pre > [data-node] > code {
 .prefers-text-stylesheet.prefers-text-background .em *,
 .prefers-text-stylesheet.prefers-text-background .strong *,
 .prefers-text-stylesheet.prefers-text-background .strikethrough * {
-	background: none;
+	background: none !important;
 }
 
 .prefers-text-stylesheet .code {

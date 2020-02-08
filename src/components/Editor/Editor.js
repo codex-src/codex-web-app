@@ -284,6 +284,10 @@ function Editor({ state, dispatch, ...props }) {
 					},
 
 					onCut: e => {
+						if (state.prefersReadOnlyMode) {
+							// No-op
+							return
+						}
 						e.preventDefault()
 						if (state.collapsed) {
 							// No-op
@@ -294,6 +298,10 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.cut()
 					},
 					onCopy: e => {
+						if (state.prefersReadOnlyMode) {
+							// No-op
+							return
+						}
 						e.preventDefault()
 						if (state.collapsed) {
 							// No-op
@@ -304,6 +312,10 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.copy()
 					},
 					onPaste: e => {
+						if (state.prefersReadOnlyMode) {
+							// No-op
+							return
+						}
 						e.preventDefault()
 						const substr = e.clipboardData.getData("text/plain")
 						if (!substr) {
