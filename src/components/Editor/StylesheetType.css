@@ -96,15 +96,20 @@
 .flag-css-type .strong {
 	font-weight: bold;
 }
-.flag-css-type.flag-read-write-mode.flag-show-markdown-background .em,
-.flag-css-type.flag-read-write-mode.flag-show-markdown-background .strong,
-.flag-css-type.flag-read-write-mode.flag-show-markdown-background .strikethrough {
+/* FIXME: Drop .flag-read-write-mode */
+.flag-read-write-mode.flag-css-type.flag-show-markdown-background .em,
+.flag-read-write-mode.flag-css-type.flag-show-markdown-background .strong {
 	background: hsla(var(--blue-a400), 0.05);
 	border-radius: 1px;
 }
-.flag-css-type.flag-read-write-mode.flag-show-markdown-background .em *,
-.flag-css-type.flag-read-write-mode.flag-show-markdown-background .strong *,
-.flag-css-type.flag-read-write-mode.flag-show-markdown-background .strikethrough * {
+.flag-read-write-mode.flag-css-type.flag-show-markdown-background .strikethrough {
+	background: hsla(var(--gray), 0.1);
+	border-radius: 1px;
+}
+/* FIXME: Drop .flag-read-write-mode */
+.flag-read-write-mode.flag-css-type.flag-show-markdown-background .em *,
+.flag-read-write-mode.flag-css-type.flag-show-markdown-background .strong *,
+.flag-read-write-mode.flag-css-type.flag-show-markdown-background .strikethrough * {
 	background: none;
 }
 
@@ -125,7 +130,6 @@
 	font-style: italic;
 	color: hsl(var(--gray));
 	text-decoration: line-through;
-	background: hsla(var(--gray), 0.1) !important;
 }
 
 .flag-css-type .markdown {
