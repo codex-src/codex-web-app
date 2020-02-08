@@ -1,6 +1,31 @@
 import Context from "./Context"
 import React from "react"
 
+const TextBackgroundStylesheet = props => (
+	<style>{
+		`
+.prefers-text-background .em,
+.prefers-text-background .strong {
+	padding: 2px;
+	background: hsla(var(--blue-a400), 0.05);
+}
+.prefers-text-background .strikethrough,
+.prefers-text-background .comment .em,
+.prefers-text-background .comment .strong,
+.prefers-text-background .comment .strikethrough {
+	padding: 2px;
+	background: hsla(var(--gray), 0.1);
+}
+.prefers-text-background .em *,
+.prefers-text-background .strong *,
+.prefers-text-background .strikethrough * {
+	background: none !important;
+}
+
+`.trim()
+	}</style>
+)
+
 const ReadOnlyModeStylesheet = props => (
 	<style>{
 		`
@@ -35,8 +60,6 @@ const ReadOnlyModeStylesheet = props => (
 const SharedStylesheet = props => (
 	<style>{
 		`
-@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
-
 .editor {
 	--padding-x:     24px;
 	--padding-y:     12px;
@@ -129,10 +152,12 @@ const SharedStylesheet = props => (
 const TextStylesheet = props => (
 	<style>{
 		`
+@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
+
 .editor {
 	-moz-tab-size: 4;
 	tab-size: 4;
-	font: 19px/1.5 system-ui;
+	font: 19px/1.6 system-ui;
 }
 
 .code-block ,
@@ -142,7 +167,7 @@ const TextStylesheet = props => (
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: 16px/1.25 "iA Writer Mono", monospace;
+	font: 16px/1.4 "iA Writer Mono", monospace;
 }
 
 .header {
@@ -192,7 +217,7 @@ const CodeStylesheet = props => (
 
 .code-block,
 .code {
-	font: 16px/1.25 "iA Writer Mono", monospace;
+	font: 16px/1.4 "iA Writer Mono";
 }
 
 `.trim()
@@ -203,13 +228,14 @@ function Stylesheets(props) {
 	const [state] = React.useContext(Context)
 	return (
 		<React.Fragment>
+			<TextBackgroundStylesheet />
+			<ReadOnlyModeStylesheet />
 			<SharedStylesheet />
-			{!state.prefersCodeStylesheet ? (
+			{state.prefersReadOnlyMode || !state.prefersCodeStylesheet ? (
 				<TextStylesheet />
 			) : (
 				<CodeStylesheet />
 			)}
-			<ReadOnlyModeStylesheet />
 		</React.Fragment>
 	)
 }
