@@ -1,0 +1,139 @@
+@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
+
+.prefers-text-stylesheet {
+	--spread-x:     24px;
+	--spread-y:     8px;
+	--box-shadow:   0px 0px 1px hsl(var(--gray));
+
+	-moz-tab-size:  4;
+	tab-size:       4;
+	font:           19px/1.50 "Inter var", sans-serif;
+	letter-spacing: -0.0156em;
+	color:          hsl(var(--gray-900));
+	caret-color:    hsl(var(--black));
+}
+.prefers-text-stylesheet *::selection {
+  background: hsla(218, 100%, 58.0392%, 0.25) !important;
+}
+
+.prefers-text-stylesheet .code-block,
+.prefers-text-stylesheet .code {
+	-webkit-font-smoothing:  auto;
+	-moz-osx-font-smoothing: auto;
+
+	-moz-tab-size:  2;
+	tab-size:       2;
+	font:           17px/1.25 "iA Writer Mono", monospace;
+}
+
+.prefers-text-stylesheet .header {
+	font-weight: bold;
+	color: hsl(var(--black));
+}
+.prefers-text-stylesheet .header.h1 {
+	font-size: 1.75em;
+	letter-spacing: -0.0217em;
+}
+.prefers-text-stylesheet .header.h2 {
+	font-size: 1.25em;
+	letter-spacing: -0.0194em;
+}
+.prefers-text-stylesheet .header.h3 {
+	font-size: 1.20em;
+	letter-spacing: -0.0188em;
+}
+.prefers-text-stylesheet .header.h4 {
+	font-size: 1.15em;
+	letter-spacing:-0.0182em;
+}
+.prefers-text-stylesheet .header.h5 {
+	font-size: 1.10em;
+	letter-spacing: -0.0175em;
+}
+.prefers-text-stylesheet .header.h6 {
+	font-size: 1.05em;
+	letter-spacing: -0.0166em;
+}
+
+.prefers-text-stylesheet .comment,
+.prefers-text-stylesheet .comment > .markdown {
+	color: hsl(var(--gray));
+}
+
+.prefers-text-stylesheet .blockquote {
+	margin: 0px calc(-1 * var(--spread-x));
+	padding: var(--spread-y) var(--spread-x);
+	box-shadow: var(--box-shadow);
+}
+
+.prefers-text-stylesheet .code-block {
+	margin: 0px calc(-1 * var(--spread-x));
+	padding: var(--spread-y) var(--spread-x);
+	border-radius: 1px;
+	box-shadow: var(--box-shadow);
+	-webkit-overflow-scrolling: touch;
+	overflow-x: scroll;
+}
+.prefers-text-stylesheet .code-block > [data-node] {
+	white-space: pre !important;
+}
+.prefers-text-stylesheet .code-block > [data-node] > .markdown {
+	color: hsl(var(--gray));
+}
+
+.prefers-text-stylesheet .paragraph.emojis {
+	font-size: 1.5em;
+}
+.prefers-text-stylesheet .emoji {
+	font-size: 1.2em;
+	line-height: 1;
+	vertical-align: -0.1em;
+}
+
+.prefers-text-stylesheet .em {
+	font-style: italic;
+}
+.prefers-text-stylesheet .strong {
+	font-weight: bold;
+}
+
+.prefers-text-stylesheet.prefers-text-background .em,
+.prefers-text-stylesheet.prefers-text-background .strong {
+	background: hsla(var(--blue-a400), 0.05);
+	border-radius: 1px;
+}
+.prefers-text-stylesheet.prefers-text-background .strikethrough {
+	background: hsla(var(--gray), 0.1);
+	border-radius: 1px;
+}
+.prefers-text-stylesheet.prefers-text-background .em *,
+.prefers-text-stylesheet.prefers-text-background .strong *,
+.prefers-text-stylesheet.prefers-text-background .strikethrough * {
+	background: none;
+}
+
+.prefers-text-stylesheet .code {
+	box-decoration-break: clone;
+	padding: 0px 2px;
+	color: hsl(var(--blue-a400));
+	border-radius: 1px;
+	box-shadow: var(--box-shadow);
+}
+.prefers-text-stylesheet .code > .markdown {
+	color: hsl(var(--gray));
+}
+
+.prefers-text-stylesheet .strikethrough {
+	--blue-a400: var(--gray);
+	font-style: italic;
+	color: hsl(var(--gray));
+	text-decoration: line-through;
+}
+
+.prefers-text-stylesheet .markdown {
+	white-space: pre;
+	color: hsl(var(--blue-a400));
+}
+.prefers-text-stylesheet.prefers-read-only-mode .markdown {
+	display: none;
+}

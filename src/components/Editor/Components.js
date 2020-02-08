@@ -2,12 +2,16 @@ import Markdown from "./Markdown"
 import React from "react"
 import recurse from "./ComponentsText"
 
-import "./StylesheetCode.css"
-import "./StylesheetText.css"
+import "./PrefersCode.css"
+import "./PrefersText.css"
 
+// Imperative styles:
+//
 // NOTE: Gecko/Firefox needs pre-wrap to be an inline style
+const style = { whiteSpace: "pre-wrap" } // FIXME?
+
 const Node = props => (
-	<div data-node {...props}>
+	<div style={style} data-node {...props}>
 		{props.children || (
 			<br />
 		)}

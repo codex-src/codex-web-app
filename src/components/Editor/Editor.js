@@ -9,7 +9,12 @@ import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
 
-import "./Editor.css"
+// Imperative styles:
+const style = {
+	whiteSpace:   "pre-wrap", // FIXME?
+	outline:      "none",
+	overflowWrap: "break-word",
+}
 
 function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
@@ -77,23 +82,25 @@ function Editor({ state, dispatch, ...props }) {
 		React.useCallback(() => {
 			const onKeyDown = e => {
 				switch (true) {
+				// Prefers text stylesheet mode:
 				case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
 					e.preventDefault()
-					dispatch.setFlagStylesheetText()
+					dispatch.preferTextStylesheet()
 					return
+				// Prefers code stylesheet mode:
 				case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
 					e.preventDefault()
-					dispatch.setFlagStylesheetCode()
+					dispatch.preferCodeStylesheet()
 					return
-				// Show markdown background:
+				// Prefers text background:
 				case platform.detectKeyCode(e, 186): // 186: ;
 					e.preventDefault()
-					dispatch.toggleFlagShowMarkdownBackground()
+					dispatch.preferTextBackground()
 					return
-				// Read-only mode:
+				// Prefers read-only mode:
 				case platform.detectKeyCode(e, 222): // 222: '
 					e.preventDefault()
-					dispatch.toggleFlagReadOnlyMode()
+					dispatch.toggleReadOnlyMode()
 					return
 				default:
 					// No-op
@@ -133,11 +140,9 @@ function Editor({ state, dispatch, ...props }) {
 				{
 					ref,
 
-					className: [
-						!state.flagReadOnlyMode ? `flag-stylesheet-${state.flagStylesheet}` : "flag-stylesheet-text",
-						state.flagShowMarkdownBackground && "flag-show-markdown-background",
-						!state.flagReadOnlyMode ? "flag-read-write-mode" : "flag-read-only-mode",
-					].filter(Boolean).join(" "),
+					className: state.prefersClassName,
+
+					style,
 
 					contentEditable: !state.flagReadOnlyMode && true,
 					suppressContentEditableWarning: !state.flagReadOnlyMode && true,

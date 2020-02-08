@@ -17,9 +17,10 @@ const ActionTypes = new Enum(
 )
 
 const initialState = {
-	flagShowMarkdownBackground: true, // Show markdown background (e.g. strong, em, etc.)?
-	flagReadOnlyMode: false,          // Is the editor read-only?
-	flagStylesheet: "text",           // Stylesheet to use
+	prefersCodeStylesheet: false, // New
+	prefersReadOnlyMode: false, // New
+	prefersTextBackground: false, // New
+	prefersClassName: "prefers-text-stylesheet", // New
 
 	epoch: 0,             // The epoch (time stamp) of the editor
 	actionType: "",       // The type of the current action
@@ -39,19 +40,45 @@ const initialState = {
 }
 
 const reducer = state => ({
-	setFlagStylesheetText() {
-		state.flagReadOnlyMode = false // Force read-write mode
-		state.flagStylesheet = "text"
+	updatedPreferences() {
+		const classNames = []
+		// Prefers code stylesheet:
+		if (state.prefersCodeStylesheet) {
+			classNames.push("prefers-code-stylesheet")
+		} else {
+			classNames.push("prefers-text-stylesheet")
+		}
+		// Prefers text background:
+		if (!state.prefersReadOnlyMode && state.prefersTextBackground) {
+			classNames.push("prefers-text-background")
+		}
+		// Prefers read-only mode:
+		if (state.prefersReadOnlyMode) {
+			classNames.push("prefers-read-only-mode")
+		}
+		state.prefersClassName = classNames.join(" ")
 	},
-	setFlagStylesheetCode() {
-		state.flagReadOnlyMode = false // Force read-write mode
-		state.flagStylesheet = "code"
+	preferTextStylesheet() {
+		state.prefersReadOnlyMode = false // Reset
+		state.prefersCodeStylesheet = false
+		this.updatedPreferences()
 	},
-	toggleFlagShowMarkdownBackground() {
-		state.flagShowMarkdownBackground = !state.flagShowMarkdownBackground
+	preferCodeStylesheet() {
+		state.prefersReadOnlyMode = false // Reset
+		state.prefersCodeStylesheet = true
+		this.updatedPreferences()
 	},
-	toggleFlagReadOnlyMode() {
-		state.flagReadOnlyMode = !state.flagReadOnlyMode
+	preferTextBackground() {
+		if (state.prefersReadOnlyMode) {
+			// No-op
+			return
+		}
+		state.prefersTextBackground = !state.prefersTextBackground
+		this.updatedPreferences()
+	},
+	toggleReadOnlyMode() {
+		state.prefersReadOnlyMode = !state.prefersReadOnlyMode
+		this.updatedPreferences()
 	},
 	newAction(actionType) {
 		const actionTimeStamp = Date.now() // - state.epoch

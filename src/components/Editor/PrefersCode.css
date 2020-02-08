@@ -1,0 +1,107 @@
+@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
+
+.prefers-code-stylesheet {
+	--spread-x:     24px;
+	--spread-y:     8px;
+	--box-shadow:   0px 0px 1px hsl(var(--gray));
+
+	-webkit-font-smoothing:  auto;
+	-moz-osx-font-smoothing: auto;
+
+	-moz-tab-size:  2;
+	tab-size:       2;
+	font:           16px/1.5 "iA Writer Mono", sans-serif;
+	color:          hsl(var(--gray-900));
+	caret-color:    hsl(var(--black));
+}
+.prefers-code-stylesheet *::selection {
+  background: hsla(218, 100%, 58.0392%, 0.25) !important;
+}
+
+.prefers-code-stylesheet .header {
+	font-weight: bold;
+	color: hsl(var(--black));
+}
+
+.prefers-code-stylesheet .comment,
+.prefers-code-stylesheet .comment > .markdown {
+	color: hsl(var(--gray));
+}
+
+.prefers-code-stylesheet .blockquote {
+	margin: 0px calc(-1 * var(--spread-x));
+	padding: var(--spread-y) var(--spread-x);
+	box-shadow: var(--box-shadow);
+}
+
+.prefers-code-stylesheet .code-block {
+	margin: 0px calc(-1 * var(--spread-x));
+	padding: var(--spread-y) var(--spread-x);
+	border-radius: 1px;
+	box-shadow: var(--box-shadow);
+	-webkit-overflow-scrolling: touch;
+	overflow-x: scroll;
+}
+.prefers-code-stylesheet .code-block > [data-node] {
+	white-space: pre !important;
+}
+.prefers-code-stylesheet .code-block > [data-node] > .markdown {
+	color: hsl(var(--gray));
+}
+
+.prefers-code-stylesheet .paragraph.emojis {
+	font-size: 1.5em;
+}
+.prefers-code-stylesheet .emoji {
+	font-size: 1.2em;
+	line-height: 1;
+	vertical-align: -0.1em;
+}
+
+.prefers-code-stylesheet .em {
+	font-style: italic;
+}
+.prefers-code-stylesheet .strong {
+	font-weight: bold;
+}
+
+.prefers-code-stylesheet.prefers-text-background .em,
+.prefers-code-stylesheet.prefers-text-background .strong {
+	background: hsla(var(--blue-a400), 0.05);
+	border-radius: 1px;
+}
+.prefers-code-stylesheet.prefers-text-background .strikethrough {
+	background: hsla(var(--gray), 0.1);
+	border-radius: 1px;
+}
+.prefers-code-stylesheet.prefers-text-background .em *,
+.prefers-code-stylesheet.prefers-text-background .strong *,
+.prefers-code-stylesheet.prefers-text-background .strikethrough * {
+	background: none;
+}
+
+.prefers-code-stylesheet .code {
+	box-decoration-break: clone;
+	padding: 0px 2px;
+	color: hsl(var(--blue-a400));
+	border-radius: 1px;
+	box-shadow: var(--box-shadow);
+}
+.prefers-code-stylesheet .code > .markdown {
+	color: hsl(var(--gray));
+}
+
+.prefers-code-stylesheet .strikethrough {
+	--blue-a400: var(--gray);
+	font-style: italic;
+	color: hsl(var(--gray));
+	text-decoration: line-through;
+}
+
+.prefers-code-stylesheet .markdown {
+	white-space: pre;
+	color: hsl(var(--blue-a400));
+}
+.prefers-code-stylesheet.prefers-read-only-mode .markdown {
+	display: none;
+}
