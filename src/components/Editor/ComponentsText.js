@@ -42,6 +42,14 @@ const Code = props => (
 	</code>
 )
 
+const Strikethrough = props => (
+	<span className="strikethrough" /* spellCheck={false} */>
+		<Markdown start="~" end="~" >
+			{props.children}
+		</Markdown>
+	</span>
+)
+
 // Shorthand for parseTextComponents
 function recurse(data) {
 	return parseTextComponents(data)
@@ -60,6 +68,8 @@ function parseTextComponents(data) {
 		const char = data[index]           // Faster access
 		const length = data.length - index // Faster access
 		switch (true) {
+		// TODO: Fast pass?
+		//
 		// Emphasis and or strong:
 		case char === "*" || char === "_":
 			syntax = char // DELETEME?
@@ -119,38 +129,34 @@ function parseTextComponents(data) {
 				break
 			}
 			break
-
-		// // 🍾🎉🎊
-		// case char >= "\u{1F600}" && char <= "\u{1F3F4}":
-		// 	if (length) {
-		// 		const emoji = emojiTrie.atStart(data.slice(index))
-		// 		if (!emoji) {
-		// 			// No-op
-		// 			break
-		// 		}
-		// 		// const children = emoji
-		// 		components.push(<Emoji key={key}>{emoji}</Emoji>)
-		// 		index += emoji.length - 1
-		// 		break
-		// 	}
-		// 	break
-
+		// Strikethrough:
+		case char === "~":
+			if (length >= "~x~".length) {
+				const offset = data.slice(index + 1).indexOf("~")
+				if (offset <= 0) {
+					// No-op
+					break
+				}
+				index += "~".length
+				const children = recurse(data.slice(index, index + offset))
+				components.push(<Strikethrough key={key}>{children}</Strikethrough>)
+				index += offset + 1 // New
+				continue
+			}
+			break
 		default:
 			// No-op
 			break
 		}
 		// Text:
 		if (key === components.length) {
-
-			// 🍾🎉🎊
-			// const codePoint = char.codePointAt(0)
+			// Emoji:
 			const emoji = emojiTrie.atStart(data.slice(index))
 			if (emoji) {
 				components.push(<Emoji key={key}>{emoji}</Emoji>)
 				index += emoji.length
 				continue
 			}
-
 			// Push new string component:
 			if (!components.length || typeof components[components.length - 1] !== "string") {
 				components.push(char)

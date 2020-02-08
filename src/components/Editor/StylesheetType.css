@@ -18,7 +18,8 @@
 	caret-color:   hsl(var(--black));
 }
 .flag-stylesheet-type *::selection {
-  background: hsla(var(--blue-a400), 0.25) !important;
+	/* https://github.com/codex-src/material-colors.css/blob/9953862e56bf7c635c6257685e408b4d9d8d2a07/src/material-colors.css#L91 */
+  background: hsla(218, 100%, 58.0392%, 0.25) !important;
 }
 
 .flag-stylesheet-type .code-block,
@@ -96,7 +97,8 @@
 	font-weight: bold;
 }
 .flag-stylesheet-type.flag-read-write-mode.flag-show-markdown-background .em,
-.flag-stylesheet-type.flag-read-write-mode.flag-show-markdown-background .strong {
+.flag-stylesheet-type.flag-read-write-mode.flag-show-markdown-background .strong,
+.flag-stylesheet-type.flag-read-write-mode.flag-show-markdown-background .strikethrough {
 	background: hsla(var(--blue-a400), 0.05);
 	border-radius: 1px;
 }
@@ -112,6 +114,21 @@
 .flag-stylesheet-type .code > .markdown {
 	color: hsl(var(--gray));
 }
+
+.flag-stylesheet-type .strikethrough {
+	font-style: italic;
+	color: hsl(var(--gray));
+	text-decoration: line-through;
+	background: hsla(var(--gray), 0.1) !important;
+}
+.flag-stylesheet-type .strikethrough * {
+	color: hsl(var(--gray)) !important;
+	background: none !important;
+}
+
+/* .flag-stylesheet-type.flag-read-only-mode .strikethrough { */
+/* 	text-decoration: line-through currentColor; */
+/* } */
 
 .flag-stylesheet-type .markdown {
 	white-space: pre;

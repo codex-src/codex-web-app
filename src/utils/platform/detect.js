@@ -4,7 +4,6 @@ const keyCodeZ = 90
 
 // Detects whether a key down event matches a key code.
 export function detectKeyCode(e, keyCode, { shiftKey } = { shiftKey: false }) {
-	// console.log(e, ...arguments)
 	const ok = (
 		e.shiftKey === shiftKey &&
 		!e.altKey &&

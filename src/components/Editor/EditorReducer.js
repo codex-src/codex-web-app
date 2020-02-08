@@ -5,7 +5,6 @@ import useMethods from "use-methods"
 import utf8 from "utils/encoding/utf8"
 
 const ActionTypes = new Enum(
-	// "INIT",
 	"FOCUS",
 	"BLUR",
 	"SELECT",
@@ -18,9 +17,9 @@ const ActionTypes = new Enum(
 )
 
 const initialState = {
-	flagShowMarkdownBackground: false, // Show markdown background (e.g. strong, em, etc.)?
-	flagReadOnlyMode: false,           // Is the editor read-only?
-	flagStylesheet: "type",            // Stylesheet to use
+	flagShowMarkdownBackground: true, // Show markdown background (e.g. strong, em, etc.)?
+	flagReadOnlyMode: false,          // Is the editor read-only?
+	flagStylesheet: "type",           // Stylesheet to use
 
 	epoch: 0,             // The epoch (time stamp) of the editor
 	actionType: "",       // The type of the current action
