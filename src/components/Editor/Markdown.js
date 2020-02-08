@@ -1,23 +1,17 @@
 import React from "react"
 
-const Syntax = props => (
-	<span className="markdown" {...props}>
-		{props.children}
-	</span>
-)
-
-const Markdown = ({ style, ...props }) => (
+const Markdown = props => (
 	<React.Fragment>
 		{props.start && (
-			<Syntax {...props}>
+			<span className="markdown">
 				{props.start}
-			</Syntax>
+			</span>
 		)}
 		{props.children}
 		{props.end && (
-			<Syntax {...props}>
+			<span className="markdown">
 				{props.end}
-			</Syntax>
+			</span>
 		)}
 	</React.Fragment>
 )

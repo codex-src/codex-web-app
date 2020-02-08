@@ -10,12 +10,26 @@ import "./PrefersText.css"
 // NOTE: Gecko/Firefox needs pre-wrap to be an inline style
 const style = { whiteSpace: "pre-wrap" } // FIXME?
 
-const Node = props => (
-	<div style={style} data-node {...props}>
-		{props.children || (
+// const Node = props => (
+// 	<div style={style} data-node {...props}>
+// 		{props.children || (
+// 			<br />
+// 		)}
+// 	</div>
+// )
+
+const Node = ({ tagName, ...props }) => (
+	React.createElement(
+		tagName || "div",
+		{
+			style,
+			"data-node": true,
+			...props,
+		},
+		props.children || (
 			<br />
-		)}
-	</div>
+		),
+	)
 )
 
 const Header = React.memo(props => (
@@ -84,7 +98,7 @@ const Blockquote = React.memo(props => (
 const CodeBlock = React.memo(props => {
 	const children = props.children.split("\n")
 	return (
-		<Node className="code-block" spellCheck={false}>
+		<Node tagName="pre" className="code-block" spellCheck={false}>
 			{children.map((each, index) => (
 				<Node key={index}>
 					<Markdown
