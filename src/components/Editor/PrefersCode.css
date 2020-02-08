@@ -76,18 +76,21 @@ pre > [data-node] > code {
 	font-weight: 600;
 }
 
-.prefers-code-stylesheet.prefers-code-background .em,
-.prefers-code-stylesheet.prefers-code-background .strong {
+.prefers-code-stylesheet.prefers-text-background .em,
+.prefers-code-stylesheet.prefers-text-background .strong {
 	background: hsla(var(--blue-a400), 0.05);
 	border-radius: var(--border-radius);
 }
-.prefers-code-stylesheet.prefers-code-background .strikethrough {
+.prefers-code-stylesheet.prefers-text-background .strikethrough,
+.prefers-code-stylesheet.prefers-text-background .comment .em,
+.prefers-code-stylesheet.prefers-text-background .comment .strong,
+.prefers-code-stylesheet.prefers-text-background .comment .strikethrough {
 	background: hsla(var(--gray), 0.1);
 	border-radius: var(--border-radius);
 }
-.prefers-code-stylesheet.prefers-code-background .em *,
-.prefers-code-stylesheet.prefers-code-background .strong *,
-.prefers-code-stylesheet.prefers-code-background .strikethrough * {
+.prefers-code-stylesheet.prefers-text-background .em *,
+.prefers-code-stylesheet.prefers-text-background .strong *,
+.prefers-code-stylesheet.prefers-text-background .strikethrough * {
 	background: none !important;
 }
 

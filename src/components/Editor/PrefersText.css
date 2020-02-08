@@ -117,7 +117,10 @@ pre > [data-node] > code {
 	background: hsla(var(--blue-a400), 0.05);
 	border-radius: var(--border-radius);
 }
-.prefers-text-stylesheet.prefers-text-background .strikethrough {
+.prefers-text-stylesheet.prefers-text-background .strikethrough,
+.prefers-text-stylesheet.prefers-text-background .comment .em,
+.prefers-text-stylesheet.prefers-text-background .comment .strong,
+.prefers-text-stylesheet.prefers-text-background .comment .strikethrough {
 	background: hsla(var(--gray), 0.1);
 	border-radius: var(--border-radius);
 }
