@@ -157,7 +157,7 @@ const TextStylesheet = props => (
 .editor {
 	-moz-tab-size: 4;
 	tab-size: 4;
-	font: 19px/1.6 system-ui;
+	font: 19px/1.65 system-ui;
 }
 
 .code-block ,
@@ -212,7 +212,7 @@ const CodeStylesheet = props => (
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: 16px/1.6 "iA Writer Duo", monospace;
+	font: 16px/1.65 "iA Writer Duo", monospace;
 }
 
 .code-block,
