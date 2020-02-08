@@ -2,9 +2,9 @@
 
 .prefers-text-stylesheet {
 	--offset-x:      24px;
-	--offset-y:      8px;
+	--offset-y:      12px;
 	--border-radius: 1px;
-	--box-shadow:    0px 0px 0px 1px hsla(var(--gray), 0.25);
+	--box-shadow:    0px 0px 0px 1px hsl(var(--gray-300));
 
 	-moz-tab-size:   4;
 	tab-size:        4;
@@ -95,9 +95,6 @@ pre > [data-node] > code {
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
-}
-.prefers-text-stylesheet .code-block .markdown {
-	color: hsl(var(--gray)) !important;
 }
 
 .prefers-text-stylesheet .paragraph.emojis {

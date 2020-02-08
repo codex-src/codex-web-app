@@ -2,9 +2,9 @@
 
 .prefers-code-stylesheet {
 	--offset-x:      24px;
-	--offset-y:      8px;
+	--offset-y:      12px;
 	--border-radius: 1px;
-	--box-shadow:    0px 0px 0px 1px hsl(var(--gray-200));
+	--box-shadow:    0px 0px 0px 1px hsl(var(--gray-300));
 
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
@@ -58,12 +58,6 @@ pre > [data-node] > code {
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
-}
-.prefers-code-stylesheet .code-block > [data-node] {
-	white-space: pre !important;
-}
-.prefers-code-stylesheet .code-block > [data-node] > .markdown {
-	color: hsl(var(--gray));
 }
 
 .prefers-code-stylesheet .paragraph.emojis {
