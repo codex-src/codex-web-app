@@ -44,7 +44,7 @@ const Code = props => (
 
 const Strikethrough = props => (
 	<span className="strikethrough" /* spellCheck={false} */>
-		<Markdown start="~" end="~" >
+		<Markdown start={props.syntax} end={props.syntax} >
 			{props.children}
 		</Markdown>
 	</span>
@@ -72,7 +72,7 @@ function parseTextComponents(data) {
 		//
 		// Emphasis and or strong:
 		case char === "*" || char === "_":
-			syntax = char // DELETEME?
+			syntax = char
 			// Strong and emphasis (takes precedence):
 			if (length >= "***x***".length && data.slice(index, index + 3) === syntax.repeat(3)) {
 				syntax = syntax.repeat(3)
@@ -131,7 +131,20 @@ function parseTextComponents(data) {
 			break
 		// Strikethrough:
 		case char === "~":
-			if (length >= "~x~".length) {
+			// ~~Strikethrough~~
+			if (length >= "~~x~~".length && data.slice(index, index + 2) === "~~") { // Takes precedence
+				const offset = data.slice(index + 2).indexOf("~~")
+				if (offset <= 0) {
+					// No-op
+					break
+				}
+				index += "~~".length
+				const children = recurse(data.slice(index, index + offset))
+				components.push(<Strikethrough key={key} syntax="~~">{children}</Strikethrough>)
+				index += offset + "~~".length
+				continue
+			// ~Strikethrough~
+			} else if (length >= "~x~".length) {
 				const offset = data.slice(index + 1).indexOf("~")
 				if (offset <= 0) {
 					// No-op
@@ -139,8 +152,8 @@ function parseTextComponents(data) {
 				}
 				index += "~".length
 				const children = recurse(data.slice(index, index + offset))
-				components.push(<Strikethrough key={key}>{children}</Strikethrough>)
-				index += offset + 1 // New
+				components.push(<Strikethrough key={key} syntax="~">{children}</Strikethrough>)
+				index += offset + "~".length
 				continue
 			}
 			break

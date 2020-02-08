@@ -1,29 +1,29 @@
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 
-.flag-css-type {
+.flag-stylesheet-text {
 	--padding-x:   24px;
 	--padding-y:   8px;
 	--tabs:        4;
 	--tabs-code:   2;
-	--font:        19px/1.50 system-ui;
+	--font:        19px/1.50 "Inter var", sans-serif;
 	--font-code:   17px/1.25 "iA Writer Mono", monospace;
 	--box-shadow:  0px 0px 1px hsl(var(--gray));
 }
 
-.flag-css-type {
+.flag-stylesheet-text {
 	-moz-tab-size: var(--tabs);
 	tab-size:      var(--tabs);
 	font:          var(--font);
 	color:         hsl(var(--gray-900));
 	caret-color:   hsl(var(--black));
 }
-.flag-css-type *::selection {
+.flag-stylesheet-text *::selection {
 	/* https://github.com/codex-src/material-colors.css/blob/9953862e56bf7c635c6257685e408b4d9d8d2a07/src/material-colors.css#L91 */
   background: hsla(218, 100%, 58.0392%, 0.25) !important;
 }
 
-.flag-css-type .code-block,
-.flag-css-type .code {
+.flag-stylesheet-text .code-block,
+.flag-stylesheet-text .code {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
@@ -32,41 +32,41 @@
 	font:          var(--font-code);
 }
 
-.flag-css-type .header {
+.flag-stylesheet-text .header {
 	font-weight: bold;
 	color: hsl(var(--black));
 }
-.flag-css-type .header.h1 {
+.flag-stylesheet-text .header.h1 {
 	font-size: 1.75em;
 }
-.flag-css-type .header.h2 {
+.flag-stylesheet-text .header.h2 {
 	font-size: 1.25em;
 }
-.flag-css-type .header.h3 {
+.flag-stylesheet-text .header.h3 {
 	font-size: 1.20em;
 }
-.flag-css-type .header.h4 {
+.flag-stylesheet-text .header.h4 {
 	font-size: 1.15em;
 }
-.flag-css-type .header.h5 {
+.flag-stylesheet-text .header.h5 {
 	font-size: 1.10em;
 }
-.flag-css-type .header.h6 {
+.flag-stylesheet-text .header.h6 {
 	font-size: 1.05em;
 }
 
-.flag-css-type .comment,
-.flag-css-type .comment > .markdown {
+.flag-stylesheet-text .comment,
+.flag-stylesheet-text .comment > .markdown {
 	color: hsl(var(--gray));
 }
 
-.flag-css-type .blockquote {
+.flag-stylesheet-text .blockquote {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
 	box-shadow: var(--box-shadow);
 }
 
-.flag-css-type .code-block {
+.flag-stylesheet-text .code-block {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
 	border-radius: 1px;
@@ -74,68 +74,68 @@
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
-.flag-css-type .code-block > [data-node] {
+.flag-stylesheet-text .code-block > [data-node] {
 	white-space: pre !important;
 }
-.flag-css-type .code-block > [data-node] > .markdown {
+.flag-stylesheet-text .code-block > [data-node] > .markdown {
 	color: hsl(var(--gray));
 }
 
-.flag-css-type .paragraph.emojis {
+.flag-stylesheet-text .paragraph.emojis {
 	font-size: 1.5em;
 }
-.flag-css-type .emoji {
+.flag-stylesheet-text .emoji {
 	font-size: 1.2em;
 	line-height: 1;
 	vertical-align: -0.1em;
 }
 
-.flag-css-type .em {
+.flag-stylesheet-text .em {
 	font-style: italic;
 }
-.flag-css-type .strong {
+.flag-stylesheet-text .strong {
 	font-weight: bold;
 }
 /* FIXME: Drop .flag-read-write-mode */
-.flag-read-write-mode.flag-css-type.flag-show-markdown-background .em,
-.flag-read-write-mode.flag-css-type.flag-show-markdown-background .strong {
+.flag-read-write-mode.flag-stylesheet-text.flag-show-markdown-background .em,
+.flag-read-write-mode.flag-stylesheet-text.flag-show-markdown-background .strong {
 	background: hsla(var(--blue-a400), 0.05);
 	border-radius: 1px;
 }
-.flag-read-write-mode.flag-css-type.flag-show-markdown-background .strikethrough {
+.flag-read-write-mode.flag-stylesheet-text.flag-show-markdown-background .strikethrough {
 	background: hsla(var(--gray), 0.1);
 	border-radius: 1px;
 }
 /* FIXME: Drop .flag-read-write-mode */
-.flag-read-write-mode.flag-css-type.flag-show-markdown-background .em *,
-.flag-read-write-mode.flag-css-type.flag-show-markdown-background .strong *,
-.flag-read-write-mode.flag-css-type.flag-show-markdown-background .strikethrough * {
+.flag-read-write-mode.flag-stylesheet-text.flag-show-markdown-background .em *,
+.flag-read-write-mode.flag-stylesheet-text.flag-show-markdown-background .strong *,
+.flag-read-write-mode.flag-stylesheet-text.flag-show-markdown-background .strikethrough * {
 	background: none;
 }
 
-.flag-css-type .code {
+.flag-stylesheet-text .code {
 	box-decoration-break: clone;
 	padding: 0px 2px;
-	vertical-align: 1px;
+	/* vertical-align: 1px; */
 	color: hsl(var(--blue-a400));
 	border-radius: 1px;
 	box-shadow: var(--box-shadow);
 }
-.flag-css-type .code > .markdown {
+.flag-stylesheet-text .code > .markdown {
 	color: hsl(var(--gray));
 }
 
-.flag-css-type .strikethrough {
+.flag-stylesheet-text .strikethrough {
 	--blue-a400: var(--gray);
 	font-style: italic;
 	color: hsl(var(--gray));
 	text-decoration: line-through;
 }
 
-.flag-css-type .markdown {
+.flag-stylesheet-text .markdown {
 	white-space: pre;
 	color: hsl(var(--blue-a400));
 }
-.flag-css-type.flag-read-only-mode .markdown {
+.flag-stylesheet-text.flag-read-only-mode .markdown {
 	display: none;
 }

@@ -19,7 +19,7 @@ const ActionTypes = new Enum(
 const initialState = {
 	flagShowMarkdownBackground: true, // Show markdown background (e.g. strong, em, etc.)?
 	flagReadOnlyMode: false,          // Is the editor read-only?
-	flagStylesheet: "type",           // Stylesheet to use
+	flagStylesheet: "text",           // Stylesheet to use
 
 	epoch: 0,             // The epoch (time stamp) of the editor
 	actionType: "",       // The type of the current action
@@ -39,13 +39,13 @@ const initialState = {
 }
 
 const reducer = state => ({
-	setFlagStylesheetType() {
+	setFlagStylesheetText() {
 		state.flagReadOnlyMode = false // Force read-write mode
-		state.flagStylesheet = "type"
+		state.flagStylesheet = "text"
 	},
-	setFlagStylesheetMono() {
+	setFlagStylesheetCode() {
 		state.flagReadOnlyMode = false // Force read-write mode
-		state.flagStylesheet = "mono"
+		state.flagStylesheet = "code"
 	},
 	toggleFlagShowMarkdownBackground() {
 		state.flagShowMarkdownBackground = !state.flagShowMarkdownBackground

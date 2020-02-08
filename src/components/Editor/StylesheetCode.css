@@ -2,7 +2,7 @@
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Quattro/Webfonts/index.css";
 
-.flag-css-mono {
+.flag-stylesheet-code {
 	--padding-x:   24px;
 	--padding-y:   0px;
 	--tabs:        2;
@@ -12,7 +12,7 @@
 	--box-shadow:  0px 0px 1px hsl(var(--gray));
 }
 
-.flag-css-mono {
+.flag-stylesheet-code {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
@@ -22,34 +22,34 @@
 	color:         hsl(var(--gray-900));
 	caret-color:   hsl(var(--black));
 }
-.flag-css-mono *::selection {
+.flag-stylesheet-code *::selection {
   background: hsla(var(--blue-a400), 0.25) !important;
 }
 
-.flag-css-mono .code-block,
-.flag-css-mono .code {
+.flag-stylesheet-code .code-block,
+.flag-stylesheet-code .code {
 	-moz-tab-size: var(--tabs-code);
 	tab-size:      var(--tabs-code);
 	font:          var(--font-code);
 }
 
-.flag-css-mono .header {
+.flag-stylesheet-code .header {
 	font-weight: bold;
 	color: hsl(var(--black));
 }
 
-.flag-css-mono .comment,
-.flag-css-mono .comment > .markdown {
+.flag-stylesheet-code .comment,
+.flag-stylesheet-code .comment > .markdown {
 	color: hsl(var(--gray));
 }
 
-.flag-css-mono .blockquote {
+.flag-stylesheet-code .blockquote {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
 	box-shadow: var(--box-shadow);
 }
 
-.flag-css-mono .code-block {
+.flag-stylesheet-code .code-block {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
 	border-radius: 1px;
@@ -57,62 +57,62 @@
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
-.flag-css-mono .code-block > [data-node] {
+.flag-stylesheet-code .code-block > [data-node] {
 	white-space: pre !important;
 }
-.flag-css-mono .code-block > [data-node] > .markdown {
+.flag-stylesheet-code .code-block > [data-node] > .markdown {
 	color: hsl(var(--gray));
 }
 
-.flag-css-mono .emoji {
+.flag-stylesheet-code .emoji {
 	font-size: 1.2em;
 	line-height: 1;
 	vertical-align: -0.1em;
 }
 
-.flag-css-mono .em {
+.flag-stylesheet-code .em {
 	font-style: italic;
 }
-.flag-css-mono .strong {
+.flag-stylesheet-code .strong {
 	font-weight: bold;
 }
 /* FIXME: Drop .flag-read-write-mode */
-.flag-read-write-mode.flag-css-mono.flag-show-markdown-background .em,
-.flag-read-write-mode.flag-css-mono.flag-show-markdown-background .strong {
+.flag-read-write-mode.flag-stylesheet-code.flag-show-markdown-background .em,
+.flag-read-write-mode.flag-stylesheet-code.flag-show-markdown-background .strong {
 	background: hsla(var(--blue-a400), 0.05);
 	border-radius: 1px;
 }
-.flag-read-write-mode.flag-css-mono.flag-show-markdown-background .strikethrough {
+.flag-read-write-mode.flag-stylesheet-code.flag-show-markdown-background .strikethrough {
 	background: hsla(var(--gray), 0.1);
 	border-radius: 1px;
 }
 /* FIXME: Drop .flag-read-write-mode */
-.flag-read-write-mode.flag-css-mono.flag-show-markdown-background .em *,
-.flag-read-write-mode.flag-css-mono.flag-show-markdown-background .strong *,
-.flag-read-write-mode.flag-css-mono.flag-show-markdown-background .strikethrough * {
+.flag-read-write-mode.flag-stylesheet-code.flag-show-markdown-background .em *,
+.flag-read-write-mode.flag-stylesheet-code.flag-show-markdown-background .strong *,
+.flag-read-write-mode.flag-stylesheet-code.flag-show-markdown-background .strikethrough * {
 	background: none;
 }
 
-.flag-css-mono .code {
+.flag-stylesheet-code .code {
 	color: hsl(var(--blue-a400));
 	border-radius: 1px;
 	box-shadow: var(--box-shadow);
 }
-.flag-css-mono .code > .markdown {
+.flag-stylesheet-code .code > .markdown {
 	color: hsl(var(--gray));
 }
 
-.flag-css-mono .strikethrough {
+.flag-stylesheet-code .strikethrough {
 	--blue-a400: var(--gray);
 	font-style: italic;
 	color: hsl(var(--gray));
 	text-decoration: line-through;
 }
 
-.flag-css-mono .markdown {
+.flag-stylesheet-code .markdown {
 	white-space: pre;
 	color: hsl(var(--blue-a400));
 }
-.flag-css-mono.flag-read-only-mode .markdown {
+.flag-stylesheet-code.flag-read-only-mode .markdown {
 	display: none;
 }

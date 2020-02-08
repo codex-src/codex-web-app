@@ -79,11 +79,11 @@ function Editor({ state, dispatch, ...props }) {
 				switch (true) {
 				case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
 					e.preventDefault()
-					dispatch.setFlagStylesheetType()
+					dispatch.setFlagStylesheetText()
 					return
 				case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
 					e.preventDefault()
-					dispatch.setFlagStylesheetMono()
+					dispatch.setFlagStylesheetCode()
 					return
 				// Show markdown background:
 				case platform.detectKeyCode(e, 186): // 186: ;
@@ -134,7 +134,7 @@ function Editor({ state, dispatch, ...props }) {
 					ref,
 
 					className: [
-						!state.flagReadOnlyMode ? `flag-css-${state.flagStylesheet}` : "flag-css-type",
+						!state.flagReadOnlyMode ? `flag-stylesheet-${state.flagStylesheet}` : "flag-stylesheet-text",
 						state.flagShowMarkdownBackground && "flag-show-markdown-background",
 						!state.flagReadOnlyMode ? "flag-read-write-mode" : "flag-read-only-mode",
 					].filter(Boolean).join(" "),
