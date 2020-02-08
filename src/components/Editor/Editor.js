@@ -134,7 +134,7 @@ function Editor({ state, dispatch, ...props }) {
 					ref,
 
 					className: [
-						!state.flagReadOnlyMode ? `flag-stylesheet-${state.flagStylesheet}` : "flag-stylesheet-type",
+						!state.flagReadOnlyMode ? `flag-css-${state.flagStylesheet}` : "flag-css-type",
 						state.flagShowMarkdownBackground && "flag-show-markdown-background",
 						!state.flagReadOnlyMode ? "flag-read-write-mode" : "flag-read-only-mode",
 					].filter(Boolean).join(" "),

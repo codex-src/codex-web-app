@@ -2,7 +2,7 @@
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Quattro/Webfonts/index.css";
 
-.flag-stylesheet-mono {
+.flag-css-mono {
 	--padding-x:   24px;
 	--padding-y:   0px;
 	--tabs:        2;
@@ -12,7 +12,7 @@
 	--box-shadow:  0px 0px 1px hsl(var(--gray));
 }
 
-.flag-stylesheet-mono {
+.flag-css-mono {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
@@ -22,34 +22,34 @@
 	color:         hsl(var(--gray-900));
 	caret-color:   hsl(var(--black));
 }
-.flag-stylesheet-mono *::selection {
+.flag-css-mono *::selection {
   background: hsla(var(--blue-a400), 0.25) !important;
 }
 
-.flag-stylesheet-mono .code-block,
-.flag-stylesheet-mono .code {
+.flag-css-mono .code-block,
+.flag-css-mono .code {
 	-moz-tab-size: var(--tabs-code);
 	tab-size:      var(--tabs-code);
 	font:          var(--font-code);
 }
 
-.flag-stylesheet-mono .header {
+.flag-css-mono .header {
 	font-weight: bold;
 	color: hsl(var(--black));
 }
 
-.flag-stylesheet-mono .comment,
-.flag-stylesheet-mono .comment > .markdown {
+.flag-css-mono .comment,
+.flag-css-mono .comment > .markdown {
 	color: hsl(var(--gray));
 }
 
-.flag-stylesheet-mono .blockquote {
+.flag-css-mono .blockquote {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
 	box-shadow: var(--box-shadow);
 }
 
-.flag-stylesheet-mono .code-block {
+.flag-css-mono .code-block {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
 	border-radius: 1px;
@@ -57,46 +57,58 @@
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
-.flag-stylesheet-mono .code-block > [data-node] {
+.flag-css-mono .code-block > [data-node] {
 	white-space: pre !important;
 }
-.flag-stylesheet-mono .code-block > [data-node] > .markdown {
+.flag-css-mono .code-block > [data-node] > .markdown {
 	color: hsl(var(--gray));
 }
 
-.flag-stylesheet-mono .emoji {
+.flag-css-mono .emoji {
 	font-size: 1.2em;
 	line-height: 1;
 	vertical-align: -0.1em;
 }
 
-.flag-stylesheet-mono .em {
+.flag-css-mono .em {
 	font-style: italic;
 }
-.flag-stylesheet-mono .strong {
+.flag-css-mono .strong {
 	font-weight: bold;
 }
-.flag-stylesheet-mono.flag-read-write-mode.flag-show-markdown-background .em,
-.flag-stylesheet-mono.flag-read-write-mode.flag-show-markdown-background .strong {
+.flag-css-mono.flag-read-write-mode.flag-show-markdown-background .em,
+.flag-css-mono.flag-read-write-mode.flag-show-markdown-background .strong,
+.flag-css-mono.flag-read-write-mode.flag-show-markdown-background .strikethrough {
 	background: hsla(var(--blue-a400), 0.05);
 	border-radius: 1px;
 }
+.flag-css-mono.flag-read-write-mode.flag-show-markdown-background .em *,
+.flag-css-mono.flag-read-write-mode.flag-show-markdown-background .strong *,
+.flag-css-mono.flag-read-write-mode.flag-show-markdown-background .strikethrough * {
+	background: none;
+}
 
-.flag-stylesheet-mono .code {
-	/* padding: 0px 2px; */
-	/* vertical-align: 1px; */
+.flag-css-mono .code {
 	color: hsl(var(--blue-a400));
 	border-radius: 1px;
 	box-shadow: var(--box-shadow);
 }
-.flag-stylesheet-mono .code > .markdown {
+.flag-css-mono .code > .markdown {
 	color: hsl(var(--gray));
 }
 
-.flag-stylesheet-mono .markdown {
+.flag-css-mono .strikethrough {
+	--blue-a400: var(--gray);
+	font-style: italic;
+	color: hsl(var(--gray));
+	text-decoration: line-through;
+	background: hsla(var(--gray), 0.1) !important;
+}
+
+.flag-css-mono .markdown {
 	white-space: pre;
 	color: hsl(var(--blue-a400));
 }
-.flag-stylesheet-mono.flag-read-only-mode .markdown {
+.flag-css-mono.flag-read-only-mode .markdown {
 	display: none;
 }
