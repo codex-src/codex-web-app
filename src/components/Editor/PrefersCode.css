@@ -1,21 +1,30 @@
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 
 .prefers-code-stylesheet {
-	--spread-x:     24px;
-	--spread-y:     8px;
-	--box-shadow:   0px 0px 1px hsl(var(--gray));
+	--spread-x:      24px;
+	--spread-y:      8px;
+	--border-radius: 2px;
+	--box-shadow:    0px 0px 0px 1px hsl(var(--gray-200));
 
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
-	-moz-tab-size:  2;
-	tab-size:       2;
-	font:           16px/1.5 "iA Writer Mono", sans-serif;
-	color:          hsl(var(--gray-900));
-	caret-color:    hsl(var(--black));
+	-moz-tab-size:   2;
+	tab-size:        2;
+	font:            17px/1.5 "iA Writer Mono", sans-serif;
+	color:           hsl(var(--gray-900));
+	caret-color:     hsl(var(--black));
 }
 .prefers-code-stylesheet *::selection {
   background: hsla(218, 100%, 58.0392%, 0.25) !important;
+}
+
+pre,
+pre > [data-node] {
+	white-space: pre !important;
+}
+pre > [data-node] > code {
+	padding-right: var(--spread-x);
 }
 
 .prefers-code-stylesheet .header {
@@ -28,16 +37,10 @@
 	color: hsl(var(--gray));
 }
 
-.prefers-code-stylesheet .blockquote {
-	margin: 0px calc(-1 * var(--spread-x));
-	padding: var(--spread-y) var(--spread-x);
-	box-shadow: var(--box-shadow);
-}
-
 .prefers-code-stylesheet .code-block {
 	margin: 0px calc(-1 * var(--spread-x));
 	padding: var(--spread-y) var(--spread-x);
-	border-radius: 1px;
+	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
@@ -68,11 +71,11 @@
 .prefers-code-stylesheet.prefers-text-background .em,
 .prefers-code-stylesheet.prefers-text-background .strong {
 	background: hsla(var(--blue-a400), 0.05);
-	border-radius: 1px;
+	border-radius: var(--border-radius);
 }
 .prefers-code-stylesheet.prefers-text-background .strikethrough {
 	background: hsla(var(--gray), 0.1);
-	border-radius: 1px;
+	border-radius: var(--border-radius);
 }
 .prefers-code-stylesheet.prefers-text-background .em *,
 .prefers-code-stylesheet.prefers-text-background .strong *,
@@ -82,9 +85,9 @@
 
 .prefers-code-stylesheet .code {
 	box-decoration-break: clone;
-	padding: 0px 2px;
+	padding: 1px 2px;
 	color: hsl(var(--blue-a400));
-	border-radius: 1px;
+	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 }
 .prefers-code-stylesheet .code > .markdown {

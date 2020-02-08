@@ -11,8 +11,8 @@ import syncTrees from "./helpers/syncTrees"
 
 // Imperative styles:
 const style = {
-	whiteSpace:   "pre-wrap", // FIXME?
-	outline:      "none",
+	whiteSpace: "pre-wrap",
+	outline: "none",
 	overflowWrap: "break-word",
 }
 
@@ -144,8 +144,8 @@ function Editor({ state, dispatch, ...props }) {
 
 					style,
 
-					contentEditable: !state.flagReadOnlyMode && true,
-					suppressContentEditableWarning: !state.flagReadOnlyMode && true,
+					contentEditable: !state.prefersReadOnlyMode && true,
+					suppressContentEditableWarning: !state.prefersReadOnlyMode && true,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,

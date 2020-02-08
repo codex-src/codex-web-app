@@ -1,16 +1,17 @@
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 
 .prefers-text-stylesheet {
-	--spread-x:     24px;
-	--spread-y:     8px;
-	--box-shadow:   0px 0px 1px hsl(var(--gray));
+	--spread-x:      24px;
+	--spread-y:      8px;
+	--border-radius: 2px;
+	--box-shadow:    0px 0px 0px 1px hsla(var(--gray), 0.25);
 
-	-moz-tab-size:  4;
-	tab-size:       4;
-	font:           19px/1.50 "Inter var", sans-serif;
-	letter-spacing: -0.0156em;
-	color:          hsl(var(--gray-900));
-	caret-color:    hsl(var(--black));
+	-moz-tab-size:   4;
+	tab-size:        4;
+	font:            19px/1.50 "Inter var", sans-serif;
+	letter-spacing:  -0.0156em;
+	color:           hsl(var(--gray-900));
+	caret-color:     hsl(var(--black));
 }
 .prefers-text-stylesheet *::selection {
   background: hsla(218, 100%, 58.0392%, 0.25) !important;
@@ -21,9 +22,17 @@ code {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
 
-	-moz-tab-size:  2;
-	tab-size:       2;
-	font:           16px/1.25 "iA Writer Mono", monospace;
+	-moz-tab-size:   2;
+	tab-size:        2;
+	font:            17px/1.25 "iA Writer Mono", monospace;
+}
+
+pre,
+pre > [data-node] {
+	white-space: pre !important;
+}
+pre > [data-node] > code {
+	padding-right: var(--spread-x);
 }
 
 .prefers-text-stylesheet .header {
@@ -60,25 +69,16 @@ code {
 	color: hsl(var(--gray));
 }
 
-.prefers-text-stylesheet .blockquote {
-	margin: 0px calc(-1 * var(--spread-x));
-	padding: var(--spread-y) var(--spread-x);
-	box-shadow: var(--box-shadow);
-}
-
 .prefers-text-stylesheet .code-block {
 	margin: 0px calc(-1 * var(--spread-x));
 	padding: var(--spread-y) var(--spread-x);
-	border-radius: 1px;
+	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
-.prefers-text-stylesheet .code-block > [data-node] {
-	white-space: pre !important;
-}
-.prefers-text-stylesheet .code-block > [data-node] > .markdown {
-	color: hsl(var(--gray));
+.prefers-text-stylesheet .code-block .markdown {
+	color: hsl(var(--gray)) !important;
 }
 
 .prefers-text-stylesheet .paragraph.emojis {
@@ -100,11 +100,11 @@ code {
 .prefers-text-stylesheet.prefers-text-background .em,
 .prefers-text-stylesheet.prefers-text-background .strong {
 	background: hsla(var(--blue-a400), 0.05);
-	border-radius: 1px;
+	border-radius: var(--border-radius);
 }
 .prefers-text-stylesheet.prefers-text-background .strikethrough {
 	background: hsla(var(--gray), 0.1);
-	border-radius: 1px;
+	border-radius: var(--border-radius);
 }
 .prefers-text-stylesheet.prefers-text-background .em *,
 .prefers-text-stylesheet.prefers-text-background .strong *,
@@ -114,9 +114,9 @@ code {
 
 .prefers-text-stylesheet .code {
 	box-decoration-break: clone;
-	padding: 0px 2px;
+	padding: 1px 2px;
 	color: hsl(var(--blue-a400));
-	border-radius: 1px;
+	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 }
 .prefers-text-stylesheet .code > .markdown {

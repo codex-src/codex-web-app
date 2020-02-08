@@ -8,7 +8,7 @@ import "./PrefersText.css"
 // Imperative styles:
 //
 // NOTE: Gecko/Firefox needs pre-wrap to be an inline style
-const style = { whiteSpace: "pre-wrap" } // FIXME?
+const style = { whiteSpace: "pre-wrap" }
 
 // const Node = props => (
 // 	<div style={style} data-node {...props}>
@@ -101,16 +101,18 @@ const CodeBlock = React.memo(props => {
 		<Node tagName="pre" className="code-block" spellCheck={false}>
 			{children.map((each, index) => (
 				<Node key={index}>
-					<Markdown
-						start={!index ? `\`\`\`${props.lang}` : null}
-						end={index + 1 === children.length ? "```" : null}
-					>
-						{each || (
-							index > 0 && index + 1 < children.length && (
-								<br />
-							)
-						)}
-					</Markdown>
+					<code>
+						<Markdown
+							start={!index ? `\`\`\`${props.lang}` : null}
+							end={index + 1 === children.length ? "```" : null}
+						>
+							{each || (
+								index > 0 && index + 1 < children.length && (
+									<br />
+								)
+							)}
+						</Markdown>
+					</code>
 				</Node>
 			))}
 		</Node>
