@@ -85,8 +85,8 @@ pre > [data-node] > code {
 }
 
 .prefers-text-stylesheet .code-block {
-	margin: 0px calc(-1 * var(--offset-x));
 	padding: var(--offset-y) var(--offset-x);
+	background: hsl(var(--gray-50));
 	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
@@ -103,6 +103,11 @@ pre > [data-node] > code {
 	font-size: 1.2em;
 	line-height: 1;
 	vertical-align: -0.1em;
+}
+
+.prefers-text-stylesheet.prefers-read-only-mode .break {
+	margin: calc(0.75em - 1px) 0px;
+	border: 2px solid hsl(var(--gray-200));
 }
 
 .prefers-text-stylesheet .em {
@@ -134,6 +139,7 @@ pre > [data-node] > code {
 	box-decoration-break: clone;
 	padding: 1px 2px;
 	color: hsl(var(--blue-a400));
+	/* background: hsla(var(--gray-50)); */
 	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 }
