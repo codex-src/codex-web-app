@@ -71,10 +71,7 @@ const reducer = state => ({
 		this.updatedPrefs()
 	},
 	preferTextBackground() {
-		if (state.prefersReadOnlyMode) {
-			// No-op
-			return
-		}
+		state.prefersReadOnlyMode = false // Reset
 		state.prefersTextBackground = !state.prefersTextBackground
 		this.updatedPrefs()
 	},

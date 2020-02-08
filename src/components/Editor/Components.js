@@ -9,7 +9,7 @@ const Node = ({ tagName, ...props }) => (
 	React.createElement(
 		tagName || "div",
 		{
-			// NOTE: Gecko/Firefox needs pre-wrap to be an inline style
+			// Gecko/Firefox needs pre-wrap to be an inline style
 			style: { whiteSpace: "pre-wrap" },
 			"data-node": true,
 			...props,
@@ -39,7 +39,7 @@ const Comment = React.memo(props => (
 const Blockquote = React.memo(props => (
 	<Node className="blockquote">
 		{props.children.map((each, index) => (
-			<Node key={index}>
+			<Node key={index} data-node-empty={!each.data ? true : null}>
 				<Markdown start={each.start}>
 					{each.data || (
 						<br />

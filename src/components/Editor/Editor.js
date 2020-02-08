@@ -92,12 +92,12 @@ function Editor({ state, dispatch, ...props }) {
 					dispatch.preferCodeStylesheet()
 					return
 				// Prefers text background:
-				case platform.detectKeyCode(e, 186): // 186: ;
+				case platform.detectKeyCode(e, 220): // 220: \
 					e.preventDefault()
 					dispatch.preferTextBackground()
 					return
 				// Prefers read-only mode:
-				case platform.detectKeyCode(e, 222): // 222: '
+				case platform.detectKeyCode(e, 191): // 191: /
 					e.preventDefault()
 					dispatch.toggleReadOnlyMode()
 					return

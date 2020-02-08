@@ -84,8 +84,11 @@ pre > [data-node] > code {
 .prefers-text-stylesheet.prefers-read-only-mode .blockquote {
 	padding-left: var(--offset-x);
 	font-size: 1.05em;
-	/* line-height: 1.75; */
+	line-height: 1.75;
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
+}
+.prefers-text-stylesheet.prefers-read-only-mode .blockquote > [data-node-empty] {
+	height: 0.75em;
 }
 
 .prefers-text-stylesheet .code-block {
