@@ -35,11 +35,11 @@ const StrongEm = props => (
 )
 
 const Code = props => (
-	<code className="code" spellCheck={false}>
+	<span className="code" spellCheck={false}>
 		<Markdown start="`" end="`" >
 			{props.children}
 		</Markdown>
-	</code>
+	</span>
 )
 
 const Strikethrough = props => (

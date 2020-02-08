@@ -7,6 +7,7 @@ import innerText from "./helpers/innerText"
 import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
+import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 
 const style = {
@@ -139,7 +140,7 @@ function Editor({ state, dispatch, ...props }) {
 				{
 					ref,
 
-					className: state.prefersClassName,
+					className: ["editor", state.prefersClassName].join(" "),
 
 					style,
 
@@ -330,6 +331,7 @@ function Editor({ state, dispatch, ...props }) {
 					onDrop: e => e.preventDefault(),
 				},
 			)}
+			<Stylesheets />
 			{/* <Debugger /> */}
 		</Provider>
 	)

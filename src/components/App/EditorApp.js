@@ -4,91 +4,97 @@ import stylex from "stylex"
 import { DocumentTitle } from "utils/DocumentTitle"
 
 const localStorageKey = "codex-app"
-const initialValue = localStorage.getItem(localStorageKey) || `# The Codex editor is designed to be different; **it’s a next-generation markdown editor for the web, purpose-built for programmers**
+const initialValue = localStorage.getItem(localStorageKey) || `# Hello, Codex! 🖖
 
-## Backstory
+// Links are coming, just not yet. 😉
 
-*What is this?* My name is [Zaydek](...) and I’m building a new kind of rich editor for the web. If you know who I am, you’re probably familiar by now that I’ve been struggling to build an editor for quite some time. Well, the hurt may finally be over! 🎉
+_What is this?_ My name is [Zaydek](https://twitter.com/username_ZAYDEK) and I’m building an editor for the web, purpose-built for programmers and markdown.
 
-The constraint for the editor are simple:
+> “When you're in love, you want to tell the world.”
+>
+> — Carl Sagan
 
-- It needs to be fast
-- It needs to be beautiful
-- It needs to work everywhere
+The reason _why_ I’m building this editor is because I love programming and I want to share it with the world. That, and because I believe people fundamentally need better tools to express themselves and learn from each other.
 
-Believe it not, this editor is designed to work in all modern browsers, mobile inclusive. In practice, this means I’m targeting (and testing):
+The constraints for this editor are simple:
 
-- Chromium/Chrome
-- WebKit/Safari
-- Gecko/Firefox
+- Make it fast
+- Make it beautiful
+- Make it work ~almost everywhere~ everywhere
 
-If you’re curious about the internals, it’s [open source](...) and builds on [React ⚛️](...).
+This editor is designed to work in all modern browsers, including mobile devices. That means dedicated support for:
 
-## Features
+- 🌈 Chrome
+- 🧭 Safari
+- 🦊 Firefox
+- (Includes browsers based on these, which is basically all of them)
 
-### Proportional type and monospace stylesheets
+If you’re curious about the internals, it’s [open source ❤️](https://github.com/codex-src) and built on top of [React ⚛️](https://github.com/facebook/react).
 
-This editor ships with *two* stylesheets you can opt into. There’s proportional type (the default, most likely what you’re seeing now) and monospace.
+If you want to get involved -- please, be my guest! You can:
 
-**Prefer monospace?** Press \`cmd-shift-2\` (\`ctrl\` on Windows/Linux) to toggle the monospace stylesheet, and \`cmd-shift-1\` to toggle the proportional type stylesheet.
+- [Open an issue](https://github.com/codex-src)
+- [Create a pull request](https://github.com/codex-src)
+- [DM me on Twitter](https://twitter.com/messages/compose?recipient_id=899350210064687105)
 
-In the future, you’ll be able to edit these stylesheets in the browser to your liking!
+## Monospace and proportional type stylesheets
 
-For now, here’s a test of how the stylesheets work:
+This editor ships with two stylesheets you can opt into -- in the future, you’ll be able edit these stylesheets *in the browser* to your liking. 🤭
+
+**Prefer monospace?** Press \`command shift 2\` (\`control\` on Windows/Linux) to toggle the monospace stylesheet and \`command shift 1\` to toggle the proportional type stylesheet.
+
+Here’s a couple of lines of code from the proportional type stylesheet:
 
 \`\`\`css
-@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
-
-.flag-stylesheet-type .header {
+.header {
 	font-weight: bold;
 	color: hsl(var(--black));
 }
-.flag-stylesheet-type .header.h1 {
-	font-size: 1.75em;
+.header.h1 {
+	font-size: 1.5em;
 }
-.flag-stylesheet-type .header.h2 {
+.header.h2 {
 	font-size: 1.25em;
 }
-.flag-stylesheet-type .header.h3 {
+.header.h3 {
 	font-size: 1.20em;
 }
-.flag-stylesheet-type .header.h4 {
+.header.h4 {
 	font-size: 1.15em;
 }
-.flag-stylesheet-type .header.h5 {
+.header.h5 {
 	font-size: 1.10em;
 }
-.flag-stylesheet-type .header.h6 {
+.header.h6 {
 	font-size: 1.05em;
 }
 \`\`\`
 
-\`flag-stylesheet-type\` targets the proportional type stylesheet and \`flag-stylesheet-mono\` targets the monospace stylesheet.
+## Markdown (CommonMark)
 
-### Markdown
+This editor supports the [CommonMark](https://commonmark.org/help) spec of markdown. If you’re familiar with [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown), CommonMark is *very* similar.
 
-This editor supports the [CommonMark](...) specification of markdown. If you’re familiar with [GFM](https://guides.github.com/features/mastering-markdown) (GitHub Flavored Markdown), CommonMark is *very* similar and can be considered a subset of GFM.
+The reason why this editor specifically supports CommonMark is because it’s approachable and lends itself well to a hybrid WYSIWYG experience.
 
-The reason this editor specifically supports CommonMark is because it’s simpler and lends itself better to a hybrid WYSIWYG experience.
+You can create the following block elements:
 
-In addition to headers (\`h1-h6\`), you can create:
+# H1
+## H2
+### H3
+#### H4
+##### H5
+###### H6
 
-// Comments
-/*
-	Multiline comments
-*/
+// Comments 👻
 
-// Paragraphs:
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-// Blockquotes:
-> *Yoda: No! No different! Only different in your mind. You must _unlearn_ what you have learned.*
+> **Yoda: No! No different! Only different in your mind. You must _unlearn_ what you have learned.**
 >
 > _Luke: All right, I'll give it a try._
 >
-> *Yoda: No! Try not. Do. Or do not. There is no try.*
+> **Yoda: No! Try not. Do. Or do not. There is no try.**
 
-// Code blocks:
+\`\`\`$ go run main.go\`\`\`
+
 \`\`\`go
 package main
 
@@ -124,7 +130,9 @@ RETURNING note_id
 + There is no death, there is the Force.
 \`\`\`
 
-All of these languages are supported via extension (\`go\`) or filename (\`main.go\`):
+You can use any of the following languages by delimiting the start of a multiline code block with an filename extension or filename:
+
+// Syntax highlighting is coming, just not yet. 😉
 
 \`\`\`<extension> or <filename>
 - Bash        → bash
@@ -157,9 +165,12 @@ All of these languages are supported via extension (\`go\`) or filename (\`main.
 - YAML        → yml, yaml
 \`\`\`
 
+Even emojis are parsed: text emojis 😯 are 20% bigger and block emojis (1-3) are 50% bigger:
+
 🔥🔥🔥
 
-// Unordered, ordered lists, and checklists:
+// Lists are coming, just not yet. 😉
+
 - foo
 	- bar
 		- baz
@@ -181,23 +192,21 @@ All of these languages are supported via extension (\`go\`) or filename (\`main.
 	- [x] quux
 - [x] corge
 
-// Section breaks
+// Break (style 1)
 ***
+
+// Break (style 2)
 ---
 
-And of course, inline elements like *italics*, **bold**, ***bold and italics***, \`code\`, [links](url), and ~strikethrough~. You can also use the alternate syntax for _italics_, __bold__, ___bold and italics___ if you prefer. 👌
+And of course, you can create inline elements like _italics_, **bold**, \`code\`, [links](url), and ~strikethrough~. Or you can use the alternate syntax for *italics*, __bold__. 👌 And you can even use /* inline comments */.
 
-### Markdown hinting
+## Markdown hinting (inline elements)
 
-See the faint blue background behind the inline elements? That’s toggleable with the \`cmd-;\` (\`ctrl\` on Windows and Linux) shortcut. This feature is disabled in read-only mode.
+See the blue and gray background behind the inline elements? That’s toggleable with the \`command \\\` (\`control\` on Windows/Linux) shortcut.
 
-### Read-only mode
+## Read-only mode
 
-When you’re ready to read your note as if a user, you can press \`cmd-'\` (\`ctrl\` on Windows/Linux) shortcut to toggle read-only mode (think preview mode).
-
----
-
-More features coming soon…
+When you’re ready to read your note as if a user, you can press \`command /\` (\`control\` on Windows/Linux) shortcut to toggle read-only mode (think preview mode).
 `
 
 function EditorApp(props) {

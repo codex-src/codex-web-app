@@ -2,22 +2,17 @@ import Markdown from "./Markdown"
 import React from "react"
 import recurse from "./ComponentsText"
 
-import "./PrefersCode.css"
-import "./PrefersText.css"
-
-const Node = ({ tagName, ...props }) => (
-	React.createElement(
-		tagName || "div",
-		{
-			// Gecko/Firefox needs pre-wrap to be an inline style
-			style: { whiteSpace: "pre-wrap" },
-			"data-node": true,
-			...props,
-		},
-		props.children || (
+const Node = ({ tagName, style, ...props }) => (
+	<div
+		style={{ whiteSpace: "pre-wrap", ...style }}
+		data-node
+		data-empty-node={!props.children || null}
+		{...props}
+	>
+		{props.children || (
 			<br />
-		),
-	)
+		)}
+	</div>
 )
 
 const Header = React.memo(props => (
@@ -39,7 +34,7 @@ const Comment = React.memo(props => (
 const Blockquote = React.memo(props => (
 	<Node className="blockquote">
 		{props.children.map((each, index) => (
-			<Node key={index} data-node-empty={!each.data ? true : null}>
+			<Node key={index} data-empty-node={!each.data ? true : null}>
 				<Markdown start={each.start}>
 					{each.data || (
 						<br />
@@ -86,14 +81,15 @@ const Blockquote = React.memo(props => (
 const CodeBlock = React.memo(props => {
 	const components = props.children.split("\n")
 	return (
-		<Node tagName="pre" className="code-block" spellCheck={false}>
+		<Node className="code-block" style={{ whiteSpace: "pre" }} spellCheck={false}>
 			{components.map((each, index) => (
 				<Node
 					key={index}
-					data-node-start={components.length > 1 && !index ? true : null}
-					data-node-end={components.length > 1 && index + 1 === components.length ? true : null}
+					style={{ whiteSpace: "pre" }}
+					data-start-node={(components.length > 1 && !index) || null}
+					data-end-node={(components.length > 1 && index + 1 === components.length) || null}
 				>
-					<code>
+					<span>
 						<Markdown
 							start={!index ? `\`\`\`${props.lang}` : null}
 							end={index + 1 === components.length ? "```" : null}
@@ -104,7 +100,7 @@ const CodeBlock = React.memo(props => {
 								)
 							)}
 						</Markdown>
-					</code>
+					</span>
 				</Node>
 			))}
 		</Node>
