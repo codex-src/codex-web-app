@@ -5,24 +5,12 @@ import recurse from "./ComponentsText"
 import "./PrefersCode.css"
 import "./PrefersText.css"
 
-// Imperative styles:
-//
-// NOTE: Gecko/Firefox needs pre-wrap to be an inline style
-const style = { whiteSpace: "pre-wrap" }
-
-// const Node = props => (
-// 	<div style={style} data-node {...props}>
-// 		{props.children || (
-// 			<br />
-// 		)}
-// 	</div>
-// )
-
 const Node = ({ tagName, ...props }) => (
 	React.createElement(
 		tagName || "div",
 		{
-			style,
+			// NOTE: Gecko/Firefox needs pre-wrap to be an inline style
+			style: { whiteSpace: "pre-wrap" },
 			"data-node": true,
 			...props,
 		},
@@ -119,23 +107,21 @@ const CodeBlock = React.memo(props => {
 	)
 })
 
-const Paragraph = React.memo(props => {
-	const isEmojis = (
-		props.children.length &&
-		props.children.length <= 3 &&
-		props.children.every(each => each && each.type && each.type.name === "Emoji")
+// Returns whether components are emoji components.
+function areEmojis({ children }, limit = 3) {
+	const ok = (
+		children.length &&
+		children.length <= limit &&
+		children.every(each => each && each.type && each.type.name === "Emoji")
 	)
-	return (
-		<Node
-			className={[
-				"paragraph",
-				isEmojis && "emojis",
-			].filter(Boolean).join(" ")}
-		>
-			{props.children}
-		</Node>
-	)
-})
+	return ok
+}
+
+const Paragraph = React.memo(props => (
+	<Node className={`paragraph${!areEmojis(props) ? "" : " emojis"}`}>
+		{props.children}
+	</Node>
+))
 
 const Break = React.memo(props => (
 	<Node className="break">

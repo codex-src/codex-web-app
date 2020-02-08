@@ -8,8 +8,8 @@
 
 	-moz-tab-size:   4;
 	tab-size:        4;
-	font:            19px/1.50 "Inter var", sans-serif;
-	letter-spacing:  -0.0156em;
+	font:            19px/1.50 system-ui;
+	/* letter-spacing:  -0.0156em; */
 	color:           hsl(var(--gray-900));
 	caret-color:     hsl(var(--black));
 }
@@ -24,7 +24,7 @@ code {
 
 	-moz-tab-size:   2;
 	tab-size:        2;
-	font:            17px/1.25 "iA Writer Mono", monospace;
+	font:            16px/1.25 "iA Writer Mono", monospace;
 }
 
 pre,
@@ -41,27 +41,27 @@ pre > [data-node] > code {
 }
 .prefers-text-stylesheet .header.h1 {
 	font-size: 1.5em;
-	letter-spacing: -0.0210em;
+	/* letter-spacing: -0.0210em; */
 }
 .prefers-text-stylesheet .header.h2 {
 	font-size: 1.25em;
-	letter-spacing: -0.0194em;
+	/* letter-spacing: -0.0194em; */
 }
 .prefers-text-stylesheet .header.h3 {
 	font-size: 1.20em;
-	letter-spacing: -0.0188em;
+	/* letter-spacing: -0.0188em; */
 }
 .prefers-text-stylesheet .header.h4 {
 	font-size: 1.15em;
-	letter-spacing:-0.0182em;
+	/* letter-spacing:-0.0182em; */
 }
 .prefers-text-stylesheet .header.h5 {
 	font-size: 1.10em;
-	letter-spacing: -0.0175em;
+	/* letter-spacing: -0.0175em; */
 }
 .prefers-text-stylesheet .header.h6 {
 	font-size: 1.05em;
-	letter-spacing: -0.0166em;
+	/* letter-spacing: -0.0166em; */
 }
 
 .prefers-text-stylesheet .comment,
