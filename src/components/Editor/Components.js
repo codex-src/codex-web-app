@@ -108,11 +108,11 @@ const CodeBlock = React.memo(props => {
 })
 
 // Returns whether components are emoji components.
-function areEmojis({ children }, limit = 3) {
+function areEmojis({ children: components }, limit = 3) {
 	const ok = (
-		children.length &&
-		children.length <= limit &&
-		children.every(each => each && each.type && each.type.name === "Emoji")
+		components.length &&
+		components.length <= limit &&
+		components.every(each => each && each.type && each.type.name === "Emoji")
 	)
 	return ok
 }

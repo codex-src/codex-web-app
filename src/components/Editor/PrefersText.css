@@ -1,9 +1,9 @@
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 
 .prefers-text-stylesheet {
-	--spread-x:      24px;
-	--spread-y:      8px;
-	--border-radius: 2px;
+	--offset-x:      24px;
+	--offset-y:      8px;
+	--border-radius: 1px;
 	--box-shadow:    0px 0px 0px 1px hsla(var(--gray), 0.25);
 
 	-moz-tab-size:   4;
@@ -32,11 +32,12 @@ pre > [data-node] {
 	white-space: pre !important;
 }
 pre > [data-node] > code {
-	padding-right: var(--spread-x);
+	padding-right: var(--offset-x);
 }
 
 .prefers-text-stylesheet .header {
 	font-weight: bold;
+	line-height: 1.4;
 	color: hsl(var(--black));
 }
 .prefers-text-stylesheet .header.h1 {
@@ -69,9 +70,19 @@ pre > [data-node] > code {
 	color: hsl(var(--gray));
 }
 
+.prefers-text-stylesheet .blockquote {
+	color: hsl(var(--blue-a200));
+}
+.prefers-text-stylesheet.prefers-read-only-mode .blockquote {
+	padding-left: var(--offset-x);
+	font-size: 1.05em;
+	line-height: 1.75;
+	box-shadow: inset 2px 0px hsl(var(--blue-a400));
+}
+
 .prefers-text-stylesheet .code-block {
-	margin: 0px calc(-1 * var(--spread-x));
-	padding: var(--spread-y) var(--spread-x);
+	margin: 0px calc(-1 * var(--offset-x));
+	padding: var(--offset-y) var(--offset-x);
 	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
@@ -94,7 +105,7 @@ pre > [data-node] > code {
 	font-style: italic;
 }
 .prefers-text-stylesheet .strong {
-	font-weight: bold;
+	font-weight: 600;
 }
 
 .prefers-text-stylesheet.prefers-text-background .em,

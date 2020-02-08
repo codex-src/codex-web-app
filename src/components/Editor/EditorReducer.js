@@ -17,11 +17,13 @@ const ActionTypes = new Enum(
 )
 
 const initialState = {
-	prefersCodeStylesheet: false, // New
-	prefersReadOnlyMode: false, // New
-	prefersTextBackground: false, // New
-	prefersClassName: "prefers-text-stylesheet", // New
+	// Preferences:
+	prefersCodeStylesheet: false,
+	prefersReadOnlyMode: false,
+	prefersTextBackground: true,
+	prefersClassName: "prefers-text-stylesheet prefers-text-background",
 
+	// Reducer:
 	epoch: 0,             // The epoch (time stamp) of the editor
 	actionType: "",       // The type of the current action
 	actionTimeStamp: 0,   // The time stamp (since epoch) of the current action
@@ -40,7 +42,7 @@ const initialState = {
 }
 
 const reducer = state => ({
-	updatedPreferences() {
+	updatedPrefs() {
 		const classNames = []
 		// Prefers code stylesheet:
 		if (state.prefersCodeStylesheet) {
@@ -61,12 +63,12 @@ const reducer = state => ({
 	preferTextStylesheet() {
 		state.prefersReadOnlyMode = false // Reset
 		state.prefersCodeStylesheet = false
-		this.updatedPreferences()
+		this.updatedPrefs()
 	},
 	preferCodeStylesheet() {
 		state.prefersReadOnlyMode = false // Reset
 		state.prefersCodeStylesheet = true
-		this.updatedPreferences()
+		this.updatedPrefs()
 	},
 	preferTextBackground() {
 		if (state.prefersReadOnlyMode) {
@@ -74,11 +76,11 @@ const reducer = state => ({
 			return
 		}
 		state.prefersTextBackground = !state.prefersTextBackground
-		this.updatedPreferences()
+		this.updatedPrefs()
 	},
 	toggleReadOnlyMode() {
 		state.prefersReadOnlyMode = !state.prefersReadOnlyMode
-		this.updatedPreferences()
+		this.updatedPrefs()
 	},
 	newAction(actionType) {
 		const actionTimeStamp = Date.now() // - state.epoch
@@ -296,11 +298,8 @@ const reducer = state => ({
 })
 
 const init = initialValue => initialState => {
-	// const epoch = Date.now()
 	const state = {
 		...initialState,
-		// epoch,
-		// actionType: ActionTypes.INIT,
 		data: initialValue,
 		coords: {
 			pos1: {

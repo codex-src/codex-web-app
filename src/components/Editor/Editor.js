@@ -9,7 +9,6 @@ import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
 
-// Imperative styles:
 const style = {
 	whiteSpace: "pre-wrap",
 	outline: "none",
