@@ -156,8 +156,10 @@ const reducer = state => ({
 		// Get the next rune:
 		const substr = state.data.slice(0, index)
 		const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+		// Iterate to an alphanumeric rune OR a non-alphanumeric
+		// rune based on the next rune:
 		if (rune && !utf8.isAlphanum(rune)) {
-			// Iterate to a alphanumeric rune:
+			// Iterate to an alphanumeric rune:
 			while (index) {
 				const substr = state.data.slice(0, index)
 				const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
@@ -237,8 +239,10 @@ const reducer = state => ({
 		// Get the next rune:
 		const substr = state.data.slice(index)
 		const rune = emoji.atStart(substr) || utf8.atStart(substr)
+		// Iterate to an alphanumeric rune OR a non-alphanumeric
+		// rune based on the next rune:
 		if (rune && !utf8.isAlphanum(rune)) {
-			// Iterate to a alphanumeric rune:
+			// Iterate to an alphanumeric rune:
 			while (index < state.data.length) {
 				const substr = state.data.slice(index)
 				const rune = emoji.atStart(substr) || utf8.atStart(substr)
@@ -260,29 +264,6 @@ const reducer = state => ({
 				index += rune.length
 			}
 		}
-
-		// // Iterate to an alphanumeric rune:
-		// let index = state.pos1.pos
-		// while (index < state.data.length) {
-		// 	const substr = state.data.slice(index)
-		// 	const rune = emoji.atStart(substr) || utf8.atStart(substr)
-		// 	if (utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
-		// 		// No-op
-		// 		break
-		// 	}
-		// 	index += rune.length
-		// }
-		// // Iterate to a non-alphanumeric rune:
-		// while (index < state.data.length) {
-		// 	const substr = state.data.slice(index)
-		// 	const rune = emoji.atStart(substr) || utf8.atStart(substr)
-		// 	if (!utf8.isAlphanum(rune)) {
-		// 		// No-op
-		// 		break
-		// 	}
-		// 	index += rune.length
-		// }
-
 		// Get the number of bytes to drop:
 		let dropR = index - state.pos1.pos
 		if (!dropR && index < state.data.length && state.data[index] === "\n") {
