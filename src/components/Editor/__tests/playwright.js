@@ -3,7 +3,7 @@ import {
 	firefox,
 } from "playwright"
 
-const options = { delay: 0 }
+const options = { delay: 2 }
 
 // Puppeteer:
 //
@@ -52,12 +52,12 @@ export async function openPage(browserType, url) {
 
 // ./src/components/Editor/helpers/innerText.js
 export async function innerText(page) {
-	return await page.$eval("[contenteditable]", node => innerText(node))
+	return await page.$eval(".editor", node => innerText(node))
 }
 
 // Resets character data.
 export async function clear(page) {
-	await page.focus("[contenteditable]")
+	await page.focus(".editor")
 	await page.keyboard.down("Meta")
 	await page.keyboard.press("a", options)
 	await page.keyboard.up("Meta")
