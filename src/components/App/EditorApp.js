@@ -24,9 +24,9 @@ If you’re curious, the editor is open source: ❤️ https://github.com/codex-
 
 There are four shortcuts you should try before reading on:
 
-- \`shift + command + 1\`: Show the rich text stylesheet (default)
-- \`shift + command + 2\`: Show the monospace stylesheet
-- \`command + \\\`: Show a faint background on markdown text (like _italics_, *bold*, etc.)
+- \`shift + command + 1\`: Toggle the rich text stylesheet (default)
+- \`shift + command + 2\`: Toggle the monospace stylesheet
+- \`command + \\\`: Toggle a faint background on markdown text (like _italics_, *bold*, etc.)
 - \`command + /\`: Read-only mode -- preview your note _without_ markdown
 
 **If you’re on Windows or Linux, use \`control\` instead of \`command\`.**
