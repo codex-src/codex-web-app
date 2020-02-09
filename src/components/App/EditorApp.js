@@ -103,8 +103,6 @@ function EditorApp(props) {
 		[state.historyIndex],
 	)
 
-	// // Lazy implementation:
-	// const title = state.data.split("\n", 1)[0].replace(/^#{1,6} /, "")
 	return (
 		<DocumentTitle title="opencodex.dev">
 			<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>

@@ -28,7 +28,7 @@ function getDuration(state) {
 	return { count, desc: "minute" }
 }
 
-// TODO: Add support for UTF-8
+// TODO: Add support for UTF-8?
 function getStatus(state) {
 	const status = {
 		line: getLine(state),

@@ -4,32 +4,10 @@ import getStatus from "./getStatus"
 import React from "react"
 import stylex from "stylex"
 
-function formatComma({ count }) {
-	return count.toLocaleString("en")
-}
-
-function formatCount({ count, desc }) {
-	return `${formatComma({ count })} ${desc}${count === 1 ? "" : "s"}`
-}
-
-// Gets the status string for the LHS.
-function getStatusLHS({ line, column, selectedLines, selectedCharacters }) {
-	if (selectedCharacters.count) {
-		if (selectedLines.count < 2) {
-			return `Selected ${formatCount(selectedCharacters)}`
-		}
-		return `Selected ${formatCount(selectedLines)}, ${formatCount(selectedCharacters)}`
-	}
-	return `Line ${formatComma(line)}, column ${formatComma(column)}`
-}
-
-// Gets the status string for the RHS.
-function getStatusRHS({ words, duration }) {
-	if (duration.count < 2) {
-		return formatCount(words)
-	}
-	return `${formatCount(words)}, ${formatCount(duration)}`
-}
+import {
+	getStatusStringLHS,
+	getStatusStringRHS,
+} from "./getStatusString"
 
 const TextBox = stylex.Styleable(props => (
 	<div style={stylex.parse("p-x:16 h:32 flex -r :center b:gray-100 br:max")}>
@@ -51,7 +29,6 @@ function StatusBars(props) {
 	const [state] = React.useContext(Context)
 
 	const status = getStatus(state)
-
 	return (
 		/* eslint-disable jsx-a11y/accessible-emoji */
 		<aside style={stylex.parse("p-x:16 p-y:12 fixed -x -b z:1")}>
@@ -60,12 +37,12 @@ function StatusBars(props) {
 					<TextBox>
 						<Text>
 							✂️{"\u00a0\u00a0"}
-							{getStatusLHS(status)}
+							{getStatusStringLHS(state, status)}
 						</Text>
 					</TextBox>
 					<TextBox>
 						<Text>
-							{getStatusRHS(status)}{"\u00a0\u00a0"}
+							{getStatusStringRHS(state, status)}{"\u00a0\u00a0"}
 							⌛️
 						</Text>
 					</TextBox>

@@ -32,17 +32,3 @@ function getPosFromRange(rootNode, node, offset) {
 }
 
 export default getPosFromRange
-
-// const pos1 = {
-// 	index:         <Number>, // The text paragraph index
-// 	elementIndex:  <Number>, // The HTML element index
-// 	offset:        <Number>, // The text offset (of the current paragraph)
-// 	nodeOffset:    <Number>, // The HTML node offset (of the current element)
-// 	pos:           <Number>, // The running index
-// }
-//
-// const pos = {
-// 	index  // The paragraph index
-// 	offset // The offset of the current paragraph
-// 	pos    // The cursor position
-// }

@@ -62,7 +62,7 @@ function Editor({ state, dispatch, ...props }) {
 	// TODO: Add support for idle timeout
 	React.useEffect(
 		React.useCallback(() => {
-			if (!state.focused) {
+			if (!state.isFocused) {
 				// No-op
 				return
 			}
@@ -75,7 +75,7 @@ function Editor({ state, dispatch, ...props }) {
 				}, 1e3)
 			}
 		}, [state, dispatch]),
-		[state.focused],
+		[state.isFocused],
 	)
 
 	// Shortcuts:
@@ -186,7 +186,7 @@ function Editor({ state, dispatch, ...props }) {
 						isPointerDownRef.current = true
 					},
 					onPointerMove: e => {
-						if (!state.focused) {
+						if (!state.isFocused) {
 							isPointerDownRef.current = false // Reset
 							return
 						} else if (!isPointerDownRef.current) {
@@ -293,7 +293,7 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						e.preventDefault()
-						if (state.collapsed) {
+						if (!state.hasSelection) {
 							// No-op
 							return
 						}
@@ -307,7 +307,7 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						e.preventDefault()
-						if (state.collapsed) {
+						if (!state.hasSelection) {
 							// No-op
 							return
 						}
