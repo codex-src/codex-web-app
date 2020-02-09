@@ -7,7 +7,7 @@ import innerText from "./helpers/innerText"
 import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
-import StatusBar from "./StatusBar"
+import StatusBars from "./StatusBars"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 
@@ -333,7 +333,7 @@ function Editor({ state, dispatch, ...props }) {
 				},
 			)}
 			<Stylesheets />
-			<StatusBar />
+			<StatusBars />
 			{/* <Debugger /> */}
 		</Provider>
 	)

@@ -42,12 +42,12 @@ const TextBox = stylex.Styleable(props => (
 ))
 
 const Text = stylex.Styleable(props => (
-	<p style={stylex.parse("tnum fw:500 fs:12 c:gray-900")}>
+	<p style={stylex.parse("tnum fw:500 fs:12.5 c:gray-900")}>
 		{props.children}
 	</p>
 ))
 
-function StatusBar(props) {
+function StatusBars(props) {
 	const [state] = React.useContext(Context)
 
 	const status = getStatus(state)
@@ -78,4 +78,4 @@ function StatusBar(props) {
 	)
 }
 
-export default StatusBar
+export default StatusBars
