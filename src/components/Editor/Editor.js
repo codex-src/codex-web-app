@@ -207,7 +207,10 @@ function Editor({ state, dispatch, ...props }) {
 					onKeyDown: e => {
 						switch (true) {
 						// Tab:
-						case e.keyCode === 9: // Tab
+						//
+						// NOTE: Use !e.ctrlKey to guard tabbing
+						// shortcuts.
+						case !e.ctrlKey && e.keyCode === 9: // Tab
 							e.preventDefault()
 							dispatch.tab()
 							return

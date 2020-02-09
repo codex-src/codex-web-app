@@ -22,7 +22,7 @@ const initialState = {
 	prefersReadOnlyMode: false,
 	prefersTextBackground: true,
 	prefersClassName: "prefers-text-stylesheet prefers-text-background",
-
+	//
 	// Reducer:
 	epoch: 0,            // The epoch (time stamp) of the editor
 	actionType: "",      // The type of the current action
@@ -42,6 +42,7 @@ const initialState = {
 }
 
 const reducer = state => ({
+	// Preferences:
 	updatedPrefs() {
 		const classNames = []
 		// Prefers code stylesheet:
@@ -79,6 +80,8 @@ const reducer = state => ({
 		state.prefersReadOnlyMode = !state.prefersReadOnlyMode
 		this.updatedPrefs()
 	},
+	//
+	// Reducer:
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
 		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
@@ -251,9 +254,8 @@ const reducer = state => ({
 		this.write(substr)
 	},
 	storeUndo() {
-		// TODO: Compare cursors?
 		const undo = state.history[state.historyIndex]
-		if (undo.data === state.data) {
+		if (undo.data === state.data && undo.pos1.pos === state.pos1.pos && undo.pos2.pos === state.pos2.pos) {
 			// No-op
 			return
 		}
