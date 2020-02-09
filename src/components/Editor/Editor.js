@@ -335,7 +335,9 @@ function Editor({ state, dispatch, ...props }) {
 				},
 			)}
 			<Stylesheets />
-			<StatusBars />
+			{!state.prefersReadOnlyMode && (
+				<StatusBars />
+			)}
 			{/* <Debugger /> */}
 		</Provider>
 	)
