@@ -1,10 +1,9 @@
 import {
-	chromium,
+	chromium as chrome,
 	firefox,
-	webkit,
 } from "playwright"
 
-const options = { delay: 1 }
+const options = { delay: 0 }
 
 // Puppeteer:
 //
@@ -32,7 +31,7 @@ const options = { delay: 1 }
 //
 export async function openPage(browserType, url) {
 	const args = []
-	if (browserType === chromium) {
+	if (browserType === chrome) {
 		args.push("--window-size=1440,900")
 	} else if (browserType === firefox) {
 		args.push("-width 1440 -height 900") // Not working

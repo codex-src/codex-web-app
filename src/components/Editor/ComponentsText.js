@@ -129,36 +129,6 @@ function parseTextComponents(data) {
 				break
 			}
 			break
-
-		// // Strikethrough:
-		// case char === "~":
-		// 	// ~~Strikethrough~~
-		// 	if (length >= "~~x~~".length && data.slice(index, index + 2) === "~~") { // Takes precedence
-		// 		const offset = data.slice(index + 2).indexOf("~~")
-		// 		if (offset <= 0) {
-		// 			// No-op
-		// 			break
-		// 		}
-		// 		index += "~~".length
-		// 		const children = recurse(data.slice(index, index + offset))
-		// 		components.push(<Strikethrough key={key} syntax="~~">{children}</Strikethrough>)
-		// 		index += offset
-		// 		break
-		// 	// ~Strikethrough~
-		// 	} else if (length >= "~x~".length) {
-		// 		const offset = data.slice(index + 1).indexOf("~")
-		// 		if (offset <= 0) {
-		// 			// No-op
-		// 			break
-		// 		}
-		// 		index += "~".length
-		// 		const children = recurse(data.slice(index, index + offset))
-		// 		components.push(<Strikethrough key={key} syntax="~">{children}</Strikethrough>)
-		// 		index += offset
-		// 		break
-		// 	}
-		// 	break
-
 		// Strikethrough:
 		case char === "~":
 			// ~~Strikethrough~~
