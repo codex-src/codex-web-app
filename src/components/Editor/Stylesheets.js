@@ -19,6 +19,9 @@ const TextBackgroundStylesheet = props => (
 .prefers-text-background .strikethrough * {
 	background: none;
 }
+.prefers-text-background .code {
+	background: hsl(var(--white)) !important;
+}
 
 `.trim()
 	}</style>
@@ -50,7 +53,12 @@ const ReadOnlyModeStylesheet = props => (
 	border: 2px solid hsl(var(--gray-200));
 }
 
+/* FIXME */
+.prefers-read-only-mode .comment,
 .prefers-read-only-mode .markdown {
+	display: none;
+}
+.prefers-read-only-mode .comment + .paragraph[data-empty-node] {
 	display: none;
 }
 

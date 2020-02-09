@@ -171,7 +171,7 @@ function parseTextComponents(data) {
 				index += "~~".length
 				const children = recurse(data.slice(index, index + offset))
 				components.push(<Strikethrough key={key} syntax="~~">{children}</Strikethrough>)
-				index += offset
+				index += offset + 1
 				break
 			// ~Strikethrough~
 			} else if (length >= "~x~".length) {
