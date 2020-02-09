@@ -21,6 +21,7 @@ const initialState = {
 	prefersCodeStylesheet: false,
 	prefersReadOnlyMode: false,
 	prefersTextBackground: true,
+	prefersScrollPastEnd: true, // TODO
 	prefersClassName: "prefers-text-stylesheet prefers-text-background",
 	//
 	// Reducer:
@@ -34,7 +35,8 @@ const initialState = {
 	pos2: null,          // The end cursor
 	// coords: null,     // The cursor coords
 	components: null,    // The React components
-	shouldRender: 0,     // Should render the DOM and cursor?
+	shouldRender: 0,     // Should rerender the React components?
+	didRender: 0,        // Did rerender the React components?
 	reactDOM: null,      // The React DOM (not what the user sees)
 	history: [],         // The history state stack
 	historyIndex: 0,     // The history state stack index
@@ -295,7 +297,6 @@ const reducer = state => ({
 	},
 	copy() {
 		this.newAction(ActionTypes.COPY)
-		// Idempotent
 	},
 	paste(substr) {
 		this.newAction(ActionTypes.PASTE)
@@ -315,6 +316,10 @@ const reducer = state => ({
 		state.history.splice(state.historyIndex + 1)
 	},
 	undo() {
+		if (state.prefersReadOnlyMode) {
+			// No-op
+			return
+		}
 		this.newAction(ActionTypes.UNDO)
 		if (!state.historyIndex) {
 			// No-op
@@ -328,6 +333,10 @@ const reducer = state => ({
 		this.render()
 	},
 	redo() {
+		if (state.prefersReadOnlyMode) {
+			// No-op
+			return
+		}
 		this.newAction(ActionTypes.REDO)
 		if (state.historyIndex + 1 === state.history.length) {
 			// No-op
@@ -341,6 +350,9 @@ const reducer = state => ({
 	render() {
 		state.components = parseComponents(state.data)
 		state.shouldRender++
+	},
+	rendered() {
+		state.didRender++
 	},
 })
 

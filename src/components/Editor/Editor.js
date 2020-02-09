@@ -30,7 +30,7 @@ function Editor({ state, dispatch, ...props }) {
 				// Sync the DOMs:
 				const mutations = syncTrees(ref.current, state.reactDOM)
 				if ((!state.shouldRender || !mutations) && !forceRender) {
-					// No-op
+					dispatch.rendered()
 					return
 				}
 				// Reset the cursor:
@@ -54,10 +54,21 @@ function Editor({ state, dispatch, ...props }) {
 				} catch (e) {
 					console.warn({ "shouldRender/catch": e })
 				}
+				dispatch.rendered()
 			})
-		}, [state, forceRender]),
+		}, [state, dispatch, forceRender]),
 		[state.shouldRender],
 	)
+
+	const [scrollPastEnd, setScrollPastEnd] = React.useState({})
+
+	React.useEffect(() => {
+		if (!state.didRender) {
+			return
+		}
+		const { height } = ref.current.lastChild.getBoundingClientRect()
+		setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px)` })
+	}, [state.didRender])
 
 	// TODO: Add support for idle timeout
 	React.useEffect(
@@ -143,8 +154,10 @@ function Editor({ state, dispatch, ...props }) {
 
 					className: ["editor", state.prefersClassName].join(" "),
 
-					// TODO: Add support for scroll past end
-					style,
+					style: {
+						...style,
+						...scrollPastEnd,
+					},
 
 					contentEditable: !state.prefersReadOnlyMode && true,
 					suppressContentEditableWarning: !state.prefersReadOnlyMode && true,

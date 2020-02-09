@@ -100,7 +100,7 @@ function EditorApp(props) {
 		React.useCallback(() => {
 			localStorage.setItem(localStorageKey, state.data)
 		}, [state]),
-		[state.historyIndex],
+		[state.didRender],
 	)
 
 	return (
@@ -110,9 +110,7 @@ function EditorApp(props) {
 					<Editor.Editor
 						state={state}
 						dispatch={dispatch}
-						// scrollPastEnd
-						// statusBar
-						// debugger
+						scrollPastEnd // FIXME
 					/>
 				</div>
 			</div>

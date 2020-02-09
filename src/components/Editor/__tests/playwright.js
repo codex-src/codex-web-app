@@ -8,7 +8,7 @@ import {
 
 const browserTypes = { Chrome, Firefox, Safari }
 
-const options = { delay: 0 }
+const options = { delay: 16.67 }
 
 // Puppeteer:
 //
