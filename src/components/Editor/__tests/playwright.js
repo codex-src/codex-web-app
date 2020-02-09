@@ -1,9 +1,14 @@
+import { execSync } from "child_process"
+
 import {
-	chromium as chrome,
-	firefox,
+	chromium as Chrome,
+	firefox as Firefox,
+	webkit as Safari,
 } from "playwright"
 
-const options = { delay: 2 }
+const browserTypes = { Chrome, Firefox, Safari }
+
+const options = { delay: 0 }
 
 // Puppeteer:
 //
@@ -24,29 +29,31 @@ const options = { delay: 2 }
 // 	return [p, () => browser.close()]
 // }
 
-// Opens a new page from a browser type and a URL.
-//
-// page.on("error", error => expect(error).toBeNull())
-// page.on("pageerror", error => expect(error).toBeNull())
-//
-export async function openPage(browserType, url) {
+// Opens a new page from a browser string and a URL.
+export async function openPage(browserStr, url) {
+	const browserType = browserTypes[browserStr]
 	const args = []
-	if (browserType === chrome) {
+	if (browserStr === Chrome) {
 		args.push("--window-size=1440,900")
-	} else if (browserType === firefox) {
-		args.push("-width 1440 -height 900") // Not working
+	} else if (browserType === Firefox) {
+		args.push("-width=1440", "-height=900")
 	}
 	const config = {
-		headless: false,
+		headless: true, // false,
 		args,
 	}
 	const browser = await browserType.launch(config)
 	const context = await browser.newContext()
 	const page = await context.newPage(url)
 	await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 })
+	// page.on("error", error => expect(error).toBeNull())     // FIXME?
+	// page.on("pageerror", error => expect(error).toBeNull()) // FIXME?
 	await page.addScriptTag({ path: "./src/components/Editor/__tests/innerText.js" })
+	if (!config.headless && browserType === Firefox) {
+		execSync("osascript -e 'activate application \"Nightly\"'")
+	}
 	// https://stackoverflow.com/a/39914235
-	await new Promise(r => setTimeout(r, 2e3))
+	await new Promise(r => setTimeout(r, 1e3))
 	return [page, () => browser.close()]
 }
 
@@ -55,7 +62,6 @@ export async function innerText(page) {
 	return await page.$eval(".editor", node => innerText(node))
 }
 
-// Resets character data.
 export async function clear(page) {
 	await page.focus(".editor")
 	await page.keyboard.down("Meta")
@@ -70,48 +76,40 @@ export async function clear(page) {
 	await page.keyboard.press("Backspace", options)
 }
 
-// Types character data.
 export async function type(page, data) {
 	await page.keyboard.type(data, options)
 }
 
-// Presses a key.
 export async function press(page, key) {
 	await page.keyboard.press(key, options)
 }
 
-// Backspaces one character.
 export async function backspaceChar(page) {
 	await page.keyboard.press("Backspace", options)
 }
 
-// Backspaces one word.
 export async function backspaceWord(page) {
 	await page.keyboard.down("Alt")
 	await page.keyboard.press("Backspace", options)
 	await page.keyboard.up("Alt")
 }
 
-// Backspaces one character (forwards).
 export async function backspaceCharForwards(page) {
 	await page.keyboard.press("Delete", options)
 }
 
-// Backspaces one word (forwards).
 export async function backspaceWordForwards(page) {
 	await page.keyboard.down("Alt")
 	await page.keyboard.press("Delete", options)
 	await page.keyboard.up("Alt")
 }
 
-// Undos (once).
 export async function undo(page) {
 	await page.keyboard.down("Meta")
 	await page.keyboard.press("z", options)
 	await page.keyboard.up("Meta")
 }
 
-// Redos (once).
 export async function redo(page) {
 	await page.keyboard.down("Meta")
 	await page.keyboard.down("Shift")

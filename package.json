@@ -26,9 +26,9 @@
     "start": "react-scripts start",
     "start-build": "yarn build && PORT=3000 serve --no-clipboard -s build",
     "test": "react-scripts test",
-    "test-editor-chrome": "BROWSER=chrome yarn test --watchAll=false playwright.test.js",
-    "test-editor-firefox": "BROWSER=firefox yarn test --watchAll=false playwright.test.js",
-    "test-editor-safari": "BROWSER=safari yarn test --watchAll=false playwright.test.js",
+    "test-editor-chrome": "BROWSER=Chrome yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
+    "test-editor-firefox": "BROWSER=Firefox yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
+    "test-editor-safari": "BROWSER=Safari yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
     "test-editor": "yarn test-editor-chrome && yarn test-editor-firefox && yarn test-editor-safari",
     "build": "react-scripts build",
     "eject": "react-scripts eject"

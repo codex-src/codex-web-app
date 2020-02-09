@@ -184,7 +184,6 @@ function Editor({ state, dispatch, ...props }) {
 					},
 					onPointerDown: e => {
 						isPointerDownRef.current = true
-						console.log(document.getSelection())
 					},
 					onPointerMove: e => {
 						if (!state.isFocused) {
