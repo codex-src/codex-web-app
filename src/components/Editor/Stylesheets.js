@@ -6,20 +6,18 @@ const TextBackgroundStylesheet = props => (
 		`
 .prefers-text-background .em,
 .prefers-text-background .strong {
-	padding: 2px;
 	background: hsla(var(--blue-a400), 0.05);
 }
 .prefers-text-background .strikethrough,
 .prefers-text-background .comment .em,
 .prefers-text-background .comment .strong,
 .prefers-text-background .comment .strikethrough {
-	padding: 2px;
 	background: hsla(var(--gray), 0.1);
 }
 .prefers-text-background .em *,
 .prefers-text-background .strong *,
 .prefers-text-background .strikethrough * {
-	background: none !important;
+	background: none;
 }
 
 `.trim()
@@ -31,7 +29,7 @@ const ReadOnlyModeStylesheet = props => (
 		`
 .prefers-read-only-mode .blockquote {
 	padding-left: var(--padding-x);
-	font-size: 1.05em;
+	font-size: 1.1em;
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
 }
 .prefers-read-only-mode .blockquote > [data-empty-node] {
@@ -75,11 +73,6 @@ const SharedStylesheet = props => (
 .header {
 	font-weight: bold;
 	color: hsl(var(--black));
-}
-
-.header.h5 > .markdown,
-.header.h6 > .markdown {
-	color: hsl(var(--gray));
 }
 
 .comment {

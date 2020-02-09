@@ -35,8 +35,14 @@ function getStatusRHS({ words, duration }) {
 // 	<Icon style={stylex.parse("sw:500 wh:14 c:gray-900")} />
 // ))
 
+const TextBox = stylex.Styleable(props => (
+	<div style={stylex.parse("p-x:16 h:32 flex -r :center b:gray-100 br:max")}>
+		{props.children}
+	</div>
+))
+
 const Text = stylex.Styleable(props => (
-	<p style={stylex.parse("tnum fw:500 fs:14 lh:100% c:gray-900")} {...props}>
+	<p style={stylex.parse("tnum fw:500 fs:12 c:gray-900")}>
 		{props.children}
 	</p>
 ))
@@ -50,22 +56,22 @@ function StatusBar(props) {
 		<aside style={stylex.parse("p-x:16 p-y:12 fixed -x -b z:1")}>
 			<div style={stylex.parse("flex -r -x:center")}>
 				<div style={stylex.parse("flex -r -x:between w:1440")}>
-					<div style={stylex.parse("p-x:16 p-y:12 b:gray-100 br:8")}>
+					<TextBox>
 						<Text>
 							<span className="emoji" role="img" aria-label="emoji">
 								✂️
 							</span>{"\u00a0\u00a0"}
 							{getStatusRHS(status)}
 						</Text>
-					</div>
-					<div style={stylex.parse("p-x:16 p-y:12 b:gray-100 br:8")}>
+					</TextBox>
+					<TextBox>
 						<Text>
 							{getStatusRHS(status)}{"\u00a0\u00a0"}
 							<span className="emoji" role="img" aria-label="emoji">
 								⌛️
 							</span>
 						</Text>
-					</div>
+					</TextBox>
 				</div>
 			</div>
 		</aside>
