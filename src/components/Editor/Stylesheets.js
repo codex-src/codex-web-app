@@ -54,7 +54,7 @@ const ReadOnlyModeStylesheet = props => (
 	}</style>
 )
 
-const SharedStylesheet = props => (
+const CoreStylesheet = props => (
 	<style>{
 		`
 .editor {
@@ -222,7 +222,7 @@ function Stylesheets(props) {
 		<React.Fragment>
 			<TextBackgroundStylesheet />
 			<ReadOnlyModeStylesheet />
-			<SharedStylesheet />
+			<CoreStylesheet />
 			{state.prefersReadOnlyMode || !state.prefersCodeStylesheet ? (
 				<TextStylesheet />
 			) : (

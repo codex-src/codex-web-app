@@ -9,7 +9,7 @@ import {
 let initialValue = ""
 
 let page = null
-let done = null
+let close = null
 
 beforeAll(async () => {
 	jest.setTimeout(180e3)
@@ -32,12 +32,12 @@ beforeAll(async () => {
 		browserType = webkit
 		break
 	}
-	;[page, done] = await ppt.openPage(browserType, "http://localhost:3000")
+	;[page, close] = await ppt.openPage(browserType, "http://localhost:3000")
 	initialValue = await ppt.innerText(page)
 })
 
 afterAll(async () => {
-	await done()
+	await close()
 })
 
 test("cannot delete contenteditable", async () => {
@@ -208,27 +208,27 @@ test("can type and delete (forwards) words", async () => {
 	expect(data).toBe("")
 })
 
-test("can type and delete 100x paragraphs", async () => {
+test("can type and delete 50x paragraphs", async () => {
 	await ppt.reset(page)
-	await ppt.type(page, "\n".repeat(100))
+	await ppt.type(page, "\n".repeat(50))
 	let data = await ppt.innerText(page)
-	expect(data).toBe("\n".repeat(100))
-	for (let index = 0; index < 100; index++) {
+	expect(data).toBe("\n".repeat(50))
+	for (let index = 0; index < 50; index++) {
 		await ppt.press(page, "Backspace")
 	}
 	data = await ppt.innerText(page)
 	expect(data).toBe("")
 })
 
-test("can type and delete (forwards) 100x paragraphs", async () => {
+test("can type and delete (forwards) 50x paragraphs", async () => {
 	await ppt.reset(page)
-	await ppt.type(page, "\n".repeat(100))
+	await ppt.type(page, "\n".repeat(50))
 	let data = await ppt.innerText(page)
-	expect(data).toBe("\n".repeat(100))
-	for (let index = 0; index < 100; index++) {
+	expect(data).toBe("\n".repeat(50))
+	for (let index = 0; index < 50; index++) {
 		await ppt.press(page, "ArrowLeft")
 	}
-	for (let index = 0; index < 100; index++) {
+	for (let index = 0; index < 50; index++) {
 		await ppt.press(page, "Delete")
 	}
 	data = await ppt.innerText(page)

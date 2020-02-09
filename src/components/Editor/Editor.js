@@ -1,10 +1,10 @@
-// import Debugger from "./Debugger"
+// import getCoordsFromRange from "./helpers/getCoordsFromRange"
+import platform from "utils/platform"
 import Context from "./Context"
-import getCoordsFromRange from "./helpers/getCoordsFromRange"
-import getPosFromRange from "./helpers/getPosFromRange"
+import Debugger from "./Debugger"
+import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
-import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
 import StatusBars from "./StatusBars"
@@ -41,13 +41,13 @@ function Editor({ state, dispatch, ...props }) {
 				}
 				try {
 					const range = document.createRange()
-					const { node, offset } = getRangeFromPos(ref.current, state.pos1)
+					const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
 					range.setStart(node, offset)
 					range.collapse()
 					// NOTE: Use pos1 and pos2
-					if (state.pos1 !== state.pos2) {
+					if (state.pos1.pos !== state.pos2.pos) {
 						// TODO: Use state.pos1 as a shortcut
-						const { node, offset } = getRangeFromPos(ref.current, state.pos2)
+						const { node, offset } = getRangeFromPos(ref.current, state.pos2.pos)
 						range.setEnd(node, offset)
 					}
 					selection.addRange(range)
@@ -59,7 +59,7 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
-	// TODO: Idle timeout
+	// TODO: Add support for idle timeout
 	React.useEffect(
 		React.useCallback(() => {
 			if (!state.focused) {
@@ -78,59 +78,59 @@ function Editor({ state, dispatch, ...props }) {
 		[state.focused],
 	)
 
-	// Shortcuts:
-	React.useEffect(
-		React.useCallback(() => {
-			const onKeyDown = e => {
-				switch (true) {
-				// Prefers text stylesheet mode:
-				case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
-					e.preventDefault()
-					dispatch.preferTextStylesheet()
-					return
-				// Prefers code stylesheet mode:
-				case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
-					e.preventDefault()
-					dispatch.preferCodeStylesheet()
-					return
-				// Prefers text background:
-				case platform.detectKeyCode(e, 220): // 220: \
-					e.preventDefault()
-					dispatch.preferTextBackground()
-					return
-				// Prefers read-only mode:
-				case platform.detectKeyCode(e, 191): // 191: /
-					e.preventDefault()
-					dispatch.toggleReadOnlyMode()
-					return
-				default:
-					// No-op
-					break
-				}
-			}
-			document.addEventListener("keydown", onKeyDown)
-			return () => {
-				document.removeEventListener("keydown", onKeyDown)
-			}
-		}, [dispatch]),
-		[],
-	)
+	// // Shortcuts:
+	// React.useEffect(
+	// 	React.useCallback(() => {
+	// 		const onKeyDown = e => {
+	// 			switch (true) {
+	// 			// Prefers text stylesheet mode:
+	// 			case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
+	// 				e.preventDefault()
+	// 				dispatch.preferTextStylesheet()
+	// 				return
+	// 			// Prefers code stylesheet mode:
+	// 			case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
+	// 				e.preventDefault()
+	// 				dispatch.preferCodeStylesheet()
+	// 				return
+	// 			// Prefers text background:
+	// 			case platform.detectKeyCode(e, 220): // 220: \
+	// 				e.preventDefault()
+	// 				dispatch.preferTextBackground()
+	// 				return
+	// 			// Prefers read-only mode:
+	// 			case platform.detectKeyCode(e, 191): // 191: /
+	// 				e.preventDefault()
+	// 				dispatch.toggleReadOnlyMode()
+	// 				return
+	// 			default:
+	// 				// No-op
+	// 				break
+	// 			}
+	// 		}
+	// 		document.addEventListener("keydown", onKeyDown)
+	// 		return () => {
+	// 			document.removeEventListener("keydown", onKeyDown)
+	// 		}
+	// 	}, [dispatch]),
+	// 	[],
+	// )
 
 	// Gets the cursors (and coords).
-	const getPos = ({ andCoords } = { andCoords: true }) => {
+	const getPos = (/* { andCoords } = { andCoords: true } */) => {
 		const selection = document.getSelection()
 		const range = selection.getRangeAt(0)
-		const pos1 = getPosFromRange(ref.current, range.startContainer, range.startOffset)
-		let pos2 = pos1
+		const pos1 = getPosFromRange2(ref.current, range.startContainer, range.startOffset)
+		let pos2 = { ...pos1 }
 		if (!range.collapsed) {
 			// TODO: Use state.pos1 as a shortcut
-			pos2 = getPosFromRange(ref.current, range.endContainer, range.endOffset)
+			pos2 = getPosFromRange2(ref.current, range.endContainer, range.endOffset)
 		}
-		let coords = null
-		if (andCoords) {
-			coords = getCoordsFromRange(range)
-		}
-		return [pos1, pos2, coords]
+		// let coords = null
+		// if (andCoords) {
+		// 	coords = getCoordsFromRange(range)
+		// }
+		return [pos1, pos2 /*, coords */]
 	}
 
 	const { Provider } = Context
@@ -143,6 +143,7 @@ function Editor({ state, dispatch, ...props }) {
 
 					className: ["editor", state.prefersClassName].join(" "),
 
+					// TODO: Add support for scroll past end
 					style,
 
 					contentEditable: !state.prefersReadOnlyMode && true,
@@ -174,8 +175,8 @@ function Editor({ state, dispatch, ...props }) {
 								selection.removeAllRanges()
 								selection.addRange(range)
 							}
-							const [pos1, pos2, coords] = getPos()
-							dispatch.actionSelect(pos1, pos2, coords)
+							const [pos1, pos2 /* , coords */] = getPos()
+							dispatch.actionSelect(pos1, pos2 /* , coords */)
 						} catch (e) {
 							console.warn({ "onSelect/catch": e })
 						}
@@ -192,8 +193,8 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						try {
-							const [pos1, pos2, coords] = getPos()
-							dispatch.actionSelect(pos1, pos2, coords)
+							const [pos1, pos2 /* , coords */] = getPos()
+							dispatch.actionSelect(pos1, pos2 /* , coords */)
 						} catch (e) {
 							console.warn({ "onPointerMove/catch": e })
 						}
@@ -234,7 +235,7 @@ function Editor({ state, dispatch, ...props }) {
 						dedupeCompositionEndRef.current = true
 						// Input:
 						const data = innerText(ref.current)
-						const [pos1, pos2] = getPos({ andCoords: false })
+						const [pos1, pos2] = getPos(/* { andCoords: false } */)
 						dispatch.actionInput(data, pos1, pos2)
 					},
 					onInput: e => {
@@ -281,7 +282,7 @@ function Editor({ state, dispatch, ...props }) {
 						}
 						// Input:
 						const data = innerText(ref.current)
-						const [pos1, pos2] = getPos({ andCoords: false })
+						const [pos1, pos2] = getPos(/* { andCoords: false } */)
 						dispatch.actionInput(data, pos1, pos2)
 					},
 
@@ -295,7 +296,7 @@ function Editor({ state, dispatch, ...props }) {
 							// No-op
 							return
 						}
-						const substr = state.data.slice(state.pos1, state.pos2)
+						const substr = state.data.slice(state.pos1.pos, state.pos2.pos)
 						e.clipboardData.setData("text/plain", substr)
 						dispatch.cut()
 					},
@@ -309,7 +310,7 @@ function Editor({ state, dispatch, ...props }) {
 							// No-op
 							return
 						}
-						const substr = state.data.slice(state.pos1, state.pos2)
+						const substr = state.data.slice(state.pos1.pos, state.pos2.pos)
 						e.clipboardData.setData("text/plain", substr)
 						dispatch.copy()
 					},

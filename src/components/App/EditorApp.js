@@ -212,9 +212,9 @@ When you’re ready to read your note as if a user, you can press \`command /\` 
 function EditorApp(props) {
 	const [state, dispatch] = Editor.useEditor(initialValue)
 
-	React.useEffect(() => {
-		localStorage.setItem(localStorageKey, state.data)
-	}, [state.data])
+	// React.useEffect(() => {
+	// 	localStorage.setItem(localStorageKey, state.data)
+	// }, [state.data])
 
 	// Lazy implementation:
 	const title = state.data.split("\n", 1)[0].replace(/^#{1,6} /, "")

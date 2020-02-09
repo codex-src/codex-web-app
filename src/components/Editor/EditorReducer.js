@@ -24,21 +24,21 @@ const initialState = {
 	prefersClassName: "prefers-text-stylesheet prefers-text-background",
 
 	// Reducer:
-	epoch: 0,             // The epoch (time stamp) of the editor
-	actionType: "",       // The type of the current action
-	actionTimeStamp: 0,   // The time stamp (since epoch) of the current action
-	focused: false,       // Is the editor focused?
-	data: "",             // The plain text data
-	pos1: 0,              // The start cursor
-	pos2: 0,              // The end cursor
-	coords: null,         // The cursor coords
-	collapsed: false,     // Are the cursors collapsed?
-	components: null,     // The React components
-	shouldRender: 0,      // Should render the DOM and cursor?
-	reactDOM: null,       // The React DOM (not what the user sees)
-	history: [],          // The history state stack
-	historyIndex: 0,      // The history state stack index
-	didCorrectPos: false, // Did correct the cursors?
+	epoch: 0,               // The epoch (time stamp) of the editor
+	actionType: "",         // The type of the current action
+	actionTimeStamp: 0,     // The time stamp (since epoch) of the current action
+	focused: false,         // Is the editor focused?
+	data: "",               // The plain text data
+	pos1: null,             // The start cursor
+	pos2: null,             // The end cursor
+	// coords: null,        // The cursor coords
+	collapsed: false,       // Are the cursors collapsed?
+	components: null,       // The React components
+	shouldRender: 0,        // Should render the DOM and cursor?
+	reactDOM: null,         // The React DOM (not what the user sees)
+	history: [],            // The history state stack
+	historyIndex: 0,        // The history state stack index
+	didOverwritePos: false, // Did overwrite the cursor on first write?
 }
 
 const reducer = state => ({
@@ -95,41 +95,40 @@ const reducer = state => ({
 		this.newAction(ActionTypes.BLUR)
 		state.focused = false
 	},
-	actionSelect(pos1, pos2, coords) {
+	actionSelect(pos1, pos2 /* , coords */) {
 		this.newAction(ActionTypes.SELECT)
-		const collapsed = pos1 === pos2
-		Object.assign(state, { pos1, pos2, coords, collapsed })
+		const collapsed = pos1.pos === pos2.pos
+		Object.assign(state, { pos1, pos2, /* coords, */ collapsed })
 	},
 	actionInput(data, pos1, pos2) {
 		this.newAction(ActionTypes.INPUT)
-		if (!state.historyIndex && !state.didCorrectPos) {
+		if (!state.historyIndex && !state.didOverwritePos) {
 			const [undo] = state.history
-			undo.pos1 = state.pos1
-			undo.pos2 = state.pos2
-			state.didCorrectPos = true
+			undo.pos1.pos = state.pos1.pos
+			undo.pos2.pos = state.pos2.pos
+			state.didOverwritePos = true
 		}
 		this.dropRedos()
 		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
 	write(substr, dropL = 0, dropR = 0) {
-		if (!state.historyIndex && !state.didCorrectPos) {
+		if (!state.historyIndex && !state.didOverwritePos) {
 			const [undo] = state.history
-			undo.pos1 = state.pos1
-			undo.pos2 = state.pos2
-			state.didCorrectPos = true
+			undo.pos1.pos = state.pos1.pos
+			undo.pos2.pos = state.pos2.pos
+			state.didOverwritePos = true
 		}
 		this.dropRedos()
-		const data = state.data.slice(0, state.pos1 - dropL) + substr + state.data.slice(state.pos2 + dropR)
-		const pos1 = state.pos1 - dropL + substr.length
-		const pos2 = pos1
-		Object.assign(state, { data, pos1, pos2 })
+		state.data = state.data.slice(0, state.pos1.pos - dropL) + substr + state.data.slice(state.pos2.pos + dropR)
+		state.pos1.pos = state.pos1.pos - dropL + substr.length
+		state.pos2.pos = state.pos1.pos
 		this.render()
 	},
 	backspaceChar() {
 		let dropL = 0
-		if (state.collapsed && state.pos1) { // Inverse
-			const substr = state.data.slice(0, state.pos1)
+		if (state.collapsed && state.pos1.pos) { // Inverse
+			const substr = state.data.slice(0, state.pos1.pos)
 			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
 			dropL = rune.length
 		}
@@ -141,7 +140,7 @@ const reducer = state => ({
 			return
 		}
 		// Iterate to an alphanumeric rune:
-		let index = state.pos1
+		let index = state.pos1.pos
 		while (index >= 0) {
 			const substr = state.data.slice(0, index)
 			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
@@ -162,7 +161,7 @@ const reducer = state => ({
 			index -= rune.length
 		}
 		// Get the number of bytes to drop:
-		let dropL = state.pos1 - index
+		let dropL = state.pos1.pos - index
 		if (!dropL && index - 1 >= 0 && state.data[index - 1] === "\n") {
 			dropL = 1
 		}
@@ -174,7 +173,7 @@ const reducer = state => ({
 			return
 		}
 		// Iterate to a v. white space rune:
-		let index = state.pos1
+		let index = state.pos1.pos
 		while (index >= 0) {
 			const substr = state.data.slice(0, index)
 			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
@@ -185,7 +184,7 @@ const reducer = state => ({
 			index -= rune.length
 		}
 		// Get the number of bytes to drop:
-		let dropL = state.pos1 - index
+		let dropL = state.pos1.pos - index
 		if (!dropL && index - 1 >= 0 && state.data[index - 1] === "\n") {
 			dropL = 1
 		}
@@ -193,20 +192,20 @@ const reducer = state => ({
 	},
 	backspaceCharForwards() {
 		let dropR = 0
-		if (state.collapsed && state.pos1 < state.data.length) { // Inverse
-			const substr = state.data.slice(state.pos1)
+		if (state.collapsed && state.pos1.pos < state.data.length) { // Inverse
+			const substr = state.data.slice(state.pos1.pos)
 			const rune = emoji.atStart(substr) || utf8.atStart(substr)
 			dropR = rune.length
 		}
 		this.write("", 0, dropR)
 	},
 	backspaceWordForwards() {
-		if (!state.collapsed) { // || state.pos1 === state.data.length) {
+		if (!state.collapsed) { // || state.pos1.pos === state.data.length) {
 			this.write("")
 			return
 		}
 		// Iterate to an alphanumeric rune:
-		let index = state.pos1
+		let index = state.pos1.pos
 		while (index < state.data.length) {
 			const substr = state.data.slice(index)
 			const rune = emoji.atStart(substr) || utf8.atStart(substr)
@@ -227,7 +226,7 @@ const reducer = state => ({
 			index += rune.length
 		}
 		// Get the number of bytes to drop:
-		let dropR = index - state.pos1
+		let dropR = index - state.pos1.pos
 		if (!dropR && index < state.data.length && state.data[index] === "\n") {
 			dropR = 1
 		}
@@ -252,13 +251,14 @@ const reducer = state => ({
 		this.write(substr)
 	},
 	storeUndo() {
+		// TODO: Compare cursors?
 		const undo = state.history[state.historyIndex]
 		if (undo.data === state.data) {
 			// No-op
 			return
 		}
 		const { data, pos1, pos2 } = state
-		state.history.push({ data, pos1, pos2 })
+		state.history.push({ data, pos1: { ...pos1 }, pos2: { ...pos2 } })
 		state.historyIndex++
 	},
 	dropRedos() {
@@ -269,8 +269,8 @@ const reducer = state => ({
 		if (!state.historyIndex) {
 			// No-op
 			return
-		} else if (state.historyIndex === 1 && state.didCorrectPos) {
-			state.didCorrectPos = false
+		} else if (state.historyIndex === 1 && state.didOverwritePos) {
+			state.didOverwritePos = false
 		}
 		state.historyIndex--
 		const undo = state.history[state.historyIndex]
@@ -294,28 +294,35 @@ const reducer = state => ({
 	},
 })
 
+// Creates a new cursor.
+function newPos() {
+	const pos = {
+		x: 0,
+		y: 0,
+		pos: 0,
+	}
+	return pos
+}
+
 const init = initialValue => initialState => {
 	const state = {
 		...initialState,
 		data: initialValue,
-		coords: {
-			pos1: {
-				x: 0,
-				y: 0,
-			},
-			pos2: {
-				x: 0,
-				y: 0,
-			},
-		},
+		pos1: newPos(),
+		pos2: newPos(),
+		// coords: {
+		// 	pos1: {
+		// 		x: 0,
+		// 		y: 0,
+		// 	},
+		// 	pos2: {
+		// 		x: 0,
+		// 		y: 0,
+		// 	},
+		// },
 		components: parseComponents(initialValue),
 		reactDOM: document.createElement("div"),
-		history: [
-			{
-				data: initialValue,
-				pos1: 0,
-				pos2: 0,
-			},
+		history: [{ data: initialValue, pos1: newPos(), pos2: newPos() },
 		],
 	}
 	return state
