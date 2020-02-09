@@ -41,6 +41,16 @@ const initialState = {
 	didSetPos: false,    // Did set the cursors before the first write?
 }
 
+// Creates a new cursor.
+function newPos() {
+	const pos = {
+		x: 0,
+		y: 0,
+		pos: 0,
+	}
+	return pos
+}
+
 const reducer = state => ({
 	// Preferences:
 	updatedPrefs() {
@@ -96,6 +106,8 @@ const reducer = state => ({
 	},
 	actionBlur() {
 		this.newAction(ActionTypes.BLUR)
+		state.pos1 = newPos() // Reset
+		state.pos2 = newPos() // Reset
 		state.isFocused = false
 	},
 	actionSelect(pos1, pos2 /* , coords */) {
@@ -331,16 +343,6 @@ const reducer = state => ({
 		state.shouldRender++
 	},
 })
-
-// Creates a new cursor.
-function newPos() {
-	const pos = {
-		x: 0,
-		y: 0,
-		pos: 0,
-	}
-	return pos
-}
 
 const init = initialValue => initialState => {
 	const state = {

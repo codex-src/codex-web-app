@@ -7,18 +7,18 @@ function formatCount({ count, desc }) {
 }
 
 // Gets the status string for the LHS:
-export function getStatusStringLHS(state, { line, column, selectedLines, selectedCharacters }) {
+export function getStatusStringLHS(state, { line, column, selectedLines, selectedChars }) {
 	if (!state.isFocused) {
 		return "No selection"
 	}
 	if (state.hasSelection) {
 		if (selectedLines.count < 2) {
-			return `${formatCount(selectedCharacters)} selected`
+			return `${formatCount(selectedChars)} selected`
 		} // else if (state.pos1.pos || state.pos2.pos < state.data.length) {
-		// 	return `${formatCount(selectedLines)}, ${formatCount(selectedCharacters)} selected`
+		// 	return `${formatCount(selectedLines)}, ${formatCount(selectedChars)} selected`
 		// }
 		// return "Document selected"
-		return `${formatCount(selectedLines)}, ${formatCount(selectedCharacters)} selected`
+		return `${formatCount(selectedLines)}, ${formatCount(selectedChars)} selected`
 	}
 	return `Line ${formatComma(line)}, column ${formatComma(column)}`
 }

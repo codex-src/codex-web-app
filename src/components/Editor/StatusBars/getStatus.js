@@ -13,7 +13,7 @@ function getSelectedLines(state) {
 	return { count, desc: "line" }
 }
 
-function getSelectedCharacters(state) {
+function getSelectedChars(state) {
 	const count = state.pos2.pos - state.pos1.pos
 	return { count, desc: "character" }
 }
@@ -34,7 +34,7 @@ function getStatus(state) {
 		line: getLine(state),
 		column: getColumn(state),
 		selectedLines: getSelectedLines(state),
-		selectedCharacters: getSelectedCharacters(state),
+		selectedChars: getSelectedChars(state),
 		words: getWords(state),
 		duration: getDuration(state),
 	}
