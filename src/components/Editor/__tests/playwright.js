@@ -4,7 +4,7 @@ import {
 	webkit,
 } from "playwright"
 
-const options = { delay: 0 }
+const options = { delay: 1 }
 
 // Puppeteer:
 //

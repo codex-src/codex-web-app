@@ -41,6 +41,10 @@ const ReadOnlyModeStylesheet = props => (
 	display: none;
 }
 
+.prefers-read-only-mode .paragraph.emojis {
+	font-size: 1.5em;
+}
+
 .prefers-read-only-mode .break {
 	margin: calc(0.75em - 1px) 0px;
 	border: 2px solid hsl(var(--gray-200));
@@ -95,10 +99,6 @@ const CoreStylesheet = props => (
 }
 .code-block > [data-node] > span {
 	padding-right: var(--padding-x);
-}
-
-.paragraph.emojis {
-	font-size: 1.5em;
 }
 
 .emoji {
@@ -159,7 +159,7 @@ const TextStylesheet = props => (
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: 16px/1.4 "iA Writer Mono", monospace;
+	font: 1em/1.4 "iA Writer Mono", monospace;
 }
 
 .header {
@@ -209,7 +209,7 @@ const CodeStylesheet = props => (
 
 .code-block,
 .code {
-	font: 16px/1.4 "iA Writer Mono";
+	font: 1em/1.4 "iA Writer Mono";
 }
 
 `.trim()

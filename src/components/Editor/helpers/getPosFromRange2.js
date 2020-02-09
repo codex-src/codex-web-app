@@ -17,14 +17,14 @@ function getPosFromRange2(rootNode, node, offset) {
 		while (index < childNodes.length) {
 			if (childNodes[index] === node) {
 				Object.assign(pos, {
-					x: pos.y + offset,
+					x: pos.x + offset,
 					pos: pos.pos + offset,
 				})
 				return true
 			}
 			const { length } = (childNodes[index].nodeValue || "")
 			Object.assign(pos, {
-				x: pos.y + length,
+				x: pos.x + length,
 				pos: pos.pos + length,
 			})
 			if (recurse(childNodes[index])) {
@@ -35,7 +35,7 @@ function getPosFromRange2(rootNode, node, offset) {
 					nextSibling.hasAttribute("data-node")) {
 				Object.assign(pos, {
 					x: 0, // Reset
-					y: pos.x + 1,
+					y: pos.y + 1,
 					pos: pos.pos + 1,
 				})
 			}

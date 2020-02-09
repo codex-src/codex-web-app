@@ -212,14 +212,17 @@ When you’re ready to read your note as if a user, you can press \`command /\` 
 function EditorApp(props) {
 	const [state, dispatch] = Editor.useEditor(initialValue)
 
-	// React.useEffect(() => {
-	// 	localStorage.setItem(localStorageKey, state.data)
-	// }, [state.data])
+	React.useEffect(
+		React.useCallback(() => {
+			localStorage.setItem(localStorageKey, state.data)
+		}, [state]),
+		[state.historyIndex],
+	)
 
-	// Lazy implementation:
-	const title = state.data.split("\n", 1)[0].replace(/^#{1,6} /, "")
+	// // Lazy implementation:
+	// const title = state.data.split("\n", 1)[0].replace(/^#{1,6} /, "")
 	return (
-		<DocumentTitle title={title}>
+		<DocumentTitle title="opencodex.dev">
 			<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
 				<div style={stylex.parse("w:834 no-min-w")}>
 					<Editor.Editor

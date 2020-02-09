@@ -4,7 +4,7 @@ function getLine(state) {
 }
 
 function getColumn(state) {
-	const count = state.pos2.x + 1
+	const count = state.pos1.x + 1
 	return { count, desc: "column" }
 }
 

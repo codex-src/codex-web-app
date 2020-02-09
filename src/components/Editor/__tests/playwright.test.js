@@ -1,9 +1,9 @@
 import * as ppt from "./playwright"
 
 import {
-	chromium,
+	chromium as chrome,
 	firefox,
-	webkit,
+	webkit as safari,
 } from "playwright"
 
 let initialValue = ""
@@ -23,13 +23,13 @@ beforeAll(async () => {
 	let browserType = null
 	switch (process.env.BROWSER) {
 	case "chrome":
-		browserType = chromium
+		browserType = chrome
 		break
 	case "firefox":
 		browserType = firefox
 		break
 	case "safari":
-		browserType = webkit
+		browserType = safari
 		break
 	}
 	;[page, close] = await ppt.openPage(browserType, "http://localhost:3000")

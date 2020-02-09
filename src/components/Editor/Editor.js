@@ -78,43 +78,43 @@ function Editor({ state, dispatch, ...props }) {
 		[state.focused],
 	)
 
-	// // Shortcuts:
-	// React.useEffect(
-	// 	React.useCallback(() => {
-	// 		const onKeyDown = e => {
-	// 			switch (true) {
-	// 			// Prefers text stylesheet mode:
-	// 			case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
-	// 				e.preventDefault()
-	// 				dispatch.preferTextStylesheet()
-	// 				return
-	// 			// Prefers code stylesheet mode:
-	// 			case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
-	// 				e.preventDefault()
-	// 				dispatch.preferCodeStylesheet()
-	// 				return
-	// 			// Prefers text background:
-	// 			case platform.detectKeyCode(e, 220): // 220: \
-	// 				e.preventDefault()
-	// 				dispatch.preferTextBackground()
-	// 				return
-	// 			// Prefers read-only mode:
-	// 			case platform.detectKeyCode(e, 191): // 191: /
-	// 				e.preventDefault()
-	// 				dispatch.toggleReadOnlyMode()
-	// 				return
-	// 			default:
-	// 				// No-op
-	// 				break
-	// 			}
-	// 		}
-	// 		document.addEventListener("keydown", onKeyDown)
-	// 		return () => {
-	// 			document.removeEventListener("keydown", onKeyDown)
-	// 		}
-	// 	}, [dispatch]),
-	// 	[],
-	// )
+	// Shortcuts:
+	React.useEffect(
+		React.useCallback(() => {
+			const onKeyDown = e => {
+				switch (true) {
+				// Prefers text stylesheet mode:
+				case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
+					e.preventDefault()
+					dispatch.preferTextStylesheet()
+					return
+				// Prefers code stylesheet mode:
+				case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
+					e.preventDefault()
+					dispatch.preferCodeStylesheet()
+					return
+				// Prefers text background:
+				case platform.detectKeyCode(e, 220): // 220: \
+					e.preventDefault()
+					dispatch.preferTextBackground()
+					return
+				// Prefers read-only mode:
+				case platform.detectKeyCode(e, 191): // 191: /
+					e.preventDefault()
+					dispatch.toggleReadOnlyMode()
+					return
+				default:
+					// No-op
+					break
+				}
+			}
+			document.addEventListener("keydown", onKeyDown)
+			return () => {
+				document.removeEventListener("keydown", onKeyDown)
+			}
+		}, [dispatch]),
+		[],
+	)
 
 	// Gets the cursors (and coords).
 	const getPos = (/* { andCoords } = { andCoords: true } */) => {
@@ -148,6 +148,7 @@ function Editor({ state, dispatch, ...props }) {
 
 					contentEditable: !state.prefersReadOnlyMode && true,
 					suppressContentEditableWarning: !state.prefersReadOnlyMode && true,
+					spellCheck: !state.prefersReadOnlyMode,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,
