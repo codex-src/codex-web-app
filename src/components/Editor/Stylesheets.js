@@ -32,11 +32,10 @@ const ReadOnlyModeStylesheet = props => (
 .prefers-read-only-mode .blockquote {
 	padding-left: var(--padding-x);
 	font-size: 1.05em;
-	line-height: 1.75;
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
 }
 .prefers-read-only-mode .blockquote > [data-empty-node] {
-	height: 0.75em;
+	height: calc(1.65em / 2);
 }
 
 .prefers-read-only-mode .code-block > [data-start-node],
@@ -63,7 +62,7 @@ const SharedStylesheet = props => (
 .editor {
 	--padding-x:     24px;
 	--padding-y:     12px;
-	--border-radius: 1px;
+	--border-radius: 2px;
 	--box-shadow:    0px 0px 0px 1px hsl(var(--gray-300));
 
 	color: hsl(var(--gray-900));
@@ -95,7 +94,7 @@ const SharedStylesheet = props => (
 .code-block {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
-	background: hsl(var(--gray-50));
+	/* background: hsl(var(--gray-50)); */
 	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
