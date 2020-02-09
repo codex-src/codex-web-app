@@ -142,26 +142,42 @@ const reducer = state => ({
 			this.write("")
 			return
 		}
-		// Iterate to an alphanumeric rune:
+		// Iterate to a non-h. white space:
 		let index = state.pos1.pos
-		while (index >= 0) {
+		while (index) {
 			const substr = state.data.slice(0, index)
 			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
-			if (!rune || utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
+			if (!rune || !utf8.isHWhiteSpace(rune)) {
 				// No-op
 				break
 			}
 			index -= rune.length
 		}
-		// Iterate to a non-alphanumeric rune:
-		while (index >= 0) {
-			const substr = state.data.slice(0, index)
-			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
-			if (!rune || !utf8.isAlphanum(rune)) {
-				// No-op
-				break
+		// Get the next rune:
+		const substr = state.data.slice(0, index)
+		const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+		if (rune && !utf8.isAlphanum(rune)) {
+			// Iterate to a alphanumeric rune:
+			while (index) {
+				const substr = state.data.slice(0, index)
+				const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+				if (!rune || utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+					// No-op
+					break
+				}
+				index -= rune.length
 			}
-			index -= rune.length
+		} else if (rune && utf8.isAlphanum(rune)) {
+			// Iterate to a non-alphanumeric rune:
+			while (index) {
+				const substr = state.data.slice(0, index)
+				const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+				if (!rune || !utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+					// No-op
+					break
+				}
+				index -= rune.length
+			}
 		}
 		// Get the number of bytes to drop:
 		let dropL = state.pos1.pos - index
@@ -207,27 +223,66 @@ const reducer = state => ({
 			this.write("")
 			return
 		}
-		// Iterate to an alphanumeric rune:
+		// Iterate to a non-h. white space:
 		let index = state.pos1.pos
 		while (index < state.data.length) {
 			const substr = state.data.slice(index)
 			const rune = emoji.atStart(substr) || utf8.atStart(substr)
-			if (utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
+			if (!rune || !utf8.isHWhiteSpace(rune)) {
 				// No-op
 				break
 			}
 			index += rune.length
 		}
-		// Iterate to a non-alphanumeric rune:
-		while (index < state.data.length) {
-			const substr = state.data.slice(index)
-			const rune = emoji.atStart(substr) || utf8.atStart(substr)
-			if (!utf8.isAlphanum(rune)) {
-				// No-op
-				break
+		// Get the next rune:
+		const substr = state.data.slice(index)
+		const rune = emoji.atStart(substr) || utf8.atStart(substr)
+		if (rune && !utf8.isAlphanum(rune)) {
+			// Iterate to a alphanumeric rune:
+			while (index < state.data.length) {
+				const substr = state.data.slice(index)
+				const rune = emoji.atStart(substr) || utf8.atStart(substr)
+				if (!rune || utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+					// No-op
+					break
+				}
+				index += rune.length
 			}
-			index += rune.length
+		} else if (rune && utf8.isAlphanum(rune)) {
+			// Iterate to a non-alphanumeric rune:
+			while (index < state.data.length) {
+				const substr = state.data.slice(index)
+				const rune = emoji.atStart(substr) || utf8.atStart(substr)
+				if (!rune || !utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+					// No-op
+					break
+				}
+				index += rune.length
+			}
 		}
+
+		// // Iterate to an alphanumeric rune:
+		// let index = state.pos1.pos
+		// while (index < state.data.length) {
+		// 	const substr = state.data.slice(index)
+		// 	const rune = emoji.atStart(substr) || utf8.atStart(substr)
+		// 	if (utf8.isAlphanum(rune) || utf8.isVWhiteSpace(rune)) {
+		// 		// No-op
+		// 		break
+		// 	}
+		// 	index += rune.length
+		// }
+		// // Iterate to a non-alphanumeric rune:
+		// while (index < state.data.length) {
+		// 	const substr = state.data.slice(index)
+		// 	const rune = emoji.atStart(substr) || utf8.atStart(substr)
+		// 	if (!utf8.isAlphanum(rune)) {
+		// 		// No-op
+		// 		break
+		// 	}
+		// 	index += rune.length
+		// }
+
 		// Get the number of bytes to drop:
 		let dropR = index - state.pos1.pos
 		if (!dropR && index < state.data.length && state.data[index] === "\n") {

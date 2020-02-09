@@ -57,7 +57,7 @@ export async function innerText(page) {
 }
 
 // Resets character data.
-export async function reset(page) {
+export async function clear(page) {
 	await page.focus("[contenteditable]")
 	await page.keyboard.down("Meta")
 	await page.keyboard.press("a", options)

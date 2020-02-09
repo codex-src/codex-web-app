@@ -252,7 +252,7 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
-						// console.log(e.nativeEvent.inputType) // DELETEME
+						console.log(e.nativeEvent.inputType)
 						switch (e.nativeEvent.inputType) {
 						case "insertLineBreak":
 						case "insertParagraph":

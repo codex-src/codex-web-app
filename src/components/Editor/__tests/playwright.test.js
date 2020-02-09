@@ -41,7 +41,7 @@ afterAll(async () => {
 })
 
 test("cannot delete contenteditable", async () => {
-	await ppt.reset(page)
+	await ppt.clear(page)
 	await ppt.backspaceChar(page)
 	await ppt.backspaceWord(page)
 	await ppt.backspaceCharForwards(page)
@@ -54,7 +54,7 @@ test("cannot delete contenteditable", async () => {
 //
 // https://unicode.org/Public/emoji/13.0/emoji-test.txt
 test("can type and delete emojis (1 of 3)", async () => {
-	await ppt.reset(page)
+	await ppt.clear(page)
 	await ppt.type(page, "😀😃😄😁😆😅🤣😂🙂🙃😉😊😇")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("😀😃😄😁😆😅🤣😂🙂🙃😉😊😇")
@@ -69,7 +69,7 @@ test("can type and delete emojis (1 of 3)", async () => {
 //
 // https://unicode.org/Public/emoji/13.0/emoji-test.txt
 test("can type and delete emojis (2 of 3)", async () => {
-	await ppt.reset(page)
+	await ppt.clear(page)
 	await ppt.type(page, "🧑‍🤝‍🧑🧑🏻‍🤝‍🧑🏻🧑🏻‍🤝‍🧑🏼🧑🏻‍🤝‍🧑🏽🧑🏻‍🤝‍🧑🏾🧑🏻‍🤝‍🧑🏿🧑🏼‍🤝‍🧑🏻🧑🏼‍🤝‍🧑🏼🧑🏼‍🤝‍🧑🏽🧑🏼‍🤝‍🧑🏾🧑🏼‍🤝‍🧑🏿🧑🏽‍🤝‍🧑🏻🧑🏽‍🤝‍🧑🏼🧑🏽‍🤝‍🧑🏽🧑🏽‍🤝‍🧑🏾🧑🏽‍🤝‍🧑🏿🧑🏾‍🤝‍🧑🏻🧑🏾‍🤝‍🧑🏼🧑🏾‍🤝‍🧑🏽🧑🏾‍🤝‍🧑🏾🧑🏾‍🤝‍🧑🏿🧑🏿‍🤝‍🧑🏻🧑🏿‍🤝‍🧑🏼🧑🏿‍🤝‍🧑🏽🧑🏿‍🤝‍🧑🏾🧑🏿‍🤝‍🧑🏿")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("🧑‍🤝‍🧑🧑🏻‍🤝‍🧑🏻🧑🏻‍🤝‍🧑🏼🧑🏻‍🤝‍🧑🏽🧑🏻‍🤝‍🧑🏾🧑🏻‍🤝‍🧑🏿🧑🏼‍🤝‍🧑🏻🧑🏼‍🤝‍🧑🏼🧑🏼‍🤝‍🧑🏽🧑🏼‍🤝‍🧑🏾🧑🏼‍🤝‍🧑🏿🧑🏽‍🤝‍🧑🏻🧑🏽‍🤝‍🧑🏼🧑🏽‍🤝‍🧑🏽🧑🏽‍🤝‍🧑🏾🧑🏽‍🤝‍🧑🏿🧑🏾‍🤝‍🧑🏻🧑🏾‍🤝‍🧑🏼🧑🏾‍🤝‍🧑🏽🧑🏾‍🤝‍🧑🏾🧑🏾‍🤝‍🧑🏿🧑🏿‍🤝‍🧑🏻🧑🏿‍🤝‍🧑🏼🧑🏿‍🤝‍🧑🏽🧑🏿‍🤝‍🧑🏾🧑🏿‍🤝‍🧑🏿")
@@ -84,7 +84,7 @@ test("can type and delete emojis (2 of 3)", async () => {
 //
 // https://unicode.org/Public/emoji/13.0/emoji-test.txt
 test("can type and delete emojis (3 of 3)", async () => {
-	await ppt.reset(page)
+	await ppt.clear(page)
 	await ppt.type(page, "\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}")
@@ -96,7 +96,7 @@ test("can type and delete emojis (3 of 3)", async () => {
 })
 
 test("can type and delete characters", async () => {
-	await ppt.reset(page)
+	await ppt.clear(page)
 	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
@@ -108,13 +108,22 @@ test("can type and delete characters", async () => {
 })
 
 test("can type and delete words", async () => {
-	await ppt.reset(page)
+	await ppt.clear(page)
 	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	await ppt.backspaceWord(page)
 	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! ")
+	await ppt.backspaceWord(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world")
+	await ppt.backspaceWord(page)
+	data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, ")
+	await ppt.backspaceWord(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello")
 	await ppt.backspaceWord(page)
 	data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\n")
@@ -126,7 +135,16 @@ test("can type and delete words", async () => {
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀")
 	await ppt.backspaceWord(page)
 	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! 😀\n\nHello, world! ")
+	await ppt.backspaceWord(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! 😀\n\nHello, world")
+	await ppt.backspaceWord(page)
+	data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, ")
+	await ppt.backspaceWord(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! 😀\n\nHello")
 	await ppt.backspaceWord(page)
 	data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\n")
@@ -138,14 +156,23 @@ test("can type and delete words", async () => {
 	expect(data).toBe("Hello, world! 😀")
 	await ppt.backspaceWord(page)
 	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! ")
+	await ppt.backspaceWord(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world")
+	await ppt.backspaceWord(page)
+	data = await ppt.innerText(page)
 	expect(data).toBe("Hello, ")
+	await ppt.backspaceWord(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe("Hello")
 	await ppt.backspaceWord(page)
 	data = await ppt.innerText(page)
 	expect(data).toBe("")
 })
 
 test("can type and delete (forwards) characters", async () => {
-	await ppt.reset(page)
+	await ppt.clear(page)
 	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
@@ -160,7 +187,7 @@ test("can type and delete (forwards) characters", async () => {
 })
 
 test("can type and delete (forwards) words", async () => {
-	await ppt.reset(page)
+	await ppt.clear(page)
 	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	let data = await ppt.innerText(page)
 	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
@@ -172,7 +199,13 @@ test("can type and delete (forwards) words", async () => {
 	expect(data).toBe(", world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	await ppt.backspaceWordForwards(page)
 	data = await ppt.innerText(page)
+	expect(data).toBe(" world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
+	await ppt.backspaceWordForwards(page)
+	data = await ppt.innerText(page)
 	expect(data).toBe("! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
+	await ppt.backspaceWordForwards(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe(" 😀\n\nHello, world! 😀\n\nHello, world! 😀")
 	await ppt.backspaceWordForwards(page)
 	data = await ppt.innerText(page)
 	expect(data).toBe("\n\nHello, world! 😀\n\nHello, world! 😀")
@@ -187,7 +220,13 @@ test("can type and delete (forwards) words", async () => {
 	expect(data).toBe(", world! 😀\n\nHello, world! 😀")
 	await ppt.backspaceWordForwards(page)
 	data = await ppt.innerText(page)
+	expect(data).toBe(" world! 😀\n\nHello, world! 😀")
+	await ppt.backspaceWordForwards(page)
+	data = await ppt.innerText(page)
 	expect(data).toBe("! 😀\n\nHello, world! 😀")
+	await ppt.backspaceWordForwards(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe(" 😀\n\nHello, world! 😀")
 	await ppt.backspaceWordForwards(page)
 	data = await ppt.innerText(page)
 	expect(data).toBe("\n\nHello, world! 😀")
@@ -202,14 +241,20 @@ test("can type and delete (forwards) words", async () => {
 	expect(data).toBe(", world! 😀")
 	await ppt.backspaceWordForwards(page)
 	data = await ppt.innerText(page)
+	expect(data).toBe(" world! 😀")
+	await ppt.backspaceWordForwards(page)
+	data = await ppt.innerText(page)
 	expect(data).toBe("! 😀")
+	await ppt.backspaceWordForwards(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe(" 😀")
 	await ppt.backspaceWordForwards(page)
 	data = await ppt.innerText(page)
 	expect(data).toBe("")
 })
 
 test("can type and delete 50x paragraphs", async () => {
-	await ppt.reset(page)
+	await ppt.clear(page)
 	await ppt.type(page, "\n".repeat(50))
 	let data = await ppt.innerText(page)
 	expect(data).toBe("\n".repeat(50))
@@ -221,7 +266,7 @@ test("can type and delete 50x paragraphs", async () => {
 })
 
 test("can type and delete (forwards) 50x paragraphs", async () => {
-	await ppt.reset(page)
+	await ppt.clear(page)
 	await ppt.type(page, "\n".repeat(50))
 	let data = await ppt.innerText(page)
 	expect(data).toBe("\n".repeat(50))
