@@ -403,32 +403,32 @@ test("can type and delete emojis (3 of 3)", async () => {
 	expect(data).toBe("")
 })
 
-// test("can undo and redo", async () => {
-// 	// https://stackoverflow.com/a/39914235
-// 	await new Promise(r => setTimeout(r, 1e3))
-// 	const currentValue = await ppt.innerText(page)
-// 	for (let index = 0; index < 50; index++) {
-// 		await ppt.undo(page)
-// 	}
-// 	let data = await ppt.innerText(page)
-// 	expect(data).toBe(initialValue)
-// 	for (let index = 0; index < 50; index++) {
-// 		await ppt.redo(page)
-// 	}
-// 	data = await ppt.innerText(page)
-// 	expect(data).toBe(currentValue)
-// })
-//
-// test("can undo and overwrite redo", async () => {
-// 	for (let index = 0; index < 50; index++) {
-// 		await ppt.undo(page)
-// 	}
-// 	let data = await ppt.innerText(page)
-// 	expect(data).toBe(initialValue)
-// 	await ppt.type(page, "Hello, world! 😀")
-// 	data = await ppt.innerText(page)
-// 	expect(data).toBe("Hello, world! 😀")
-// 	await ppt.redo(page)
-// 	data = await ppt.innerText(page)
-// 	expect(data).toBe("Hello, world! 😀")
-// })
+test("can undo and redo", async () => {
+	// https://stackoverflow.com/a/39914235
+	await new Promise(r => setTimeout(r, 1e3))
+	const currentValue = await ppt.innerText(page)
+	for (let index = 0; index < 50; index++) {
+		await ppt.undo(page)
+	}
+	let data = await ppt.innerText(page)
+	expect(data).toBe(initialValue)
+	for (let index = 0; index < 50; index++) {
+		await ppt.redo(page)
+	}
+	data = await ppt.innerText(page)
+	expect(data).toBe(currentValue)
+})
+
+test("can undo and overwrite redo", async () => {
+	for (let index = 0; index < 50; index++) {
+		await ppt.undo(page)
+	}
+	let data = await ppt.innerText(page)
+	expect(data).toBe(initialValue)
+	await ppt.type(page, "Hello, world! 😀")
+	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! 😀")
+	await ppt.redo(page)
+	data = await ppt.innerText(page)
+	expect(data).toBe("Hello, world! 😀")
+})
