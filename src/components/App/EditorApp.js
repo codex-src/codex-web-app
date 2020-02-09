@@ -6,7 +6,7 @@ import { DocumentTitle } from "utils/DocumentTitle"
 const localStorageKey = "codex-app"
 const initialValue = localStorage.getItem(localStorageKey) || `# Hello, Codex! 🖖
 
-// 🚧 What you are seeing is the alpha of the _Codex editor_, 🚧
+// 🚧 What you are seeing is the alpha of the _Codex editor_ 🚧
 //
 // **The following are not yet ready:**
 //
