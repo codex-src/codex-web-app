@@ -200,7 +200,7 @@ const TextStylesheet = props => (
 	}</style>
 )
 
-const CodeStylesheet = props => (
+const MonoStylesheet = props => (
 	<style>{
 		`
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
@@ -231,10 +231,10 @@ function Stylesheets(props) {
 			<TextBackgroundStylesheet />
 			<ReadOnlyModeStylesheet />
 			<CoreStylesheet />
-			{state.prefersReadOnlyMode || !state.prefersCodeStylesheet ? (
+			{state.prefersReadOnlyMode || !state.prefersMonoStylesheet ? (
 				<TextStylesheet />
 			) : (
-				<CodeStylesheet />
+				<MonoStylesheet />
 			)}
 		</React.Fragment>
 	)

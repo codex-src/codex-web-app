@@ -18,7 +18,7 @@ const ActionTypes = new Enum(
 
 const initialState = {
 	// Preferences:
-	prefersCodeStylesheet: false,
+	prefersMonoStylesheet: false,
 	prefersReadOnlyMode: false,
 	prefersTextBackground: true,
 	prefersScrollPastEnd: true, // TODO
@@ -57,11 +57,11 @@ const reducer = state => ({
 	// Preferences:
 	updatedPrefs() {
 		const classNames = []
-		// Prefers code stylesheet:
-		if (!state.prefersReadOnlyMode && state.prefersCodeStylesheet) {
-			classNames.push("prefers-code-stylesheet")
-		} else {
+		// Prefers mono stylesheet:
+		if (state.prefersReadOnlyMode || !state.prefersMonoStylesheet) {
 			classNames.push("prefers-text-stylesheet")
+		} else {
+			classNames.push("prefers-mono-stylesheet")
 		}
 		// Prefers text background:
 		if (!state.prefersReadOnlyMode && state.prefersTextBackground) {
@@ -75,12 +75,12 @@ const reducer = state => ({
 	},
 	preferTextStylesheet() {
 		state.prefersReadOnlyMode = false // Reset
-		state.prefersCodeStylesheet = false
+		state.prefersMonoStylesheet = false
 		this.updatedPrefs()
 	},
-	preferCodeStylesheet() {
+	preferMonoStylesheet() {
 		state.prefersReadOnlyMode = false // Reset
-		state.prefersCodeStylesheet = true
+		state.prefersMonoStylesheet = true
 		this.updatedPrefs()
 	},
 	preferTextBackground() {

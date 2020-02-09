@@ -63,12 +63,12 @@ function Editor({ state, dispatch, ...props }) {
 	const [scrollPastEnd, setScrollPastEnd] = React.useState({})
 
 	React.useEffect(() => {
-		if (!state.didRender) {
+		if (!ref.current.childNodes.length) {
 			return
 		}
 		const { height } = ref.current.lastChild.getBoundingClientRect()
 		setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px)` })
-	}, [state.didRender])
+	}, [state.prefersMonoStylesheet, state.didRender])
 
 	// TODO: Add support for idle timeout
 	React.useEffect(
@@ -94,15 +94,15 @@ function Editor({ state, dispatch, ...props }) {
 		React.useCallback(() => {
 			const onKeyDown = e => {
 				switch (true) {
-				// Prefers text stylesheet mode:
+				// Prefers text stylesheet:
 				case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
 					e.preventDefault()
 					dispatch.preferTextStylesheet()
 					return
-				// Prefers code stylesheet mode:
+				// Prefers mono stylesheet:
 				case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
 					e.preventDefault()
-					dispatch.preferCodeStylesheet()
+					dispatch.preferMonoStylesheet()
 					return
 				// Prefers text background:
 				case platform.detectKeyCode(e, 220): // 220: \
