@@ -90,7 +90,7 @@ This alpha periodically saves to localStorage (once per second). That means you 
 
 ---
 
-More features coming soon…stay tuned! 📺⚡️.`
+More features coming soon…stay tuned! 📺⚡️`
 
 function EditorApp(props) {
 	const [state, dispatch] = Editor.useEditor(initialValue)
