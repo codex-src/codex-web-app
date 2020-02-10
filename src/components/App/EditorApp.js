@@ -10,6 +10,8 @@ const initialValue = localStorage.getItem(localStorageKey) || `# Hello, Codex! ð
 //
 // **The following are not yet ready:**
 //
+// - Images
+// - Embeds
 // - Syntax highlighting for code blocks
 // - Links
 // - Lists (like unordered lists, ordered lists, and checklists)

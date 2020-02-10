@@ -12,9 +12,14 @@ function Debugger(props) {
 				<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
 					{JSON.stringify(
 						{
-							...state,
-							components: undefined,
-							reactDOM: undefined,
+							data: state.data,
+							body: state.body,
+							pos1: state.pos1,
+							pos2: state.pos2,
+
+							// ...state,
+							// components: undefined,
+							// reactDOM: undefined,
 						},
 						null,
 						"\t",

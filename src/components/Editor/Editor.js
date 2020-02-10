@@ -5,6 +5,7 @@ import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
 import platform from "utils/platform"
+import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
 import StatusBars from "./StatusBars"
@@ -19,10 +20,107 @@ const style = {
 	overflowWrap: "break-word",
 }
 
+class NodeIterator {
+	constructor(node) {
+		if (node.nodeType === Node.TEXT_NODE) {
+			node = node.parentNode
+		}
+		const currentNode = node.closest("[data-node]")
+		Object.assign(this, {
+			currentNode, // The current node
+			count: 0,    // The getPrev and getNext sum count
+		})
+	}
+	getPrev() {
+		const { previousSibling, parentNode } = this.currentNode
+		if (previousSibling && previousSibling.hasAttribute("data-node")) {
+			return previousSibling
+		} else if (previousSibling && previousSibling.hasAttribute("data-compound-node")) {
+			return previousSibling.childNodes[previousSibling.childNodes.length - 1]
+		} else if (parentNode.previousSibling && parentNode.previousSibling.hasAttribute("data-node")) {
+			return parentNode.previousSibling
+		} else if (parentNode.previousSibling && parentNode.previousSibling.hasAttribute("data-compound-node")) {
+			return parentNode.previousSibling.childNodes[parentNode.previousSibling.childNodes.length - 1]
+		}
+		return null
+	}
+	prev() {
+		this.currentNode = this.getPrev()
+		this.count += this.currentNode !== null
+		return this.currentNode
+	}
+	getNext() {
+		const { nextSibling, parentNode } = this.currentNode
+		if (nextSibling && nextSibling.hasAttribute("data-node")) {
+			return nextSibling
+		} else if (nextSibling && nextSibling.hasAttribute("data-compound-node")) {
+			return nextSibling.childNodes[0]
+		} else if (parentNode.nextSibling && parentNode.nextSibling.hasAttribute("data-node")) {
+			return parentNode.nextSibling
+		} else if (parentNode.nextSibling && parentNode.nextSibling.hasAttribute("data-compound-node")) {
+			return parentNode.nextSibling.childNodes[0]
+		}
+		return null
+	}
+	next() {
+		this.currentNode = this.getNext()
+		this.count += this.currentNode !== null
+		return this.currentNode
+	}
+}
+
+// Gets the cursors.
+function getCursors(rootNode) {
+	const selection = document.getSelection()
+	const range = selection.getRangeAt(0)
+	const pos1 = getPosFromRange2(rootNode, range.startContainer, range.startOffset)
+	let pos2 = { ...pos1 }
+	if (!range.collapsed) {
+		// TODO: Use state.pos1 as a shortcut
+		pos2 = getPosFromRange2(rootNode, range.endContainer, range.endOffset)
+	}
+	return [pos1, pos2]
+}
+
+// Creates a new DOM range.
+//
+// NOTE: pos1 and pos2 are expected to be start-offset:
+//
+// pos1.pos - pos1.x
+// pos2.pos - pos2.x
+//
+function newDOMRange(pos1, pos2) {
+	const selection = document.getSelection()
+	const range = selection.getRangeAt(0)
+	const { startContainer, endContainer } = range
+	// Start:
+	const startIter = new NodeIterator(startContainer)
+	while (startIter.count < 2 && startIter.getPrev()) {
+		startIter.prev()
+		pos1 -= innerText(startIter.currentNode).length + 1
+	}
+	// End:
+	const endIter = new NodeIterator(endContainer)
+	pos2 += innerText(endIter.currentNode).length
+	while (endIter.count < 2 && endIter.getNext()) {
+		endIter.next()
+		pos2 += innerText(endIter.currentNode).length + 1
+	}
+	const target = {
+		startIter, // The start iterator
+		endIter,   // The end iterator
+		pos1,      // The cursor of the start iterator
+		pos2,      // The cursor of the end iterator
+	}
+	return target
+}
+
 function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const isPointerDownRef = React.useRef()
 	const dedupeCompositionEndRef = React.useRef()
+
+	const domRange = React.useRef()
 
 	const [forceRender, setForceRender] = React.useState(false)
 
@@ -83,17 +181,17 @@ function Editor({ state, dispatch, ...props }) {
 		[state.didRender],
 	)
 
-	const [scrollPastEnd, setScrollPastEnd] = React.useState({})
-
-	React.useLayoutEffect(() => {
-		if (!ref.current.childNodes.length) {
-			// No-op
-			return
-		}
-		const endNode = ref.current.lastChild.closest("[data-node]")
-		const { height } = endNode.getBoundingClientRect()
-		setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
-	}, [state.prefersMonoStylesheet, state.didRender])
+	// const [scrollPastEnd, setScrollPastEnd] = React.useState({})
+	//
+	// React.useLayoutEffect(() => {
+	// 	if (!ref.current.childNodes.length) {
+	// 		// No-op
+	// 		return
+	// 	}
+	// 	const endNode = ref.current.lastChild.closest("[data-node]")
+	// 	const { height } = endNode.getBoundingClientRect()
+	// 	setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
+	// }, [state.prefersMonoStylesheet, state.didRender])
 
 	// TODO: Add support for idle timeout
 	React.useEffect(
@@ -152,20 +250,6 @@ function Editor({ state, dispatch, ...props }) {
 		[],
 	)
 
-	// Gets the cursors.
-	const getCursors = () => {
-		const selection = document.getSelection()
-		const range = selection.getRangeAt(0)
-		const pos1 = getPosFromRange2(ref.current, range.startContainer, range.startOffset)
-		let pos2 = { ...pos1 }
-		if (!range.collapsed) {
-			// TODO: Use state.pos1 as a shortcut
-			pos2 = getPosFromRange2(ref.current, range.endContainer, range.endOffset)
-		}
-		// const coords = getCoordsFromRange(range)
-		return [pos1, pos2]
-	}
-
 	const { Provider } = Context
 	return (
 		<Provider value={[state, dispatch]}>
@@ -178,7 +262,7 @@ function Editor({ state, dispatch, ...props }) {
 
 					style: {
 						...style,
-						...scrollPastEnd,
+						// ...scrollPastEnd,
 					},
 
 					contentEditable: !state.prefersReadOnlyMode && true,
@@ -211,8 +295,9 @@ function Editor({ state, dispatch, ...props }) {
 								selection.removeAllRanges()
 								selection.addRange(range)
 							}
-							const [pos1, pos2] = getCursors()
-							dispatch.actionSelect(pos1, pos2 /* , coords */)
+							const [pos1, pos2] = getCursors(ref.current)
+							dispatch.actionSelect(pos1, pos2)
+							domRange.current = newDOMRange(pos1.pos - pos1.x, pos2.pos - pos2.x)
 						} catch (e) {
 							console.warn({ "onSelect/catch": e })
 						}
@@ -229,8 +314,9 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						try {
-							const [pos1, pos2] = getCursors()
-							dispatch.actionSelect(pos1, pos2 /* , coords */)
+							const [pos1, pos2] = getCursors(ref.current)
+							dispatch.actionSelect(pos1, pos2)
+							domRange.current = newDOMRange(pos1.pos - pos1.x, pos2.pos - pos2.x)
 						} catch (e) {
 							console.warn({ "onPointerMove/catch": e })
 						}
@@ -274,8 +360,8 @@ function Editor({ state, dispatch, ...props }) {
 						dedupeCompositionEndRef.current = true
 						// Input:
 						const data = innerText(ref.current)
-						const [pos1, pos2] = getCursors()
-						dispatch.actionInput(data, pos1, pos2 /* , coords */)
+						const [pos1, pos2] = getCursors(ref.current)
+						dispatch.actionInput(data, pos1, pos2)
 					},
 					onInput: e => {
 						if (dedupeCompositionEndRef.current) {
@@ -319,10 +405,38 @@ function Editor({ state, dispatch, ...props }) {
 							// No-op
 							break
 						}
-						// Input:
-						const data = innerText(ref.current)
-						const [pos1, pos2] = getCursors()
-						dispatch.actionInput(data, pos1, pos2 /* , coords */)
+						// Re-extend the DOM range start (once):
+						let { startIter, endIter, pos1, pos2 } = domRange.current
+						if (!startIter.count && startIter.getPrev()) {
+							startIter.prev()
+							pos1 -= innerText(startIter.currentNode).length + 1
+						// Re-extend the DOM range end (once):
+						} else if (!endIter.count && endIter.getNext()) {
+							endIter.next()
+							pos2 += innerText(endIter.currentNode).length + 1
+						}
+						// Read the nodes (from the DOM):
+						const seenKeys = {}
+						const nodes = []
+						while (startIter.currentNode) {
+							let key = startIter.currentNode.getAttribute("data-node")
+							if (seenKeys[key]) {
+								key = random.newUUID()
+								startIter.currentNode.setAttribute("data-node", key)
+							}
+							seenKeys[key] = true
+							const data = innerText(startIter.currentNode)
+							nodes.push({ key, data })
+							if (startIter.currentNode === endIter.currentNode) { // Compares references
+								// No-op
+								break
+							}
+							startIter.next()
+						}
+						// Done:
+						const target = { nodes, pos1: pos1, pos2: pos2 }
+						const [resetPos] = getCursors(ref.current)
+						dispatch.actionInput2(nodes, pos1, pos2, resetPos)
 					},
 
 					onCut: e => {
@@ -376,7 +490,7 @@ function Editor({ state, dispatch, ...props }) {
 			{!state.prefersReadOnlyMode && (
 				<StatusBars />
 			)}
-			{/* <Debugger /> */}
+			<Debugger />
 		</Provider>
 	)
 }

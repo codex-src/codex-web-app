@@ -2,11 +2,10 @@ import Markdown from "./Markdown"
 import React from "react"
 import recurse from "./ComponentsText"
 
-const Node = ({ tagName, style, ...props }) => (
+const Compound = ({ style, ...props }) => (
 	<div
 		style={{ whiteSpace: "pre-wrap", ...style }}
-		data-node
-		data-empty-node={!props.children || null}
+		data-compound-node
 		{...props}
 	>
 		{props.children || (
@@ -15,26 +14,39 @@ const Node = ({ tagName, style, ...props }) => (
 	</div>
 )
 
-const Header = React.memo(props => (
-	<Node className={`header h${props.start.length - 1}`}>
+const Node = ({ reactKey, style, ...props }) => (
+	<div
+		style={{ whiteSpace: "pre-wrap", ...style }}
+		data-node={reactKey}
+		// data-empty-node={!props.children || null}
+		{...props}
+	>
+		{props.children || (
+			<br />
+		)}
+	</div>
+)
+
+const Header = React.memo(({ reactKey, ...props }) => (
+	<Node reactKey={reactKey} className={`header h${props.start.length - 1}`}>
 		<Markdown start={props.start}>
 			{props.children}
 		</Markdown>
 	</Node>
 ))
 
-const Comment = React.memo(props => (
-	<Node className="comment" spellCheck={false}>
+const Comment = React.memo(({ reactKey, ...props }) => (
+	<Node reactKey={reactKey} className="comment" spellCheck={false}>
 		<Markdown start={props.start}>
 			{props.children}
 		</Markdown>
 	</Node>
 ))
 
-const Blockquote = React.memo(props => (
-	<Node className="blockquote">
+const Blockquote = React.memo(({ reactKey, ...props }) => (
+	<Compound className="blockquote">
 		{props.children.map((each, index) => (
-			<Node key={index} data-empty-node={!each.data ? true : null}>
+			<Node reactKey={reactKey} key={index} /* data-empty-node={!each.data ? true : null} */>
 				<Markdown start={each.start}>
 					{each.data || (
 						<br />
@@ -42,46 +54,17 @@ const Blockquote = React.memo(props => (
 				</Markdown>
 			</Node>
 		))}
-	</Node>
+	</Compound>
 ))
-
-// // NOTE: Use React.memo because of PrismJS
-// const CodeBlock = React.memo(props => {
-// 	let html = ""
-// 	const lang = getPrismLang(props.lang)
-// 	if (lang) {
-// 		try {
-// 			html = window.Prism.highlight(props.children, lang, props.lang)
-// 		} catch (e) {
-// 			console.warn(e)
-// 		}
-// 	}
-// 	const className = `language-${props.lang}`
-// 	return (
-// 		<div style={{ ...stylex.parse("m-x:-24 p-x:24 b:white"), boxShadow: "0px 0px 1px hsl(var(--gray))" }}>
-// 			<Markdown style={stylex.parse("c:gray")} start={`\`\`\`${props.lang}`} end="```">
-// 				{!html ? (
-// 					<code>
-// 						{props.children}
-// 					</code>
-// 				) : (
-// 					<code className={className} dangerouslySetInnerHTML={{
-// 						__html: html,
-// 					}} />
-// 				)}
-// 			</Markdown>
-// 		</div>
-// 	)
-// })
 
 // https://cdpn.io/PowjgOg
 //
 // NOTE: Do not use start={... ? ... : ""} because
 // Gecko/Firefox creates an empty text node
-const CodeBlock = React.memo(props => {
+const CodeBlock = React.memo(({ reactKey, ...props }) => {
 	const components = props.children.split("\n")
 	return (
-		<Node className="code-block" style={{ whiteSpace: "pre" }} spellCheck={false}>
+		<Compound className="code-block" style={{ whiteSpace: "pre" }} spellCheck={false}>
 			{components.map((each, index) => (
 				<Node
 					key={index}
@@ -103,7 +86,7 @@ const CodeBlock = React.memo(props => {
 					</span>
 				</Node>
 			))}
-		</Node>
+		</Compound>
 	)
 })
 
@@ -117,76 +100,76 @@ function areEmojis({ children: components }, limit = 3) {
 	return ok
 }
 
-const Paragraph = React.memo(props => (
-	<Node className={`paragraph${!areEmojis(props) ? "" : " emojis"}`}>
+const Paragraph = React.memo(({ reactKey, ...props }) => (
+	<Node reactKey={reactKey} className={`paragraph${!areEmojis(props) ? "" : " emojis"}`}>
 		{props.children}
 	</Node>
 ))
 
-const Break = React.memo(props => (
-	<Node className="break">
+const Break = React.memo(({ reactKey, ...props }) => (
+	<Node reactKey={reactKey} className="break">
 		<Markdown start={props.start} />
 	</Node>
 ))
 
 // Parses an array of React components from plain text data.
-function parseComponents(data) {
+function parseComponents(body) {
 	const components = []
-	const nodes = data.split("\n")
 	let index = 0
-	while (index < nodes.length) {
-		const key = components.length // Count the (current) number of components
-		const substr = nodes[index]   // Faster access
-		const { length } = substr     // Faster access
-		switch (substr.slice(0, 1)) {
+	while (index < body.length) {
+		const count = components.length   // Count the (current) number of components
+		const { key, data } = body[index] // Faster access
+		const { length } = data           // Faster access
+		switch (data.slice(0, 1)) {
 		// Header:
 		case "#":
 			if (
-				(length >= 2 && substr.slice(0, 2) === "# ") ||
-				(length >= 3 && substr.slice(0, 3) === "## ") ||
-				(length >= 4 && substr.slice(0, 4) === "### ") ||
-				(length >= 5 && substr.slice(0, 5) === "#### ") ||
-				(length >= 6 && substr.slice(0, 6) === "##### ") ||
-				(length >= 7 && substr.slice(0, 7) === "###### ")
+				(length >= 2 && data.slice(0, 2) === "# ") ||
+				(length >= 3 && data.slice(0, 3) === "## ") ||
+				(length >= 4 && data.slice(0, 4) === "### ") ||
+				(length >= 5 && data.slice(0, 5) === "#### ") ||
+				(length >= 6 && data.slice(0, 6) === "##### ") ||
+				(length >= 7 && data.slice(0, 7) === "###### ")
 			) {
-				const start = substr.slice(0, substr.indexOf(" ") + 1)
-				const children = recurse(substr.slice(start.length))
-				components.push(<Header key={key} start={start}>{children}</Header>)
+				const start = data.slice(0, data.indexOf(" ") + 1)
+				const children = recurse(data.slice(start.length))
+				components.push(<Header key={key} reactKey={key} start={start}>{children}</Header>)
 			}
 			break
 		// Comment:
 		case "/":
-			if (length >= 2 && substr.slice(0, 2) === "//") {
-				const children = recurse(substr.slice(2))
-				components.push(<Comment key={key} start="//">{children}</Comment>)
+			if (length >= 2 && data.slice(0, 2) === "//") {
+				const children = recurse(data.slice(2))
+				components.push(<Comment key={key} reactKey={key} start="//">{children}</Comment>)
 			}
 			break
 		// Blockquote:
 		case ">":
 			if (
-				(length >= 2 && substr.slice(0, 2) === "> ") ||
-				(length === 1 && substr === ">")
+				(length >= 2 && data.slice(0, 2) === "> ") ||
+				(length === 1 && data === ">")
 			) {
 				const from = index
 				let to = from
 				to++
-				while (to < nodes.length) {
+				while (to < body.length) {
 					if (
-						(nodes[to].length < 2 || nodes[to].slice(0, 2) !== "> ") &&
-						(nodes[to].length !== 1 || nodes[to] !== ">")
+						(body[to].length < 2 || body[to].slice(0, 2) !== "> ") &&
+						(body[to].length !== 1 || body[to] !== ">")
 					) {
 						to-- // Decrement -- one too many
 						break
 					}
 					to++
 				}
-				const slice = nodes.slice(from, to + 1)
+				const nodes = body.slice(from, to + 1)
 				components.push((
-					<Blockquote key={key}>
-						{slice.map(each => (
+					<Blockquote key={key} reactKey={key}>
+						{nodes.map(each => (
 							{
-								start: each.slice(0, 2),
-								data:  recurse(each.slice(2)),
+								key:   each.key,
+								start: each.data.slice(0, 2),
+								data:  recurse(each.data.slice(2)),
 							}
 						))}
 					</Blockquote>
@@ -199,50 +182,50 @@ function parseComponents(data) {
 			// Single line code block:
 			if (
 				length >= 6 &&
-				substr.slice(0, 3) === "```" && // Start syntax
-				substr.slice(-3) === "```"      // End syntax
+				data.slice(0, 3) === "```" && // Start syntax
+				data.slice(-3) === "```"      // End syntax
 			) {
-				const children = substr.slice(3, -3)
-				components.push(<CodeBlock key={key} /* defer={!window.Prism} */ lang="">{children}</CodeBlock>)
+				const children = data.slice(3, -3)
+				components.push(<CodeBlock key={key} reactKey={key} /* defer={!window.Prism} */ lang="">{children}</CodeBlock>)
 			// Multiline code block:
 			} else if (
 				length >= 3 &&
-				substr.slice(0, 3) === "```" &&
-				index + 1 < nodes.length // Has more nodes
+				data.slice(0, 3) === "```" &&
+				index + 1 < body.length // Has more body
 			) {
 				const from = index
 				let to = from
 				to++
-				while (to < nodes.length) {
-					if (nodes[to].length === 3 && nodes[to] === "```") {
+				while (to < body.length) {
+					if (body[to].length === 3 && body[to] === "```") {
 						break
 					}
 					to++
 				}
 				// Guard unterminated code blocks:
-				if (to === nodes.length) {
+				if (to === body.length) {
 					index = from // Reset
 					break
 				}
-				const lang = substr.slice(3)
-				const children = nodes.slice(from, to + 1).join("\n").slice(3 + lang.length, -3)
-				components.push(<CodeBlock key={key} /* defer={!window.Prism} */ lang={lang}>{children}</CodeBlock>)
+				const lang = data.slice(3)
+				const children = body.slice(from, to + 1).join("\n").slice(3 + lang.length, -3)
+				components.push(<CodeBlock key={key} reactKey={key} /* defer={!window.Prism} */ lang={lang}>{children}</CodeBlock>)
 				index = to
 				break
 			}
 			break
 		// Break (1):
 		case "-":
-			if (length === 3 && substr.slice(0, 3) === "---") {
-				const start = substr
-				components.push(<Break key={key} start={start} />)
+			if (length === 3 && data.slice(0, 3) === "---") {
+				const start = data
+				components.push(<Break key={key} reactKey={key} start={start} />)
 			}
 			break
 		// Break (2):
 		case "*":
-			if (length === 3 && substr.slice(0, 3) === "***") {
-				const start = substr
-				components.push(<Break key={key} start={start} />)
+			if (length === 3 && data.slice(0, 3) === "***") {
+				const start = data
+				components.push(<Break key={key} reactKey={key} start={start} />)
 			}
 			break
 		default:
@@ -250,9 +233,9 @@ function parseComponents(data) {
 			break
 		}
 		// Paragraph:
-		if (key === components.length) {
-			const children = recurse(substr)
-			components.push(<Paragraph key={key}>{children}</Paragraph>)
+		if (count === components.length) {
+			const children = recurse(data)
+			components.push(<Paragraph key={key} reactKey={key}>{children}</Paragraph>)
 		}
 		index++
 	}

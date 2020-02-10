@@ -32,7 +32,8 @@ function getPosFromRange2(rootNode, node, offset) {
 			}
 			const { nextSibling } = childNodes[index]
 			if (nextSibling && nextSibling.nodeType === Node.ELEMENT_NODE &&
-					nextSibling.hasAttribute("data-node")) {
+					// nextSibling.hasAttribute("data-node")) {
+					(nextSibling.hasAttribute("data-compound-node") || nextSibling.hasAttribute("data-node"))) {
 				Object.assign(pos, {
 					x: 0, // Reset
 					y: pos.y + 1,

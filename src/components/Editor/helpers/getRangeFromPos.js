@@ -21,7 +21,8 @@ function getRangeFromPos(rootNode, pos) {
 			}
 			const { nextSibling } = childNodes[index]
 			if (nextSibling && nextSibling.nodeType === Node.ELEMENT_NODE &&
-					nextSibling.hasAttribute("data-node")) {
+					// nextSibling.hasAttribute("data-node")) {
+					(nextSibling.hasAttribute("data-compound-node") || nextSibling.hasAttribute("data-node"))) {
 				pos--
 			}
 			index++
