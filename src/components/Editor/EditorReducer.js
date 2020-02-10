@@ -186,16 +186,31 @@ const reducer = state => ({
 		// dropL:
 		state.pos1.pos -= dropL
 		while (dropL) {
-			const bytesToStart = state.pos1.x
-			if (dropL <= bytesToStart) {
+			const bytesToEnd = state.pos1.x
+			if (dropL <= bytesToEnd) {
 				state.pos1.x -= dropL
 				dropL = 0
 				break // XOR
 			}
-			dropL -= bytesToStart + 1
+			dropL -= bytesToEnd + 1
 			state.pos1.y--
 			state.pos1.x = state.body[state.pos1.y].data.length
 		}
+
+		// // dropL:
+		// state.pos1.pos -= dropL
+		// while (dropL) {
+		// 	const bytesToStart = state.pos1.x
+		// 	if (dropL <= bytesToStart) {
+		// 		state.pos1.x -= dropL
+		// 		dropL = 0
+		// 		break // XOR
+		// 	}
+		// 	dropL -= bytesToStart + 1
+		// 	state.pos1.y--
+		// 	state.pos1.x = state.body[state.pos1.y].data.length
+		// }
+
 		// // dropR:
 		// state.pos2.pos += dropR
 		// while (dropR) {
@@ -292,27 +307,27 @@ const reducer = state => ({
 		this.write2("", dropL, 0)
 	},
 	backspaceLine() {
-		// if (state.hasSelection) {
-		// 	this.write("")
-		// 	return
-		// }
-		// // Iterate to a v. white space rune:
-		// let index = state.pos1.pos
-		// while (index >= 0) {
-		// 	const substr = state.data.slice(0, index)
-		// 	const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
-		// 	if (!rune || utf8.isVWhiteSpace(rune)) {
-		// 		// No-op
-		// 		break
-		// 	}
-		// 	index -= rune.length
-		// }
-		// // Get the number of bytes to drop:
-		// let dropL = state.pos1.pos - index
-		// if (!dropL && index - 1 >= 0 && state.data[index - 1] === "\n") {
-		// 	dropL = 1
-		// }
-		// this.write("", dropL, 0)
+		if (state.hasSelection) {
+			this.write2("")
+			return
+		}
+		// Iterate to a v. white space rune:
+		let index = state.pos1.pos
+		while (index >= 0) {
+			const substr = state.data.slice(0, index)
+			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+			if (!rune || utf8.isVWhiteSpace(rune)) {
+				// No-op
+				break
+			}
+			index -= rune.length
+		}
+		// Get the number of bytes to drop:
+		let dropL = state.pos1.pos - index
+		if (!dropL && index - 1 >= 0 && state.data[index - 1] === "\n") {
+			dropL = 1
+		}
+		this.write2("", dropL, 0)
 	},
 	backspaceCharForwards() {
 		// let dropR = 0
