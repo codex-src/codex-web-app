@@ -154,8 +154,8 @@ function parseComponents(body) {
 				to++
 				while (to < body.length) {
 					if (
-						(body[to].length < 2 || body[to].slice(0, 2) !== "> ") &&
-						(body[to].length !== 1 || body[to] !== ">")
+						(body[to].data.length < 2 || body[to].data.slice(0, 2) !== "> ") &&
+						(body[to].data.length !== 1 || body[to].data !== ">")
 					) {
 						to-- // Decrement -- one too many
 						break

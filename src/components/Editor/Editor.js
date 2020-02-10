@@ -70,49 +70,67 @@ class NodeIterator {
 }
 
 // Gets the cursors.
-function getCursors(rootNode) {
+//
+// TODO: Get pos1 and pos2 together
+function getPos(rootNode) {
 	const selection = document.getSelection()
 	const range = selection.getRangeAt(0)
 	const pos1 = getPosFromRange2(rootNode, range.startContainer, range.startOffset)
 	let pos2 = { ...pos1 }
 	if (!range.collapsed) {
-		// TODO: Use state.pos1 as a shortcut
 		pos2 = getPosFromRange2(rootNode, range.endContainer, range.endOffset)
 	}
 	return [pos1, pos2]
 }
 
-// Creates a new DOM range.
-//
-// NOTE: pos1 and pos2 are expected to be start-offset:
-//
-// pos1.pos - pos1.x
-// pos2.pos - pos2.x
-//
-function newDOMRange(pos1, pos2) {
+// Creates a new target.
+function newTarget() {
 	const selection = document.getSelection()
 	const range = selection.getRangeAt(0)
 	const { startContainer, endContainer } = range
-	// Start:
+	// Extend the target start (2x):
 	const startIter = new NodeIterator(startContainer)
 	while (startIter.count < 2 && startIter.getPrev()) {
 		startIter.prev()
-		pos1 -= innerText(startIter.currentNode).length + 1
 	}
-	// End:
+	// Extend the target end (2x):
 	const endIter = new NodeIterator(endContainer)
-	pos2 += innerText(endIter.currentNode).length
 	while (endIter.count < 2 && endIter.getNext()) {
 		endIter.next()
-		pos2 += innerText(endIter.currentNode).length + 1
 	}
-	const target = {
-		startIter, // The start iterator
-		endIter,   // The end iterator
-		pos1,      // The cursor of the start iterator
-		pos2,      // The cursor of the end iterator
+	return { startIter, endIter }
+}
+
+// Gets nodes from a target.
+function getNodesFromTarget(rootNode, { startIter, endIter }) {
+	// Re-extend the target start (1x):
+	if (!startIter.count && startIter.getPrev()) {
+		startIter.prev()
+	// Re-extend the DOM range end (1x):
+	} else if (!endIter.count && endIter.getNext()) {
+		endIter.next()
 	}
-	return target
+	// Get nodes:
+	const seenKeys = {}
+	const nodes = []
+	while (startIter.currentNode) {
+		// Read the key:
+		let key = startIter.currentNode.getAttribute("data-node")
+		if (seenKeys[key]) {
+			key = random.newUUID()
+			startIter.currentNode.setAttribute("data-node", key)
+		}
+		seenKeys[key] = true
+		// Read the data:
+		const data = innerText(startIter.currentNode)
+		nodes.push({ key, data })
+		if (startIter.currentNode === endIter.currentNode) {
+			// No-op
+			break
+		}
+		startIter.next()
+	}
+	return nodes
 }
 
 function Editor({ state, dispatch, ...props }) {
@@ -120,7 +138,7 @@ function Editor({ state, dispatch, ...props }) {
 	const isPointerDownRef = React.useRef()
 	const dedupeCompositionEndRef = React.useRef()
 
-	const domRange = React.useRef()
+	const target = React.useRef()
 
 	const [forceRender, setForceRender] = React.useState(false)
 
@@ -295,9 +313,9 @@ function Editor({ state, dispatch, ...props }) {
 								selection.removeAllRanges()
 								selection.addRange(range)
 							}
-							const [pos1, pos2] = getCursors(ref.current)
+							const [pos1, pos2] = getPos(ref.current)
 							dispatch.actionSelect(pos1, pos2)
-							domRange.current = newDOMRange(pos1.pos - pos1.x, pos2.pos - pos2.x)
+							target.current = newTarget()
 						} catch (e) {
 							console.warn({ "onSelect/catch": e })
 						}
@@ -314,9 +332,9 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						try {
-							const [pos1, pos2] = getCursors(ref.current)
+							const [pos1, pos2] = getPos(ref.current)
 							dispatch.actionSelect(pos1, pos2)
-							domRange.current = newDOMRange(pos1.pos - pos1.x, pos2.pos - pos2.x)
+							target.current = newTarget()
 						} catch (e) {
 							console.warn({ "onPointerMove/catch": e })
 						}
@@ -355,13 +373,14 @@ function Editor({ state, dispatch, ...props }) {
 							break
 						}
 					},
+
 					onCompositionEnd: e => {
 						// https://github.com/w3c/uievents/issues/202#issue-316461024
 						dedupeCompositionEndRef.current = true
 						// Input:
-						const data = innerText(ref.current)
-						const [pos1, pos2] = getCursors(ref.current)
-						dispatch.actionInput(data, pos1, pos2)
+						const nodes = getNodesFromTarget(ref.current, target.current)
+						const [pos1, pos2] = getPos(ref.current)
+						dispatch.actionInput2(nodes, pos1, pos2)
 					},
 					onInput: e => {
 						if (dedupeCompositionEndRef.current) {
@@ -405,38 +424,10 @@ function Editor({ state, dispatch, ...props }) {
 							// No-op
 							break
 						}
-						// Re-extend the DOM range start (once):
-						let { startIter, endIter, pos1, pos2 } = domRange.current
-						if (!startIter.count && startIter.getPrev()) {
-							startIter.prev()
-							pos1 -= innerText(startIter.currentNode).length + 1
-						// Re-extend the DOM range end (once):
-						} else if (!endIter.count && endIter.getNext()) {
-							endIter.next()
-							pos2 += innerText(endIter.currentNode).length + 1
-						}
-						// Read the nodes (from the DOM):
-						const seenKeys = {}
-						const nodes = []
-						while (startIter.currentNode) {
-							let key = startIter.currentNode.getAttribute("data-node")
-							if (seenKeys[key]) {
-								key = random.newUUID()
-								startIter.currentNode.setAttribute("data-node", key)
-							}
-							seenKeys[key] = true
-							const data = innerText(startIter.currentNode)
-							nodes.push({ key, data })
-							if (startIter.currentNode === endIter.currentNode) { // Compares references
-								// No-op
-								break
-							}
-							startIter.next()
-						}
-						// Done:
-						const target = { nodes, pos1: pos1, pos2: pos2 }
-						const [resetPos] = getCursors(ref.current)
-						dispatch.actionInput2(nodes, pos1, pos2, resetPos)
+						// Input:
+						const nodes = getNodesFromTarget(ref.current, target.current)
+						const [pos1, pos2] = getPos(ref.current)
+						dispatch.actionInput2(nodes, pos1, pos2)
 					},
 
 					onCut: e => {

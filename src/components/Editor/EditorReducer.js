@@ -150,31 +150,30 @@ const reducer = state => ({
 		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
-	actionInput2(nodes, pos1, pos2, resetPos) {
+	// if (!state.historyIndex && !state.didSetPos) {
+	// 	const [undo] = state.history
+	// 	undo.pos1.pos = state.pos1.pos
+	// 	undo.pos2.pos = state.pos2.pos
+	// 	state.didSetPos = true
+	// }
+	// this.dropRedos()
+	actionInput2(nodes, pos1, pos2) {
 		this.newAction(ActionTypes.INPUT)
-
-		// if (!state.historyIndex && !state.didSetPos) {
-		// 	const [undo] = state.history
-		// 	undo.pos1.pos = state.pos1.pos
-		// 	undo.pos2.pos = state.pos2.pos
-		// 	state.didSetPos = true
-		// }
-		// this.dropRedos()
-
-		// Update data:
-		const data = (
-			state.data.slice(0, pos1) +
-			nodes.map(each => each.data).join("\n") +
-			state.data.slice(pos2)
-		)
 		// Update body:
 		const key1 = nodes[0].key
 		const key2 = nodes[nodes.length - 1].key
 		const index1 = state.body.findIndex(each => each.key === key1)
+		if (index1 === -1) {
+			throw new Error("FIXME")
+		}
 		const index2 = state.body.findIndex(each => each.key === key2)
-		state.body.splice(index1, index2 - index1 + 1, ...nodes)
-		// Update pos1 and pos2:
-		Object.assign(state, { data, pos1: resetPos, pos2: resetPos })
+		if (index2 === -1) {
+			throw new Error("FIXME")
+		}
+		state.body.splice(index1, (index2 + 1) - index1, ...nodes)
+		// Update data, pos1, and pos2:
+		const data = state.body.map(each => each.data).join("\n")
+		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
 	write(substr, dropL = 0, dropR = 0) {
@@ -190,30 +189,28 @@ const reducer = state => ({
 		state.pos2.pos = state.pos1.pos
 		this.render()
 	},
-
-	write2(substr, dropL = 0, dropR = 0) { // FIXME: dropL and dropR
-		// Parse nodes from substr:
+	// TODO: dropBytes?
+	write2(substr) {
+		this.newAction(ActionTypes.INPUT)
+		// Parse the new nodes:
 		const nodes = newNodes(substr)
-		// Merge the start node:
-		Object.assign(nodes[0], {
-			...state.body[state.pos1.y],
-			data: state.body[state.pos1.y].data.slice(0, state.pos1.x - dropL) + nodes[0].data
-		})
-		// Merge the end node:
-		nodes.push({
-			...state.body[state.pos2.y],
-			data: nodes[nodes.length - 1].data + state.body[state.pos2.y].data.slice(state.pos2.x + dropR)
-		})
-		if (state.pos1.y === state.pos2.y) {
-			nodes[nodes.length - 1].key = state.body[state.pos2.y + 1].key // random.newUUID()
+		const startNode = state.body[state.pos1.y]
+		const endNode = { ...state.body[state.pos2.y] } // Do not share references (startNode)
+		// Start node:
+		startNode.data = startNode.data.slice(0, state.pos1.x) + nodes[0].data
+		state.body.splice(state.pos1.y + 1, state.pos2.y - state.pos1.y, ...nodes.slice(1))
+		// End node:
+		let node = startNode
+		if (nodes.length > 1) {
+			node = nodes[nodes.length - 1]
 		}
-		// Get the cursors:
-		const pos1 = state.pos1.pos - state.pos1.x
-		const pos2 = state.pos2.pos - state.pos2.x + state.body[state.pos2.y].data.length
-		const resetPos = { ...state.pos1, pos: state.pos1.pos - dropL + substr.length }
-		// Done:
-		// console.log({ nodes, pos1, pos2, resetPos }) // DELETEME
-		this.actionInput2(nodes, pos1, pos2, resetPos)
+		node.data += endNode.data.slice(state.pos2.x)
+		// Update data, pos1, and pos2:
+		const data = state.body.map(each => each.data).join("\n")
+		const pos1 = { ...state.pos1, pos: state.pos1.pos + substr.length }
+		const pos2 = { ...pos1 }
+		Object.assign(state, { data, pos1, pos2 })
+		this.render()
 	},
 
 	backspaceChar() {
@@ -360,7 +357,7 @@ const reducer = state => ({
 		// this.write("", 0, dropR)
 	},
 	tab() {
-		// this.write("\t")
+		this.write2("\t")
 	},
 	enter() {
 		this.write2("\n")
