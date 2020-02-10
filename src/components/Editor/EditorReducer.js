@@ -43,7 +43,7 @@ const initialState = {
 	didSetPos: false,    // Did set the cursors before the first write?
 }
 
-// Creates a new cursor.
+// Creates a new cursor object.
 function newPos() {
 	const pos = {
 		x: 0,
@@ -52,6 +52,15 @@ function newPos() {
 	}
 	return pos
 }
+
+// // Creates a new coords object.
+// function newCoords() {
+// 	const coords = {
+// 		x: 0,
+// 		y: 0,
+// 	}
+// 	return coords
+// }
 
 const reducer = state => ({
 	// Preferences:
@@ -115,9 +124,9 @@ const reducer = state => ({
 	actionSelect(pos1, pos2 /* , coords */) {
 		this.newAction(ActionTypes.SELECT)
 		const hasSelection = pos1.pos !== pos2.pos
-		Object.assign(state, { hasSelection, pos1, pos2, /* coords, */ })
+		Object.assign(state, { hasSelection, pos1, pos2 /* , coords */ })
 	},
-	actionInput(data, pos1, pos2) {
+	actionInput(data, pos1, pos2 /* , coords */) {
 		this.newAction(ActionTypes.INPUT)
 		if (!state.historyIndex && !state.didSetPos) {
 			const [undo] = state.history
@@ -126,7 +135,7 @@ const reducer = state => ({
 			state.didSetPos = true
 		}
 		this.dropRedos()
-		Object.assign(state, { data, pos1, pos2 })
+		Object.assign(state, { data, pos1, pos2 /* , coords */ })
 		this.render()
 	},
 	write(substr, dropL = 0, dropR = 0) {
@@ -356,29 +365,19 @@ const reducer = state => ({
 	},
 })
 
-const init = initialValue => initialState => {
-	const state = {
-		...initialState,
-		data: initialValue,
-		pos1: newPos(),
-		pos2: newPos(),
-		// coords: {
-		// 	pos1: {
-		// 		x: 0,
-		// 		y: 0,
-		// 	},
-		// 	pos2: {
-		// 		x: 0,
-		// 		y: 0,
-		// 	},
-		// },
-		components: parseComponents(initialValue),
-		reactDOM: document.createElement("div"),
-		history: [{ data: initialValue, pos1: newPos(), pos2: newPos() },
-		],
-	}
-	return state
-}
+const init = initialValue => initialState => ({
+	...initialState,
+	data: initialValue,
+	pos1: newPos(),
+	pos2: newPos(),
+	// coords: {
+	// 	pos1: newCoords(),
+	// 	pos2: newCoords(),
+	// },
+	components: parseComponents(initialValue),
+	reactDOM: document.createElement("div"),
+	history: [{ data: initialValue, pos1: newPos(), pos2: newPos() }],
+})
 
 const useEditor = initialValue => useMethods(reducer, initialState, init(initialValue))
 

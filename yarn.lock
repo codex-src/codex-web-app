@@ -3639,12 +3639,6 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
-document-title@codex-src/DocumentTitle.js:
-  version "0.1.0"
-  resolved "https://codeload.github.com/codex-src/DocumentTitle.js/tar.gz/2a728dfc6e356314a4ab1474c7ab4887e7f5101b"
-  dependencies:
-    invariant "^2.2.4"
-
 dom-converter@^0.2:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/dom-converter/-/dom-converter-0.2.0.tgz#6721a9daee2e293682955b6afe416771627bb768"

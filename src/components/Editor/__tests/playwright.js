@@ -8,7 +8,7 @@ import {
 
 const browserTypes = { Chrome, Firefox, Safari }
 
-const options = { delay: 16.67 }
+const options = { delay: 10 }
 
 // Puppeteer:
 //
@@ -33,13 +33,13 @@ const options = { delay: 16.67 }
 export async function openPage(browserStr, url) {
 	const browserType = browserTypes[browserStr]
 	const args = []
-	if (browserStr === Chrome) {
+	if (browserType === Chrome) {
 		args.push("--window-size=1440,900")
 	} else if (browserType === Firefox) {
 		args.push("-width=1440", "-height=900")
 	}
 	const config = {
-		headless: true, // false,
+		headless: false,
 		args,
 	}
 	const browser = await browserType.launch(config)
@@ -52,8 +52,8 @@ export async function openPage(browserStr, url) {
 	if (!config.headless && browserType === Firefox) {
 		execSync("osascript -e 'activate application \"Nightly\"'")
 	}
-	// https://stackoverflow.com/a/39914235
-	await new Promise(r => setTimeout(r, 1e3))
+	// // https://stackoverflow.com/a/39914235
+	// await new Promise(r => setTimeout(r, 1e3))
 	return [page, () => browser.close()]
 }
 

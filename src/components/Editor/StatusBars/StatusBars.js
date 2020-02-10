@@ -10,7 +10,7 @@ import {
 } from "./getStatusString"
 
 const TextBox = stylex.Styleable(props => (
-	<div style={stylex.parse("p-x:16 h:32 flex -r :center b:gray-100 br:max")}>
+	<div style={stylex.parse("p-x:16 h:32 flex -r :center b:gray-100 br:max pointer-events")}>
 		{props.children}
 	</div>
 ))
@@ -31,7 +31,7 @@ function StatusBars(props) {
 	const status = getStatus(state)
 	return (
 		/* eslint-disable jsx-a11y/accessible-emoji */
-		<aside style={stylex.parse("p-x:16 p-y:12 fixed -x -b z:1")}>
+		<aside style={stylex.parse("p-x:16 p-y:12 fixed -x -b z:1 no-pointer-events")}>
 			<div style={stylex.parse("flex -r -x:center")}>
 				<div style={stylex.parse("flex -r -x:between w:1440")}>
 					<TextBox>

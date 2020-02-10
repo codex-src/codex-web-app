@@ -14,11 +14,11 @@ export function getStatusStringLHS(state, { line, column, selectedLines, selecte
 	if (state.hasSelection) {
 		if (selectedLines.count < 2) {
 			return `${formatCount(selectedChars)} selected`
-		} // else if (state.pos1.pos || state.pos2.pos < state.data.length) {
-		// 	return `${formatCount(selectedLines)}, ${formatCount(selectedChars)} selected`
-		// }
-		// return "Document selected"
-		return `${formatCount(selectedLines)}, ${formatCount(selectedChars)} selected`
+		} else if (state.pos1.pos || state.pos2.pos < state.data.length) {
+			return `${formatCount(selectedLines)}, ${formatCount(selectedChars)} selected`
+		}
+		// return `${formatCount(selectedLines)}, ${formatCount(selectedChars)} selected`
+		return "Document selected"
 	}
 	return `Line ${formatComma(line)}, column ${formatComma(column)}`
 }

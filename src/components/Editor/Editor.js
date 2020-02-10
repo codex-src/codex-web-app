@@ -1,15 +1,17 @@
-// import getCoordsFromRange from "./helpers/getCoordsFromRange"
-import platform from "utils/platform"
 import Context from "./Context"
 import Debugger from "./Debugger"
+import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
+import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
 import StatusBars from "./StatusBars"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
+
+const SCROLL_BUFFER = 12
 
 const style = {
 	whiteSpace: "pre-wrap",
@@ -60,14 +62,37 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				// No-op
+				return
+			}
+			const selection = document.getSelection()
+			const range = selection.getRangeAt(0)
+			const { pos1, pos2 } = getCoordsFromRange(range)
+			if (pos1.y < SCROLL_BUFFER && pos2.y > window.innerHeight) {
+				// No-op
+				return
+			} else if (pos1.y < SCROLL_BUFFER) {
+				window.scrollBy(0, pos1.y - SCROLL_BUFFER)
+			} else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
+				window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
+			}
+		}, [state.isFocused]), // TODO: Use [state]?
+		[state.didRender],
+	)
+
 	const [scrollPastEnd, setScrollPastEnd] = React.useState({})
 
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		if (!ref.current.childNodes.length) {
+			// No-op
 			return
 		}
-		const { height } = ref.current.lastChild.getBoundingClientRect()
-		setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px)` })
+		const endNode = ref.current.lastChild.closest("[data-node]")
+		const { height } = endNode.getBoundingClientRect()
+		setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
 	}, [state.prefersMonoStylesheet, state.didRender])
 
 	// TODO: Add support for idle timeout
@@ -127,8 +152,8 @@ function Editor({ state, dispatch, ...props }) {
 		[],
 	)
 
-	// Gets the cursors (and coords).
-	const getPos = (/* { andCoords } = { andCoords: true } */) => {
+	// Gets the cursors.
+	const getCursors = () => {
 		const selection = document.getSelection()
 		const range = selection.getRangeAt(0)
 		const pos1 = getPosFromRange2(ref.current, range.startContainer, range.startOffset)
@@ -137,11 +162,8 @@ function Editor({ state, dispatch, ...props }) {
 			// TODO: Use state.pos1 as a shortcut
 			pos2 = getPosFromRange2(ref.current, range.endContainer, range.endOffset)
 		}
-		// let coords = null
-		// if (andCoords) {
-		// 	coords = getCoordsFromRange(range)
-		// }
-		return [pos1, pos2 /*, coords */]
+		// const coords = getCoordsFromRange(range)
+		return [pos1, pos2]
 	}
 
 	const { Provider } = Context
@@ -189,7 +211,7 @@ function Editor({ state, dispatch, ...props }) {
 								selection.removeAllRanges()
 								selection.addRange(range)
 							}
-							const [pos1, pos2 /* , coords */] = getPos()
+							const [pos1, pos2] = getCursors()
 							dispatch.actionSelect(pos1, pos2 /* , coords */)
 						} catch (e) {
 							console.warn({ "onSelect/catch": e })
@@ -207,7 +229,7 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						try {
-							const [pos1, pos2 /* , coords */] = getPos()
+							const [pos1, pos2] = getCursors()
 							dispatch.actionSelect(pos1, pos2 /* , coords */)
 						} catch (e) {
 							console.warn({ "onPointerMove/catch": e })
@@ -252,8 +274,8 @@ function Editor({ state, dispatch, ...props }) {
 						dedupeCompositionEndRef.current = true
 						// Input:
 						const data = innerText(ref.current)
-						const [pos1, pos2] = getPos(/* { andCoords: false } */)
-						dispatch.actionInput(data, pos1, pos2)
+						const [pos1, pos2] = getCursors()
+						dispatch.actionInput(data, pos1, pos2 /* , coords */)
 					},
 					onInput: e => {
 						if (dedupeCompositionEndRef.current) {
@@ -299,8 +321,8 @@ function Editor({ state, dispatch, ...props }) {
 						}
 						// Input:
 						const data = innerText(ref.current)
-						const [pos1, pos2] = getPos(/* { andCoords: false } */)
-						dispatch.actionInput(data, pos1, pos2)
+						const [pos1, pos2] = getCursors()
+						dispatch.actionInput(data, pos1, pos2 /* , coords */)
 					},
 
 					onCut: e => {
@@ -336,13 +358,13 @@ function Editor({ state, dispatch, ...props }) {
 							// No-op
 							return
 						}
-						e.preventDefault()
 						const substr = e.clipboardData.getData("text/plain")
+						e.preventDefault()
 						if (!substr) {
 							// No-op
 							return
 						}
-						setForceRender(true) // *Use the Force, Luke*
+						setForceRender(true) // Use the Force, Luke!
 						dispatch.paste(substr)
 					},
 
