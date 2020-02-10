@@ -296,7 +296,7 @@ function Editor({ state, dispatch, ...props }) {
 						case "deleteContentBackward":
 							dispatch.backspaceChar()
 							return
-						case "deleteWordBackward":
+						case "deleteWordBackward": // FIXME/Chrome
 							dispatch.backspaceWord()
 							return
 						case "deleteSoftLineBackward":

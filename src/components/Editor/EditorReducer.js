@@ -67,7 +67,7 @@ const reducer = state => ({
 	updatedPrefs() {
 		const classNames = []
 		// Prefers mono stylesheet:
-		if (state.prefersReadOnlyMode || !state.prefersMonoStylesheet) {
+		if (/* state.prefersReadOnlyMode || */ !state.prefersMonoStylesheet) {
 			classNames.push("prefers-text-stylesheet")
 		} else {
 			classNames.push("prefers-mono-stylesheet")
@@ -83,12 +83,12 @@ const reducer = state => ({
 		state.prefersClassName = classNames.join(" ")
 	},
 	preferTextStylesheet() {
-		state.prefersReadOnlyMode = false // Reset
+		// state.prefersReadOnlyMode = false // Reset
 		state.prefersMonoStylesheet = false
 		this.updatedPrefs()
 	},
 	preferMonoStylesheet() {
-		state.prefersReadOnlyMode = false // Reset
+		// state.prefersReadOnlyMode = false // Reset
 		state.prefersMonoStylesheet = true
 		this.updatedPrefs()
 	},
@@ -313,7 +313,7 @@ const reducer = state => ({
 	},
 	storeUndo() {
 		const undo = state.history[state.historyIndex]
-		if (undo.data === state.data && undo.pos1.pos === state.pos1.pos && undo.pos2.pos === state.pos2.pos) {
+		if (undo.data === state.data) { // && undo.pos1.pos === state.pos1.pos && undo.pos2.pos === state.pos2.pos) {
 			// No-op
 			return
 		}

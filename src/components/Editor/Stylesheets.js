@@ -36,7 +36,7 @@ const ReadOnlyModeStylesheet = props => (
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
 }
 .prefers-read-only-mode .blockquote > [data-empty-node] {
-	height: calc(1.65em / 2);
+	height: calc(1.7em / 2);
 }
 
 .prefers-read-only-mode .code-block > [data-start-node],
@@ -75,7 +75,7 @@ const CoreStylesheet = props => (
 .editor {
 	--padding-x:     24px;
 	--padding-y:     12px;
-	--border-radius: 2px;
+	--border-radius: 0px;
 	--box-shadow:    0px 0px 0px 1px hsl(var(--gray-300));
 
 	color: hsl(var(--gray-900));
@@ -100,8 +100,9 @@ const CoreStylesheet = props => (
 }
 
 .code-block {
-	margin: 0px calc(-1 * var(--padding-x));
+	/* margin: 0px calc(-1 * var(--padding-x)); */
 	padding: var(--padding-y) var(--padding-x);
+	background: hsl(var(--gray-50));
 	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
@@ -127,7 +128,7 @@ const CoreStylesheet = props => (
 
 .code {
 	box-decoration-break: clone;
-	padding: 1px 2px;
+	padding: 0px 2px;
 	color: hsl(var(--blue-a400));
 	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
@@ -157,7 +158,7 @@ const TextStylesheet = props => (
 .editor {
 	-moz-tab-size: 4;
 	tab-size: 4;
-	font: 19px/1.65 system-ui;
+	font: 19px/1.7 system-ui;
 }
 
 .code-block,
@@ -167,11 +168,11 @@ const TextStylesheet = props => (
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: calc(16/19 * 1em)/1.4 "iA Writer Mono", monospace;
+	font: calc(16/19 * 1em)/1.3 "iA Writer Mono", monospace;
 }
 
 .header {
-	line-height: 1.4;
+	line-height: 1.3;
 }
 .header.h1 {
 	font-size: 1.50em;
@@ -209,12 +210,12 @@ const MonoStylesheet = props => (
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: 16px/1.65 "iA Writer Duo", monospace;
+	font: 16px/1.7 "iA Writer Duo", monospace;
 }
 
 .code-block,
 .code {
-	font: 1em/1.4 "iA Writer Mono";
+	font: 1em/1.3 "iA Writer Mono";
 }
 
 `.trim()
@@ -228,7 +229,7 @@ function Stylesheets(props) {
 			<TextBackgroundStylesheet />
 			<ReadOnlyModeStylesheet />
 			<CoreStylesheet />
-			{state.prefersReadOnlyMode || !state.prefersMonoStylesheet ? (
+			{/* state.prefersReadOnlyMode || */ !state.prefersMonoStylesheet ? (
 				<TextStylesheet />
 			) : (
 				<MonoStylesheet />

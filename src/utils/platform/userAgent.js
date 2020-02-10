@@ -1,5 +1,3 @@
-// Tests the user agent for a substring.
-//
 // https://css-tricks.com/snippets/javascript/test-mac-pc-javascript
 function testUserAgent(substr) {
 	return navigator.userAgent.indexOf(substr) !== -1
