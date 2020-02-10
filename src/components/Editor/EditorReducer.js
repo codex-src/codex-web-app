@@ -167,64 +167,49 @@ const reducer = state => ({
 		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
-	write(substr, dropL = 0, dropR = 0) {
-		if (!state.historyIndex && !state.didSetPos) {
-			const [undo] = state.history
-			undo.pos1.pos = state.pos1.pos
-			undo.pos2.pos = state.pos2.pos
-			state.didSetPos = true
-		}
-		this.dropRedos()
-		state.data = state.data.slice(0, state.pos1.pos - dropL) + substr + state.data.slice(state.pos2.pos + dropR)
-		state.pos1.pos = state.pos1.pos - dropL + substr.length
-		state.pos2.pos = state.pos1.pos
-		this.render()
-	},
+
+	// write(substr, dropL = 0, dropR = 0) {
+	// 	if (!state.historyIndex && !state.didSetPos) {
+	// 		const [undo] = state.history
+	// 		undo.pos1.pos = state.pos1.pos
+	// 		undo.pos2.pos = state.pos2.pos
+	// 		state.didSetPos = true
+	// 	}
+	// 	this.dropRedos()
+	// 	state.data = state.data.slice(0, state.pos1.pos - dropL) + substr + state.data.slice(state.pos2.pos + dropR)
+	// 	state.pos1.pos = state.pos1.pos - dropL + substr.length
+	// 	state.pos2.pos = state.pos1.pos
+	// 	this.render()
+	// },
+
 	write2(substr, dropL = 0, dropR = 0) {
 		this.newAction(ActionTypes.INPUT)
-
 		// dropL:
 		state.pos1.pos -= dropL
 		while (dropL) {
-			const bytesToEnd = state.pos1.x
-			if (dropL <= bytesToEnd) {
+			const bytesToStart = state.pos1.x
+			if (dropL <= bytesToStart) {
 				state.pos1.x -= dropL
 				dropL = 0
 				break // XOR
 			}
-			dropL -= bytesToEnd + 1
+			dropL -= bytesToStart + 1
 			state.pos1.y--
 			state.pos1.x = state.body[state.pos1.y].data.length
 		}
-
-		// // dropL:
-		// state.pos1.pos -= dropL
-		// while (dropL) {
-		// 	const bytesToStart = state.pos1.x
-		// 	if (dropL <= bytesToStart) {
-		// 		state.pos1.x -= dropL
-		// 		dropL = 0
-		// 		break // XOR
-		// 	}
-		// 	dropL -= bytesToStart + 1
-		// 	state.pos1.y--
-		// 	state.pos1.x = state.body[state.pos1.y].data.length
-		// }
-
-		// // dropR:
-		// state.pos2.pos += dropR
-		// while (dropR) {
-		// 	const bytesToEnd = state.body[state.pos2.y].data.length - state.pos2.x
-		// 	if (dropR <= bytesToEnd) {
-		// 		state.pos2.x += dropR
-		// 		dropR = 0
-		// 		break // XOR
-		// 	}
-		// 	dropR -= bytesToEnd + 1
-		// 	state.pos1.y--
-		// 	state.pos1.x = state.body[state.pos1.y].data.length
-		// }
-
+		// dropR:
+		state.pos2.pos += dropR
+		while (dropR) {
+			const bytesToEnd = state.body[state.pos2.y].data.length - state.pos2.x
+			if (dropR <= bytesToEnd) {
+				state.pos2.x += dropR
+				dropR = 0
+				break // XOR
+			}
+			dropR -= bytesToEnd + 1
+			state.pos2.y++
+			state.pos2.x = 0 // Reset
+		}
 		// Parse the new nodes:
 		const nodes = newNodes(substr)
 		const startNode = state.body[state.pos1.y]
@@ -245,7 +230,6 @@ const reducer = state => ({
 		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
-
 	backspaceChar() {
 		let dropL = 0
 		if (!state.hasSelection && state.pos1.pos) { // Inverse
@@ -330,64 +314,64 @@ const reducer = state => ({
 		this.write2("", dropL, 0)
 	},
 	backspaceCharForwards() {
-		// let dropR = 0
-		// if (!state.hasSelection && state.pos1.pos < state.data.length) { // Inverse
-		// 	const substr = state.data.slice(state.pos1.pos)
-		// 	const rune = emoji.atStart(substr) || utf8.atStart(substr)
-		// 	dropR = rune.length
-		// }
-		// this.write("", 0, dropR)
+		let dropR = 0
+		if (!state.hasSelection && state.pos1.pos < state.data.length) { // Inverse
+			const substr = state.data.slice(state.pos1.pos)
+			const rune = emoji.atStart(substr) || utf8.atStart(substr)
+			dropR = rune.length
+		}
+		this.write2("", 0, dropR)
 	},
 	backspaceWordForwards() {
-		// if (state.hasSelection) {
-		// 	this.write("")
-		// 	return
-		// }
-		// // Iterate to a non-h. white space:
-		// let index = state.pos1.pos
-		// while (index < state.data.length) {
-		// 	const substr = state.data.slice(index)
-		// 	const rune = emoji.atStart(substr) || utf8.atStart(substr)
-		// 	if (!rune || !utf8.isHWhiteSpace(rune)) {
-		// 		// No-op
-		// 		break
-		// 	}
-		// 	index += rune.length
-		// }
-		// // Get the next rune:
-		// const substr = state.data.slice(index)
-		// const rune = emoji.atStart(substr) || utf8.atStart(substr)
-		// // Iterate to an alphanumeric rune OR a non-alphanumeric
-		// // rune based on the next rune:
-		// if (rune && !utf8.isAlphanum(rune)) {
-		// 	// Iterate to an alphanumeric rune:
-		// 	while (index < state.data.length) {
-		// 		const substr = state.data.slice(index)
-		// 		const rune = emoji.atStart(substr) || utf8.atStart(substr)
-		// 		if (!rune || utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
-		// 			// No-op
-		// 			break
-		// 		}
-		// 		index += rune.length
-		// 	}
-		// } else if (rune && utf8.isAlphanum(rune)) {
-		// 	// Iterate to a non-alphanumeric rune:
-		// 	while (index < state.data.length) {
-		// 		const substr = state.data.slice(index)
-		// 		const rune = emoji.atStart(substr) || utf8.atStart(substr)
-		// 		if (!rune || !utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
-		// 			// No-op
-		// 			break
-		// 		}
-		// 		index += rune.length
-		// 	}
-		// }
-		// // Get the number of bytes to drop:
-		// let dropR = index - state.pos1.pos
-		// if (!dropR && index < state.data.length && state.data[index] === "\n") {
-		// 	dropR = 1
-		// }
-		// this.write("", 0, dropR)
+		if (state.hasSelection) {
+			this.write2("")
+			return
+		}
+		// Iterate to a non-h. white space:
+		let index = state.pos1.pos
+		while (index < state.data.length) {
+			const substr = state.data.slice(index)
+			const rune = emoji.atStart(substr) || utf8.atStart(substr)
+			if (!rune || !utf8.isHWhiteSpace(rune)) {
+				// No-op
+				break
+			}
+			index += rune.length
+		}
+		// Get the next rune:
+		const substr = state.data.slice(index)
+		const rune = emoji.atStart(substr) || utf8.atStart(substr)
+		// Iterate to an alphanumeric rune OR a non-alphanumeric
+		// rune based on the next rune:
+		if (rune && !utf8.isAlphanum(rune)) {
+			// Iterate to an alphanumeric rune:
+			while (index < state.data.length) {
+				const substr = state.data.slice(index)
+				const rune = emoji.atStart(substr) || utf8.atStart(substr)
+				if (!rune || utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+					// No-op
+					break
+				}
+				index += rune.length
+			}
+		} else if (rune && utf8.isAlphanum(rune)) {
+			// Iterate to a non-alphanumeric rune:
+			while (index < state.data.length) {
+				const substr = state.data.slice(index)
+				const rune = emoji.atStart(substr) || utf8.atStart(substr)
+				if (!rune || !utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+					// No-op
+					break
+				}
+				index += rune.length
+			}
+		}
+		// Get the number of bytes to drop:
+		let dropR = index - state.pos1.pos
+		if (!dropR && index < state.data.length && state.data[index] === "\n") {
+			dropR = 1
+		}
+		this.write2("", 0, dropR)
 	},
 	tab() {
 		this.write2("\t")
