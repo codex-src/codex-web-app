@@ -69,6 +69,9 @@ const ReadOnlyModeStylesheet = props => (
 const CoreStylesheet = props => (
 	<style>{
 		`
+@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
+@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Duo/Webfonts/index.css";
+
 .editor {
 	--padding-x:     24px;
 	--padding-y:     12px;
@@ -99,7 +102,6 @@ const CoreStylesheet = props => (
 .code-block {
 	margin: 0px calc(-1 * var(--padding-x));
 	padding: var(--padding-y) var(--padding-x);
-	/* background: hsl(var(--gray-50)); */
 	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
@@ -152,8 +154,6 @@ const CoreStylesheet = props => (
 const TextStylesheet = props => (
 	<style>{
 		`
-@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
-
 .editor {
 	-moz-tab-size: 4;
 	tab-size: 4;
@@ -203,9 +203,6 @@ const TextStylesheet = props => (
 const MonoStylesheet = props => (
 	<style>{
 		`
-@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
-@import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Duo/Webfonts/index.css";
-
 .editor {
 	-webkit-font-smoothing:  auto;
 	-moz-osx-font-smoothing: auto;
