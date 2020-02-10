@@ -24,7 +24,7 @@ const initialState = {
 	prefersTextBackground: true,
 	prefersScrollPastEnd: true, // TODO
 	prefersClassName: "prefers-text-stylesheet prefers-text-background",
-	//
+
 	// Reducer:
 	epoch: 0,            // The epoch (time stamp) of the editor
 	actionType: "",      // The type of the current action
@@ -65,15 +65,6 @@ function newPos() {
 	return pos
 }
 
-// // Creates a new coords object.
-// function newCoords() {
-// 	const coords = {
-// 		x: 0,
-// 		y: 0,
-// 	}
-// 	return coords
-// }
-
 const reducer = state => ({
 	// Preferences:
 	updatedPrefs() {
@@ -95,12 +86,10 @@ const reducer = state => ({
 		state.prefersClassName = classNames.join(" ")
 	},
 	preferTextStylesheet() {
-		// state.prefersReadOnlyMode = false // Reset
 		state.prefersMonoStylesheet = false
 		this.updatedPrefs()
 	},
 	preferMonoStylesheet() {
-		// state.prefersReadOnlyMode = false // Reset
 		state.prefersMonoStylesheet = true
 		this.updatedPrefs()
 	},
@@ -113,7 +102,7 @@ const reducer = state => ({
 		state.prefersReadOnlyMode = !state.prefersReadOnlyMode
 		this.updatedPrefs()
 	},
-	//
+
 	// Reducer:
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
@@ -129,8 +118,8 @@ const reducer = state => ({
 	},
 	actionBlur() {
 		this.newAction(ActionTypes.BLUR)
-		state.pos1 = newPos()   // Reset
-		state.pos2 = newPos()   // Reset
+		// state.pos1 = newPos()
+		// state.pos2 = newPos()
 		state.isFocused = false // Reset
 	},
 	actionSelect(pos1, pos2) {
@@ -157,6 +146,8 @@ const reducer = state => ({
 	// 	state.didSetPos = true
 	// }
 	// this.dropRedos()
+	//
+	// TODO: Rename to input?
 	actionInput2(nodes, pos1, pos2) {
 		this.newAction(ActionTypes.INPUT)
 		// Update body:
@@ -363,19 +354,21 @@ const reducer = state => ({
 		this.write2("\n")
 	},
 	cut() {
-		// this.newAction(ActionTypes.CUT)
-		// this.write("")
+		this.newAction(ActionTypes.CUT)
+		this.write2("")
 	},
 	copy() {
-		// this.newAction(ActionTypes.COPY)
+		this.newAction(ActionTypes.COPY)
 	},
 	paste(substr) {
-		// this.newAction(ActionTypes.PASTE)
-		// this.write(substr)
+		this.newAction(ActionTypes.PASTE)
+		this.write2(substr)
 	},
 	storeUndo() {
 		const undo = state.history[state.historyIndex]
-		// && undo.pos1.pos === state.pos1.pos && undo.pos2.pos === state.pos2.pos) {
+		// FIXME?
+		//
+		// if (... && undo.pos1.pos === state.pos1.pos && undo.pos2.pos === state.pos2.pos) {
 		if (undo.data === state.data) {
 			// No-op
 			return
