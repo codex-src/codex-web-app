@@ -110,46 +110,54 @@ function Editor({ state, dispatch, ...props }) {
 					selection.removeAllRanges()
 				}
 				// try {
-					const range = document.createRange()
-					const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
-					range.setStart(node, offset)
-					range.collapse()
-					// NOTE: Use pos1 and pos2
-					if (state.pos1.pos !== state.pos2.pos) {
-						// TODO: Use state.pos1 as a shortcut
-						const { node, offset } = getRangeFromPos(ref.current, state.pos2.pos)
-						range.setEnd(node, offset)
-					}
-					selection.addRange(range)
+				const range = document.createRange()
+				const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
+				range.setStart(node, offset)
+				range.collapse()
+				// NOTE: Use pos1 and pos2
+				if (state.pos1.pos !== state.pos2.pos) {
+					// TODO: Use state.pos1 as a shortcut
+					const { node, offset } = getRangeFromPos(ref.current, state.pos2.pos)
+					range.setEnd(node, offset)
+				}
+				selection.addRange(range)
 				// } catch (e) {
 				// 	console.warn({ "shouldRender/catch": e })
 				// }
 				dispatch.rendered()
 			})
-		}, [state, dispatch, forceRender]),
+		}, [
+			dispatch,
+			forceRender,
+			state.components,
+			state.pos1.pos,
+			state.pos2.pos,
+			state.reactDOM,
+			state.shouldRender,
+		]),
 		[state.shouldRender],
 	)
 
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			if (!state.isFocused) {
-				// No-op
-				return
-			}
-			const selection = document.getSelection()
-			const range = selection.getRangeAt(0)
-			const { pos1, pos2 } = getCoordsFromRange(range)
-			if (pos1.y < SCROLL_BUFFER && pos2.y > window.innerHeight) {
-				// No-op
-				return
-			} else if (pos1.y < SCROLL_BUFFER) {
-				window.scrollBy(0, pos1.y - SCROLL_BUFFER)
-			} else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
-				window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
-			}
-		}, [state.isFocused]), // TODO: Use [state]?
-		[state.didRender],
-	)
+	// React.useLayoutEffect(
+	// 	React.useCallback(() => {
+	// 		if (!state.isFocused) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		const selection = document.getSelection()
+	// 		const range = selection.getRangeAt(0)
+	// 		const { pos1, pos2 } = getCoordsFromRange(range)
+	// 		if (pos1.y < SCROLL_BUFFER && pos2.y > window.innerHeight) {
+	// 			// No-op
+	// 			return
+	// 		} else if (pos1.y < SCROLL_BUFFER) {
+	// 			window.scrollBy(0, pos1.y - SCROLL_BUFFER)
+	// 		} else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
+	// 			window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
+	// 		}
+	// 	}, [state.isFocused]), // TODO: Use [state]?
+	// 	[state.didRender],
+	// )
 
 	// const [scrollPastEnd, setScrollPastEnd] = React.useState({})
 	//
@@ -244,30 +252,30 @@ function Editor({ state, dispatch, ...props }) {
 
 					onSelect: e => {
 						// try {
-							const selection = document.getSelection()
-							const range = selection.getRangeAt(0)
-							// Guard the root node:
-							if (range.startContainer === ref.current || range.endContainer === ref.current) {
-								// Iterate to the innermost start node:
-								let startNode = ref.current.childNodes[0]
-								while (startNode.childNodes.length) {
-									startNode = startNode.childNodes[0]
-								}
-								// Iterate to the innermost end node:
-								let endNode = ref.current.childNodes[ref.current.childNodes.length - 1]
-								while (endNode.childNodes.length) {
-									endNode = endNode.childNodes[endNode.childNodes.length - 1]
-								}
-								// Reset the range:
-								const range = document.createRange()
-								range.setStart(startNode, 0)
-								range.setEnd(endNode, (endNode.nodeValue || "").length)
-								selection.removeAllRanges()
-								selection.addRange(range)
+						const selection = document.getSelection()
+						const range = selection.getRangeAt(0)
+						// Guard the root node:
+						if (range.startContainer === ref.current || range.endContainer === ref.current) {
+							// Iterate to the innermost start node:
+							let startNode = ref.current.childNodes[0]
+							while (startNode.childNodes.length) {
+								startNode = startNode.childNodes[0]
 							}
-							const [pos1, pos2] = getPos(ref.current)
-							dispatch.actionSelect(pos1, pos2)
-							iters.current = newNodeIterators()
+							// Iterate to the innermost end node:
+							let endNode = ref.current.childNodes[ref.current.childNodes.length - 1]
+							while (endNode.childNodes.length) {
+								endNode = endNode.childNodes[endNode.childNodes.length - 1]
+							}
+							// Reset the range:
+							const range = document.createRange()
+							range.setStart(startNode, 0)
+							range.setEnd(endNode, (endNode.nodeValue || "").length)
+							selection.removeAllRanges()
+							selection.addRange(range)
+						}
+						const [pos1, pos2] = getPos(ref.current)
+						dispatch.actionSelect(pos1, pos2)
+						iters.current = newNodeIterators()
 						// } catch (e) {
 						// 	console.warn({ "onSelect/catch": e })
 						// }
@@ -284,9 +292,9 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						// try {
-							const [pos1, pos2] = getPos(ref.current)
-							dispatch.actionSelect(pos1, pos2)
-							iters.current = newNodeIterators()
+						const [pos1, pos2] = getPos(ref.current)
+						dispatch.actionSelect(pos1, pos2)
+						iters.current = newNodeIterators()
 						// } catch (e) {
 						// 	console.warn({ "onPointerMove/catch": e })
 						// }
