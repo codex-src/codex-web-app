@@ -2,7 +2,7 @@ import Markdown from "./Markdown"
 import React from "react"
 import recurse from "./ComponentsText"
 
-const Compound = ({ style, ...props }) => (
+const CompoundNode = ({ style, ...props }) => (
 	<div
 		style={{ whiteSpace: "pre-wrap", ...style }}
 		data-compound-node
@@ -14,18 +14,23 @@ const Compound = ({ style, ...props }) => (
 	</div>
 )
 
-const Node = ({ reactKey, style, ...props }) => (
-	<div
-		style={{ whiteSpace: "pre-wrap", ...style }}
-		data-node={reactKey}
-		// data-empty-node={!props.children || null}
-		{...props}
-	>
-		{props.children || (
-			<br />
-		)}
-	</div>
-)
+function Node({ reactKey, style, ...props }) {
+	if (!reactKey) {
+		throw new Error("FIXME")
+	}
+	return (
+		<div
+			style={{ whiteSpace: "pre-wrap", ...style }}
+			data-node={reactKey}
+			// data-empty-node={!props.children || null}
+			{...props}
+		>
+			{props.children || (
+				<br />
+			)}
+		</div>
+	)
+}
 
 const Header = React.memo(({ reactKey, ...props }) => (
 	<Node reactKey={reactKey} className={`header h${props.start.length - 1}`}>
@@ -43,59 +48,109 @@ const Comment = React.memo(({ reactKey, ...props }) => (
 	</Node>
 ))
 
-const Blockquote = React.memo(({ reactKey, ...props }) => (
-	<Compound className="blockquote">
+// const BlockquoteNode = React.memo(({ reactKey, ...props }) => (
+// 	<Node reactKey={reactKey}>
+// 		<Markdown start={props.start}>
+// 			{props.children}
+// 		</Markdown>
+// 	</Node>
+// ))
+//
+// const Blockquote = React.memo(props => (
+// 	<CompoundNode className="blockquote">
+// 		{props.children.map(each => (
+// 			<BlockquoteNode key={each.key} reactKey={each.key} start={each.start}>
+// 				{each.children}
+// 			</BlockquoteNode>
+// 		))}
+// 	</CompoundNode>
+// ))
+
+const Blockquote = React.memo(props => (
+	<CompoundNode className="blockquote">
 		{props.children.map((each, index) => (
-			<Node reactKey={reactKey} key={index} /* data-empty-node={!each.data ? true : null} */>
+			/* data-empty-node={!each.data ? true : null} */
+			<Node key={each.key} reactKey={each.key}>
 				<Markdown start={each.start}>
-					{each.data || (
-						<br />
-					)}
+					{each.children}
 				</Markdown>
 			</Node>
 		))}
-	</Compound>
+	</CompoundNode>
 ))
+
+// // https://cdpn.io/PowjgOg
+// //
+// // NOTE: Do not use start={... ? ... : ""} because
+// // Gecko/Firefox creates an empty text node
+// const CodeBlock = React.memo(({ reactKey, ...props }) => {
+// 	const components = props.children.split("\n")
+// 	return (
+// 		<CompoundNode className="code-block" style={{ whiteSpace: "pre" }} spellCheck={false}>
+// 			{components.map((each, index) => (
+// 				<Node
+// 					key={index}
+// 					style={{ whiteSpace: "pre" }}
+// 					data-start-node={(components.length > 1 && !index) || null}
+// 					data-end-node={(components.length > 1 && index + 1 === components.length) || null}
+// 				>
+// 					<span>
+// 						<Markdown
+// 							start={!index ? `\`\`\`${props.lang}` : null}
+// 							end={index + 1 === components.length ? "```" : null}
+// 						>
+// 							{each || (
+// 								index > 0 && index + 1 < components.length && (
+// 									<br />
+// 								)
+// 							)}
+// 						</Markdown>
+// 					</span>
+// 				</Node>
+// 			))}
+// 		</CompoundNode>
+// 	)
+// })
 
 // https://cdpn.io/PowjgOg
 //
 // NOTE: Do not use start={... ? ... : ""} because
 // Gecko/Firefox creates an empty text node
-const CodeBlock = React.memo(({ reactKey, ...props }) => {
-	const components = props.children.split("\n")
-	return (
-		<Compound className="code-block" style={{ whiteSpace: "pre" }} spellCheck={false}>
-			{components.map((each, index) => (
-				<Node
-					key={index}
-					style={{ whiteSpace: "pre" }}
-					data-start-node={(components.length > 1 && !index) || null}
-					data-end-node={(components.length > 1 && index + 1 === components.length) || null}
-				>
-					<span>
-						<Markdown
-							start={!index ? `\`\`\`${props.lang}` : null}
-							end={index + 1 === components.length ? "```" : null}
-						>
-							{each || (
-								index > 0 && index + 1 < components.length && (
-									<br />
-								)
-							)}
-						</Markdown>
-					</span>
-				</Node>
-			))}
-		</Compound>
-	)
-})
+const CodeBlock = React.memo(({ reactKey, ...props }) => (
+	<CompoundNode className="code-block" style={{ whiteSpace: "pre" }} spellCheck={false}>
+		{props.children.map(each => (
+			<Node
+				key={each.key}
+				reactKey={each.key}
+				style={{ whiteSpace: "pre" }}
+				// data-start-node={(components.length > 1 && !index) || null}
+				// data-end-node={(components.length > 1 && index + 1 === components.length) || null}
+			>
+				{/* NOTE: Do not remove the span; needed for
+				overflow-x */}
+				<span>
+					<Markdown
+						start={each.atStart ? `\`\`\`${props.metadata}` : null}
+						end={each.atEnd ? "```" : null}
+					>
+						{each.children || (
+							!each.atStart && !each.atEnd && (
+								<br />
+							)
+						)}
+					</Markdown>
+				</span>
+			</Node>
+		))}
+	</CompoundNode>
+))
 
 // Returns whether components are emoji components.
-function areEmojis({ children: components }, limit = 3) {
+function areEmojis(props, limit = 3) {
 	const ok = (
-		components.length &&
-		components.length <= limit &&
-		components.every(each => each && each.type && each.type.name === "Emoji")
+		props.children.length &&
+		props.children.length <= limit &&
+		props.children.every(each => each && each.type && each.type.name === "Emoji")
 	)
 	return ok
 }
@@ -164,12 +219,12 @@ function parseComponents(body) {
 				}
 				const nodes = body.slice(from, to + 1)
 				components.push((
-					<Blockquote key={key} reactKey={key}>
+					<Blockquote key={key}>
 						{nodes.map(each => (
 							{
-								key:   each.key,
-								start: each.data.slice(0, 2),
-								data:  recurse(each.data.slice(2)),
+								key:      each.key,
+								start:    each.data.slice(0, 2),
+								children: recurse(each.data.slice(2)),
 							}
 						))}
 					</Blockquote>
@@ -186,18 +241,30 @@ function parseComponents(body) {
 				data.slice(-3) === "```"      // End syntax
 			) {
 				const children = data.slice(3, -3)
-				components.push(<CodeBlock key={key} reactKey={key} /* defer={!window.Prism} */ lang="">{children}</CodeBlock>)
+				components.push((
+					<CodeBlock key={key} reactKey={key} /* defer={!window.Prism} */ metadata="">
+						{[
+							{
+								key,
+								atStart: true,
+								atEnd: true,
+								children,
+							},
+						]}
+					</CodeBlock>
+				))
+				// TODO: Increment and continue?
 			// Multiline code block:
 			} else if (
 				length >= 3 &&
 				data.slice(0, 3) === "```" &&
-				index + 1 < body.length // Has more body
+				index + 1 < body.length
 			) {
 				const from = index
 				let to = from
 				to++
 				while (to < body.length) {
-					if (body[to].length === 3 && body[to] === "```") {
+					if (body[to].data.length === 3 && body[to].data === "```") {
 						break
 					}
 					to++
@@ -207,9 +274,22 @@ function parseComponents(body) {
 					index = from // Reset
 					break
 				}
-				const lang = data.slice(3)
-				const children = body.slice(from, to + 1).join("\n").slice(3 + lang.length, -3)
-				components.push(<CodeBlock key={key} reactKey={key} /* defer={!window.Prism} */ lang={lang}>{children}</CodeBlock>)
+				const metadata = data.slice(3)
+				const nodes = body.slice(from, to + 1) // .join("\n").slice(3 + lang.length, -3)
+				components.push((
+					<CodeBlock key={key} reactKey={key} /* defer={!window.Prism} */ metadata={metadata}>
+						{nodes.map((each, index) => (
+							{
+								key:      each.key,
+								atStart:  !index,
+								atEnd:    index + 1 === nodes.length,
+								children: !index || index + 1 === nodes.length
+									? ""
+									: each.data,
+							}
+						))}
+					</CodeBlock>
+				))
 				index = to
 				break
 			}

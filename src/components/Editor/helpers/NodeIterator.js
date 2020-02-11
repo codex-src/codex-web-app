@@ -1,13 +1,23 @@
 // Iterates data-node and data-compound-node.
 class NodeIterator {
 	constructor(node) {
+		// if (!node) {
+		// 	throw new Error("FIXME")
+		// }
 		if (node.nodeType === Node.TEXT_NODE) {
 			node = node.parentNode
 		}
-		const currentNode = node.closest("[data-node]")
+		// Recurse down or up to the nearest data-node:
+		let currentNode = node
+		if (!currentNode.hasAttribute("[data-node]")) {
+			currentNode = node.querySelector("[data-node]") || node.closest("[data-node]")
+		}
+		if (!currentNode) {
+			throw new Error("FIXME")
+		}
 		Object.assign(this, {
 			currentNode, // The current node
-			count: 0,    // The prev and next sum count
+			count: 0,    // The prev and next count (sum)
 		})
 	}
 	getPrev() {

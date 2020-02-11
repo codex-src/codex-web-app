@@ -1,6 +1,6 @@
 import Context from "./Context"
 import Debugger from "./Debugger"
-import getCoordsFromRange from "./helpers/getCoordsFromRange"
+// import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
@@ -13,7 +13,7 @@ import StatusBars from "./StatusBars"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 
-const SCROLL_BUFFER = 12
+// const SCROLL_BUFFER = 12
 
 const style = {
 	whiteSpace: "pre-wrap",
@@ -87,9 +87,9 @@ function getNodesFromIterators(rootNode, [start, end]) {
 
 function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
-	const iters = React.useRef()
+	const target = React.useRef()
 
-	const isPointerDownRef = React.useRef()        // Is a/the pointer down?
+	const isPointerDownRef = React.useRef()        // Is a pointer down?
 	const dedupeCompositionEndRef = React.useRef() // Is onCompositionEnd deduped?
 
 	const [forceRender, setForceRender] = React.useState(false)
@@ -109,7 +109,6 @@ function Editor({ state, dispatch, ...props }) {
 				if (selection.rangeCount) {
 					selection.removeAllRanges()
 				}
-				// try {
 				const range = document.createRange()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
 				range.setStart(node, offset)
@@ -121,20 +120,9 @@ function Editor({ state, dispatch, ...props }) {
 					range.setEnd(node, offset)
 				}
 				selection.addRange(range)
-				// } catch (e) {
-				// 	console.warn({ "shouldRender/catch": e })
-				// }
 				dispatch.rendered()
 			})
-		}, [
-			dispatch,
-			forceRender,
-			state.components,
-			state.pos1.pos,
-			state.pos2.pos,
-			state.reactDOM,
-			state.shouldRender,
-		]),
+		}, [state, dispatch, forceRender]),
 		[state.shouldRender],
 	)
 
@@ -155,7 +143,7 @@ function Editor({ state, dispatch, ...props }) {
 	// 		} else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
 	// 			window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
 	// 		}
-	// 	}, [state.isFocused]), // TODO: Use [state]?
+	// 	}, [state]),
 	// 	[state.didRender],
 	// )
 
@@ -251,10 +239,9 @@ function Editor({ state, dispatch, ...props }) {
 					onBlur:  dispatch.actionBlur,
 
 					onSelect: e => {
-						// try {
+						// Guard the root node:
 						const selection = document.getSelection()
 						const range = selection.getRangeAt(0)
-						// Guard the root node:
 						if (range.startContainer === ref.current || range.endContainer === ref.current) {
 							// Iterate to the innermost start node:
 							let startNode = ref.current.childNodes[0]
@@ -275,10 +262,7 @@ function Editor({ state, dispatch, ...props }) {
 						}
 						const [pos1, pos2] = getPos(ref.current)
 						dispatch.actionSelect(pos1, pos2)
-						iters.current = newNodeIterators()
-						// } catch (e) {
-						// 	console.warn({ "onSelect/catch": e })
-						// }
+						target.current = newNodeIterators()
 					},
 					onPointerDown: e => {
 						isPointerDownRef.current = true
@@ -291,13 +275,9 @@ function Editor({ state, dispatch, ...props }) {
 							// No-op
 							return
 						}
-						// try {
 						const [pos1, pos2] = getPos(ref.current)
 						dispatch.actionSelect(pos1, pos2)
-						iters.current = newNodeIterators()
-						// } catch (e) {
-						// 	console.warn({ "onPointerMove/catch": e })
-						// }
+						target.current = newNodeIterators()
 					},
 					onPointerUp: e => {
 						isPointerDownRef.current = false
@@ -308,7 +288,7 @@ function Editor({ state, dispatch, ...props }) {
 						// Tab:
 						//
 						// NOTE: Use !e.ctrlKey to guard tabbing
-						// shortcuts.
+						// shortcuts
 						case !e.ctrlKey && e.keyCode === 9: // Tab
 							e.preventDefault()
 							dispatch.tab()
@@ -338,7 +318,7 @@ function Editor({ state, dispatch, ...props }) {
 						// https://github.com/w3c/uievents/issues/202#issue-316461024
 						dedupeCompositionEndRef.current = true
 						// Input:
-						const nodes = getNodesFromIterators(ref.current, iters.current)
+						const nodes = getNodesFromIterators(ref.current, target.current)
 						const [pos1, pos2] = getPos(ref.current)
 						dispatch.actionInput2(nodes, pos1, pos2)
 					},
@@ -385,7 +365,7 @@ function Editor({ state, dispatch, ...props }) {
 							break
 						}
 						// Input:
-						const nodes = getNodesFromIterators(ref.current, iters.current)
+						const nodes = getNodesFromIterators(ref.current, target.current)
 						const [pos1, pos2] = getPos(ref.current)
 						dispatch.actionInput2(nodes, pos1, pos2)
 					},
@@ -429,7 +409,7 @@ function Editor({ state, dispatch, ...props }) {
 							// No-op
 							return
 						}
-						setForceRender(true) // Use the Force, Luke!
+						setForceRender(true) // *Use the Force, Luke!*
 						dispatch.paste(substr)
 					},
 
