@@ -25,8 +25,8 @@ const Text = stylex.Styleable(props => (
 	</p>
 ))
 
-function StatusBars(props) {
-	const [state] = React.useContext(Context)
+function StatusBars({ state, ...props }) {
+	// const [state] = React.useContext(Context)
 
 	const status = getStatus(state)
 	return (

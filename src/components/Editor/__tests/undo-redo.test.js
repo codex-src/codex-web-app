@@ -6,7 +6,7 @@ let done = null
 let initialValue = ""
 
 beforeAll(async () => {
-	jest.setTimeout(180e3)
+	jest.setTimeout(600e3)
 	const browserStr = process.env.BROWSER
 	;[page, done] = await ppt.openPage(browserStr, "http://localhost:3000")
 	initialValue = await ppt.innerText(page)

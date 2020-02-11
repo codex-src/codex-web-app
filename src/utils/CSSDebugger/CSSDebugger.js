@@ -4,7 +4,7 @@ function CSSDebugger(props) {
 	React.useEffect(() => {
 		document.body.classList.toggle("debug-css")
 	}, [])
-	return props.children
+	return props.children || null
 }
 
 export default CSSDebugger

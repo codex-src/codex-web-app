@@ -45,13 +45,13 @@ export async function openPage(browserStr, url) {
 	const browser = await browserType.launch(config)
 	const context = await browser.newContext()
 	const page = await context.newPage(url)
-	await page.waitFor(".editor", { visible: true })
 	if (!config.headless && browserType === Firefox) {
 		execSync("osascript -e 'activate application \"Nightly\"'")
 	}
-	page.on("pageerror", error => expect(error).toBeNull())
-	await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 })
+	await page.setViewport({ width: 1440, height: 900 }) // , deviceScaleFactor: 2 })
 	await page.addScriptTag({ path: "./src/components/Editor/__tests/innerText.js" })
+	await page.waitFor(1e3, options)
+	page.on("pageerror", error => expect(error).toBeNull())
 	return [page, () => browser.close()]
 }
 

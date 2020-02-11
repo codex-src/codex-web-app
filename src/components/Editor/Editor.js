@@ -1,6 +1,7 @@
-import Context from "./Context"
-import Debugger from "./Debugger"
 // import getCoordsFromRange from "./helpers/getCoordsFromRange"
+import Context from "./Context"
+import CSSDebugger from "utils/CSSDebugger"
+import Debugger from "./Debugger"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
@@ -84,6 +85,10 @@ function getNodesFromIterators(rootNode, [start, end]) {
 	}
 	return nodes
 }
+
+// function EditorComponents(props) {
+// 	return props.components
+// }
 
 function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
@@ -218,7 +223,8 @@ function Editor({ state, dispatch, ...props }) {
 
 	const { Provider } = Context
 	return (
-		<Provider value={[state, dispatch]}>
+		// <Provider value={[state, dispatch]}>
+		<React.Fragment>
 			{React.createElement(
 				"article",
 				{
@@ -417,12 +423,14 @@ function Editor({ state, dispatch, ...props }) {
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			<Stylesheets />
+			<Stylesheets state={state} />
 			{!state.prefersReadOnlyMode && (
-				<StatusBars />
+				<StatusBars state={state} />
 			)}
-			<Debugger />
-		</Provider>
+			{/* <Debugger /> */}
+			{/* <CSSDebugger /> */}
+		</React.Fragment>
+		// </Provider>
 	)
 }
 

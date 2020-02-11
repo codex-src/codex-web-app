@@ -4,7 +4,7 @@ let page = null
 let done = null
 
 beforeAll(async () => {
-	jest.setTimeout(180e3)
+	jest.setTimeout(600e3)
 	const browserStr = process.env.BROWSER
 	;[page, done] = await ppt.openPage(browserStr, "http://localhost:3000")
 })
@@ -137,7 +137,7 @@ test("can type and delete strikethrough", async () => {
 	await ppt.type(page, str)
 	let data = await ppt.innerText(page)
 	expect(data).toBe(str)
-	for (let index = 0; index < 39; index++) {
+	for (let index = 0; index < 37; index++) {
 		await ppt.backspaceChar(page)
 	}
 	data = await ppt.innerText(page)

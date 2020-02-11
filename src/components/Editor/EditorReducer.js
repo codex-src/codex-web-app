@@ -127,29 +127,31 @@ const reducer = state => ({
 		const hasSelection = pos1.pos !== pos2.pos
 		Object.assign(state, { hasSelection, pos1, pos2 })
 	},
-	actionInput(data, pos1, pos2) {
-		this.newAction(ActionTypes.INPUT)
-		if (!state.historyIndex && !state.didSetPos) {
-			const [undo] = state.history
-			undo.pos1.pos = state.pos1.pos
-			undo.pos2.pos = state.pos2.pos
-			state.didSetPos = true
-		}
-		this.dropRedos()
-		Object.assign(state, { data, pos1, pos2 })
-		this.render()
-	},
-	// if (!state.historyIndex && !state.didSetPos) {
-	// 	const [undo] = state.history
-	// 	undo.pos1.pos = state.pos1.pos
-	// 	undo.pos2.pos = state.pos2.pos
-	// 	state.didSetPos = true
-	// }
-	// this.dropRedos()
-	//
-	// TODO: Rename to input?
+	// actionInput(data, pos1, pos2) {
+	// 	this.newAction(ActionTypes.INPUT)
+	// 	if (!state.historyIndex && !state.didSetPos) {
+	// 		const [undo] = state.history
+	// 		undo.pos1.pos = state.pos1.pos
+	// 		undo.pos2.pos = state.pos2.pos
+	// 		state.didSetPos = true
+	// 	}
+	// 	this.dropRedos()
+	// 	Object.assign(state, { data, pos1, pos2 })
+	// 	this.render()
+	// },
 	actionInput2(nodes, pos1, pos2) {
 		this.newAction(ActionTypes.INPUT)
+
+		// TODO
+		//
+		// if (!state.historyIndex && !state.didSetPos) {
+		// 	const [undo] = state.history
+		// 	undo.pos1.pos = state.pos1.pos
+		// 	undo.pos2.pos = state.pos2.pos
+		// 	state.didSetPos = true
+		// }
+		// this.dropRedos()
+
 		// Update body:
 		const key1 = nodes[0].key
 		const key2 = nodes[nodes.length - 1].key

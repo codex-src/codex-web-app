@@ -1,4 +1,4 @@
-import Context from "./Context"
+// import Context from "./Context"
 import React from "react"
 
 const TextBackgroundStylesheet = props => (
@@ -6,6 +6,7 @@ const TextBackgroundStylesheet = props => (
 		`
 .prefers-text-background .em,
 .prefers-text-background .strong {
+	/* color: hsl(var(--blue-a400)); */
 	background: hsla(var(--blue-a400), 0.05);
 }
 .prefers-text-background .strikethrough,
@@ -31,12 +32,12 @@ const ReadOnlyModeStylesheet = props => (
 	<style>{
 		`
 .prefers-read-only-mode .blockquote {
-	padding-left: var(--padding-x);
-	font-size: 1.1em;
+	padding-left: 32px;
+	font-size: 1.05em;
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
 }
 .prefers-read-only-mode .blockquote > [data-empty-node] {
-	height: calc(1.7em / 2);
+	height: calc(1.65em / 2);
 }
 
 .prefers-read-only-mode .code-block > [data-start-node],
@@ -122,13 +123,17 @@ const CoreStylesheet = props => (
 	font-style: italic;
 }
 
+.header .strong {
+	font-weight: bold;
+}
 .strong {
-	font-weight: 600;
+	/* font-weight: 600; */
+	font-weight: bold;
 }
 
 .code {
 	box-decoration-break: clone;
-	padding: 0px 2px;
+	padding: 1px 2px;
 	color: hsl(var(--blue-a400));
 	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
@@ -158,7 +163,7 @@ const TextStylesheet = props => (
 .editor {
 	-moz-tab-size: 4;
 	tab-size: 4;
-	font: 19px/1.7 system-ui;
+	font: 19px/1.65 system-ui;
 }
 
 .code-block,
@@ -168,7 +173,7 @@ const TextStylesheet = props => (
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: calc(16/19 * 1em)/1.3 "iA Writer Mono", monospace;
+	font: calc(16/19 * 1em)/1.45 "iA Writer Mono", monospace;
 }
 
 .header {
@@ -210,20 +215,20 @@ const MonoStylesheet = props => (
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: 16px/1.7 "iA Writer Duo", monospace;
+	font: 16px/1.65 "iA Writer Duo", monospace;
 }
 
 .code-block,
 .code {
-	font: 1em/1.3 "iA Writer Mono";
+	font: 1em/1.45 "iA Writer Mono";
 }
 
 `.trim()
 	}</style>
 )
 
-function Stylesheets(props) {
-	const [state] = React.useContext(Context)
+function Stylesheets({ state, ...props }) {
+	// const [state] = React.useContext(Context)
 	return (
 		<React.Fragment>
 			<TextBackgroundStylesheet />

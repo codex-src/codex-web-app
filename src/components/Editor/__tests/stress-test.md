@@ -23,12 +23,39 @@ Text 😀 *emphasis* **strong** // `code` [anchor](href) ~strikethrough~.
 Text 😀 *emphasis* **strong** `code` // [anchor](href) ~strikethrough~.
 Text 😀 *emphasis* **strong** `code` [anchor](href) // ~strikethrough~.
 
-Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
-Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
-Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
-Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
-Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
-Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
+```Hello, world! 😀```
+
+```
+Hello, world! 😀
+```
+
+```txt
+Hello, world! 😀
+```
+
+```hello.txt
+Hello, world! 😀
+```
+
+```
+package main
+
+import "fmt"
+
+func main() {
+  fmt.Println("Hello, world! 😀")
+}
+```
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+  fmt.Println("Hello, world! 😀")
+}
+```
 
 ```main.go
 package main
@@ -47,11 +74,7 @@ func main() {
 > Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
 > Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
 
-// NOTE: Gecko/Firefox crashes on tabs:
-//
-// Protocol error (Page.dispatchKeyEvent): Component returned failure code: 0xc1f30001 (NS_ERROR_NOT_INITIALIZED) [nsITextInputProcessor.keydown]
-//
-- Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
+// TODO: Update type to support tabs
 - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
 - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
 - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
@@ -59,11 +82,7 @@ func main() {
 - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
 - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
 
-// NOTE: Gecko/Firefox crashes on tabs:
-//
-// Protocol error (Page.dispatchKeyEvent): Component returned failure code: 0xc1f30001 (NS_ERROR_NOT_INITIALIZED) [nsITextInputProcessor.keydown]
-//
-1. Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
+// TODO: Update type to support tabs
 1. Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
 1. Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
 1. Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
@@ -71,9 +90,17 @@ func main() {
 1. Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
 1. Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
 
----
----
----
----
----
----
+// TODO: Update type to support tabs
+[x] - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
+[x] - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
+[x] - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
+[ ] - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
+[ ] - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
+[ ] - Text 😀 *emphasis* **strong** `code` [anchor](href) ~strikethrough~.
+
+***
+***
+***
+***
+***
+***
