@@ -137,8 +137,8 @@ test("can type and delete strikethrough", async () => {
 	await ppt.type(page, str)
 	let data = await ppt.innerText(page)
 	expect(data).toBe(str)
-	for (let index = 0; index < 38; index++) {
-		await ppt.backspaceWord(page)
+	for (let index = 0; index < 39; index++) {
+		await ppt.backspaceChar(page)
 	}
 	data = await ppt.innerText(page)
 	expect(data).toBe("")

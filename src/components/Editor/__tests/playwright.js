@@ -39,7 +39,7 @@ export async function openPage(browserStr, url) {
 		args.push("-width=1440", "-height=900")
 	}
 	const config = {
-		headless: process.env.HEADLESS || false,
+		headless: process.env.HEADLESS === "true" || false,
 		args,
 	}
 	const browser = await browserType.launch(config)

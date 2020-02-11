@@ -48,24 +48,6 @@ const Comment = React.memo(({ reactKey, ...props }) => (
 	</Node>
 ))
 
-// const BlockquoteNode = React.memo(({ reactKey, ...props }) => (
-// 	<Node reactKey={reactKey}>
-// 		<Markdown start={props.start}>
-// 			{props.children}
-// 		</Markdown>
-// 	</Node>
-// ))
-//
-// const Blockquote = React.memo(props => (
-// 	<CompoundNode className="blockquote">
-// 		{props.children.map(each => (
-// 			<BlockquoteNode key={each.key} reactKey={each.key} start={each.start}>
-// 				{each.children}
-// 			</BlockquoteNode>
-// 		))}
-// 	</CompoundNode>
-// ))
-
 const Blockquote = React.memo(props => (
 	<CompoundNode className="blockquote">
 		{props.children.map((each, index) => (
@@ -79,41 +61,6 @@ const Blockquote = React.memo(props => (
 	</CompoundNode>
 ))
 
-// // https://cdpn.io/PowjgOg
-// //
-// // NOTE: Do not use start={... ? ... : ""} because
-// // Gecko/Firefox creates an empty text node
-// const CodeBlock = React.memo(({ reactKey, ...props }) => {
-// 	const components = props.children.split("\n")
-// 	return (
-// 		<CompoundNode className="code-block" style={{ whiteSpace: "pre" }} spellCheck={false}>
-// 			{components.map((each, index) => (
-// 				<Node
-// 					key={index}
-// 					style={{ whiteSpace: "pre" }}
-// 					data-start-node={(components.length > 1 && !index) || null}
-// 					data-end-node={(components.length > 1 && index + 1 === components.length) || null}
-// 				>
-// 					<span>
-// 						<Markdown
-// 							start={!index ? `\`\`\`${props.lang}` : null}
-// 							end={index + 1 === components.length ? "```" : null}
-// 						>
-// 							{each || (
-// 								index > 0 && index + 1 < components.length && (
-// 									<br />
-// 								)
-// 							)}
-// 						</Markdown>
-// 					</span>
-// 				</Node>
-// 			))}
-// 		</CompoundNode>
-// 	)
-// })
-
-// https://cdpn.io/PowjgOg
-//
 // NOTE: Do not use start={... ? ... : ""} because
 // Gecko/Firefox creates an empty text node
 const CodeBlock = React.memo(({ reactKey, ...props }) => (
@@ -126,8 +73,6 @@ const CodeBlock = React.memo(({ reactKey, ...props }) => (
 				// data-start-node={(components.length > 1 && !index) || null}
 				// data-end-node={(components.length > 1 && index + 1 === components.length) || null}
 			>
-				{/* NOTE: Do not remove the span; needed for
-				overflow-x */}
 				<span>
 					<Markdown
 						start={each.atStart ? `\`\`\`${props.metadata}` : null}
