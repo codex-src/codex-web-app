@@ -13,28 +13,6 @@ afterAll(async () => {
 	await done()
 })
 
-test("cannot delete contenteditable", async () => {
-	await ppt.clear(page)
-	await ppt.backspaceChar(page)
-	await ppt.backspaceWord(page)
-	await ppt.backspaceCharForwards(page)
-	await ppt.backspaceWordForwards(page)
-	const data = await ppt.innerText(page)
-	expect(data).toBe("")
-})
-
-test("can type and delete characters", async () => {
-	await ppt.clear(page)
-	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
-	let data = await ppt.innerText(page)
-	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
-	for (let index = 0; index < 52; index++) {
-		await ppt.backspaceChar(page)
-	}
-	data = await ppt.innerText(page)
-	expect(data).toBe("")
-})
-
 test("can type and delete words", async () => {
 	await ppt.clear(page)
 	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
@@ -95,21 +73,6 @@ test("can type and delete words", async () => {
 	data = await ppt.innerText(page)
 	expect(data).toBe("Hello")
 	await ppt.backspaceWord(page)
-	data = await ppt.innerText(page)
-	expect(data).toBe("")
-})
-
-test("can type and delete (forwards) characters", async () => {
-	await ppt.clear(page)
-	await ppt.type(page, "Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
-	let data = await ppt.innerText(page)
-	expect(data).toBe("Hello, world! 😀\n\nHello, world! 😀\n\nHello, world! 😀")
-	for (let index = 0; index < 52; index++) {
-		await ppt.press(page, "ArrowLeft")
-	}
-	for (let index = 0; index < 52; index++) {
-		await ppt.backspaceCharForwards(page)
-	}
 	data = await ppt.innerText(page)
 	expect(data).toBe("")
 })
@@ -177,33 +140,6 @@ test("can type and delete (forwards) words", async () => {
 	data = await ppt.innerText(page)
 	expect(data).toBe(" 😀")
 	await ppt.backspaceWordForwards(page)
-	data = await ppt.innerText(page)
-	expect(data).toBe("")
-})
-
-test("can type and delete 100x paragraphs", async () => {
-	await ppt.clear(page)
-	await ppt.type(page, "\n".repeat(100))
-	let data = await ppt.innerText(page)
-	expect(data).toBe("\n".repeat(100))
-	for (let index = 0; index < 100; index++) {
-		await ppt.press(page, "Backspace")
-	}
-	data = await ppt.innerText(page)
-	expect(data).toBe("")
-})
-
-test("can type and delete (forwards) 100x paragraphs", async () => {
-	await ppt.clear(page)
-	await ppt.type(page, "\n".repeat(100))
-	let data = await ppt.innerText(page)
-	expect(data).toBe("\n".repeat(100))
-	for (let index = 0; index < 100; index++) {
-		await ppt.press(page, "ArrowLeft")
-	}
-	for (let index = 0; index < 100; index++) {
-		await ppt.press(page, "Delete")
-	}
 	data = await ppt.innerText(page)
 	expect(data).toBe("")
 })

@@ -8,7 +8,7 @@ import {
 
 const browserTypes = { Chrome, Firefox, Safari }
 
-const options = { delay: 10 }
+const options = { delay: +process.env.DELAY }
 
 // Puppeteer:
 //
@@ -45,15 +45,13 @@ export async function openPage(browserStr, url) {
 	const browser = await browserType.launch(config)
 	const context = await browser.newContext()
 	const page = await context.newPage(url)
-	await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 })
-	// page.on("error", error => expect(error).toBeNull())     // FIXME?
-	// page.on("pageerror", error => expect(error).toBeNull()) // FIXME?
-	await page.addScriptTag({ path: "./src/components/Editor/__tests/innerText.js" })
 	if (!config.headless && browserType === Firefox) {
 		execSync("osascript -e 'activate application \"Nightly\"'")
 	}
-	// // https://stackoverflow.com/a/39914235
-	// await new Promise(r => setTimeout(r, 1e3))
+	// page.on("error", error => expect(error).toBeNull())     // FIXME?
+	// page.on("pageerror", error => expect(error).toBeNull()) // FIXME?
+	await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 })
+	await page.addScriptTag({ path: "./src/components/Editor/__tests/innerText.js" })
 	return [page, () => browser.close()]
 }
 
@@ -76,8 +74,23 @@ export async function clear(page) {
 	await page.keyboard.press("Backspace", options)
 }
 
+// export async function type(page, data) {
+// 	await page.keyboard.type(data, options)
+// }
 export async function type(page, data) {
-	await page.keyboard.type(data, options)
+	// NOTE: Do not use page.keyboard.type for paragraphs;
+	// 😀<Enter> does not work as expected (because of
+	// onKeyDown)
+	const arr = data.split("\n")
+	for (let index = 0; index < arr.length; index++) {
+		if (index) {
+			// // https://stackoverflow.com/a/39914235
+			// await new Promise(r => setTimeout(r, 10))
+			await page.waitFor(0, options)
+			await page.keyboard.press("Enter", options)
+		}
+		await page.keyboard.type(arr[index], options)
+	}
 }
 
 export async function press(page, key) {
