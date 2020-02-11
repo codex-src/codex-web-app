@@ -4,6 +4,7 @@ import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
+import NodeIterator from "./helpers/NodeIterator"
 import platform from "utils/platform"
 import random from "utils/random/id"
 import React from "react"
@@ -20,55 +21,6 @@ const style = {
 	overflowWrap: "break-word",
 }
 
-class NodeIterator {
-	constructor(node) {
-		if (node.nodeType === Node.TEXT_NODE) {
-			node = node.parentNode
-		}
-		const currentNode = node.closest("[data-node]")
-		Object.assign(this, {
-			currentNode, // The current node
-			count: 0,    // The getPrev and getNext sum count
-		})
-	}
-	getPrev() {
-		const { previousSibling, parentNode } = this.currentNode
-		if (previousSibling && previousSibling.hasAttribute("data-node")) {
-			return previousSibling
-		} else if (previousSibling && previousSibling.hasAttribute("data-compound-node")) {
-			return previousSibling.childNodes[previousSibling.childNodes.length - 1]
-		} else if (parentNode && parentNode.previousSibling && parentNode.previousSibling.hasAttribute("data-node")) {
-			return parentNode.previousSibling
-		} else if (parentNode && parentNode.previousSibling && parentNode.previousSibling.hasAttribute("data-compound-node")) {
-			return parentNode.previousSibling.childNodes[parentNode.previousSibling.childNodes.length - 1]
-		}
-		return null
-	}
-	prev() {
-		this.currentNode = this.getPrev()
-		this.count += this.currentNode !== null
-		return this.currentNode
-	}
-	getNext() {
-		const { nextSibling, parentNode } = this.currentNode
-		if (nextSibling && nextSibling.hasAttribute("data-node")) {
-			return nextSibling
-		} else if (nextSibling && nextSibling.hasAttribute("data-compound-node")) {
-			return nextSibling.childNodes[0]
-		} else if (parentNode && parentNode.nextSibling && parentNode.nextSibling.hasAttribute("data-node")) {
-			return parentNode.nextSibling
-		} else if (parentNode && parentNode.nextSibling && parentNode.nextSibling.hasAttribute("data-compound-node")) {
-			return parentNode.nextSibling.childNodes[0]
-		}
-		return null
-	}
-	next() {
-		this.currentNode = this.getNext()
-		this.count += this.currentNode !== null
-		return this.currentNode
-	}
-}
-
 // Gets the cursors.
 //
 // TODO: Get pos1 and pos2 together
@@ -83,62 +35,62 @@ function getPos(rootNode) {
 	return [pos1, pos2]
 }
 
-// Creates a new target.
-function newTarget() {
+// Creates a new start and end node iterator.
+function newNodeIterators() {
 	const selection = document.getSelection()
 	const range = selection.getRangeAt(0)
 	const { startContainer, endContainer } = range
 	// Extend the target start (2x):
-	const startIter = new NodeIterator(startContainer)
-	while (startIter.count < 2 && startIter.getPrev()) {
-		startIter.prev()
+	const start = new NodeIterator(startContainer)
+	while (start.count < 2 && start.getPrev()) {
+		start.prev()
 	}
 	// Extend the target end (2x):
-	const endIter = new NodeIterator(endContainer)
-	while (endIter.count < 2 && endIter.getNext()) {
-		endIter.next()
+	const end = new NodeIterator(endContainer)
+	while (end.count < 2 && end.getNext()) {
+		end.next()
 	}
-	return { startIter, endIter }
+	return [start, end]
 }
 
-// Gets nodes from a target.
-function getNodesFromTarget(rootNode, { startIter, endIter }) {
+// Gets (reads) parsed nodes from node iterators.
+function getNodesFromIterators(rootNode, [start, end]) {
 	// Re-extend the target start (1x):
-	if (!startIter.count && startIter.getPrev()) {
-		startIter.prev()
+	if (!start.count && start.getPrev()) {
+		start.prev()
 	// Re-extend the DOM range end (1x):
-	} else if (!endIter.count && endIter.getNext()) {
-		endIter.next()
+	} else if (!end.count && end.getNext()) {
+		end.next()
 	}
 	// Get nodes:
 	const seenKeys = {}
 	const nodes = []
-	while (startIter.currentNode) {
+	while (start.currentNode) {
 		// Read the key:
-		let key = startIter.currentNode.getAttribute("data-node")
+		let key = start.currentNode.getAttribute("data-node")
 		if (seenKeys[key]) {
 			key = random.newUUID()
-			startIter.currentNode.setAttribute("data-node", key)
+			start.currentNode.setAttribute("data-node", key)
 		}
 		seenKeys[key] = true
 		// Read the data:
-		const data = innerText(startIter.currentNode)
+		const data = innerText(start.currentNode)
 		nodes.push({ key, data })
-		if (startIter.currentNode === endIter.currentNode) {
+		if (start.currentNode === end.currentNode) {
 			// No-op
 			break
 		}
-		startIter.next()
+		start.next()
 	}
 	return nodes
 }
 
 function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
-	const isPointerDownRef = React.useRef()
-	const dedupeCompositionEndRef = React.useRef()
+	const iters = React.useRef()
 
-	const target = React.useRef()
+	const isPointerDownRef = React.useRef()        // Is a/the pointer down?
+	const dedupeCompositionEndRef = React.useRef() // Is onCompositionEnd deduped?
 
 	const [forceRender, setForceRender] = React.useState(false)
 
@@ -157,7 +109,7 @@ function Editor({ state, dispatch, ...props }) {
 				if (selection.rangeCount) {
 					selection.removeAllRanges()
 				}
-				try {
+				// try {
 					const range = document.createRange()
 					const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
 					range.setStart(node, offset)
@@ -169,9 +121,9 @@ function Editor({ state, dispatch, ...props }) {
 						range.setEnd(node, offset)
 					}
 					selection.addRange(range)
-				} catch (e) {
-					console.warn({ "shouldRender/catch": e })
-				}
+				// } catch (e) {
+				// 	console.warn({ "shouldRender/catch": e })
+				// }
 				dispatch.rendered()
 			})
 		}, [state, dispatch, forceRender]),
@@ -291,7 +243,7 @@ function Editor({ state, dispatch, ...props }) {
 					onBlur:  dispatch.actionBlur,
 
 					onSelect: e => {
-						try {
+						// try {
 							const selection = document.getSelection()
 							const range = selection.getRangeAt(0)
 							// Guard the root node:
@@ -315,10 +267,10 @@ function Editor({ state, dispatch, ...props }) {
 							}
 							const [pos1, pos2] = getPos(ref.current)
 							dispatch.actionSelect(pos1, pos2)
-							target.current = newTarget()
-						} catch (e) {
-							console.warn({ "onSelect/catch": e })
-						}
+							iters.current = newNodeIterators()
+						// } catch (e) {
+						// 	console.warn({ "onSelect/catch": e })
+						// }
 					},
 					onPointerDown: e => {
 						isPointerDownRef.current = true
@@ -331,13 +283,13 @@ function Editor({ state, dispatch, ...props }) {
 							// No-op
 							return
 						}
-						try {
+						// try {
 							const [pos1, pos2] = getPos(ref.current)
 							dispatch.actionSelect(pos1, pos2)
-							target.current = newTarget()
-						} catch (e) {
-							console.warn({ "onPointerMove/catch": e })
-						}
+							iters.current = newNodeIterators()
+						// } catch (e) {
+						// 	console.warn({ "onPointerMove/catch": e })
+						// }
 					},
 					onPointerUp: e => {
 						isPointerDownRef.current = false
@@ -378,7 +330,7 @@ function Editor({ state, dispatch, ...props }) {
 						// https://github.com/w3c/uievents/issues/202#issue-316461024
 						dedupeCompositionEndRef.current = true
 						// Input:
-						const nodes = getNodesFromTarget(ref.current, target.current)
+						const nodes = getNodesFromIterators(ref.current, iters.current)
 						const [pos1, pos2] = getPos(ref.current)
 						dispatch.actionInput2(nodes, pos1, pos2)
 					},
@@ -425,7 +377,7 @@ function Editor({ state, dispatch, ...props }) {
 							break
 						}
 						// Input:
-						const nodes = getNodesFromTarget(ref.current, target.current)
+						const nodes = getNodesFromIterators(ref.current, iters.current)
 						const [pos1, pos2] = getPos(ref.current)
 						dispatch.actionInput2(nodes, pos1, pos2)
 					},

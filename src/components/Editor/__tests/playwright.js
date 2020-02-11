@@ -8,7 +8,7 @@ import {
 
 const browserTypes = { Chrome, Firefox, Safari }
 
-const options = { delay: +process.env.DELAY }
+const options = { delay: +(process.env.DELAY || 0) }
 
 // Puppeteer:
 //
@@ -45,11 +45,12 @@ export async function openPage(browserStr, url) {
 	const browser = await browserType.launch(config)
 	const context = await browser.newContext()
 	const page = await context.newPage(url)
+	page.waitFor(".editor", { visible: true })
 	if (!config.headless && browserType === Firefox) {
 		execSync("osascript -e 'activate application \"Nightly\"'")
 	}
-	// page.on("error", error => expect(error).toBeNull())     // FIXME?
-	// page.on("pageerror", error => expect(error).toBeNull()) // FIXME?
+	page.on("error", error => expect(error).toBeNull())     // FIXME?
+	page.on("pageerror", error => expect(error).toBeNull()) // FIXME?
 	await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 })
 	await page.addScriptTag({ path: "./src/components/Editor/__tests/innerText.js" })
 	return [page, () => browser.close()]

@@ -7,7 +7,7 @@ class NodeIterator {
 		const currentNode = node.closest("[data-node]")
 		Object.assign(this, {
 			currentNode, // The current node
-			count: 0,    // The getPrev and getNext sum count
+			count: 0,    // The prev and next sum count
 		})
 	}
 	getPrev() {
