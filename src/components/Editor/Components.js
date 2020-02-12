@@ -32,21 +32,27 @@ function Node({ reactKey, style, ...props }) {
 	)
 }
 
-const Header = React.memo(({ reactKey, ...props }) => (
-	<Node reactKey={reactKey} className={`header h${props.start.length - 1}`}>
-		<Markdown start={props.start}>
-			{props.children}
-		</Markdown>
-	</Node>
-))
+const Header = React.memo(({ reactKey, ...props }) => {
+	const parsed = recurse(props.children)
+	return (
+		<Node reactKey={reactKey} className={`header h${props.start.length - 1}`}>
+			<Markdown start={props.start}>
+				{parsed}
+			</Markdown>
+		</Node>
+	)
+})
 
-const Comment = React.memo(({ reactKey, ...props }) => (
-	<Node reactKey={reactKey} className="comment" spellCheck={false}>
-		<Markdown start={props.start}>
-			{props.children}
-		</Markdown>
-	</Node>
-))
+const Comment = React.memo(({ reactKey, ...props }) => {
+	const parsed = recurse(props.children)
+	return (
+		<Node reactKey={reactKey} className="comment" spellCheck={false}>
+			<Markdown start={props.start}>
+				{parsed}
+			</Markdown>
+		</Node>
+	)
+})
 
 function blockquotesAreEqual(prev, next) {
 	if (prev.children.length !== next.children.length) {
@@ -135,21 +141,28 @@ const CodeBlock = React.memo(props => {
 	)
 }, codeBlocksAreEqual)
 
-// Returns whether components are emoji components.
-function areEmojis(props, limit = 3) {
+// Returns whether parsed components are emoji components.
+function areEmojis(parsed, max = 3) {
+	if (!Array.isArray(parsed)) {
+		return false
+	}
 	const ok = (
-		props.children.length &&
-		props.children.length <= limit &&
-		props.children.every(each => each && each.type && each.type.name === "Emoji")
+		parsed.length <= max &&
+		parsed.every(each => each && each.type && each.type.name === "Emoji")
 	)
 	return ok
 }
 
-const Paragraph = React.memo(({ reactKey, ...props }) => (
-	<Node reactKey={reactKey} className={`paragraph${!areEmojis(props) ? "" : " emojis"}`}>
-		{props.children}
-	</Node>
-))
+const Paragraph = React.memo(({ reactKey, ...props }) => {
+	const parsed = recurse(props.children)
+
+	const className = `paragraph${!areEmojis(parsed) ? "" : " emojis"}`
+	return (
+		<Node reactKey={reactKey} className={className}>
+			{parsed}
+		</Node>
+	)
+})
 
 const Break = React.memo(({ reactKey, ...props }) => (
 	<Node reactKey={reactKey} className="break">
@@ -163,11 +176,15 @@ function parseComponents(body) {
 	let index = 0
 	while (index < body.length) {
 		const count = components.length   // Count the (current) number of components
-		const { key, data } = body[index] // Faster access
-		const { length } = data           // Faster access
-		switch (data.slice(0, 1)) {
+		const { key, data } = body[index]
+		const { length } = data
+		const char = data.slice(0, 1)
+		switch (true) {
+		case !char:
+			// No-op
+			break
 		// Header:
-		case "#":
+		case char === "#":
 			if (
 				(length >= 2 && data.slice(0, 2) === "# ") ||
 				(length >= 3 && data.slice(0, 3) === "## ") ||
@@ -176,20 +193,26 @@ function parseComponents(body) {
 				(length >= 6 && data.slice(0, 6) === "##### ") ||
 				(length >= 7 && data.slice(0, 7) === "###### ")
 			) {
+				// const children = recurse(data.slice(start.length))
 				const start = data.slice(0, data.indexOf(" ") + 1)
-				const children = recurse(data.slice(start.length))
-				components.push(<Header key={key} reactKey={key} start={start}>{children}</Header>)
+				const str = data.slice(start.length)
+				components.push(<Header key={key} reactKey={key} start={start}>{str}</Header>)
+				index++
+				continue
 			}
 			break
 		// Comment:
-		case "/":
+		case char === "/":
 			if (length >= 2 && data.slice(0, 2) === "//") {
-				const children = recurse(data.slice(2))
-				components.push(<Comment key={key} reactKey={key} start="//">{children}</Comment>)
+				// const children = recurse(data.slice(2))
+				const str = data.slice(2)
+				components.push(<Comment key={key} reactKey={key} start="//">{str}</Comment>)
+				index++
+				continue
 			}
 			break
 		// Blockquote:
-		case ">":
+		case char === ">":
 			if (
 				(length >= 2 && data.slice(0, 2) === "> ") ||
 				(length === 1 && data === ">")
@@ -207,14 +230,14 @@ function parseComponents(body) {
 					}
 					to++
 				}
-				// const raw = body.slice(from, to + 1).map(each => each.data).join("\n")
 				const nodes = body.slice(from, to + 1).map(each => ({ ...each })) // Read proxy
 				components.push(<Blockquote key={key}>{nodes}</Blockquote>)
-				index = to
+				index = to + 1
+				continue
 			}
 			break
 		// Code block:
-		case "`":
+		case char === "`":
 			// Single line code block:
 			if (
 				length >= 6 &&
@@ -223,6 +246,8 @@ function parseComponents(body) {
 			) {
 				const nodes = body.slice(index, index + 1).map(each => ({ ...each })) // Read proxy
 				components.push(<CodeBlock key={key} metadata="">{nodes}</CodeBlock>)
+				index++
+				continue
 			// Multiline code block:
 			} else if (
 				length >= 3 &&
@@ -246,22 +271,16 @@ function parseComponents(body) {
 				const metadata = data.slice(3)
 				const nodes = body.slice(from, to + 1).map(each => ({ ...each })) // Read proxy
 				components.push(<CodeBlock key={key} reactKey={key} metadata={metadata}>{nodes}</CodeBlock>)
-				index = to
-				break
+				index = to + 1
+				continue
 			}
 			break
-		// Break (1):
-		case "-":
-			if (length === 3 && data.slice(0, 3) === "---") {
-				const start = data
-				components.push(<Break key={key} reactKey={key} start={start} />)
-			}
-			break
-		// Break (2):
-		case "*":
-			if (length === 3 && data.slice(0, 3) === "***") {
-				const start = data
-				components.push(<Break key={key} reactKey={key} start={start} />)
+		// Break:
+		case char === "-" || char === "*":
+			if (length === 3 && data.slice(0, 3) === char.repeat(3)) {
+				components.push(<Break key={key} reactKey={key} start={data} />)
+				index++
+				continue
 			}
 			break
 		default:
@@ -270,8 +289,7 @@ function parseComponents(body) {
 		}
 		// Paragraph:
 		if (count === components.length) {
-			const children = recurse(data)
-			components.push(<Paragraph key={key} reactKey={key}>{children}</Paragraph>)
+			components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
 		}
 		index++
 	}
