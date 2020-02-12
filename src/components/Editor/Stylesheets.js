@@ -224,7 +224,7 @@ const Stylesheets = ({ state, ...props }) => (
 		<TextBackgroundStylesheet />
 		<ReadOnlyModeStylesheet />
 		<CoreStylesheet />
-		{/* state.prefersReadOnlyMode || */ !state.prefersMonoStylesheet ? (
+		{!state.prefersMonoStylesheet ? (
 			<TextStylesheet />
 		) : (
 			<MonoStylesheet />

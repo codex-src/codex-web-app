@@ -26,18 +26,14 @@ const initialState = {
 	prefersClassName: "prefers-text-stylesheet",
 
 	// Reducer:
-	epoch: 0,            // The epoch (time stamp) of the editor
 	actionType: "",      // The type of the current action
-	actionTimeStamp: 0,  // The time stamp (since epoch) of the current action
+	actionTimeStamp: 0,  // The time stamp of the current action
 	isFocused: false,    // Is the editor focused?
 	hasSelection: false, // Does the editor have a selection?
 	data: "",            // The plain text data
-
-	body: null,
-
+	body: null,          // The parsed nodes
 	pos1: null,          // The start cursor
 	pos2: null,          // The end cursor
-	// coords: null,     // The cursor coords
 	components: null,    // The React components
 	shouldRender: 0,     // Should rerender the React components?
 	didRender: 0,        // Did rerender the React components?
@@ -125,18 +121,6 @@ const reducer = state => ({
 		const hasSelection = pos1.pos !== pos2.pos
 		Object.assign(state, { hasSelection, pos1, pos2 })
 	},
-	// actionInput(data, pos1, pos2) {
-	// 	this.newAction(ActionTypes.INPUT)
-	// 	if (!state.historyIndex && !state.didSetPos) {
-	// 		const [undo] = state.history
-	// 		undo.pos1.pos = state.pos1.pos
-	// 		undo.pos2.pos = state.pos2.pos
-	// 		state.didSetPos = true
-	// 	}
-	// 	this.dropRedos()
-	// 	Object.assign(state, { data, pos1, pos2 })
-	// 	this.render()
-	// },
 	actionInput2(nodes, pos1, pos2) {
 		this.newAction(ActionTypes.INPUT)
 
@@ -157,31 +141,16 @@ const reducer = state => ({
 		if (index1 === -1) {
 			throw new Error("FIXME")
 		}
-		const index2 = state.body.findIndex(each => each.key === key2)
-		if (index2 === -1) {
-			throw new Error("FIXME")
-		}
+		const index2 = state.body.length - 1 // state.body.findIndex(each => each.key === key2)
+		// if (index2 === -1) {
+		// 	throw new Error("FIXME")
+		// }
 		state.body.splice(index1, (index2 + 1) - index1, ...nodes)
 		// Update data, pos1, and pos2:
 		const data = state.body.map(each => each.data).join("\n")
 		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
-
-	// write(substr, dropL = 0, dropR = 0) {
-	// 	if (!state.historyIndex && !state.didSetPos) {
-	// 		const [undo] = state.history
-	// 		undo.pos1.pos = state.pos1.pos
-	// 		undo.pos2.pos = state.pos2.pos
-	// 		state.didSetPos = true
-	// 	}
-	// 	this.dropRedos()
-	// 	state.data = state.data.slice(0, state.pos1.pos - dropL) + substr + state.data.slice(state.pos2.pos + dropR)
-	// 	state.pos1.pos = state.pos1.pos - dropL + substr.length
-	// 	state.pos2.pos = state.pos1.pos
-	// 	this.render()
-	// },
-
 	write2(substr, dropL = 0, dropR = 0) {
 		this.newAction(ActionTypes.INPUT)
 		// dropL:

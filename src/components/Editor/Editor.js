@@ -71,8 +71,8 @@ function getNodesFromIterators(rootNode, [start, end]) {
 			key = random.newUUID()
 			start.currentNode.setAttribute("data-node", key)
 		}
-		seenKeys[key] = true
 		// Read the data:
+		seenKeys[key] = true
 		const data = innerText(start.currentNode)
 		nodes.push({ key, data })
 		if (start.currentNode === end.currentNode) {
@@ -269,6 +269,7 @@ function Editor({ state, dispatch, ...props }) {
 						const [pos1, pos2] = getPos(ref.current)
 						dispatch.actionSelect(pos1, pos2)
 						target.current = newNodeIterators()
+						// console.log(target.current.map(each => each.currentNode)) // DELETEME
 					},
 					onPointerDown: e => {
 						isPointerDownRef.current = true
@@ -372,6 +373,7 @@ function Editor({ state, dispatch, ...props }) {
 						}
 						// Input:
 						const nodes = getNodesFromIterators(ref.current, target.current)
+						console.log(nodes)
 						const [pos1, pos2] = getPos(ref.current)
 						dispatch.actionInput2(nodes, pos1, pos2)
 					},
