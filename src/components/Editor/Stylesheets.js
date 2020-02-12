@@ -34,9 +34,9 @@ const ReadOnlyModeStylesheet = props => (
 	padding-left: 28px;
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
 }
-.prefers-read-only-mode .blockquote > [data-empty-node] {
-	height: calc(1.65em / 2);
-}
+/* .prefers-read-only-mode .blockquote > [data-empty-node] { */
+/* 	height: calc(1.65em / 2); */
+/* } */
 
 .prefers-read-only-mode .code-block > [data-start-node],
 .prefers-read-only-mode .code-block > [data-end-node] {

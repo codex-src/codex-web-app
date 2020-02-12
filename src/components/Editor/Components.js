@@ -22,7 +22,7 @@ function Node({ reactKey, style, ...props }) {
 		<div
 			style={{ whiteSpace: "pre-wrap", ...style }}
 			data-node={reactKey}
-			// data-empty-node={!props.children || null}
+			data-empty-node={!props.children || null}
 			{...props}
 		>
 			{props.children || (
@@ -72,7 +72,6 @@ const Blockquote = React.memo(props => {
 	return (
 		<CompoundNode className="blockquote">
 			{parsed.map(each => (
-				/* data-empty-node={!each.data ? true : null} */
 				<Node key={each.key} reactKey={each.key}>
 					<Markdown start={each.start}>
 						{each.children}
@@ -116,13 +115,13 @@ const CodeBlock = React.memo(props => {
 	}))
 	return (
 		<CompoundNode className="code-block" /* style={{ whiteSpace: "pre" }} */ spellCheck={false}>
-			{parsed.map(each => (
+			{parsed.map((each, index) => (
 				<Node
 					key={each.key}
 					reactKey={each.key}
 					/* style={{ whiteSpace: "pre" }} */
-					// data-start-node={(components.length > 1 && !index) || null}
-					// data-end-node={(components.length > 1 && index + 1 === components.length) || null}
+					data-start-node={(parsed.length > 1 && !index) || null}
+					data-end-node={(parsed.length > 1 && index + 1 === parsed.length) || null}
 				>
 					<span>
 						<Markdown

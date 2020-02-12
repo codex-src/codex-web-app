@@ -135,10 +135,7 @@ function Editor({ state, dispatch, ...props }) {
 				// No-op
 				return
 			}
-			const t1 = Date.now()
 			const [pos1, pos2] = getCoords()
-			const t2 = Date.now()
-			console.log(`getCoords=${t2 - t1}`)
 			if (pos1.y < SCROLL_BUFFER && pos2.y > window.innerHeight) {
 				// No-op
 				return
@@ -148,7 +145,7 @@ function Editor({ state, dispatch, ...props }) {
 				window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
 			}
 		}, [state]),
-		[state.pos1],
+		[state.shouldRender /* before */, state.pos1, state.pos2 /* after */],
 	)
 
 	const [scrollPastEnd, setScrollPastEnd] = React.useState({})
