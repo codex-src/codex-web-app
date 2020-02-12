@@ -1,7 +1,7 @@
-// import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import Context from "./Context"
 import CSSDebugger from "utils/CSSDebugger"
 import Debugger from "./Debugger"
+import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
@@ -14,7 +14,7 @@ import StatusBars from "./StatusBars"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 
-// const SCROLL_BUFFER = 12
+const SCROLL_BUFFER = 12
 
 const style = {
 	whiteSpace: "pre-wrap",
@@ -90,6 +90,7 @@ function getNodesFromIterators(rootNode, [start, end]) {
 // 	return props.components
 // }
 
+// TODO: Reset by ID?
 function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const target = React.useRef()
@@ -140,38 +141,43 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
-	// React.useLayoutEffect(
-	// 	React.useCallback(() => {
-	// 		if (!state.isFocused) {
-	// 			// No-op
-	// 			return
-	// 		}
-	// 		const selection = document.getSelection()
-	// 		const range = selection.getRangeAt(0)
-	// 		const { pos1, pos2 } = getCoordsFromRange(range)
-	// 		if (pos1.y < SCROLL_BUFFER && pos2.y > window.innerHeight) {
-	// 			// No-op
-	// 			return
-	// 		} else if (pos1.y < SCROLL_BUFFER) {
-	// 			window.scrollBy(0, pos1.y - SCROLL_BUFFER)
-	// 		} else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
-	// 			window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
-	// 		}
-	// 	}, [state]),
-	// 	[state.didRender],
-	// )
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				// No-op
+				return
+			}
+			const t1 = Date.now()
+			const selection = document.getSelection()
+			const range = selection.getRangeAt(0)
+			const t2 = Date.now()
+			const { pos1, pos2 } = getCoordsFromRange(range)
+			if (pos1.y < SCROLL_BUFFER && pos2.y > window.innerHeight) {
+				// No-op
+				return
+			} else if (pos1.y < SCROLL_BUFFER) {
+				window.scrollBy(0, pos1.y - SCROLL_BUFFER)
+			} else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
+				window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
+			}
+		}, [state]),
+		[state.didRender],
+	)
 
-	// const [scrollPastEnd, setScrollPastEnd] = React.useState({})
-	//
-	// React.useLayoutEffect(() => {
-	// 	if (!ref.current.childNodes.length) {
-	// 		// No-op
-	// 		return
-	// 	}
-	// 	const endNode = ref.current.lastChild.closest("[data-node]")
-	// 	const { height } = endNode.getBoundingClientRect()
-	// 	setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
-	// }, [state.prefersMonoStylesheet, state.didRender])
+	const [scrollPastEnd, setScrollPastEnd] = React.useState({})
+
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!ref.current.childNodes.length) {
+				// No-op
+				return
+			}
+			const endNode = ref.current.lastChild.closest("[data-node]")
+			const { height } = endNode.getBoundingClientRect()
+			setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
+		}, [state]),
+		[state.didRender, state.prefersMonoStylesheet],
+	)
 
 	// TODO: Add support for idle timeout
 	React.useEffect(
@@ -243,7 +249,7 @@ function Editor({ state, dispatch, ...props }) {
 
 					style: {
 						...style,
-						// ...scrollPastEnd,
+						...scrollPastEnd,
 					},
 
 					contentEditable: !state.prefersReadOnlyMode && true,
