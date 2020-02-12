@@ -195,12 +195,12 @@ function parseComponents(body) {
 		// Header:
 		} else if (char === "#") {
 			if (
-				(each.length >= 2 && each.data.slice(0, 2) === "# ") ||
-				(each.length >= 3 && each.data.slice(0, 3) === "## ") ||
-				(each.length >= 4 && each.data.slice(0, 4) === "### ") ||
-				(each.length >= 5 && each.data.slice(0, 5) === "#### ") ||
-				(each.length >= 6 && each.data.slice(0, 6) === "##### ") ||
-				(each.length >= 7 && each.data.slice(0, 7) === "###### ")
+				(each.data.length >= 2 && each.data.slice(0, 2) === "# ") ||
+				(each.data.length >= 3 && each.data.slice(0, 3) === "## ") ||
+				(each.data.length >= 4 && each.data.slice(0, 4) === "### ") ||
+				(each.data.length >= 5 && each.data.slice(0, 5) === "#### ") ||
+				(each.data.length >= 6 && each.data.slice(0, 6) === "##### ") ||
+				(each.data.length >= 7 && each.data.slice(0, 7) === "###### ")
 			) {
 				// const children = recurse(data.slice(start.length))
 				const start = each.data.slice(0, each.data.indexOf(" ") + 1)
@@ -210,7 +210,7 @@ function parseComponents(body) {
 			}
 		// Comment:
 		} else if (char === "/") {
-			if (each.length >= 2 && each.data.slice(0, 2) === "//") {
+			if (each.data.length >= 2 && each.data.slice(0, 2) === "//") {
 				// const children = recurse(data.slice(2))
 				const str = each.data.slice(2)
 				components.push(<Comment key={each.key} reactKey={each.key} start="//">{str}</Comment>)
@@ -219,8 +219,8 @@ function parseComponents(body) {
 		// Blockquote:
 		} else if (char === ">") {
 			if (
-				(each.length >= 2 && each.data.slice(0, 2) === "> ") ||
-				(each.length === 1 && each.data === ">")
+				(each.data.length >= 2 && each.data.slice(0, 2) === "> ") ||
+				(each.data.length === 1 && each.data === ">")
 			) {
 				const from = index
 				let to = from
@@ -279,7 +279,7 @@ function parseComponents(body) {
 			}
 		// Break:
 		} else if (char === "-" || char === "*") {
-			if (each.length === 3 && each.data.slice(0, 3) === char.repeat(3)) {
+			if (each.data.length === 3 && each.data.slice(0, 3) === char.repeat(3)) {
 				components.push(<Break key={each.key} reactKey={each.key} start={each.data} />)
 				continue
 			}
