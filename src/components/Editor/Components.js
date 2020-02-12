@@ -107,6 +107,7 @@ const CodeBlock = React.memo(props => {
 		key:      each.key,
 		atStart:  !index,
 		atEnd:    index + 1 === props.children.length,
+		/* eslint-disable-next-line no-nested-ternary */
 		children: props.children.length === 1 ? each.data.slice(3, -3) : (
 			!index || index + 1 === props.children.length
 				? ""

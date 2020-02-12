@@ -66,13 +66,10 @@ function parseTextComponents(data) {
 		const length = MAX_LENGTH - index // Faster access
 		switch (true) {
 		// Text (fast pass):
-		case (
-				// NOTE: Do not match #️⃣, *️⃣, 0️⃣, 1️⃣, 2️⃣, 3️⃣, 4️⃣,
-				// 5️⃣, 6️⃣, 7️⃣, 8️⃣, 9️⃣
-				char === " " || // Takes precedence (faster)
-				(char >= "a" && char <= "z") ||
-				(char >= "A" && char <= "Z")
-			):
+		//
+		// NOTE: Do not match #️⃣, *️⃣, 0️⃣, 1️⃣, 2️⃣, 3️⃣, 4️⃣,
+		// 5️⃣, 6️⃣, 7️⃣, 8️⃣, 9️⃣
+		case char === " " || (char >= "a" && char <= "z") || (char >= "A" && char <= "Z"):
 			// No-op
 			break
 		// Emphasis and or strong:
@@ -167,7 +164,7 @@ function parseTextComponents(data) {
 			break
 		default:
 			// 😀
-			const emoji = emojiTrie.atStart(data.slice(index))
+			const emoji = emojiTrie.atStart(data.slice(index)) // eslint-disable-line no-case-declarations
 			if (emoji) {
 				components.push(<Emoji key={components.length}>{emoji}</Emoji>)
 				index += emoji.length - 1

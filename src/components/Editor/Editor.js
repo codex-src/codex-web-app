@@ -1,4 +1,4 @@
-import Debugger from "./Debugger"
+// import Debugger from "./Debugger"
 import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
@@ -112,10 +112,8 @@ function Editor({ state, dispatch, ...props }) {
 				if (selection.rangeCount) {
 					selection.removeAllRanges()
 				}
-				// try {
 				const range = document.createRange()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
-				console.log({ node, offset, pos: state.pos1.pos, length: state.data.length })
 				range.setStart(node, offset)
 				range.collapse()
 				// NOTE: Use pos1 and pos2
@@ -125,13 +123,6 @@ function Editor({ state, dispatch, ...props }) {
 					range.setEnd(node, offset)
 				}
 				selection.addRange(range)
-				// } catch (e) {
-				// 	// if (selection.rangeCount) {
-				// 	selection.removeAllRanges()
-				// 	// }
-				// 	dispatch.actionBlur()
-				// 	console.warn("FIXME: selection.addRange(range)")
-				// }
 				dispatch.rendered()
 			})
 		}, [state, dispatch, forceRender]),
@@ -144,7 +135,6 @@ function Editor({ state, dispatch, ...props }) {
 				// No-op
 				return
 			}
-			// try {
 			const selection = document.getSelection()
 			const range = selection.getRangeAt(0)
 			const { pos1, pos2 } = getCoordsFromRange(range)
@@ -156,27 +146,28 @@ function Editor({ state, dispatch, ...props }) {
 			} else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
 				window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
 			}
-			// } catch (e) {
-			// 	console.warn("FIXME: selection.getRangeAt(0)")
-			// }
 		}, [state]),
 		[state.didRender],
 	)
 
-	// const [scrollPastEnd, setScrollPastEnd] = React.useState({})
-	//
-	// React.useLayoutEffect(
-	// 	React.useCallback(() => {
-	// 		if (!ref.current.childNodes.length) {
-	// 			// No-op
-	// 			return
-	// 		}
-	// 		const endNode = ref.current.lastChild.closest("[data-node]")
-	// 		const { height } = endNode.getBoundingClientRect()
-	// 		setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
-	// 	}, [state]),
-	// 	[state.didRender, state.prefersMonoStylesheet],
-	// )
+	const [scrollPastEnd, setScrollPastEnd] = React.useState({})
+
+	React.useLayoutEffect(
+		React.useCallback(() => {
+			if (!state.isFocused) {
+				// No-op
+				return
+			}
+			// TODO: data-empty-node?
+			let endNode = ref.current.lastChild
+			if (!endNode.hasAttribute("data-node")) {
+				endNode = endNode.querySelector("[data-node]")
+			}
+			const { height } = endNode.getBoundingClientRect()
+			setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
+		}, [state]),
+		[state.didRender, state.prefersMonoStylesheet],
+	)
 
 	const id = React.useRef()
 
@@ -242,7 +233,8 @@ function Editor({ state, dispatch, ...props }) {
 
 					style: {
 						...style,
-						// ...scrollPastEnd,
+						...scrollPastEnd,
+						// padding: "128px 0px 90vh 0px",
 					},
 
 					contentEditable: !state.prefersReadOnlyMode && true,
@@ -281,7 +273,6 @@ function Editor({ state, dispatch, ...props }) {
 						const [pos1, pos2] = getPos(ref.current)
 						dispatch.actionSelect(pos1, pos2)
 						target.current = newNodeIterators()
-						// console.log(target.current.map(each => each.currentNode)) // DELETEME
 					},
 					onPointerDown: e => {
 						isPointerDownRef.current = true
@@ -438,7 +429,7 @@ function Editor({ state, dispatch, ...props }) {
 			)}
 			<Stylesheets state={state} />
 			<StatusBars state={state} />
-			<Debugger state={state} />
+			{/* <Debugger state={state} /> */}
 		</React.Fragment>
 	)
 }

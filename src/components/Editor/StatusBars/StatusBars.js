@@ -23,7 +23,6 @@ const Text = stylex.Styleable(props => (
 	</p>
 ))
 
-/* eslint-disable jsx-a11y/accessible-emoji */
 function StatusBars({ state, ...props }) {
 	if (state.prefersReadOnlyMode) {
 		return null
@@ -36,7 +35,7 @@ function StatusBars({ state, ...props }) {
 				<div style={stylex.parse("flex -r -x:between w:1440")}>
 					<TextBox>
 						<Text>
-							<span className="emoji">
+							<span className="emoji" role="img" aria-label="scissors">
 								✂️
 							</span>{"\u00a0\u00a0"}
 							{getStatusStringLHS(state, status)}
@@ -45,7 +44,7 @@ function StatusBars({ state, ...props }) {
 					<TextBox>
 						<Text>
 							{getStatusStringRHS(state, status)}{"\u00a0\u00a0"}
-							<span className="emoji">
+							<span className="emoji" role="img" aria-label="hourglass with flowing sand">
 								⌛️
 							</span>
 						</Text>
