@@ -191,7 +191,7 @@ function parseComponents(body) {
 			char = each.data[0]
 		}
 		switch (true) {
-		case !char || (char >= "A" && char <= "Z") || (char >= "a" && char <= "z"):
+		case !char || (char >= "A" && char <= "Z") || (char >= "a" && char <= "z"): // Fast pass
 			// No-op
 			break
 		// Header:
