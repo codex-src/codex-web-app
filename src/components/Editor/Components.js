@@ -183,17 +183,19 @@ function parseComponents(body) {
 
 	const t1 = Date.now()
 	const components = []
-	const MAX_LEN = body.length
-	for (let index = 0; index < MAX_LEN; index++) {
+	const MAX_LENGTH = body.length
+	for (let index = 0; index < MAX_LENGTH; index++) {
 		const each = body[index]
 		let char = ""
 		if (each.data.length) {
 			char = each.data[0]
 		}
-		if (!char || (char >= "A" && char <= "Z") || (char >= "a" && char <= "z")) {
+		switch (true) {
+		case !char || (char >= "A" && char <= "Z") || (char >= "a" && char <= "z"):
 			// No-op
+			break
 		// Header:
-		} else if (char === "#") {
+		case char === "#":
 			if (
 				(each.data.length >= 2 && each.data.slice(0, 2) === "# ") ||
 				(each.data.length >= 3 && each.data.slice(0, 3) === "## ") ||
@@ -202,22 +204,22 @@ function parseComponents(body) {
 				(each.data.length >= 6 && each.data.slice(0, 6) === "##### ") ||
 				(each.data.length >= 7 && each.data.slice(0, 7) === "###### ")
 			) {
-				// const children = recurse(data.slice(start.length))
 				const start = each.data.slice(0, each.data.indexOf(" ") + 1)
 				const str = each.data.slice(start.length)
 				components.push(<Header key={each.key} reactKey={each.key} start={start}>{str}</Header>)
 				continue
 			}
+			break
 		// Comment:
-		} else if (char === "/") {
+		case char === "/":
 			if (each.data.length >= 2 && each.data.slice(0, 2) === "//") {
-				// const children = recurse(data.slice(2))
 				const str = each.data.slice(2)
 				components.push(<Comment key={each.key} reactKey={each.key} start="//">{str}</Comment>)
 				continue
 			}
+			break
 		// Blockquote:
-		} else if (char === ">") {
+		case char === ">":
 			if (
 				(each.data.length >= 2 && each.data.slice(0, 2) === "> ") ||
 				(each.data.length === 1 && each.data === ">")
@@ -225,7 +227,7 @@ function parseComponents(body) {
 				const from = index
 				let to = from
 				to++
-				while (to < MAX_LEN) {
+				while (to < MAX_LENGTH) {
 					if (
 						(body[to].data.length < 2 || body[to].data.slice(0, 2) !== "> ") &&
 						(body[to].data.length !== 1 || body[to].data !== ">")
@@ -240,8 +242,9 @@ function parseComponents(body) {
 				index = to
 				continue
 			}
+			break
 		// Code block:
-		} else if (char === "`") {
+		case char === "`":
 			// Single line code block:
 			if (
 				each.data.length >= 6 &&
@@ -255,19 +258,19 @@ function parseComponents(body) {
 			} else if (
 				each.data.length >= 3 &&
 				each.data.slice(0, 3) === "```" &&
-				index + 1 < MAX_LEN
+				index + 1 < MAX_LENGTH
 			) {
 				const from = index
 				let to = from
 				to++
-				while (to < MAX_LEN) {
+				while (to < MAX_LENGTH) {
 					if (body[to].data.length === 3 && body[to].data === "```") {
 						break
 					}
 					to++
 				}
-				// Guard unterminated code blocks:
-				if (to === MAX_LEN) {
+				// Unterminated code block:
+				if (to === MAX_LENGTH) {
 					index = from // Reset
 					break
 				}
@@ -277,12 +280,16 @@ function parseComponents(body) {
 				index = to
 				continue
 			}
+			break
 		// Break:
-		} else if (char === "-" || char === "*") {
-			if (each.data.length === 3 && each.data.slice(0, 3) === char.repeat(3)) {
+		case char === "-" || char === "*":
+			if (each.data.length === 3 && each.data === char.repeat(3)) {
 				components.push(<Break key={each.key} reactKey={each.key} start={each.data} />)
 				continue
 			}
+			break
+		default:
+			// No-op
 			break
 		}
 		components.push(<Paragraph key={each.key} reactKey={each.key}>{each.data}</Paragraph>)

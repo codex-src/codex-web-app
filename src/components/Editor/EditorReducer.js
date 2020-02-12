@@ -165,7 +165,12 @@ const reducer = state => ({
 		}
 		state.body.splice(index1, (index2 + 1) - index1, ...nodes)
 		// Update data, pos1, and pos2:
+
+		const t1 = Date.now()
 		const data = state.body.map(each => each.data).join("\n")
+		const t2 = Date.now()
+		console.log(`actionInput2.data=${t2 - t1}`)
+
 		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
