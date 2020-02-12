@@ -121,7 +121,7 @@ const reducer = state => ({
 		const hasSelection = pos1.pos !== pos2.pos
 		Object.assign(state, { hasSelection, pos1, pos2 })
 	},
-	actionInput2(nodes, pos1, pos2) {
+	actionInput2(nodes, atEnd, pos1, pos2) {
 		this.newAction(ActionTypes.INPUT)
 
 		// TODO
@@ -136,15 +136,15 @@ const reducer = state => ({
 
 		// Update body:
 		const key1 = nodes[0].key
-		const key2 = nodes[nodes.length - 1].key
 		const index1 = state.body.findIndex(each => each.key === key1)
 		if (index1 === -1) {
 			throw new Error("FIXME")
 		}
-		const index2 = state.body.length - 1 // state.body.findIndex(each => each.key === key2)
-		// if (index2 === -1) {
-		// 	throw new Error("FIXME")
-		// }
+		const key2 = nodes[nodes.length - 1].key
+		const index2 = !atEnd ? state.body.findIndex(each => each.key === key2) : state.body.length - 1
+		if (index2 === -1) {
+			throw new Error("FIXME")
+		}
 		state.body.splice(index1, (index2 + 1) - index1, ...nodes)
 		// Update data, pos1, and pos2:
 		const data = state.body.map(each => each.data).join("\n")

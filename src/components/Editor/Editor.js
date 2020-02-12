@@ -57,10 +57,9 @@ function getNodesFromIterators(rootNode, [start, end]) {
 	// Re-extend the target start (1x):
 	if (!start.count && start.getPrev()) {
 		start.prev()
-	// Re-extend the DOM range end (1x):
-	} else if (!end.count && end.getNext()) {
-		end.next()
 	}
+	// NOTE: Do not re-extend the target end
+	const atEnd = !end.count
 	// Get nodes:
 	const seenKeys = {}
 	const nodes = []
@@ -81,7 +80,7 @@ function getNodesFromIterators(rootNode, [start, end]) {
 		}
 		start.next()
 	}
-	return nodes
+	return { nodes, atEnd }
 }
 
 // function EditorComponents(props) {
@@ -321,14 +320,14 @@ function Editor({ state, dispatch, ...props }) {
 						}
 					},
 
-					onCompositionEnd: e => {
-						// https://github.com/w3c/uievents/issues/202#issue-316461024
-						dedupeCompositionEndRef.current = true
-						// Input:
-						const nodes = getNodesFromIterators(ref.current, target.current)
-						const [pos1, pos2] = getPos(ref.current)
-						dispatch.actionInput2(nodes, pos1, pos2)
-					},
+					// onCompositionEnd: e => {
+					// 	// https://github.com/w3c/uievents/issues/202#issue-316461024
+					// 	dedupeCompositionEndRef.current = true
+					// 	// Input:
+					// 	const nodes = getNodesFromIterators(ref.current, target.current)
+					// 	const [pos1, pos2] = getPos(ref.current)
+					// 	dispatch.actionInput2(nodes, pos1, pos2)
+					// },
 					onInput: e => {
 						if (dedupeCompositionEndRef.current) {
 							dedupeCompositionEndRef.current = false // Reset
@@ -372,10 +371,9 @@ function Editor({ state, dispatch, ...props }) {
 							break
 						}
 						// Input:
-						const nodes = getNodesFromIterators(ref.current, target.current)
-						console.log(nodes)
+						const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
 						const [pos1, pos2] = getPos(ref.current)
-						dispatch.actionInput2(nodes, pos1, pos2)
+						dispatch.actionInput2(nodes, atEnd, pos1, pos2)
 					},
 
 					onCut: e => {
