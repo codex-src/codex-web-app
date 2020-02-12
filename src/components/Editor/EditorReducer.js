@@ -122,18 +122,16 @@ const reducer = state => ({
 		Object.assign(state, { hasSelection, pos1, pos2 })
 	},
 	actionInput2(nodes, atEnd, pos1, pos2) {
+		// Create a new action:
 		this.newAction(ActionTypes.INPUT)
-
-		// TODO
-		//
-		// if (!state.historyIndex && !state.didSetPos) {
-		// 	const [undo] = state.history
-		// 	undo.pos1.pos = state.pos1.pos
-		// 	undo.pos2.pos = state.pos2.pos
-		// 	state.didSetPos = true
-		// }
-		// this.dropRedos()
-
+		if (!state.historyIndex && !state.didSetPos) {
+			Object.assign(state.history[0], {
+				pos1: state.pos1,
+				pos2: state.pos2,
+			})
+			state.didSetPos = true
+		}
+		this.dropRedos()
 		// Update body:
 		const key1 = nodes[0].key
 		const index1 = state.body.findIndex(each => each.key === key1)
@@ -152,8 +150,17 @@ const reducer = state => ({
 		this.render()
 	},
 	write2(substr, dropL = 0, dropR = 0) {
+		// Create a new action:
 		this.newAction(ActionTypes.INPUT)
-		// dropL:
+		if (!state.historyIndex && !state.didSetPos) {
+			Object.assign(state.history[0], {
+				pos1: state.pos1,
+				pos2: state.pos2,
+			})
+			state.didSetPos = true
+		}
+		this.dropRedos()
+		// Drop bytes (L):
 		state.pos1.pos -= dropL
 		while (dropL) {
 			const bytesToStart = state.pos1.x
@@ -166,7 +173,7 @@ const reducer = state => ({
 			state.pos1.y--
 			state.pos1.x = state.body[state.pos1.y].data.length
 		}
-		// dropR:
+		// Drop bytes (R):
 		state.pos2.pos += dropR
 		while (dropR) {
 			const bytesToEnd = state.body[state.pos2.y].data.length - state.pos2.x
@@ -361,15 +368,12 @@ const reducer = state => ({
 	},
 	storeUndo() {
 		const undo = state.history[state.historyIndex]
-		// FIXME?
-		//
-		// if (... && undo.pos1.pos === state.pos1.pos && undo.pos2.pos === state.pos2.pos) {
-		if (undo.data === state.data) {
+		if (undo.data.length === state.data.length && undo.data === state.data) {
 			// No-op
 			return
 		}
-		const { data, pos1, pos2 } = state
-		state.history.push({ data, pos1: { ...pos1 }, pos2: { ...pos2 } })
+		const { data, body, pos1, pos2 } = state
+		state.history.push({ data, body, pos1, pos2 })
 		state.historyIndex++
 	},
 	dropRedos() {
@@ -381,13 +385,13 @@ const reducer = state => ({
 			return
 		}
 		this.newAction(ActionTypes.UNDO)
-		if (!state.historyIndex) {
-			// No-op
-			return
-		} else if (state.historyIndex === 1 && state.didSetPos) {
+		if (state.historyIndex === 1 && state.didSetPos) {
 			state.didSetPos = false
 		}
-		state.historyIndex--
+		// Guard decrement:
+		if (state.historyIndex) {
+			state.historyIndex--
+		}
 		const undo = state.history[state.historyIndex]
 		Object.assign(state, undo)
 		this.render()
@@ -416,21 +420,21 @@ const reducer = state => ({
 	},
 })
 
-const init = initialValue => initialState => {
-	const body = newNodes(initialValue)
+const init = data => initialState => {
+	const body = newNodes(data)
 	const state = {
 		...initialState,
-		data: initialValue,
+		data,
 		body,
 		pos1: newPos(),
 		pos2: newPos(),
 		components: parseComponents(body),
 		reactDOM: document.createElement("div"),
-		history: [{ data: initialValue, pos1: newPos(), pos2: newPos() }],
+		history: [{ data, body, pos1: newPos(), pos2: newPos() }],
 	}
 	return state
 }
 
-const useEditor = initialValue => useMethods(reducer, initialState, init(initialValue))
+const useEditor = data => useMethods(reducer, initialState, init(data))
 
 export default useEditor

@@ -54,7 +54,8 @@ function blockquotesAreEqual(prev, next) {
 	}
 	const { length } = prev.children
 	for (let x = 0; x < length; x++) {
-		if (prev.children[x].key !== next.children[x].key ||
+		if (prev.children[x].key !== next.children[x].key ||                 // Fast pass
+				prev.children[x].data.length !== next.children[x].data.length || // Fast pass
 				prev.children[x].data !== next.children[x].data) {
 			return false
 		}
@@ -90,7 +91,8 @@ function codeBlocksAreEqual(prev, next) {
 	}
 	const { length } = prev.children
 	for (let x = 0; x < length; x++) {
-		if (prev.children[x].key !== next.children[x].key ||
+		if (prev.children[x].key !== next.children[x].key ||                 // Fast pass
+				prev.children[x].data.length !== next.children[x].data.length || // Fast pass
 				prev.children[x].data !== next.children[x].data) {
 			return false
 		}

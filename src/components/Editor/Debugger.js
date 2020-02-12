@@ -8,10 +8,13 @@ const Debugger = ({ state, ...props }) => (
 			<pre style={{ ...stylex.parse("pre-wrap fs:12 lh:125%"), MozTabSize: 2, tabSize: 2 }}>
 				{JSON.stringify(
 					{
-						data: state.data,
-						body: state.body,
-						pos1: state.pos1,
-						pos2: state.pos2,
+						history: state.history,
+						historyIndex: state.historyIndex,
+
+						// data: state.data,
+						// body: state.body,
+						// pos1: state.pos1,
+						// pos2: state.pos2,
 
 						// ...state,
 						// components: undefined,
