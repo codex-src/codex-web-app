@@ -1,31 +1,31 @@
+// import CSSDebugger from "utils/CSSDebugger"
 import * as Router from "react-router-dom"
-import DebugCSS from "components/DebugCSS"
 import fetchGraphQL from "./fetchGraphQL"
 import Footer from "components/Footer"
 import Forms from "components/Forms"
 import GraphQL from "use-graphql"
-import id from "lib/random/id"
 import Nav from "components/Nav"
 import Note from "components/Note"
 import PageNotFound from "./PageNotFound"
+import random from "utils/random/id"
 import React from "react"
 import stylex from "stylex"
 import User from "components/User"
 
 const AppContainer = props => (
-	<DebugCSS>
-		<div style={stylex.parse("flex -c -y:between h:max")}>
-			<div style={stylex.parse("b:white")}>
-				<Nav />
-				<main style={stylex.parse("p-x:24 p-y:80 flex -r -x:center")}>
-					<div style={stylex.parse("w:1024 no-min-w")}>
-						{props.children}
-					</div>
-				</main>
-			</div>
-			<Footer />
+	// <CSSDebugger>
+	<div style={stylex.parse("flex -c -y:between h:max")}>
+		<div style={stylex.parse("b:white")}>
+			<Nav />
+			<main style={stylex.parse("p-x:24 p-y:80 flex -r -x:center")}>
+				<div style={stylex.parse("w:1024 no-min-w")}>
+					{props.children}
+				</div>
+			</main>
 		</div>
-	</DebugCSS>
+		<Footer />
+	</div>
+	// </CSSDebugger>
 )
 
 const client = new GraphQL.Client({ fetchGraphQL })
@@ -94,7 +94,7 @@ const App = props => (
 						path="/new"
 						exact
 						title={"New note"}
-						render={props => <Note key={id.newFourByteHash()} />}
+						render={props => <Note key={random.newFourByteHash()} />}
 					/>
 
 					<User.Route

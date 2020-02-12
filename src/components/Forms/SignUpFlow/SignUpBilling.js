@@ -3,7 +3,6 @@ import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
 import Headers from "components/Headers"
 import Input from "components/Input"
-import invariant from "invariant"
 import Overlay from "components/Overlay"
 import React from "react"
 import stylex from "stylex"
@@ -34,8 +33,7 @@ function SignUpBilling({ state, dispatch, ...props }) {
 					${Fragments.date}
 				`)
 				if (errors) {
-					invariant(false, errors.map(error => error.message).join(", "))
-					return
+					throw new Error(`FIXME: ${errors.map(error => error.message).join(", ")}`)
 				}
 				const { nextMonth, nextYear } = data
 				dispatch.setNextMonth(nextMonth.year, nextMonth.month, nextMonth.day)
@@ -55,25 +53,24 @@ function SignUpBilling({ state, dispatch, ...props }) {
 		// Create token:
 		dispatch.setFetching(true)
 		const res1 = await createToken()
-		if (res1.error) { // Stripe error; not GraphQL.
-			invariant(false, res1.error.message)
+		if (res1.error) { // Stripe error; not GraphQL
 			dispatch.setFetching(false)
-			dispatch.setWarn(res1.error.message)
+			dispatch.setWarn(`Stripe: ${res1.error.message}`)
 			return
 		}
 		// Create user:
 		const { card: { id: stripeCardID, brand: stripeCardBrand, last4: stripeCardLastFour } } = res1.token
 		const res2 = await createUser({ user: { username, password, passcode, chargeMonth: chargeMonth === 1, stripeCardID, stripeCardBrand, stripeCardLastFour } })
 		if (res2.errors) {
-			invariant(false, res2.errors.map(error => error.message).join(", "))
+			// throw new Error(`FIXME: ${res2.errors.map(error => error.message).join(", ")}`)
 			dispatch.setFetching(false)
-			dispatch.setWarn("An unexpected error occurred.")
+			dispatch.setWarn("An unexpected error occurred.") // FIXME: E.g. support@opencodex.dev
 			return
 		}
 		login(res2.data.createUser)
 	}
 
-	// TODO: Add back button.
+	// TODO: Add back button?
 	return (
 		<Overlay>
 			<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>

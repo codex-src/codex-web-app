@@ -1,4 +1,4 @@
-import time from "lib/time"
+import time from "utils/time"
 import useMethods from "use-methods"
 
 const initialState = {

@@ -1,37 +1,11 @@
 import React from "react"
 
-const TextBackgroundStylesheet = props => (
-	<style>{
-		`
-.prefers-text-background .em,
-.prefers-text-background .strong {
-	/* color: hsl(var(--blue-a400)); */
-	background: hsla(var(--blue-a400), 0.05);
-}
-.prefers-text-background .strikethrough,
-.prefers-text-background .comment .em,
-.prefers-text-background .comment .strong,
-.prefers-text-background .comment .strikethrough {
-	background: hsla(var(--gray), 0.1);
-}
-.prefers-text-background .em *,
-.prefers-text-background .strong *,
-.prefers-text-background .strikethrough * {
-	background: none;
-}
-.prefers-text-background .code {
-	background: hsl(var(--white)) !important;
-}
-
-`.trim()
-	}</style>
-)
-
 const ReadOnlyModeStylesheet = props => (
 	<style>{
 		`
 .prefers-read-only-mode .blockquote {
 	padding-left: 28px;
+	font-size: 1.1em;
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
 }
 /* .prefers-read-only-mode .blockquote > [data-empty-node] { */
@@ -59,6 +33,33 @@ const ReadOnlyModeStylesheet = props => (
 }
 .prefers-read-only-mode .comment + .paragraph[data-empty-node] {
 	display: none;
+}
+
+`.trim()
+	}</style>
+)
+
+const TextBackgroundStylesheet = props => (
+	<style>{
+		`
+.prefers-text-background .em,
+.prefers-text-background .strong {
+	/* color: hsl(var(--blue-a400)); */
+	background: hsla(var(--blue-a400), 0.05);
+}
+.prefers-text-background .strikethrough,
+.prefers-text-background .comment .em,
+.prefers-text-background .comment .strong,
+.prefers-text-background .comment .strikethrough {
+	background: hsla(var(--gray), 0.1);
+}
+.prefers-text-background .em *,
+.prefers-text-background .strong *,
+.prefers-text-background .strikethrough * {
+	background: none;
+}
+.prefers-text-background .code {
+	background: hsl(var(--white)) !important;
 }
 
 `.trim()

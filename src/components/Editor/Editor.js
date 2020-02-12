@@ -129,6 +129,7 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
+	// TODO: Drag-based scrolling (e.g. hasSelection) jumps
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -136,7 +137,7 @@ function Editor({ state, dispatch, ...props }) {
 				return
 			}
 			const [pos1, pos2] = getCoords()
-			if (pos1.y < SCROLL_BUFFER && pos2.y > window.innerHeight) {
+			if (state.pos1.y !== state.pos2.y) {
 				// No-op
 				return
 			} else if (pos1.y < SCROLL_BUFFER) {
