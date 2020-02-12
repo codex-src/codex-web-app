@@ -1,5 +1,5 @@
 // import Debugger from "./Debugger"
-import getCoordsFromRange from "./helpers/getCoordsFromRange"
+import getCoords from "./helpers/getCoords"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
@@ -135,9 +135,10 @@ function Editor({ state, dispatch, ...props }) {
 				// No-op
 				return
 			}
-			const selection = document.getSelection()
-			const range = selection.getRangeAt(0)
-			const { pos1, pos2 } = getCoordsFromRange(range)
+			const t1 = Date.now()
+			const [pos1, pos2] = getCoords()
+			const t2 = Date.now()
+			console.log(`getCoords=${t2 - t1}`)
 			if (pos1.y < SCROLL_BUFFER && pos2.y > window.innerHeight) {
 				// No-op
 				return
@@ -147,7 +148,7 @@ function Editor({ state, dispatch, ...props }) {
 				window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
 			}
 		}, [state]),
-		[state.didRender],
+		[state.pos1],
 	)
 
 	const [scrollPastEnd, setScrollPastEnd] = React.useState({})
@@ -166,7 +167,7 @@ function Editor({ state, dispatch, ...props }) {
 			const { height } = endNode.getBoundingClientRect()
 			setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
 		}, [state]),
-		[state.didRender, state.prefersMonoStylesheet],
+		[state.prefersMonoStylesheet, state.didRender],
 	)
 
 	const id = React.useRef()
