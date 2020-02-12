@@ -65,6 +65,7 @@ function parseTextComponents(data) {
 		const char = data[index]          // Faster access
 		const length = MAX_LENGTH - index // Faster access
 		switch (true) {
+		// Text (fast pass):
 		case (
 				// NOTE: Do not match #️⃣, *️⃣, 0️⃣, 1️⃣, 2️⃣, 3️⃣, 4️⃣,
 				// 5️⃣, 6️⃣, 7️⃣, 8️⃣, 9️⃣
@@ -74,9 +75,9 @@ function parseTextComponents(data) {
 			):
 			// No-op
 			break
-		// Emphasis and or strong
+		// Emphasis and or strong:
 		case char === "*" || char === "_":
-			// Strong and emphasis (takes precedence)
+			// ***Strong and emphasis***
 			if (length >= "***x***".length && data.slice(index, index + 3) === char.repeat(3)) {
 				const syntax = char.repeat(3)
 				const offset = data.slice(index + syntax.length).indexOf(syntax)
@@ -89,7 +90,7 @@ function parseTextComponents(data) {
 				components.push(<StrongEm key={components.length} syntax={syntax}>{children}</StrongEm>)
 				index += offset + syntax.length - 1
 				continue
-			// Strong (takes precedence)
+			// **Strong**
 			} else if (length >= "**x**".length && data.slice(index, index + 2) === char.repeat(2)) {
 				const syntax = char.repeat(2)
 				const offset = data.slice(index + syntax.length).indexOf(syntax)
@@ -102,7 +103,7 @@ function parseTextComponents(data) {
 				components.push(<Strong key={components.length} syntax={syntax}>{children}</Strong>)
 				index += offset + syntax.length - 1
 				continue
-			// Emphasis
+			// *Emphasis*
 			} else if (length >= "*x*".length) {
 				const syntax = char.repeat(1)
 				const offset = data.slice(index + syntax.length).indexOf(syntax)
@@ -117,8 +118,9 @@ function parseTextComponents(data) {
 				continue
 			}
 			break
-		// Code
+		// Code:
 		case char === "`":
+			// `Code`
 			if (length >= "`x`".length) {
 				const syntax = char.repeat(1)
 				const offset = data.slice(index + syntax.length).indexOf(syntax)
@@ -133,7 +135,7 @@ function parseTextComponents(data) {
 				continue
 			}
 			break
-		// Strikethrough
+		// Strikethrough:
 		case char === "~":
 			// ~~Strikethrough~~
 			if (length >= "~~x~~".length && data.slice(index, index + 2) === char.repeat(2)) { // Takes precedence
@@ -173,10 +175,10 @@ function parseTextComponents(data) {
 			}
 			break
 		}
-		// Push new string component
+		// Push new string component:
 		if (!components.length || typeof components[components.length - 1] !== "string") {
 			components.push(char)
-		// Concatenate string
+		// Concatenate string:
 		} else {
 			components[components.length - 1] += char
 		}

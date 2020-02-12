@@ -21,9 +21,9 @@ const initialState = {
 	// Preferences:
 	prefersMonoStylesheet: false,
 	prefersReadOnlyMode: false,
-	prefersTextBackground: true,
-	prefersScrollPastEnd: true, // TODO
-	prefersClassName: "prefers-text-stylesheet prefers-text-background",
+	prefersTextBackground: false,
+	// prefersScrollPastEnd: true, // TODO
+	prefersClassName: "prefers-text-stylesheet",
 
 	// Reducer:
 	epoch: 0,            // The epoch (time stamp) of the editor
@@ -118,8 +118,6 @@ const reducer = state => ({
 	},
 	actionBlur() {
 		this.newAction(ActionTypes.BLUR)
-		// state.pos1 = newPos()
-		// state.pos2 = newPos()
 		state.isFocused = false // Reset
 	},
 	actionSelect(pos1, pos2) {
@@ -165,12 +163,7 @@ const reducer = state => ({
 		}
 		state.body.splice(index1, (index2 + 1) - index1, ...nodes)
 		// Update data, pos1, and pos2:
-
-		const t1 = Date.now()
 		const data = state.body.map(each => each.data).join("\n")
-		const t2 = Date.now()
-		console.log(`actionInput2.data=${t2 - t1}`)
-
 		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
@@ -231,12 +224,7 @@ const reducer = state => ({
 		}
 		node.data += endNode.data.slice(state.pos2.x)
 		// Update data, pos1, and pos2:
-
-		const t1 = Date.now()
 		const data = state.body.map(each => each.data).join("\n")
-		const t2 = Date.now()
-		console.log(`write2.data=${t2 - t1}`)
-
 		const pos1 = { ...state.pos1, pos: state.pos1.pos + substr.length }
 		const pos2 = { ...pos1 }
 		Object.assign(state, { data, pos1, pos2 })

@@ -1,5 +1,3 @@
-// import * as Feather from "react-feather"
-import Context from "../Context"
 import getStatus from "./getStatus"
 import React from "react"
 import stylex from "stylex"
@@ -25,25 +23,31 @@ const Text = stylex.Styleable(props => (
 	</p>
 ))
 
+/* eslint-disable jsx-a11y/accessible-emoji */
 function StatusBars({ state, ...props }) {
-	// const [state] = React.useContext(Context)
+	if (state.prefersReadOnlyMode) {
+		return null
+	}
 
 	const status = getStatus(state)
 	return (
-		/* eslint-disable jsx-a11y/accessible-emoji */
 		<aside style={stylex.parse("p-x:16 p-y:12 fixed -x -b z:1 no-pointer-events")}>
 			<div style={stylex.parse("flex -r -x:center")}>
 				<div style={stylex.parse("flex -r -x:between w:1440")}>
 					<TextBox>
 						<Text>
-							✂️{"\u00a0\u00a0"}
+							<span className="emoji">
+								✂️
+							</span>{"\u00a0\u00a0"}
 							{getStatusStringLHS(state, status)}
 						</Text>
 					</TextBox>
 					<TextBox>
 						<Text>
 							{getStatusStringRHS(state, status)}{"\u00a0\u00a0"}
-							⌛️
+							<span className="emoji">
+								⌛️
+							</span>
 						</Text>
 					</TextBox>
 				</div>

@@ -1,4 +1,3 @@
-// import Context from "./Context"
 import React from "react"
 
 const TextBackgroundStylesheet = props => (
@@ -32,8 +31,7 @@ const ReadOnlyModeStylesheet = props => (
 	<style>{
 		`
 .prefers-read-only-mode .blockquote {
-	padding-left: 32px;
-	font-size: 1.05em;
+	padding-left: 28px;
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
 }
 .prefers-read-only-mode .blockquote > [data-empty-node] {
@@ -79,7 +77,7 @@ const CoreStylesheet = props => (
 	--border-radius: 0px;
 	--box-shadow:    0px 0px 0px 1px hsl(var(--gray-300));
 
-	color: hsl(var(--gray-900));
+	color: hsl(var(--black));
 	caret-color: hsl(var(--black));
 }
 .editor *::selection {
@@ -88,7 +86,26 @@ const CoreStylesheet = props => (
 
 .header {
 	font-weight: bold;
+	line-height: 1.45;
 	color: hsl(var(--black));
+}
+.header.h1 {
+	font-size: 1.50em;
+}
+.header.h2 {
+	font-size: 1.25em;
+}
+.header.h3 {
+	font-size: 1.20em;
+}
+.header.h4 {
+	font-size: 1.15em;
+}
+.header.h5 {
+	font-size: 1.10em;
+}
+.header.h6 {
+	font-size: 1.05em;
 }
 
 .comment {
@@ -113,6 +130,10 @@ const CoreStylesheet = props => (
 	padding-right: var(--padding-x);
 }
 
+.paragraph.emojis {
+	font-size: 1.5em;
+}
+
 .emoji {
 	font-size: 1.2em;
 	line-height: 1;
@@ -121,19 +142,16 @@ const CoreStylesheet = props => (
 
 .em {
 	font-style: italic;
+	/* color: hsl(var(--blue-a400)); */
 }
 
-.header .strong {
-	font-weight: bold;
-}
 .strong {
-	/* font-weight: 600; */
 	font-weight: bold;
 }
 
 .code {
+	padding: 1px 0px;
 	box-decoration-break: clone;
-	padding: 1px 2px;
 	color: hsl(var(--blue-a400));
 	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
@@ -176,32 +194,6 @@ const TextStylesheet = props => (
 	font: calc(16/19 * 1em)/1.45 "iA Writer Mono", monospace;
 }
 
-.header {
-	line-height: 1.3;
-}
-.header.h1 {
-	font-size: 1.50em;
-}
-.header.h2 {
-	font-size: 1.25em;
-}
-.header.h3 {
-	font-size: 1.20em;
-}
-.header.h4 {
-	font-size: 1.15em;
-}
-.header.h5 {
-	font-size: 1.10em;
-}
-.header.h6 {
-	font-size: 1.05em;
-}
-
-.paragraph.emojis {
-	font-size: 1.5em;
-}
-
 `.trim()
 	}</style>
 )
@@ -227,20 +219,17 @@ const MonoStylesheet = props => (
 	}</style>
 )
 
-function Stylesheets({ state, ...props }) {
-	// const [state] = React.useContext(Context)
-	return (
-		<React.Fragment>
-			<TextBackgroundStylesheet />
-			<ReadOnlyModeStylesheet />
-			<CoreStylesheet />
-			{/* state.prefersReadOnlyMode || */ !state.prefersMonoStylesheet ? (
-				<TextStylesheet />
-			) : (
-				<MonoStylesheet />
-			)}
-		</React.Fragment>
-	)
-}
+const Stylesheets = ({ state, ...props }) => (
+	<React.Fragment>
+		<TextBackgroundStylesheet />
+		<ReadOnlyModeStylesheet />
+		<CoreStylesheet />
+		{/* state.prefersReadOnlyMode || */ !state.prefersMonoStylesheet ? (
+			<TextStylesheet />
+		) : (
+			<MonoStylesheet />
+		)}
+	</React.Fragment>
+)
 
 export default Stylesheets

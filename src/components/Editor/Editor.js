@@ -1,5 +1,3 @@
-import Context from "./Context"
-import CSSDebugger from "utils/CSSDebugger"
 import Debugger from "./Debugger"
 import getCoordsFromRange from "./helpers/getCoordsFromRange"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
@@ -102,15 +100,9 @@ function Editor({ state, dispatch, ...props }) {
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			const t1 = Date.now()
 			ReactDOM.render(state.components, state.reactDOM, () => {
-				const t2 = Date.now()
-				console.log(`render=${t2 - t1}`)
 				// Sync the DOMs:
-				const t3 = Date.now()
 				const mutations = syncTrees(ref.current, state.reactDOM)
-				const t4 = Date.now()
-				console.log(`syncTrees=${t4 - t3}`)
 				if ((!state.shouldRender || !mutations) && !forceRender) {
 					dispatch.rendered()
 					return
@@ -122,10 +114,7 @@ function Editor({ state, dispatch, ...props }) {
 					selection.removeAllRanges()
 				}
 				const range = document.createRange()
-				const t5 = Date.now()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
-				const t6 = Date.now()
-				console.log(`getRangeFromPos=${t6 - t5}`)
 				range.setStart(node, offset)
 				range.collapse()
 				// NOTE: Use pos1 and pos2
@@ -147,10 +136,8 @@ function Editor({ state, dispatch, ...props }) {
 				// No-op
 				return
 			}
-			const t1 = Date.now()
 			const selection = document.getSelection()
 			const range = selection.getRangeAt(0)
-			const t2 = Date.now()
 			const { pos1, pos2 } = getCoordsFromRange(range)
 			if (pos1.y < SCROLL_BUFFER && pos2.y > window.innerHeight) {
 				// No-op
@@ -164,20 +151,20 @@ function Editor({ state, dispatch, ...props }) {
 		[state.didRender],
 	)
 
-	const [scrollPastEnd, setScrollPastEnd] = React.useState({})
-
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			if (!ref.current.childNodes.length) {
-				// No-op
-				return
-			}
-			const endNode = ref.current.lastChild.closest("[data-node]")
-			const { height } = endNode.getBoundingClientRect()
-			setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
-		}, [state]),
-		[state.didRender, state.prefersMonoStylesheet],
-	)
+	// const [scrollPastEnd, setScrollPastEnd] = React.useState({})
+	//
+	// React.useLayoutEffect(
+	// 	React.useCallback(() => {
+	// 		if (!ref.current.childNodes.length) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		const endNode = ref.current.lastChild.closest("[data-node]")
+	// 		const { height } = endNode.getBoundingClientRect()
+	// 		setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
+	// 	}, [state]),
+	// 	[state.didRender, state.prefersMonoStylesheet],
+	// )
 
 	// TODO: Add support for idle timeout
 	React.useEffect(
@@ -236,9 +223,7 @@ function Editor({ state, dispatch, ...props }) {
 		[],
 	)
 
-	const { Provider } = Context
 	return (
-		// <Provider value={[state, dispatch]}>
 		<React.Fragment>
 			{React.createElement(
 				"article",
@@ -249,7 +234,7 @@ function Editor({ state, dispatch, ...props }) {
 
 					style: {
 						...style,
-						...scrollPastEnd,
+						// ...scrollPastEnd,
 					},
 
 					contentEditable: !state.prefersReadOnlyMode && true,
@@ -439,13 +424,9 @@ function Editor({ state, dispatch, ...props }) {
 				},
 			)}
 			<Stylesheets state={state} />
-			{!state.prefersReadOnlyMode && (
-				<StatusBars state={state} />
-			)}
-			{/* <Debugger /> */}
-			{/* <CSSDebugger /> */}
+			<StatusBars state={state} />
+			<Debugger state={state} />
 		</React.Fragment>
-		// </Provider>
 	)
 }
 

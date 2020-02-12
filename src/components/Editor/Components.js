@@ -32,27 +32,21 @@ function Node({ reactKey, style, ...props }) {
 	)
 }
 
-const Header = React.memo(({ reactKey, ...props }) => {
-	const parsed = recurse(props.children)
-	return (
-		<Node reactKey={reactKey} className={`header h${props.start.length - 1}`}>
-			<Markdown start={props.start}>
-				{parsed}
-			</Markdown>
-		</Node>
-	)
-})
+const Header = React.memo(({ reactKey, ...props }) => (
+	<Node reactKey={reactKey} className={`header h${props.start.length - 1}`}>
+		<Markdown start={props.start}>
+			{recurse(props.children)}
+		</Markdown>
+	</Node>
+))
 
-const Comment = React.memo(({ reactKey, ...props }) => {
-	const parsed = recurse(props.children)
-	return (
-		<Node reactKey={reactKey} className="comment" spellCheck={false}>
-			<Markdown start={props.start}>
-				{parsed}
-			</Markdown>
-		</Node>
-	)
-})
+const Comment = React.memo(({ reactKey, ...props }) => (
+	<Node reactKey={reactKey} className="comment" spellCheck={false}>
+		<Markdown start={props.start}>
+			{recurse(props.children)}
+		</Markdown>
+	</Node>
+))
 
 function blockquotesAreEqual(prev, next) {
 	if (prev.children.length !== next.children.length) {
@@ -172,16 +166,12 @@ const Break = React.memo(({ reactKey, ...props }) => (
 
 // Parses an array of React components from plain text data.
 function parseComponents(body) {
-	// const _t1 = Date.now()
 	// const _components = []
 	// for (let index = 0; index < body.length; index++) {
 	// 	_components.push(<Paragraph key={body[index].key} reactKey={body[index].key}>{body[index].data}</Paragraph>)
 	// }
-	// const _t2 = Date.now()
-	// console.log(`parseComponents=${_t2 - _t1}`)
 	// return _components
 
-	const t1 = Date.now()
 	const components = []
 	const MAX_LENGTH = body.length
 	for (let index = 0; index < MAX_LENGTH; index++) {
@@ -191,6 +181,7 @@ function parseComponents(body) {
 			char = each.data[0]
 		}
 		switch (true) {
+		// Paragraph (fast pass):
 		case !char || (char >= "A" && char <= "Z") || (char >= "a" && char <= "z"): // Fast pass
 			// No-op
 			break
@@ -294,8 +285,6 @@ function parseComponents(body) {
 		}
 		components.push(<Paragraph key={each.key} reactKey={each.key}>{each.data}</Paragraph>)
 	}
-	const t2 = Date.now()
-	console.log(`parseComponents=${t2 - t1}`)
 	return components
 }
 

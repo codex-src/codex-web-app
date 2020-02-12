@@ -108,7 +108,8 @@ function EditorApp(props) {
 	return (
 		<DocumentTitle title="opencodex.dev">
 			<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
-				<div style={stylex.parse("w:768 no-min-w")}>
+				{/* 2388 x 1668 */}
+				<div style={stylex.parse("w:834 no-min-w")}>
 					<Editor.Editor
 						state={state}
 						dispatch={dispatch}
