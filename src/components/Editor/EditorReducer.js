@@ -226,7 +226,12 @@ const reducer = state => ({
 		}
 		node.data += endNode.data.slice(state.pos2.x)
 		// Update data, pos1, and pos2:
+
+		const t1 = Date.now()
 		const data = state.body.map(each => each.data).join("\n")
+		const t2 = Date.now()
+		console.log(`write2.data=${t2 - t1}`)
+
 		const pos1 = { ...state.pos1, pos: state.pos1.pos + substr.length }
 		const pos2 = { ...pos1 }
 		Object.assign(state, { data, pos1, pos2 })

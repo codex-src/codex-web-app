@@ -172,6 +172,7 @@ const Break = React.memo(({ reactKey, ...props }) => (
 
 // Parses an array of React components from plain text data.
 function parseComponents(body) {
+	const t1 = Date.now()
 	const components = []
 	let index = 0
 	while (index < body.length) {
@@ -293,6 +294,8 @@ function parseComponents(body) {
 		}
 		index++
 	}
+	const t2 = Date.now()
+	console.log(`parseComponents=${t2 - t1}`)
 	return components
 }
 

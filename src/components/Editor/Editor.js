@@ -101,9 +101,15 @@ function Editor({ state, dispatch, ...props }) {
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
+			const t1 = Date.now()
 			ReactDOM.render(state.components, state.reactDOM, () => {
+				const t2 = Date.now()
+				console.log(`render=${t2 - t1}`)
 				// Sync the DOMs:
+				const t3 = Date.now()
 				const mutations = syncTrees(ref.current, state.reactDOM)
+				const t4 = Date.now()
+				console.log(`syncTrees=${t4 - t3}`)
 				if ((!state.shouldRender || !mutations) && !forceRender) {
 					dispatch.rendered()
 					return
@@ -115,7 +121,10 @@ function Editor({ state, dispatch, ...props }) {
 					selection.removeAllRanges()
 				}
 				const range = document.createRange()
+				const t5 = Date.now()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
+				const t6 = Date.now()
+				console.log(`getRangeFromPos=${t6 - t5}`)
 				range.setStart(node, offset)
 				range.collapse()
 				// NOTE: Use pos1 and pos2
