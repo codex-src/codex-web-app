@@ -126,7 +126,11 @@ function Editor({ state, dispatch, ...props }) {
 				}
 				selection.addRange(range)
 				// } catch (e) {
-				// 	console.warn("FIXME")
+				// 	// if (selection.rangeCount) {
+				// 	selection.removeAllRanges()
+				// 	// }
+				// 	dispatch.actionBlur()
+				// 	console.warn("FIXME: selection.addRange(range)")
 				// }
 				dispatch.rendered()
 			})
@@ -153,7 +157,7 @@ function Editor({ state, dispatch, ...props }) {
 				window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
 			}
 			// } catch (e) {
-			// 	console.warn("FIXME")
+			// 	console.warn("FIXME: selection.getRangeAt(0)")
 			// }
 		}, [state]),
 		[state.didRender],
@@ -249,6 +253,10 @@ function Editor({ state, dispatch, ...props }) {
 					onBlur:  dispatch.actionBlur,
 
 					onSelect: e => {
+						if (!state.isFocused) {
+							// No-op
+							return
+						}
 						// Guard the root node:
 						const selection = document.getSelection()
 						const range = selection.getRangeAt(0)

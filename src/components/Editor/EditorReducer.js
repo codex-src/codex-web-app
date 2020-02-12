@@ -373,8 +373,7 @@ const reducer = state => ({
 			return
 		}
 		const { data, body, pos1, pos2 } = state
-		state.history.push({ data, body: { ...body }, pos1: { ...pos1 }, pos2: { ...pos2 } })
-		// state.history.push({ data, body, pos1, pos2 })
+		state.history.push({ data, body: body.map(each => ({ ...each })), pos1: { ...pos1 }, pos2: { ...pos2 } })
 		state.historyIndex++
 	},
 	dropRedos() {
