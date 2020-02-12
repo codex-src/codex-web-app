@@ -172,56 +172,60 @@ const Break = React.memo(({ reactKey, ...props }) => (
 
 // Parses an array of React components from plain text data.
 function parseComponents(body) {
+	// const _t1 = Date.now()
+	// const _components = []
+	// for (let index = 0; index < body.length; index++) {
+	// 	_components.push(<Paragraph key={body[index].key} reactKey={body[index].key}>{body[index].data}</Paragraph>)
+	// }
+	// const _t2 = Date.now()
+	// console.log(`parseComponents=${_t2 - _t1}`)
+	// return _components
+
 	const t1 = Date.now()
 	const components = []
-	let index = 0
-	while (index < body.length) {
-		const count = components.length   // Count the (current) number of components
-		const { key, data } = body[index]
-		const { length } = data
-		const char = data.slice(0, 1)
-		switch (true) {
-		case !char:
+	const MAX_LEN = body.length
+	for (let index = 0; index < MAX_LEN; index++) {
+		const each = body[index]
+		let char = ""
+		if (each.data.length) {
+			char = each.data[0]
+		}
+		if (!char || (char >= "A" && char <= "Z") || (char >= "a" && char <= "z")) {
 			// No-op
-			break
 		// Header:
-		case char === "#":
+		} else if (char === "#") {
 			if (
-				(length >= 2 && data.slice(0, 2) === "# ") ||
-				(length >= 3 && data.slice(0, 3) === "## ") ||
-				(length >= 4 && data.slice(0, 4) === "### ") ||
-				(length >= 5 && data.slice(0, 5) === "#### ") ||
-				(length >= 6 && data.slice(0, 6) === "##### ") ||
-				(length >= 7 && data.slice(0, 7) === "###### ")
+				(each.length >= 2 && each.data.slice(0, 2) === "# ") ||
+				(each.length >= 3 && each.data.slice(0, 3) === "## ") ||
+				(each.length >= 4 && each.data.slice(0, 4) === "### ") ||
+				(each.length >= 5 && each.data.slice(0, 5) === "#### ") ||
+				(each.length >= 6 && each.data.slice(0, 6) === "##### ") ||
+				(each.length >= 7 && each.data.slice(0, 7) === "###### ")
 			) {
 				// const children = recurse(data.slice(start.length))
-				const start = data.slice(0, data.indexOf(" ") + 1)
-				const str = data.slice(start.length)
-				components.push(<Header key={key} reactKey={key} start={start}>{str}</Header>)
-				index++
+				const start = each.data.slice(0, each.data.indexOf(" ") + 1)
+				const str = each.data.slice(start.length)
+				components.push(<Header key={each.key} reactKey={each.key} start={start}>{str}</Header>)
 				continue
 			}
-			break
 		// Comment:
-		case char === "/":
-			if (length >= 2 && data.slice(0, 2) === "//") {
+		} else if (char === "/") {
+			if (each.length >= 2 && each.data.slice(0, 2) === "//") {
 				// const children = recurse(data.slice(2))
-				const str = data.slice(2)
-				components.push(<Comment key={key} reactKey={key} start="//">{str}</Comment>)
-				index++
+				const str = each.data.slice(2)
+				components.push(<Comment key={each.key} reactKey={each.key} start="//">{str}</Comment>)
 				continue
 			}
-			break
 		// Blockquote:
-		case char === ">":
+		} else if (char === ">") {
 			if (
-				(length >= 2 && data.slice(0, 2) === "> ") ||
-				(length === 1 && data === ">")
+				(each.length >= 2 && each.data.slice(0, 2) === "> ") ||
+				(each.length === 1 && each.data === ">")
 			) {
 				const from = index
 				let to = from
 				to++
-				while (to < body.length) {
+				while (to < MAX_LEN) {
 					if (
 						(body[to].data.length < 2 || body[to].data.slice(0, 2) !== "> ") &&
 						(body[to].data.length !== 1 || body[to].data !== ">")
@@ -232,67 +236,56 @@ function parseComponents(body) {
 					to++
 				}
 				const nodes = body.slice(from, to + 1).map(each => ({ ...each })) // Read proxy
-				components.push(<Blockquote key={key}>{nodes}</Blockquote>)
-				index = to + 1
+				components.push(<Blockquote key={each.key}>{nodes}</Blockquote>)
+				index = to
 				continue
 			}
-			break
 		// Code block:
-		case char === "`":
+		} else if (char === "`") {
 			// Single line code block:
 			if (
-				length >= 6 &&
-				data.slice(0, 3) === "```" && // Start syntax
-				data.slice(-3) === "```"      // End syntax
+				each.data.length >= 6 &&
+				each.data.slice(0, 3) === "```" && // Start syntax
+				each.data.slice(-3) === "```"      // End syntax
 			) {
 				const nodes = body.slice(index, index + 1).map(each => ({ ...each })) // Read proxy
-				components.push(<CodeBlock key={key} metadata="">{nodes}</CodeBlock>)
-				index++
+				components.push(<CodeBlock key={each.key} metadata="">{nodes}</CodeBlock>)
 				continue
 			// Multiline code block:
 			} else if (
-				length >= 3 &&
-				data.slice(0, 3) === "```" &&
-				index + 1 < body.length
+				each.data.length >= 3 &&
+				each.data.slice(0, 3) === "```" &&
+				index + 1 < MAX_LEN
 			) {
 				const from = index
 				let to = from
 				to++
-				while (to < body.length) {
+				while (to < MAX_LEN) {
 					if (body[to].data.length === 3 && body[to].data === "```") {
 						break
 					}
 					to++
 				}
 				// Guard unterminated code blocks:
-				if (to === body.length) {
+				if (to === MAX_LEN) {
 					index = from // Reset
 					break
 				}
-				const metadata = data.slice(3)
+				const metadata = each.data.slice(3)
 				const nodes = body.slice(from, to + 1).map(each => ({ ...each })) // Read proxy
-				components.push(<CodeBlock key={key} reactKey={key} metadata={metadata}>{nodes}</CodeBlock>)
-				index = to + 1
+				components.push(<CodeBlock key={each.key} reactKey={each.key} metadata={metadata}>{nodes}</CodeBlock>)
+				index = to
 				continue
 			}
-			break
 		// Break:
-		case char === "-" || char === "*":
-			if (length === 3 && data.slice(0, 3) === char.repeat(3)) {
-				components.push(<Break key={key} reactKey={key} start={data} />)
-				index++
+		} else if (char === "-" || char === "*") {
+			if (each.length === 3 && each.data.slice(0, 3) === char.repeat(3)) {
+				components.push(<Break key={each.key} reactKey={each.key} start={each.data} />)
 				continue
 			}
 			break
-		default:
-			// No-op
-			break
 		}
-		// Paragraph:
-		if (count === components.length) {
-			components.push(<Paragraph key={key} reactKey={key}>{data}</Paragraph>)
-		}
-		index++
+		components.push(<Paragraph key={each.key} reactKey={each.key}>{each.data}</Paragraph>)
 	}
 	const t2 = Date.now()
 	console.log(`parseComponents=${t2 - t1}`)
