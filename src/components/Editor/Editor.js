@@ -115,6 +115,7 @@ function Editor({ state, dispatch, ...props }) {
 				// try {
 				const range = document.createRange()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
+				console.log({ node, offset, pos: state.pos1.pos, length: state.data.length })
 				range.setStart(node, offset)
 				range.collapse()
 				// NOTE: Use pos1 and pos2
@@ -324,14 +325,14 @@ function Editor({ state, dispatch, ...props }) {
 						}
 					},
 
-					// onCompositionEnd: e => {
-					// 	// https://github.com/w3c/uievents/issues/202#issue-316461024
-					// 	dedupeCompositionEndRef.current = true
-					// 	// Input:
-					// 	const nodes = getNodesFromIterators(ref.current, target.current)
-					// 	const [pos1, pos2] = getPos(ref.current)
-					// 	dispatch.actionInput2(nodes, pos1, pos2)
-					// },
+					onCompositionEnd: e => {
+						// https://github.com/w3c/uievents/issues/202#issue-316461024
+						dedupeCompositionEndRef.current = true
+						// Input:
+						const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
+						const [pos1, pos2] = getPos(ref.current)
+						dispatch.actionInput2(nodes, atEnd, pos1, pos2)
+					},
 					onInput: e => {
 						if (dedupeCompositionEndRef.current) {
 							dedupeCompositionEndRef.current = false // Reset
