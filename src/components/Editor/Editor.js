@@ -106,12 +106,13 @@ function Editor({ state, dispatch, ...props }) {
 					dispatch.rendered()
 					return
 				}
-				// Reset the cursor:
 				setForceRender(false) // Reset
+				// Reset the cursor:
 				const selection = document.getSelection()
 				if (selection.rangeCount) {
 					selection.removeAllRanges()
 				}
+				// try {
 				const range = document.createRange()
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
 				range.setStart(node, offset)
@@ -123,6 +124,9 @@ function Editor({ state, dispatch, ...props }) {
 					range.setEnd(node, offset)
 				}
 				selection.addRange(range)
+				// } catch (e) {
+				// 	console.warn("FIXME")
+				// }
 				dispatch.rendered()
 			})
 		}, [state, dispatch, forceRender]),
@@ -135,6 +139,7 @@ function Editor({ state, dispatch, ...props }) {
 				// No-op
 				return
 			}
+			// try {
 			const selection = document.getSelection()
 			const range = selection.getRangeAt(0)
 			const { pos1, pos2 } = getCoordsFromRange(range)
@@ -146,6 +151,9 @@ function Editor({ state, dispatch, ...props }) {
 			} else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
 				window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
 			}
+			// } catch (e) {
+			// 	console.warn("FIXME")
+			// }
 		}, [state]),
 		[state.didRender],
 	)
@@ -165,23 +173,19 @@ function Editor({ state, dispatch, ...props }) {
 	// 	[state.didRender, state.prefersMonoStylesheet],
 	// )
 
-	// TODO: Add support for idle timeout
+	const id = React.useRef()
+
 	React.useEffect(
 		React.useCallback(() => {
-			if (!state.isFocused) {
-				// No-op
-				return
-			}
-			const id = setInterval(() => {
+			const h = () => {
 				dispatch.storeUndo()
-			}, 1e3)
-			return () => {
-				setTimeout(() => {
-					clearInterval(id)
-				}, 1e3)
 			}
-		}, [state, dispatch]),
-		[state.isFocused],
+			id.current = setTimeout(h, 250)
+			return () => {
+				clearTimeout(id.current)
+			}
+		}, [dispatch]),
+		[state.shouldRender],
 	)
 
 	// Shortcuts:
