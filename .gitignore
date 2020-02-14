@@ -5,4 +5,4 @@
 .DS_Store
 yarn-error.log
 
-tailwind.generated.css
+/src/stylesheets/tailwind.generated.css
