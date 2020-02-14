@@ -131,20 +131,6 @@ func main() {
 
 Done!
 
-What about syntax highlighted code blocks?!
-
-\`\`\`main.go
-package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("Hello, world!")
-}
-\`\`\`
-
-Done, baby! 😉
-
 // Why stop there? Why not support comments **only you can see**? 👻
 
 For then, and only then, would you rule.
