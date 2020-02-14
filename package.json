@@ -17,21 +17,21 @@
     "react-scripts": "3.3.0",
     "stylex": "https://github.com/codex-src/stylex.js",
     "system-font-css": "^2.0.2",
-    "tailwindcss": "^1.2.0",
     "use-graphql": "codex-src/use-graphql.js",
     "use-methods": "^0.5.1"
   },
   "scripts": {
     "lint": "yarn eslint --ignore-pattern=build --ignore-pattern=\"**/*.min.js\" .",
-    "tailwind-generate": "yarn tailwind build src/stylesheets/tailwind.css -o src/stylesheets/tailwind.generated.css",
-    "start": "react-scripts start",
-    "start-build": "yarn build && PORT=3000 serve --no-clipboard -s build",
+    "tailwind-dev": "yarn postcss src/stylesheets/tailwind.src.css --output src/stylesheets/tailwind.css",
+    "tailwind-prod": "yarn postcss src/stylesheets/tailwind.src.css --output src/stylesheets/tailwind.css --env production",
+    "start": "yarn tailwind-dev && react-scripts start",
+    "start-build": "yarn build && PORT=3000 serve --single --no-clipboard build",
     "test": "react-scripts test",
     "test-editor-chrome": "BROWSER=Chrome yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
     "test-editor-firefox": "BROWSER=Firefox yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
     "test-editor-safari": "BROWSER=Safari yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
     "test-editor": "yarn test-editor-chrome && yarn test-editor-firefox && yarn test-editor-safari",
-    "build": "react-scripts build",
+    "build": "yarn tailwind-prod && react-scripts build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -52,11 +52,12 @@
   "devDependencies": {
     "@babel/core": "^7.7.5",
     "@fullhuman/postcss-purgecss": "^2.0.6",
+    "autoprefixer": "^9.7.4",
     "babel-eslint": "^10.0.3",
-    "clipboardy": "^2.1.0",
     "eslint": "^6.7.2",
     "playwright": "^0.10.0",
-    "prettier": "^1.19.1",
-    "serve": "^11.2.0"
+    "postcss-cli": "^7.1.0",
+    "serve": "^11.2.0",
+    "tailwindcss": "^1.2.0"
   }
 }

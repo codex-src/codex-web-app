@@ -1,0 +1,16 @@
+/* https://medium.com/@xijo/5c36b4c33ba7 */
+
+/* purgecss start ignore */
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+
+.tnum { font-feature-settings: "tnum"; }
+
+.emoji {
+	font-size: 1.2em;
+	line-height: 1;
+	vertical-align: -0.1em;
+}
+
+@tailwind utilities;
