@@ -9,11 +9,11 @@ import { ReactComponent as CodexLogo } from "assets/codex.svg"
 import "./nav.css"
 
 const Icon = stylex.Styleable(({ icon: Icon, ...props }) => (
-	<Icon style={stylex.parse("wh:15 middle c:blue-a400")} />
+	<Icon style={stylex.parse("wh:16 middle c:blue-a400")} />
 ))
 
 const Text = stylex.Styleable(props => (
-	<p style={stylex.parse("fs:15 lh:100% c:gray-800")} {...props}>
+	<p style={stylex.parse("fs:16 lh:100%")} {...props}>
 		{props.children}
 	</p>
 ))
@@ -122,7 +122,7 @@ function Nav(props) {
 	const [state] = React.useContext(User.Context)
 
 	return (
-		<nav style={{ ...stylex.parse("sticky -x -t b:white -a:95% z:1"), backdropFilter: "blur(8px)", boxShadow: "inset 0px -1px hsl(var(--gray-200))" }}>
+		<nav style={{ ...stylex.parse("sticky -x -t b:white -a:95% z:1"), backdropFilter: "blur(8px)" }}>
 			<div style={stylex.parse("p-x:24 flex -r -x:center")}>
 				<div style={stylex.parse("flex -r -x:between w:1024 h:80")}>
 
@@ -131,7 +131,7 @@ function Nav(props) {
 						<NavItem to="/">
 							{/* <div style={stylex.parse("wh:24 b:gray-200 br:max")} /> */}
 							{/* <div style={stylex.parse("w:12")} /> */}
-							<CodexLogo style={stylex.parse("w:80 h:20")} />
+							<CodexLogo style={stylex.parse("w:96 h:24")} />
 						</NavItem>
 					</NavList>
 

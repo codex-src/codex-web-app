@@ -1,7 +1,6 @@
 import Editor from "components/Editor"
 import React from "react"
 import stylex from "stylex"
-import { DocumentTitle } from "utils/DocumentTitle"
 
 const localStorageKey = "codex-app"
 
@@ -106,17 +105,15 @@ function EditorApp(props) {
 	)
 
 	return (
-		<DocumentTitle title="opencodex.dev">
-			<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
-				{/* Based on 2388 x 1668 */}
-				<div style={stylex.parse("w:834 no-min-w")}>
-					<Editor.Editor
-						state={state}
-						dispatch={dispatch}
-					/>
-				</div>
+		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
+			{/* Based on 2388 x 1668 */}
+			<div style={stylex.parse("w:834 no-min-w")}>
+				<Editor.Editor
+					state={state}
+					dispatch={dispatch}
+				/>
 			</div>
-		</DocumentTitle>
+		</div>
 	)
 }
 

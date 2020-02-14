@@ -1,5 +1,3 @@
-// TODO: "yoda": [1, "never", { exceptRange: true }] -- not
-// working as expected.
 module.exports = {
 	env: {
 		browser: true,

@@ -1,7 +1,6 @@
-// import Headers from "components/Headers"
-// import stylex from "stylex"
 import Editor from "components/Editor"
 import React from "react"
+import stylex from "stylex"
 
 const intialValue = `# How to build a beautiful blog
 
@@ -61,18 +60,15 @@ function Note(props) {
 	}, [])
 
 	return (
-		<React.Fragment>
-			{/* <header> */}
-			{/* 	<Headers.H1 style={stylex.parse("fs:32")} contentEditable> */}
-			{/* 		How to build a blog */}
-			{/* 	</Headers.H1> */}
-			{/* </header> */}
-			{/* <div style={stylex.parse("h:16")} /> */}
-			<Editor.Editor
-				state={state}
-				dispatch={dispatch}
-			/>
-		</React.Fragment>
+		<div style={stylex.parse("flex -r -x:center")}>
+			<div style={stylex.parse("w:834")}>
+				<div style={stylex.parse("h:16")} />
+				<Editor.Editor
+					state={state}
+					dispatch={dispatch}
+				/>
+			</div>
+		</div>
 	)
 }
 

@@ -1,8 +1,8 @@
 import React from "react"
 import { DocumentTitle } from "utils/DocumentTitle"
 
-const CodexTitle = ({ title, ...props }) => (
-	<DocumentTitle title={`${title} - Codex`}>
+const CodexTitle = props => (
+	<DocumentTitle title={!props.title ? "Codex" : `${props.title} - Codex`}>
 		{props.children}
 	</DocumentTitle>
 )

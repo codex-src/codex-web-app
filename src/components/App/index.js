@@ -1,1 +1,2 @@
-export { default } from "./EditorApp" // "./App"
+// export { default } from "./EditorDemo"
+export { default } from "./App"

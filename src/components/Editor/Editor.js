@@ -15,6 +15,8 @@ import syncTrees from "./helpers/syncTrees"
 const SCROLL_BUFFER = 12
 
 const style = {
+	width: "100%",
+	height: "100%",
 	whiteSpace: "pre-wrap",
 	outline: "none",
 	overflowWrap: "break-word",
@@ -149,24 +151,23 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender /* before */, state.pos1, state.pos2 /* after */],
 	)
 
-	const [scrollPastEnd, setScrollPastEnd] = React.useState({})
-
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			if (!state.isFocused) {
-				// No-op
-				return
-			}
-			// TODO: data-empty-node?
-			let endNode = ref.current.lastChild
-			if (!endNode.hasAttribute("data-node")) {
-				endNode = endNode.querySelector("[data-node]")
-			}
-			const { height } = endNode.getBoundingClientRect()
-			setScrollPastEnd({ paddingBottom: `calc(100vh - 128px - ${height}px - ${SCROLL_BUFFER}px)` })
-		}, [state]),
-		[state.prefersMonoStylesheet, state.didRender],
-	)
+	// const [scrollPastEnd, setScrollPastEnd] = React.useState({})
+	//
+	// React.useLayoutEffect(() => {
+	// 	// React.useCallback(() => {
+	// 		if (!ref.current.childNodes.length) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		// TODO: data-empty-node?
+	// 		let endNode = ref.current.lastChild
+	// 		if (!endNode.hasAttribute("data-node")) {
+	// 			endNode = endNode.querySelector("[data-node]")
+	// 		}
+	// 		const { height } = endNode.getBoundingClientRect()
+	// 		setScrollPastEnd({ paddingBottom: `calc(100vh - ${height}px - ${SCROLL_BUFFER}px)` })
+	// 	// }, [state]),
+	// }, [state.prefersMonoStylesheet, state.didRender])
 
 	const id = React.useRef()
 
@@ -232,7 +233,7 @@ function Editor({ state, dispatch, ...props }) {
 
 					style: {
 						...style,
-						...scrollPastEnd,
+						// ...scrollPastEnd,
 						// padding: "128px 0px 90vh 0px",
 					},
 
@@ -427,7 +428,7 @@ function Editor({ state, dispatch, ...props }) {
 				},
 			)}
 			<Stylesheets state={state} />
-			<StatusBars state={state} />
+			{props.statusBars && <StatusBars state={state} />}
 			{/* <Debugger state={state} /> */}
 		</React.Fragment>
 	)

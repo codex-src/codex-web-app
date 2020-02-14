@@ -66,6 +66,7 @@ const TextBackgroundStylesheet = props => (
 	}</style>
 )
 
+// <h1 style={{ ...stylex.parse("fw:500 fs:32"), fontFamily: "Poppins" }} {...props}>
 const CoreStylesheet = props => (
 	<style>{
 		`
@@ -87,8 +88,7 @@ const CoreStylesheet = props => (
 
 .header {
 	font-weight: bold;
-	line-height: 1.45;
-	color: hsl(var(--black));
+	line-height: 1.3;
 }
 .header.h1 {
 	font-size: 1.50em;

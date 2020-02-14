@@ -1,8 +1,8 @@
-import * as Routes from "./Routes"
+import * as Route from "./Route"
 import * as User from "./User"
 
 const exports = {
-	...Routes,
+	...Route,
 	...User,
 }
 

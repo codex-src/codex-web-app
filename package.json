@@ -17,11 +17,13 @@
     "react-scripts": "3.3.0",
     "stylex": "https://github.com/codex-src/stylex.js",
     "system-font-css": "^2.0.2",
+    "tailwindcss": "^1.2.0",
     "use-graphql": "codex-src/use-graphql.js",
     "use-methods": "^0.5.1"
   },
   "scripts": {
     "lint": "yarn eslint --ignore-pattern=build --ignore-pattern=\"**/*.min.js\" .",
+    "tailwind-generate": "yarn tailwind build src/stylesheets/tailwind.css -o src/stylesheets/tailwind.generated.css",
     "start": "react-scripts start",
     "start-build": "yarn build && PORT=3000 serve --no-clipboard -s build",
     "test": "react-scripts test",
@@ -49,6 +51,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",
+    "@fullhuman/postcss-purgecss": "^2.0.6",
     "babel-eslint": "^10.0.3",
     "clipboardy": "^2.1.0",
     "eslint": "^6.7.2",

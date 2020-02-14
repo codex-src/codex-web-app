@@ -1,0 +1,16 @@
+#marketing-editor {
+	transform:
+		perspective(1e3px)
+		rotate(2deg)
+		rotateX(6deg)
+		rotateY(-4deg)
+		scale(0.95)
+		/* translateX(-0.75rem) */;
+	transition: transform 500ms ease-in-out;
+}
+
+@media (max-width: 1023px) {
+	#marketing-editor {
+		transform: none;
+	}
+}
