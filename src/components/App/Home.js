@@ -19,24 +19,24 @@ const Nav = props => (
 			{/* RHS: */}
 			<div className="flex items-center h-full">
 				{/* <Link */}
-				{/* 	className="px-2 flex items-center h-full text-gray-900 hover:text-brand transition duration-75 ease-in-out" */}
 				{/* 	to="#features" */}
+				{/* 	className="px-2 flex items-center h-full text-gray-900 hover:text-brand transition duration-75 ease-in-out" */}
 				{/* 	children="Features" */}
 				{/* /> */}
 				{/* <Link */}
-				{/* 	className="px-2 flex items-center h-full text-gray-900 hover:text-brand transition duration-75 ease-in-out" */}
 				{/* 	to="#pricing" */}
+				{/* 	className="px-2 flex items-center h-full text-gray-900 hover:text-brand transition duration-75 ease-in-out" */}
 				{/* 	children="Pricing" */}
 				{/* /> */}
 				{/* <Link */}
-				{/* 	className="px-2 flex items-center h-full text-gray-900 hover:text-brand transition duration-75 ease-in-out" */}
 				{/* 	to="/sign-in" */}
+				{/* 	className="px-2 flex items-center h-full text-gray-900 hover:text-brand transition duration-75 ease-in-out" */}
 				{/* 	children="Login" */}
 				{/* /> */}
 				{/* CTA: */}
 				<Link
-					className="-mr-4 px-4 flex items-center h-full"
 					to="/demo"
+					className="-mr-4 px-4 flex items-center h-full"
 				>
 					<div className="px-3 py-2 text-brand border border-brand rounded-sm">
 						<p className="font-medium">
@@ -68,16 +68,16 @@ const Hero = props => (
 				{/* Spacer: */}
 				<div className="h-8" />
 				<Link
-					className="py-1 block"
 					to="/demo"
+					className="py-1 block"
 				>
 					<p className="font-medium text-2xl text-brand">
 						Try the editor alpha!
 					</p>
 				</Link>
 				{/* <Link */}
-				{/* 	className="py-1 block" */}
 				{/* 	to="#features" */}
+				{/* 	className="py-1 block" */}
 				{/* > */}
 				{/* 	<p className="font-medium text-2xl text-brand"> */}
 				{/* 		Learn more */}
@@ -154,6 +154,7 @@ We hope you love it. ❤️
 						<Editor.Editor
 							state={state}
 							dispatch={dispatch}
+							statusBars={false}
 						/>
 					</div>
 				</div>

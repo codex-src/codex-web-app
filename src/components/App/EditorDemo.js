@@ -111,6 +111,7 @@ function EditorApp(props) {
 				<Editor.Editor
 					state={state}
 					dispatch={dispatch}
+					statusBars={true}
 				/>
 			</div>
 		</div>
