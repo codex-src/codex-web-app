@@ -22,16 +22,18 @@
   },
   "scripts": {
     "lint": "yarn eslint --ignore-pattern=build --ignore-pattern=\"**/*.min.js\" .",
-    "tailwind-dev": "yarn postcss src/stylesheets/tailwind.src.css --output src/stylesheets/tailwind.css",
-    "tailwind-prod": "yarn postcss src/stylesheets/tailwind.src.css --output src/stylesheets/tailwind.css --env production",
-    "start": "yarn tailwind-dev && react-scripts start",
+    "tailwind-dev": "yarn postcss src/stylesheets/tailwind.css --output src/stylesheets/tailwind.generated.css",
+    "tailwind-prod": "yarn postcss src/stylesheets/tailwind.css --output src/stylesheets/tailwind.generated.css --env production",
+    "prestart": "yarn tailwind-dev",
+    "start": "react-scripts start",
     "start-build": "yarn build && PORT=3000 serve --single --no-clipboard build",
     "test": "react-scripts test",
     "test-editor-chrome": "BROWSER=Chrome yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
     "test-editor-firefox": "BROWSER=Firefox yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
     "test-editor-safari": "BROWSER=Safari yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
     "test-editor": "yarn test-editor-chrome && yarn test-editor-firefox && yarn test-editor-safari",
-    "build": "yarn tailwind-prod && react-scripts build",
+    "prebuild": "yarn tailwind-prod",
+    "build": "react-scripts build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

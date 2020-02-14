@@ -40,7 +40,7 @@ const Nav = props => (
 				>
 					<div className="px-3 py-2 text-brand border border-brand rounded-sm">
 						<p className="font-medium">
-							Try the alpha demo!
+							Try the editor alpha
 						</p>
 					</div>
 				</Link>
@@ -72,7 +72,7 @@ const Hero = props => (
 					to="/demo"
 				>
 					<p className="font-medium text-2xl text-brand">
-						Try the alpha demo!
+						Try the editor alpha!
 					</p>
 				</Link>
 				{/* <Link */}

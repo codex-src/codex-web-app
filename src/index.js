@@ -7,7 +7,7 @@ import ReactDOM from "react-dom"
 // import "stylesheets/focus.css"
 
 import "material-colors.css"
-import "stylesheets/tailwind.css"
+import "stylesheets/tailwind.generated.css"
 import "stylesheets/reset-input.css"
 import "debug.css"
 import "stylesheets/prism.css"
