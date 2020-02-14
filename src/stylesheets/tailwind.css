@@ -620,3 +620,331 @@ video {
     max-width: 1280px;
   }
 }
+
+.tnum { font-feature-settings: "tnum";
+}
+
+.emoji {
+  font-size: 1.2em;
+  line-height: 1;
+  vertical-align: -0.1em;
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.bg-gray-100 {
+  background-color: #f7fafc;
+}
+
+.border-brand {
+  border-color: #4489ff;
+}
+
+.rounded-sm {
+  border-radius: 0.125rem;
+}
+
+.rounded-xl {
+  border-radius: 1rem;
+}
+
+.border {
+  border-width: 1px;
+}
+
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.inline {
+  display: inline;
+}
+
+.flex {
+  display: -webkit-box;
+  display: flex;
+}
+
+.inline-flex {
+  display: -webkit-inline-box;
+  display: inline-flex;
+}
+
+.table {
+  display: table;
+}
+
+.flex-col {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+          flex-direction: column;
+}
+
+.items-center {
+  -webkit-box-align: center;
+          align-items: center;
+}
+
+.justify-center {
+  -webkit-box-pack: center;
+          justify-content: center;
+}
+
+.justify-between {
+  -webkit-box-pack: justify;
+          justify-content: space-between;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.h-4 {
+  height: 1rem;
+}
+
+.h-8 {
+  height: 2rem;
+}
+
+.h-12 {
+  height: 3rem;
+}
+
+.h-20 {
+  height: 5rem;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+.leading-1 {
+  line-height: 1.0;
+}
+
+.-mr-4 {
+  margin-right: -1rem;
+}
+
+.max-w-screen-lg {
+  max-width: 1024px;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
+}
+
+.scrolling-touch {
+  -webkit-overflow-scrolling: touch;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.py-32 {
+  padding-top: 8rem;
+  padding-bottom: 8rem;
+}
+
+.pb-9\/16 {
+  padding-bottom: 56.25%;
+}
+
+.pb-4\/5 {
+  padding-bottom: 80%;
+}
+
+.static {
+  position: static;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.relative {
+  position: relative;
+}
+
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.inset-x-0 {
+  right: 0;
+  left: 0;
+}
+
+.top-0 {
+  top: 0;
+}
+
+.shadow-xs {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.text-gray-700 {
+  color: #4a5568;
+}
+
+.text-gray-900 {
+  color: #1a202c;
+}
+
+.text-brand {
+  color: #4489ff;
+}
+
+.hover\:text-brand:hover {
+  color: #4489ff;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.line-through {
+  text-decoration: line-through;
+}
+
+.antialiased {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.select-all {
+  -webkit-user-select: all;
+     -moz-user-select: all;
+      -ms-user-select: all;
+          user-select: all;
+}
+
+.w-24 {
+  width: 6rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.z-30 {
+  z-index: 30;
+}
+
+.transition {
+  -webkit-transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, -webkit-transform;
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, -webkit-transform;
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, -webkit-transform;
+}
+
+.ease-in-out {
+  -webkit-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+          transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.duration-75 {
+  -webkit-transition-duration: 75ms;
+          transition-duration: 75ms;
+}
+
+.duration-150 {
+  -webkit-transition-duration: 150ms;
+          transition-duration: 150ms;
+}
+
+@media (min-width: 768px) {
+
+  .md\:items-start {
+    -webkit-box-align: start;
+            align-items: flex-start;
+  }
+}
+
+@media (min-width: 1024px) {
+
+  .lg\:block {
+    display: block;
+  }
+
+  .lg\:flex-row {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+            flex-direction: row;
+  }
+}
