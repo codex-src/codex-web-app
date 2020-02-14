@@ -2,7 +2,6 @@ import * as Router from "react-router-dom"
 import Errors from "components/Errors"
 import Fragments from "components/Fragments"
 import GraphQL from "use-graphql"
-import invariant from "invariant"
 import React from "react"
 import useUser from "./UserReducer"
 
@@ -35,8 +34,7 @@ function Fetcher(props) {
 	)
 
 	if (errors && !GraphQL.errorsIs(errors, Errors.sqlNoRows)) {
-		// FIXME
-		invariant(false, errors.map(error => error.message).join(", "))
+		console.warn(`FIXME: ${errors.map(error => error.message).join(", ")}`)
 	} else if (fetching) {
 		return null
 	}
