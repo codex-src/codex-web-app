@@ -26,14 +26,16 @@ const Blockquote = React.memo(props => {
 	const parsed = props.children.map(each => ({
 		key:      each.key,
 		start:    each.data.slice(0, 2),
-		children: recurse(each.data.slice(2)) || <br />,
+		children: recurse(each.data.slice(2)), // || <br />,
 	}))
 	return (
 		<CompoundNode className="blockquote">
 			{parsed.map(each => (
-				<Node key={each.key} reactKey={each.key}>
+				<Node key={each.key} reactKey={each.key} data-empty-node={!each.children ? true : null}>
 					<Markdown start={each.start}>
-						{each.children}
+						{each.children || (
+							<br />
+						)}
 					</Markdown>
 				</Node>
 			))}

@@ -3,9 +3,9 @@
 	font-size: 1.1em;
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
 }
-/* .blockquote > [data-empty-node] { */
-/* 	height: calc(1.65em / 2); */
-/* } */
+.blockquote > [data-empty-node] {
+	line-height: 1;
+}
 
 .code-block > [data-start-node],
 .code-block > [data-end-node] {
