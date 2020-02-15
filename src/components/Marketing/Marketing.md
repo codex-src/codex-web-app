@@ -38,8 +38,6 @@ For then, and only then, would you rule.
 
 So, how would you build it? **You don’t have to.** Just use Codex.
 
-**Codex is a new platform for authors to write _and format_ their every thought in plain ‘ol markdown. Notes are automatically backed up to the cloud.**
-
-Codex works in all modern browser, even on mobile.
+## Codex is a new notebook for devs. ✍️ Based on **markdown** and works _everywhere_
 
 We hope you love it. ❤️

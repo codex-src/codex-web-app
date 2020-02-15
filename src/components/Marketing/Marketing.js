@@ -7,12 +7,12 @@ import React from "react"
 import "./Marketing.css"
 
 const Hero = props => (
-	<section className="px-6 py-32 flex justify-center items-center min-h-screen">
-		<div className="flex lg:flex-row flex-col items-center w-full max-w-screen-lg">
+	<section className="px-6 py-32 flex justify-center items-center min-h-screen bg-gray-50">
+		<div className="flex lg:flex-row flex-col items-center max-w-screen-lg">
 
 			{/* LHS: */}
 			<div className="w-full flex lg:block flex-col md:items-start items-center">
-				<h1 className="font-bold text-4xl">
+				<h1 className="font-bold text-4xl leading-1.4">
 					Codex makes it easier than ever to express yourself in words <em>and</em> code
 				</h1>
 				<div className="h-8" />
@@ -24,14 +24,14 @@ const Hero = props => (
 						Try the editor alpha!
 					</p>
 				</Link>
-				<Link
-					to="#features"
-					className="py-1 block"
-				>
-					<p className="font-medium text-2xl text-brand">
-						Learn more
-					</p>
-				</Link>
+				{/* <Link */}
+				{/* 	to="#features" */}
+				{/* 	className="py-1 block" */}
+				{/* > */}
+				{/* 	<p className="font-medium text-2xl text-brand"> */}
+				{/* 		Learn more */}
+				{/* 	</p> */}
+				{/* </Link> */}
 			</div>
 
 			{/* Spacer: */}
@@ -88,7 +88,7 @@ function HeroEditor(props) {
 
 const Marketing = props => (
 	<React.Fragment>
-		<Nav2 />
+		<Nav2 background="bg-gray-50" />
 		<Hero />
 	</React.Fragment>
 )
