@@ -1,7 +1,6 @@
 import React from "react"
 
-// NOTE: We need to export Emoji because Paragraph
-// references the component name (minified in production)
+// NOTE: Exported because Paragraph references Emoji
 const Emoji = props => (
 	<span className="emoji">
 		{props.children}
