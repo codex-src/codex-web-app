@@ -1,5 +1,4 @@
 // import Debugger from "./Debugger"
-// import StatusBars from "./StatusBars"
 import getCoords from "./helpers/getCoords"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
@@ -9,6 +8,7 @@ import platform from "utils/platform"
 import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
+import StatusBars from "./StatusBars"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 
@@ -173,10 +173,12 @@ function Editor({ state, dispatch, ...props }) {
 	)
 
 	// Shortcuts:
-	//
-	// TODO: Refactor to useShortcuts
 	React.useEffect(
 		React.useCallback(() => {
+			if (!state.prefers.shortcuts) {
+				// No-op
+				return
+			}
 			const onKeyDown = e => {
 				switch (true) {
 				// Proportional type:
@@ -208,8 +210,8 @@ function Editor({ state, dispatch, ...props }) {
 			return () => {
 				document.removeEventListener("keydown", onKeyDown)
 			}
-		}, [dispatch]),
-		[],
+		}, [state, dispatch]),
+		[state.prefers.shortcuts],
 	)
 
 	return (
@@ -227,9 +229,9 @@ function Editor({ state, dispatch, ...props }) {
 						overflowWrap: "break-word",
 					},
 
-					contentEditable: !state.prefers.previewMode && true,
-					suppressContentEditableWarning: !state.prefers.previewMode && true,
-					spellCheck: !state.prefers.previewMode,
+					contentEditable: !state.prefers.readOnly && !state.prefers.previewMode && true,
+					suppressContentEditableWarning: !state.prefers.readOnly && !state.prefers.previewMode && true,
+					spellCheck: !state.prefers.readOnly && !state.prefers.previewMode,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,
@@ -371,10 +373,10 @@ function Editor({ state, dispatch, ...props }) {
 					},
 
 					onCut: e => {
-						// if (state.prefersPreviewMode) {
-						// 	// No-op
-						// 	return
-						// }
+						if (state.prefers.previewMode) {
+							// No-op
+							return
+						}
 						e.preventDefault()
 						if (!state.hasSelection) {
 							// No-op
@@ -385,10 +387,10 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.cut()
 					},
 					onCopy: e => {
-						// if (state.prefersPreviewMode) {
-						// 	// No-op
-						// 	return
-						// }
+						if (state.prefers.previewMode) {
+							// No-op
+							return
+						}
 						e.preventDefault()
 						if (!state.hasSelection) {
 							// No-op
@@ -399,10 +401,10 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.copy()
 					},
 					onPaste: e => {
-						// if (state.prefersPreviewMode) {
-						// 	// No-op
-						// 	return
-						// }
+						if (state.prefers.previewMode) {
+							// No-op
+							return
+						}
 						const substr = e.clipboardData.getData("text/plain")
 						e.preventDefault()
 						if (!substr) {
@@ -418,7 +420,7 @@ function Editor({ state, dispatch, ...props }) {
 				},
 			)}
 			<Stylesheets state={state} />
-			{/* {props.statusBars && <StatusBars state={state} />} */}
+			{state.prefers.statusBars && <StatusBars state={state} />}
 			{/* <Debugger state={state} /> */}
 		</React.Fragment>
 	)

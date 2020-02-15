@@ -1,32 +1,26 @@
 import * as Router from "react-router-dom"
 import React from "react"
+import { Link } from "react-router-dom"
 
-// <RouterLink to="/..."> -> <Router.Link to="...">
-// <RouterLink to="...">  -> <a href="...">
-// <RouterLink>           -> <div>
+// <RouterLink to="">         -> <Router.Link to="...">
+// <RouterLink to="http://">  -> <a href="http://">
+// <RouterLink to="https://"> -> <a href="https://">
+// <RouterLink>               -> <div>
 //
 function RouterLink({ to, ...props }) {
-	let Wrapper = null
+	let Component = null
 	switch (true) {
-	case !to:
-		Wrapper = newProps => <div {...newProps} />
+	case to !== undefined && (to.startsWith("http://") || to.startsWith("https://")): // Takes precedence
+		Component = <a href={to} {...props} />
 		break
-	case to.startsWith("/"):
-		Wrapper = newProps => <Router.Link to={to} {...newProps} />
+	case to !== undefined:
+		Component = <Link to={to} {...props} />
 		break
 	default:
-		Wrapper = newProps => (
-			<a href={to} {...newProps}>
-				{newProps.children}
-			</a>
-		)
+		Component = <div {...props} />
 		break
 	}
-	return (
-		<Wrapper {...props}>
-			{props.children}
-		</Wrapper>
-	)
+	return Component
 }
 
 export default RouterLink

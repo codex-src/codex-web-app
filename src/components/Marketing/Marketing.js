@@ -1,8 +1,9 @@
 import Editor from "components/Editor"
-import Link from "utils/RouterLink"
+// import Link from "utils/RouterLink"
 import Nav2 from "components/Nav2"
 import raw from "raw.macro"
 import React from "react"
+import { Link } from "react-router-dom"
 
 import "./Marketing.css"
 
@@ -46,26 +47,35 @@ const Hero = props => (
 	</section>
 )
 
+const preferences = {
+	inlineBackground: true,
+	// placeholder: false,
+	readOnly: true, // FIXME
+	shortcuts: false,
+	statusBars: false,
+}
+
 function HeroEditor(props) {
 	// TODO: Show markdown background
-	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"))
+	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"), preferences)
 
 	return (
 		// Preserve aspect ratio:
-		<div id="marketing-editor" className="pb-4/5 relative">
-			<div className="absolute inset-0">
-				{/* Two shadows: */}
-				<div className="h-full rounded-xl shadow-xs">
-					<div className="px-6 py-4 h-full bg-white rounded-xl shadow-xl overflow-y-scroll scrolling-touch">
-						<Editor.Editor
-							state={state}
-							dispatch={dispatch}
-							statusBars={false}
-						/>
+		<Link to="https://google.com">
+			<div id="marketing-editor" className="pb-4/5 relative">
+				<div className="absolute inset-0">
+					{/* Two shadows: */}
+					<div className="h-full rounded-xl shadow-xs">
+						<div className="px-6 py-4 h-full bg-white rounded-xl shadow-xl overflow-y-scroll scrolling-touch">
+							<Editor.Editor
+								state={state}
+								dispatch={dispatch}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</Link>
 	)
 }
 
