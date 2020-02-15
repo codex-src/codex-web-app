@@ -1,6 +1,5 @@
 .em,
 .strong {
-	/* color: hsl(var(--blue-a400)); */
 	background: hsla(var(--blue-a400), 0.05);
 }
 

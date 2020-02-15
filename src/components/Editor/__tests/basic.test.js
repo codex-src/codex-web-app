@@ -6,7 +6,7 @@ let done = null
 beforeAll(async () => {
 	jest.setTimeout(600e3)
 	const browserStr = process.env.BROWSER
-	;[page, done] = await ppt.openPage(browserStr, "http://localhost:3000")
+	;[page, done] = await ppt.openPage(browserStr, "http://localhost:3000/demo")
 })
 
 afterAll(async () => {

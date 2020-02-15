@@ -57,11 +57,11 @@ export async function openPage(browserStr, url) {
 
 // ./src/components/Editor/helpers/innerText.js
 export async function innerText(page) {
-	return await page.$eval(".editor", node => innerText(node))
+	return await page.$eval(".codex-editor", node => innerText(node))
 }
 
 export async function clear(page) {
-	await page.focus(".editor")
+	await page.focus(".codex-editor")
 	await page.keyboard.down("Meta")
 	await page.keyboard.press("a", options)
 	await page.keyboard.up("Meta")
