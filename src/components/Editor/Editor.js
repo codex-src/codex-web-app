@@ -178,45 +178,47 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
-	// // Shortcuts:
-	// //
-	// // TODO: Refactor to useShortcuts
-	// React.useEffect(
-	// 	React.useCallback(() => {
-	// 		const onKeyDown = e => {
-	// 			switch (true) {
-	// 			// Prefers proportional type stylesheet:
-	// 			case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
-	// 				e.preventDefault()
-	// 				dispatch.toggleStylesheet(false)
-	// 				return
-	// 			// Prefers monospace stylesheet:
-	// 			case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
-	// 				e.preventDefault()
-	// 				dispatch.toggleStylesheet(true)
-	// 				return
-	// 			// Prefers inline background:
-	// 			case platform.detectKeyCode(e, 220): // 220: \
-	// 				e.preventDefault()
-	// 				dispatch.toggleInlineBackground()
-	// 				return
-	// 			// Prefers preview mode:
-	// 			case platform.detectKeyCode(e, 80): // 80: "p"
-	// 				e.preventDefault()
-	// 				dispatch.togglePreviewMode()
-	// 				return
-	// 			default:
-	// 				// No-op
-	// 				break
-	// 			}
-	// 		}
-	// 		document.addEventListener("keydown", onKeyDown)
-	// 		return () => {
-	// 			document.removeEventListener("keydown", onKeyDown)
-	// 		}
-	// 	}, [dispatch]),
-	// 	[],
-	// )
+	// Shortcuts:
+	//
+	// TODO: Refactor to useShortcuts
+	React.useEffect(
+		React.useCallback(() => {
+			const onKeyDown = e => {
+				switch (true) {
+
+				// // Proportional type:
+				// case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
+				// 	e.preventDefault()
+				// 	dispatch.toggleStylesheet(false)
+				// 	return
+				// // Monospace:
+				// case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
+				// 	e.preventDefault()
+				// 	dispatch.toggleStylesheet(true)
+				// 	return
+				// // Inline background:
+				// case platform.detectKeyCode(e, 220): // 220: \
+				// 	e.preventDefault()
+				// 	dispatch.toggleInlineBackground()
+				// 	return
+
+				// Preview mode:
+				case platform.detectKeyCode(e, 80): // 80: p
+					e.preventDefault()
+					dispatch.togglePreviewMode()
+					return
+				default:
+					// No-op
+					break
+				}
+			}
+			document.addEventListener("keydown", onKeyDown)
+			return () => {
+				document.removeEventListener("keydown", onKeyDown)
+			}
+		}, [dispatch]),
+		[],
+	)
 
 	return (
 		<React.Fragment>
@@ -230,9 +232,9 @@ function Editor({ state, dispatch, ...props }) {
 					style,
 
 					// FIXME
-					contentEditable: true, // !state.prefersPreviewMode && true,
-					suppressContentEditableWarning: true, // !state.prefersPreviewMode && true,
-					spellCheck: true, // !state.prefersPreviewMode,
+					contentEditable: !state.preferences.previewMode && true,
+					suppressContentEditableWarning: !state.preferences.previewMode && true,
+					spellCheck: !state.preferences.previewMode,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,

@@ -83,14 +83,8 @@ const reducer = state => ({
 	// 	state.prefersPreviewMode = false // Reset
 	// 	state.prefersInlineBackground = !state.prefersInlineBackground
 	// },
-	// togglePreviewMode() {
-	// 	state.prefersPreviewMode = !state.prefersPreviewMode
-	// },
-	setPreference(preferenceName, setting) {
-		if (state[preferenceName] === undefined) {
-			throw new Error("FIXME") // No such preference
-		}
-		state[preferenceName] = setting
+	togglePreviewMode() {
+		state.preferences.previewMode = !state.preferences.previewMode
 	},
 
 	// Reducer:
