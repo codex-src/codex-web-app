@@ -425,7 +425,7 @@ function Editor({ state, dispatch, ...props }) {
 			)}
 			<Stylesheets state={state} />
 			{state.prefers.statusBars && <StatusBars state={state} />}
-			<Debugger state={state} />
+			{/* <Debugger state={state} /> */}
 		</React.Fragment>
 	)
 }
