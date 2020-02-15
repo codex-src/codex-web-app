@@ -19,11 +19,11 @@ const ActionTypes = new Enum(
 
 const initialState = {
 	// Preferences:
-	prefersMonoStylesheet: false,
-	prefersReadOnlyMode: false,
-	prefersTextBackground: false,
-	// prefersScrollPastEnd: true, // TODO
-	prefersClassName: "prefers-text-stylesheet",
+	//
+	// TODO: prefersScrollPastEnd
+	prefersInlineBackground: false,
+	prefersMonospace: false,
+	prefersPreviewMode: false,
 
 	// Reducer:
 	actionType: "",      // The type of the current action
@@ -63,40 +63,15 @@ function newPos() {
 
 const reducer = state => ({
 	// Preferences:
-	updatedPrefs() {
-		const classNames = []
-		// Prefers mono stylesheet:
-		if (/* state.prefersReadOnlyMode || */ !state.prefersMonoStylesheet) {
-			classNames.push("prefers-text-stylesheet")
-		} else {
-			classNames.push("prefers-mono-stylesheet")
-		}
-		// Prefers text background:
-		if (!state.prefersReadOnlyMode && state.prefersTextBackground) {
-			classNames.push("prefers-text-background")
-		}
-		// Prefers read-only mode:
-		if (state.prefersReadOnlyMode) {
-			classNames.push("prefers-read-only-mode")
-		}
-		state.prefersClassName = classNames.join(" ")
+	toggleStylesheet(prefersMonospace) {
+		state.prefersMonospacae = prefersMonospace
 	},
-	preferTextStylesheet() {
-		state.prefersMonoStylesheet = false
-		this.updatedPrefs()
+	toggleInlineBackground() {
+		// state.prefersPreviewMode = false // Reset
+		state.prefersInlineBackground = !state.prefersInlineBackground
 	},
-	preferMonoStylesheet() {
-		state.prefersMonoStylesheet = true
-		this.updatedPrefs()
-	},
-	preferTextBackground() {
-		state.prefersReadOnlyMode = false // Reset
-		state.prefersTextBackground = !state.prefersTextBackground
-		this.updatedPrefs()
-	},
-	toggleReadOnlyMode() {
-		state.prefersReadOnlyMode = !state.prefersReadOnlyMode
-		this.updatedPrefs()
+	togglePreviewMode() {
+		state.prefersPreviewMode = !state.prefersPreviewMode
 	},
 
 	// Reducer:
@@ -380,7 +355,7 @@ const reducer = state => ({
 		state.history.splice(state.historyIndex + 1)
 	},
 	undo() {
-		if (state.prefersReadOnlyMode) {
+		if (state.prefersPreviewMode) {
 			// No-op
 			return
 		}
@@ -397,7 +372,7 @@ const reducer = state => ({
 		this.render()
 	},
 	redo() {
-		if (state.prefersReadOnlyMode) {
+		if (state.prefersPreviewMode) {
 			// No-op
 			return
 		}

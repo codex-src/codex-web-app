@@ -60,6 +60,7 @@
     "netlify-cli": "^2.32.0",
     "playwright": "^0.10.0",
     "postcss-cli": "^7.1.0",
+    "raw.macro": "^0.3.0",
     "serve": "^11.2.0",
     "tailwindcss": "^1.2.0"
   }

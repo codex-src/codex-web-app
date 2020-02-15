@@ -1,4 +1,4 @@
-// import Debugger from "./Debugger"
+import Debugger from "./Debugger"
 import getCoords from "./helpers/getCoords"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
@@ -15,8 +15,6 @@ import syncTrees from "./helpers/syncTrees"
 const SCROLL_BUFFER = 12
 
 const style = {
-	width: "100%",
-	height: "100%",
 	whiteSpace: "pre-wrap",
 	outline: "none",
 	overflowWrap: "break-word",
@@ -189,25 +187,25 @@ function Editor({ state, dispatch, ...props }) {
 		React.useCallback(() => {
 			const onKeyDown = e => {
 				switch (true) {
-				// Prefers text stylesheet:
+				// Prefers proportional type stylesheet:
 				case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
 					e.preventDefault()
-					dispatch.preferTextStylesheet()
+					dispatch.toggleStylesheet(false)
 					return
-				// Prefers mono stylesheet:
+				// Prefers monospace stylesheet:
 				case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
 					e.preventDefault()
-					dispatch.preferMonoStylesheet()
+					dispatch.toggleStylesheet(true)
 					return
-				// Prefers text background:
+				// Prefers inline background:
 				case platform.detectKeyCode(e, 220): // 220: \
 					e.preventDefault()
-					dispatch.preferTextBackground()
+					dispatch.toggleInlineBackground()
 					return
-				// Prefers read-only mode:
-				case platform.detectKeyCode(e, 191): // 191: /
+				// Prefers preview mode (cmd+p):
+				case platform.detectKeyCode(e, 80): // 80: "p"
 					e.preventDefault()
-					dispatch.toggleReadOnlyMode()
+					dispatch.togglePreviewMode()
 					return
 				default:
 					// No-op
