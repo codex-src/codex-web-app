@@ -3,7 +3,13 @@
 @import "tailwindcss/components";
 /* purgecss end ignore */
 
-.tnum { font-feature-settings: "tnum"; }
+/* html { */
+/* 	@apply font-mono; */
+/* } */
+
+.tnum {
+	font-feature-settings: "tnum";
+}
 
 .emoji {
 	font-size: 1.2em;

@@ -182,22 +182,26 @@ function Editor({ state, dispatch, ...props }) {
 			const onKeyDown = e => {
 				switch (true) {
 				// Proportional type:
-				case platform.detectKeyCode(e, 49):
+				// case platform.detectKeyCode(e, 49):
+				case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
 					e.preventDefault()
 					dispatch.toggleMonospace(false)
 					return
 				// Monospace:
-				case platform.detectKeyCode(e, 50):
+				// case platform.detectKeyCode(e, 50):
+				case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
 					e.preventDefault()
 					dispatch.toggleMonospace(true)
 					return
 				// Inline background:
-				case platform.detectKeyCode(e, 80, { shiftKey: true }):
+				// case platform.detectKeyCode(e, 80, { shiftKey: true }):
+				case platform.detectKeyCode(e, 220): // 220: \
 					e.preventDefault()
 					dispatch.toggleInlineBackground()
 					return
 				// Preview mode:
-				case platform.detectKeyCode(e, 80, { shiftKey: false }):
+				// case platform.detectKeyCode(e, 80, { shiftKey: false }):
+				case platform.detectKeyCode(e, 191): // 191: /
 					e.preventDefault()
 					dispatch.togglePreviewMode()
 					return
@@ -421,7 +425,7 @@ function Editor({ state, dispatch, ...props }) {
 			)}
 			<Stylesheets state={state} />
 			{state.prefers.statusBars && <StatusBars state={state} />}
-			{/* <Debugger state={state} /> */}
+			<Debugger state={state} />
 		</React.Fragment>
 	)
 }
