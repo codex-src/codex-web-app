@@ -25,7 +25,7 @@ const ActionTypes = new Enum(
 // prefersPreviewMode: false,
 
 const initialState = {
-	preferences: {
+	prefers: {
 		darkMode:         false,
 		inlineBackground: false,
 		monospace:        false,
@@ -75,18 +75,20 @@ function newPos() {
 }
 
 const reducer = state => ({
-	// // Preferences:
-	// toggleStylesheet(prefersMonospace) {
-	// 	state.prefersMonospacae = prefersMonospace
-	// },
-	// toggleInlineBackground() {
-	// 	state.prefersPreviewMode = false // Reset
-	// 	state.prefersInlineBackground = !state.prefersInlineBackground
-	// },
-	togglePreviewMode() {
-		state.preferences.previewMode = !state.preferences.previewMode
+	// Preferences:
+	toggleInlineBackground() {
+		if (state.prefers.previewMode) {
+			// No-op
+			return
+		}
+		state.prefers.inlineBackground = !state.prefers.inlineBackground
 	},
-
+	toggleMonospace(on) {
+		state.prefers.monospace = on
+	},
+	togglePreviewMode() {
+		state.prefers.previewMode = !state.prefers.previewMode
+	},
 	// Reducer:
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
@@ -408,13 +410,13 @@ const reducer = state => ({
 	},
 })
 
-const init = (initialValue, preferences) => initialState => {
+const init = (initialValue, prefers) => initialState => {
 	const body = newNodes(initialValue)
 	const state = {
 		...initialState,
-		preferences: {
-			...initialState.preferences,
-			...preferences,
+		prefers: {
+			...initialState.prefers,
+			...prefers,
 		},
 		data: initialValue,
 		body,
@@ -427,8 +429,8 @@ const init = (initialValue, preferences) => initialState => {
 	return state
 }
 
-function useEditor(initialValue, preferences) {
-	const _init = init(initialValue, preferences)
+function useEditor(initialValue, prefers) {
+	const _init = init(initialValue, prefers)
 	return useMethods(reducer, initialState, _init)
 }
 

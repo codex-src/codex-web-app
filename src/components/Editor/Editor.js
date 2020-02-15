@@ -16,12 +16,6 @@ const EDITOR_CLASS_NAME = "codex-editor"
 
 const SCROLL_BUFFER = 12
 
-const style = {
-	whiteSpace: "pre-wrap",
-	outline: "none",
-	overflowWrap: "break-word",
-}
-
 // Gets the cursors.
 //
 // TODO: Get pos1 and pos2 together
@@ -185,25 +179,23 @@ function Editor({ state, dispatch, ...props }) {
 		React.useCallback(() => {
 			const onKeyDown = e => {
 				switch (true) {
-
-				// // Proportional type:
-				// case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
-				// 	e.preventDefault()
-				// 	dispatch.toggleStylesheet(false)
-				// 	return
-				// // Monospace:
-				// case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
-				// 	e.preventDefault()
-				// 	dispatch.toggleStylesheet(true)
-				// 	return
-				// // Inline background:
-				// case platform.detectKeyCode(e, 220): // 220: \
-				// 	e.preventDefault()
-				// 	dispatch.toggleInlineBackground()
-				// 	return
-
+				// Proportional type:
+				case platform.detectKeyCode(e, 49):
+					e.preventDefault()
+					dispatch.toggleMonospace(false)
+					return
+				// Monospace:
+				case platform.detectKeyCode(e, 50):
+					e.preventDefault()
+					dispatch.toggleMonospace(true)
+					return
+				// Inline background:
+				case platform.detectKeyCode(e, 80, { shiftKey: true }):
+					e.preventDefault()
+					dispatch.toggleInlineBackground()
+					return
 				// Preview mode:
-				case platform.detectKeyCode(e, 80): // 80: p
+				case platform.detectKeyCode(e, 80, { shiftKey: false }):
 					e.preventDefault()
 					dispatch.togglePreviewMode()
 					return
@@ -223,18 +215,21 @@ function Editor({ state, dispatch, ...props }) {
 	return (
 		<React.Fragment>
 			{React.createElement(
-				state.preferences.tagName || "div",
+				state.prefers.tagName || "div",
 				{
 					ref,
 
 					className: EDITOR_CLASS_NAME,
 
-					style,
+					style: {
+						whiteSpace: "pre-wrap",
+						outline: "none",
+						overflowWrap: "break-word",
+					},
 
-					// FIXME
-					contentEditable: !state.preferences.previewMode && true,
-					suppressContentEditableWarning: !state.preferences.previewMode && true,
-					spellCheck: !state.preferences.previewMode,
+					contentEditable: !state.prefers.previewMode && true,
+					suppressContentEditableWarning: !state.prefers.previewMode && true,
+					spellCheck: !state.prefers.previewMode,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,
