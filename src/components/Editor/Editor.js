@@ -183,6 +183,8 @@ function Editor({ state, dispatch, ...props }) {
 	)
 
 	// Shortcuts:
+	//
+	// TODO: Refactor to useShortcuts
 	React.useEffect(
 		React.useCallback(() => {
 			const onKeyDown = e => {
@@ -202,7 +204,7 @@ function Editor({ state, dispatch, ...props }) {
 					e.preventDefault()
 					dispatch.toggleInlineBackground()
 					return
-				// Prefers preview mode (cmd+p):
+				// Prefers preview mode:
 				case platform.detectKeyCode(e, 80): // 80: "p"
 					e.preventDefault()
 					dispatch.togglePreviewMode()
@@ -235,9 +237,9 @@ function Editor({ state, dispatch, ...props }) {
 						// padding: "128px 0px 90vh 0px",
 					},
 
-					contentEditable: !state.prefersReadOnlyMode && true,
-					suppressContentEditableWarning: !state.prefersReadOnlyMode && true,
-					spellCheck: !state.prefersReadOnlyMode,
+					contentEditable: !state.prefersPreviewMode && true,
+					suppressContentEditableWarning: !state.prefersPreviewMode && true,
+					spellCheck: !state.prefersPreviewMode,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,
@@ -379,7 +381,7 @@ function Editor({ state, dispatch, ...props }) {
 					},
 
 					onCut: e => {
-						if (state.prefersReadOnlyMode) {
+						if (state.prefersPreviewMode) {
 							// No-op
 							return
 						}
@@ -393,7 +395,7 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.cut()
 					},
 					onCopy: e => {
-						if (state.prefersReadOnlyMode) {
+						if (state.prefersPreviewMode) {
 							// No-op
 							return
 						}
@@ -407,7 +409,7 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.copy()
 					},
 					onPaste: e => {
-						if (state.prefersReadOnlyMode) {
+						if (state.prefersPreviewMode) {
 							// No-op
 							return
 						}

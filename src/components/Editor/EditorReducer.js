@@ -67,7 +67,7 @@ const reducer = state => ({
 		state.prefersMonospacae = prefersMonospace
 	},
 	toggleInlineBackground() {
-		// state.prefersPreviewMode = false // Reset
+		state.prefersPreviewMode = false // Reset
 		state.prefersInlineBackground = !state.prefersInlineBackground
 	},
 	togglePreviewMode() {
