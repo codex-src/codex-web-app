@@ -1,6 +1,6 @@
 import Emoji from "./Emoji"
 import React from "react"
-import recurse from "../ComponentsText"
+import recurse from "./parseTextComponents"
 import { Node } from "./Node"
 
 // Returns whether components are emoji components.

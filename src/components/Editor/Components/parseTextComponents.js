@@ -1,56 +1,22 @@
-import Emoji from "./Components/Emoji"
+import Emoji from "./Emoji"
 import emojiTrie from "emoji-trie"
-import Markdown from "./Markdown"
 import React from "react"
 
-const Em = props => (
-	<span className="em">
-		<Markdown start={props.syntax} end={props.syntax}>
-			{props.children}
-		</Markdown>
-	</span>
-)
+import {
+	Code,
+	Em,
+	Strikethrough,
+	Strong,
+	StrongEm,
+} from "./Inline"
 
-const Strong = props => (
-	<span className="strong">
-		<Markdown start={props.syntax} end={props.syntax}>
-			{props.children}
-		</Markdown>
-	</span>
-)
-
-const StrongEm = props => (
-	<span className="strong em">
-		<Markdown start={props.syntax.slice(0, 2)} end={props.syntax.slice(1)}>
-			<Markdown start={props.syntax.slice(-1)} end={props.syntax.slice(0, 1)}>
-				{props.children}
-			</Markdown>
-		</Markdown>
-	</span>
-)
-
-const Code = props => (
-	<span className="code" spellCheck={false}>
-		<Markdown start="`" end="`" >
-			{props.children}
-		</Markdown>
-	</span>
-)
-
-const Strikethrough = props => (
-	<span className="strikethrough" /* spellCheck={false} */>
-		<Markdown start={props.syntax} end={props.syntax} >
-			{props.children}
-		</Markdown>
-	</span>
-)
-
+// Shorthand for parseTextComponents.
 function recurse(data) {
 	return parseTextComponents(data)
 }
 
-// Parses an array of React components from plain text data.
-function parseTextComponents(data) {
+// Parses an array of components from a string.
+function parseTextComponents(data) { // TODO: Rename to str
 	if (!data) {
 		return ""
 	}

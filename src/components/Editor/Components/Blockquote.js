@@ -1,6 +1,6 @@
-import Markdown from "../Markdown"
+import Markdown from "./Markdown"
 import React from "react"
-import recurse from "../ComponentsText"
+import recurse from "./parseTextComponents"
 
 import {
 	CompoundNode,

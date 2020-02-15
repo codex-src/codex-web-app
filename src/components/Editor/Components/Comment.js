@@ -1,6 +1,6 @@
-import Markdown from "../Markdown"
+import Markdown from "./Markdown"
 import React from "react"
-import recurse from "../ComponentsText"
+import recurse from "./parseTextComponents"
 import { Node } from "./Node"
 
 const Comment = React.memo(({ reactKey, ...props }) => (

@@ -1,4 +1,4 @@
-import Markdown from "../Markdown"
+import Markdown from "./Markdown"
 import React from "react"
 import { Node } from "./Node"
 
