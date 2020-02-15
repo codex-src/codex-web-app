@@ -3,13 +3,14 @@ import React from "react"
 import ReactDOM from "react-dom"
 
 // import "minireset.css"
-// import "material-colors.css"
 // import "stylesheets/focus.css"
 
+// NOTE: Needed for <Stylesheets />
 import "material-colors.css"
-import "stylesheets/tailwind.generated.css"
-import "stylesheets/reset-input.css"
 import "debug.css"
-import "stylesheets/prism.css"
+
+import "stylesheets/tailwind.generated.css"
+// import "stylesheets/reset-input.css"
+// import "stylesheets/prism.css"
 
 ReactDOM.render(<App />, document.getElementById("root"))

@@ -26,7 +26,6 @@
     "tailwind-prod": "yarn postcss src/stylesheets/tailwind.css --output src/stylesheets/tailwind.generated.css --env production",
     "prestart": "yarn tailwind-dev",
     "start": "react-scripts start",
-    "start-build": "yarn build && PORT=3000 serve --single --no-clipboard build",
     "test": "react-scripts test",
     "test-editor-chrome": "BROWSER=Chrome yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
     "test-editor-firefox": "BROWSER=Firefox yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
@@ -34,6 +33,7 @@
     "test-editor": "yarn test-editor-chrome && yarn test-editor-firefox && yarn test-editor-safari",
     "prebuild": "yarn tailwind-prod",
     "build": "PUBLIC_URL=https://opencodex.dev react-scripts build",
+    "build-start": "PUBLIC_URL=http://localhost:3000 react-scripts build && PORT=3000 serve --single --no-clipboard build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

@@ -12,7 +12,7 @@ const Nav = props => (
 		<div className="flex justify-between w-full max-w-screen-lg">
 
 			{/* LHS: */}
-			<Link to="/" className="flex items-center h-full hover:text-brand transition duration-150 ease-in-out">
+			<Link to="/" className="flex items-center h-full hover:text-brand transition duration-75 ease-in-out">
 				<CodexLogo style={{ width: "5.625rem", height: "3.75rem" }} />
 			</Link>
 
@@ -49,6 +49,20 @@ const Nav = props => (
 	</nav>
 )
 
+const Markdown = props => (
+	<span className="markdown">
+		{props.children}
+	</span>
+)
+
+// # Codex is a new notebook for devs. ✍️ Based on **markdown** and works _everywhere_
+//
+// <Markdown>#</Markdown> Codex is a new notebook for devs. <Emoji emoji="✍️" />{" "}
+// Based on {/* <strong> */}<Markdown>**</Markdown>markdown<Markdown>**</Markdown>{/* </strong> */} and works <em><Markdown>_</Markdown>everywhere<Markdown>_</Markdown></em>
+
+// # Codex is a new notebook for devs. ✍️ Based on **markdown** and works _everywhere_
+// # Codex makes it easier than ever to express yourself in words and code
+
 const Hero = props => (
 	<section className="px-6 py-32 flex justify-center items-center min-h-screen">
 		<div className="flex lg:flex-row flex-col items-center w-full max-w-screen-lg">
@@ -56,14 +70,13 @@ const Hero = props => (
 			{/* LHS: */}
 			<div className="w-full flex lg:block flex-col md:items-start items-center">
 				<h1 className="font-bold text-4xl">
-					Introducing Codex{"\u00a0"}
-					<Emoji emoji="✨" />
+					{/* <Markdown>#</Markdown> */}
+					Codex makes it easier than ever to express yourself in words <em>and</em> code
 				</h1>
-				<div className="h-4" />
-				<p className="text-2xl text-gray-700">
-					Codex is a digital notebook for authors, built for the modern web.
-					It supports markdown and works everywhere.
-				</p>
+				{/* <div className="h-4" /> */}
+				{/* <p className="text-2xl text-gray-700"> */}
+				{/* 	Codex makes it easier than ever to express yourself in words <em>and</em> code. */}
+				{/* </p> */}
 				<div className="h-8" />
 				<Link
 					to="/demo"
@@ -73,14 +86,14 @@ const Hero = props => (
 						Try the editor alpha!
 					</p>
 				</Link>
-				{/* <Link */}
-				{/* 	to="#features" */}
-				{/* 	className="py-1 block" */}
-				{/* > */}
-				{/* 	<p className="font-medium text-2xl text-brand"> */}
-				{/* 		Learn more */}
-				{/* 	</p> */}
-				{/* </Link> */}
+				<Link
+					to="#features"
+					className="py-1 block"
+				>
+					<p className="font-medium text-2xl text-brand">
+						Learn more
+					</p>
+				</Link>
 			</div>
 
 			{/* Spacer: */}
