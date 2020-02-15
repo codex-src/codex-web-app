@@ -1,7 +1,6 @@
 import Editor from "components/Editor"
 import raw from "raw.macro"
 import React from "react"
-import stylex from "stylex"
 
 const LOCAL_STORAGE_KEY = "codex-app"
 
@@ -18,10 +17,8 @@ function Demo(props) {
 	)
 
 	return (
-		// FIXME: Migrate to Tailwind CSS
-		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
-			{/* Based on 2388 x 1668 */}
-			<div style={stylex.parse("w:834 no-min-w")}>
+		<div className="px-6 py-32 flex justify-center">
+			<div style={{ maxWidth: 834 }}>
 				<Editor.Editor
 					state={state}
 					dispatch={dispatch}
