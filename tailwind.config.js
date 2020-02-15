@@ -1,3 +1,5 @@
+const defaultTheme = require("tailwindcss/defaultTheme")
+
 module.exports = {
 	theme: {
 		extend: {
@@ -9,19 +11,17 @@ module.exports = {
 				"gray-50": {
 					default: "#fbfdfe",
 				},
-				// gray:   { default: "#a0aec0" },
-				// red:    { default: "#f56565" },
-				// orange: { default: "#ed8936" },
-				// yellow: { default: "#ecc94b" },
-				// green:  { default: "#48bb78" },
-				// teal:   { default: "#38b2ac" },
-				// blue:   { default: "#4299e1" },
-				// indigo: { default: "#667eea" },
-				// purple: { default: "#9f7aea" },
-				// pink:   { default: "#ed64a6" },
-				brand: {
-					default: "#4489ff",
-				},
+				gray:   { ...defaultTheme.colors.gray,   default: "#a0aec0" },
+				red:    { ...defaultTheme.colors.red,    default: "#f56565" },
+				orange: { ...defaultTheme.colors.orange, default: "#ed8936" },
+				yellow: { ...defaultTheme.colors.yellow, default: "#ecc94b" },
+				green:  { ...defaultTheme.colors.green,  default: "#48bb78" },
+				teal:   { ...defaultTheme.colors.teal,   default: "#38b2ac" },
+				blue:   { ...defaultTheme.colors.blue,   default: "#4299e1" },
+				indigo: { ...defaultTheme.colors.indigo, default: "#667eea" },
+				purple: { ...defaultTheme.colors.purple, default: "#9f7aea" },
+				pink:   { ...defaultTheme.colors.pink,   default: "#ed64a6" },
+				brand:  { ...defaultTheme.colors.brand,  default: "#4489ff" },
 			},
 			fontWeight: {
 				100: "100",
