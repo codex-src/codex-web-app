@@ -12,6 +12,8 @@ import ReactDOM from "react-dom"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 
+const EDITOR_CLASS_NAME = "codex-editor"
+
 const SCROLL_BUFFER = 12
 
 const style = {
@@ -83,17 +85,11 @@ function getNodesFromIterators(rootNode, [start, end]) {
 	return { nodes, atEnd }
 }
 
-// function EditorComponents(props) {
-// 	return props.components
-// }
-
-// TODO: Reset by ID?
 function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const target = React.useRef()
-
-	const isPointerDownRef = React.useRef()        // Is a pointer down?
-	const dedupeCompositionEndRef = React.useRef() // Is onCompositionEnd deduped?
+	const isPointerDownRef = React.useRef()
+	const dedupeCompositionEndRef = React.useRef()
 
 	const [forceRender, setForceRender] = React.useState(false)
 
@@ -182,64 +178,61 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
-	// Shortcuts:
-	//
-	// TODO: Refactor to useShortcuts
-	React.useEffect(
-		React.useCallback(() => {
-			const onKeyDown = e => {
-				switch (true) {
-				// Prefers proportional type stylesheet:
-				case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
-					e.preventDefault()
-					dispatch.toggleStylesheet(false)
-					return
-				// Prefers monospace stylesheet:
-				case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
-					e.preventDefault()
-					dispatch.toggleStylesheet(true)
-					return
-				// Prefers inline background:
-				case platform.detectKeyCode(e, 220): // 220: \
-					e.preventDefault()
-					dispatch.toggleInlineBackground()
-					return
-				// Prefers preview mode:
-				case platform.detectKeyCode(e, 80): // 80: "p"
-					e.preventDefault()
-					dispatch.togglePreviewMode()
-					return
-				default:
-					// No-op
-					break
-				}
-			}
-			document.addEventListener("keydown", onKeyDown)
-			return () => {
-				document.removeEventListener("keydown", onKeyDown)
-			}
-		}, [dispatch]),
-		[],
-	)
+	// // Shortcuts:
+	// //
+	// // TODO: Refactor to useShortcuts
+	// React.useEffect(
+	// 	React.useCallback(() => {
+	// 		const onKeyDown = e => {
+	// 			switch (true) {
+	// 			// Prefers proportional type stylesheet:
+	// 			case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
+	// 				e.preventDefault()
+	// 				dispatch.toggleStylesheet(false)
+	// 				return
+	// 			// Prefers monospace stylesheet:
+	// 			case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
+	// 				e.preventDefault()
+	// 				dispatch.toggleStylesheet(true)
+	// 				return
+	// 			// Prefers inline background:
+	// 			case platform.detectKeyCode(e, 220): // 220: \
+	// 				e.preventDefault()
+	// 				dispatch.toggleInlineBackground()
+	// 				return
+	// 			// Prefers preview mode:
+	// 			case platform.detectKeyCode(e, 80): // 80: "p"
+	// 				e.preventDefault()
+	// 				dispatch.togglePreviewMode()
+	// 				return
+	// 			default:
+	// 				// No-op
+	// 				break
+	// 			}
+	// 		}
+	// 		document.addEventListener("keydown", onKeyDown)
+	// 		return () => {
+	// 			document.removeEventListener("keydown", onKeyDown)
+	// 		}
+	// 	}, [dispatch]),
+	// 	[],
+	// )
 
 	return (
 		<React.Fragment>
 			{React.createElement(
-				"article",
+				state.preferences.tagName || "div",
 				{
 					ref,
 
-					className: ["editor", state.prefersClassName].join(" "),
+					className: EDITOR_CLASS_NAME,
 
-					style: {
-						...style,
-						// ...scrollPastEnd,
-						// padding: "128px 0px 90vh 0px",
-					},
+					style,
 
-					contentEditable: !state.prefersPreviewMode && true,
-					suppressContentEditableWarning: !state.prefersPreviewMode && true,
-					spellCheck: !state.prefersPreviewMode,
+					// FIXME
+					contentEditable: true, // !state.prefersPreviewMode && true,
+					suppressContentEditableWarning: true, // !state.prefersPreviewMode && true,
+					spellCheck: true, // !state.prefersPreviewMode,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,
@@ -381,10 +374,10 @@ function Editor({ state, dispatch, ...props }) {
 					},
 
 					onCut: e => {
-						if (state.prefersPreviewMode) {
-							// No-op
-							return
-						}
+						// if (state.prefersPreviewMode) {
+						// 	// No-op
+						// 	return
+						// }
 						e.preventDefault()
 						if (!state.hasSelection) {
 							// No-op
@@ -395,10 +388,10 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.cut()
 					},
 					onCopy: e => {
-						if (state.prefersPreviewMode) {
-							// No-op
-							return
-						}
+						// if (state.prefersPreviewMode) {
+						// 	// No-op
+						// 	return
+						// }
 						e.preventDefault()
 						if (!state.hasSelection) {
 							// No-op
@@ -409,10 +402,10 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.copy()
 					},
 					onPaste: e => {
-						if (state.prefersPreviewMode) {
-							// No-op
-							return
-						}
+						// if (state.prefersPreviewMode) {
+						// 	// No-op
+						// 	return
+						// }
 						const substr = e.clipboardData.getData("text/plain")
 						e.preventDefault()
 						if (!substr) {

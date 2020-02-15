@@ -17,15 +17,28 @@ const ActionTypes = new Enum(
 	"REDO",
 )
 
-const initialState = {
-	// Preferences:
-	//
-	// TODO: prefersScrollPastEnd
-	prefersInlineBackground: false,
-	prefersMonospace: false,
-	prefersPreviewMode: false,
+// // Preferences:
+// //
+// // TODO: prefersScrollPastEnd
+// prefersInlineBackground: false,
+// prefersMonospace: false,
+// prefersPreviewMode: false,
 
-	// Reducer:
+const initialState = {
+	preferences: {
+		darkMode:         false,
+		inlineBackground: false,
+		monospace:        false,
+		placeholder:      false,
+		previewMode:      false,
+		readOnly:         false,
+		renderWhiteSpace: false,
+		scrollPastEnd:    false,
+		shortcuts:        false,
+		statusBars:       false,
+		tagName:          "",
+		wordWrap:         false,
+	},
 	actionType: "",      // The type of the current action
 	actionTimeStamp: 0,  // The time stamp of the current action
 	isFocused: false,    // Is the editor focused?
@@ -62,16 +75,22 @@ function newPos() {
 }
 
 const reducer = state => ({
-	// Preferences:
-	toggleStylesheet(prefersMonospace) {
-		state.prefersMonospacae = prefersMonospace
-	},
-	toggleInlineBackground() {
-		state.prefersPreviewMode = false // Reset
-		state.prefersInlineBackground = !state.prefersInlineBackground
-	},
-	togglePreviewMode() {
-		state.prefersPreviewMode = !state.prefersPreviewMode
+	// // Preferences:
+	// toggleStylesheet(prefersMonospace) {
+	// 	state.prefersMonospacae = prefersMonospace
+	// },
+	// toggleInlineBackground() {
+	// 	state.prefersPreviewMode = false // Reset
+	// 	state.prefersInlineBackground = !state.prefersInlineBackground
+	// },
+	// togglePreviewMode() {
+	// 	state.prefersPreviewMode = !state.prefersPreviewMode
+	// },
+	setPreference(preferenceName, setting) {
+		if (state[preferenceName] === undefined) {
+			throw new Error("FIXME") // No such preference
+		}
+		state[preferenceName] = setting
 	},
 
 	// Reducer:
@@ -355,10 +374,10 @@ const reducer = state => ({
 		state.history.splice(state.historyIndex + 1)
 	},
 	undo() {
-		if (state.prefersPreviewMode) {
-			// No-op
-			return
-		}
+		// if (state.prefersPreviewMode) {
+		// 	// No-op
+		// 	return
+		// }
 		this.newAction(ActionTypes.UNDO)
 		if (state.historyIndex === 1 && state.didSetPos) {
 			state.didSetPos = false
@@ -372,10 +391,10 @@ const reducer = state => ({
 		this.render()
 	},
 	redo() {
-		if (state.prefersPreviewMode) {
-			// No-op
-			return
-		}
+		// if (state.prefersPreviewMode) {
+		// 	// No-op
+		// 	return
+		// }
 		this.newAction(ActionTypes.REDO)
 		if (state.historyIndex + 1 === state.history.length) {
 			// No-op
@@ -395,21 +414,28 @@ const reducer = state => ({
 	},
 })
 
-const init = data => initialState => {
-	const body = newNodes(data)
+const init = (initialValue, preferences) => initialState => {
+	const body = newNodes(initialValue)
 	const state = {
 		...initialState,
-		data,
+		preferences: {
+			...initialState.preferences,
+			...preferences,
+		},
+		data: initialValue,
 		body,
 		pos1: newPos(),
 		pos2: newPos(),
 		components: parseComponents(body),
 		reactDOM: document.createElement("div"),
-		history: [{ data, body, pos1: newPos(), pos2: newPos() }],
+		history: [{ data: initialValue, body, pos1: newPos(), pos2: newPos() }],
 	}
 	return state
 }
 
-const useEditor = data => useMethods(reducer, initialState, init(data))
+function useEditor(initialValue, preferences) {
+	const _init = init(initialValue, preferences)
+	return useMethods(reducer, initialState, _init)
+}
 
 export default useEditor

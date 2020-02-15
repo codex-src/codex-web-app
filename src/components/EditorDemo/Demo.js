@@ -6,6 +6,7 @@ const LOCAL_STORAGE_KEY = "codex-app"
 
 const initialValue = localStorage.getItem(LOCAL_STORAGE_KEY) || raw("./Demo.md")
 
+// { wordWrap: true }
 function Demo(props) {
 	const [state, dispatch] = Editor.useEditor(initialValue)
 
@@ -18,7 +19,7 @@ function Demo(props) {
 
 	return (
 		<div className="px-6 py-32 flex justify-center">
-			<div style={{ maxWidth: 834 }}>
+			<div className="w-full" style={{ maxWidth: 834 }}>
 				<Editor.Editor
 					state={state}
 					dispatch={dispatch}
