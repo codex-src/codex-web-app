@@ -73,14 +73,14 @@ const Hero = props => (
 						Try the editor alpha!
 					</p>
 				</Link>
-				<Link
-					to="#features"
-					className="py-1 block"
-				>
-					<p className="font-medium text-2xl text-brand">
-						Learn more
-					</p>
-				</Link>
+				{/* <Link */}
+				{/* 	to="#features" */}
+				{/* 	className="py-1 block" */}
+				{/* > */}
+				{/* 	<p className="font-medium text-2xl text-brand"> */}
+				{/* 		Learn more */}
+				{/* 	</p> */}
+				{/* </Link> */}
 			</div>
 
 			{/* Spacer: */}
