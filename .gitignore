@@ -2,7 +2,11 @@
 /node_modules
 /pkg
 
+# macOS
 .DS_Store
+
+# Yarn
 yarn-error.log
 
+# Tailwind CSS
 tailwind.generated.css
