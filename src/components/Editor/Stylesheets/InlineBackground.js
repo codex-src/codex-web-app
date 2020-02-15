@@ -1,3 +1,8 @@
+import css from "./__css"
+import React from "react"
+
+const stylesheet = css`
+
 .em,
 .strong {
 	/* color: hsl(var(--blue-a400)); */
@@ -20,3 +25,13 @@
 .code {
 	background: hsl(var(--white)) !important;
 }
+
+`
+
+const Stylesheet = React.forwardRef((props, ref) => (
+	<style ref={ref}>
+		{stylesheet}
+	</style>
+))
+
+export default Stylesheet

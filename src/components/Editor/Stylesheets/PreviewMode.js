@@ -1,3 +1,8 @@
+import css from "./__css"
+import React from "react"
+
+const stylesheet = css`
+
 .blockquote {
 	padding-left: 28px;
 	font-size: 1.1em;
@@ -30,3 +35,13 @@
 .comment + .paragraph[data-empty-node] {
 	display: none;
 }
+
+`
+
+const Stylesheet = React.forwardRef((props, ref) => (
+	<style ref={ref}>
+		{stylesheet}
+	</style>
+))
+
+export default Stylesheet
