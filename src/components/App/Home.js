@@ -55,17 +55,15 @@ const Hero = props => (
 
 			{/* LHS: */}
 			<div className="w-full flex lg:block flex-col md:items-start items-center">
-				<h1 className="font-bold text-4xl leading-1.3">
+				<h1 className="font-bold text-4xl">
 					Introducing Codex{"\u00a0"}
 					<Emoji emoji="✨" />
 				</h1>
-				{/* Spacer: */}
 				<div className="h-4" />
 				<p className="text-2xl text-gray-700">
 					Codex is a digital notebook for authors, built for the modern web.
 					It supports markdown and works everywhere.
 				</p>
-				{/* Spacer: */}
 				<div className="h-8" />
 				<Link
 					to="/demo"
@@ -75,14 +73,14 @@ const Hero = props => (
 						Try the editor alpha!
 					</p>
 				</Link>
-				{/* <Link */}
-				{/* 	to="#features" */}
-				{/* 	className="py-1 block" */}
-				{/* > */}
-				{/* 	<p className="font-medium text-2xl text-brand"> */}
-				{/* 		Learn more */}
-				{/* 	</p> */}
-				{/* </Link> */}
+				<Link
+					to="#features"
+					className="py-1 block"
+				>
+					<p className="font-medium text-2xl text-brand">
+						Learn more
+					</p>
+				</Link>
 			</div>
 
 			{/* Spacer: */}
