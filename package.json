@@ -33,7 +33,7 @@
     "test-editor-safari": "BROWSER=Safari yarn test --verbose --watchAll=false --runInBand Editor/__tests/",
     "test-editor": "yarn test-editor-chrome && yarn test-editor-firefox && yarn test-editor-safari",
     "prebuild": "yarn tailwind-prod",
-    "build": "react-scripts build",
+    "build": "PUBLIC_URL=https://opencodex.dev react-scripts build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
