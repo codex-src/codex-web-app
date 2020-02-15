@@ -6,9 +6,12 @@ const LOCAL_STORAGE_KEY = "codex-app"
 
 const initialValue = localStorage.getItem(LOCAL_STORAGE_KEY) || raw("./Demo.md")
 
-// { wordWrap: true }
 function Demo(props) {
-	const [state, dispatch] = Editor.useEditor(initialValue)
+	const [state, dispatch] = Editor.useEditor(initialValue, {
+		inlineBackground: true,
+		shortcuts: true,
+		statusBars: true,
+	})
 
 	React.useEffect(
 		React.useCallback(() => {

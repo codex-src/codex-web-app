@@ -1,12 +1,7 @@
+import Emoji from "./Components/Emoji"
 import emojiTrie from "emoji-trie"
 import Markdown from "./Markdown"
 import React from "react"
-
-const Emoji = props => (
-	<span className="emoji">
-		{props.children}
-	</span>
-)
 
 const Em = props => (
 	<span className="em">

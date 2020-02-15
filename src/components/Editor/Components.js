@@ -1,3 +1,4 @@
+import Emoji from "./Components/Emoji"
 import Markdown from "./Markdown"
 import React from "react"
 import recurse from "./ComponentsText"
@@ -54,8 +55,8 @@ function blockquotesAreEqual(prev, next) {
 	}
 	const { length } = prev.children
 	for (let x = 0; x < length; x++) {
-		if (prev.children[x].key !== next.children[x].key ||                 // Fast pass
-				prev.children[x].data.length !== next.children[x].data.length || // Fast pass
+		if (prev.children[x].key !== next.children[x].key ||
+				prev.children[x].data.length !== next.children[x].data.length ||
 				prev.children[x].data !== next.children[x].data) {
 			return false
 		}
@@ -90,8 +91,8 @@ function codeBlocksAreEqual(prev, next) {
 	}
 	const { length } = prev.children
 	for (let x = 0; x < length; x++) {
-		if (prev.children[x].key !== next.children[x].key ||                 // Fast pass
-				prev.children[x].data.length !== next.children[x].data.length || // Fast pass
+		if (prev.children[x].key !== next.children[x].key ||
+				prev.children[x].data.length !== next.children[x].data.length ||
 				prev.children[x].data !== next.children[x].data) {
 			return false
 		}
@@ -137,22 +138,20 @@ const CodeBlock = React.memo(props => {
 	)
 }, codeBlocksAreEqual)
 
-// Returns whether parsed components are emoji components.
 function areEmojis(parsed, max = 3) {
-	if (!Array.isArray(parsed)) {
-		return false
-	}
 	const ok = (
+		parsed &&
 		parsed.length <= max &&
-		parsed.every(each => each && each.type && each.type.name === "Emoji")
+		parsed.every(each => each && each.type && each.type === Emoji)
 	)
 	return ok
 }
 
 const Paragraph = React.memo(({ reactKey, ...props }) => {
 	const parsed = recurse(props.children)
-
-	const className = `paragraph${!areEmojis(parsed) ? "" : " emojis"}`
+	const className = ["paragraph", areEmojis(parsed) && "emojis"]
+		.filter(Boolean)
+		.join(" ")
 	return (
 		<Node reactKey={reactKey} className={className}>
 			{parsed}
@@ -184,7 +183,7 @@ function parseComponents(body) {
 		}
 		switch (true) {
 		// Paragraph (fast pass):
-		case !char || (char >= "A" && char <= "Z") || (char >= "a" && char <= "z"): // Fast pass
+		case !char || (char >= "A" && char <= "Z") || (char >= "a" && char <= "z"):
 			// No-op
 			break
 		// Header:

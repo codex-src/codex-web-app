@@ -17,19 +17,12 @@ const ActionTypes = new Enum(
 	"REDO",
 )
 
-// // Preferences:
-// //
-// // TODO: prefersScrollPastEnd
-// prefersInlineBackground: false,
-// prefersMonospace: false,
-// prefersPreviewMode: false,
-
 const initialState = {
 	prefers: {
 		darkMode:         false,
 		inlineBackground: false,
 		monospace:        false,
-		placeholder:      false,
+		placeholder:      "Hello, world!",
 		previewMode:      false,
 		readOnly:         false,
 		renderWhiteSpace: false,

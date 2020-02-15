@@ -1,4 +1,3 @@
-import * as Router from "react-router-dom"
 import React from "react"
 import { Link } from "react-router-dom"
 
@@ -11,7 +10,7 @@ function RouterLink({ to, ...props }) {
 	let Component = null
 	switch (true) {
 	case to !== undefined && (to.startsWith("http://") || to.startsWith("https://")): // Takes precedence
-		Component = <a href={to} {...props} />
+		Component = <a href={to} {...props} /> // eslint-disable-line jsx-a11y/anchor-has-content
 		break
 	case to !== undefined:
 		Component = <Link to={to} {...props} />

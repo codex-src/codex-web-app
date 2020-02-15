@@ -52,7 +52,7 @@ const Hero = props => (
 function HeroEditor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"))
+	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"), { inlineBackground: true })
 
 	React.useEffect(() => {
 		ref.current.classList.add("hero-editor-enter")
