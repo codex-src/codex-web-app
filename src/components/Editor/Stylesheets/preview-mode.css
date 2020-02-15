@@ -21,7 +21,6 @@
 	border: 2px solid hsl(var(--gray-200));
 }
 
-/* FIXME */
 .comment,
 .markdown {
 	display: none;

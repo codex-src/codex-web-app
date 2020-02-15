@@ -8,7 +8,6 @@ const initialValue = localStorage.getItem(LOCAL_STORAGE_KEY) || raw("./Demo.md")
 
 function Demo(props) {
 	const [state, dispatch] = Editor.useEditor(initialValue, {
-		inlineBackground: true,
 		shortcuts: true,
 		statusBars: true,
 	})

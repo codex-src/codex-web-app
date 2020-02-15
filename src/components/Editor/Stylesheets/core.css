@@ -1,16 +1,16 @@
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Mono/Webfonts/index.css";
 @import "https://cdn.jsdelivr.net/gh/codex-src/iA-Fonts@master/iA%20Writer%20Duo/Webfonts/index.css";
 
-.editor {
-	--padding-x:     24px;
-	--padding-y:     12px;
+.codex-editor {
+	--padding-x:     1.5rem;  /* 24px */
+	--padding-y:     0.75rem; /* 12px */
 	--border-radius: 0px;
 	--box-shadow:    0px 0px 0px 1px hsl(var(--gray-300));
 
 	color: hsl(var(--black));
 	caret-color: hsl(var(--black));
 }
-.editor *::selection {
+.codex-editor *::selection {
 	background: hsla(218, 100%, 58.0392%, 0.25) !important;
 }
 
@@ -49,7 +49,7 @@
 .code-block {
 	/* margin: 0px calc(-1 * var(--padding-x)); */
 	padding: var(--padding-y) var(--padding-x);
-	background: hsl(var(--gray-50));
+	/* background: hsl(var(--gray-50)); */
 	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
@@ -71,7 +71,6 @@
 
 .em {
 	font-style: italic;
-	/* color: hsl(var(--blue-a400)); */
 }
 
 .strong {
