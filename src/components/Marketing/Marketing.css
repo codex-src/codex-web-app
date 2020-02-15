@@ -1,16 +1,20 @@
-#marketing-editor {
-	transform:
-		perspective(1e3px)
-		rotate(2deg)
-		rotateX(6deg)
-		rotateY(-4deg)
-		scale(0.95)
-		/* translateX(-0.75rem) */;
-	transition: transform 500ms ease-in-out;
+.hero-editor-enter {
+	opacity: 0;
+	transform: scale(0.75);
+}
+
+.hero-editor-active {
+	opacity: 1;
+	transform: perspective(1e3px) rotate(2deg) rotateX(6deg) rotateY(-4deg) scale(0.95);
+	transition: 1.5s ease 1s;
 }
 
 @media (max-width: 1023px) {
-	#marketing-editor {
-		transform: none;
-	}
+
+.hero-editor-active {
+	opacity: 1;
+	transform: none;
+	transition: 1.5s ease 1s;
+}
+
 }

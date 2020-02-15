@@ -1,9 +1,8 @@
 import Editor from "components/Editor"
-// import Link from "utils/RouterLink"
+import Link from "utils/RouterLink"
 import Nav2 from "components/Nav2"
 import raw from "raw.macro"
 import React from "react"
-import { Link } from "react-router-dom"
 
 import "./Marketing.css"
 
@@ -39,9 +38,12 @@ const Hero = props => (
 			<div className="w-24 h-12" />
 
 			{/* RHS: */}
-			<div className="w-full">
+			<Link
+				to="demo"
+				className="w-full"
+			>
 				<HeroEditor />
-			</div>
+			</Link>
 
 		</div>
 	</section>
@@ -56,26 +58,31 @@ const preferences = {
 }
 
 function HeroEditor(props) {
-	// TODO: Show markdown background
+	const ref = React.useRef()
+
 	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"), preferences)
 
+	React.useEffect(() => {
+		ref.current.classList.add("hero-editor-enter")
+		setTimeout(() => {
+			ref.current.classList.add("hero-editor-active")
+		}, 0)
+	}, [])
+
 	return (
-		// Preserve aspect ratio:
-		<Link to="https://google.com">
-			<div id="marketing-editor" className="pb-4/5 relative">
-				<div className="absolute inset-0">
-					{/* Two shadows: */}
-					<div className="h-full rounded-xl shadow-xs">
-						<div className="px-6 py-4 h-full bg-white rounded-xl shadow-xl overflow-y-scroll scrolling-touch">
-							<Editor.Editor
-								state={state}
-								dispatch={dispatch}
-							/>
-						</div>
+		<div ref={ref} className="pb-4/5 relative">
+			<div className="absolute inset-0">
+				{/* Two shadows: */}
+				<div className="h-full rounded-xl shadow-xs">
+					<div className="px-6 py-4 h-full bg-white rounded-xl shadow-xl overflow-y-scroll scrolling-touch">
+						<Editor.Editor
+							state={state}
+							dispatch={dispatch}
+						/>
 					</div>
 				</div>
 			</div>
-		</Link>
+		</div>
 	)
 }
 

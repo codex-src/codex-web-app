@@ -1,3 +1,5 @@
+# Imagine a markdown editor, built for the modern web
+
 There comes a time in every developer’s career when you feel the sudden urge to build a blog. Not just any blog — no, **your blog**…the best blog there ever was.
 
 And it will be magnificent!
