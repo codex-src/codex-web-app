@@ -4,7 +4,7 @@ import React from "react"
 
 const LOCAL_STORAGE_KEY = "codex-app"
 
-const initialValue = localStorage.getItem(LOCAL_STORAGE_KEY) || raw("./demo.md")
+const initialValue = localStorage.getItem(LOCAL_STORAGE_KEY) || raw("./Demo.md")
 
 function Demo(props) {
 	const [state, dispatch] = Editor.useEditor(initialValue)
