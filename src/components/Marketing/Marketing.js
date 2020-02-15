@@ -6,7 +6,7 @@ import raw from "raw.macro"
 import React from "react"
 import { ReactComponent as CodexLogo } from "assets/codex.svg"
 
-import "./Home.css"
+import "./Marketing.css"
 
 const Nav = props => (
 	<nav className="px-6 absolute inset-x-0 top-0 flex justify-center h-20 bg-white z-30">
@@ -111,7 +111,7 @@ const Hero = props => (
 
 // TODO: Show markdown background
 function MarketingEditor(props) {
-	const [state, dispatch] = Editor.useEditor(raw("./marketing.md"))
+	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"))
 
 	return (
 		// Preserve aspect ratio:

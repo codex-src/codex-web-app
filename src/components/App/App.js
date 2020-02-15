@@ -7,7 +7,7 @@ import * as Router from "react-router-dom"
 import EditorDemo from "components/EditorDemo"
 import fetchGraphQL from "./fetchGraphQL"
 import GraphQL from "use-graphql"
-import Home from "./Home"
+import Marketing from "components/Marketing"
 import Note from "components/Note"
 import PageNotFound from "./PageNotFound"
 import random from "utils/random/id"
@@ -59,7 +59,7 @@ const App = props => (
 						path="/"
 						exact
 						title=""
-						children={<Home />}
+						children={<Marketing />}
 					/>
 					{/* <User.UnprotectedRoute */}
 					{/* 	path="/our-story" */}
