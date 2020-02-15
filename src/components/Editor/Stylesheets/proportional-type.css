@@ -1,7 +1,19 @@
 .codex-editor {
 	-moz-tab-size: 4;
 	tab-size: 4;
-	font: 19px/1.65 system-ui;
+	font: 1.1875rem/1.65 system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		"Helvetica Neue",
+		Arial,
+		"Noto Sans",
+		sans-serif,
+		"Apple Color Emoji",
+		"Segoe UI Emoji",
+		"Segoe UI Symbol",
+		"Noto Color Emoji";
 }
 
 .code-block,
@@ -11,5 +23,5 @@
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: calc(16/19 * 1em)/1.45 "iA Writer Mono", monospace;
+	font: 0.85rem/1.45 "iA Writer Mono", monospace;
 }
