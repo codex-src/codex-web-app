@@ -410,7 +410,7 @@ const reducer = state => ({
 	},
 })
 
-const init = (initialValue, prefers) => initialState => {
+const init = (initialValue, prefers = {}) => initialState => {
 	const body = newNodes(initialValue)
 	const state = {
 		...initialState,

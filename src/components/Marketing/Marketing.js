@@ -39,7 +39,7 @@ const Hero = props => (
 
 			{/* RHS: */}
 			<Link
-				to="demo"
+				// to="demo"
 				className="w-full"
 			>
 				<HeroEditor />
@@ -49,24 +49,16 @@ const Hero = props => (
 	</section>
 )
 
-const preferences = {
-	inlineBackground: true,
-	// placeholder: false,
-	readOnly: true, // FIXME
-	shortcuts: false,
-	statusBars: false,
-}
-
 function HeroEditor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"), preferences)
+	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"))
 
 	React.useEffect(() => {
 		ref.current.classList.add("hero-editor-enter")
 		setTimeout(() => {
 			ref.current.classList.add("hero-editor-active")
-		}, 0)
+		}, 1e3)
 	}, [])
 
 	return (
@@ -74,7 +66,7 @@ function HeroEditor(props) {
 			<div className="absolute inset-0">
 				{/* Two shadows: */}
 				<div className="h-full rounded-xl shadow-xs">
-					<div className="px-6 py-4 h-full bg-white rounded-xl shadow-xl overflow-y-scroll scrolling-touch">
+					<div className="px-6 py-6 h-full bg-white rounded-xl shadow-xl overflow-y-scroll scrolling-touch">
 						<Editor.Editor
 							state={state}
 							dispatch={dispatch}

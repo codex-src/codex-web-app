@@ -6,7 +6,7 @@
 .hero-editor-active {
 	opacity: 1;
 	transform: perspective(1e3px) rotate(2deg) rotateX(6deg) rotateY(-4deg) scale(0.95);
-	transition: 1.5s ease 1s;
+	transition: 1.5s ease;
 }
 
 @media (max-width: 1023px) {
@@ -14,7 +14,7 @@
 .hero-editor-active {
 	opacity: 1;
 	transform: none;
-	transition: 1.5s ease 1s;
+	transition: 1.5s ease;
 }
 
 }
