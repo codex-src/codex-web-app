@@ -7,8 +7,6 @@ const Monospace = props => <style>{raw("./monospace.css")}</style>
 const PreviewMode = props => <style>{raw("./preview-mode.css")}</style>
 const ProportionalType = props => <style>{raw("./proportional-type.css")}</style>
 
-// <PreviewMode />
-// <InlineBackground />
 const Stylesheets = ({ state, ...props }) => (
 	<React.Fragment>
 		<Core />
@@ -19,6 +17,8 @@ const Stylesheets = ({ state, ...props }) => (
 			// Prefers monospace:
 			<Monospace />
 		)}
+		{/* <PreviewMode /> */}
+		{/* <InlineBackground /> */}
 	</React.Fragment>
 )
 

@@ -4,7 +4,7 @@
 // import Nav from "components/Nav"
 // import stylex from "stylex"
 import * as Router from "react-router-dom"
-import EditorDemo from "./EditorDemo"
+import EditorDemo from "components/EditorDemo"
 import fetchGraphQL from "./fetchGraphQL"
 import GraphQL from "use-graphql"
 import Home from "./Home"

@@ -1,10 +1,4 @@
-import Editor from "components/Editor"
-import React from "react"
-import stylex from "stylex"
-
-const localStorageKey = "codex-app"
-
-const initialValue = localStorage.getItem(localStorageKey) || `# Hello, Codex! 🖖
+# Hello, Codex! 🖖
 
 // 🚧 What you are seeing is the alpha of the _Codex editor_ 🚧
 //
@@ -26,12 +20,12 @@ If you’re curious, the editor is open source: ❤️ https://github.com/codex-
 
 There are four shortcuts you should try before reading on:
 
-- \`shift + command + 1\`: Toggle the rich text stylesheet (default)
-- \`shift + command + 2\`: Toggle the monospace stylesheet
-- \`command + \\\`: Toggle a faint background on markdown text (like _italics_, *bold*, etc.)
-- \`command + /\`: Read-only mode -- preview your note _without_ markdown
+- `shift + command + 1`: Toggle the rich text stylesheet (default)
+- `shift + command + 2`: Toggle the monospace stylesheet
+- `command + \`: Toggle a faint background on markdown text (like _italics_, *bold*, etc.)
+- `command + /`: Read-only mode -- preview your note _without_ markdown
 
-**If you’re on Windows or Linux, use \`control\` instead of \`command\`.**
+**If you’re on Windows or Linux, use `control` instead of `command`.**
 
 In the near future, you’ll be able to directly edit the stylesheets to your liking.
 
@@ -62,11 +56,11 @@ To do so, use the following syntax:
 >
 > (Blockquotes can also be multiline)
 
-\`\`\`Code block\`\`\`
+```Code block```
 
-\`\`\`
+```
 (Code blocks can also be multiline)
-\`\`\`
+```
 
 // Even emojis are parsed! You can use 1-3 emojis to make them bigger :
 
@@ -80,7 +74,7 @@ To do so, use the following syntax:
 
 ## CommonMark: Inline elements
 
-CommonMark also supports inline elements like _italics_, **bold**, \`code\`. ~Strikethrough~ is also supported. You can also use the alternate syntax for *italics*, __bold__, and ~~strikethrough~~. 👌
+CommonMark also supports inline elements like _italics_, **bold**, `code`. ~Strikethrough~ is also supported. You can also use the alternate syntax for *italics*, __bold__, and ~~strikethrough~~. 👌
 
 ## Cut, copy, and paste _as_ markdown
 
@@ -92,30 +86,4 @@ This alpha periodically saves to localStorage (once per second). That means you 
 
 ---
 
-More features coming soon…stay tuned! 📺⚡️`
-
-function EditorApp(props) {
-	const [state, dispatch] = Editor.useEditor(initialValue)
-
-	React.useEffect(
-		React.useCallback(() => {
-			localStorage.setItem(localStorageKey, state.data)
-		}, [state]),
-		[state.historyIndex],
-	)
-
-	return (
-		<div style={stylex.parse("p-x:24 p-y:128 flex -r -x:center")}>
-			{/* Based on 2388 x 1668 */}
-			<div style={stylex.parse("w:834 no-min-w")}>
-				<Editor.Editor
-					state={state}
-					dispatch={dispatch}
-					statusBars={true}
-				/>
-			</div>
-		</div>
-	)
-}
-
-export default EditorApp
+More features coming soon…stay tuned! 📺⚡️
