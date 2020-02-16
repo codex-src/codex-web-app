@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "iA Writer Mono var";
+  font-display: block;
+  font-style: normal;
+  font-weight: 400 700;
+  font-named-instance: "Regular";
+  src: url("iAWriterMonoV.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "iA Writer Mono var";
+  font-display: block;
+  font-style: italic;
+  font-weight: 400 700;
+  font-named-instance: "Italic";
+  src: url("iAWriterMonoV-Italic.ttf") format("truetype");
+}

@@ -13,7 +13,7 @@ function getSelectedLines(state) {
 	return { count, desc: "line" }
 }
 
-function getSelectedChars(state) {
+function getSelectedCharacters(state) {
 	const count = state.pos2.pos - state.pos1.pos
 	return { count, desc: "character" }
 }
@@ -25,7 +25,7 @@ function getWords(state) {
 
 function getDuration(state) {
 	const count = Math.ceil(state.data.length / 6 / 200)
-	return { count, desc: "minute" }
+	return { count, desc: "minute" } // TODO: Add support for hours, etc.?
 }
 
 // TODO: Add support for UTF-8?
@@ -33,8 +33,10 @@ function getStatus(state) {
 	const status = {
 		line: getLine(state),
 		column: getColumn(state),
-		selectedLines: getSelectedLines(state),
-		selectedChars: getSelectedChars(state),
+		selected: {
+			lines: getSelectedLines(state),
+			characters: getSelectedCharacters(state),
+		},
 		words: getWords(state),
 		duration: getDuration(state),
 	}

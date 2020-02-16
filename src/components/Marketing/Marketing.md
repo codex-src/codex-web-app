@@ -1,9 +1,11 @@
-# Hello, world!
+You can _finally_ write **and see** your notes using markdown in the browser! 🎉
 
-You can write formatted notes using CommonMark markdown. For example: *italics*, **bold**, `code`, and ~strikethrough~.
+Format your notes using CommonMark markdown, a subset of GitHub flavored markdown. For example: _italics_, **bold**, `code` and ~strikethrough~.
 
-> Blockquotes are supported
+> You can create blockquotes like this.
 
 ```
-Code blocks, too!
+And code blocks like this!
 ```
+
+More features coming soon…stay tuned! 📺⚡️

@@ -39,7 +39,7 @@ const Hero = props => (
 
 			{/* RHS: */}
 			<Link
-				to="demo"
+				// to="demo"
 				className="w-full"
 			>
 				<HeroEditor />
@@ -52,7 +52,7 @@ const Hero = props => (
 function HeroEditor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"), { readOnly: true })
+	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"), { /* readOnly: true */ })
 
 	React.useEffect(() => {
 		ref.current.classList.add("hero-editor-enter")

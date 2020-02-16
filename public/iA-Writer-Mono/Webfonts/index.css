@@ -1,27 +1,27 @@
 @font-face {
-	font-family: "iA Writer Mono";
-	font-style: normal;
-	font-weight: normal;
-	src: url("iAWriterMonoS-Regular.eot") format("embedded-opentype"), url("iAWriterMonoS-Regular.woff2") format("woff2"), url("iAWriterMonoS-Regular.woff") format("woff");
+  font-family: "iA Writer Mono";
+  font-style: normal;
+  font-weight: normal;
+  src: url("iAWriterMonoS-Regular.eot") format("embedded-opentype"), url("iAWriterMonoS-Regular.woff2") format("woff2"), url("iAWriterMonoS-Regular.woff") format("woff");
 }
 
 @font-face {
-	font-family: "iA Writer Mono";
-	font-style: italic;
-	font-weight: normal;
-	src: url("iAWriterMonoS-Italic.eot") format("embedded-opentype"), url("iAWriterMonoS-Italic.woff2") format("woff2"), url("iAWriterMonoS-Italic.woff") format("woff");
+  font-family: "iA Writer Mono";
+  font-style: italic;
+  font-weight: normal;
+  src: url("iAWriterMonoS-Italic.eot") format("embedded-opentype"), url("iAWriterMonoS-Italic.woff2") format("woff2"), url("iAWriterMonoS-Italic.woff") format("woff");
 }
 
 @font-face {
-	font-family: "iA Writer Mono";
-	font-style: normal;
-	font-weight: bold;
-	src: url("iAWriterMonoS-Bold.eot") format("embedded-opentype"), url("iAWriterMonoS-Bold.woff2") format("woff2"), url("iAWriterMonoS-Bold.woff") format("woff");
+  font-family: "iA Writer Mono";
+  font-style: normal;
+  font-weight: bold;
+  src: url("iAWriterMonoS-Bold.eot") format("embedded-opentype"), url("iAWriterMonoS-Bold.woff2") format("woff2"), url("iAWriterMonoS-Bold.woff") format("woff");
 }
 
 @font-face {
-	font-family: "iA Writer Mono";
-	font-style: italic;
-	font-weight: bold;
-	src: url("iAWriterMonoS-BoldItalic.eot") format("embedded-opentype"), url("iAWriterMonoS-BoldItalic.woff2") format("woff2"), url("iAWriterMonoS-BoldItalic.woff") format("woff");
+  font-family: "iA Writer Mono";
+  font-style: italic;
+  font-weight: bold;
+  src: url("iAWriterMonoS-BoldItalic.eot") format("embedded-opentype"), url("iAWriterMonoS-BoldItalic.woff2") format("woff2"), url("iAWriterMonoS-BoldItalic.woff") format("woff");
 }

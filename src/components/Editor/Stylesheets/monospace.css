@@ -1,13 +1,15 @@
 .codex-editor {
-	-webkit-font-smoothing:  auto;
+	--break-height: 16px;
+
 	-moz-osx-font-smoothing: auto;
+	-webkit-font-smoothing:  auto;
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: 1rem/1.65 "iA Writer Duo", monospace;
+	font: 16px/1.65 "iA Writer Duo var", monospace;
 }
 
 .code-block,
 .code {
-	font: 1rem/1.45 "iA Writer Mono", monospace;
+	font: 16px/1.45 "iA Writer Mono var", monospace;
 }

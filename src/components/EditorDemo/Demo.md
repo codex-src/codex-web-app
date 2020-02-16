@@ -1,89 +1,76 @@
-# Hello, Codex! 🖖
+# Hello, world!
 
-// 🚧 What you are seeing is the alpha of the _Codex editor_ 🚧
-//
-// **The following are not yet ready:**
-//
-// - Images
-// - Embeds
-// - Syntax highlighting for code blocks
-// - Links
-// - Lists (like unordered lists, ordered lists, and checklists)
+### 🚧 This is the _alpha_ of the Codex editor; images, syntax highlighting, links and lists are not yet supported but will be soon! 🚧
 
-_What is this?_ This is a WYSIWYG editor I’m building for the web, based on markdown and designed for programmers. **This document is editable.**
+> _What is this?_
 
-This editor is designed to be **simple**, **beautiful**, and work for the **modern web**, even on mobile devices.
-
-If you’re curious, the editor is open source: ❤️ https://github.com/codex-src/codex-app
+**Codex makes it easier than ever to express yourself in words and code.** The editor is based on CommonMark and works _everywhere_. **Psst…this document is editable!**
 
 ## Shortcuts
 
-There are four shortcuts you should try before reading on:
+There are currently four shortcuts:
 
-- `shift + command + 1`: Toggle the rich text stylesheet (default)
-- `shift + command + 2`: Toggle the monospace stylesheet
-- `command + \`: Toggle a faint background on markdown text (like _italics_, *bold*, etc.)
-- `command + /`: Read-only mode -- preview your note _without_ markdown
+- `shift-command-1`: Toggle the proportional type stylesheet (default)
+- `shift-command-2`: Toggle the monospace stylesheet
+- `command-\`: Toggle background on inline elements (like _italics_, **bold**, etc.)
+- `command-/`: Toggle preview mode
 
-**If you’re on Windows or Linux, use `control` instead of `command`.**
+> **Note:** If you’re on Windows or Linux, use `control` instead of `command`.
 
-In the near future, you’ll be able to directly edit the stylesheets to your liking.
+## Block elements
 
-## CommonMark: Block elements
+This editor is based on CommonMark markdown. If you’re familiar with GitHub Flavored Markdown, CommonMark is *very* similar.
 
-This editor is based on the CommonMark spec of markdown. If you’re familiar with GitHub Flavored Markdown, CommonMark is *very* similar, essentially a subset of GFM.
-
-You can create the following:
+You can create all of the following:
 
 - Headers
-- Comments
 - Blockquotes
 - Code blocks
-- Breaks
+- Section breaks
 
-To do so, use the following syntax:
+For example:
 
-# H1
-## H2
-### H3
-#### H4
-##### H5
-###### H6
+# Header
+## Subheader
+### How to Build a Beautiful Blog
+#### Learn This One Weird Trick to Debug CSS
+##### Level Up with Bulma CSS
+###### Let’s Learn Vue.js
 
-// Comment 👻
-
-> Blockquote
+> **Yoda: No! No different! Only different in your mind. You must _unlearn_ what you have learned.**
 >
-> (Blockquotes can also be multiline)
+> _Luke: All right, I'll give it a try._
+>
+> **Yoda: No! Try not. Do. Or do not. There is no try.**
 
-```Code block```
+```main.go
+package main
 
+import "fmt"
+
+func main() {
+	fmt.Println("hello, codex!")
+}
 ```
-(Code blocks can also be multiline)
-```
 
-// Even emojis are parsed! You can use 1-3 emojis to make them bigger :
+**Even emojis are parsed!** 😲
 
 🔥🔥🔥
 
-// You can make a section break using this syntax:
-***
-
-// Or this syntax:
 ---
 
-## CommonMark: Inline elements
+> **Note:** You can also use `***` for section breaks.
 
-CommonMark also supports inline elements like _italics_, **bold**, `code`. ~Strikethrough~ is also supported. You can also use the alternate syntax for *italics*, __bold__, and ~~strikethrough~~. 👌
+## Inline elements
+
+CommonMark also supports inline elements like _italics_, **bold**, `code`, and ~strikethrough~. You can also use the alternate syntax for *italics*, __bold__, and ~~strikethrough~~. 👌
 
 ## Cut, copy, and paste _as_ markdown
 
-**So long as you’re not in read-only mode,** when you copy a selection of your document, it copies _as markdown_ so you’ll never loose formatting again.
+So long as you’re not in preview mode, when you copy a selection, the selection copies _as_ markdown; this means you’ll _never_ loose formatting again!
+
+However, if you want to copy _without_ markdown syntax, toggle preview mode (`command-/` on macOS or `control-/` on Windows and Linux) and copy a selection.
 
 ## localStorage
 
-This alpha periodically saves to localStorage (once per second). That means you should be able to refresh and your document will persist.
-
----
-
-More features coming soon…stay tuned! 📺⚡️
+This note is automatically backed up to localStorage after every write — you should be able to refresh the page and your note will persist. ✨

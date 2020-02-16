@@ -1,7 +1,7 @@
 import Blockquote from "./Blockquote"
 import Break from "./Break"
 import CodeBlock from "./CodeBlock"
-import Comment from "./Comment"
+// import Comment from "./Comment"
 import Header from "./Header"
 import Paragraph from "./Paragraph"
 import React from "react"
@@ -44,14 +44,16 @@ function parseComponents(body) {
 				continue
 			}
 			break
-		// Comment:
-		case char === "/":
-			if (each.data.length >= 2 && each.data.slice(0, 2) === "//") {
-				const str = each.data.slice(2)
-				components.push(<Comment key={each.key} reactKey={each.key} start="//">{str}</Comment>)
-				continue
-			}
-			break
+
+		// // Comment:
+		// case char === "/":
+		// 	if (each.data.length >= 2 && each.data.slice(0, 2) === "//") {
+		// 		const str = each.data.slice(2)
+		// 		components.push(<Comment key={each.key} reactKey={each.key} start="//">{str}</Comment>)
+		// 		continue
+		// 	}
+		// 	break
+
 		// Blockquote:
 		case char === ">":
 			if (
@@ -79,17 +81,18 @@ function parseComponents(body) {
 			break
 		// Code block:
 		case char === "`":
-			// Single line code block:
+			// // Single line code block:
+			// if (
+			// 	each.data.length >= 6 &&
+			// 	each.data.slice(0, 3) === "```" && // Start syntax
+			// 	each.data.slice(-3) === "```"      // End syntax
+			// ) {
+			// 	const nodes = body.slice(index, index + 1).map(each => ({ ...each })) // Read proxy
+			// 	components.push(<CodeBlock key={each.key} metadata="">{nodes}</CodeBlock>)
+			// 	continue
+			// }
+
 			if (
-				each.data.length >= 6 &&
-				each.data.slice(0, 3) === "```" && // Start syntax
-				each.data.slice(-3) === "```"      // End syntax
-			) {
-				const nodes = body.slice(index, index + 1).map(each => ({ ...each })) // Read proxy
-				components.push(<CodeBlock key={each.key} metadata="">{nodes}</CodeBlock>)
-				continue
-			// Multiline code block:
-			} else if (
 				each.data.length >= 3 &&
 				each.data.slice(0, 3) === "```" &&
 				index + 1 < MAX_LENGTH
