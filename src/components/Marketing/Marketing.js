@@ -17,16 +17,16 @@ const Hero = props => (
 				</h1>
 				<div className="h-8" />
 				<Link
-					to="/demo"
 					className="py-1 block"
+					to="/demo"
 				>
 					<p className="font-medium text-2xl text-brand">
 						Try the editor alpha!
 					</p>
 				</Link>
 				{/* <Link */}
-				{/* 	to="#features" */}
 				{/* 	className="py-1 block" */}
+				{/* 	to="#features" */}
 				{/* > */}
 				{/* 	<p className="font-medium text-2xl text-brand"> */}
 				{/* 		Learn more */}
@@ -39,8 +39,8 @@ const Hero = props => (
 
 			{/* RHS: */}
 			<Link
-				// to="demo"
 				className="w-full"
+				to="demo"
 			>
 				<HeroEditor />
 			</Link>
@@ -52,7 +52,7 @@ const Hero = props => (
 function HeroEditor(props) {
 	const ref = React.useRef()
 
-	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"), { /* readOnly: true */ })
+	const [state, dispatch] = Editor.useEditor(raw("./Marketing.md"), { readOnly: true })
 
 	React.useEffect(() => {
 		ref.current.classList.add("hero-editor-enter")
