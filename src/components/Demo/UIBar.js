@@ -1,6 +1,6 @@
 import * as Feather from "react-feather"
+import Link from "utils/RouterLink"
 import React from "react"
-
 import { ReactComponent as GitHubLogo } from "./svg/github-logo.svg"
 
 // {/* <div className="my-1"> */}
@@ -56,12 +56,11 @@ const UIBar = props => (
 			<div className="ml-4 flex flex-row">
 				<UIIcon
 					icon={Feather.Info}
-					onClick={props.handleShowReadme}
+					onClick={props.handleOpenReadme}
 				/>
-				<UIIcon
-					icon={GitHubLogo}
-					// TODO: onClick={...}
-				/>
+				<Link href="https://github.com/codex-src/codex-app" target="_blank">
+					<UIIcon icon={GitHubLogo} />
+				</Link>
 			</div>
 		</div>
 	</div>

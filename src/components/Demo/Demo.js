@@ -1,4 +1,4 @@
-import * as Feather from "react-feather"
+// import * as Feather from "react-feather"
 import Editor from "components/Editor"
 import raw from "raw.macro"
 import React from "react"
@@ -10,7 +10,7 @@ const LOCAL_STORAGE_KEY = "codex-app"
 const demo = localStorage.getItem(LOCAL_STORAGE_KEY) || raw("./markdown/demo.md")
 
 function DemoEditor(props) {
-	const [state, dispatch] = Editor.useEditor(demo, { shortcuts: true, /* statusBar: true */ })
+	const [state, dispatch] = Editor.useEditor(demo, { shortcuts: true /* statusBar: true */ })
 
 	React.useEffect(
 		React.useCallback(() => {
@@ -34,11 +34,50 @@ function DemoEditor(props) {
 // {/* </div> */}
 
 function Demo(props) {
-	const [showReadme, setShowReadme] = React.useState(false)
+	// TODO: Refactor to hook
+	const [openReadme, setOpenReadme] = React.useState(false)
+
+	const didMount = React.useRef()
+	React.useEffect(() => {
+		if (!didMount.current) {
+			didMount.current = true
+			return
+		}
+		/* eslint-disable no-multi-spaces */
+		if (openReadme) {
+			const { scrollY } = window // Takes precedence
+			document.body.style.position = "fixed"
+			document.body.style.left     = 0
+			document.body.style.right    = 0
+			document.body.style.top      = `${-scrollY}px`
+		} else {
+			const { top } = document.body.style
+			document.body.style.position = ""
+			document.body.style.left     = ""
+			document.body.style.right    = ""
+			document.body.style.top      = ""
+			window.scrollTo(0, -top.slice(0, -2))
+		}
+		/* eslint-enable no-multi-spaces */
+	}, [openReadme])
+
+	React.useEffect(() => {
+		const h = e => {
+			if (e.keyCode !== 27) { // 27: Escape
+				// No-op
+				return
+			}
+			setOpenReadme(!openReadme)
+		}
+		document.addEventListener("keydown", h)
+		return () => {
+			document.removeEventListener("keydown", h)
+		}
+	}, [openReadme])
 
 	return (
 		<div>
-			{showReadme && (
+			{openReadme && (
 				<React.Fragment>
 					<div
 						className="p-6 fixed inset-0 z-40 flex flex-row justify-center items-center pointer-events-none"
@@ -51,7 +90,7 @@ function Demo(props) {
 					<div
 						className="fixed inset-0 z-30"
 						style={{ background: "hsla(0, 0%, 0%, 0.1)" }}
-						onClick={() => setShowReadme(false)}
+						onClick={e => setOpenReadme(false)}
 					/>
 				</React.Fragment>
 			)}
@@ -60,7 +99,7 @@ function Demo(props) {
 					<DemoEditor />
 				</div>
 			</div>
-			<UIBar handleShowReadme={() => setShowReadme(true)} />
+			<UIBar handleOpenReadme={e => setOpenReadme(true)} />
 		</div>
 	)
 }
