@@ -1,21 +1,24 @@
+import * as Feather from "react-feather"
 import getStatus from "./getStatus"
 import getStatusStrings from "./getStatusStrings"
 import React from "react"
 
 const StatusBarsView = props => (
-	<div className="px-4 py-3 fixed inset-x-0 bottom-0 flex justify-between items-center">
-		{/* LHS: */}
-		<div className="px-4 py-2 bg-md-gray-100 rounded-full">
-			<p className="tnum font-500 text-xs text-gray-800">
-				{props.lhs}
-			</p>
-		</div>
-		{/* RHS: */}
-		<div className="px-4 py-2 bg-md-gray-100 rounded-full">
-			<p className="tnum font-500 text-xs text-gray-800">
-				{props.rhs}
-			</p>
-		</div>
+	<div className="px-6 fixed inset-x-0 bottom-0 flex flex-row justify-between bg-gray-200">
+		<p className="py-1 flex flex-row items-center tnum font-500 text-xs text-gray-800" style={{ fontSize: 11 }}>
+			<Feather.Scissors
+				className="p-px stroke-600 w-3 h-3"
+			/>
+			<div className="w-1" />
+			{props.lhs}
+		</p>
+		<p className="py-1 flex flex-row items-center tnum font-500 text-xs text-gray-800" style={{ fontSize: 11 }}>
+			{props.lhs}
+			<div className="w-1" />
+			<Feather.Search
+				className="p-px stroke-600 w-3 h-3"
+			/>
+		</p>
 	</div>
 )
 
