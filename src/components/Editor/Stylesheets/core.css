@@ -33,24 +33,11 @@
 	font-size: 1.05em;
 }
 
-/* .comment { */
-/* 	--blue-a400: var(--gray); */
-/* 	color: hsl(var(--gray)); */
-/* } */
-
 .blockquote {
-	/* margin: 0px -4px; */
-	/* padding: 16px 24px; */
 	color: hsl(var(--blue-a200));
-	/* background: hsla(var(--blue-400), 0.05); */
-	/* border-radius: 4px; */
 }
-/* .blockquote > [data-empty-node] { */
-/* 	line-height: 1; */
-/* } */
 
 .code-block {
-	/* margin: 0px calc(-1 * var(--padding-x)); */
 	padding: 0px var(--padding-x);
 	background: hsl(var(--gray-50));
 	border-radius: var(--border-radius);
@@ -84,7 +71,7 @@
 }
 
 .code {
-	padding: 1px 0px;
+	padding: calc(1 / 16 * 1em);
 	box-decoration-break: clone;
 	color: hsl(var(--blue-a400));
 	border-radius: var(--border-radius);

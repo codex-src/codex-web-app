@@ -11,5 +11,5 @@
 
 .code-block,
 .code {
-	font: 16px/1.45 "iA Writer Mono var", monospace;
+	font: calc(16 / 19 * 1em)/1.45 "iA Writer Mono var", monospace;
 }

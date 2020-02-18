@@ -70,7 +70,7 @@ function HeroEditor(props) {
 			<div className="absolute inset-0">
 				{/* Two shadows: */}
 				<div className="h-full rounded-xl shadow-xs">
-					<div className="px-6 py-6 h-full bg-white rounded-xl shadow-xl overflow-y-scroll scrolling-touch">
+					<div className="p-6 h-full bg-white rounded-xl shadow-xl overflow-y-scroll scrolling-touch">
 						<Editor.Editor
 							state={state}
 							dispatch={dispatch}
