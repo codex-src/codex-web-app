@@ -1,7 +1,11 @@
-## The Codex editor makes it easier than ever to express yourself in words _and_ `code` 🎉
+# Codex is a new markdown editor for devs 👩‍💻👨‍💻
 
-_Codex_ is a new editor for the web, based on CommonMark. _Format_ your notes using **special characters**. And when you paste in and out of the Codex editor, you never loose formatting.
+_**Note:** that this the alpha of the Codex editor — some features are not yet implemented such as links, lists, and images._
 
-**Your edits are saved to localStorage.** Refresh the page or reopen the browser and your note should persist. Don’t forget you can copy your note if you need to.
+Codex is based on CommonMark so you can format your notes using special syntax characters called _markdown_.
 
-_Last updated February 18th, 2019_
+You can format _italic_, **bold**, `code`, and ~strikethrough~. We also support the alternate syntax for *italic*, __bold__, and ~~strikethrough~~.
+
+As you type, **your note is automatically saved to localStorage,** so you can refresh the page or reopen the page and your note persists. 🎉
+
+_Last updated February 18, 2019_
