@@ -4,17 +4,17 @@ import getStatusStrings from "./getStatusStrings"
 import React from "react"
 
 const StatusBarView = props => (
-	<div className="px-6 fixed inset-x-0 bottom-0 flex flex-row justify-between bg-gray-200">
+	<div className="px-6 fixed inset-x-0 bottom-0 flex flex-row justify-between bg-gray-100">
 		<p className="py-1 flex flex-row items-center tnum font-500 text-xs text-gray-800" style={{ fontSize: 11 }}>
 			<Feather.Scissors
 				className="p-px stroke-600 w-3 h-3"
 			/>
-			<div className="w-1" />
+			<div className="w-2" />
 			{props.lhs}
 		</p>
 		<p className="py-1 flex flex-row items-center tnum font-500 text-xs text-gray-800" style={{ fontSize: 11 }}>
 			{props.lhs}
-			<div className="w-1" />
+			<div className="w-2" />
 			<Feather.Search
 				className="p-px stroke-600 w-3 h-3"
 			/>
