@@ -28,7 +28,7 @@ const initialState = {
 		renderWhiteSpace: false,
 		scrollPastEnd:    false,
 		shortcuts:        false,
-		statusBars:       false,
+		statusBar:        false,
 		tagName:          "",
 		wordWrap:         false,
 	},

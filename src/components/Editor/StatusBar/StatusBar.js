@@ -3,7 +3,7 @@ import getStatus from "./getStatus"
 import getStatusStrings from "./getStatusStrings"
 import React from "react"
 
-const StatusBarsView = props => (
+const StatusBarView = props => (
 	<div className="px-6 fixed inset-x-0 bottom-0 flex flex-row justify-between bg-gray-200">
 		<p className="py-1 flex flex-row items-center tnum font-500 text-xs text-gray-800" style={{ fontSize: 11 }}>
 			<Feather.Scissors
@@ -22,10 +22,10 @@ const StatusBarsView = props => (
 	</div>
 )
 
-function StatusBars({ state, ...props }) {
+function StatusBar({ state, ...props }) {
 	const status = getStatus(state)
 	const [lhs, rhs] = getStatusStrings(status)
-	return <StatusBarsView lhs={lhs} rhs={rhs} />
+	return <StatusBarView lhs={lhs} rhs={rhs} />
 }
 
-export default StatusBars
+export default StatusBar

@@ -8,7 +8,7 @@ import platform from "utils/platform"
 import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
-import StatusBars from "./StatusBars"
+import StatusBar from "./StatusBar"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 
@@ -424,7 +424,7 @@ function Editor({ state, dispatch, ...props }) {
 				},
 			)}
 			<Stylesheets state={state} />
-			{!state.prefers.previewMode && state.prefers.statusBars && <StatusBars state={state} />}
+			{!state.prefers.previewMode && state.prefers.statusBar && <StatusBar state={state} />}
 			{/* <Debugger state={state} /> */}
 		</React.Fragment>
 	)
