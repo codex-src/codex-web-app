@@ -8,7 +8,10 @@ import { ReactComponent as GitHubLogo } from "./svg/github-logo.svg"
 // {/* </div> */}
 
 const UIIcon = ({ icon: Icon, ...props }) => (
-	<div className="flex flex-row justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full cursor-pointer">
+	<div
+		className="flex flex-row justify-center items-center w-10 h-10 hover:bg-gray-200 rounded-full cursor-pointer"
+		onClick={props.onClick}
+	>
 		<Icon className="stroke-500 w-5 h-5 text-gray-800" />
 	</div>
 )
@@ -53,7 +56,7 @@ const UIBar = props => (
 			<div className="ml-4 flex flex-row">
 				<UIIcon
 					icon={Feather.Info}
-					// TODO: onClick={...}
+					onClick={props.handleShowReadme}
 				/>
 				<UIIcon
 					icon={GitHubLogo}

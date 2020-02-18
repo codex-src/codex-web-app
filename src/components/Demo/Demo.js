@@ -19,36 +19,50 @@ function DemoEditor(props) {
 		[state.historyIndex],
 	)
 
-	// FIXME: Shortcuts
+	// FIXME: Remove shortcuts
 	return <Editor.Editor state={state} dispatch={dispatch} />
 }
 
 // const CloseButton = props => (
-// 	<div className="p-12 fixed right-0 top-0 pointer-events-none">
-// 		<div className="flex flex-row justify-center items-center w-10 h-10 text-gray-800 bg-white hover:bg-gray-100 rounded-full !shadow-xs cursor-pointer transition duration-200 ease-in-out pointer-events-auto">
-// 			<Feather.ArrowRight className="stroke-500 w-5 h-5" />
-// 		</div>
+// 	<div className="flex flex-row justify-center items-center w-10 h-10 bg-white hover:bg-gray-100 rounded-full cursor-pointer transition duration-200 ease-in-out">
+// 		<Feather.X className="stroke-500 w-5 h-5 text-gray-800" />
 // 	</div>
 // )
 
-const Demo = props => (
-	<React.Fragment>
-		{/* <div */}
-		{/* 	className="p-6 fixed inset-0 z-40 flex flex-row justify-center items-center pointer-events-none" */}
-		{/* 	style={{ transform: "scale(0.95)" }} */}
-		{/* > */}
-		{/* 	<div className="p-6 max-w-2xl max-h-full bg-white rounded-md shadow-md overflow-y-scroll scrolling-touch pointer-events-auto"> */}
-		{/* 		<ReadmeEditor /> */}
-		{/* 	</div> */}
-		{/* </div> */}
-		{/* <div className="fixed inset-0 z-30" style={{ background: "hsla(0, 0%, 0%, 0.1)" }} /> */}
-		<div className="md:py-24 flex justify-center !bg-md-gray-50">
-			<div className="p-6 max-w-3xl bg-white">
-				<DemoEditor />
+// {/* <div className="p-4 absolute top-0 right-0"> */}
+// {/* 	<CloseButton /> */}
+// {/* </div> */}
+
+function Demo(props) {
+	const [showReadme, setShowReadme] = React.useState(false)
+
+	return (
+		<div>
+			{showReadme && (
+				<React.Fragment>
+					<div
+						className="p-6 fixed inset-0 z-40 flex flex-row justify-center items-center pointer-events-none"
+						style={{ transform: "scale(0.95)" }}
+					>
+						<div className="relative p-6 max-w-2xl max-h-full bg-white rounded-md shadow-md overflow-y-scroll scrolling-touch pointer-events-auto">
+							<ReadmeEditor />
+						</div>
+					</div>
+					<div
+						className="fixed inset-0 z-30"
+						style={{ background: "hsla(0, 0%, 0%, 0.1)" }}
+						onClick={() => setShowReadme(false)}
+					/>
+				</React.Fragment>
+			)}
+			<div className="md:py-24 flex justify-center !bg-md-gray-50">
+				<div className="p-6 max-w-3xl bg-white">
+					<DemoEditor />
+				</div>
 			</div>
+			<UIBar handleShowReadme={() => setShowReadme(true)} />
 		</div>
-		<UIBar />
-	</React.Fragment>
-)
+	)
+}
 
 export default Demo
