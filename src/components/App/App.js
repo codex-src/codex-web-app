@@ -4,7 +4,7 @@
 // import Nav from "components/Nav"
 // import stylex from "stylex"
 import * as Router from "react-router-dom"
-import EditorDemo from "components/EditorDemo"
+import Demo from "components/Demo"
 import fetchGraphQL from "./fetchGraphQL"
 import GraphQL from "use-graphql"
 import Marketing from "components/Marketing"
@@ -51,7 +51,7 @@ const App = props => (
 						path="/demo"
 						exact
 						title="Demo"
-						children={<EditorDemo />}
+						children={<Demo />}
 					/>
 
 					{/* Unprotected routes: */}
