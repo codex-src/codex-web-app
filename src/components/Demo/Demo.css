@@ -1,15 +1,13 @@
 .readme-editor-enter {
 	will-change: transform;
-	/* opacity: 0; */
-	transform: scale(0.9) translateX(0%) translateY(1.5rem);
-	transform-origin: top right;
+	transform: scale(0.9) translateX(0%);
+	transform-origin: top left;
 	transition: 500ms ease;
 }
 
 .readme-editor-active {
 	will-change: transform;
-	/* opacity: 1; */
-	transform: scale(0.9) translateX(calc(-110% - 1.5rem)) translateY(1.5rem);
-	transform-origin: top right;
+	transform: scale(0.9) translateX(calc(-100% - 3rem));
+	transform-origin: top left;
 	transition: 500ms ease;
 }
