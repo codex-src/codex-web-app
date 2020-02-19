@@ -10,15 +10,12 @@ const ProportionalType = props => <style>{raw("./proportional-type.css")}</style
 const Stylesheets = ({ state, ...props }) => (
 	<React.Fragment>
 		<Core />
-		{/* Stylesheet: */}
 		{!state.prefers.monospace ? (
 			<ProportionalType />
 		) : (
 			<Monospace />
 		)}
-		{/* Inline background: */}
 		{!state.prefers.previewMode && state.prefers.inlineBackground && <InlineBackground />}
-		{/* Preview mode: */}
 		{state.prefers.previewMode && <PreviewMode />}
 	</React.Fragment>
 )

@@ -182,26 +182,22 @@ function Editor({ state, dispatch, ...props }) {
 			const onKeyDown = e => {
 				switch (true) {
 				// Proportional type:
-				// case platform.detectKeyCode(e, 49):
-				case platform.detectKeyCode(e, 49, { shiftKey: true }): // 49: 1
+				case platform.detectKeyCode(e, 49, { shiftKey: true }):
 					e.preventDefault()
 					dispatch.toggleMonospace(false)
 					return
 				// Monospace:
-				// case platform.detectKeyCode(e, 50):
-				case platform.detectKeyCode(e, 50, { shiftKey: true }): // 50: 2
+				case platform.detectKeyCode(e, 50, { shiftKey: true }):
 					e.preventDefault()
 					dispatch.toggleMonospace(true)
 					return
 				// Inline background:
-				// case platform.detectKeyCode(e, 80, { shiftKey: true }):
-				case platform.detectKeyCode(e, 220): // 220: \
+				case platform.detectKeyCode(e, 80, { shiftKey: true }):
 					e.preventDefault()
 					dispatch.toggleInlineBackground()
 					return
 				// Preview mode:
-				// case platform.detectKeyCode(e, 80, { shiftKey: false }):
-				case platform.detectKeyCode(e, 191): // 191: /
+				case platform.detectKeyCode(e, 80, { shiftKey: false }):
 					e.preventDefault()
 					dispatch.togglePreviewMode()
 					return

@@ -70,16 +70,18 @@ function newPos() {
 const reducer = state => ({
 	// Preferences:
 	toggleInlineBackground() {
-		if (state.prefers.previewMode) {
-			// No-op
+		if (state.prefers.previewMode && state.prefers.inlineBackground) {
+			state.prefers.previewMode = false // Reset
 			return
 		}
+		state.prefers.previewMode = false // Reset
 		state.prefers.inlineBackground = !state.prefers.inlineBackground
 	},
 	toggleMonospace(on) {
 		state.prefers.monospace = on
 	},
 	togglePreviewMode() {
+		// state.prefers.inlineBackground = false // Reset
 		state.prefers.previewMode = !state.prefers.previewMode
 	},
 	// Reducer:

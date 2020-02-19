@@ -401,8 +401,8 @@ module.exports = {
 				"9/12":   "75%",
 				"10/12":  "83.333333%",
 				"11/12":  "91.666667%",
-				// "full":   "100%",
-				// "screen": "100vw",
+				"full":   "100%",
+				"screen": "100vw",
 			},
 			strokeWidth: {
 				400: "2",
@@ -412,6 +412,10 @@ module.exports = {
 			},
 		},
 	},
-	variants: {},
+	// https://tailwindcss.com/docs/pseudo-class-variants/#active
+	variants: {
+		backgroundColor: ["responsive", "hover", "focus", "active"],
+		textColor:       ["responsive", "hover", "focus", "active"],
+	},
 	plugins: [],
 }

@@ -68,14 +68,11 @@ function HeroEditor(props) {
 	return (
 		<div ref={ref} className="pb-4/5 relative">
 			<div className="absolute inset-0">
-				{/* Two shadows: */}
-				<div className="h-full rounded-xl shadow-xs">
-					<div className="p-6 h-full bg-white rounded-xl shadow-xl overflow-y-scroll scrolling-touch">
-						<Editor.Editor
-							state={state}
-							dispatch={dispatch}
-						/>
-					</div>
+				<div className="p-6 h-full bg-white rounded-xl shadow-hero-xl overflow-y-scroll scrolling-touch">
+					<Editor.Editor
+						state={state}
+						dispatch={dispatch}
+					/>
 				</div>
 			</div>
 		</div>
@@ -83,10 +80,10 @@ function HeroEditor(props) {
 }
 
 const Marketing = props => (
-	<React.Fragment>
+	<div>
 		<Nav2 background="bg-gray-50" />
 		<Hero />
-	</React.Fragment>
+	</div>
 )
 
 export default Marketing

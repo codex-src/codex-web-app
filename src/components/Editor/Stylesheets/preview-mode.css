@@ -1,6 +1,6 @@
 .blockquote {
-	padding-left: 28px;
-	box-shadow: inset 2px 0px hsl(var(--blue-a400));
+	padding-left: 32px;
+	border-left: 2px solid hsl(var(--blue-a400));
 }
 
 .break {

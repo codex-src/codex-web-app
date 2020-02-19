@@ -36,6 +36,10 @@
 .blockquote {
 	color: hsl(var(--blue-a200));
 }
+.blockquote > [data-node] > .markdown {
+	margin-right: 0.5ch;
+	color: hsla(var(--blue-a200), 0.5);
+}
 
 .code-block {
 	padding: 0px var(--padding-x);
