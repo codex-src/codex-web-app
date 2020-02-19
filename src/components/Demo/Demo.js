@@ -10,7 +10,7 @@ const LOCAL_STORAGE_KEY = "codex-app"
 const demo = localStorage.getItem(LOCAL_STORAGE_KEY) || raw("./markdown/demo.md")
 
 function DemoEditor(props) {
-	const [state, dispatch] = Editor.useEditor(demo, { shortcuts: true /* statusBar: true */ })
+	const [state, dispatch] = Editor.useEditor(demo, { shortcuts: true, /* statusBar: true */ })
 
 	React.useEffect(
 		React.useCallback(() => {

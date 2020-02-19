@@ -1,0 +1,24 @@
+.tooltip-l {
+	position: absolute;
+	top: 50%;
+	right: 100%;
+	transform: translateY(-50%);
+}
+.tooltip-r {
+	position: absolute;
+	top: 50%;
+	left: 100%;
+	transform: translateY(-50%);
+}
+.tooltip-t {
+	position: absolute;
+	left: 50%;
+	bottom: 100%;
+	transform: translateX(-50%);
+}
+.tooltip-b {
+	position: absolute;
+	left: 50%;
+	top: 100%;
+	transform: translateX(-50%);
+}

@@ -32,27 +32,55 @@ module.exports = {
 				  0 25px 50px -12px rgba(0, 0, 0, 0.25),
 					0 0 0 1px rgba(0, 0, 0, 0.05)
 				`,
-
-				// "hero": `
-				// 		0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04),
-				// 		0 0 0 1px rgba(0, 0, 0, 0.05)
-				// 	`,
 			},
 			colors: {
 				"gray-50": {
 					default: "#fbfdfe",
 				},
-				"gray":   { ...defaultTheme.colors.gray, default: "#a0aec0" },
-				"red":    { ...defaultTheme.colors.red, default: "#f56565" },
-				"orange": { ...defaultTheme.colors.orange, default: "#ed8936" },
-				"yellow": { ...defaultTheme.colors.yellow, default: "#ecc94b" },
-				"green":  { ...defaultTheme.colors.green, default: "#48bb78" },
-				"teal":   { ...defaultTheme.colors.teal, default: "#38b2ac" },
-				"blue":   { ...defaultTheme.colors.blue, default: "#4299e1" },
-				"indigo": { ...defaultTheme.colors.indigo, default: "#667eea" },
-				"purple": { ...defaultTheme.colors.purple, default: "#9f7aea" },
-				"pink":   { ...defaultTheme.colors.pink, default: "#ed64a6" },
-				"brand":  { ...defaultTheme.colors.brand, default: "#4489ff" },
+				"gray":   {
+					...defaultTheme.colors.gray,
+					default: "#a0aec0",
+				},
+				"red":    {
+					...defaultTheme.colors.red,
+					default: "#f56565",
+				},
+				"orange": {
+					...defaultTheme.colors.orange,
+					default: "#ed8936",
+				},
+				"yellow": {
+					...defaultTheme.colors.yellow,
+					default: "#ecc94b",
+				},
+				"green":  {
+					...defaultTheme.colors.green,
+					default: "#48bb78",
+				},
+				"teal":   {
+					...defaultTheme.colors.teal,
+					default: "#38b2ac",
+				},
+				"blue":   {
+					...defaultTheme.colors.blue,
+					default: "#4299e1",
+				},
+				"indigo": {
+					...defaultTheme.colors.indigo,
+					default: "#667eea",
+				},
+				"purple": {
+					...defaultTheme.colors.purple,
+					default: "#9f7aea",
+				},
+				"pink":   {
+					...defaultTheme.colors.pink,
+					default: "#ed64a6",
+				},
+				"brand":  {
+					...defaultTheme.colors.brand,
+					default: "#4489ff",
+				},
 				// https://material.io/design/color/the-color-system.html#tools-for-picking-colors
 				"md-red-50":           { default: "#ffebee" },
 				"md-red-100":          { default: "#ffcdd2" },
@@ -322,6 +350,10 @@ module.exports = {
 				800: "800",
 				900: "900",
 			},
+			inset: {
+				"1/2":  "50%",
+				"full": "100%",
+			},
 			lineHeight: {
 				1.0: "1.0",
 				1.1: "1.1",
@@ -335,6 +367,12 @@ module.exports = {
 				1.9: "1.9",
 				2.0: "2.0",
 			},
+	    opacity: {
+				80: "0.80",
+				85: "0.85",
+				90: "0.90",
+				95: "0.95",
+	    },
 			// https://youtube.com/watch?v=jl_tdhBxc_Y
 			spacing: {
 				"9/16":   "56.25%",
@@ -365,8 +403,8 @@ module.exports = {
 				"9/12":   "75%",
 				"10/12":  "83.333333%",
 				"11/12":  "91.666667%",
-				"full":   "100%",
-				"screen": "100vw",
+				// "full":   "100%",
+				// "screen": "100vw",
 			},
 			strokeWidth: {
 				400: "2",
