@@ -2,34 +2,17 @@
 	padding-left: 28px;
 	box-shadow: inset 2px 0px hsl(var(--blue-a400));
 }
-.blockquote > [data-empty-node] {
-	line-height: 1;
-}
-/*  */
-/* .code-block > [data-start-node], */
-/* .code-block > [data-end-node] { */
-/* 	display: none; */
-/* } */
 
 .break {
-  height: var(--break-height);
-  background: linear-gradient(
-    transparent          calc(var(--break-height) / 2 - 2px),
-    hsl(var(--gray-200)) calc(var(--break-height) / 2 - 2px),
-    hsl(var(--gray-200)) calc(var(--break-height) / 2 + 2px),
-    transparent          calc(var(--break-height) / 2 + 2px)
-  );
+	height: var(--break-height);
+	background: linear-gradient(
+		transparent          calc(var(--break-height) / 2 - 2px),
+		hsl(var(--gray-200)) calc(var(--break-height) / 2 - 2px),
+		hsl(var(--gray-200)) calc(var(--break-height) / 2 + 2px),
+		transparent          calc(var(--break-height) / 2 + 2px)
+	);
 }
 
 .markdown {
 	display: none;
 }
-
-/* .comment, */
-/* .markdown { */
-/* 	display: none; */
-/* } */
-/*  */
-/* .comment + .paragraph[data-empty-node] { */
-/* 	display: none; */
-/* } */

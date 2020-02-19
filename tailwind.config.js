@@ -367,12 +367,10 @@ module.exports = {
 				1.9: "1.9",
 				2.0: "2.0",
 			},
-	    opacity: {
-				80: "0.80",
-				85: "0.85",
+			opacity: {
+				10: "0.10",
 				90: "0.90",
-				95: "0.95",
-	    },
+			},
 			// https://youtube.com/watch?v=jl_tdhBxc_Y
 			spacing: {
 				"9/16":   "56.25%",
