@@ -86,23 +86,42 @@ const demo = localStorage.getItem(LOCAL_STORAGE_KEY) || raw("./markdown/demo.md"
 
 function WithReadme({ readme, setReadme, ...props }) {
 	const ref = React.useRef()
+	const didPointerEnter = React.useRef()
 
 	React.useEffect(() => {
 		if (!readme) {
 			// Off:
 			ref.current.classList.remove("readme-editor-active")
+			// didPointerEnter.current = false // Reset
 		} else {
 			// On:
 			ref.current.classList.add("readme-editor-active")
 		}
 	}, [readme])
 
+	const handlePointerEnter = e => {
+		if (readme) {
+			// No-op
+			return
+		}
+		setReadme(true)
+		didPointerEnter.current = true
+	}
+	const handlePointerLeave = e => {
+		if (!didPointerEnter.current) {
+			// No-op
+			return
+		}
+		setReadme(false)
+		didPointerEnter.current = false // Reset
+	}
+
 	return (
 		<div>
 			<div
 				className="fixed right-0 inset-y-0 w-12"
-				onPointerEnter={e => setReadme(true)}
-				onPointerLeave={e => setReadme(false)}
+				onPointerEnter={handlePointerEnter}
+				onPointerLeave={handlePointerLeave}
 			>
 				<div className="absolute left-full inset-y-0">
 					{/* Readme: */}
