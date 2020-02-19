@@ -18,7 +18,7 @@ function WithTooltip(props) {
 
 	return (
 		<div
-			className="relative"
+			className="relative" // Needed for tooltip-x
 			onPointerEnter={e => setShow(1)}
 			onPointerLeave={e => setShow(0)}
 		>
@@ -70,8 +70,8 @@ const Toolbar = ({ editor, state, dispatch, ...props }) => (
 				/>
 			</div>
 			{/* Cut, copy, and paste: */}
-			<div className="m-4" />
-			<div className="flex flex-row">
+			<div className="m-4 hidden md:block" />
+			<div className="hidden md:flex md:flex-row">
 				<Button
 					tooltip="Cut selection (⌘X)"
 					svg={Feather.Scissors}

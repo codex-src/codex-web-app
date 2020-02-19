@@ -1,11 +1,15 @@
 .readme-editor-enter {
 	will-change: transform;
-	transform: scale(0.9) translateX(110%);
+	/* opacity: 0; */
+	transform: scale(0.9) translateX(0%) translateY(1.5rem);
+	transform-origin: top right;
 	transition: 500ms ease;
 }
 
 .readme-editor-active {
 	will-change: transform;
-	transform: scale(0.9) translateX(0%);
+	/* opacity: 1; */
+	transform: scale(0.9) translateX(calc(-110% - 1.5rem)) translateY(1.5rem);
+	transform-origin: top right;
 	transition: 500ms ease;
 }

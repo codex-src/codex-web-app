@@ -1,5 +1,6 @@
-import Editor from "components/Editor"
 // import EditorDemo from "./EditorDemo"
+import * as Feather from "react-feather"
+import Editor from "components/Editor"
 import EditorReadme from "./EditorReadme"
 import raw from "raw.macro"
 import React from "react"
@@ -13,37 +14,130 @@ const LOCAL_STORAGE_KEY = "codex-app"
 
 const demo = localStorage.getItem(LOCAL_STORAGE_KEY) || raw("./markdown/demo.md")
 
-function WithReadme({ open, ...props }) {
+// function WithReadme({ readme, setReadme, ...props }) {
+// 	const ref = React.useRef()
+//
+// 	React.useEffect(() => {
+// 		if (!readme) {
+// 			// Off:
+// 			ref.current.classList.remove("readme-editor-active")
+// 		} else {
+// 			// On:
+// 			ref.current.classList.add("readme-editor-active")
+// 		}
+// 	}, [readme])
+//
+// 	return (
+// 		<div>
+// 			<div className="fixed right-0 inset-y-0 z-30">
+// 				<div className="transform scale-90">
+// 					<div ref={ref} className="readme-editor-enter p-6 w-full max-w-md max-h-full bg-white rounded-xl shadow-hero-xl z-30 overflow-y-scroll scrolling-touch">
+// 						<div className="p-6 absolute right-0 top-0">
+// 							<div className="p-2 text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 rounded-full cursor-pointer" onClick={e => setReadme(false)}>
+// 								<Feather.X className="p-px w-5 h-5 stroke-500" />
+// 							</div>
+// 						</div>
+// 						<EditorReadme />
+// 					</div>
+// 				</div>
+// 			</div>
+// 			{props.children}
+// 		</div>
+// 	)
+// }
+
+// function WithReadme({ readme, setReadme, ...props }) {
+// 	const ref = React.useRef()
+//
+// 	React.useEffect(() => {
+// 		if (!readme) {
+// 			// Off:
+// 			ref.current.classList.remove("readme-editor-active")
+// 		} else {
+// 			// On:
+// 			ref.current.classList.add("readme-editor-active")
+// 		}
+// 	}, [readme])
+//
+// 	return (
+// 		<div>
+// 			<div
+// 				className="fixed right-0 inset-y-0 w-8 bg-black"
+// 				onPointerEnter={e => setReadme(true)}
+// 				onPointerLeave={e => setReadme(false)}
+// 			>
+// 				<div className="mr-8 absolute right-full inset-y-0 flex flex-row justify-end items-start pointer-events-none" style={{ width: "calc(100vw - 100%)" }}>
+// 					{/* Readme: */}
+// 					<div ref={ref} className="readme-editor-enter p-6 w-full max-w-md max-h-full bg-white rounded-xl shadow-hero-xl z-30 overflow-y-scroll scrolling-touch">
+// 						{/* X: */}
+// 						<div className="p-6 absolute right-0 top-0">
+// 							<div className="p-2 text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 rounded-full cursor-pointer" onClick={e => setReadme(false)}>
+// 								<Feather.X className="p-px w-5 h-5 stroke-500" />
+// 							</div>
+// 						</div>
+// 						<EditorReadme />
+// 					</div>
+// 				</div>
+// 			</div>
+// 			{props.children}
+// 		</div>
+// 	)
+// }
+
+function WithReadme({ readme, setReadme, ...props }) {
 	const ref = React.useRef()
 
-	const didMount = React.useRef()
 	React.useEffect(() => {
-		// if (!didMount.current) {
-		// 	didMount.current = true
-		// 	return
-		// }
-		if (!open) {
-			setTimeout(() => {
-				ref.current.classList.remove("readme-editor-active")
-			}, 25)
+		if (!readme) {
+			// Off:
+			ref.current.classList.remove("readme-editor-active")
 		} else {
-			setTimeout(() => {
-				ref.current.classList.add("readme-editor-active")
-			}, 25)
+			// On:
+			ref.current.classList.add("readme-editor-active")
 		}
-	}, [open])
+	}, [readme])
 
 	return (
 		<div>
-			<div className="fixed right-0 inset-y-0 z-30 pointer-events-none">
-				<div ref={ref} className="readme-editor-enter p-6 w-full max-w-md max-h-full bg-white rounded-xl shadow-hero-xl z-30 overflow-y-scroll scrolling-touch pointer-events-auto">
-					<EditorReadme />
+			<div
+				className="fixed right-0 inset-y-0 w-12"
+				onPointerEnter={e => setReadme(true)}
+				onPointerLeave={e => setReadme(false)}
+			>
+				<div className="absolute left-full inset-y-0">
+					{/* Readme: */}
+					<div
+						ref={ref}
+						className="readme-editor-enter p-6 max-h-full bg-white rounded-xl shadow-hero-xl z-30 overflow-y-scroll scrolling-touch"
+						style={{ width: "28rem" }}
+					>
+						{/* X: */}
+						<div className="p-6 absolute right-0 top-0">
+							<div className="p-2 text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 rounded-full cursor-pointer" onClick={e => setReadme(false)}>
+								<Feather.X className="p-px w-5 h-5 stroke-500" />
+							</div>
+						</div>
+						<EditorReadme />
+					</div>
 				</div>
 			</div>
 			{props.children}
 		</div>
 	)
 }
+
+// <div className="absolute right-full inset-y-0 flex flex-row justify-end items-start pointer-events-none" style={{ width: "calc(100vw - 100%)" }}>
+// 	{/* Readme: */}
+// 	<div ref={ref} className="readme-editor-enter p-6 w-full max-w-md max-h-full bg-white rounded-xl shadow-hero-xl z-30 overflow-y-scroll scrolling-touch">
+// 		{/* X: */}
+// 		<div className="p-6 absolute right-0 top-0">
+// 			<div className="p-2 text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 rounded-full cursor-pointer" onClick={e => setReadme(false)}>
+// 				<Feather.X className="p-px w-5 h-5 stroke-500" />
+// 			</div>
+// 		</div>
+// 		<EditorReadme />
+// 	</div>
+// </div>
 
 function Demo(props) {
 	const editor = Editor.useEditor(demo, { shortcuts: true /* statusBar: true */ })
@@ -61,9 +155,9 @@ function Demo(props) {
 	})
 
 	return (
-		<WithReadme open={toolbar[0].readme}>
+		<WithReadme readme={toolbar[0].readme} setReadme={on => toolbar[1].setProperty("readme", on)}>
 			<div className="py-12 md:py-24 flex flex-row justify-center">
-				<div className="p-6 max-w-4xl bg-white">
+				<div className="w-full max-w-4xl p-6 bg-white">
 					<Editor.Editor state={editor[0]} dispatch={editor[1]} />
 				</div>
 			</div>
