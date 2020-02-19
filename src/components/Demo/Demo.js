@@ -75,12 +75,9 @@ function WithReadme({ readme, setReadme, ...props }) {
 function Demo(props) {
 	const editor = Editor.useEditor(demo, { shortcuts: true /* statusBar: true */ })
 
-	// React.useEffect(
-	// 	React.useCallback(() => {
-	// 		localStorage.setItem(LOCAL_STORAGE_KEY, editor[0].data)
-	// 	}, [editor[0]]),
-	// 	[editor[0].data],
-	// )
+	React.useEffect(() => {
+		localStorage.setItem(LOCAL_STORAGE_KEY, editor[0].data)
+	}, [editor[0].data])
 
 	const toolbar = useToolbar()
 	useEscape(toolbar[0].readme, on => {
