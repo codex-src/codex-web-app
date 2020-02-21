@@ -1,4 +1,5 @@
-import Debugger from "./Debugger" // eslint-disable-line
+import EditorDebugger from "./EditorDebugger" // eslint-disable-line
+import EnumStylesheets from "./EnumStylesheets"
 import getCoords from "./helpers/getCoords"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
@@ -172,47 +173,47 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
-	// // Shortcuts:
-	// React.useEffect(
-	// 	React.useCallback(() => {
-	// 		if (!state.prefers.shortcuts) {
-	// 			// No-op
-	// 			return
-	// 		}
-	// 		const onKeyDown = e => {
-	// 			switch (true) {
-	// 			// Proportional type:
-	// 			case platform.detectKeyCode(e, 49, { shiftKey: true }):
-	// 				e.preventDefault()
-	// 				dispatch.toggleMonospace(false)
-	// 				return
-	// 			// Monospace:
-	// 			case platform.detectKeyCode(e, 50, { shiftKey: true }):
-	// 				e.preventDefault()
-	// 				dispatch.toggleMonospace(true)
-	// 				return
-	// 			// Inline background:
-	// 			case platform.detectKeyCode(e, 80, { shiftKey: true }):
-	// 				e.preventDefault()
-	// 				dispatch.toggleInlineBackground()
-	// 				return
-	// 			// Preview mode:
-	// 			case platform.detectKeyCode(e, 80, { shiftKey: false }):
-	// 				e.preventDefault()
-	// 				dispatch.togglePreviewMode()
-	// 				return
-	// 			default:
-	// 				// No-op
-	// 				break
-	// 			}
-	// 		}
-	// 		document.addEventListener("keydown", onKeyDown)
-	// 		return () => {
-	// 			document.removeEventListener("keydown", onKeyDown)
-	// 		}
-	// 	}, [state, dispatch]),
-	// 	[state.prefers.shortcuts],
-	// )
+	// Shortcuts:
+	React.useEffect(
+		React.useCallback(() => {
+			if (!state.prefs.shortcuts) {
+				// No-op
+				return
+			}
+			const onKeyDown = e => {
+				switch (true) {
+				// Stylesheet/type:
+				case platform.detectKeyCode(e, 49, { shiftKey: !!1 }):
+					e.preventDefault()
+					dispatch.prefs.toggleStylesheet(EnumStylesheets.TYPE)
+					return
+				// Stylesheet/mono:
+				case platform.detectKeyCode(e, 50, { shiftKey: !!1 }):
+					e.preventDefault()
+					dispatch.prefs.toggleStylesheet(EnumStylesheets.MONO)
+					return
+				// Text background:
+				case platform.detectKeyCode(e, 80, { shiftKey: !!1 }):
+					e.preventDefault()
+					dispatch.setProperty()
+					return
+				// Preview mode:
+				case platform.detectKeyCode(e, 80, { shiftKey: !!0 }):
+					e.preventDefault()
+					dispatch.prefs.togglePreviewMode()
+					return
+				default:
+					// No-op
+					break
+				}
+			}
+			document.addEventListener("keydown", onKeyDown)
+			return () => {
+				document.removeEventListener("keydown", onKeyDown)
+			}
+		}, [state, dispatch]),
+		[state.prefs.shortcuts],
+	)
 
 	return (
 		<React.Fragment>
@@ -224,6 +225,7 @@ function Editor({ state, dispatch, ...props }) {
 					className: "codex-editor", // DO NOT CHANGE
 
 					style: {
+						padding: `${state.prefs.paddingY}px ${state.prefs.paddingX}px`,
 						whiteSpace: "pre-wrap",
 						outline: "none",
 						overflowWrap: "break-word",
@@ -419,9 +421,9 @@ function Editor({ state, dispatch, ...props }) {
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			{/* <Stylesheets state={state} /> */}
+			<Stylesheets state={state} />
 			{/* {!state.prefers.previewMode && state.prefers.statusBar && <StatusBar state={state} />} */}
-			<Debugger state={state} />
+			{/* <EditorDebugger state={state} /> */}
 		</React.Fragment>
 	)
 }

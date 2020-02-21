@@ -6,7 +6,12 @@ const KEY = "codex-app"
 const demo = localStorage.getItem(KEY) || ""
 
 function Demo(props) {
-	const [state, dispatch] = Editor.useEditor(demo, { shortcuts: true, statusBar: true })
+	const [state, dispatch] = Editor.useEditor(demo, {
+		paddingX: 24,
+		paddingY: 128,
+		shortcuts: true,
+		statusBar: true,
+	})
 
 	React.useEffect(() => {
 		localStorage.setItem(KEY, state.data)

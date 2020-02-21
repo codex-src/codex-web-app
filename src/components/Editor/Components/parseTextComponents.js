@@ -8,7 +8,7 @@ import {
 	Strikethrough,
 	Strong,
 	StrongEm,
-} from "./Inline"
+} from "./Text"
 
 // Shorthand for parseTextComponents.
 function recurse(data) {

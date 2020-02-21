@@ -67,6 +67,7 @@ function WithReadme({ readme, setReadme, ...props }) {
 	)
 }
 
+// py-12 md:py-24
 function Demo(props) {
 	const toolbar = useToolbar()
 	useEscape(toolbar[0].readme, on => {
@@ -75,8 +76,8 @@ function Demo(props) {
 
 	return (
 		<WithReadme readme={toolbar[0].readme} setReadme={on => toolbar[1].setProperty("readme", on)}>
-			<div className="py-12 md:py-24 flex flex-row justify-center">
-				<div className="w-full max-w-4xl p-6 bg-white">
+			<div className="flex flex-row justify-center">
+				<div className="w-full max-w-4xl bg-white">
 					<EditorDemo />
 				</div>
 			</div>

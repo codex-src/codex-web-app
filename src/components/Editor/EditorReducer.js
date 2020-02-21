@@ -1,40 +1,16 @@
-import ActionTypes from "./ActionTypes"
+import * as preferences from "./PreferencesReducer"
+import ActionTypes from "./EnumActionTypes"
 import emoji from "emoji-trie"
 import newNodes from "./helpers/newNodes"
 import newPos from "./helpers/newPos"
 import parseComponents from "./Components"
+import Stylesheets from "./EnumStylesheets"
 import useMethods from "use-methods"
 import utf8 from "utils/encoding/utf8"
 
-// history: [],      // The history state stack
-// history.index: 0,  // The history state stack index
 const initialState = {
-	// // DEPRECATE
-	// prefers: {
-	// 	darkMode:         false,
-	// 	inlineBackground: false,
-	// 	monospace:        false,
-	// 	placeholder:      "Hello, world!",
-	// 	previewMode:      false,
-	// 	readOnly:         false,
-	// 	renderWhiteSpace: false,
-	// 	scrollPastEnd:    false,
-	// 	shortcuts:        false,
-	// 	statusBar:        false,
-	// 	tagName:          "",
-	// 	wordWrap:         false,
-	// },
-
-	toolbar: {
-		undo:    false,
-		redo:    false,
-		cut:     false,
-		copy:    false,
-		paste:   false,
-		type:    false,
-		code:    false,
-		preview: false,
-		readme:  false,
+	prefs: {
+		...preferences.initialState,
 	},
 	actionType: "",      // The type of the current action
 	actionTimeStamp: 0,  // The time stamp of the current action
@@ -56,31 +32,9 @@ const initialState = {
 }
 
 const reducer = state => ({
-	// setProperty(propertyName, on) {
-	// 	state[propertyName] = on
-	// },
-	// toggleProperty(propertyName) {
-	// 	state[propertyName] = !state[propertyName]
-	// },
-
-	// // Preferences:
-	// toggleInlineBackground() {
-	// 	if (state.prefers.previewMode && state.prefers.inlineBackground) {
-	// 		state.prefers.previewMode = false // Reset
-	// 		return
-	// 	}
-	// 	state.prefers.previewMode = false // Reset
-	// 	state.prefers.inlineBackground = !state.prefers.inlineBackground
-	// },
-	// toggleMonospace(on) {
-	// 	state.prefers.monospace = on
-	// },
-	// togglePreviewMode() {
-	// 	// state.prefers.inlineBackground = false // Reset
-	// 	state.prefers.previewMode = !state.prefers.previewMode
-	// },
-
-	// Reducer:
+	prefs: {
+		...preferences.reducer(state),
+	},
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
 		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
@@ -401,15 +355,15 @@ const reducer = state => ({
 	},
 })
 
-const init = data => initialState => {
+const init = (data, prefs) => initialState => {
 	const body = newNodes(data)
 	const state = {
 		...initialState,
-		// prefers: {
-		// 	...initialState.prefers,
-		// 	...prefers,
-		// },
-		data, // FIXME?
+		prefs: {
+			...initialState.prefs,
+			...prefs,
+		},
+		data,
 		body,
 		components: parseComponents(body),
 		reactDOM: document.createElement("div"),
@@ -418,6 +372,6 @@ const init = data => initialState => {
 	return state
 }
 
-const useEditor = data => useMethods(reducer, initialState, init(data))
+const useEditor = (data, prefs) => useMethods(reducer, initialState, init(data, prefs))
 
 export default useEditor

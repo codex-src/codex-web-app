@@ -1,7 +1,6 @@
-import Editor from "components/Editor"
+import HeroEditor from "./HeroEditor"
 import Link from "utils/RouterLink"
 import Nav2 from "components/Nav2"
-import raw from "raw.macro"
 import React from "react"
 
 import "./Marketing.css"
@@ -42,17 +41,15 @@ const Hero = props => (
 				className="w-full"
 				to="demo"
 			>
-				<HeroEditor />
+				<HeroEditorSurface />
 			</Link>
 
 		</div>
 	</section>
 )
 
-function HeroEditor(props) {
+function HeroEditorSurface(props) {
 	const ref = React.useRef()
-
-	const [state, dispatch] = Editor.useEditor(raw("./markdown/marketing.md"), { readOnly: true })
 
 	React.useEffect(() => {
 		ref.current.classList.add("hero-editor-enter")
@@ -68,11 +65,8 @@ function HeroEditor(props) {
 	return (
 		<div ref={ref} className="pb-4/5 relative">
 			<div className="absolute inset-0">
-				<div className="p-6 h-full bg-white rounded-xl shadow-hero-xl overflow-y-scroll scrolling-touch">
-					<Editor.Editor
-						state={state}
-						dispatch={dispatch}
-					/>
+				<div className="h-full bg-white rounded-xl shadow-hero-xl overflow-y-scroll scrolling-touch">
+					<HeroEditor />
 				</div>
 			</div>
 		</div>
