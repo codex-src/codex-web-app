@@ -5,12 +5,13 @@ const KEY = "codex-app"
 
 const demo = localStorage.getItem(KEY) || ""
 
-function Demo(props) {
+function DemoEditor(props) {
 	const [state, dispatch] = Editor.useEditor(demo, {
-		paddingX: 24,
-		paddingY: 128,
+		paddingX:  24,
+		paddingY:  128,
 		shortcuts: true,
 		statusBar: true,
+		toolbar:   true,
 	})
 
 	React.useEffect(() => {
@@ -20,4 +21,4 @@ function Demo(props) {
 	return <Editor.Editor state={state} dispatch={dispatch} />
 }
 
-export default Demo
+export default DemoEditor

@@ -9,7 +9,7 @@ import useToolbar from "./Toolbar/useToolbar"
 
 import "./Demo.css"
 
-function WithReadme({ readme, setReadme, ...props }) {
+function WithReadmeSurface({ readme, setReadme, ...props }) {
 	const ref = React.useRef()
 	const didPointerEnter = React.useRef()
 
@@ -75,14 +75,14 @@ function Demo(props) {
 	})
 
 	return (
-		<WithReadme readme={toolbar[0].readme} setReadme={on => toolbar[1].setProperty("readme", on)}>
+		<WithReadmeSurface readme={toolbar[0].readme} setReadme={on => toolbar[1].setProperty("readme", on)}>
 			<div className="flex flex-row justify-center">
 				<div className="w-full max-w-4xl bg-white">
 					<EditorDemo />
 				</div>
 			</div>
 			{/* <Toolbar editor={editor} state={toolbar[0]} dispatch={toolbar[1]} /> */}
-		</WithReadme>
+		</WithReadmeSurface>
 	)
 }
 

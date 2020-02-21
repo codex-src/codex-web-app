@@ -12,6 +12,7 @@ import ReactDOM from "react-dom"
 import StatusBar from "./StatusBar"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
+import Toolbar from "./Toolbar"
 
 const SCROLL_BUFFER = 12
 
@@ -183,24 +184,24 @@ function Editor({ state, dispatch, ...props }) {
 			const onKeyDown = e => {
 				switch (true) {
 				// Stylesheet/type:
-				case platform.detectKeyCode(e, 49, { shiftKey: !!1 }):
+				case platform.detectKeyCode(e, 49, { shiftKey: true }):
 					e.preventDefault()
-					dispatch.prefs.toggleStylesheet(EnumStylesheets.TYPE)
+					dispatch.toggleStylesheet(EnumStylesheets.TYPE)
 					return
 				// Stylesheet/mono:
-				case platform.detectKeyCode(e, 50, { shiftKey: !!1 }):
+				case platform.detectKeyCode(e, 50, { shiftKey: true }):
 					e.preventDefault()
-					dispatch.prefs.toggleStylesheet(EnumStylesheets.MONO)
+					dispatch.toggleStylesheet(EnumStylesheets.MONO)
 					return
 				// Text background:
-				case platform.detectKeyCode(e, 80, { shiftKey: !!1 }):
+				case platform.detectKeyCode(e, 80, { shiftKey: true }):
 					e.preventDefault()
 					dispatch.setProperty()
 					return
 				// Preview mode:
-				case platform.detectKeyCode(e, 80, { shiftKey: !!0 }):
+				case platform.detectKeyCode(e, 80, { shiftKey: false }):
 					e.preventDefault()
-					dispatch.prefs.togglePreviewMode()
+					dispatch.togglePreviewMode()
 					return
 				default:
 					// No-op
@@ -231,9 +232,9 @@ function Editor({ state, dispatch, ...props }) {
 						overflowWrap: "break-word",
 					},
 
-					contentEditable: /*!state.prefers.readOnly && !state.prefers.previewMode && */ true,
-					suppressContentEditableWarning: /*!state.prefers.readOnly && !state.prefers.previewMode && */ true,
-					// spellCheck: !state.prefers.readOnly && !state.prefers.previewMode,
+					contentEditable: /*!state.prefs.readOnly && !state.prefs.previewMode && */ true,
+					suppressContentEditableWarning: /*!state.prefs.readOnly && !state.prefs.previewMode && */ true,
+					// spellCheck: !state.prefs.readOnly && !state.prefs.previewMode,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,
@@ -375,7 +376,7 @@ function Editor({ state, dispatch, ...props }) {
 					},
 
 					onCut: e => {
-						// if (state.prefers.previewMode) {
+						// if (state.prefs.previewMode) {
 						// 	// No-op
 						// 	return
 						// }
@@ -389,7 +390,7 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.cut()
 					},
 					onCopy: e => {
-						// if (state.prefers.previewMode) {
+						// if (state.prefs.previewMode) {
 						// 	// No-op
 						// 	return
 						// }
@@ -403,7 +404,7 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.copy()
 					},
 					onPaste: e => {
-						// if (state.prefers.previewMode) {
+						// if (state.prefs.previewMode) {
 						// 	// No-op
 						// 	return
 						// }
@@ -422,7 +423,8 @@ function Editor({ state, dispatch, ...props }) {
 				},
 			)}
 			<Stylesheets state={state} />
-			{/* {!state.prefers.previewMode && state.prefers.statusBar && <StatusBar state={state} />} */}
+			{state.prefs.toolbar && <Toolbar state={state} dispatch={dispatch} />}
+			{/* {!state.prefs.previewMode && state.prefs.statusBar && <StatusBar state={state} />} */}
 			{/* <EditorDebugger state={state} /> */}
 		</React.Fragment>
 	)

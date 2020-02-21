@@ -9,9 +9,8 @@ import useMethods from "use-methods"
 import utf8 from "utils/encoding/utf8"
 
 const initialState = {
-	prefs: {
-		...preferences.initialState,
-	},
+	prefs: { ...preferences.initialState, },
+
 	actionType: "",      // The type of the current action
 	actionTimeStamp: 0,  // The time stamp of the current action
 	isFocused: false,    // Is the editor focused?
@@ -27,14 +26,13 @@ const initialState = {
 	history: {           //
 		stack: [],         // The history state stack
 		index: 0,          // The history state stack index
+		// didSetPos       // FIXME
 	},                   //
 	didSetPos: false,    // Did set the cursors before the first write?
 }
 
 const reducer = state => ({
-	prefs: {
-		...preferences.reducer(state),
-	},
+	...preferences.reducer(state.prefs),
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
 		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {

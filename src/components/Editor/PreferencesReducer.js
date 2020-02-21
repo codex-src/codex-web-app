@@ -1,9 +1,9 @@
 import EnumStylesheets from "./EnumStylesheets"
 
 export const initialState = {
+	darkMode:       false,
 	paddingX:       0,
 	paddingY:       0,
-	darkMode:       false,
 	placeholder:    "Hello, world! 👋",
 	previewMode:    false,
 	readme:         false,
@@ -13,6 +13,7 @@ export const initialState = {
 	statusBars:     false,
 	stylesheet:     EnumStylesheets.TYPE,
 	textBackground: false,
+	toolbar:        false,
 	whiteSpace:     false,
 	wordWrap:       false,
 }
@@ -39,5 +40,8 @@ export const reducer = state => ({
 	},
 	togglePreviewMode() {
 		state.previewMode = !state.previewMode
+	},
+	toggleReadme() {
+		state.readme = !state.readme
 	},
 })
