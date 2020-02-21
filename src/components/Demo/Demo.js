@@ -4,7 +4,7 @@ import Editor from "components/Editor"
 import EditorReadme from "./EditorReadme"
 import raw from "raw.macro"
 import React from "react"
-import Toolbar from "./Toolbar"
+import Toolbar from "./Toolbar/Toolbar"
 import useEscape from "./hooks/useEscape"
 import useToolbar from "./Toolbar/useToolbar"
 

@@ -1,4 +1,4 @@
-// import Debugger from "./Debugger"
+import Debugger from "./Debugger" // eslint-disable-line
 import getCoords from "./helpers/getCoords"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
