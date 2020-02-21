@@ -1,10 +1,13 @@
 import ActionTypes from "./ActionTypes"
 import emoji from "emoji-trie"
+import newNodes from "./helpers/newNodes"
+import newPos from "./helpers/newPos"
 import parseComponents from "./Components"
-import random from "utils/random/id"
 import useMethods from "use-methods"
 import utf8 from "utils/encoding/utf8"
 
+// history: [],      // The history state stack
+// history.index: 0,  // The history state stack index
 const initialState = {
 	// // DEPRECATE
 	// prefers: {
@@ -39,33 +42,17 @@ const initialState = {
 	hasSelection: false, // Does the editor have a selection?
 	data: "",            // The plain text data
 	body: null,          // The parsed nodes
-	pos1: null,          // The start cursor
-	pos2: null,          // The end cursor
+	pos1: newPos(),      // The start cursor
+	pos2: newPos(),      // The end cursor
 	components: null,    // The React components
-	shouldRender: 0,     // Should rerender the React components?
-	didRender: 0,        // Did rerender the React components?
+	shouldRender: 0,     // Should rerender React components?
+	didRender: 0,        // Did rerender React components?
 	reactDOM: null,      // The React DOM (not what the user sees)
-	history: [],         // The history state stack
-	historyIndex: 0,     // The history state stack index
+	history: {           //
+		stack: [],         // The history state stack
+		index: 0,          // The history state stack index
+	},                   //
 	didSetPos: false,    // Did set the cursors before the first write?
-}
-
-function newNodes(data) {
-	const body = data.split("\n").map(each => ({
-		key: random.newUUID(), // The key.
-		data: each,            // The plain text data.
-	}))
-	return body
-}
-
-// Creates a new cursor object.
-function newPos() {
-	const pos = {
-		x: 0,
-		y: 0,
-		pos: 0,
-	}
-	return pos
 }
 
 const reducer = state => ({
@@ -115,11 +102,11 @@ const reducer = state => ({
 		const hasSelection = pos1.pos !== pos2.pos
 		Object.assign(state, { hasSelection, pos1, pos2 })
 	},
-	actionInput2(nodes, atEnd, pos1, pos2) {
+	actionInput(nodes, atEnd, pos1, pos2) {
 		// Create a new action:
 		this.newAction(ActionTypes.INPUT)
-		if (!state.historyIndex && !state.didSetPos) {
-			Object.assign(state.history[0], {
+		if (!state.history.index && !state.didSetPos) {
+			Object.assign(state.history.stack[0], {
 				pos1: state.pos1,
 				pos2: state.pos2,
 			})
@@ -143,11 +130,11 @@ const reducer = state => ({
 		Object.assign(state, { data, pos1, pos2 })
 		this.render()
 	},
-	write2(substr, dropL = 0, dropR = 0) {
+	write(substr, dropL = 0, dropR = 0) {
 		// Create a new action:
 		this.newAction(ActionTypes.INPUT)
-		if (!state.historyIndex && !state.didSetPos) {
-			Object.assign(state.history[0], {
+		if (!state.history.index && !state.didSetPos) {
+			Object.assign(state.history.stack[0], {
 				pos1: state.pos1,
 				pos2: state.pos2,
 			})
@@ -207,11 +194,11 @@ const reducer = state => ({
 			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
 			dropL = rune.length
 		}
-		this.write2("", dropL, 0)
+		this.write("", dropL, 0)
 	},
 	backspaceWord() {
 		if (state.hasSelection) {
-			this.write2("")
+			this.write("")
 			return
 		}
 		// Iterate to a non-h. white space:
@@ -258,11 +245,11 @@ const reducer = state => ({
 		if (!dropL && index - 1 >= 0 && state.data[index - 1] === "\n") {
 			dropL = 1
 		}
-		this.write2("", dropL, 0)
+		this.write("", dropL, 0)
 	},
 	backspaceLine() {
 		if (state.hasSelection) {
-			this.write2("")
+			this.write("")
 			return
 		}
 		// Iterate to a v. white space rune:
@@ -281,7 +268,7 @@ const reducer = state => ({
 		if (!dropL && index - 1 >= 0 && state.data[index - 1] === "\n") {
 			dropL = 1
 		}
-		this.write2("", dropL, 0)
+		this.write("", dropL, 0)
 	},
 	backspaceCharForwards() {
 		let dropR = 0
@@ -290,11 +277,11 @@ const reducer = state => ({
 			const rune = emoji.atStart(substr) || utf8.atStart(substr)
 			dropR = rune.length
 		}
-		this.write2("", 0, dropR)
+		this.write("", 0, dropR)
 	},
 	backspaceWordForwards() {
 		if (state.hasSelection) {
-			this.write2("")
+			this.write("")
 			return
 		}
 		// Iterate to a non-h. white space:
@@ -341,37 +328,37 @@ const reducer = state => ({
 		if (!dropR && index < state.data.length && state.data[index] === "\n") {
 			dropR = 1
 		}
-		this.write2("", 0, dropR)
+		this.write("", 0, dropR)
 	},
 	tab() {
-		this.write2("\t")
+		this.write("\t")
 	},
 	enter() {
-		this.write2("\n")
+		this.write("\n")
 	},
 	cut() {
 		this.newAction(ActionTypes.CUT)
-		this.write2("")
+		this.write("")
 	},
 	copy() {
 		this.newAction(ActionTypes.COPY)
 	},
 	paste(substr) {
 		this.newAction(ActionTypes.PASTE)
-		this.write2(substr)
+		this.write(substr)
 	},
 	storeUndo() {
-		const undo = state.history[state.historyIndex]
+		const undo = state.history.stack[state.history.index]
 		if (undo.data.length === state.data.length && undo.data === state.data) {
 			// No-op
 			return
 		}
 		const { data, body, pos1, pos2 } = state
-		state.history.push({ data, body: body.map(each => ({ ...each })), pos1: { ...pos1 }, pos2: { ...pos2 } })
-		state.historyIndex++
+		state.history.stack.push({ data, body: body.map(each => ({ ...each })), pos1: { ...pos1 }, pos2: { ...pos2 } })
+		state.history.index++
 	},
 	dropRedos() {
-		state.history.splice(state.historyIndex + 1)
+		state.history.stack.splice(state.history.index + 1)
 	},
 	undo() {
 		// if (state.prefersPreviewMode) {
@@ -379,14 +366,14 @@ const reducer = state => ({
 		// 	return
 		// }
 		this.newAction(ActionTypes.UNDO)
-		if (state.historyIndex === 1 && state.didSetPos) {
+		if (state.history.index === 1 && state.didSetPos) {
 			state.didSetPos = false
 		}
 		// Guard decrement:
-		if (state.historyIndex) {
-			state.historyIndex--
+		if (state.history.index) {
+			state.history.index--
 		}
-		const undo = state.history[state.historyIndex]
+		const undo = state.history.stack[state.history.index]
 		Object.assign(state, undo)
 		this.render()
 	},
@@ -396,12 +383,12 @@ const reducer = state => ({
 		// 	return
 		// }
 		this.newAction(ActionTypes.REDO)
-		if (state.historyIndex + 1 === state.history.length) {
+		if (state.history.index + 1 === state.history.stack.length) {
 			// No-op
 			return
 		}
-		state.historyIndex++
-		const redo = state.history[state.historyIndex]
+		state.history.index++
+		const redo = state.history.stack[state.history.index]
 		Object.assign(state, redo)
 		this.render()
 	},
@@ -414,25 +401,23 @@ const reducer = state => ({
 	},
 })
 
-const init = initialValue => initialState => {
-	const body = newNodes(initialValue)
+const init = data => initialState => {
+	const body = newNodes(data)
 	const state = {
 		...initialState,
 		// prefers: {
 		// 	...initialState.prefers,
 		// 	...prefers,
 		// },
-		data: initialValue,
+		data, // FIXME?
 		body,
-		pos1: newPos(),
-		pos2: newPos(),
 		components: parseComponents(body),
 		reactDOM: document.createElement("div"),
-		history: [{ data: initialValue, body, pos1: newPos(), pos2: newPos() }],
+		history: { stack: [{ data, body, pos1: newPos(), pos2: newPos() }], index: 0 },
 	}
 	return state
 }
 
-const useEditor = initialValue => useMethods(reducer, initialState, init(initialValue))
+const useEditor = data => useMethods(reducer, initialState, init(data))
 
 export default useEditor

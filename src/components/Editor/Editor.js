@@ -118,6 +118,8 @@ function Editor({ state, dispatch, ...props }) {
 	)
 
 	// TODO: Drag-based scrolling (e.g. hasSelection) jumps
+	//
+	// FIXME
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			if (!state.isFocused) {
@@ -155,8 +157,8 @@ function Editor({ state, dispatch, ...props }) {
 	// 	// }, [state]),
 	// }, [state.prefersMonoStylesheet, state.didRender])
 
+	// TODO: Refactor to useUndo?
 	const id = React.useRef()
-
 	React.useEffect(
 		React.useCallback(() => {
 			const h = () => {
@@ -320,7 +322,7 @@ function Editor({ state, dispatch, ...props }) {
 						// Input:
 						const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
 						const [pos1, pos2] = getPos(ref.current)
-						dispatch.actionInput2(nodes, atEnd, pos1, pos2)
+						dispatch.actionInput(nodes, atEnd, pos1, pos2)
 					},
 					onInput: e => {
 						if (dedupeCompositionEndRef.current) {
@@ -367,7 +369,7 @@ function Editor({ state, dispatch, ...props }) {
 						// Input:
 						const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
 						const [pos1, pos2] = getPos(ref.current)
-						dispatch.actionInput2(nodes, atEnd, pos1, pos2)
+						dispatch.actionInput(nodes, atEnd, pos1, pos2)
 					},
 
 					onCut: e => {
@@ -419,7 +421,7 @@ function Editor({ state, dispatch, ...props }) {
 			)}
 			{/* <Stylesheets state={state} /> */}
 			{/* {!state.prefers.previewMode && state.prefers.statusBar && <StatusBar state={state} />} */}
-			{/* <Debugger state={state} /> */}
+			<Debugger state={state} />
 		</React.Fragment>
 	)
 }
