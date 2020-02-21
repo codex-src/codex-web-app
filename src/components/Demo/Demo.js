@@ -1,18 +1,13 @@
-// import EditorDemo from "./EditorDemo"
 import * as Feather from "react-feather"
 import Editor from "components/Editor"
+import EditorDemo from "./EditorDemo"
 import EditorReadme from "./EditorReadme"
-import raw from "raw.macro"
 import React from "react"
 import Toolbar from "./Toolbar/Toolbar"
 import useEscape from "./hooks/useEscape"
 import useToolbar from "./Toolbar/useToolbar"
 
 import "./Demo.css"
-
-const LOCAL_STORAGE_KEY = "codex-app"
-
-const demo = localStorage.getItem(LOCAL_STORAGE_KEY) || raw("./markdown/demo.md")
 
 function WithReadme({ readme, setReadme, ...props }) {
 	const ref = React.useRef()
@@ -73,12 +68,6 @@ function WithReadme({ readme, setReadme, ...props }) {
 }
 
 function Demo(props) {
-	const editor = Editor.useEditor(demo, { shortcuts: true /* statusBar: true */ })
-
-	React.useEffect(() => {
-		localStorage.setItem(LOCAL_STORAGE_KEY, editor[0].data)
-	}, [editor[0].data])
-
 	const toolbar = useToolbar()
 	useEscape(toolbar[0].readme, on => {
 		toolbar[1].setProperty("readme", on)
@@ -88,10 +77,10 @@ function Demo(props) {
 		<WithReadme readme={toolbar[0].readme} setReadme={on => toolbar[1].setProperty("readme", on)}>
 			<div className="py-12 md:py-24 flex flex-row justify-center">
 				<div className="w-full max-w-4xl p-6 bg-white">
-					<Editor.Editor state={editor[0]} dispatch={editor[1]} />
+					<EditorDemo />
 				</div>
 			</div>
-			<Toolbar editor={editor} state={toolbar[0]} dispatch={toolbar[1]} />
+			{/* <Toolbar editor={editor} state={toolbar[0]} dispatch={toolbar[1]} /> */}
 		</WithReadme>
 	)
 }
