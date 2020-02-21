@@ -1,5 +1,4 @@
 import EditorDebugger from "./EditorDebugger" // eslint-disable-line
-import EnumStylesheets from "./EnumStylesheets"
 import getCoords from "./helpers/getCoords"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
@@ -13,6 +12,7 @@ import StatusBar from "./StatusBar"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 import Toolbar from "./Toolbar"
+import useShortcuts from "./hooks/useShortcuts"
 
 const SCROLL_BUFFER = 12
 
@@ -174,47 +174,7 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
-	// Shortcuts:
-	React.useEffect(
-		React.useCallback(() => {
-			if (!state.prefs.shortcuts) {
-				// No-op
-				return
-			}
-			const onKeyDown = e => {
-				switch (true) {
-				// Stylesheet/type:
-				case platform.detectKeyCode(e, 49, { shiftKey: true }):
-					e.preventDefault()
-					dispatch.toggleStylesheet(EnumStylesheets.TYPE)
-					return
-				// Stylesheet/mono:
-				case platform.detectKeyCode(e, 50, { shiftKey: true }):
-					e.preventDefault()
-					dispatch.toggleStylesheet(EnumStylesheets.MONO)
-					return
-				// Text background:
-				case platform.detectKeyCode(e, 80, { shiftKey: true }):
-					e.preventDefault()
-					dispatch.setProperty()
-					return
-				// Preview mode:
-				case platform.detectKeyCode(e, 80, { shiftKey: false }):
-					e.preventDefault()
-					dispatch.togglePreviewMode()
-					return
-				default:
-					// No-op
-					break
-				}
-			}
-			document.addEventListener("keydown", onKeyDown)
-			return () => {
-				document.removeEventListener("keydown", onKeyDown)
-			}
-		}, [state, dispatch]),
-		[state.prefs.shortcuts],
-	)
+	useShortcuts(state, dispatch)
 
 	return (
 		<React.Fragment>
@@ -232,9 +192,8 @@ function Editor({ state, dispatch, ...props }) {
 						overflowWrap: "break-word",
 					},
 
-					contentEditable: /*!state.prefs.readOnly && !state.prefs.previewMode && */ true,
-					suppressContentEditableWarning: /*!state.prefs.readOnly && !state.prefs.previewMode && */ true,
-					// spellCheck: !state.prefs.readOnly && !state.prefs.previewMode,
+					contentEditable: !state.prefs.readOnly && !state.prefs.previewMode && true,
+					suppressContentEditableWarning: !state.prefs.readOnly && !state.prefs.previewMode && true,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,

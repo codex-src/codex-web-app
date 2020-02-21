@@ -5,7 +5,7 @@ import EnumStylesheets from "../EnumStylesheets"
 import Link from "utils/RouterLink"
 import React from "react"
 import WithTooltip from "./WithTooltip"
-import { ReactComponent as GitHubLogo } from "../assets/svg/github-logo.svg"
+import { ReactComponent as GitHubLogo } from "./github-logo.svg"
 
 const ButtonIcon = ({ tooltip, ...props }) => (
 	<WithTooltip tooltip={tooltip}>

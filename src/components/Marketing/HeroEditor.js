@@ -2,7 +2,7 @@ import Editor from "components/Editor"
 import raw from "raw.macro"
 import React from "react"
 
-const data = raw("./markdown/marketing.md").trimEnd()
+const data = raw("./HeroEditor.md").trimEnd()
 
 const HeroEditor = props => {
 	const [state, dispatch] = Editor.useEditor(data, {
