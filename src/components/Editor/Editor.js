@@ -12,8 +12,6 @@ import StatusBar from "./StatusBar"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 
-const EDITOR_CLASS_NAME = "codex-editor"
-
 const SCROLL_BUFFER = 12
 
 // Gets the cursors.
@@ -172,56 +170,56 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
-	// Shortcuts:
-	React.useEffect(
-		React.useCallback(() => {
-			if (!state.prefers.shortcuts) {
-				// No-op
-				return
-			}
-			const onKeyDown = e => {
-				switch (true) {
-				// Proportional type:
-				case platform.detectKeyCode(e, 49, { shiftKey: true }):
-					e.preventDefault()
-					dispatch.toggleMonospace(false)
-					return
-				// Monospace:
-				case platform.detectKeyCode(e, 50, { shiftKey: true }):
-					e.preventDefault()
-					dispatch.toggleMonospace(true)
-					return
-				// Inline background:
-				case platform.detectKeyCode(e, 80, { shiftKey: true }):
-					e.preventDefault()
-					dispatch.toggleInlineBackground()
-					return
-				// Preview mode:
-				case platform.detectKeyCode(e, 80, { shiftKey: false }):
-					e.preventDefault()
-					dispatch.togglePreviewMode()
-					return
-				default:
-					// No-op
-					break
-				}
-			}
-			document.addEventListener("keydown", onKeyDown)
-			return () => {
-				document.removeEventListener("keydown", onKeyDown)
-			}
-		}, [state, dispatch]),
-		[state.prefers.shortcuts],
-	)
+	// // Shortcuts:
+	// React.useEffect(
+	// 	React.useCallback(() => {
+	// 		if (!state.prefers.shortcuts) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		const onKeyDown = e => {
+	// 			switch (true) {
+	// 			// Proportional type:
+	// 			case platform.detectKeyCode(e, 49, { shiftKey: true }):
+	// 				e.preventDefault()
+	// 				dispatch.toggleMonospace(false)
+	// 				return
+	// 			// Monospace:
+	// 			case platform.detectKeyCode(e, 50, { shiftKey: true }):
+	// 				e.preventDefault()
+	// 				dispatch.toggleMonospace(true)
+	// 				return
+	// 			// Inline background:
+	// 			case platform.detectKeyCode(e, 80, { shiftKey: true }):
+	// 				e.preventDefault()
+	// 				dispatch.toggleInlineBackground()
+	// 				return
+	// 			// Preview mode:
+	// 			case platform.detectKeyCode(e, 80, { shiftKey: false }):
+	// 				e.preventDefault()
+	// 				dispatch.togglePreviewMode()
+	// 				return
+	// 			default:
+	// 				// No-op
+	// 				break
+	// 			}
+	// 		}
+	// 		document.addEventListener("keydown", onKeyDown)
+	// 		return () => {
+	// 			document.removeEventListener("keydown", onKeyDown)
+	// 		}
+	// 	}, [state, dispatch]),
+	// 	[state.prefers.shortcuts],
+	// )
 
 	return (
 		<React.Fragment>
 			{React.createElement(
-				state.prefers.tagName || "div",
+				"div",
 				{
 					ref,
 
-					className: EDITOR_CLASS_NAME,
+					className: "codex-editor", // DO NOT CHANGE
 
 					style: {
 						whiteSpace: "pre-wrap",
@@ -229,9 +227,9 @@ function Editor({ state, dispatch, ...props }) {
 						overflowWrap: "break-word",
 					},
 
-					contentEditable: !state.prefers.readOnly && !state.prefers.previewMode && true,
-					suppressContentEditableWarning: !state.prefers.readOnly && !state.prefers.previewMode && true,
-					spellCheck: !state.prefers.readOnly && !state.prefers.previewMode,
+					contentEditable: /*!state.prefers.readOnly && !state.prefers.previewMode && */ true,
+					suppressContentEditableWarning: /*!state.prefers.readOnly && !state.prefers.previewMode && */ true,
+					// spellCheck: !state.prefers.readOnly && !state.prefers.previewMode,
 
 					onFocus: dispatch.actionFocus,
 					onBlur:  dispatch.actionBlur,
@@ -373,10 +371,10 @@ function Editor({ state, dispatch, ...props }) {
 					},
 
 					onCut: e => {
-						if (state.prefers.previewMode) {
-							// No-op
-							return
-						}
+						// if (state.prefers.previewMode) {
+						// 	// No-op
+						// 	return
+						// }
 						e.preventDefault()
 						if (!state.hasSelection) {
 							// No-op
@@ -387,10 +385,10 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.cut()
 					},
 					onCopy: e => {
-						if (state.prefers.previewMode) {
-							// No-op
-							return
-						}
+						// if (state.prefers.previewMode) {
+						// 	// No-op
+						// 	return
+						// }
 						e.preventDefault()
 						if (!state.hasSelection) {
 							// No-op
@@ -401,10 +399,10 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.copy()
 					},
 					onPaste: e => {
-						if (state.prefers.previewMode) {
-							// No-op
-							return
-						}
+						// if (state.prefers.previewMode) {
+						// 	// No-op
+						// 	return
+						// }
 						const substr = e.clipboardData.getData("text/plain")
 						e.preventDefault()
 						if (!substr) {
@@ -419,8 +417,8 @@ function Editor({ state, dispatch, ...props }) {
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			<Stylesheets state={state} />
-			{!state.prefers.previewMode && state.prefers.statusBar && <StatusBar state={state} />}
+			{/* <Stylesheets state={state} /> */}
+			{/* {!state.prefers.previewMode && state.prefers.statusBar && <StatusBar state={state} />} */}
 			{/* <Debugger state={state} /> */}
 		</React.Fragment>
 	)

@@ -4,15 +4,10 @@ import React from "react"
 
 const readme = raw("./markdown/readme.md").trimEnd()
 
-function Readme(props) {
+const Readme = props => {
 	const [state, dispatch] = Editor.useEditor(readme, { /* readOnly: true */ })
 
-	return (
-		<Editor.Editor
-			state={state}
-			dispatch={dispatch}
-		/>
-	)
+	return <Editor.Editor state={state} dispatch={dispatch} />
 }
 
 export default Readme

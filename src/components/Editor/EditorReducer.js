@@ -1,36 +1,37 @@
+import ActionTypes from "./ActionTypes"
 import emoji from "emoji-trie"
-import Enum from "utils/Enum"
 import parseComponents from "./Components"
 import random from "utils/random/id"
 import useMethods from "use-methods"
 import utf8 from "utils/encoding/utf8"
 
-const ActionTypes = new Enum(
-	"FOCUS",
-	"BLUR",
-	"SELECT",
-	"INPUT",
-	"CUT",
-	"COPY",
-	"PASTE",
-	"UNDO",
-	"REDO",
-)
-
 const initialState = {
-	prefers: {
-		darkMode:         false,
-		inlineBackground: false,
-		monospace:        false,
-		placeholder:      "Hello, world!",
-		previewMode:      false,
-		readOnly:         false,
-		renderWhiteSpace: false,
-		scrollPastEnd:    false,
-		shortcuts:        false,
-		statusBar:        false,
-		tagName:          "",
-		wordWrap:         false,
+	// // DEPRECATE
+	// prefers: {
+	// 	darkMode:         false,
+	// 	inlineBackground: false,
+	// 	monospace:        false,
+	// 	placeholder:      "Hello, world!",
+	// 	previewMode:      false,
+	// 	readOnly:         false,
+	// 	renderWhiteSpace: false,
+	// 	scrollPastEnd:    false,
+	// 	shortcuts:        false,
+	// 	statusBar:        false,
+	// 	tagName:          "",
+	// 	wordWrap:         false,
+	// },
+
+	toolbar: {
+		undo:    false,
+		redo:    false,
+		cut:     false,
+		copy:    false,
+		paste:   false,
+		type:    false,
+		code:    false,
+		preview: false,
+		readme:  false,
 	},
 	actionType: "",      // The type of the current action
 	actionTimeStamp: 0,  // The time stamp of the current action
@@ -68,22 +69,30 @@ function newPos() {
 }
 
 const reducer = state => ({
-	// Preferences:
-	toggleInlineBackground() {
-		if (state.prefers.previewMode && state.prefers.inlineBackground) {
-			state.prefers.previewMode = false // Reset
-			return
-		}
-		state.prefers.previewMode = false // Reset
-		state.prefers.inlineBackground = !state.prefers.inlineBackground
-	},
-	toggleMonospace(on) {
-		state.prefers.monospace = on
-	},
-	togglePreviewMode() {
-		// state.prefers.inlineBackground = false // Reset
-		state.prefers.previewMode = !state.prefers.previewMode
-	},
+	// setProperty(propertyName, on) {
+	// 	state[propertyName] = on
+	// },
+	// toggleProperty(propertyName) {
+	// 	state[propertyName] = !state[propertyName]
+	// },
+
+	// // Preferences:
+	// toggleInlineBackground() {
+	// 	if (state.prefers.previewMode && state.prefers.inlineBackground) {
+	// 		state.prefers.previewMode = false // Reset
+	// 		return
+	// 	}
+	// 	state.prefers.previewMode = false // Reset
+	// 	state.prefers.inlineBackground = !state.prefers.inlineBackground
+	// },
+	// toggleMonospace(on) {
+	// 	state.prefers.monospace = on
+	// },
+	// togglePreviewMode() {
+	// 	// state.prefers.inlineBackground = false // Reset
+	// 	state.prefers.previewMode = !state.prefers.previewMode
+	// },
+
 	// Reducer:
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
@@ -405,14 +414,14 @@ const reducer = state => ({
 	},
 })
 
-const init = (initialValue, prefers = {}) => initialState => {
+const init = initialValue => initialState => {
 	const body = newNodes(initialValue)
 	const state = {
 		...initialState,
-		prefers: {
-			...initialState.prefers,
-			...prefers,
-		},
+		// prefers: {
+		// 	...initialState.prefers,
+		// 	...prefers,
+		// },
 		data: initialValue,
 		body,
 		pos1: newPos(),
@@ -424,9 +433,6 @@ const init = (initialValue, prefers = {}) => initialState => {
 	return state
 }
 
-function useEditor(initialValue, prefers) {
-	const _init = init(initialValue, prefers)
-	return useMethods(reducer, initialState, _init)
-}
+const useEditor = initialValue => useMethods(reducer, initialState, init(initialValue))
 
 export default useEditor

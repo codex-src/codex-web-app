@@ -1,4 +1,3 @@
-import * as Feather from "react-feather"
 import getStatus from "./getStatus"
 import getStatusLHS from "./getStatusLHS"
 import getStatusRHS from "./getStatusRHS"
