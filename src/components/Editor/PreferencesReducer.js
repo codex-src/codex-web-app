@@ -1,11 +1,13 @@
 import EnumStylesheets from "./EnumStylesheets"
 
 export const initialState = {
+	// antialiased: true,
 	darkMode:       false,
 	paddingX:       0,
 	paddingY:       0,
 	placeholder:    "Hello, world! 👋",
 	previewMode:    false,
+	primary:        false,
 	readme:         false,
 	readOnly:       false,
 	scrollPastEnd:  false,
@@ -18,30 +20,23 @@ export const initialState = {
 	wordWrap:       false,
 }
 
-// if (state.previewMode && state.textBackground) {
-// 	state.previewMode = false // Reset
-// 	return
-// }
-// state.previewMode = false // Reset
-// state.textBackground = !state.textBackground
-
-export const reducer = state => ({
+export const reducer = ({ prefs }) => ({
 	toggleStylesheet(stylesheet) {
-		state.stylesheet = stylesheet
+		prefs.stylesheet = stylesheet
 	},
 	toggleTextBackground() {
-		const { previewMode } = state
-		state.previewMode = false // Reset
+		const { previewMode } = prefs
+		prefs.previewMode = false // Reset
 		if (previewMode) {
 			// No-op
 			return
 		}
-		state.textBackground = !state.textBackground
+		prefs.textBackground = !prefs.textBackground
 	},
 	togglePreviewMode() {
-		state.previewMode = !state.previewMode
+		prefs.previewMode = !prefs.previewMode
 	},
 	toggleReadme() {
-		state.readme = !state.readme
+		prefs.readme = !prefs.readme
 	},
 })

@@ -1,10 +1,8 @@
 import * as Feather from "react-feather"
 import Button from "./Button"
-import EnumActionTypes from "../EnumActionTypes"
-import EnumStylesheets from "../EnumStylesheets"
 import Link from "utils/RouterLink"
 import React from "react"
-import WithTooltip from "./WithTooltip"
+import Tooltip from "./Tooltip"
 import { ReactComponent as GitHubLogo } from "./github-logo.svg"
 
 // {/* Cut, copy, and paste: */}
@@ -30,9 +28,9 @@ import { ReactComponent as GitHubLogo } from "./github-logo.svg"
 // </div>
 
 const ButtonIcon = ({ tooltip, ...props }) => (
-	<WithTooltip tooltip={tooltip}>
+	<Tooltip tooltip={tooltip}>
 		<Button {...props} />
-	</WithTooltip>
+	</Tooltip>
 )
 
 const Toolbar = ({ state, dispatch, ...props }) => (
@@ -43,15 +41,17 @@ const Toolbar = ({ state, dispatch, ...props }) => (
 				<ButtonIcon
 					tooltip="Undo (⌘Z)"
 					svg={Feather.ArrowLeft}
-					disabled={!state.history.index}
-					active={state.actionType === EnumActionTypes.UNDO}
+					// NOTE: Ignore state.prefs.readOnly
+					disabled={state.prefs.previewMode || !state.history.index}
+					active={state.actionType === "UNDO"}
 					onClick={dispatch.undo}
 				/>
 				<ButtonIcon
 					tooltip="Redo (⌘⇧Z or ⌘Y)"
 					svg={Feather.ArrowRight}
-					disabled={state.history.index + 1 === state.history.stack.length}
-					active={state.actionType === EnumActionTypes.REDO}
+					// NOTE: Ignore state.prefs.readOnly
+					disabled={state.prefs.previewMode || state.history.index + 1 === state.history.stack.length}
+					active={state.actionType === "REDO"}
 					onClick={dispatch.redo}
 				/>
 			</div>
@@ -60,14 +60,14 @@ const Toolbar = ({ state, dispatch, ...props }) => (
 				<ButtonIcon
 					tooltip="Type stylesheet (⌘⇧1)"
 					svg={Feather.Image}
-					active={state.prefs.stylesheet === EnumStylesheets.TYPE}
-					onClick={e => dispatch.toggleStylesheet(EnumStylesheets.TYPE)}
+					active={state.prefs.stylesheet === "TYPE"}
+					onClick={e => dispatch.toggleStylesheet("TYPE")}
 				/>
 				<ButtonIcon
 					tooltip="Mono stylesheet (⌘⇧2)"
 					svg={Feather.Image}
-					active={state.prefs.stylesheet === EnumStylesheets.MONO}
-					onClick={e => dispatch.toggleStylesheet(EnumStylesheets.MONO)}
+					active={state.prefs.stylesheet === "MONO"}
+					onClick={e => dispatch.toggleStylesheet("MONO")}
 				/>
 				<ButtonIcon
 					tooltip="Text background (⌘⇧P)"

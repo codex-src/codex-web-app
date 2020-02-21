@@ -1,6 +1,6 @@
 import Emoji from "./Emoji"
+import parseText from "./parseText"
 import React from "react"
-import recurse from "./parseTextComponents"
 import { Node } from "./Node"
 
 // Returns whether components are emoji components.
@@ -14,7 +14,7 @@ function areEmojis(components, limit = 3) {
 }
 
 const Paragraph = React.memo(({ reactKey, ...props }) => {
-	const parsed = recurse(props.children)
+	const parsed = parseText(props.children)
 	const className = ["paragraph", areEmojis(parsed) && "emojis"]
 		.filter(Boolean)
 		.join(" ")

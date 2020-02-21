@@ -1,6 +1,6 @@
 import Markdown from "./Markdown"
+import parseText from "./parseText"
 import React from "react"
-import recurse from "./parseTextComponents"
 
 import {
 	CompoundNode,
@@ -26,7 +26,7 @@ const Blockquote = React.memo(props => {
 	const parsed = props.children.map(each => ({
 		key:      each.key,
 		start:    each.data.slice(0, 2),
-		children: recurse(each.data.slice(2)), // || <br />,
+		children: parseText(each.data.slice(2)), // || <br />,
 	}))
 	return (
 		<CompoundNode className="blockquote">

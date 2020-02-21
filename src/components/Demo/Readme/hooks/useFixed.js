@@ -1,9 +1,7 @@
 import React from "react"
-import useEscape from "./useEscape"
 
 function useFixed() {
 	const [open, setOpen] = React.useState(false)
-	useEscape(open, setOpen)
 
 	const didMount = React.useRef()
 	React.useEffect(() => {

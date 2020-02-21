@@ -1,15 +1,17 @@
-import * as preferences from "./PreferencesReducer"
+import * as Preferences from "./PreferencesReducer"
 import emoji from "emoji-trie"
 import EnumActionTypes from "./EnumActionTypes"
 import newNodes from "./helpers/newNodes"
 import newPos from "./helpers/newPos"
-import parseComponents from "./Components"
+import parse from "./parser"
 import useMethods from "use-methods"
 import utf8 from "utils/encoding/utf8"
 
+// history: ...History.initialState,
 const initialState = {
-	prefs: { ...preferences.initialState },
-
+	prefs: {
+		...Preferences.initialState,
+	},
 	actionType: "",      // The type of the current action
 	actionTimeStamp: 0,  // The time stamp of the current action
 	isFocused: false,    // Is the editor focused?
@@ -25,13 +27,12 @@ const initialState = {
 	history: {           //
 		stack: [],         // The history state stack
 		index: 0,          // The history state stack index
-		// didSetPos       // FIXME
 	},                   //
-	didSetPos: false,    // Did set the cursors before the first write?
+	resetPos: false,     // Did reset the cursors?
 }
 
 const reducer = state => ({
-	...preferences.reducer(state.prefs),
+	...Preferences.reducer(state),
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
 		if (actionType === EnumActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
@@ -56,12 +57,12 @@ const reducer = state => ({
 	actionInput(nodes, atEnd, pos1, pos2) {
 		// Create a new action:
 		this.newAction(EnumActionTypes.INPUT)
-		if (!state.history.index && !state.didSetPos) {
+		if (!state.history.index && !state.resetPos) {
 			Object.assign(state.history.stack[0], {
 				pos1: state.pos1,
 				pos2: state.pos2,
 			})
-			state.didSetPos = true
+			state.resetPos = true
 		}
 		this.dropRedos()
 		// Update body:
@@ -84,12 +85,12 @@ const reducer = state => ({
 	write(substr, dropL = 0, dropR = 0) {
 		// Create a new action:
 		this.newAction(EnumActionTypes.INPUT)
-		if (!state.history.index && !state.didSetPos) {
+		if (!state.history.index && !state.resetPos) {
 			Object.assign(state.history.stack[0], {
 				pos1: state.pos1,
 				pos2: state.pos2,
 			})
-			state.didSetPos = true
+			state.resetPos = true
 		}
 		this.dropRedos()
 		// Drop bytes (L):
@@ -317,8 +318,8 @@ const reducer = state => ({
 			return
 		}
 		this.newAction(EnumActionTypes.UNDO)
-		if (state.history.index === 1 && state.didSetPos) {
-			state.didSetPos = false
+		if (state.history.index === 1 && state.resetPos) {
+			state.resetPos = false
 		}
 		// Guard decrement:
 		if (state.history.index) {
@@ -344,7 +345,7 @@ const reducer = state => ({
 		this.render()
 	},
 	render() {
-		state.components = parseComponents(state.body)
+		state.components = parse(state.body)
 		state.shouldRender++
 	},
 	rendered() {
@@ -359,7 +360,7 @@ const init = (data, prefs) => initialState => {
 		prefs: { ...initialState.prefs, ...prefs },
 		data,
 		body,
-		components: parseComponents(body),
+		components: parse(body),
 		reactDOM: document.createElement("div"),
 		history: { ...initialState.history, stack: [{ data, body, pos1: newPos(), pos2: newPos() }], index: 0 },
 	}

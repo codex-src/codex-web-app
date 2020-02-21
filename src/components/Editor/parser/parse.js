@@ -1,7 +1,6 @@
 import Blockquote from "./Blockquote"
 import Break from "./Break"
 import CodeBlock from "./CodeBlock"
-// import Comment from "./Comment"
 import Header from "./Header"
 import Paragraph from "./Paragraph"
 import React from "react"
@@ -13,7 +12,7 @@ import React from "react"
 // return _components
 
 // Parses an array of components from an array of nodes.
-function parseComponents(body) {
+function parse(body) {
 	const MAX_LENGTH = body.length
 
 	const components = []
@@ -134,4 +133,4 @@ function parseComponents(body) {
 	return components
 }
 
-export default parseComponents
+export default parse

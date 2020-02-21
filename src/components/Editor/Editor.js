@@ -8,10 +8,8 @@ import platform from "utils/platform"
 import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
-import StatusBar from "./StatusBar"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
-import Toolbar from "./Toolbar"
 import useShortcuts from "./hooks/useShortcuts"
 import useUndo from "./hooks/useUndo"
 
@@ -139,7 +137,7 @@ function Editor({ state, dispatch, ...props }) {
 				window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
 			}
 		}, [state]),
-		[state.shouldRender /* before */, state.pos1, state.pos2 /* after */],
+		[state.shouldRender /* before */, state.pos1, state.pos2],
 	)
 
 	useUndo(state, dispatch)
@@ -346,10 +344,8 @@ function Editor({ state, dispatch, ...props }) {
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			<Stylesheets state={state} />
-			{state.prefs.toolbar && <Toolbar state={state} dispatch={dispatch} />}
-			{!state.prefs.previewMode && state.prefs.statusBar && <StatusBar state={state} />}
-			{/* <EditorDebugger state={state} /> */}
+			{state.prefs.shortcuts && <Stylesheets state={state} />}
+			<EditorDebugger state={state} />
 		</React.Fragment>
 	)
 }

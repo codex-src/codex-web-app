@@ -36,7 +36,7 @@ export const Code = props => (
 )
 
 export const Strikethrough = props => (
-	<span className="strikethrough" /* spellCheck={false} */>
+	<span className="strikethrough">
 		<Markdown start={props.syntax} end={props.syntax} >
 			{props.children}
 		</Markdown>

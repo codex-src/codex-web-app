@@ -1,6 +1,6 @@
 import raw from "raw.macro"
 import React from "react"
-import EnumStylesheet from "../EnumStylesheets"
+import EnumStylesheets from "../EnumStylesheets"
 
 const Core = props => (
 	<style>{raw("./core.css")}</style>
@@ -22,7 +22,7 @@ const Stylesheets = ({ state, ...props }) => (
 	<React.Fragment>
 		<Core />
 		{state.prefs.previewMode && <PreviewMode />}
-		{state.prefs.stylesheet === EnumStylesheet.TYPE ? (
+		{state.prefs.stylesheet === EnumStylesheets.TYPE ? (
 			<StylesheetType />
 		) : (
 			<StylesheetMono />

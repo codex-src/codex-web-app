@@ -10,13 +10,13 @@ import {
 	StrongEm,
 } from "./Text"
 
-// Shorthand for parseTextComponents.
+// Shorthand for parseText.
 function recurse(data) {
-	return parseTextComponents(data)
+	return parseText(data)
 }
 
 // Parses an array of components from a string.
-function parseTextComponents(data) { // TODO: Rename to str
+function parseText(data) { // TODO: Rename to str
 	if (!data) {
 		return ""
 	}
@@ -144,4 +144,4 @@ function parseTextComponents(data) { // TODO: Rename to str
 	return components
 }
 
-export default parseTextComponents
+export default parseText
