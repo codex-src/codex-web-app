@@ -3,18 +3,23 @@
 @import "tailwindcss/components";
 /* purgecss end ignore */
 
-/* html { */
-/* 	@apply font-mono; */
-/* } */
+.tabs-2 {
+	-moz-tab-size: 2;
+	tab-size: 2;
+}
+.tabs-4 {
+	-moz-tab-size: 4;
+	tab-size: 4;
+}
 
 .tnum {
 	font-feature-settings: "tnum";
 }
 
-.emoji {
-	font-size: 1.2em;
-	line-height: 1;
-	vertical-align: -0.1em;
-}
+/* .emoji { */
+/* 	font-size: 1.2em; */
+/* 	line-height: 1; */
+/* 	vertical-align: -0.1em; */
+/* } */
 
 @import "tailwindcss/utilities";
