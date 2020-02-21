@@ -17,7 +17,6 @@ function useFixed() {
 			document.body.style.position = "fixed"
 			document.body.style.left     = 0
 			document.body.style.right    = 0
-			// FIXME: ... style.bottom?
 			document.body.style.top      = `${-scrollY}px`
 		} else {
 			const { top } = document.body.style
@@ -25,7 +24,6 @@ function useFixed() {
 			document.body.style.left     = ""
 			document.body.style.right    = ""
 			document.body.style.top      = ""
-			// FIXME: ... style.bottom?
 			window.scrollTo(0, -top.slice(0, -2))
 		}
 		/* eslint-enable no-multi-spaces */

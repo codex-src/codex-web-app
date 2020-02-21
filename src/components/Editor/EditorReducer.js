@@ -1,10 +1,9 @@
 import * as preferences from "./PreferencesReducer"
-import ActionTypes from "./EnumActionTypes"
 import emoji from "emoji-trie"
+import EnumActionTypes from "./EnumActionTypes"
 import newNodes from "./helpers/newNodes"
 import newPos from "./helpers/newPos"
 import parseComponents from "./Components"
-import Stylesheets from "./EnumStylesheets"
 import useMethods from "use-methods"
 import utf8 from "utils/encoding/utf8"
 
@@ -35,28 +34,28 @@ const reducer = state => ({
 	...preferences.reducer(state.prefs),
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
-		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
+		if (actionType === EnumActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
 			// No-op
 			return
 		}
 		Object.assign(state, { actionType, actionTimeStamp })
 	},
 	actionFocus() {
-		this.newAction(ActionTypes.FOCUS)
+		this.newAction(EnumActionTypes.FOCUS)
 		state.isFocused = true
 	},
 	actionBlur() {
-		this.newAction(ActionTypes.BLUR)
+		this.newAction(EnumActionTypes.BLUR)
 		state.isFocused = false // Reset
 	},
 	actionSelect(pos1, pos2) {
-		this.newAction(ActionTypes.SELECT)
+		this.newAction(EnumActionTypes.SELECT)
 		const hasSelection = pos1.pos !== pos2.pos
 		Object.assign(state, { hasSelection, pos1, pos2 })
 	},
 	actionInput(nodes, atEnd, pos1, pos2) {
 		// Create a new action:
-		this.newAction(ActionTypes.INPUT)
+		this.newAction(EnumActionTypes.INPUT)
 		if (!state.history.index && !state.didSetPos) {
 			Object.assign(state.history.stack[0], {
 				pos1: state.pos1,
@@ -84,7 +83,7 @@ const reducer = state => ({
 	},
 	write(substr, dropL = 0, dropR = 0) {
 		// Create a new action:
-		this.newAction(ActionTypes.INPUT)
+		this.newAction(EnumActionTypes.INPUT)
 		if (!state.history.index && !state.didSetPos) {
 			Object.assign(state.history.stack[0], {
 				pos1: state.pos1,
@@ -289,14 +288,14 @@ const reducer = state => ({
 		this.write("\n")
 	},
 	cut() {
-		this.newAction(ActionTypes.CUT)
+		this.newAction(EnumActionTypes.CUT)
 		this.write("")
 	},
 	copy() {
-		this.newAction(ActionTypes.COPY)
+		this.newAction(EnumActionTypes.COPY)
 	},
 	paste(substr) {
-		this.newAction(ActionTypes.PASTE)
+		this.newAction(EnumActionTypes.PASTE)
 		this.write(substr)
 	},
 	storeUndo() {
@@ -317,7 +316,7 @@ const reducer = state => ({
 		// 	// No-op
 		// 	return
 		// }
-		this.newAction(ActionTypes.UNDO)
+		this.newAction(EnumActionTypes.UNDO)
 		if (state.history.index === 1 && state.didSetPos) {
 			state.didSetPos = false
 		}
@@ -334,7 +333,7 @@ const reducer = state => ({
 		// 	// No-op
 		// 	return
 		// }
-		this.newAction(ActionTypes.REDO)
+		this.newAction(EnumActionTypes.REDO)
 		if (state.history.index + 1 === state.history.stack.length) {
 			// No-op
 			return
