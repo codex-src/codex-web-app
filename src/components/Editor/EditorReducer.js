@@ -8,7 +8,7 @@ import useMethods from "use-methods"
 import utf8 from "utils/encoding/utf8"
 
 const initialState = {
-	prefs: { ...preferences.initialState, },
+	prefs: { ...preferences.initialState },
 
 	actionType: "",      // The type of the current action
 	actionTimeStamp: 0,  // The time stamp of the current action
@@ -312,10 +312,10 @@ const reducer = state => ({
 		state.history.stack.splice(state.history.index + 1)
 	},
 	undo() {
-		// if (state.prefersPreviewMode) {
-		// 	// No-op
-		// 	return
-		// }
+		if (state.prefs.readOnly || state.prefs.previewMode) {
+			// No-op
+			return
+		}
 		this.newAction(EnumActionTypes.UNDO)
 		if (state.history.index === 1 && state.didSetPos) {
 			state.didSetPos = false
@@ -329,10 +329,10 @@ const reducer = state => ({
 		this.render()
 	},
 	redo() {
-		// if (state.prefersPreviewMode) {
-		// 	// No-op
-		// 	return
-		// }
+		if (state.prefs.readOnly || state.prefs.previewMode) {
+			// No-op
+			return
+		}
 		this.newAction(EnumActionTypes.REDO)
 		if (state.history.index + 1 === state.history.stack.length) {
 			// No-op
@@ -356,15 +356,12 @@ const init = (data, prefs) => initialState => {
 	const body = newNodes(data)
 	const state = {
 		...initialState,
-		prefs: {
-			...initialState.prefs,
-			...prefs,
-		},
+		prefs: { ...initialState.prefs, ...prefs },
 		data,
 		body,
 		components: parseComponents(body),
 		reactDOM: document.createElement("div"),
-		history: { stack: [{ data, body, pos1: newPos(), pos2: newPos() }], index: 0 },
+		history: { ...initialState.history, stack: [{ data, body, pos1: newPos(), pos2: newPos() }], index: 0 },
 	}
 	return state
 }

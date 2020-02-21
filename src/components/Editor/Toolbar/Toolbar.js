@@ -7,6 +7,28 @@ import React from "react"
 import WithTooltip from "./WithTooltip"
 import { ReactComponent as GitHubLogo } from "./github-logo.svg"
 
+// {/* Cut, copy, and paste: */}
+// <div className="mx-2 hidden md:flex md:flex-row">
+// 	<ButtonIcon
+// 		tooltip="Cut selection (⌘X)"
+// 		svg={Feather.Scissors}
+// 		active={state.actionType === EnumActionTypes.CUT}
+// 		onClick={dispatch.cut}
+// 	/>
+// 	<ButtonIcon
+// 		tooltip="Copy selection (⌘C)"
+// 		svg={Feather.Copy}
+// 		active={state.actionType === EnumActionTypes.COPY}
+// 		onClick={dispatch.copy}
+// 	/>
+// 	<ButtonIcon
+// 		tooltip="Paste clipboard (⌘V)"
+// 		svg={Feather.Clipboard}
+// 		active={state.actionType === EnumActionTypes.PASTE}
+// 		onClick={dispatch.paste}
+// 	/>
+// </div>
+
 const ButtonIcon = ({ tooltip, ...props }) => (
 	<WithTooltip tooltip={tooltip}>
 		<Button {...props} />
@@ -15,9 +37,9 @@ const ButtonIcon = ({ tooltip, ...props }) => (
 
 const Toolbar = ({ state, dispatch, ...props }) => (
 	<div className="m-2 fixed inset-x-0 bottom-0 flex flex-row justify-center z-20 pointer-events-none">
-		<div className="p-1 flex flex-row justify-between bg-white rounded-lg shadow-hero-lg pointer-events-auto">
+		<div className="-mx-2 p-1 flex flex-row justify-between bg-white rounded-lg shadow-hero-lg pointer-events-auto">
 			{/* Undo and redo: */}
-			<div className="flex flex-row">
+			<div className="mr-2 flex flex-row">
 				<ButtonIcon
 					tooltip="Undo (⌘Z)"
 					svg={Feather.ArrowLeft}
@@ -26,38 +48,15 @@ const Toolbar = ({ state, dispatch, ...props }) => (
 					onClick={dispatch.undo}
 				/>
 				<ButtonIcon
-					tooltip="Redo (⌘Y)"
+					tooltip="Redo (⌘⇧Z or ⌘Y)"
 					svg={Feather.ArrowRight}
 					disabled={state.history.index + 1 === state.history.stack.length}
 					active={state.actionType === EnumActionTypes.REDO}
 					onClick={dispatch.redo}
 				/>
 			</div>
-			{/* Cut, copy, and paste: */}
-			<div className="m-4 hidden md:block" />
-			<div className="hidden md:flex md:flex-row">
-				<ButtonIcon
-					tooltip="Cut selection (⌘X)"
-					svg={Feather.Scissors}
-					active={state.actionType === EnumActionTypes.CUT}
-					onClick={dispatch.cut}
-				/>
-				<ButtonIcon
-					tooltip="Copy selection (⌘C)"
-					svg={Feather.Copy}
-					active={state.actionType === EnumActionTypes.COPY}
-					onClick={dispatch.copy}
-				/>
-				<ButtonIcon
-					tooltip="Paste clipboard (⌘V)"
-					svg={Feather.Clipboard}
-					active={state.actionType === EnumActionTypes.PASTE}
-					onClick={dispatch.paste}
-				/>
-			</div>
 			{/* Stylesheets: */}
-			<div className="m-4" />
-			<div className="flex flex-row">
+			<div className="mx-2 flex flex-row">
 				<ButtonIcon
 					tooltip="Type stylesheet (⌘⇧1)"
 					svg={Feather.Image}
@@ -84,8 +83,7 @@ const Toolbar = ({ state, dispatch, ...props }) => (
 				/>
 			</div>
 			{/* Readme: */}
-			<div className="m-4" />
-			<div className="flex flex-row">
+			<div className="ml-2 flex flex-row">
 				<ButtonIcon
 					tooltip="Open Readme (Esc)"
 					svg={Feather.HelpCircle}

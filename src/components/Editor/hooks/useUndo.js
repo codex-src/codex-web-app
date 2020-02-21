@@ -4,15 +4,22 @@ function useUndo(state, dispatch) {
 	const id = React.useRef()
 	React.useEffect(
 		React.useCallback(() => {
-			const h = () => {
-				dispatch.storeUndo()
+			if (state.prefs.readOnly || state.prefs.previewMode) {
+				// No-op
+				return
 			}
-			id.current = setTimeout(h, 250)
+			if (!state.shouldRender) {
+				dispatch.storeUndo()
+				return
+			}
+			id.current = setTimeout(() => {
+				dispatch.storeUndo()
+			}, 250)
 			return () => {
 				clearTimeout(id.current)
 			}
-		}, [dispatch]),
-		[state.shouldRender],
+		}, [state, dispatch]),
+		[state.shouldRender], // state.data?
 	)
 }
 

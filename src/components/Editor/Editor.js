@@ -8,7 +8,6 @@ import platform from "utils/platform"
 import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
-import StatusBar from "./StatusBar"
 import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 import Toolbar from "./Toolbar"
@@ -142,24 +141,6 @@ function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender /* before */, state.pos1, state.pos2 /* after */],
 	)
 
-	// const [scrollPastEnd, setScrollPastEnd] = React.useState({})
-	//
-	// React.useLayoutEffect(() => {
-	// 	// React.useCallback(() => {
-	// 		if (!ref.current.childNodes.length) {
-	// 			// No-op
-	// 			return
-	// 		}
-	// 		// TODO: data-empty-node?
-	// 		let endNode = ref.current.lastChild
-	// 		if (!endNode.hasAttribute("data-node")) {
-	// 			endNode = endNode.querySelector("[data-node]")
-	// 		}
-	// 		const { height } = endNode.getBoundingClientRect()
-	// 		setScrollPastEnd({ paddingBottom: `calc(100vh - ${height}px - ${SCROLL_BUFFER}px)` })
-	// 	// }, [state]),
-	// }, [state.prefersMonoStylesheet, state.didRender])
-
 	useUndo(state, dispatch)
 	useShortcuts(state, dispatch)
 
@@ -170,7 +151,7 @@ function Editor({ state, dispatch, ...props }) {
 				{
 					ref,
 
-					className: "codex-editor", // DO NOT CHANGE
+					className: "codex-editor",
 
 					style: {
 						padding: `${state.prefs.paddingY}px ${state.prefs.paddingX}px`,
@@ -237,9 +218,6 @@ function Editor({ state, dispatch, ...props }) {
 					onKeyDown: e => {
 						switch (true) {
 						// Tab:
-						//
-						// NOTE: Use !e.ctrlKey to guard tabbing
-						// shortcuts
 						case !e.ctrlKey && e.keyCode === 9: // Tab
 							e.preventDefault()
 							dispatch.tab()
@@ -283,7 +261,6 @@ function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
-						// console.log(e.nativeEvent.inputType) // DELETEME
 						switch (e.nativeEvent.inputType) {
 						case "insertLineBreak":
 						case "insertParagraph":
@@ -322,10 +299,10 @@ function Editor({ state, dispatch, ...props }) {
 					},
 
 					onCut: e => {
-						// if (state.prefs.previewMode) {
-						// 	// No-op
-						// 	return
-						// }
+						if (state.prefs.readOnly || state.prefs.previewMode) {
+							// No-op
+							return
+						}
 						e.preventDefault()
 						if (!state.hasSelection) {
 							// No-op
@@ -336,10 +313,10 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.cut()
 					},
 					onCopy: e => {
-						// if (state.prefs.previewMode) {
-						// 	// No-op
-						// 	return
-						// }
+						if (state.prefs.readOnly || state.prefs.previewMode) {
+							// No-op
+							return
+						}
 						e.preventDefault()
 						if (!state.hasSelection) {
 							// No-op
@@ -350,17 +327,17 @@ function Editor({ state, dispatch, ...props }) {
 						dispatch.copy()
 					},
 					onPaste: e => {
-						// if (state.prefs.previewMode) {
-						// 	// No-op
-						// 	return
-						// }
-						const substr = e.clipboardData.getData("text/plain")
+						if (state.prefs.readOnly || state.prefs.previewMode) {
+							// No-op
+							return
+						}
 						e.preventDefault()
+						const substr = e.clipboardData.getData("text/plain")
 						if (!substr) {
 							// No-op
 							return
 						}
-						setForceRender(true) // *Use the Force, Luke!*
+						setForceRender(true)
 						dispatch.paste(substr)
 					},
 
