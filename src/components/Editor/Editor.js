@@ -13,6 +13,7 @@ import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 import Toolbar from "./Toolbar"
 import useShortcuts from "./hooks/useShortcuts"
+import useUndo from "./hooks/useUndo"
 
 const SCROLL_BUFFER = 12
 
@@ -159,21 +160,7 @@ function Editor({ state, dispatch, ...props }) {
 	// 	// }, [state]),
 	// }, [state.prefersMonoStylesheet, state.didRender])
 
-	// TODO: Refactor to useUndo?
-	const id = React.useRef()
-	React.useEffect(
-		React.useCallback(() => {
-			const h = () => {
-				dispatch.storeUndo()
-			}
-			id.current = setTimeout(h, 250)
-			return () => {
-				clearTimeout(id.current)
-			}
-		}, [dispatch]),
-		[state.shouldRender],
-	)
-
+	useUndo(state, dispatch)
 	useShortcuts(state, dispatch)
 
 	return (
