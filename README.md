@@ -11,6 +11,8 @@
   </h1>
 </div>
 
+<br>
+
 <h3 align="center">
   The developer’s web-based notebook
 </h2>
