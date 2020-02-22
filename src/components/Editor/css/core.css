@@ -1,12 +1,12 @@
 .codex-editor {
-	--padding-x: 24rem;
+	--padding-x: 24px;
 	--box-shadow: 0px 0px 0px 1px hsl(var(--gray-300));
 
 	color: hsl(var(--black));
 	caret-color: hsl(var(--black));
 }
 .codex-editor *::selection {
-	background: "#2979ff3f";
+	background: #2979ff3f;
 }
 
 .codex-editor .header {

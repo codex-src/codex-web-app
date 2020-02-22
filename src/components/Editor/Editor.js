@@ -1,4 +1,3 @@
-// import Stylesheets from "./Stylesheets"
 import EditorDebugger from "./EditorDebugger" // eslint-disable-line
 import getCoords from "./helpers/getCoords"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
@@ -361,8 +360,7 @@ function Editor({ state, dispatch, ...props }) {
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			{/* <Stylesheets state={state} /> */}
-			<EditorDebugger state={state} />
+			{/* <EditorDebugger state={state} /> */}
 		</React.Fragment>
 	)
 }
