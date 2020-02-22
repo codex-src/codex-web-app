@@ -6,8 +6,6 @@
     Codex 📘
     <br>
     <br>
-    <br>
-    <br>
   </h1>
 </div>
 
@@ -17,7 +15,6 @@
   The developer’s web-based notebook
 </h2>
 <p align="center">
-  <img src="https://img.shields.io/badge/Markdown-black.svg?logo=markdown">
   <img src="https://img.shields.io/badge/Chrome-black.svg?logo=google-chrome">
   <img src="https://img.shields.io/badge/Firefox-black.svg?logo=mozilla-firefox">
   <img src="https://img.shields.io/badge/Safari-black.svg?logo=safari">
