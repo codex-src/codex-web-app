@@ -4,7 +4,7 @@
 }
 
 .preview-mode .break {
-	--height: calc(var(--line-height) * 1px);;
+	--height: calc(var(--line-height) * 1em);
 	height: var(--height);
 	background:
 		linear-gradient(

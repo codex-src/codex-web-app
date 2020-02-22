@@ -13,10 +13,10 @@ import useShortcuts from "./hooks/useShortcuts"
 import useUndo from "./hooks/useUndo"
 
 import "./css/core.css"
-import "./css/mono.css"
 import "./css/preview-mode.css"
+import "./css/stylesheet-mono.css"
+import "./css/stylesheet-type.css"
 import "./css/text-background.css"
-import "./css/type.css"
 
 const SCROLL_BUFFER = 12
 

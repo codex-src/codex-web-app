@@ -24,9 +24,6 @@ export const initialState = {
 export const reducer = ({ prefs }) => ({
 	getClassNames() {
 		const classNames = []
-		if (prefs.previewMode) {
-			classNames.push("preview-mode")
-		}
 		if (prefs.stylesheet === EnumStylesheets.TYPE) {
 			classNames.push("stylesheet-type")
 		} else {
@@ -34,6 +31,9 @@ export const reducer = ({ prefs }) => ({
 		}
 		if (prefs.previewMode && prefs.textBackground) {
 			classNames.push("text-background")
+		}
+		if (prefs.previewMode) {
+			classNames.push("preview-mode")
 		}
 		prefs.classNames = classNames
 	},
