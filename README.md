@@ -2,7 +2,10 @@
 <div align="center">
   <h1>
     <br>
+    <br>
     Codex 📘
+    <br>
+    <br>
     <br>
     <br>
   </h1>
