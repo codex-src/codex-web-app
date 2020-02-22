@@ -12,6 +12,8 @@
   </h1>
 </div>
 
+<br>
+
 ## What is Codex?
 
 Codex is a _new_ kind of web-based markdown editor, for developers. 🎉
