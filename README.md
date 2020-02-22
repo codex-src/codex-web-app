@@ -11,8 +11,6 @@
   </h1>
 </div>
 
-<!--
-
 <br>
 
 <h3 align="center">
@@ -23,8 +21,6 @@
   <img src="https://img.shields.io/badge/Firefox-black.svg?logo=mozilla-firefox">
   <img src="https://img.shields.io/badge/Safari-black.svg?logo=safari">
 </p>
-
--->
 
 <br>
 
