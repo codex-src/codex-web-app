@@ -1,0 +1,20 @@
+.preview-mode .blockquote {
+	padding-left: 32px;
+	border-left: 2px solid hsl(var(--blue-a400));
+}
+
+.preview-mode .break {
+	--height: calc(var(--line-height) * 1px);;
+	height: var(--height);
+	background:
+		linear-gradient(
+			transparent calc(var(--height) / 2 - 2px),
+			hsl(var(--gray-200)) calc(var(--height) / 2 - 2px),
+			hsl(var(--gray-200)) calc(var(--height) / 2 + 2px),
+			transparent calc(var(--height) / 2 + 2px)
+		);
+}
+
+.preview-mode .markdown {
+	display: none;
+}

@@ -1,3 +1,4 @@
+// import Stylesheets from "./Stylesheets"
 import EditorDebugger from "./EditorDebugger" // eslint-disable-line
 import getCoords from "./helpers/getCoords"
 import getPosFromRange2 from "./helpers/getPosFromRange2"
@@ -8,10 +9,15 @@ import platform from "utils/platform"
 import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
-import Stylesheets from "./Stylesheets"
 import syncTrees from "./helpers/syncTrees"
 import useShortcuts from "./hooks/useShortcuts"
 import useUndo from "./hooks/useUndo"
+
+import "./css/core.css"
+import "./css/mono.css"
+import "./css/preview-mode.css"
+import "./css/text-background.css"
+import "./css/type.css"
 
 const SCROLL_BUFFER = 12
 
@@ -143,6 +149,17 @@ function Editor({ state, dispatch, ...props }) {
 	useUndo(state, dispatch)
 	useShortcuts(state, dispatch)
 
+	React.useEffect(() => {
+		dispatch.getClassNames()
+	}, [dispatch])
+
+	// React.useEffect(
+	// 	React.useCallback(() => {
+	// 		dispatch.getClassNames()
+	// 	}, [dispatch]),
+	// 	[],
+	// )
+
 	return (
 		<React.Fragment>
 			{React.createElement(
@@ -150,7 +167,7 @@ function Editor({ state, dispatch, ...props }) {
 				{
 					ref,
 
-					className: "codex-editor",
+					className: ["codex-editor", ...state.prefs.classNames].join(" "),
 
 					style: {
 						padding: `${state.prefs.paddingY}px ${state.prefs.paddingX}px`,
@@ -344,7 +361,7 @@ function Editor({ state, dispatch, ...props }) {
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			{state.prefs.shortcuts && <Stylesheets state={state} />}
+			{/* <Stylesheets state={state} /> */}
 			<EditorDebugger state={state} />
 		</React.Fragment>
 	)

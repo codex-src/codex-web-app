@@ -1,0 +1,20 @@
+.stylesheet-type {
+	--line-height: 1.6;
+
+	-moz-tab-size: 4;
+	tab-size: 4;
+	font: 19px/var(--line-height) system-ui, sans-serif;
+}
+.stylesheet-type .code-block,
+.stylesheet-type .code {
+	-moz-osx-font-smoothing: auto;
+	-webkit-font-smoothing:  auto;
+
+	-moz-tab-size: 2;
+	tab-size: 2;
+	font: calc(16 / 19 * 1em)/1.4 "iA Writer Mono var", monospace;
+}
+
+.stylesheet-type .header {
+	line-height: 1.4;
+}

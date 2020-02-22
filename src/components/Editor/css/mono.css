@@ -1,0 +1,14 @@
+.stylesheet-mono {
+	--line-height: 1.6;
+
+	-moz-osx-font-smoothing: auto;
+	-webkit-font-smoothing:  auto;
+
+	-moz-tab-size: 2;
+	tab-size: 2;
+	font: 16px/var(--line-height) "iA Writer Duo var", monospace;
+}
+.stylesheet-mono .code-block,
+.stylesheet-mono .code {
+	font: 1em/1.4 "iA Writer Mono var", monospace;
+}

@@ -1,97 +1,93 @@
 .codex-editor {
-	--padding-x:     1.5rem;  /* 24px */
-	--padding-y:     0.75rem; /* 12px */
-	--border-radius: 0px;
-	--box-shadow:    0px 0px 0px 1px hsl(var(--gray-300));
+	--padding-x: 24rem;
+	--box-shadow: 0px 0px 0px 1px hsl(var(--gray-300));
 
 	color: hsl(var(--black));
 	caret-color: hsl(var(--black));
 }
 .codex-editor *::selection {
-	background: hsla(218, 100%, 58.0392%, 0.25) !important;
+	background: "#2979ff3f";
 }
 
-.header {
+.codex-editor .header {
 	font-weight: bold;
 }
-.header.h1 {
+.codex-editor .header.h1 {
 	font-size: 1.50em;
 }
-.header.h2 {
+.codex-editor .header.h2 {
 	font-size: 1.25em;
 }
-.header.h3 {
+.codex-editor .header.h3 {
 	font-size: 1.20em;
 }
-.header.h4 {
+.codex-editor .header.h4 {
 	font-size: 1.15em;
 }
-.header.h5 {
+.codex-editor .header.h5 {
 	font-size: 1.10em;
 }
-.header.h6 {
+.codex-editor .header.h6 {
 	font-size: 1.05em;
 }
 
-.blockquote {
+.codex-editor .blockquote {
 	color: hsl(var(--blue-a200));
 }
-.blockquote > [data-node] > .markdown {
+.codex-editor .blockquote > [data-node] > .markdown {
 	margin-right: 0.5ch;
 	color: hsla(var(--blue-a200), 0.5);
 }
 
-.code-block {
+.codex-editor .code-block {
 	padding: 0px var(--padding-x);
 	background: hsl(var(--gray-50));
-	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
-.code-block > [data-node] > span {
+.codex-editor .code-block > [data-node] > span {
 	padding-right: var(--padding-x);
 }
 
-.paragraph.emojis {
+.codex-editor .paragraph.emojis {
 	font-size: 1.5em;
 }
 
-.emoji {
+.codex-editor .emoji {
 	font-size: 1.2em;
 	line-height: 1;
 	vertical-align: -0.1em;
 }
 
-.em {
+.codex-editor .em {
 	font-style: italic;
 }
 
-.strong {
+.codex-editor .strong {
 	font-weight: 600;
 }
-.header .strong {
+.codex-editor .header .strong {
 	font-weight: 700;
 }
 
-.code {
+.codex-editor .code {
 	padding: calc(1 / 16 * 1em);
 	box-decoration-break: clone;
 	color: hsl(var(--blue-a400));
-	border-radius: var(--border-radius);
 	box-shadow: var(--box-shadow);
 }
-.code > .markdown {
+.codex-editor .code > .markdown {
 	color: hsl(var(--gray));
 }
 
-.strikethrough {
+.codex-editor .strikethrough {
 	--blue-a400: var(--gray);
 	font-style: italic;
 	color: hsl(var(--gray));
 	text-decoration: line-through;
 }
 
-.markdown {
+.codex-editor .markdown {
 	color: hsl(var(--blue-a400));
 }

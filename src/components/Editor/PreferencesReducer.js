@@ -2,6 +2,7 @@ import EnumStylesheets from "./EnumStylesheets"
 
 export const initialState = {
 	// antialiased: true,
+	classNames:     "",
 	darkMode:       false,
 	paddingX:       0,
 	paddingY:       0,
@@ -21,8 +22,24 @@ export const initialState = {
 }
 
 export const reducer = ({ prefs }) => ({
+	getClassNames() {
+		const classNames = []
+		if (prefs.previewMode) {
+			classNames.push("preview-mode")
+		}
+		if (prefs.stylesheet === EnumStylesheets.TYPE) {
+			classNames.push("stylesheet-type")
+		} else {
+			classNames.push("stylesheet-mono")
+		}
+		if (prefs.previewMode && prefs.textBackground) {
+			classNames.push("text-background")
+		}
+		prefs.classNames = classNames
+	},
 	toggleStylesheet(stylesheet) {
 		prefs.stylesheet = stylesheet
+		this.getClassNames()
 	},
 	toggleTextBackground() {
 		const { previewMode } = prefs
@@ -32,11 +49,14 @@ export const reducer = ({ prefs }) => ({
 			return
 		}
 		prefs.textBackground = !prefs.textBackground
+		this.getClassNames()
 	},
 	togglePreviewMode() {
 		prefs.previewMode = !prefs.previewMode
+		this.getClassNames()
 	},
 	toggleReadme() {
 		prefs.readme = !prefs.readme
+		this.getClassNames()
 	},
 })
