@@ -3,8 +3,7 @@
   <h1>
     <br>
     <br>
-    Codex 📘<br>
-    <small>The developer’s notebook</small>
+    Codex 📘
     <br>
     <br>
     <br>
