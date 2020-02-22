@@ -3,7 +3,7 @@
   <h1>
     <br>
     <br>
-    Codex 📘
+    Codex ✍️
     <br>
     <br>
     <br>
