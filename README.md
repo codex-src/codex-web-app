@@ -1,3 +1,18 @@
+<!-- https://github.com/streamich/react-use/blob/master/README.md -->
+<div align="center">
+  <h1>
+    <br>
+    <br>
+    Codex 📘
+    <br>
+    <br>
+    <br>
+    <br>
+  </h1>
+</div>
+
+<br>
+
 ## What is Codex?
 
 Codex is a _new_ kind of web-based markdown editor, for developers. 🎉
