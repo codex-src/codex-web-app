@@ -1,8 +1,8 @@
 <!-- https://github.com/streamich/react-use/blob/master/README.md -->
 <div align="center">
   <h1>
-    <br>
     Codex 📘
+    <br>
     <br>
   </h1>
 </div>
