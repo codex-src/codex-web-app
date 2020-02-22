@@ -45,80 +45,80 @@ const App = props => (
 	<Router.BrowserRouter>
 		<AppProviders>
 			{/* <AppContainer> */}
-				<Router.Switch>
+			<Router.Switch>
 
-					<User.UnprotectedRoute
-						path="/demo"
-						exact
-						title="Demo"
-						children={<Demo />}
-					/>
+				<User.UnprotectedRoute
+					path="/demo"
+					exact
+					title="Demo"
+					children={<Demo />}
+				/>
 
-					{/* Unprotected routes: */}
-					<User.UnprotectedRoute
-						path="/"
-						exact
-						title=""
-						children={<Marketing />}
-					/>
-					{/* <User.UnprotectedRoute */}
-					{/* 	path="/our-story" */}
-					{/* 	exact */}
-					{/* 	title="Our story" */}
-					{/* 	component={props => "TODO"} */}
-					{/* /> */}
-					{/* <User.UnprotectedRoute */}
-					{/* 	path="/features" */}
-					{/* 	exact */}
-					{/* 	title="Features" */}
-					{/* 	component={props => "TODO"} */}
-					{/* /> */}
-					{/* <User.UnprotectedRoute */}
-					{/* 	path="/pricing" */}
-					{/* 	exact */}
-					{/* 	title="Pricing" */}
-					{/* 	component={props => "TODO"} */}
-					{/* /> */}
-					{/* <User.UnprotectedRoute */}
-					{/* 	path="/faq" */}
-					{/* 	exact */}
-					{/* 	title="FAQ" */}
-					{/* 	component={props => "TODO"} */}
-					{/* /> */}
-					{/* <User.UnprotectedRoute */}
-					{/* 	path="/sign-up" */}
-					{/* 	exact */}
-					{/* 	title="Sign up" */}
-					{/* 	component={Forms.SignUpFlow} */}
-					{/* /> */}
-					{/* <User.UnprotectedRoute */}
-					{/* 	path="/sign-in" */}
-					{/* 	exact */}
-					{/* 	title="Sign in" */}
-					{/* 	component={Forms.SignIn} */}
-					{/* /> */}
-					{/* <User.UnprotectedRoute */}
-					{/* 	path="/reset-password" */}
-					{/* 	exact */}
-					{/* 	title="Reset password" */}
-					{/* 	component={Forms.ResetPassword} */}
-					{/* /> */}
+				{/* Unprotected routes: */}
+				<User.UnprotectedRoute
+					path="/"
+					exact
+					title=""
+					children={<Marketing />}
+				/>
+				{/* <User.UnprotectedRoute */}
+				{/* 	path="/our-story" */}
+				{/* 	exact */}
+				{/* 	title="Our story" */}
+				{/* 	component={props => "TODO"} */}
+				{/* /> */}
+				{/* <User.UnprotectedRoute */}
+				{/* 	path="/features" */}
+				{/* 	exact */}
+				{/* 	title="Features" */}
+				{/* 	component={props => "TODO"} */}
+				{/* /> */}
+				{/* <User.UnprotectedRoute */}
+				{/* 	path="/pricing" */}
+				{/* 	exact */}
+				{/* 	title="Pricing" */}
+				{/* 	component={props => "TODO"} */}
+				{/* /> */}
+				{/* <User.UnprotectedRoute */}
+				{/* 	path="/faq" */}
+				{/* 	exact */}
+				{/* 	title="FAQ" */}
+				{/* 	component={props => "TODO"} */}
+				{/* /> */}
+				{/* <User.UnprotectedRoute */}
+				{/* 	path="/sign-up" */}
+				{/* 	exact */}
+				{/* 	title="Sign up" */}
+				{/* 	component={Forms.SignUpFlow} */}
+				{/* /> */}
+				{/* <User.UnprotectedRoute */}
+				{/* 	path="/sign-in" */}
+				{/* 	exact */}
+				{/* 	title="Sign in" */}
+				{/* 	component={Forms.SignIn} */}
+				{/* /> */}
+				{/* <User.UnprotectedRoute */}
+				{/* 	path="/reset-password" */}
+				{/* 	exact */}
+				{/* 	title="Reset password" */}
+				{/* 	component={Forms.ResetPassword} */}
+				{/* /> */}
 
-					{/* Protected routes: */}
-					<User.ProtectedRoute
-						path="/new"
-						exact
-						title="New note"
-						render={props => <Note key={random.newFourByteHash()} />}
-					/>
+				{/* Protected routes: */}
+				<User.ProtectedRoute
+					path="/new"
+					exact
+					title="New note"
+					render={props => <Note key={random.newFourByteHash()} />}
+				/>
 
-					<User.Route
-						path="/"
-						title="404"
-						component={PageNotFound}
-					/>
+				<User.Route
+					path="/"
+					title="404"
+					component={PageNotFound}
+				/>
 
-				</Router.Switch>
+			</Router.Switch>
 			{/* </AppContainer> */}
 		</AppProviders>
 	</Router.BrowserRouter>

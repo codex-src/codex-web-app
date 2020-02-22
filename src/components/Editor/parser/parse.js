@@ -43,16 +43,6 @@ function parse(body) {
 				continue
 			}
 			break
-
-		// // Comment:
-		// case char === "/":
-		// 	if (each.data.length >= 2 && each.data.slice(0, 2) === "//") {
-		// 		const str = each.data.slice(2)
-		// 		components.push(<Comment key={each.key} reactKey={each.key} start="//">{str}</Comment>)
-		// 		continue
-		// 	}
-		// 	break
-
 		// Blockquote:
 		case char === ">":
 			if (
@@ -90,7 +80,6 @@ function parse(body) {
 			// 	components.push(<CodeBlock key={each.key} metadata="">{nodes}</CodeBlock>)
 			// 	continue
 			// }
-
 			if (
 				each.data.length >= 3 &&
 				each.data.slice(0, 3) === "```" &&

@@ -24,16 +24,16 @@ export const initialState = {
 export const reducer = ({ prefs }) => ({
 	getClassNames() {
 		const classNames = []
+		if (prefs.previewMode) {
+			classNames.push("preview-mode")
+		}
 		if (prefs.stylesheet === EnumStylesheets.TYPE) {
 			classNames.push("stylesheet-type")
 		} else {
 			classNames.push("stylesheet-mono")
 		}
-		if (prefs.previewMode && prefs.textBackground) {
+		if (!prefs.previewMode && prefs.textBackground) {
 			classNames.push("text-background")
-		}
-		if (prefs.previewMode) {
-			classNames.push("preview-mode")
 		}
 		prefs.classNames = classNames
 	},
@@ -42,12 +42,7 @@ export const reducer = ({ prefs }) => ({
 		this.getClassNames()
 	},
 	toggleTextBackground() {
-		const { previewMode } = prefs
 		prefs.previewMode = false // Reset
-		if (previewMode) {
-			// No-op
-			return
-		}
 		prefs.textBackground = !prefs.textBackground
 		this.getClassNames()
 	},

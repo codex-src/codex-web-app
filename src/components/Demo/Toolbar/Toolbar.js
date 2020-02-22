@@ -85,7 +85,7 @@ const Toolbar = ({ state, dispatch, ...props }) => (
 			{/* Readme: */}
 			<div className="ml-2 flex flex-row">
 				<ButtonIcon
-					tooltip="Open Readme (Esc)"
+					tooltip="Open readme (Esc)"
 					svg={Feather.HelpCircle}
 					active={state.prefs.readme}
 					onClick={dispatch.toggleReadme}
