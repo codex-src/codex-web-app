@@ -25,8 +25,6 @@ Codex is different than other editors because:
 2. Codex is based on web technologies, notably CSS for design. In the near future, you’ll be able to toggle dark mode, import custom themes, including fonts, and tweak your Codex’s stylesheet to your liking. 👌
 3. Codex is _for_ developers. A lot of editors are designed for non-technical users, leaving developers to use code editors to achieve the same effect. Codex, however, is designed to replace your code editor for words _and_ code.
 
-TODO: Images
-
 ## Can I try Codex?
 
 **Yes!** The editor alpha is live at https://opencodex.dev and syncs to localStorage.
