@@ -1,7 +1,7 @@
 import isMetaOrCtrlKey from "./isMetaOrCtrlKey"
 
-const keyCodeY = 89
-const keyCodeZ = 90
+const KEY_CODE_Y = 89
+const KEY_CODE_Z = 90
 
 // Detects whether a key down event matches a key code.
 export function detectKeyCode(e, keyCode, { shiftKey } = { shiftKey: false }) {
@@ -20,7 +20,7 @@ export function detectUndo(e) {
 		!e.shiftKey &&
 		!e.altKey &&
 		isMetaOrCtrlKey(e) &&
-		e.keyCode === keyCodeZ
+		e.keyCode === KEY_CODE_Z
 	)
 	return ok
 }
@@ -31,7 +31,7 @@ export function detectRedo(e) {
 		e.shiftKey &&
 		!e.altKey &&
 		isMetaOrCtrlKey(e) &&
-		(e.keyCode === keyCodeZ || e.keyCode === keyCodeY)
+		(e.keyCode === KEY_CODE_Z || e.keyCode === KEY_CODE_Y)
 	)
 	return ok
 }

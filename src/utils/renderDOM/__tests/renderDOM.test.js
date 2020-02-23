@@ -5,10 +5,10 @@ import renderDOM from "../renderDOM"
 // Parses a React component to markup and then a DOM node.
 function ParseMarkupDOM(Component) {
 	const parser = new DOMParser()
-	const dom = parser.parseFromString(ReactDOMServer.renderToStaticMarkup(<Component />), "text/html")
-	const div = document.createElement("div")
-	div.appendChild(dom.body.childNodes[0])
-	return div.childNodes[0] // NOTE: Breaks document fragments
+	const domNode = parser.parseFromString(ReactDOMServer.renderToStaticMarkup(<Component />), "text/html")
+	const rootNode = document.createElement("div")
+	rootNode.appendChild(domNode.body.childNodes[0])
+	return rootNode.childNodes[0] // NOTE: Breaks document fragments
 }
 
 test("br", () => {

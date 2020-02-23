@@ -1,6 +1,10 @@
 import EnumStylesheets from "../EnumStylesheets"
-import platform from "utils/platform"
 import React from "react"
+import { detectKeyCode } from "utils/platform"
+
+const KEY_CODE_1 = 49
+const KEY_CODE_2 = 50
+const KEY_CODE_P = 80
 
 function useShortcuts(state, dispatch) {
 	React.useEffect(
@@ -11,23 +15,19 @@ function useShortcuts(state, dispatch) {
 			}
 			const onKeyDown = e => {
 				switch (true) {
-				// Stylesheet/type:
-				case platform.detectKeyCode(e, 49, { shiftKey: true }):
+				case detectKeyCode(e, KEY_CODE_1, { shiftKey: true }):
 					e.preventDefault()
 					dispatch.toggleStylesheet(EnumStylesheets.TYPE)
 					return
-				// Stylesheet/mono:
-				case platform.detectKeyCode(e, 50, { shiftKey: true }):
+				case detectKeyCode(e, KEY_CODE_2, { shiftKey: true }):
 					e.preventDefault()
 					dispatch.toggleStylesheet(EnumStylesheets.MONO)
 					return
-				// Text background:
-				case platform.detectKeyCode(e, 80, { shiftKey: true }):
+				case detectKeyCode(e, KEY_CODE_P, { shiftKey: true }):
 					e.preventDefault()
 					dispatch.toggleTextBackground()
 					return
-				// Preview mode:
-				case platform.detectKeyCode(e, 80, { shiftKey: false }):
+				case detectKeyCode(e, KEY_CODE_P):
 					e.preventDefault()
 					dispatch.togglePreviewMode()
 					return

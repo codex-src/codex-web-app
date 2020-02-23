@@ -1,15 +1,16 @@
 import Enum from "../Enum"
 
-test("integration", () => {
-	const DaysOfTheWeek = new Enum(
-		"MONDAY",
-		"TUESDAY",
-		"WEDNESDAY",
-		"THURSDAY",
-		"FRIDAY",
-		"SATURDAY",
-		"SUNDAY",
-	)
+const DaysOfTheWeek = new Enum(
+	"MONDAY",
+	"TUESDAY",
+	"WEDNESDAY",
+	"THURSDAY",
+	"FRIDAY",
+	"SATURDAY",
+	"SUNDAY",
+)
+
+test("DaysOfTheWeek", () => {
 	expect(DaysOfTheWeek.MONDAY).toBe("MONDAY")
 	expect(DaysOfTheWeek.TUESDAY).toBe("TUESDAY")
 	expect(DaysOfTheWeek.WEDNESDAY).toBe("WEDNESDAY")

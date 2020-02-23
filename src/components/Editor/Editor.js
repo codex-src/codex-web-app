@@ -4,13 +4,17 @@ import getPosFromRange2 from "./helpers/getPosFromRange2"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
 import NodeIterator from "./helpers/NodeIterator"
-import platform from "utils/platform"
 import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
 import useShortcuts from "./hooks/useShortcuts"
 import useUndo from "./hooks/useUndo"
 import { newUUID } from "utils/random"
+
+import {
+	detectRedo,
+	detectUndo,
+} from "utils/platform"
 
 import "./css/core.css"
 import "./css/preview-mode.css"
@@ -245,12 +249,12 @@ function Editor({ state, dispatch, ...props }) {
 							dispatch.enter()
 							return
 						// Undo:
-						case platform.detectUndo(e):
+						case detectUndo(e):
 							e.preventDefault()
 							dispatch.undo()
 							return
 						// Redo:
-						case platform.detectRedo(e):
+						case detectRedo(e):
 							e.preventDefault()
 							dispatch.redo()
 							return

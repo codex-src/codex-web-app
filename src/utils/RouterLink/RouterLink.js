@@ -1,12 +1,12 @@
 import React from "react"
 import { Link } from "react-router-dom"
 
-// <RouterLink to="">         -> <Router.Link to="...">
-// <RouterLink to="http://">  -> <a href="http://">
-// <RouterLink to="https://"> -> <a href="https://">
-// <RouterLink>               -> <div>
+// <RouterLink to="...">         -> <a to="...">
+// <RouterLink to="http://...">  -> <a href="http://...">
+// <RouterLink to="https://..."> -> <a href="https://...">
+// <RouterLink>                  -> <div>
 //
-function RouterLink({ to, ...props }) {
+const RouterLink = ({ to, ...props }) => {
 	let Component = null
 	switch (true) {
 	case to !== undefined && (to.startsWith("http://") || to.startsWith("https://")): // Takes precedence

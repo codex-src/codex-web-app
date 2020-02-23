@@ -1,10 +1,10 @@
 import ReactDOM from "react-dom"
 
-// RenderDOM renders a React element to a DOM node.
-function RenderDOM(ReactElement) {
+// Renders a React component to a DOM node.
+function renderDOM(Component) {
 	const domNode = document.createElement("div")
-	ReactDOM.render(ReactElement, domNode)
+	ReactDOM.render(Component, domNode)
 	return domNode.childNodes[0] // NOTE: Breaks document fragments
 }
 
-export default RenderDOM
+export default renderDOM
