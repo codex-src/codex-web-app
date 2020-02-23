@@ -5,7 +5,15 @@ import newNodes from "./helpers/newNodes"
 import newPos from "./helpers/newPos"
 import parse from "./parser"
 import useMethods from "use-methods"
-import utf8 from "utils/encoding/utf8"
+
+import {
+	atEnd,
+	atStart,
+	isAlphanum,
+	isHWhiteSpace,
+	isVWhiteSpace,
+	isWhiteSpace,
+} from "utils/encoding/utf8"
 
 // history: ...History.initialState,
 const initialState = {
@@ -143,7 +151,7 @@ const reducer = state => ({
 		let dropL = 0
 		if (!state.hasSelection && state.pos1.pos) { // Inverse
 			const substr = state.data.slice(0, state.pos1.pos)
-			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+			const rune = emoji.atEnd(substr) || atEnd(substr)
 			dropL = rune.length
 		}
 		this.write("", dropL, 0)
@@ -157,8 +165,8 @@ const reducer = state => ({
 		let index = state.pos1.pos
 		while (index) {
 			const substr = state.data.slice(0, index)
-			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
-			if (!rune || !utf8.isHWhiteSpace(rune)) {
+			const rune = emoji.atEnd(substr) || atEnd(substr)
+			if (!rune || !isHWhiteSpace(rune)) {
 				// No-op
 				break
 			}
@@ -166,26 +174,26 @@ const reducer = state => ({
 		}
 		// Get the next rune:
 		const substr = state.data.slice(0, index)
-		const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+		const rune = emoji.atEnd(substr) || atEnd(substr)
 		// Iterate to an alphanumeric rune OR a non-alphanumeric
 		// rune based on the next rune:
-		if (rune && !utf8.isAlphanum(rune)) {
+		if (rune && !isAlphanum(rune)) {
 			// Iterate to an alphanumeric rune:
 			while (index) {
 				const substr = state.data.slice(0, index)
-				const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
-				if (!rune || utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+				const rune = emoji.atEnd(substr) || atEnd(substr)
+				if (!rune || isAlphanum(rune) || isWhiteSpace(rune)) {
 					// No-op
 					break
 				}
 				index -= rune.length
 			}
-		} else if (rune && utf8.isAlphanum(rune)) {
+		} else if (rune && isAlphanum(rune)) {
 			// Iterate to a non-alphanumeric rune:
 			while (index) {
 				const substr = state.data.slice(0, index)
-				const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
-				if (!rune || !utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+				const rune = emoji.atEnd(substr) || atEnd(substr)
+				if (!rune || !isAlphanum(rune) || isWhiteSpace(rune)) {
 					// No-op
 					break
 				}
@@ -208,8 +216,8 @@ const reducer = state => ({
 		let index = state.pos1.pos
 		while (index >= 0) {
 			const substr = state.data.slice(0, index)
-			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
-			if (!rune || utf8.isVWhiteSpace(rune)) {
+			const rune = emoji.atEnd(substr) || atEnd(substr)
+			if (!rune || isVWhiteSpace(rune)) {
 				// No-op
 				break
 			}
@@ -226,7 +234,7 @@ const reducer = state => ({
 		let dropR = 0
 		if (!state.hasSelection && state.pos1.pos < state.data.length) { // Inverse
 			const substr = state.data.slice(state.pos1.pos)
-			const rune = emoji.atStart(substr) || utf8.atStart(substr)
+			const rune = emoji.atStart(substr) || atStart(substr)
 			dropR = rune.length
 		}
 		this.write("", 0, dropR)
@@ -240,8 +248,8 @@ const reducer = state => ({
 		let index = state.pos1.pos
 		while (index < state.data.length) {
 			const substr = state.data.slice(index)
-			const rune = emoji.atStart(substr) || utf8.atStart(substr)
-			if (!rune || !utf8.isHWhiteSpace(rune)) {
+			const rune = emoji.atStart(substr) || atStart(substr)
+			if (!rune || !isHWhiteSpace(rune)) {
 				// No-op
 				break
 			}
@@ -249,26 +257,26 @@ const reducer = state => ({
 		}
 		// Get the next rune:
 		const substr = state.data.slice(index)
-		const rune = emoji.atStart(substr) || utf8.atStart(substr)
+		const rune = emoji.atStart(substr) || atStart(substr)
 		// Iterate to an alphanumeric rune OR a non-alphanumeric
 		// rune based on the next rune:
-		if (rune && !utf8.isAlphanum(rune)) {
+		if (rune && !isAlphanum(rune)) {
 			// Iterate to an alphanumeric rune:
 			while (index < state.data.length) {
 				const substr = state.data.slice(index)
-				const rune = emoji.atStart(substr) || utf8.atStart(substr)
-				if (!rune || utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+				const rune = emoji.atStart(substr) || atStart(substr)
+				if (!rune || isAlphanum(rune) || isWhiteSpace(rune)) {
 					// No-op
 					break
 				}
 				index += rune.length
 			}
-		} else if (rune && utf8.isAlphanum(rune)) {
+		} else if (rune && isAlphanum(rune)) {
 			// Iterate to a non-alphanumeric rune:
 			while (index < state.data.length) {
 				const substr = state.data.slice(index)
-				const rune = emoji.atStart(substr) || utf8.atStart(substr)
-				if (!rune || !utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
+				const rune = emoji.atStart(substr) || atStart(substr)
+				if (!rune || !isAlphanum(rune) || isWhiteSpace(rune)) {
 					// No-op
 					break
 				}

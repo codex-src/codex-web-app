@@ -1,6 +1,6 @@
 import isAlphanum from "../isAlphanum.js"
 
-test("integration", () => {
+test("isAlphanum", () => {
 	expect(isAlphanum("")).toBe(false)
 	expect(isAlphanum(" ")).toBe(false)
 	expect(isAlphanum("\t")).toBe(false)

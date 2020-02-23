@@ -1,5 +1,4 @@
-// Returns whether a character is an alphanumeric character.
-function isAlphanum(char) {
+export function isAlphanum(char) {
 	if (!char) {
 		return false
 	}
@@ -11,5 +10,3 @@ function isAlphanum(char) {
 	)
 	return ok
 }
-
-export default isAlphanum
