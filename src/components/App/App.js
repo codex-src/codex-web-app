@@ -1,5 +1,3 @@
-// import fetchGraphQL from "./fetchGraphQL"
-// import GraphQL from "use-graphql"
 // import Note from "components/Note"
 // import { newFourByteHash } from "utils/random"
 import Demo from "components/Demo"
@@ -15,16 +13,6 @@ import {
 	BrowserRouter,
 	Switch,
 } from "react-router-dom"
-
-// const client = new GraphQL.Client({ fetchGraphQL })
-//
-// const AppProviders = props => (
-// 	<GraphQL.Provider client={client}>
-// 		<Provider>
-// 			{props.children}
-// 		</Provider>
-// 	</GraphQL.Provider>
-// )
 
 const App = props => (
 	<BrowserRouter>

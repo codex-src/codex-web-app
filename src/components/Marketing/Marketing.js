@@ -1,6 +1,6 @@
 import HeroEditor from "./HeroEditor"
 import Link from "utils/RouterLink"
-import Nav2 from "components/Nav2"
+import Nav from "components/Nav"
 import React from "react"
 
 import "./Marketing.css"
@@ -34,7 +34,6 @@ const Hero = props => (
 				{/* </Link> */}
 			</div>
 
-			{/* Spacer: */}
 			<div className="w-24 h-12" />
 
 			{/* RHS: */}
@@ -50,7 +49,7 @@ const Hero = props => (
 	</section>
 )
 
-function HeroEditorSurface(props) {
+const HeroEditorSurface = props => {
 	const ref = React.useRef()
 
 	React.useEffect(() => {
@@ -77,7 +76,7 @@ function HeroEditorSurface(props) {
 
 const Marketing = props => (
 	<div>
-		<Nav2 background="bg-gray-50" />
+		<Nav background="bg-gray-50" />
 		<Hero />
 	</div>
 )
