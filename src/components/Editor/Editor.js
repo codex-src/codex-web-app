@@ -5,12 +5,12 @@ import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
 import NodeIterator from "./helpers/NodeIterator"
 import platform from "utils/platform"
-import random from "utils/random/id"
 import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
 import useShortcuts from "./hooks/useShortcuts"
 import useUndo from "./hooks/useUndo"
+import { newUUID } from "utils/random"
 
 import "./css/core.css"
 import "./css/preview-mode.css"
@@ -67,7 +67,7 @@ function getNodesFromIterators(rootNode, [start, end]) {
 		// Read the key:
 		let key = start.currentNode.getAttribute("data-node")
 		if (seenKeys[key]) {
-			key = random.newUUID()
+			key = newUUID()
 			start.currentNode.setAttribute("data-node", key)
 		}
 		// Read the data:

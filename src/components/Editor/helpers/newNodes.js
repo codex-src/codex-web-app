@@ -1,8 +1,8 @@
-import random from "utils/random/id"
+import { newUUID } from "utils/random"
 
 function newNodes(data) {
 	const nodes = data.split("\n").map(each => ({
-		key: random.newUUID(),
+		key: newUUID(),
 		data: each,
 	}))
 	return nodes

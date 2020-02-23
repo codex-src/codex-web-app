@@ -1,127 +1,100 @@
-// import CSSDebugger from "utils/CSSDebugger"
-// import Footer from "components/Footer"
-// import Forms from "components/Forms"
-// import Nav from "components/Nav"
-// import stylex from "stylex"
-import * as Router from "react-router-dom"
+// import fetchGraphQL from "./fetchGraphQL"
+// import GraphQL from "use-graphql"
+// import Note from "components/Note"
+// import { newFourByteHash } from "utils/random"
 import Demo from "components/Demo"
-import fetchGraphQL from "./fetchGraphQL"
-import GraphQL from "use-graphql"
 import Marketing from "components/Marketing"
-import Note from "components/Note"
-import PageNotFound from "./PageNotFound"
-import random from "utils/random/id"
 import React from "react"
-import User from "components/User"
 
-// const AppContainer = props => (
-// 	// <CSSDebugger>
-// 	<div style={stylex.parse("flex -c -y:between h:max")}>
-// 		<div style={stylex.parse("b:white")}>
-// 			<Nav />
-// 			<main style={stylex.parse("p-x:24 p-t:80 flex -r -x:center")}>
-// 				<div style={stylex.parse("w:1024 no-min-w")}>
-// 					{props.children}
-// 				</div>
-// 			</main>
-// 		</div>
-// 		<Footer />
-// 	</div>
-// 	// </CSSDebugger>
+import {
+	// ProtectedRoute,
+	UnprotectedRoute,
+} from "components/User"
+
+import {
+	BrowserRouter,
+	Switch,
+} from "react-router-dom"
+
+// const client = new GraphQL.Client({ fetchGraphQL })
+//
+// const AppProviders = props => (
+// 	<GraphQL.Provider client={client}>
+// 		<Provider>
+// 			{props.children}
+// 		</Provider>
+// 	</GraphQL.Provider>
 // )
 
-const client = new GraphQL.Client({ fetchGraphQL })
-
-const AppProviders = props => (
-	<GraphQL.Provider client={client}>
-		<User.Provider>
-			{props.children}
-		</User.Provider>
-	</GraphQL.Provider>
-)
-
-// TODO: Add home route.
 const App = props => (
-	<Router.BrowserRouter>
-		<AppProviders>
-			{/* <AppContainer> */}
-			<Router.Switch>
+	<BrowserRouter>
+		<Switch>
 
-				<User.UnprotectedRoute
-					path="/demo"
-					exact
-					title="Demo"
-					children={<Demo />}
-				/>
+			<UnprotectedRoute
+				path="/"
+				exact
+				title=""
+				children={<Marketing />}
+			/>
+			<UnprotectedRoute
+				path="/demo"
+				exact
+				title="Demo"
+				children={<Demo />}
+			/>
 
-				{/* Unprotected routes: */}
-				<User.UnprotectedRoute
-					path="/"
-					exact
-					title=""
-					children={<Marketing />}
-				/>
-				{/* <User.UnprotectedRoute */}
-				{/* 	path="/our-story" */}
-				{/* 	exact */}
-				{/* 	title="Our story" */}
-				{/* 	component={props => "TODO"} */}
-				{/* /> */}
-				{/* <User.UnprotectedRoute */}
-				{/* 	path="/features" */}
-				{/* 	exact */}
-				{/* 	title="Features" */}
-				{/* 	component={props => "TODO"} */}
-				{/* /> */}
-				{/* <User.UnprotectedRoute */}
-				{/* 	path="/pricing" */}
-				{/* 	exact */}
-				{/* 	title="Pricing" */}
-				{/* 	component={props => "TODO"} */}
-				{/* /> */}
-				{/* <User.UnprotectedRoute */}
-				{/* 	path="/faq" */}
-				{/* 	exact */}
-				{/* 	title="FAQ" */}
-				{/* 	component={props => "TODO"} */}
-				{/* /> */}
-				{/* <User.UnprotectedRoute */}
-				{/* 	path="/sign-up" */}
-				{/* 	exact */}
-				{/* 	title="Sign up" */}
-				{/* 	component={Forms.SignUpFlow} */}
-				{/* /> */}
-				{/* <User.UnprotectedRoute */}
-				{/* 	path="/sign-in" */}
-				{/* 	exact */}
-				{/* 	title="Sign in" */}
-				{/* 	component={Forms.SignIn} */}
-				{/* /> */}
-				{/* <User.UnprotectedRoute */}
-				{/* 	path="/reset-password" */}
-				{/* 	exact */}
-				{/* 	title="Reset password" */}
-				{/* 	component={Forms.ResetPassword} */}
-				{/* /> */}
+			{/* <UnprotectedRoute */}
+			{/* 	path="/our-story" */}
+			{/* 	exact */}
+			{/* 	title="Our story" */}
+			{/* 	component={props => "TODO"} */}
+			{/* /> */}
+			{/* <UnprotectedRoute */}
+			{/* 	path="/features" */}
+			{/* 	exact */}
+			{/* 	title="Features" */}
+			{/* 	component={props => "TODO"} */}
+			{/* /> */}
+			{/* <UnprotectedRoute */}
+			{/* 	path="/pricing" */}
+			{/* 	exact */}
+			{/* 	title="Pricing" */}
+			{/* 	component={props => "TODO"} */}
+			{/* /> */}
+			{/* <UnprotectedRoute */}
+			{/* 	path="/faq" */}
+			{/* 	exact */}
+			{/* 	title="FAQ" */}
+			{/* 	component={props => "TODO"} */}
+			{/* /> */}
+			{/* <UnprotectedRoute */}
+			{/* 	path="/sign-up" */}
+			{/* 	exact */}
+			{/* 	title="Sign up" */}
+			{/* 	component={Forms.SignUpFlow} */}
+			{/* /> */}
+			{/* <UnprotectedRoute */}
+			{/* 	path="/sign-in" */}
+			{/* 	exact */}
+			{/* 	title="Sign in" */}
+			{/* 	component={Forms.SignIn} */}
+			{/* /> */}
+			{/* <UnprotectedRoute */}
+			{/* 	path="/reset-password" */}
+			{/* 	exact */}
+			{/* 	title="Reset password" */}
+			{/* 	component={Forms.ResetPassword} */}
+			{/* /> */}
 
-				{/* Protected routes: */}
-				<User.ProtectedRoute
-					path="/new"
-					exact
-					title="New note"
-					render={props => <Note key={random.newFourByteHash()} />}
-				/>
+			{/* <ProtectedRoute */}
+			{/* 	path="/new" */}
+			{/* 	exact */}
+			{/* 	title="New note" */}
+			{/* 	render={props => <Note key={newFourByteHash()} />} */}
+			{/* /> */}
 
-				<User.Route
-					path="/"
-					title="404"
-					component={PageNotFound}
-				/>
-
-			</Router.Switch>
-			{/* </AppContainer> */}
-		</AppProviders>
-	</Router.BrowserRouter>
+		</Switch>
+	</BrowserRouter>
 )
 
 export default App

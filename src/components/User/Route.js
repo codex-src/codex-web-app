@@ -1,32 +1,36 @@
-import * as Router from "react-router-dom"
-import * as User from "./User"
+// import * as User from "./User"
 import CodexTitle from "components/CodexTitle"
 import React from "react"
 
-export const Route = ({ title, ...props }) => (
+import {
+	// Redirect,
+	Route,
+} from "react-router-dom"
+
+export const CodexRoute = ({ title, ...props }) => (
 	<CodexTitle title={title}>
-		<Router.Route {...props}>
+		<Route {...props}>
 			{props.children}
-		</Router.Route>
+		</Route>
 	</CodexTitle>
 )
 
-// `UnprotectedRoute` redirects an authenticated user.
+// Redirects authenticated users.
 export function UnprotectedRoute(props) {
-	const [state] = React.useContext(User.Context)
-
-	if (state.isAuth) {
-		return <Router.Redirect to="/" />
-	}
-	return <Route {...props} />
+	// const [state] = React.useContext(User.Context)
+	//
+	// if (state.isAuth) {
+	// 	return <Redirect to="/" />
+	// }
+	return <CodexRoute {...props} />
 }
 
-// `ProtectedRoute` redirects an unauthenticated user.
+// Rirects unauthenticated users.
 export function ProtectedRoute(props) {
-	const [state] = React.useContext(User.Context)
-
-	if (!state.isAuth) {
-		return <Router.Redirect to="/sign-in" />
-	}
-	return <Route {...props} />
+	// const [state] = React.useContext(User.Context)
+	//
+	// if (!state.isAuth) {
+	// 	return <Redirect to="/sign-in" />
+	// }
+	return <CodexRoute {...props} />
 }
