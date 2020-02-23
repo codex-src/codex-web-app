@@ -11,6 +11,7 @@ const Nav = props => (
 				className="flex items-center h-full hover:text-brand transition duration-75 ease-in-out"
 				to="/"
 				children={<CodexLogo style={{ width: "5.625rem", height: "3.75rem" }} />}
+				data-e2e="nav-home"
 			/>
 
 			{/* RHS: */}
@@ -34,9 +35,10 @@ const Nav = props => (
 				<Link
 					className="-mr-4 px-4 flex items-center h-full"
 					to="/demo"
+					data-e2e="nav-demo"
 				>
 					<div className="px-3 py-2 text-brand border border-brand rounded-sm">
-						<p className="font-medium">
+						<p className="font-500">
 							Try the editor alpha
 						</p>
 					</div>

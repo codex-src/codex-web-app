@@ -58,9 +58,7 @@
     "autoprefixer": "^9.7.4",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.7.2",
-    "netlify-cli": "^2.32.0",
     "postcss-cli": "^7.1.0",
-    "qawolf": "^0.9.2",
     "raw.macro": "^0.3.0",
     "tailwindcss": "^1.2.0"
   }

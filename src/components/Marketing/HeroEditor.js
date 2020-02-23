@@ -6,11 +6,11 @@ const data = raw("./HeroEditor.md").trimEnd()
 
 const HeroEditor = props => {
 	const [state, dispatch] = Editor.useEditor(data, {
+		id: "hero-editor",
 		paddingX: 24,
 		paddingY: 24,
 		readOnly: true,
 	})
-
 	return <Editor.Editor state={state} dispatch={dispatch} />
 }
 

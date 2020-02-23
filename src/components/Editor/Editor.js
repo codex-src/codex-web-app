@@ -166,6 +166,8 @@ function Editor({ state, dispatch, ...props }) {
 				{
 					ref,
 
+					id: state.prefs.id || null,
+
 					className: ["codex-editor", ...state.prefs.classNames].join(" "),
 
 					style: {

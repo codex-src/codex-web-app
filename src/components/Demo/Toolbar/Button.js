@@ -1,10 +1,9 @@
 import React from "react"
 
-const ButtonUI = ({ svg: SVG, ...props }) => (
+const ButtonUI = ({ svg: SVG, extend, ...props }) => (
 	<button
-		className={`p-2 rounded-lg focus:outline-none cursor-pointer ${props.extend}`}
-		disabled={props.disabled}
-		onClick={props.onClick}
+		className={`p-2 rounded-lg focus:outline-none cursor-pointer ${extend}`}
+		{...props}
 	>
 		<SVG className="p-px w-5 h-5 stroke-500" />
 	</button>

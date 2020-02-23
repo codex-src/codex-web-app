@@ -10,12 +10,13 @@ const demo = localStorage.getItem(LOCALSTORAGE_KEY) || ""
 
 const Demo = props => {
 	const [state, dispatch] = Editor.useEditor(demo, {
-		paddingX:  24,
-		paddingY:  128,
+		id: "editor",
+		paddingX: 24,
+		paddingY: 128,
 		// readme: true,
 		shortcuts: true,
 		statusBar: true,
-		toolbar:   true,
+		toolbar: true,
 	})
 
 	React.useEffect(() => {
@@ -25,7 +26,7 @@ const Demo = props => {
 	return (
 		<React.Fragment>
 			<div className="flex flex-row justify-center">
-				<div className="w-full max-w-3xl bg-white">
+				<div className="w-full max-w-4xl bg-white">
 					<Editor.Editor state={state} dispatch={dispatch} />
 				</div>
 			</div>

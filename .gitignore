@@ -1,6 +1,6 @@
+# Node
 /build
 /node_modules
-/pkg
 
 # macOS
 .DS_Store

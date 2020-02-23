@@ -5,8 +5,9 @@ import React from "react"
 const data = raw("./ReadmeEditor.md").trimEnd()
 
 const ReadmeEditor = props => {
-	const [state, dispatch] = Editor.useEditor(data)
-
+	const [state, dispatch] = Editor.useEditor(data, {
+		id: "readme-editor",
+	})
 	return <Editor.Editor state={state} dispatch={dispatch} />
 }
 

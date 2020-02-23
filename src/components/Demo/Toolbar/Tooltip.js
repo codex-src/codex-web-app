@@ -1,7 +1,7 @@
 import React from "react"
 
 const TooltipUI = props => (
-	<div className="my-2 px-2 py-1 bg-black rounded-sm opacity-90">
+	<div className="my-2 px-2 py-1 bg-black rounded-sm opacity-90" data-e2e="tooltip">
 		<p className="whitespace-pre font-700 text-xs text-gray-100">
 			{props.children}
 		</p>

@@ -9,36 +9,38 @@ export const Context = React.createContext()
 
 // `Fetcher` fetches the current user.
 function Fetcher(props) {
-	const [, { login }] = React.useContext(Context)
-
-	const [history, { pathname }] = [Router.useHistory(), Router.useLocation()]
-
-	const { fetching, errors, data } = GraphQL.useQuery(`
-		query Me {
-			me {
-				...user
-			}
-		}
-		${Fragments.user}
-	`)
-
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			if (!data) {
-				return
-			}
-			login(data.me)
-			history.push(pathname)
-		}, [data, history, login, pathname]),
-		[data],
-	)
-
-	if (errors && !GraphQL.errorsIs(errors, Errors.sqlNoRows)) {
-		console.warn(`FIXME: ${errors.map(error => error.message).join(", ")}`)
-	} else if (fetching) {
-		return null
-	}
 	return props.children
+
+	// const [, { login }] = React.useContext(Context)
+	//
+	// const [history, { pathname }] = [Router.useHistory(), Router.useLocation()]
+	//
+	// const { fetching, errors, data } = GraphQL.useQuery(`
+	// 	query Me {
+	// 		me {
+	// 			...user
+	// 		}
+	// 	}
+	// 	${Fragments.user}
+	// `)
+	//
+	// React.useLayoutEffect(
+	// 	React.useCallback(() => {
+	// 		if (!data) {
+	// 			return
+	// 		}
+	// 		login(data.me)
+	// 		history.push(pathname)
+	// 	}, [data, history, login, pathname]),
+	// 	[data],
+	// )
+	//
+	// if (errors && !GraphQL.errorsIs(errors, Errors.sqlNoRows)) {
+	// 	console.warn(`FIXME: ${errors.map(error => error.message).join(", ")}`)
+	// } else if (fetching) {
+	// 	return null
+	// }
+	// return props.children
 }
 
 export function Provider(props) {

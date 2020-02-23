@@ -11,15 +11,16 @@ const Hero = props => (
 
 			{/* LHS: */}
 			<div className="w-full flex lg:block flex-col md:items-start items-center">
-				<h1 className="font-bold text-4xl leading-1.4">
+				<h1 className="font-700 text-4xl leading-1.4">
 					Codex makes it easier than ever to express yourself in words <em>and</em> code
 				</h1>
 				<div className="h-8" />
 				<Link
 					className="py-1 block"
 					to="/demo"
+					data-e2e="cta-btn"
 				>
-					<p className="font-medium text-2xl text-brand">
+					<p className="font-500 text-2xl text-brand">
 						Try the editor alpha!
 					</p>
 				</Link>
@@ -27,7 +28,7 @@ const Hero = props => (
 				{/* 	className="py-1 block" */}
 				{/* 	to="#features" */}
 				{/* > */}
-				{/* 	<p className="font-medium text-2xl text-brand"> */}
+				{/* 	<p className="font-500 text-2xl text-brand"> */}
 				{/* 		Learn more */}
 				{/* 	</p> */}
 				{/* </Link> */}
@@ -40,6 +41,7 @@ const Hero = props => (
 			<Link
 				className="w-full"
 				to="demo"
+				data-e2e="cta-editor"
 			>
 				<HeroEditorSurface />
 			</Link>
