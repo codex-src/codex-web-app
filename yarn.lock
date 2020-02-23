@@ -6633,7 +6633,7 @@ map-visit@^1.0.0:
 
 "material-colors.css@https://github.com/codex-src/material-colors.css":
   version "0.1.0"
-  resolved "https://github.com/codex-src/material-colors.css#37c91cdfe254ff2508a82aa9d250a38fdfb5917a"
+  resolved "https://github.com/codex-src/material-colors.css#6cdc64bff5ad6be7be644c62306c5b01045d0660"
 
 md5.js@^1.3.4:
   version "1.3.5"
