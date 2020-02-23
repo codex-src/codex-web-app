@@ -3,34 +3,34 @@ import renderDOM from "utils/renderDOM"
 import RouterLink from "../RouterLink"
 import { BrowserRouter } from "react-router-dom"
 
-test("<a href=\"\">", () => {
+test("<a href=\"...\">", () => {
 	const Component = props => (
 		<BrowserRouter>
-			<RouterLink to="" />
+			<RouterLink to="..." />
 		</BrowserRouter>
 	)
 	const rootNode = renderDOM(<Component />)
-	expect(rootNode.outerHTML).toBe("<a href=\"/\"></a>")
+	expect(rootNode.outerHTML).toBe("<a href=\"/...\"></a>")
 })
 
-test("<a href=\"http://\">", () => {
+test("<a href=\"http://...\">", () => {
 	const Component = props => (
 		<BrowserRouter>
-			<RouterLink to="http://" />
+			<RouterLink to="http://..." />
 		</BrowserRouter>
 	)
 	const rootNode = renderDOM(<Component />)
-	expect(rootNode.outerHTML).toBe("<a href=\"http://\"></a>")
+	expect(rootNode.outerHTML).toBe("<a href=\"http://...\"></a>")
 })
 
 test("<a href=\"https://...\">", () => {
 	const Component = props => (
 		<BrowserRouter>
-			<RouterLink to="https://" />
+			<RouterLink to="https://..." />
 		</BrowserRouter>
 	)
 	const rootNode = renderDOM(<Component />)
-	expect(rootNode.outerHTML).toBe("<a href=\"https://\"></a>")
+	expect(rootNode.outerHTML).toBe("<a href=\"https://...\"></a>")
 })
 
 test("<div>", () => {
