@@ -1,8 +1,0 @@
-.status-dot {
-	animation: pulse 3s infinite;
-}
-
-@keyframes pulse {
-	 0% { box-shadow: 0px 0px 0px 0px hsla(var(--current-color), 1); }
-	33% { box-shadow: 0px 0px 0px 6px hsla(var(--current-color), 0); }
-}

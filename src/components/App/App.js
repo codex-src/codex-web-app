@@ -1,5 +1,3 @@
-// import Note from "components/Note"
-// import { newFourByteHash } from "utils/random"
 import Demo from "components/Demo"
 import Marketing from "components/Marketing"
 import React from "react"
