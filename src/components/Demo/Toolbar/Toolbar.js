@@ -3,7 +3,7 @@ import Button from "./Button"
 import Link from "utils/RouterLink"
 import React from "react"
 import Tooltip from "./Tooltip"
-import { ReactComponent as GitHubLogo } from "./github-logo.svg"
+import { ReactComponent as GitHubLogo } from "./github.svg"
 
 // {/* Cut, copy, and paste: */}
 // <div className="mx-2 hidden md:flex md:flex-row">

@@ -1,6 +1,6 @@
 import Link from "utils/RouterLink"
 import React from "react"
-import { ReactComponent as CodexLogo } from "assets/codex.svg"
+import { ReactComponent as CodexLogo } from "./codex.svg"
 
 const Nav = props => (
 	<nav className={`px-6 absolute inset-x-0 top-0 flex justify-center h-20 ${props.background || "bg-white"} z-30`}>
