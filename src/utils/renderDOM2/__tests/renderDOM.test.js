@@ -2,14 +2,13 @@ import React from "react"
 import ReactDOMServer from "react-dom/server"
 import renderDOM from "../renderDOM"
 
-// Parses a React component to markup (HTML) and then to a
-// DOM node.
+// Parses a React component to markup and then a DOM node.
 function ParseMarkupDOM(Component) {
 	const parser = new DOMParser()
 	const dom = parser.parseFromString(ReactDOMServer.renderToStaticMarkup(<Component />), "text/html")
 	const div = document.createElement("div")
 	div.appendChild(dom.body.childNodes[0])
-	return div.childNodes[0] // NOTE: Breaks document fragments.
+	return div.childNodes[0] // NOTE: Breaks document fragments
 }
 
 test("br", () => {
