@@ -1,13 +1,13 @@
 import React from "react"
 
-export function LayoutDocumentTitle(props) {
+export const LayoutDocumentTitle = props => {
 	React.useLayoutEffect(() => {
 		document.title = props.title
 	}, [props.title])
 	return props.children
 }
 
-export function DocumentTitle(props) {
+export const DocumentTitle = props => {
 	React.useEffect(() => {
 		document.title = props.title
 	}, [props.title])

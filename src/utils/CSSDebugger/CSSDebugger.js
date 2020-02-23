@@ -1,6 +1,14 @@
 import React from "react"
 
-function CSSDebugger(props) {
+// <CSSDebugger>
+//   ...
+// </CSSDebugger>
+//
+// or
+//
+// <CSSDebugger />
+//
+const CSSDebugger = props => {
 	React.useEffect(() => {
 		document.body.classList.toggle("debug-css")
 	}, [])
