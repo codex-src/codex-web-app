@@ -9,16 +9,11 @@
     "debug.css": "codex-src/debug.css",
     "emoji-trie": "https://github.com/codex-src/emoji-trie.js",
     "material-colors.css": "codex-src/material-colors.css",
-    "minireset.css": "^0.0.6",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-feather": "^2.0.3",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
-    "serve": "^11.3.0",
-    "stylex": "https://github.com/codex-src/stylex.js",
-    "system-font-css": "^2.0.2",
-    "use-graphql": "codex-src/use-graphql.js",
     "use-methods": "^0.5.1"
   },
   "scripts": {
@@ -56,6 +51,7 @@
     "eslint": "^6.7.2",
     "postcss-cli": "^7.1.0",
     "raw.macro": "^0.3.0",
+    "serve": "^11.3.0",
     "tailwindcss": "^1.2.0"
   }
 }
