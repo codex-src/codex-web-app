@@ -2,7 +2,7 @@ import * as AuthRoute from "components/AuthRoute"
 import * as Router from "react-router-dom"
 import Auth from "components/Auth"
 import Demo from "components/Demo"
-import Marketing from "components/Marketing"
+import Home from "components/Home"
 import React from "react"
 
 const App = props => (
@@ -13,7 +13,7 @@ const App = props => (
 				path="/"
 				exact
 				title=""
-				children={<Marketing />}
+				children={<Home />}
 			/>
 			<AuthRoute.Unprotected
 				path="/auth"

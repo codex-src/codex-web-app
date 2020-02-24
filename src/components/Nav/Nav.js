@@ -28,24 +28,28 @@ const Nav = props => (
 			{/* RHS: */}
 			<div className="-mx-3 flex flex-row">
 				<NavLink
-					to="TODO"
+					to="/TODO"
 					text="What is Codex?"
+					data-e2e="nav-a"
 				/>
 				<NavLink
-					to="TODO"
+					to="/TODO"
 					text="Features"
+					data-e2e="nav-b"
 				/>
 				<NavLink
-					to="TODO"
+					to="/TODO"
 					text="Demo"
+					data-e2e="nav-c"
 				/>
 				<NavLink
-					to="TODO"
+					to="/TODO"
 					text="Pricing"
+					data-e2e="nav-d"
 				/>
 				{/* CTA: */}
 				<div className="ml-6 mr-3 flex flex-row items-center">
-					<Link className="px-4 py-3 flex flex-row items-center text-md-blue-a400 bg-white hover:bg-gray-100 active:bg-gray-200 border border-md-blue-a400 rounded-md tx-150" to="/open">
+					<Link className="px-4 py-3 flex flex-row items-center text-md-blue-a400 bg-white hover:bg-gray-100 active:bg-gray-200 border border-md-blue-a400 rounded-md tx-150" to="/auth" data-e2e="nav-cta-btn">
 						<p className="font-medium text-px">
 							Open your Codex
 						</p>
