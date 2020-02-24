@@ -4,7 +4,7 @@ import React from "react"
 import { ReactComponent as CodexLogo } from "svg/codex_4x1.svg"
 
 const NavLink = ({ text, ...props }) => (
-	<Link className="px-3 flex flex-row items-center text-gray-700 hover:text-md-blue-a400 tx-75" {...props}>
+	<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 tx-75" {...props}>
 		<p className="font-medium">
 			{text}
 		</p>
@@ -38,14 +38,9 @@ const Nav = props => (
 					data-e2e="nav-b"
 				/>
 				<NavLink
-					to="/TODO"
-					text="Demo"
+					to="/demo"
+					text="Try the Editor!"
 					data-e2e="nav-c"
-				/>
-				<NavLink
-					to="/TODO"
-					text="Pricing"
-					data-e2e="nav-d"
 				/>
 				{/* CTA: */}
 				<div className="ml-6 mr-3 flex flex-row items-center">
