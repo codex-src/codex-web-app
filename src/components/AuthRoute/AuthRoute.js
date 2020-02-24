@@ -11,11 +11,11 @@ export const CodexRoute = ({ title, ...props }) => (
 )
 
 // TODO
-export function UnprotectedRoute(props) {
+export function Unprotected(props) {
 	return <CodexRoute {...props} />
 }
 
 // TODO
-export function ProtectedRoute(props) {
+export function Protected(props) {
 	return <CodexRoute {...props} />
 }

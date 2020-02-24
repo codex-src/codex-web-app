@@ -4,9 +4,9 @@ import Marketing from "components/Marketing"
 import React from "react"
 
 import {
-	// ProtectedRoute,
-	UnprotectedRoute,
-} from "components/User"
+	// Protected,
+	Unprotected,
+} from "components/AuthRoute"
 
 import {
 	BrowserRouter,
@@ -17,68 +17,68 @@ const App = props => (
 	<BrowserRouter>
 		<Switch>
 
-			<UnprotectedRoute
+			<Unprotected
 				path="/"
 				exact
 				title=""
 				children={<Marketing />}
 			/>
-			<UnprotectedRoute
+			<Unprotected
 				path="/auth"
 				title="Open your Codex"
 				children={<Auth />}
 			/>
-			<UnprotectedRoute
+			<Unprotected
 				path="/demo"
 				exact
 				title="Demo"
 				children={<Demo />}
 			/>
 
-			{/* <UnprotectedRoute */}
+			{/* <Unprotected */}
 			{/* 	path="/our-story" */}
 			{/* 	exact */}
 			{/* 	title="Our story" */}
 			{/* 	component={props => "TODO"} */}
 			{/* /> */}
-			{/* <UnprotectedRoute */}
+			{/* <Unprotected */}
 			{/* 	path="/features" */}
 			{/* 	exact */}
 			{/* 	title="Features" */}
 			{/* 	component={props => "TODO"} */}
 			{/* /> */}
-			{/* <UnprotectedRoute */}
+			{/* <Unprotected */}
 			{/* 	path="/pricing" */}
 			{/* 	exact */}
 			{/* 	title="Pricing" */}
 			{/* 	component={props => "TODO"} */}
 			{/* /> */}
-			{/* <UnprotectedRoute */}
+			{/* <Unprotected */}
 			{/* 	path="/faq" */}
 			{/* 	exact */}
 			{/* 	title="FAQ" */}
 			{/* 	component={props => "TODO"} */}
 			{/* /> */}
-			{/* <UnprotectedRoute */}
+			{/* <Unprotected */}
 			{/* 	path="/sign-up" */}
 			{/* 	exact */}
 			{/* 	title="Sign up" */}
 			{/* 	component={Forms.SignUpFlow} */}
 			{/* /> */}
-			{/* <UnprotectedRoute */}
+			{/* <Unprotected */}
 			{/* 	path="/sign-in" */}
 			{/* 	exact */}
 			{/* 	title="Sign in" */}
 			{/* 	component={Forms.SignIn} */}
 			{/* /> */}
-			{/* <UnprotectedRoute */}
+			{/* <Unprotected */}
 			{/* 	path="/reset-password" */}
 			{/* 	exact */}
 			{/* 	title="Reset password" */}
 			{/* 	component={Forms.ResetPassword} */}
 			{/* /> */}
 
-			{/* <ProtectedRoute */}
+			{/* <Protected */}
 			{/* 	path="/new" */}
 			{/* 	exact */}
 			{/* 	title="New note" */}

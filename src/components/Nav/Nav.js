@@ -44,8 +44,8 @@ const Nav = props => (
 					text="Pricing"
 				/>
 				{/* CTA: */}
-				<div className="mx-3 flex flex-row items-center">
-					<Link className="px-4 py-3 flex flex-row items-center text-md-blue-a400 bg-white hover:bg-gray-100 active:bg-gray-200 rounded-md border border-md-blue-a400 tx-150" to="/open">
+				<div className="ml-6 mr-3 flex flex-row items-center">
+					<Link className="px-4 py-3 flex flex-row items-center text-md-blue-a400 bg-white hover:bg-gray-100 active:bg-gray-200 border border-md-blue-a400 rounded-md tx-150" to="/open">
 						<p className="font-medium text-px">
 							Open your Codex
 						</p>
