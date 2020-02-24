@@ -46,8 +46,8 @@ const Nav = props => (
 					text="Pricing"
 				/>
 				<div className="mx-3 flex flex-row items-center">
-					<Link className="p-3 flex flex-row items-center text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 rounded-md shadow-hero hover:shadow-hero-md trans-150">
-						<Feather.FileText className="mr-3 stroke-500 w-4 h-4" />
+					<Link className="p-3 px-4 flex flex-row items-center text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 rounded-md shadow-hero hover:shadow-hero-md trans-150">
+						<Feather.Copy className="mr-3 stroke-500 w-4 h-4" style={{ transform: "scale(1, -1)" }} />
 						<p className="font-500">
 							Open your Codex
 						</p>
