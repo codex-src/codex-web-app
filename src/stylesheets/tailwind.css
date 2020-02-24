@@ -3,8 +3,21 @@
 @import "tailwindcss/components";
 /* purgecss end ignore */
 
-.tabs-2 { -moz-tab-size: 2; tab-size: 2; }
-.tabs-4 { -moz-tab-size: 4; tab-size: 4; }
+@import "tailwindcss/utilities";
+
+.w-px {
+	font-size: 0.125rem;
+}
+.h-px {
+	font-size: 0.125rem;
+}
+
+.tabs-2 {
+	tab-size: 2;
+}
+.tabs-4 {
+	tab-size: 4;
+}
 
 .tnum {
 	font-feature-settings: "tnum";
@@ -16,16 +29,58 @@
 	vertical-align: -0.1em;
 }
 
-.-text-px { font-size: 0.9375rem; }
-.text-px  { font-size: 1.0625rem; }
+.-text-px {
+	font-size: 0.9375rem;
+}
+.text-px {
+	font-size: 1.0625rem;
+}
 
-.trans-75   { @apply transition duration-75   ease-in-out; }
-.trans-100  { @apply transition duration-100  ease-in-out; }
-.trans-150  { @apply transition duration-150  ease-in-out; }
-.trans-200  { @apply transition duration-200  ease-in-out; }
-.trans-300  { @apply transition duration-300  ease-in-out; }
-.trans-500  { @apply transition duration-500  ease-in-out; }
-.trans-700  { @apply transition duration-700  ease-in-out; }
-.trans-1000 { @apply transition duration-1000 ease-in-out; }
-
-@import "tailwindcss/utilities";
+.tx-75 {
+	@apply
+		transition
+		duration-75
+		ease-in-out;
+}
+.tx-100 {
+	@apply
+		transition
+		duration-100
+		ease-in-out;
+}
+.tx-150 {
+	@apply
+		transition
+		duration-150
+		ease-in-out;
+}
+.tx-200 {
+	@apply
+		transition
+		duration-200
+		ease-in-out;
+}
+.tx-300 {
+	@apply
+		transition
+		duration-300
+		ease-in-out;
+}
+.tx-500 {
+	@apply
+		transition
+		duration-500
+		ease-in-out;
+}
+.tx-700 {
+	@apply
+		transition
+		duration-700
+		ease-in-out;
+}
+.tx-1000 {
+	@apply
+		transition
+		duration-1000
+		ease-in-out;
+}

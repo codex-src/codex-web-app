@@ -4,7 +4,7 @@ import React from "react"
 
 const Marketing = props => (
 	<React.Fragment>
-		<Nav extend="bg-gray-50" />
+		<Nav />
 		<HeroSection />
 	</React.Fragment>
 )

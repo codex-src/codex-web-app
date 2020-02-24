@@ -18,7 +18,7 @@
   },
   "scripts": {
     "lint": "yarn eslint --ignore-pattern=build --ignore-pattern=\"**/*.min.js\" .",
-    "tailwind-dev": "yarn postcss src/stylesheets/tailwind.css --output src/stylesheets/tailwind.generated.css",
+    "tailwind-dev": "yarn tailwind build src/stylesheets/tailwind.css -o src/stylesheets/tailwind.generated.css",
     "tailwind-prod": "yarn postcss src/stylesheets/tailwind.css --output src/stylesheets/tailwind.generated.css --env production",
     "prestart": "yarn tailwind-dev",
     "start": "react-scripts start",

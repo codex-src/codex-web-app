@@ -1,3 +1,4 @@
+import Auth from "components/Auth"
 import Demo from "components/Demo"
 import Marketing from "components/Marketing"
 import React from "react"
@@ -21,6 +22,11 @@ const App = props => (
 				exact
 				title=""
 				children={<Marketing />}
+			/>
+			<UnprotectedRoute
+				path="/auth"
+				title="Open your Codex"
+				children={<Auth />}
 			/>
 			<UnprotectedRoute
 				path="/demo"

@@ -1,5 +1,4 @@
 # Node
-/build
 /node_modules
 
 # macOS
@@ -8,5 +7,6 @@
 # Yarn
 yarn-error.log
 
-# Tailwind CSS
+# Production
+/build
 tailwind.generated.css

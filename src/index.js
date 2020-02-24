@@ -7,7 +7,9 @@ import "material-colors.css"
 import "debug.css"
 import "stylesheets/tailwind.generated.css"
 
-// codex-playwright
+// window.getCodex("#editor") -> ...
+//
+// https://github.com/codex-src/codex-playwright
 window.getCodex = (id = "editor") => {
 	const node = document.getElementById(id)
 	return innerText(node)
