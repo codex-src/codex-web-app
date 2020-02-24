@@ -17,7 +17,7 @@ const NavLink = ({ text, ...props }) => (
 )
 
 const Nav = props => (
-	<nav className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 z-30">
+	<div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 z-30">
 		<div className="flex flex-row justify-between w-full max-w-screen-lg">
 
 			{/* LHS: */}
@@ -56,8 +56,7 @@ const Nav = props => (
 			</div>
 
 		</div>
-		{/* <CSSDebugger /> */}
-	</nav>
+	</div>
 )
 
 export default Nav
