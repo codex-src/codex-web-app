@@ -1,50 +1,58 @@
-import Link from "utils/RouterLink"
+import * as Feather from "react-feather"
+import CSSDebugger from "utils/CSSDebugger"
+import RouterLink from "utils/RouterLink"
 import React from "react"
 import { ReactComponent as CodexLogo } from "./codex.svg"
 
+const Link = ({ className, ...props }) => (
+	<RouterLink className={`${className || ""} select-none`} {...props} />
+)
+
 const Nav = props => (
-	<nav className={`px-6 absolute inset-x-0 top-0 flex flex-row justify-center h-20 z-30 ${props.extend || "bg-white"}`}>
+	<nav className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 z-30">
 		<div className="flex flex-row justify-between w-full max-w-screen-lg">
 
 			{/* LHS: */}
-			<Link
-				className="flex flex-row items-center h-full hover:text-brand transition duration-75 ease-in-out"
-				to="/"
-				children={<CodexLogo style={{ width: "5.625rem", height: "3.75rem" }} />}
-				data-e2e="nav-home"
-			/>
-
-			{/* RHS: */}
-			<div className="flex flex-row items-center h-full">
-				{/* <Link */}
-				{/* 	className="px-2 flex flex-row items-center h-full text-gray-900 hover:text-brand transition duration-75 ease-in-out" */}
-				{/* 	to="#features" */}
-				{/* 	children="Features" */}
-				{/* /> */}
-				{/* <Link */}
-				{/* 	className="px-2 flex flex-row items-center h-full text-gray-900 hover:text-brand transition duration-75 ease-in-out" */}
-				{/* 	to="#pricing" */}
-				{/* 	children="Pricing" */}
-				{/* /> */}
-				{/* <Link */}
-				{/* 	className="px-2 flex flex-row items-center h-full text-gray-900 hover:text-brand transition duration-75 ease-in-out" */}
-				{/* 	to="/sign-in" */}
-				{/* 	children="Login" */}
-				{/* /> */}
-				{/* CTA: */}
-				<Link
-					className="-mr-4 px-4 flex flex-row items-center h-full"
-					to="/demo"
-					data-e2e="nav-demo"
-				>
-					<div className="px-3 py-2 text-brand border border-brand rounded-sm">
-						<p className="font-500">
-							Try the editor alpha
-						</p>
-					</div>
+			<div className="-mx-3 flex flex-row">
+				<Link className="px-3 flex flex-row items-center hover:text-md-blue-a400" to="/" data-e2e="nav-home">
+					<CodexLogo style={{ width: 60 * 1.5, height: 60 }} />
 				</Link>
 			</div>
+
+			{/* RHS: */}
+			<div className="-mx-3 flex flex-row">
+				<Link className="px-3 flex flex-row items-center text-gray-700 hover:text-md-blue-a400" to="TODO">
+					<p className="font-500">
+						What is Codex?
+					</p>
+				</Link>
+				<Link className="px-3 flex flex-row items-center text-gray-700 hover:text-md-blue-a400" to="TODO">
+					<p className="font-500">
+						Features
+					</p>
+				</Link>
+				<Link className="px-3 flex flex-row items-center text-gray-700 hover:text-md-blue-a400" to="TODO">
+					<p className="font-500">
+						Demo
+					</p>
+				</Link>
+				<Link className="px-3 flex flex-row items-center text-gray-700 hover:text-md-blue-a400" to="TODO">
+					<p className="font-500">
+						Pricing
+					</p>
+				</Link>
+				<div className="mx-3 flex flex-row items-center">
+					<Link className="p-3 flex flex-row items-center text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 rounded-md shadow-hero">
+						<Feather.FileText className="mr-3 stroke-500 w-4 h-4" />
+						<p className="font-500">
+							Open your Codex
+						</p>
+					</Link>
+				</div>
+			</div>
+
 		</div>
+		{/* <CSSDebugger /> */}
 	</nav>
 )
 

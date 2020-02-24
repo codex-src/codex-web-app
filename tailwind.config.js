@@ -433,8 +433,11 @@ module.exports = {
 	},
 	// https://tailwindcss.com/docs/pseudo-class-variants/#active
 	variants: {
-		backgroundColor: ["responsive", "disabled", "hover", "focus", "active"],
-		textColor:       ["responsive", "disabled", "hover", "focus", "active"],
+		backgroundColor: ["responsive", "disabled", "hover", "group-hover", "focus", "active"],
+		textColor:       ["responsive", "disabled", "hover", "group-hover", "focus", "active"],
+		boxShadow:       ["responsive", "disabled", "hover", "group-hover", "focus", "active"],
+		borderColor:     ["responsive", "disabled", "hover", "group-hover", "focus", "active"],
+		borderWidth:     ["responsive", "disabled", "hover", "group-hover", "focus", "active"],
 	},
 	plugins: [],
 }

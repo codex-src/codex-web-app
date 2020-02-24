@@ -6,7 +6,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "debug.css": "codex-src/debug.css",
+    "debug.css": "https://github.com/codex-src/debug.css",
     "emoji-trie": "https://github.com/codex-src/emoji-trie.js",
     "material-colors.css": "https://github.com/codex-src/material-colors.css",
     "react": "^16.12.0",

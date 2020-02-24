@@ -4,7 +4,7 @@ import React from "react"
 //   ...
 // </CSSDebugger>
 //
-// or
+// OR
 //
 // <CSSDebugger />
 //

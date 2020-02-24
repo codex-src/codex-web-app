@@ -3440,9 +3440,9 @@ data-urls@^1.0.0, data-urls@^1.1.0:
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
 
-debug.css@codex-src/debug.css:
+"debug.css@https://github.com/codex-src/debug.css":
   version "0.1.0"
-  resolved "https://codeload.github.com/codex-src/debug.css/tar.gz/66d1c1aa082dee8ddea10510e15e20214d356d15"
+  resolved "https://github.com/codex-src/debug.css#4f606aabb2fc9a65a939c11cd1ed9ba24e5ee1ae"
 
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.9:
   version "2.6.9"

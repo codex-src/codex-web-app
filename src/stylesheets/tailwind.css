@@ -16,4 +16,17 @@
 	font-feature-settings: "tnum";
 }
 
+.emoji {
+	font-size: 1.2em;
+	line-height: 1;
+	vertical-align: -0.1em;
+}
+
+.-text-px {
+	font-size: 0.9375rem;
+}
+.text-px {
+	font-size: 1.0625rem;
+}
+
 @import "tailwindcss/utilities";
