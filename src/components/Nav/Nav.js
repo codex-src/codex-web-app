@@ -17,7 +17,7 @@ const Nav = props => (
 
 			{/* LHS: */}
 			<div className="-mx-3 flex flex-row">
-				<Link className="px-3 flex flex-row items-center tx-75" to="/" data-e2e="nav-home">
+				<Link className="px-3 flex flex-row items-center" to="/" data-e2e="nav-home">
 					<div className="mr-3 text-md-blue-a400">
 						<Feather.Layers className="w-6 h-6" />
 					</div>
