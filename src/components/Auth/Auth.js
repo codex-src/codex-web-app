@@ -30,7 +30,7 @@ const SignInWithGoogle = props => (
 )
 
 const Auth = props => (
-	<div className="p-6 py-64 flex flex-row justify-center">
+	<div className="px-6 py-64 flex flex-row justify-center">
 		<div className="flex flex-col items-center w-64">
 
 			{/* Logo; based on Nav LHS: */}
@@ -40,6 +40,13 @@ const Auth = props => (
 				</div>
 				<CodexLogo className="w-24 h-6" />
 			</div>
+
+			{/* Subtext: */}
+			{/* <div className="h-6" /> */}
+			{/* <p className="text-center font-medium text-lg leading-1.4 text-gray-900"> */}
+			{/* 	Choose one of the following to continue with Codex: */}
+			{/* </p> */}
+			{/* <div className="h-6" /> */}
 
 			<div className="h-12" />
 
