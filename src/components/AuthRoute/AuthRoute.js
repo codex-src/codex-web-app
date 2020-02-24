@@ -1,12 +1,12 @@
+import * as Router from "react-router-dom"
 import CodexTitle from "components/CodexTitle"
 import React from "react"
-import { Route } from "react-router-dom"
 
 export const CodexRoute = ({ title, ...props }) => (
 	<CodexTitle title={title}>
-		<Route {...props}>
+		<Router.Route {...props}>
 			{props.children}
-		</Route>
+		</Router.Route>
 	</CodexTitle>
 )
 

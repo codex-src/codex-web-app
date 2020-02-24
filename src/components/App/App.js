@@ -1,77 +1,69 @@
+import * as AuthRoute from "components/AuthRoute"
+import * as Router from "react-router-dom"
 import Auth from "components/Auth"
 import Demo from "components/Demo"
 import Marketing from "components/Marketing"
 import React from "react"
 
-import {
-	// Protected,
-	Unprotected,
-} from "components/AuthRoute"
-
-import {
-	BrowserRouter,
-	Switch,
-} from "react-router-dom"
-
 const App = props => (
-	<BrowserRouter>
-		<Switch>
+	<Router.BrowserRouter>
+		<Router.Switch>
 
-			<Unprotected
+			<AuthRoute.Unprotected
 				path="/"
 				exact
 				title=""
 				children={<Marketing />}
 			/>
-			<Unprotected
+			<AuthRoute.Unprotected
 				path="/auth"
 				title="Open your Codex"
 				children={<Auth />}
 			/>
-			<Unprotected
+			<AuthRoute.Unprotected
 				path="/demo"
 				exact
 				title="Demo"
 				children={<Demo />}
 			/>
 
-			{/* <Unprotected */}
+			{/* <AuthRoute.Unprotected */}
 			{/* 	path="/our-story" */}
 			{/* 	exact */}
 			{/* 	title="Our story" */}
 			{/* 	component={props => "TODO"} */}
 			{/* /> */}
-			{/* <Unprotected */}
+			{/* <AuthRoute.Unprotected */}
 			{/* 	path="/features" */}
 			{/* 	exact */}
 			{/* 	title="Features" */}
 			{/* 	component={props => "TODO"} */}
 			{/* /> */}
-			{/* <Unprotected */}
+			{/* <AuthRoute.Unprotected */}
 			{/* 	path="/pricing" */}
 			{/* 	exact */}
 			{/* 	title="Pricing" */}
 			{/* 	component={props => "TODO"} */}
 			{/* /> */}
-			{/* <Unprotected */}
+			{/* <AuthRoute.Unprotected */}
 			{/* 	path="/faq" */}
 			{/* 	exact */}
 			{/* 	title="FAQ" */}
 			{/* 	component={props => "TODO"} */}
 			{/* /> */}
-			{/* <Unprotected */}
+			{/* <AuthRoute.Unprotected */}
 			{/* 	path="/sign-up" */}
 			{/* 	exact */}
 			{/* 	title="Sign up" */}
 			{/* 	component={Forms.SignUpFlow} */}
 			{/* /> */}
-			{/* <Unprotected */}
+			{/* <AuthRoute.Unprotected */}
 			{/* 	path="/sign-in" */}
 			{/* 	exact */}
 			{/* 	title="Sign in" */}
 			{/* 	component={Forms.SignIn} */}
 			{/* /> */}
-			{/* <Unprotected */}
+			{/* <AuthRoute.Unprotected */}
 			{/* 	path="/reset-password" */}
 			{/* 	exact */}
 			{/* 	title="Reset password" */}
@@ -85,8 +77,8 @@ const App = props => (
 			{/* 	render={props => <Note key={newFourByteHash()} />} */}
 			{/* /> */}
 
-		</Switch>
-	</BrowserRouter>
+		</Router.Switch>
+	</Router.BrowserRouter>
 )
 
 export default App

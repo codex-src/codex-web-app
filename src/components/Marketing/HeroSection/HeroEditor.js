@@ -9,7 +9,7 @@ const HeroEditor = props => {
 		id: "hero-editor",
 		paddingX: 24,
 		paddingY: 24,
-		readOnly: true,
+		readOnly: true, // TODO: readOnly: false
 	})
 	return <Editor.Editor state={state} dispatch={dispatch} />
 }
