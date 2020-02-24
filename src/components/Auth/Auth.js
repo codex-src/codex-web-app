@@ -9,9 +9,9 @@ const SignInWithGitHub = props => (
 	// Based on Nav CTA:
 	<div className="px-4 py-3 flex flex-row justify-center items-center w-full bg-gray-900 hover:bg-gray-800 rounded-lg shadow-hero hover:shadow-hero-md cursor-pointer select-none tx-150">
 		<div className="mr-3">
-			<GitHubLogo className="w-6 h-6 text-white" />
+			<GitHubLogo className="w-6 h-6 text-gray-100" />
 		</div>
-		<p className="font-semibold text-px tracking-px text-white">
+		<p className="font-semibold text-px tracking-px text-gray-100">
 			Continue with GitHub
 		</p>
 	</div>
@@ -21,7 +21,7 @@ const SignInWithGoogle = props => (
 	// Based on Nav CTA:
 	<div className="px-4 py-3 flex flex-row justify-center items-center w-full bg-white hover:bg-gray-100 rounded-lg shadow-hero hover:shadow-hero-md cursor-pointer select-none tx-150">
 		<div className="mr-3">
-			<GoogleLogo className="w-6 h-6" />
+			<GoogleLogo className="w-6 h-6 text-gray-900" />
 		</div>
 		<p className="font-semibold text-px tracking-px text-gray-900">
 			Continue with Google
