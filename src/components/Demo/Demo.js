@@ -1,4 +1,5 @@
 import Editor from "components/Editor"
+import raw from "raw.macro"
 import React from "react"
 import Readme from "./Readme"
 import StatusBar from "./StatusBar"
@@ -6,10 +7,10 @@ import Toolbar from "./Toolbar"
 
 const LOCALSTORAGE_KEY = "codex-app"
 
-const demo = localStorage.getItem(LOCALSTORAGE_KEY) || ""
+const data = localStorage.getItem(LOCALSTORAGE_KEY) || raw("./Demo.md").trimEnd()
 
 const Demo = props => {
-	const [state, dispatch] = Editor.useEditor(demo, {
+	const [state, dispatch] = Editor.useEditor(data, {
 		id: "editor",
 		paddingX: 24,
 		paddingY: 128,
