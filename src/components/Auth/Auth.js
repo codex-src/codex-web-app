@@ -21,7 +21,7 @@ const Auth = props => (
 			<div className="h-6" />
 
 			{/* Subtext: */}
-			<p className="text-center font-medium text-lg leading-1.4 text-gray-900">
+			<p className="text-center font-medium text-lg text-gray-900">
 				Choose one of the following to{" "}
 				continue with <Link className="text-md-blue-a400" to="https://opencodex.dev">Codex</Link>:
 			</p>
@@ -53,7 +53,7 @@ const Auth = props => (
 			<div className="h-6" />
 
 			{/* Subtext: */}
-			<p className="text-center font-medium text-lg leading-1.4 text-gray-900">
+			<p className="text-center font-medium text-lg text-gray-900">
 				Or <Link className="text-md-blue-a400" to="https://opencodex.dev/support">click here</Link> for support
 			</p>
 
