@@ -34,8 +34,9 @@ module.exports = {
 				`,
 			},
 			colors: {
-				"gray-50": {
-					default: "#fbfdfe",
+				"gray":   {
+					...defaultTheme.colors.gray,
+					50: "#fbfdfe",
 				},
 				// https://material.io/design/color/the-color-system.html#tools-for-picking-colors
 				"md-blue-50":             { default: "#e3f2fd" },

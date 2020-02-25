@@ -7,7 +7,7 @@ import { ReactComponent as GitHubLogo } from "svg/github.svg"
 import { ReactComponent as GoogleLogo } from "svg/google.svg"
 
 const Auth = props => (
-	<div className="px-6 py-12 flex flex-row justify-center items-center min-h-full">
+	<div className="px-6 py-12 flex flex-row justify-center items-center min-h-full bg-gray-50">
 		<div className="w-72">
 
 			{/* Logo: */}
