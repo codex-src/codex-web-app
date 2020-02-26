@@ -33,14 +33,9 @@ const Nav = props => (
 					data-e2e="nav-a"
 				/>
 				<NavLink
-					to="/TODO"
-					text="Features"
-					data-e2e="nav-b"
-				/>
-				<NavLink
 					to="/demo"
-					text="Try the Editor!"
-					data-e2e="nav-c"
+					text="Try the editor"
+					data-e2e="nav-b"
 				/>
 				{/* CTA: */}
 				<div className="ml-6 mr-3 flex flex-row items-center">

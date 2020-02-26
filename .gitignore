@@ -2,8 +2,8 @@
 .DS_Store
 
 # Node
-/node_modules
 /.env
+/node_modules
 
 # Yarn
 yarn-error.log

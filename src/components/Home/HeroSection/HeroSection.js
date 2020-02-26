@@ -13,16 +13,11 @@ const HeroSection = props => (
 				<h1 className="font-bold text-4xl -tracking-px leading-1.4">
 					Codex makes it easier than ever to express yourself in words <em>and</em> code
 				</h1>
-				<div className="h-8" />
 				{/* NOTE: block is needed because of lg:block */}
-				<Link className="py-2 block" to="/demo" data-e2e="cta-btn-demo">
-					<p className="font-medium text-2xl text-md-blue-a400">
-						Try the editor! (alpha)
-					</p>
-				</Link>
+				<div className="h-8" />
 				<Link className="py-2 block" to="/auth" data-e2e="cta-btn-auth">
 					<p className="font-medium text-2xl text-md-blue-a400">
-						Open your Codex
+						Try Codex for free!
 					</p>
 				</Link>
 			</div>
