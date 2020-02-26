@@ -41,7 +41,7 @@ const Auth = props => {
 					<CodexLogo className="w-24 h-6" />
 				</div>
 
-				{/* Subtext: */}
+				{/* Text: */}
 				<p className="my-6 text-center font-medium text-lg text-gray-900">
 					Choose one of the following to{" "}
 					continue with <Link className="text-md-blue-a400" to={constants.URL}>Codex</Link>:
@@ -49,7 +49,7 @@ const Auth = props => {
 
 				{/* GitHub: */}
 				<div
-					className="my-2 px-4 py-3 flex flex-row items-center w-full bg-gray-900 hover:bg-gray-800 rounded-md shadow-hero cursor-pointer select-none tx-75"
+					className="my-2 px-4 py-3 flex flex-row items-center w-full bg-gray-900 hover:bg-gray-800 rounded-md shadow-hero hover:shadow-hero-md cursor-pointer select-none tx-150"
 					onClick={handleClickGitHub}
 				>
 					<div className="mx-4">
@@ -62,7 +62,7 @@ const Auth = props => {
 
 				{/* Google: */}
 				<div
-					className="my-2 px-4 py-3 flex flex-row items-center w-full bg-white hover:bg-gray-100 rounded-md shadow-hero cursor-pointer select-none tx-75"
+					className="my-2 px-4 py-3 flex flex-row items-center w-full bg-white hover:bg-gray-100 rounded-md shadow-hero hover:shadow-hero-md cursor-pointer select-none tx-150"
 					onClick={handleClickGoogle}
 				>
 					<div className="mx-4">
@@ -73,7 +73,7 @@ const Auth = props => {
 					</p>
 				</div>
 
-				{/* Subtext: */}
+				{/* Text: */}
 				<p className="my-6 text-center font-medium text-lg text-gray-900">
 					Or <Link className="text-md-blue-a400" to={constants.PATH_HELP}>click here</Link> for support
 				</p>
