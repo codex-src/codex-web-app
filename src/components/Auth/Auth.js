@@ -35,9 +35,7 @@ const Auth = props => {
 
 				{/* Logo: */}
 				<div className="my-6 flex flex-row justify-center items-center transform scale-110 origin-bottom">
-					<div className="mr-3 text-md-blue-a400">
-						<Feather.Layers className="w-6 h-6" />
-					</div>
+					<Feather.Layers className="mr-3 w-6 h-6 text-md-blue-a400" />
 					<CodexLogo className="w-24 h-6" />
 				</div>
 
