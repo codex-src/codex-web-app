@@ -9,25 +9,23 @@ import { ReactComponent as GitHubLogo } from "svg/github.svg"
 import { ReactComponent as GoogleLogo } from "svg/google.svg"
 
 const Auth = props => {
-	const [state, dispatch] = User.useUser()
+	const [, { login }] = User.useUser()
 
 	const handleClickGitHub = e => {
 		const provider = new firebase.auth.GithubAuthProvider()
 		firebase.auth().signInWithPopup(provider).then(res => {
-			console.log({ "handleClickGitHub": res })
-			dispatch.login(res.user)
+			login(res.user)
 		}).catch(err => {
-			console.warn({ "handleClickGitHub": err })
+			console.warn(err)
 		})
 	}
 
 	const handleClickGoogle = e => {
 		const provider = new firebase.auth.GoogleAuthProvider()
 		firebase.auth().signInWithPopup(provider).then(res => {
-			console.log({ "handleClickGitHub": res })
-			dispatch.login(res.user)
+			login(res.user)
 		}).catch(err => {
-			console.warn({ "handleClickGitHub": err })
+			console.warn(err)
 		})
 	}
 
