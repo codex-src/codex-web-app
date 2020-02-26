@@ -74,20 +74,20 @@ const AuthNav = props => {
 				</div>
 
 				{/* RHS: */}
-				<div className={`-my-3 md:mt-0 py-3 absolute right-0 top-full ${!open ? "hidden" : "block"} md:static md:flex md:flex-row bg-gray-50 rounded-lg shadow-hero-lg md:shadow-none`}>
-					<Link to={constants.PATH_TODO} className="px-4 py-3 flex flex-row justify-center items-center text-gray-800 hover:text-md-blue-a400 md:hover:bg-transparent hover:bg-gray-100 tx-75">
-						<p className="font-medium">
+				<div className={`-mx-3 -mt-4 md:mt-0 py-4 md:py-0 absolute right-0 top-full ${!open ? "hidden" : "block"} md:static md:flex md:flex-row bg-gray-50 rounded-lg shadow-hero-lg md:shadow-none`}>
+					<Link to={constants.PATH_TODO} className="px-7 md:px-4 py-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 md:hover:bg-transparent hover:bg-gray-100 tx-75">
+						<p className="font-medium text-px">
 							What is Codex?
 						</p>
 					</Link>
-					<Link to={constants.PATH_TODO} className="px-4 py-3 flex flex-row justify-center items-center text-gray-800 hover:text-md-blue-a400 md:hover:bg-transparent hover:bg-gray-100 tx-75">
-						<p className="font-medium">
+					<Link to={constants.PATH_TODO} className="px-7 md:px-4 py-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 md:hover:bg-transparent hover:bg-gray-100 tx-75">
+						<p className="font-medium text-px">
 							Try the editor
 						</p>
 					</Link>
 					{/* CTA: */}
-					<div className="mx-4 mt-3 md:mt-0 flex flex-row items-center">
-						<Link className="px-4 py-3 flex flex-row items-center text-md-blue-a400 hover:bg-gray-100 border border-md-blue-a400 rounded-md tx-75" to={constants.PATH_AUTH} data-e2e="nav-cta-btn">
+					<div className="mx-3 md:ml-4 mt-4 md:mt-0 flex flex-row items-center">
+						<Link className="px-4 py-3 box-content flex flex-row items-center text-md-blue-a400 hover:bg-gray-100 border border-md-blue-a400 rounded-md tx-75" to={constants.PATH_AUTH} data-e2e="nav-cta-btn">
 							<p className="font-medium text-px">
 								Open your Codex
 							</p>
