@@ -1,3 +1,4 @@
+import * as constants from "__constants"
 import * as Feather from "react-feather"
 import * as User from "components/User"
 import firebase from "__firebase"
@@ -10,33 +11,25 @@ import { ReactComponent as GoogleLogo } from "svg/google.svg"
 const Auth = props => {
 	const [state, dispatch] = User.useUser()
 
-	// GitHub handler:
 	const handleClickGitHub = e => {
-		// e.preventDefault()
 		const provider = new firebase.auth.GithubAuthProvider()
 		firebase.auth().signInWithPopup(provider).then(res => {
+			console.log({ "handleClickGitHub": res })
 			dispatch.login(res.user)
 		}).catch(err => {
-			console.log({ err })
+			console.warn({ "handleClickGitHub": err })
 		})
 	}
 
-	// Google handler:
 	const handleClickGoogle = e => {
-		// e.preventDefault()
 		const provider = new firebase.auth.GoogleAuthProvider()
 		firebase.auth().signInWithPopup(provider).then(res => {
+			console.log({ "handleClickGitHub": res })
 			dispatch.login(res.user)
 		}).catch(err => {
-			console.log({ err })
+			console.warn({ "handleClickGitHub": err })
 		})
 	}
-
-	// React.useEffect(() => {
-	// 	firebase.auth().onAuthStateChanged(arg => {
-	// 		console.log("hello, world!")
-	// 	})
-	// }, [])
 
 	return (
 		<div className="px-6 py-32 flex flex-row justify-center items-center min-h-full bg-gray-50">
@@ -53,7 +46,7 @@ const Auth = props => {
 				{/* Subtext: */}
 				<p className="my-6 text-center font-medium text-lg text-gray-900">
 					Choose one of the following to{" "}
-					continue with <Link className="text-md-blue-a400" to="https://opencodex.dev">Codex</Link>:
+					continue with <Link className="text-md-blue-a400" to={constants.URL}>Codex</Link>:
 				</p>
 
 				{/* GitHub: */}
@@ -84,7 +77,7 @@ const Auth = props => {
 
 				{/* Subtext: */}
 				<p className="my-6 text-center font-medium text-lg text-gray-900">
-					Or <Link className="text-md-blue-a400" to="https://opencodex.dev/support">click here</Link> for support
+					Or <Link className="text-md-blue-a400" to={constants.PATH_HELP}>click here</Link> for support
 				</p>
 
 			</div>

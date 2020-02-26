@@ -1,3 +1,4 @@
+import * as constants from "__constants"
 import HeroEditor from "./HeroEditor"
 import Link from "utils/RouterLink"
 import React from "react"
@@ -15,7 +16,7 @@ const HeroSection = props => (
 				</h1>
 				{/* NOTE: block is needed because of lg:block */}
 				<div className="h-8" />
-				<Link className="py-2 block" to="/auth" data-e2e="cta-btn-auth">
+				<Link className="py-2 block" to={constants.PATH_AUTH} data-e2e="cta-btn-auth">
 					<p className="font-medium text-2xl text-md-blue-a400">
 						Try Codex for free!
 					</p>
@@ -25,7 +26,7 @@ const HeroSection = props => (
 			<div className="w-24 h-12" />
 
 			{/* RHS: */}
-			<Link className="w-full" to="demo" data-e2e="cta-editor">
+			<Link className="w-full" to={constants.PATH_DEMO} data-e2e="cta-editor">
 				<HeroEditorSlate />
 			</Link>
 

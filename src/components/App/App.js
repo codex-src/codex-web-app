@@ -1,3 +1,4 @@
+import * as constants from "__constants"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Auth from "components/Auth"
@@ -5,64 +6,49 @@ import Demo from "components/Demo"
 import Home from "components/Home"
 import React from "react"
 
-// const Providers = props => (
-// 	<Router.BrowserRouter>
-// 		<User.Provider>
-// 			{props.children}
-// 		</User.Provider>
-// 	</Router.BrowserRouter>
-// )
-
-// {/* NOTE: An unauthenticated and authenticated
-// route cannot share the same path. */}
-// <User.Context.Consumer>
-// 	{([state]) => !state.auth ? (
-// 		<Routes.Route
-// 			path="/"
-// 			exact
-// 			title={CodexTitle("Home")}
-// 			component={props => "TODO"}
-// 		/>
-// 	) : (
-// 		null
-// 		// <Routes.Route
-// 		// 	path="/"
-// 		// 	exact
-// 		// 	title={CodexTitle("Notes")}
-// 		// 	component={Notes}
-// 		// />
-// 	)}
-// </User.Context.Consumer>
-
 const App = props => (
 	<Router.BrowserRouter>
 		<User.Provider>
 			<Router.Switch>
 
+				{/* <User.UnprotectedRoute */}
+				{/* 	path="/" */}
+				{/* 	exact */}
+				{/* 	title="" */}
+				{/* 	children={<Home />} */}
+				{/* /> */}
+
 				<User.UnprotectedRoute
-					path="/"
-					exact
-					title=""
-					children={<Home />}
-				/>
-				<User.UnprotectedRoute
-					path="/auth"
+					path={constants.PATH_AUTH}
 					title="Open your Codex"
 					children={<Auth />}
 				/>
 				<User.UnprotectedRoute
-					path="/demo"
+					path={constants.PATH_DEMO}
 					exact
 					title="Demo"
 					children={<Demo />}
 				/>
 
-				{/* <User.ProtectedRoute */}
-				{/* 	path="/" */}
-				{/* 	exact */}
-				{/* 	title="New note" */}
-				{/* 	render={props => <Note key={newFourByteHash()} />} */}
-				{/* /> */}
+				<User.Context.Consumer>
+					{([user]) => !user ? (
+						// Unauthenticated:
+						<User.UnprotectedRoute
+							path={constants.PATH_HOME}
+							exact
+							// title=""
+							children={<Home />}
+						/>
+					) : (
+						// Authenticated:
+						<User.ProtectedRoute
+							path={constants.PATH_HOME}
+							exact
+							// title=""
+							children="Hello, world!"
+						/>
+					)}
+				</User.Context.Consumer>
 
 				{/* <User.UnprotectedRoute */}
 				{/* 	path="/our-story" */}

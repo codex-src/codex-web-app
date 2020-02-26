@@ -1,3 +1,4 @@
+import * as constants from "__constants"
 import * as Feather from "react-feather"
 import Link from "components/Link"
 import React from "react"
@@ -17,7 +18,7 @@ const Nav = props => (
 
 			{/* LHS: */}
 			<div className="-mx-3 flex flex-row">
-				<Link className="px-3 flex flex-row items-center" to="/" data-e2e="nav-home">
+				<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME} data-e2e="nav-home">
 					<div className="mr-3 text-md-blue-a400">
 						<Feather.Layers className="w-6 h-6" />
 					</div>
@@ -28,18 +29,18 @@ const Nav = props => (
 			{/* RHS: */}
 			<div className="-mx-3 flex flex-row">
 				<NavLink
-					to="/TODO"
+					to={constants.PATH_TODO}
 					text="What is Codex?"
-					data-e2e="nav-a"
+					// data-e2e="nav-a" // TODO
 				/>
 				<NavLink
-					to="/demo"
+					to={constants.PATH_DEMO}
 					text="Try the editor"
-					data-e2e="nav-b"
+					// data-e2e="nav-b" // TODO
 				/>
 				{/* CTA: */}
 				<div className="ml-6 mr-3 flex flex-row items-center">
-					<Link className="px-4 py-3 flex flex-row items-center text-md-blue-a400 hover:bg-gray-100 border border-md-blue-a400 rounded-md tx-75" to="/auth" data-e2e="nav-cta-btn">
+					<Link className="px-4 py-3 flex flex-row items-center text-md-blue-a400 hover:bg-gray-100 border border-md-blue-a400 rounded-md tx-75" to={constants.PATH_AUTH} data-e2e="nav-cta-btn">
 						<p className="font-medium text-px">
 							Open your Codex
 						</p>

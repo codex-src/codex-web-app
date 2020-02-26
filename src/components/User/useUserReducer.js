@@ -23,10 +23,10 @@ import useMethods from "use-methods"
 // TODO: React.useState()?
 const reducer = state => ({
 	login(user) {
-		state = user
+		return user
 	},
 	logout() {
-		state = null
+		return null
 	},
 })
 

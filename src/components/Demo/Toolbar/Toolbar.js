@@ -1,3 +1,4 @@
+import * as constants from "__constants"
 import * as Feather from "react-feather"
 import Button from "./Button"
 import Link from "utils/RouterLink"
@@ -98,7 +99,7 @@ const Toolbar = ({ state, dispatch, ...props }) => (
 					data-e2e="editor-toolbar-btn-7"
 				/>
 				<Link
-					to="https://github.com/codex-src/codex-app"
+					to={constants.URL_REPO}
 					target="_blank"
 					data-e2e="editor-toolbar-btn-8"
 					children={
