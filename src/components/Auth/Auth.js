@@ -44,6 +44,16 @@ const Auth = props => (
 				</p>
 			</div>
 
+			{/* Google: */}
+			<div className="my-2 px-4 py-3 flex flex-row justify-center items-center w-full bg-white hover:bg-gray-100 rounded-md shadow-hero cursor-pointer select-none tx-75">
+				{/* <div className="mx-4"> */}
+					{/* <GoogleLogo className="w-6 h-6 text-gray-900" /> */}
+				{/* </div> */}
+				<p className="font-semibold text-px text-gray-900">
+					Or continue with email
+				</p>
+			</div>
+
 			{/* Subtext: */}
 			<p className="my-6 text-center font-medium text-lg text-gray-900">
 				Or <Link className="text-md-blue-a400" to="https://opencodex.dev/support">click here</Link> for support
