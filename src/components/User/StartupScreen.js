@@ -1,6 +1,5 @@
 import * as Feather from "react-feather"
 import React from "react"
-import { ReactComponent as CodexLogo } from "svg/codex_4x1.svg"
 
 const StartupScreen = props => (
 	<div className="-mt-8 flex flex-row justify-center items-center h-full bg-gray-50">
