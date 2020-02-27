@@ -9,15 +9,15 @@ const Nav = props => {
 	const ref = React.useRef()
 
 	const user = User.useUser()
-	const [open, setOpen] = React.useState(false)
-	useEscape(open, setOpen)
-	useClickAway(ref, open, setOpen)
+	const dropDown = React.useState(false)
+	useEscape(...dropDown)
+	useClickAway(ref, ...dropDown)
 
 	let Component = null
 	if (!user) {
-		Component = <UnauthNav ref={ref} {...props} open={open} setOpen={setOpen} />
+		Component = <UnauthNav ref={ref} {...props} dropDown={dropDown} />
 	} else {
-		Component = <AuthNav ref={ref} {...props} open={open} setOpen={setOpen} />
+		Component = <AuthNav ref={ref} {...props} dropDown={dropDown} />
 	}
 	return Component
 }

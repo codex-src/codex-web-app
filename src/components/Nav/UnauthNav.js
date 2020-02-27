@@ -4,7 +4,7 @@ import Link from "components/Link"
 import React from "react"
 import { ReactComponent as CodexLogo } from "svg/codex_4x1.svg"
 
-const UnauthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => (
+const UnauthNav = React.forwardRef(({ dropDown, ...props }, ref) => (
 	<div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-white z-30 select-none">
 		<div className="relative flex flex-row justify-between w-full max-w-screen-lg">
 
@@ -18,13 +18,13 @@ const UnauthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => (
 
 			{/* RHS: */}
 			<div className="-mx-3 flex flex-row md:hidden">
-				<div className="p-3 flex flex-row items-center cursor-pointer" onClick={e => setOpen(!open)}>
+				<div className="p-3 flex flex-row items-center cursor-pointer" onClick={e => dropDown[1](!dropDown[0])}>
 					<Feather.Menu className="w-6 h-6 stroke-500" />
 				</div>
 			</div>
 
 			{/* RHS - drop down: */}
-			<div ref={ref} className={`-mx-3 -mt-4 md:mt-0 py-4 md:py-0 absolute right-0 top-full ${!open ? "hidden" : "block"} md:static md:flex md:flex-row bg-white rounded-lg shadow-hero-lg md:shadow-none`}>
+			<div ref={ref} className={`-mx-3 -mt-4 md:mt-0 py-4 md:py-0 absolute right-0 top-full ${!dropDown[0] ? "hidden" : "block"} md:static md:flex md:flex-row bg-white rounded-lg shadow-hero-lg md:shadow-none`}>
 				<Link to={constants.PATH_TODO} className="px-7 md:px-3 py-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100 md:hover:bg-transparent active:bg-gray-200 tx-75">
 					<p className="font-medium">
 						What’s Codex?
