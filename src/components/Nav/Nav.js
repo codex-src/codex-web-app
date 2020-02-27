@@ -10,7 +10,7 @@ import useEscape from "utils/hooks/useEscape"
 import { ReactComponent as CodexLogo } from "svg/codex_4x1.svg"
 
 const UnauthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => (
-	<div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-gray-50 z-30 select-none">
+	<div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-white z-30 select-none">
 		<div className="relative flex flex-row justify-between w-full max-w-screen-lg">
 
 			{/* LHS: */}
@@ -29,7 +29,7 @@ const UnauthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => (
 			</div>
 
 			{/* RHS - drop down: */}
-			<div ref={ref} className={`-mx-3 -mt-4 md:mt-0 py-4 md:py-0 absolute right-0 top-full ${!open ? "hidden" : "block"} md:static md:flex md:flex-row bg-gray-50 rounded-lg shadow-hero-lg md:shadow-none`}>
+			<div ref={ref} className={`-mx-3 -mt-4 md:mt-0 py-4 md:py-0 absolute right-0 top-full ${!open ? "hidden" : "block"} md:static md:flex md:flex-row bg-white rounded-lg shadow-hero-lg md:shadow-none`}>
 				<Link to={constants.PATH_TODO} className="px-7 md:px-4 py-3 flex flex-row items-center text-gray-900 hover:text-md-blue-a400 hover:bg-gray-100 md:hover:bg-transparent active:bg-gray-200 tx-75">
 					<p className="font-medium text-px">
 						What is Codex?
@@ -41,7 +41,7 @@ const UnauthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => (
 					</p>
 				</Link>
 				<div className="mx-3 md:ml-4 mt-4 md:mt-0 flex flex-row items-center">
-					<Link className="px-4 py-3 !box-content flex flex-row items-center text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 !border !border-md-blue-a400 rounded-md shadow-hero-md hover:shadow-hero-lg tx-150" to={constants.PATH_AUTH} data-e2e="nav-cta-btn">
+					<Link className="px-4 py-3 !box-content flex flex-row items-center text-md-blue-a400 bg-white hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero tx-150" to={constants.PATH_AUTH} data-e2e="nav-cta-btn">
 						<p className="font-medium text-px">
 							Open your Codex
 						</p>
@@ -54,7 +54,7 @@ const UnauthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => (
 ))
 
 const AuthNav = React.forwardRef(({ user, open, setOpen, ...props }, ref) => (
-	<div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-gray-50 z-30 select-none">
+	<div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-white z-30 select-none">
 		<div className="relative flex flex-row justify-between w-full max-w-screen-lg">
 
 			{/* LHS: */}
@@ -66,47 +66,53 @@ const AuthNav = React.forwardRef(({ user, open, setOpen, ...props }, ref) => (
 
 			{/* RHS: */}
 			<div className="-mx-3 flex flex-row">
-				<div className="p-1 flex flex-row items-center cursor-pointer" onClick={e => setOpen(!open)}>
-					<Hero.PencilAlt_sm className="w-5 h-5 text-md-blue-a400" />
-				</div>
-				<div className="p-1 flex flex-row items-center cursor-pointer" onClick={e => setOpen(!open)}>
-					<Hero.Cog_sm className="w-5 h-5" />
-				</div>
 				<div className="p-3 flex flex-row items-center cursor-pointer" onClick={e => setOpen(!open)}>
 					<img className={`w-8 h-8 bg-gray-200 rounded-full outline-none ${!open ? "" : "shadow-outline"} tx-150`} src={user && user.photoURL} tabIndex="0" />
 				</div>
 			</div>
 
 			{/* RHS - drop down: */}
-			<div ref={ref} className={`-mx-3 -mt-4 py-4 absolute right-0 top-full ${!open ? "hidden" : "block"} bg-gray-50 rounded-lg shadow-hero-lg`}>
-				<Link to={constants.PATH_TODO} className="px-7 py-2 flex flex-row items-center text-gray-900 hover:text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 tx-75">
-					<p className="font-medium -text-px">
-						My notes
-					</p>
-				</Link>
-				<Link to={constants.PATH_TODO} className="px-7 py-2 flex flex-row items-center text-gray-900 hover:text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 tx-75">
-					<p className="font-medium -text-px">
-						Settings
-					</p>
-				</Link>
-				<Link to={constants.PATH_TODO} className="px-7 py-2 flex flex-row items-center text-gray-900 hover:text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 tx-75">
-					<p className="font-medium -text-px">
-						Upgrade to pro
-					</p>
-				</Link>
-				<Link to={constants.PATH_TODO} className="px-7 py-2 flex flex-row items-center text-gray-900 hover:text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 tx-75">
-					<p className="font-medium -text-px">
-						Import a note
-					</p>
-				</Link>
-				{/* <div className="mx-3 mt-4 flex flex-row items-center"> */}
-				{/* 	<Link className="px-4 py-2 !box-content flex flex-row items-center text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 !border !border-md-blue-a400 rounded-md shadow-hero-md hover:shadow-hero-lg tx-150" to={constants.PATH_AUTH} data-e2e="nav-cta-btn"> */}
-				{/* 		<p className="font-medium -text-px"> */}
-				{/* 			Create a new note */}
-				{/* 		</p> */}
-				{/* 	</Link> */}
-				{/* </div> */}
-			</div>
+			{open && (
+				<div ref={ref} className={`-mx-3 -mt-4 py-2 absolute right-0 top-full w-56 bg-gray-50 rounded-lg shadow-hero-lg`}>
+					<Link to={constants.PATH_TODO} className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+						<p className="font-medium -text-px">
+							Create a new note
+						</p>
+						<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 border rounded">
+							^+N
+						</div>
+					</Link>
+					<Link to={constants.PATH_TODO} className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+						<p className="font-medium -text-px">
+							My notes
+						</p>
+						<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 border rounded">
+							^+M
+						</div>
+					</Link>
+					{/* <div className="my-2 h-1 bg-md-gray-100" /> */}
+					<hr className="my-2" />
+					<Link to={constants.PATH_TODO} className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+						<p className="font-medium -text-px">
+							Preferences
+						</p>
+					</Link>
+					{/* <div className="my-2 h-1 bg-md-gray-100" /> */}
+					<hr className="my-2" />
+					<Link to={constants.PATH_TODO} className="px-4 py-2 flex flex-row justify-between items-center text-red-600 hover:bg-red-100 active:bg-red-200 tx-75">
+						<p className="font-medium -text-px">
+							Sign out
+						</p>
+					</Link>
+					{/* <div className="mx-3 mt-4 flex flex-row items-center"> */}
+					{/* 	<Link className="px-4 py-2 !box-content flex flex-row items-center text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 !border !border-md-blue-a400 rounded-md shadow-hero-md hover:shadow-hero-lg tx-150" to={constants.PATH_AUTH} data-e2e="nav-cta-btn"> */}
+					{/* 		<p className="font-medium -text-px"> */}
+					{/* 			Create a new note */}
+					{/* 		</p> */}
+					{/* 	</Link> */}
+					{/* </div> */}
+				</div>
+			)}
 
 		</div>
 	</div>

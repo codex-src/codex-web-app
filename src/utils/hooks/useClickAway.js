@@ -7,11 +7,10 @@ function useClickAway(ref, open, setOpen) {
 			return
 		}
 		const h = e => {
-			// if (ref.current === e.target || ref.current.contains(e.target)) {
-			// 	// No-op
-			// 	return
-			// }
-			// setOpen(false)
+			if (!ref.current || !e.target) {
+				// No-op
+				return
+			}
 			setOpen(ref.current === e.target || ref.current.contains(e.target))
 		}
 		document.addEventListener("click", h)
