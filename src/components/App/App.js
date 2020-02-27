@@ -35,6 +35,7 @@ const App = props => (
 				children={<Demo />}
 			/>
 
+			{/* NOTE: PATH_HOME cannot share the same route */}
 			<User.Context.Consumer>
 				{user => !user ? (
 					// Unauthenticated users:

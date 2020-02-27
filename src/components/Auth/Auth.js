@@ -10,39 +10,31 @@ import { ReactComponent as GitHubLogo } from "svg/github.svg"
 import { ReactComponent as GoogleLogo } from "svg/google.svg"
 
 const Auth = props => {
-	// const [, { login }] = User.useUser()
-	const [, render] = ProgressBar.useProgressBar()
+	const render = ProgressBar.useProgressBar()
 
 	const handleClickGitHub = e => {
-		// render()
-		const provider = new firebase.auth.GithubAuthProvider()
-		firebase.auth().signInWithPopup(provider).then(res => {
-			// login(res.user)
-		}).catch(err => {
-			console.warn(err)
-		})
+		const p = new firebase.auth.GithubAuthProvider()
+		firebase.auth()
+			.signInWithPopup(p)
+			.catch(err => {
+				console.warn(err)
+			})
 	}
-
 	const handleClickGoogle = e => {
-		// render()
-		const provider = new firebase.auth.GoogleAuthProvider()
-		firebase.auth().signInWithPopup(provider).then(res => {
-			// login(res.user)
-		}).catch(err => {
-			console.warn(err)
-		})
+		const p = new firebase.auth.GoogleAuthProvider()
+		firebase.auth()
+			.signInWithPopup(p)
+			.catch(err => {
+				console.warn(err)
+			})
 	}
-
 	const handleClickGuest = e => {
-		// render()
-		firebase.auth().signInAnonymously().then(res => {
-			// render()
-			// setTimeout(() => {
-			// 	login(res.user)
-			// }, 1e3)
-		}).catch(err => {
-			console.warn(err)
-		})
+		render()
+		firebase.auth()
+			.signInAnonymously()
+			.catch(err => {
+				console.warn(err)
+			})
 	}
 
 	return (
@@ -55,7 +47,6 @@ const Auth = props => {
 					<CodexLogo className="w-24 h-6" />
 				</div>
 
-				{/* Text: */}
 				<p className="my-6 text-center font-medium text-px text-gray-900">
 					Choose one of the following to{" "}
 					continue with{" "}
@@ -84,7 +75,6 @@ const Auth = props => {
 					</p>
 				</div>
 
-				{/* Text: */}
 				<hr className="mx-auto my-8 w-32" />
 				<p className="my-6 text-center font-medium text-px text-gray-900">
 					Just want to look around?{"\u00a0\u00a0"}<span className="emoji">👀</span><br />
