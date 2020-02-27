@@ -26,7 +26,7 @@
     "test": "yarn react-scripts test",
     "prebuild": "yarn tailwind-prod",
     "build": "PUBLIC_URL=https://opencodex.dev yarn react-scripts build",
-    "firebase-build": "PUBLIC_URL=https://codex-ef322.web.app yarn react-scripts build",
+    "firebase-build-deploy": "PUBLIC_URL=https://codex-ef322.web.app yarn react-scripts build && yarn firebase deploy",
     "eject": "yarn react-scripts eject"
   },
   "eslintConfig": {

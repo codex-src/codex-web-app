@@ -33,7 +33,12 @@ const UnauthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => (
 			<div ref={ref} className={`-mx-3 -mt-4 md:mt-0 py-4 md:py-0 absolute right-0 top-full ${!open ? "hidden" : "block"} md:static md:flex md:flex-row bg-white rounded-lg shadow-hero-lg md:shadow-none`}>
 				<Link to={constants.PATH_TODO} className="px-7 md:px-3 py-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100 md:hover:bg-transparent active:bg-gray-200 tx-75">
 					<p className="font-medium">
-						What is Codex?
+						What’s Codex?
+					</p>
+				</Link>
+				<Link to={constants.PATH_TODO} className="px-7 md:px-3 py-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100 md:hover:bg-transparent active:bg-gray-200 tx-75">
+					<p className="font-medium">
+						What can I do with Codex?
 					</p>
 				</Link>
 				<Link to={constants.PATH_DEMO} className="px-7 md:px-3 py-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100 md:hover:bg-transparent active:bg-gray-200 tx-75">
@@ -55,11 +60,11 @@ const UnauthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => (
 ))
 
 const AuthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => {
-	const [user, { logout }] = User.useUser()
+	const user = User.useUser()
 
 	const handleClickSignOut = e => {
 		firebase.auth().signOut().then(res => {
-			logout()
+			// logout()
 		}).catch(err => {
 			console.warn(err)
 		})
@@ -114,8 +119,11 @@ const AuthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => {
 						<hr className="my-1" />
 						<div className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
 							<p className="font-medium -text-px">
-								Preferences
+								Settings
 							</p>
+							<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
+								^+S
+							</div>
 						</div>
 						<div className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
 							<p className="font-medium -text-px">
@@ -128,6 +136,9 @@ const AuthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => {
 							<p className="font-medium -text-px">
 								Sign out
 							</p>
+							<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
+								^+Q
+							</div>
 						</div>
 					</div>
 				)}
@@ -140,9 +151,9 @@ const AuthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => {
 const Nav = props => {
 	const ref = React.useRef()
 
-	const [user] = React.useContext(User.Context)
-
+	const user = React.useContext(User.Context)
 	const [open, setOpen] = React.useState(false)
+
 	useEscape(open, setOpen)
 	useClickAway(ref, open, setOpen)
 
@@ -152,7 +163,6 @@ const Nav = props => {
 	} else {
 		Component = <AuthNav ref={ref} {...props} open={open} setOpen={setOpen} />
 	}
-	// return React.cloneElement(Component, { ...props, user, open, setOpen })
 	return Component
 }
 

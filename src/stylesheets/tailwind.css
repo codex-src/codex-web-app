@@ -5,12 +5,12 @@
 
 @import "tailwindcss/utilities";
 
-.w-px {
-	font-size: 0.125rem;
-}
-.h-px {
-	font-size: 0.125rem;
-}
+/* .w-px { */
+/* 	font-size: 0.125rem; */
+/* } */
+/* .h-px { */
+/* 	font-size: 0.125rem; */
+/* } */
 
 .tabs-2 {
 	tab-size: 2;
@@ -84,3 +84,7 @@
 		duration-1000
 		ease-in-out;
 }
+
+/* .cursor-wait-important { */
+/* 	cursor: wait !important; */
+/* } */

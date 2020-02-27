@@ -4,7 +4,7 @@ import CodexTitle from "components/CodexTitle"
 import React from "react"
 import useUser from "./useUser"
 
-export const CodexRoute = ({ title, ...props }) => (
+const CodexRoute = ({ title, ...props }) => (
 	<CodexTitle title={title}>
 		<Router.Route {...props}>
 			{props.children}
@@ -12,20 +12,28 @@ export const CodexRoute = ({ title, ...props }) => (
 	</CodexTitle>
 )
 
+// Redirect unauthenticated users.
 export const UnprotectedRoute = props => {
-	const [state] = useUser()
+	const user = useUser()
 
-	if (state) {
-		return <Router.Redirect to={constants.PATH_HOME} />
+	let Component = null
+	if (user) {
+		Component = <Router.Redirect to={constants.PATH_HOME} />
+	} else {
+		Component = <CodexRoute {...props} />
 	}
-	return <CodexRoute {...props} />
+	return Component
 }
 
+// Redirect authenticated users.
 export const ProtectedRoute = props => {
-	const [state] = useUser()
+	const user = useUser()
 
-	if (!state) {
-		return <Router.Redirect to={constants.PATH_AUTH} />
+	let Component = null
+	if (!user) {
+		Component = <Router.Redirect to={constants.PATH_AUTH} />
+	} else {
+		Component = <CodexRoute {...props} />
 	}
-	return <CodexRoute {...props} />
+	return Component
 }

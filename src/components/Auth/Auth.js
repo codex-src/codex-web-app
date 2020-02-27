@@ -1,5 +1,6 @@
 import * as constants from "__constants"
 import * as Feather from "react-feather"
+import * as ProgressBar from "components/ProgressBar"
 import * as User from "components/User"
 import firebase from "__firebase"
 import Link from "utils/RouterLink"
@@ -9,28 +10,43 @@ import { ReactComponent as GitHubLogo } from "svg/github.svg"
 import { ReactComponent as GoogleLogo } from "svg/google.svg"
 
 const Auth = props => {
-	const [, { login }] = User.useUser()
+	// const [, { login }] = User.useUser()
+	const [, render] = ProgressBar.useProgressBar()
 
 	const handleClickGitHub = e => {
+		// render()
 		const provider = new firebase.auth.GithubAuthProvider()
 		firebase.auth().signInWithPopup(provider).then(res => {
-			login(res.user)
+			// login(res.user)
 		}).catch(err => {
 			console.warn(err)
 		})
 	}
 
 	const handleClickGoogle = e => {
+		// render()
 		const provider = new firebase.auth.GoogleAuthProvider()
 		firebase.auth().signInWithPopup(provider).then(res => {
-			login(res.user)
+			// login(res.user)
+		}).catch(err => {
+			console.warn(err)
+		})
+	}
+
+	const handleClickGuest = e => {
+		// render()
+		firebase.auth().signInAnonymously().then(res => {
+			// render()
+			// setTimeout(() => {
+			// 	login(res.user)
+			// }, 1e3)
 		}).catch(err => {
 			console.warn(err)
 		})
 	}
 
 	return (
-		<div className="-mt-16 px-6 py-32 flex flex-row justify-center items-center min-h-full">
+		<div className="!-mt-16 px-6 py-32 flex flex-row justify-center items-center min-h-full bg-gray-50">
 			<div className="w-72">
 
 				{/* Logo: */}
@@ -40,7 +56,7 @@ const Auth = props => {
 				</div>
 
 				{/* Text: */}
-				<p className="my-6 text-center font-medium text-px text-gray-900 select-none">
+				<p className="my-6 text-center font-medium text-px text-gray-900">
 					Choose one of the following to{" "}
 					continue with{" "}
 					<Link className="text-md-blue-a400" to={constants.URL}>
@@ -69,13 +85,13 @@ const Auth = props => {
 				</div>
 
 				{/* Text: */}
-				{/* <hr className="my-8" /> */}
-				{/* <p className="my-6 text-center font-medium text-px text-gray-900 select-none"> */}
-				{/* 	Just want to look around? <span className="emoji">👀</span><br /> */}
-				{/* 	<Link className="text-md-blue-a400" to={constants.PATH_HELP}> */}
-				{/* 		Continue as a guest */}
-				{/* 	</Link> */}
-				{/* </p> */}
+				<hr className="mx-auto my-8 w-32" />
+				<p className="my-6 text-center font-medium text-px text-gray-900">
+					Just want to look around?{"\u00a0\u00a0"}<span className="emoji">👀</span><br />
+					<span className="text-md-blue-a400 cursor-pointer" onClick={handleClickGuest}>
+						Continue as a guest
+					</span>
+				</p>
 
 			</div>
 		</div>
