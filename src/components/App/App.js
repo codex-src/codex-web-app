@@ -1,4 +1,5 @@
 import * as constants from "__constants"
+import * as random from "utils/random"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Auth from "components/Auth"
@@ -37,7 +38,7 @@ const App = props => (
 							path={constants.PATH_HOME}
 							exact
 							// title=""
-							children={<Home />}
+							children={<Home key={random.newFourByteHash()} />}
 						/>
 					) : (
 						// Authenticated:
@@ -45,7 +46,7 @@ const App = props => (
 							path={constants.PATH_HOME}
 							exact
 							// title=""
-							children={<Home />}
+							children={<Home key={random.newFourByteHash()} />}
 						/>
 					)}
 				</User.Context.Consumer>

@@ -7,11 +7,12 @@ function useEscape(open, setOpen) {
 			return
 		}
 		const h = e => {
-			if (e.keyCode !== 27) { // 27: Escape
-				// No-op
-				return
-			}
-			setOpen(false)
+			// if (e.keyCode !== 27) { // 27: Escape
+			// 	// No-op
+			// 	return
+			// }
+			// setOpen(false)
+			setOpen(e.keyCode === 27)
 		}
 		document.addEventListener("keydown", h)
 		return () => {

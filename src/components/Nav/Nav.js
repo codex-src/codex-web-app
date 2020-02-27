@@ -5,10 +5,11 @@ import * as User from "components/User"
 import CSSDebugger from "utils/CSSDebugger" // eslint-disable-line no-unused-vars
 import Link from "components/Link"
 import React from "react"
+import useClickAway from "utils/hooks/useClickAway"
 import useEscape from "utils/hooks/useEscape"
 import { ReactComponent as CodexLogo } from "svg/codex_4x1.svg"
 
-const UnauthNav = ({ open, setOpen, ...props }) => (
+const UnauthNav = React.forwardRef(({ open, setOpen, ...props }, ref) => (
 	<div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-gray-50 z-30 select-none">
 		<div className="relative flex flex-row justify-between w-full max-w-screen-lg">
 
@@ -20,14 +21,15 @@ const UnauthNav = ({ open, setOpen, ...props }) => (
 				</Link>
 			</div>
 
+			{/* RHS: */}
 			<div className="-mx-3 flex flex-row md:hidden">
 				<div className="p-3 flex flex-row items-center cursor-pointer" onClick={e => setOpen(!open)}>
 					<Feather.Menu className="w-6 h-6 stroke-500" />
 				</div>
 			</div>
 
-			{/* RHS: */}
-			<div className={`-mx-3 -mt-4 md:mt-0 py-4 md:py-0 absolute right-0 top-full ${!open ? "hidden" : "block"} md:static md:flex md:flex-row bg-gray-50 rounded-lg shadow-hero-lg md:shadow-none`}>
+			{/* RHS - drop down: */}
+			<div ref={ref} className={`-mx-3 -mt-4 md:mt-0 py-4 md:py-0 absolute right-0 top-full ${!open ? "hidden" : "block"} md:static md:flex md:flex-row bg-gray-50 rounded-lg shadow-hero-lg md:shadow-none`}>
 				<Link to={constants.PATH_TODO} className="px-7 md:px-4 py-3 flex flex-row items-center text-gray-900 hover:text-md-blue-a400 hover:bg-gray-100 md:hover:bg-transparent active:bg-gray-200 tx-75">
 					<p className="font-medium text-px">
 						What is Codex?
@@ -49,9 +51,9 @@ const UnauthNav = ({ open, setOpen, ...props }) => (
 
 		</div>
 	</div>
-)
+))
 
-const AuthNav = ({ user, open, setOpen, ...props }) => (
+const AuthNav = React.forwardRef(({ user, open, setOpen, ...props }, ref) => (
 	<div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-gray-50 z-30 select-none">
 		<div className="relative flex flex-row justify-between w-full max-w-screen-lg">
 
@@ -76,7 +78,7 @@ const AuthNav = ({ user, open, setOpen, ...props }) => (
 			</div>
 
 			{/* RHS - drop down: */}
-			<div className={`-mx-3 -mt-4 py-4 absolute right-0 top-full ${!open ? "hidden" : "block"} bg-gray-50 rounded-lg shadow-hero-lg`}>
+			<div ref={ref} className={`-mx-3 -mt-4 py-4 absolute right-0 top-full ${!open ? "hidden" : "block"} bg-gray-50 rounded-lg shadow-hero-lg`}>
 				<Link to={constants.PATH_TODO} className="px-7 py-2 flex flex-row items-center text-gray-900 hover:text-md-blue-a400 hover:bg-gray-100 active:bg-gray-200 tx-75">
 					<p className="font-medium -text-px">
 						My notes
@@ -108,20 +110,24 @@ const AuthNav = ({ user, open, setOpen, ...props }) => (
 
 		</div>
 	</div>
-)
+))
 
 const Nav = props => {
+	const ref = React.useRef()
+
 	const [user] = React.useContext(User.Context)
 
 	const [open, setOpen] = React.useState(false)
 	useEscape(open, setOpen)
+	useClickAway(ref, open, setOpen)
 
 	let Component = null
 	if (!user) {
-		Component = <UnauthNav {...props} open={open} setOpen={setOpen} />
+		Component = <UnauthNav ref={ref} {...props} open={open} setOpen={setOpen} />
 	} else {
-		Component = <AuthNav {...props} user={user} open={open} setOpen={setOpen} />
+		Component = <AuthNav ref={ref} {...props} user={user} open={open} setOpen={setOpen} />
 	}
+	// return React.cloneElement(Component, { ...props, user, open, setOpen })
 	return Component
 }
 
