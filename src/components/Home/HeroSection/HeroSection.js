@@ -6,7 +6,7 @@ import React from "react"
 import "./HeroSection.css"
 
 const HeroSection = props => (
-	<div className="px-6 py-32 flex flex-row justify-center items-center min-h-screen bg-gray-50">
+	<div className="px-6 py-32 flex flex-row justify-center items-center min-h-screen">
 		<div className="flex flex-col lg:flex-row items-center max-w-screen-lg">
 
 			{/* LHS: */}

@@ -30,7 +30,7 @@ const Auth = props => {
 	}
 
 	return (
-		<div className="-mt-16 px-6 py-32 flex flex-row justify-center items-center min-h-full bg-gray-50">
+		<div className="-mt-16 px-6 py-32 flex flex-row justify-center items-center min-h-full">
 			<div className="w-72">
 
 				{/* Logo: */}
@@ -42,14 +42,14 @@ const Auth = props => {
 				{/* Text: */}
 				<p className="my-6 text-center font-medium text-px text-gray-900 select-none">
 					Choose one of the following to{" "}
-					continue with <Link className="text-md-blue-a400" to={constants.URL}>Codex</Link>:
+					continue with{" "}
+					<Link className="text-md-blue-a400" to={constants.URL}>
+						Codex
+					</Link>:
 				</p>
 
 				{/* GitHub: */}
-				<div
-					className="my-2 px-4 py-3 flex flex-row items-center bg-gray-900 rounded-md shadow-hero cursor-pointer select-none tx-150"
-					onClick={handleClickGitHub}
-				>
+				<div className="my-2 px-4 py-3 flex flex-row items-center bg-black hover:bg-gray-900 active:bg-black rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero cursor-pointer select-none tx-150" onClick={handleClickGitHub}>
 					<div className="mx-4">
 						<GitHubLogo className="w-6 h-6 text-gray-100" />
 					</div>
@@ -59,10 +59,7 @@ const Auth = props => {
 				</div>
 
 				{/* Google: */}
-				<div
-					className="my-2 px-4 py-3 flex flex-row items-center bg-gray-100 rounded-md shadow-hero cursor-pointer select-none tx-150"
-					onClick={handleClickGoogle}
-				>
+				<div className="my-2 px-4 py-3 flex flex-row items-center bg-white hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero cursor-pointer select-none tx-150" onClick={handleClickGoogle}>
 					<div className="mx-4">
 						<GoogleLogo className="w-6 h-6 text-gray-900" />
 					</div>
@@ -72,8 +69,12 @@ const Auth = props => {
 				</div>
 
 				{/* Text: */}
+				{/* <hr className="my-8" /> */}
 				{/* <p className="my-6 text-center font-medium text-px text-gray-900 select-none"> */}
-				{/* 	Or <Link className="text-md-blue-a400" to={constants.PATH_HELP}>click here</Link> for support */}
+				{/* 	Just want to look around? <span className="emoji">👀</span><br /> */}
+				{/* 	<Link className="text-md-blue-a400" to={constants.PATH_HELP}> */}
+				{/* 		Continue as a guest */}
+				{/* 	</Link> */}
 				{/* </p> */}
 
 			</div>

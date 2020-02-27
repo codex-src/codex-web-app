@@ -33,7 +33,6 @@ const App = props => (
 
 				<User.Context.Consumer>
 					{([user]) => !user ? (
-						// Unauthenticated:
 						<User.UnprotectedRoute
 							path={constants.PATH_HOME}
 							exact
@@ -41,7 +40,6 @@ const App = props => (
 							children={<Home key={random.newFourByteHash()} />}
 						/>
 					) : (
-						// Authenticated:
 						<User.ProtectedRoute
 							path={constants.PATH_HOME}
 							exact
