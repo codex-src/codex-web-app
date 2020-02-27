@@ -1,8 +1,8 @@
 import * as Feather from "react-feather"
 import React from "react"
 import ReadmeEditor from "./ReadmeEditor"
-import useEscape from "./hooks/useEscape"
-import useFixed from "./hooks/useFixed"
+import useEscape from "utils/hooks/useEscape"
+import useFixed from "utils/hooks/useFixed"
 
 import "./Readme.css"
 

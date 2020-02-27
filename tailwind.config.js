@@ -93,6 +93,7 @@ module.exports = {
 			},
 			spacing: {
 				"7":     "1.75rem",
+				"9":     "2.25rem",
 				"72":    "18rem",
 				// https://youtube.com/watch?v=jl_tdhBxc_Y
 				"9/16":  "56.25%",

@@ -2,12 +2,16 @@ import React from "react"
 
 function useEscape(open, setOpen) {
 	React.useEffect(() => {
+		if (!open) {
+			// No-op
+			return
+		}
 		const h = e => {
 			if (e.keyCode !== 27) { // 27: Escape
 				// No-op
 				return
 			}
-			setOpen(!open)
+			setOpen(false)
 		}
 		document.addEventListener("keydown", h)
 		return () => {

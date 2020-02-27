@@ -45,7 +45,7 @@ const App = props => (
 							path={constants.PATH_HOME}
 							exact
 							// title=""
-							children="Hello, world!"
+							children={<Home />}
 						/>
 					)}
 				</User.Context.Consumer>

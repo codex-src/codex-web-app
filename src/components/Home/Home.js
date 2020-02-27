@@ -5,7 +5,7 @@ import React from "react"
 const Home = props => (
 	<React.Fragment>
 		<Nav className="bg-gray-50" />
-		<HeroSection />
+		{/* <HeroSection /> */}
 	</React.Fragment>
 )
 
