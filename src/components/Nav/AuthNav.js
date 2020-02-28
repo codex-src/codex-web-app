@@ -4,16 +4,32 @@ import * as User from "components/User"
 import firebase from "__firebase"
 import Link from "components/Link"
 import React from "react"
+import useClickAway from "utils/hooks/useClickAway"
+import useEscape from "utils/hooks/useEscape"
 import useTransition from "utils/hooks/useTransition"
 
 import "./AuthNav.css"
 
-const AuthNav = React.forwardRef(({ dropDown, ...props }, ref) => {
+// TODO: Bind shortcut
+const Shortcut = props => (
+	<span className="px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
+		{props.children}
+	</span>
+)
+
+const AuthNav = props => {
+	const ref = React.useRef()
+
 	const user = User.useUser()
+	const [dropDown, setDropDown] = React.useState(false)
+
+	useEscape(dropDown, setDropDown)
+
+	useClickAway(ref, dropDown, setDropDown)
 
 	useTransition({
 		ref,
-		state: dropDown[0],
+		state: dropDown,
 		enterClass: "drop-down-enter",
 		activeClass: "drop-down-active",
 		durationMs: 300,
@@ -37,56 +53,53 @@ const AuthNav = React.forwardRef(({ dropDown, ...props }, ref) => {
 				</Link>
 
 				{/* RHS: */}
-				<Link className="-mx-3 flex flex-row items-center cursor-pointer" onClick={e => dropDown[1](!dropDown[0])}>
+				<Link className="-mx-3 flex flex-row items-center" onClick={e => setDropDown(!dropDown)}>
 					<img className="mx-3 w-8 h-8 bg-gray-200 rounded-full" src={user.photoURL || constants.IMG_TRANS} alt="TODO" />
 				</Link>
 
 				{/* RHS - drop down: */}
 				<div ref={ref} className="-mx-3 -mt-3 py-2 absolute right-0 top-full w-56 bg-white rounded-lg shadow-hero-lg">
-					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200">
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100" to={constants.PATH_TODO}>
 						<p className="font-medium -text-px">
 							Create a new note
 						</p>
-						<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
-							^+N
-						</div>
+						{/* <Shortcut> */}
+						{/* 	^+N */}
+						{/* </Shortcut> */}
 					</Link>
-					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200">
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100" to={constants.PATH_TODO}>
 						<p className="font-medium -text-px">
 							My notes
 						</p>
-						<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
-							^+M
-						</div>
+						{/* <Shortcut> */}
+						{/* 	^+M */}
+						{/* </Shortcut> */}
 					</Link>
 					<hr className="my-1" />
-					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200">
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100" to={constants.PATH_TODO}>
 						<p className="font-medium -text-px">
 							Settings
 						</p>
-						<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
-							^+S
-						</div>
+						{/* <Shortcut> */}
+						{/* 	^+S */}
+						{/* </Shortcut> */}
 					</Link>
-					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200">
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100" to={constants.PATH_TODO}>
 						<p className="font-medium -text-px">
 							Upgrade to unlimited
 						</p>
 					</Link>
 					<hr className="my-1" />
-					<Link className="px-4 py-2 flex flex-row justify-between items-center text-red-600 hover:bg-red-100 active:bg-red-200" onClick={handleClickSignOut}>
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:text-red-600 hover:bg-red-100" onClick={handleClickSignOut}>
 						<p className="font-medium -text-px">
 							Sign out
 						</p>
-						<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
-							^+Q
-						</div>
 					</Link>
 				</div>
 
 			</div>
 		</div>
 	)
-})
+}
 
 export default AuthNav
