@@ -20,25 +20,28 @@ function useTransition({ ref, state, enterClass, activeClass, durationMs }) {
 			// No-op
 			return
 		}
-		if (!state) {
-			ref.current.classList.remove(activeClass)
+		ref.current.style.display = ""
+		id = setTimeout(() => {
+			if (!ref.current) {
+				// No-op
+				return
+			}
+			ref.current.classList.add(activeClass)
 			id = setTimeout(() => {
 				if (!ref.current) {
 					// No-op
 					return
 				}
-				ref.current.style.display = "none"
+				ref.current.classList.remove(activeClass)
+				id = setTimeout(() => {
+					if (!ref.current) {
+						// No-op
+						return
+					}
+					ref.current.style.display = "none"
+				}, MICRO_DELAY)
 			}, durationMs)
-		} else {
-			ref.current.style.display = ""
-			id = setTimeout(() => {
-				if (!ref.current) {
-					// No-op
-					return
-				}
-				ref.current.classList.add(activeClass)
-			}, MICRO_DELAY)
-		}
+		}, MICRO_DELAY)
 		return () => {
 			clearTimeout(id)
 		}
