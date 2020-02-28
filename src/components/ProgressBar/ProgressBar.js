@@ -1,12 +1,8 @@
 import Context from "./Context"
 import React from "react"
+import sleep from "utils/sleep"
 
 import "./ProgressBar.css"
-
-// https://stackoverflow.com/a/39914235
-function sleep(timeoutMs) {
-	return new Promise(resolve => setTimeout(resolve, timeoutMs))
-}
 
 const ProgressBar = props => {
 	const ref = React.useRef()

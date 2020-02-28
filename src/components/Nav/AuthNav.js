@@ -1,13 +1,45 @@
 import * as constants from "__constants"
 import * as Feather from "react-feather"
 import * as User from "components/User"
-import CSSDebugger from "utils/CSSDebugger"
 import firebase from "__firebase"
 import Link from "components/Link"
 import React from "react"
 
+import "./AuthNav.css"
+
+function useTransition({ ref, state, enterClass, activeClass, durationMs }) {
+	// Once:
+	React.useEffect(() => {
+		ref.current.classList.add(enterClass)
+		ref.current.style.display = "none"
+	}, [ref, enterClass])
+
+	// Per change:
+	React.useEffect(() => {
+		if (!state) {
+			ref.current.classList.remove(activeClass)
+			setTimeout(() => {
+				ref.current.style.display = "none"
+			}, durationMs)
+		} else {
+			ref.current.style.display = ""
+			setTimeout(() => {
+				ref.current.classList.add(activeClass)
+			}, 25)
+		}
+	}, [ref, state, enterClass, activeClass])
+}
+
 const AuthNav = React.forwardRef(({ dropDown, ...props }, ref) => {
 	const user = User.useUser()
+
+	useTransition({
+		ref,
+		state: dropDown[0],
+		enterClass: "drop-down-enter",
+		activeClass: "drop-down-active",
+		durationMs: 300,
+	})
 
 	const handleClickSignOut = e => {
 		firebase.auth()
@@ -32,52 +64,49 @@ const AuthNav = React.forwardRef(({ dropDown, ...props }, ref) => {
 				</Link>
 
 				{/* RHS - drop down: */}
-				{dropDown[0] && (
-					<div ref={ref} className="-mx-3 -mt-4 py-2 absolute right-0 top-full w-56 bg-white rounded-lg shadow-hero-lg">
-						<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
-							<p className="font-medium -text-px">
-								Create a new note
-							</p>
-							<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
-								^+N
-							</div>
-						</Link>
-						<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
-							<p className="font-medium -text-px">
-								My notes
-							</p>
-							<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
-								^+M
-							</div>
-						</Link>
-						<hr className="my-2" />
-						<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
-							<p className="font-medium -text-px">
-								Settings
-							</p>
-							<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
-								^+S
-							</div>
-						</Link>
-						<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
-							<p className="font-medium -text-px">
-								Upgrade to unlimited
-							</p>
-						</Link>
-						<hr className="my-2" />
-						<Link className="px-4 py-2 flex flex-row justify-between items-center text-red-600 hover:bg-red-100 active:bg-red-200 tx-75" onClick={handleClickSignOut}>
-							<p className="font-medium -text-px">
-								Sign out
-							</p>
-							<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
-								^+Q
-							</div>
-						</Link>
-					</div>
-				)}
+				<div ref={ref} className="-mx-3 -mt-3 py-2 absolute right-0 top-full w-56 bg-white rounded-lg shadow-hero-lg">
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+						<p className="font-medium -text-px">
+							Create a new note
+						</p>
+						<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
+							^+N
+						</div>
+					</Link>
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+						<p className="font-medium -text-px">
+							My notes
+						</p>
+						<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
+							^+M
+						</div>
+					</Link>
+					<hr className="my-1" />
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+						<p className="font-medium -text-px">
+							Settings
+						</p>
+						<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
+							^+S
+						</div>
+					</Link>
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+						<p className="font-medium -text-px">
+							Upgrade to unlimited
+						</p>
+					</Link>
+					<hr className="my-1" />
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-red-600 hover:bg-red-100 active:bg-red-200 tx-75" onClick={handleClickSignOut}>
+						<p className="font-medium -text-px">
+							Sign out
+						</p>
+						<div className="ml-2 px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
+							^+Q
+						</div>
+					</Link>
+				</div>
 
 			</div>
-			<CSSDebugger />
 		</div>
 	)
 })

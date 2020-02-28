@@ -24,15 +24,10 @@ const UnauthNav = React.forwardRef(({ dropDown, ...props }, ref) => (
 			</div>
 
 			{/* RHS - drop down: */}
-			<div ref={ref} className={`-mx-3 -mt-4 md:mt-0 py-4 md:py-0 absolute right-0 top-full ${!dropDown[0] ? "hidden" : "block"} md:static md:flex md:flex-row bg-white rounded-lg shadow-hero-lg md:shadow-none`}>
+			<div ref={ref} className={`-mx-3 -mt-3 md:mt-0 py-4 md:py-0 absolute right-0 top-full ${!dropDown[0] ? "hidden" : "block"} md:static md:flex md:flex-row bg-white rounded-lg shadow-hero-lg md:shadow-none`}>
 				<Link to={constants.PATH_TODO} className="px-7 md:px-3 py-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100 md:hover:bg-transparent active:bg-gray-200 tx-75">
 					<p className="font-medium">
 						What’s Codex?
-					</p>
-				</Link>
-				<Link to={constants.PATH_TODO} className="px-7 md:px-3 py-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100 md:hover:bg-transparent active:bg-gray-200 tx-75">
-					<p className="font-medium">
-						What can I do with Codex?
 					</p>
 				</Link>
 				<Link to={constants.PATH_DEMO} className="px-7 md:px-3 py-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 hover:bg-gray-100 md:hover:bg-transparent active:bg-gray-200 tx-75">
