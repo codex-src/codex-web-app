@@ -1,5 +1,6 @@
 import React from "react"
 
+// TODO: Move open, setOpen to parameters
 function useFixed() {
 	const [open, setOpen] = React.useState(false)
 

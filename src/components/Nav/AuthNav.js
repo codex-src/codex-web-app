@@ -4,31 +4,9 @@ import * as User from "components/User"
 import firebase from "__firebase"
 import Link from "components/Link"
 import React from "react"
+import useTransition from "utils/hooks/useTransition"
 
 import "./AuthNav.css"
-
-function useTransition({ ref, state, enterClass, activeClass, durationMs }) {
-	// Once:
-	React.useEffect(() => {
-		ref.current.classList.add(enterClass)
-		ref.current.style.display = "none"
-	}, [ref, enterClass])
-
-	// Per change:
-	React.useEffect(() => {
-		if (!state) {
-			ref.current.classList.remove(activeClass)
-			setTimeout(() => {
-				ref.current.style.display = "none"
-			}, durationMs)
-		} else {
-			ref.current.style.display = ""
-			setTimeout(() => {
-				ref.current.classList.add(activeClass)
-			}, 25)
-		}
-	}, [ref, state, enterClass, activeClass])
-}
 
 const AuthNav = React.forwardRef(({ dropDown, ...props }, ref) => {
 	const user = User.useUser()

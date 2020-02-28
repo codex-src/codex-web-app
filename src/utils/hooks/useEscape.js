@@ -1,17 +1,19 @@
 import React from "react"
 
+const KEY_CODE_ESCAPE = 27
+
 function useEscape(open, setOpen) {
 	React.useEffect(() => {
-		if (!open) {
-			// No-op
-			return
+		const handler = e => {
+			if (e.keyCode !== KEY_CODE_ESCAPE) {
+				// No-op
+				return
+			}
+			setOpen(false)
 		}
-		const h = e => {
-			setOpen(e.keyCode !== 27)
-		}
-		document.addEventListener("keydown", h)
+		document.addEventListener("keydown", handler)
 		return () => {
-			document.removeEventListener("keydown", h)
+			document.removeEventListener("keydown", handler)
 		}
 	}, [open, setOpen])
 }

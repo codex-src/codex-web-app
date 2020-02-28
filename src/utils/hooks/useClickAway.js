@@ -6,16 +6,16 @@ function useClickAway(ref, open, setOpen) {
 			// No-op
 			return
 		}
-		const h = e => {
+		const handler = e => {
 			if (!ref.current || !e.target) {
 				// No-op
 				return
 			}
 			setOpen(ref.current === e.target || ref.current.contains(e.target))
 		}
-		document.addEventListener("click", h)
+		document.addEventListener("click", handler)
 		return () => {
-			document.removeEventListener("click", h)
+			document.removeEventListener("click", handler)
 		}
 	}, [ref, open, setOpen])
 }
