@@ -10,12 +10,11 @@ import useTransition from "utils/hooks/useTransition"
 
 import "./AuthNav.css"
 
-// TODO: Bind shortcut
-const Shortcut = props => (
-	<span className="px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
-		{props.children}
-	</span>
-)
+// const Shortcut = props => (
+// 	<span className="px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
+// 		{props.children}
+// 	</span>
+// )
 
 const AuthNav = props => {
 	const ref = React.useRef()
@@ -24,7 +23,6 @@ const AuthNav = props => {
 	const [dropDown, setDropDown] = React.useState(false)
 
 	useEscape(dropDown, setDropDown)
-
 	useClickAway(ref, dropDown, setDropDown)
 
 	useTransition({

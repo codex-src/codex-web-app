@@ -15,7 +15,6 @@ const UnauthNav = props => {
 	const [dropDown, setDropDown] = React.useState(false)
 
 	useEscape(dropDown, setDropDown)
-
 	useClickAway(ref, dropDown, setDropDown)
 
 	useTransition({
