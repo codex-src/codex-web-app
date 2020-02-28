@@ -43,7 +43,7 @@ const AuthNav = React.forwardRef(({ dropDown, ...props }, ref) => {
 
 				{/* RHS - drop down: */}
 				<div ref={ref} className="-mx-3 -mt-3 py-2 absolute right-0 top-full w-56 bg-white rounded-lg shadow-hero-lg">
-					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200">
 						<p className="font-medium -text-px">
 							Create a new note
 						</p>
@@ -51,7 +51,7 @@ const AuthNav = React.forwardRef(({ dropDown, ...props }, ref) => {
 							^+N
 						</div>
 					</Link>
-					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200">
 						<p className="font-medium -text-px">
 							My notes
 						</p>
@@ -60,7 +60,7 @@ const AuthNav = React.forwardRef(({ dropDown, ...props }, ref) => {
 						</div>
 					</Link>
 					<hr className="my-1" />
-					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200">
 						<p className="font-medium -text-px">
 							Settings
 						</p>
@@ -68,13 +68,13 @@ const AuthNav = React.forwardRef(({ dropDown, ...props }, ref) => {
 							^+S
 						</div>
 					</Link>
-					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200 tx-75">
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-gray-800 hover:bg-md-gray-100 active:bg-md-gray-200">
 						<p className="font-medium -text-px">
 							Upgrade to unlimited
 						</p>
 					</Link>
 					<hr className="my-1" />
-					<Link className="px-4 py-2 flex flex-row justify-between items-center text-red-600 hover:bg-red-100 active:bg-red-200 tx-75" onClick={handleClickSignOut}>
+					<Link className="px-4 py-2 flex flex-row justify-between items-center text-red-600 hover:bg-red-100 active:bg-red-200" onClick={handleClickSignOut}>
 						<p className="font-medium -text-px">
 							Sign out
 						</p>

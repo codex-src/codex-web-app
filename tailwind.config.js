@@ -125,6 +125,7 @@ module.exports = {
 				"10/12": "83.333333%",
 				"11/12": "91.666667%",
 			},
+			// https://feathericons.com
 			strokeWidth: {
 				hairline:  1,    // 100
 				thin:      1.33, // 200
@@ -142,8 +143,6 @@ module.exports = {
 		backgroundColor: ["responsive", "disabled", "hover", "focus", "active"],
 		textColor:       ["responsive", "disabled", "hover", "focus", "active"],
 		boxShadow:       ["responsive", "disabled", "hover", "focus", "active"],
-		// borderColor:  ["responsive", "disabled", "hover", "focus", "active"],
-		// borderWidth:  ["responsive", "disabled", "hover", "focus", "active"],
 	},
 	plugins: [],
 }
