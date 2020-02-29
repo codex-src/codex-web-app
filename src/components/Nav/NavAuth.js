@@ -6,12 +6,6 @@ import Link from "components/Link"
 import React from "react"
 import useDropDown from "components/hooks/useDropDown"
 
-// const Shortcut = props => (
-// 	<span className="px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
-// 		{props.children}
-// 	</span>
-// )
-
 const AuthNav = props => {
 	const ref = React.useRef()
 

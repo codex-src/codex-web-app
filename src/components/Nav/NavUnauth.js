@@ -3,12 +3,7 @@ import * as constants from "__constants"
 import * as Feather from "react-feather"
 import Link from "components/Link"
 import React from "react"
-import useClickAway from "utils/hooks/useClickAway"
 import useDropDown from "components/hooks/useDropDown"
-import useEscape from "utils/hooks/useEscape"
-import useTransition from "utils/hooks/useTransition"
-
-import "./DropDown.css"
 
 const UnauthNav = props => {
 	const ref = React.useRef()

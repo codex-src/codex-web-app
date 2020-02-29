@@ -41,3 +41,9 @@ export const DropDownLink = ({ text, ...props }) => (
 		</p>
 	</Link>
 )
+
+// const DropDownShortcut = props => (
+// 	<span className="px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
+// 		{props.children}
+// 	</span>
+// )
