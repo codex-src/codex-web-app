@@ -1,6 +1,6 @@
 import * as constants from "__constants"
 import HeroEditor from "./HeroEditor"
-import Link from "utils/RouterLink"
+import Link from "components/Link"
 import React from "react"
 import useTransitionForwards from "utils/hooks/useTransitionForwards"
 
@@ -11,23 +11,10 @@ const HeroEditorSlate = props => {
 
 	useTransitionForwards({
 		ref,
-		state: true,
 		enterClass: "hero-editor-enter",
 		activeClass: "hero-editor-active",
 		delayMs: 1e3,
-		// durationMs: 1e3,
 	})
-
-	// React.useEffect(() => {
-	// 	ref.current.classList.add("hero-editor-enter")
-	// 	setTimeout(() => {
-	// 		if (!ref.current) {
-	// 			// No-op
-	// 			return
-	// 		}
-	// 		ref.current.classList.add("hero-editor-active")
-	// 	}, 1e3)
-	// }, [])
 
 	return (
 		<div ref={ref} className="pb-4/5 relative">

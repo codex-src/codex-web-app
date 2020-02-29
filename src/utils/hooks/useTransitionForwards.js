@@ -2,7 +2,7 @@ import React from "react"
 
 const MICRO_DELAY = 25
 
-function useTransition({ ref, state, enterClass, activeClass, delayMs, durationMs }) {
+function useTransition({ ref, enterClass, activeClass, delayMs, durationMs }) {
 	// Once:
 	React.useEffect(() => {
 		if (!ref.current) {
@@ -27,25 +27,11 @@ function useTransition({ ref, state, enterClass, activeClass, delayMs, durationM
 				return
 			}
 			ref.current.classList.add(activeClass)
-			// id = setTimeout(() => {
-			// 	if (!ref.current) {
-			// 		// No-op
-			// 		return
-			// 	}
-			// 	ref.current.classList.remove(activeClass)
-			// 	id = setTimeout(() => {
-			// 		if (!ref.current) {
-			// 			// No-op
-			// 			return
-			// 		}
-			// 		ref.current.style.display = "none"
-			// 	}, MICRO_DELAY)
-			// }, durationMs)
 		}, delayMs || MICRO_DELAY)
 		return () => {
 			clearTimeout(id)
 		}
-	}, [ref, state, enterClass, activeClass, durationMs])
+	}, [ref, enterClass, activeClass, durationMs])
 }
 
 export default useTransition

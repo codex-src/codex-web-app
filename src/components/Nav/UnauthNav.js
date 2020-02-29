@@ -30,31 +30,27 @@ const UnauthNav = props => {
 			<div className="relative flex flex-row justify-between w-full max-w-screen-lg">
 
 				{/* LHS: */}
-				<div className="-mx-3 flex flex-row">
-					<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME}>
-						<Feather.Layers className="mr-3 w-6 h-6 text-md-blue-a400" />
-						<CodexLogo className="w-24 h-6" />
-					</Link>
-				</div>
+				<Link className="-mx-3 flex flex-row items-center" to={constants.PATH_HOME}>
+					<Feather.Layers className="mx-3 w-8 h-8 text-md-blue-a400" />
+				</Link>
 
 				{/* RHS: */}
 				<div className="-mx-3 hidden md:flex md:flex-row">
-					<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 tx-75" to={constants.PATH_TODO}>
-						<p className="font-medium">
-							What’s Codex?
-						</p>
-					</Link>
-					<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 tx-75" to={constants.PATH_TODO}>
-						<p className="font-medium">
-							Features
-						</p>
-					</Link>
-					<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 tx-75" to={constants.PATH_TODO}>
-						<p className="font-medium">
-							Questions
-						</p>
-					</Link>
-					{/* CTA button: */}
+					{/* <Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 tx-75" to={constants.PATH_TODO}> */}
+					{/* 	<p className="font-medium"> */}
+					{/* 		What’s Codex? */}
+					{/* 	</p> */}
+					{/* </Link> */}
+					{/* <Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 tx-75" to={constants.PATH_TODO}> */}
+					{/* 	<p className="font-medium"> */}
+					{/* 		Features */}
+					{/* 	</p> */}
+					{/* </Link> */}
+					{/* <Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 tx-75" to={constants.PATH_TODO}> */}
+					{/* 	<p className="font-medium"> */}
+					{/* 		Questions */}
+					{/* 	</p> */}
+					{/* </Link> */}
 					<div className="mx-3 flex flex-row items-center">
 						<Link className="px-4 py-3 block text-md-blue-a400 bg-white hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero tx-150" to={constants.PATH_AUTH}>
 							<p className="font-medium">
