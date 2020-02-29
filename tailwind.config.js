@@ -64,6 +64,16 @@ module.exports = {
 				"md-gray-800":  { default: "#424242" },
 				"md-gray-900":  { default: "#212121" },
 			},
+			fontFamily: {
+				"brand-sans": "Inter, sans-serif",
+				"brand-sans-round": "'DM Sans', monospace",
+				"brand-mono": "'iA Writer Mono var', monospace",
+				"brand-duo": "'iA Writer Duo var', monospace",
+				"brand-quattro": "'iA Writer Quattro var', sans-serif",
+			},
+			fontSize: {
+				"4.5xl": "2.625rem",
+			},
 			inset: {
 				"1/2":  "50%",
 				"full": "100%",
