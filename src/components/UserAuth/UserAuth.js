@@ -74,8 +74,8 @@ const UserAuth = props => {
 				<hr className="mx-auto my-6 w-32" />
 
 				<p className="mt-6 text-center font-medium text-lg text-gray-900">
-					Or link your account later and{" "}
-					<span className="text-md-blue-a400 cursor-pointer" onClick={handleClickGuest}>continue as a guest</span><br />
+					Or link an account later and{" "}
+					<span className="text-md-blue-a400 cursor-pointer" onClick={handleClickGuest}>continue as a guest</span>
 				</p>
 
 			</div>
