@@ -47,7 +47,8 @@ const UserAuth = props => {
 				</div>
 
 				<p className="my-6 text-center font-medium text-lg text-gray-900">
-					Choose one of the following to open your <a className="text-md-blue-a400 cursor-pointer" href={constants.URL} target="_blank" rel="noopener noreferrer">Codex</a>:
+					Choose one of the following to{" "}
+					open your <a className="text-md-blue-a400 cursor-pointer" href={constants.URL} target="_blank" rel="noopener noreferrer">Codex</a>
 				</p>
 
 				{/* GitHub: */}
@@ -73,7 +74,7 @@ const UserAuth = props => {
 				<hr className="mx-auto my-6 w-32" />
 
 				<p className="mt-6 text-center font-medium text-lg text-gray-900">
-					Or link your account later and<br />
+					Or link your account later and{" "}
 					<span className="text-md-blue-a400 cursor-pointer" onClick={handleClickGuest}>continue as a guest</span><br />
 				</p>
 
