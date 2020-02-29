@@ -20,15 +20,11 @@ const UnauthNav = props => {
 			<div className="-mx-3 hidden md:flex md:flex-row">
 				<Base.NavLink
 					to={constants.PATH_TODO}
-					text="What’s Codex?"
+					text="TODO"
 				/>
 				<Base.NavLink
 					to={constants.PATH_TODO}
-					text="Features"
-				/>
-				<Base.NavLink
-					to={constants.PATH_TODO}
-					text="Questions"
+					text="TODO"
 				/>
 				<Base.NavLinkCTA
 					to={constants.PATH_AUTH}
@@ -45,15 +41,11 @@ const UnauthNav = props => {
 			<div ref={ref} className="-mt-3 py-2 absolute right-0 top-full w-56 bg-white rounded-lg shadow-hero-lg">
 				<Base.DropDownLink
 					to={constants.PATH_TODO}
-					text="What’s Codex?"
+					text="TODO"
 				/>
 				<Base.DropDownLink
 					to={constants.PATH_TODO}
-					text="Features"
-				/>
-				<Base.DropDownLink
-					to={constants.PATH_TODO}
-					text="Questions"
+					text="TODO"
 				/>
 				<Base.DropDownLink
 					to={constants.PATH_AUTH}

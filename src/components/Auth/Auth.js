@@ -1,6 +1,7 @@
 // import * as ProgressBar from "components/ProgressBar"
 import * as constants from "__constants"
 import * as Feather from "react-feather"
+import Container from "components/Container"
 import firebase from "__firebase"
 import Link from "components/Link"
 import React from "react"
@@ -37,7 +38,7 @@ const Auth = props => {
 	}
 
 	return (
-		<div className="px-6 py-32 flex flex-row justify-center items-center min-h-full">
+		<Container>
 			<div className="w-72">
 
 				<div className="my-6 flex flex-row justify-center items-center transform scale-110 origin-bottom">
@@ -77,7 +78,7 @@ const Auth = props => {
 				</p>
 
 			</div>
-		</div>
+		</Container>
 	)
 }
 

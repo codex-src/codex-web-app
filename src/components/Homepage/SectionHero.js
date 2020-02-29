@@ -1,34 +1,11 @@
 import * as constants from "__constants"
-import HeroEditor from "./HeroEditor"
+import Container from "components/Container"
+import HeroEditorSurface from "./HeroEditorSurface"
 import Link from "components/Link"
 import React from "react"
-import useTransitionForwards from "utils/hooks/useTransitionForwards"
-
-import "./HeroSection.css"
-
-const HeroEditorSlate = props => {
-	const ref = React.useRef()
-
-	useTransitionForwards({
-		ref,
-		enterClass: "hero-editor-enter",
-		activeClass: "hero-editor-active",
-		delayMs: 1e3,
-	})
-
-	return (
-		<div ref={ref} className="pb-4/5 relative">
-			<div className="absolute inset-0">
-				<div className="h-full bg-white rounded-xl shadow-hero-xl overflow-y-scroll scrolling-touch">
-					<HeroEditor />
-				</div>
-			</div>
-		</div>
-	)
-}
 
 const HeroSection = props => (
-	<div className="px-6 py-32 flex flex-row justify-center items-center min-h-screen">
+	<Container>
 		<div className="flex flex-col lg:flex-row items-center w-full max-w-screen-lg">
 
 			{/* LHS: */}
@@ -40,7 +17,7 @@ const HeroSection = props => (
 					<div className="mt-8">
 						<Link className="py-1 block" to={constants.PATH_AUTH}>
 							<p className="font-brand-sans text-2.5xl text-md-blue-a400" style={{ fontWeight: 550 }}>
-								Sign up now!
+								Open your Codex
 							</p>
 						</Link>
 					</div>
@@ -51,11 +28,11 @@ const HeroSection = props => (
 
 			{/* RHS: */}
 			<Link className="w-full" to={constants.PATH_DEMO}>
-				<HeroEditorSlate />
+				<HeroEditorSurface />
 			</Link>
 
 		</div>
-	</div>
+	</Container>
 )
 
 export default HeroSection
