@@ -5,23 +5,29 @@
 
 @import "tailwindcss/utilities";
 
-/* .w-px { */
-/* 	font-size: 0.125rem; */
-/* } */
-/* .h-px { */
-/* 	font-size: 0.125rem; */
-/* } */
+.font-brand-sans.text-xs     { letter-spacing:  0.0005em; } /* 12px */
+.font-brand-sans.text-sm     { letter-spacing: -0.0062em; } /* 14px */
+.font-brand-sans.-text-px    { letter-spacing: -0.0088em; } /* 15px */
+.font-brand-sans.text-base   { letter-spacing: -0.0110em; } /* 16px */
+.font-brand-sans.text-px     { letter-spacing: -0.0128em; } /* 17px */
+.font-brand-sans.text-lg     { letter-spacing: -0.0143em; } /* 18px */
+.font-brand-sans.text-xl     { letter-spacing: -0.0167em; } /* 20px */
+.font-brand-sans.text-1\.5xl { letter-spacing: -0.0183em; } /* 22px */
+.font-brand-sans.text-2xl    { letter-spacing: -0.0195em; } /* 24px */
+.font-brand-sans.text-2\.5xl { letter-spacing: -0.0206em; } /* 27px */
+.font-brand-sans.text-3xl    { letter-spacing: -0.0213em; } /* 30px */
+.font-brand-sans.text-3\.5xl { letter-spacing: -0.0217em; } /* 33px */
+.font-brand-sans.text-4xl    { letter-spacing: -0.0220em; } /* 36px */
+.font-brand-sans.text-4\.5xl { letter-spacing: -0.0222em; } /* 42px */
+.font-brand-sans.text-5xl    { letter-spacing: -0.0223em; } /* 48px */
+.font-brand-sans.text-5\.5xl { letter-spacing: -0.0223em; } /* 56px */
+.font-brand-sans.text-6xl    { letter-spacing: -0.0223em; } /* 64px */
 
-.tabs-2 {
-	tab-size: 2;
-}
-.tabs-4 {
-	tab-size: 4;
-}
+.font-salt { font-feature-settings: "salt"; }
+.font-tnum { font-feature-settings: "tnum"; }
 
-.tnum {
-	font-feature-settings: "tnum";
-}
+.text-tabs-2 { tab-size: 2; }
+.text-tabs-4 { tab-size: 4; }
 
 .emoji {
 	font-size: 1.2em;
@@ -29,62 +35,14 @@
 	vertical-align: -0.1em;
 }
 
-.-text-px {
-	font-size: 0.9375rem;
-}
-.text-px {
-	font-size: 1.0625rem;
-}
+.-text-px { font-size: 0.9375rem; } /* 15px */
+.text-px  { font-size: 1.0625rem; } /* 17px */
 
-.tx-75 {
-	@apply
-		transition
-		duration-75
-		ease-in-out;
-}
-.tx-100 {
-	@apply
-		transition
-		duration-100
-		ease-in-out;
-}
-.tx-150 {
-	@apply
-		transition
-		duration-150
-		ease-in-out;
-}
-.tx-200 {
-	@apply
-		transition
-		duration-200
-		ease-in-out;
-}
-.tx-300 {
-	@apply
-		transition
-		duration-300
-		ease-in-out;
-}
-.tx-500 {
-	@apply
-		transition
-		duration-500
-		ease-in-out;
-}
-.tx-700 {
-	@apply
-		transition
-		duration-700
-		ease-in-out;
-}
-.tx-1000 {
-	@apply
-		transition
-		duration-1000
-		ease-in-out;
-}
-
-/* .cursor-wait-important { */
-/* 	cursor: wait !important; */
-/* } */
+.tx-75   { @apply transition duration-75   ease-in-out; }
+.tx-100  { @apply transition duration-100  ease-in-out; }
+.tx-150  { @apply transition duration-150  ease-in-out; }
+.tx-200  { @apply transition duration-200  ease-in-out; }
+.tx-300  { @apply transition duration-300  ease-in-out; }
+.tx-500  { @apply transition duration-500  ease-in-out; }
+.tx-700  { @apply transition duration-700  ease-in-out; }
+.tx-1000 { @apply transition duration-1000 ease-in-out; }

@@ -35,23 +35,30 @@ const HeroSection = props => (
 		<div className="flex flex-col lg:flex-row items-center w-full max-w-screen-lg">
 
 			{/* LHS: */}
-			<div className="w-full flex flex-col lg:block md:items-start items-center">
-				<h1 className="font-bold text-4xl -tracking-px leading-1.4">
-					Codex makes it easier than ever to express yourself in words <em>and</em> code
-				</h1>
-				{/* NOTE: block is needed because of lg:block */}
-				<div className="h-8" />
-				<Link className="py-2 block" to={constants.PATH_AUTH} data-e2e="cta-btn-auth">
-					<p className="font-medium text-2xl text-md-blue-a400">
-						Try Codex for free!
-					</p>
-				</Link>
+			<div className="w-full">
+				<div className="flex flex-col lg:block md:items-start items-center">
+					<h1 className="font-brand-sans text-4xl leading-snug" style={{ fontWeight: 650 }}>
+						Codex makes it easier than ever to express yourself in words <em>and</em> code
+					</h1>
+					<div className="mt-8">
+						<Link className="py-1 block" to={constants.PATH_AUTH}>
+							<p className="font-brand-sans text-2.5xl text-md-blue-a400" style={{ fontWeight: 550 }}>
+								Sign up now!
+							</p>
+						</Link>
+						{/* <Link className="py-1 block" to={constants.PATH_TODO}> */}
+						{/* 	<p className="font-brand-sans text-2.5xl text-md-blue-a400" style={{ fontWeight: 550 }}> */}
+						{/* 		Learn more */}
+						{/* 	</p> */}
+						{/* </Link> */}
+					</div>
+				</div>
 			</div>
 
 			<div className="w-24 h-12" />
 
 			{/* RHS: */}
-			<Link className="w-full" to={constants.PATH_DEMO} data-e2e="cta-editor">
+			<Link className="w-full" to={constants.PATH_DEMO}>
 				<HeroEditorSlate />
 			</Link>
 
