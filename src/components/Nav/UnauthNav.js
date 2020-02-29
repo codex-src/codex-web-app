@@ -5,7 +5,6 @@ import React from "react"
 import useClickAway from "utils/hooks/useClickAway"
 import useEscape from "utils/hooks/useEscape"
 import useTransition from "utils/hooks/useTransition"
-import { ReactComponent as CodexLogo } from "svg/codex_4x1.svg"
 
 import "./UnauthNav.css"
 

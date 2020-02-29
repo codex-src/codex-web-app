@@ -37,7 +37,7 @@ const Auth = props => {
 	}
 
 	return (
-		<div className="px-6 py-32 flex flex-row justify-center items-center min-h-full bg-gray-50">
+		<div className="px-6 py-32 flex flex-row justify-center items-center min-h-full">
 			<div className="w-72">
 
 				<div className="my-6 flex flex-row justify-center items-center transform scale-110 origin-bottom">

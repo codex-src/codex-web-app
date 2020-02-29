@@ -31,7 +31,7 @@ function useTransition({ ref, enterClass, activeClass, delayMs, durationMs }) {
 		return () => {
 			clearTimeout(id)
 		}
-	}, [ref, enterClass, activeClass, durationMs])
+	}, [ref, enterClass, activeClass, delayMs, durationMs])
 }
 
 export default useTransition

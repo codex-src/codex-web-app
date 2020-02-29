@@ -8,6 +8,5 @@ export const PATH_TODO = "/TODO"
 export const URL       = process.env.PUBLIC_URL || `http://localhost:${process.env.PORT || "3000"}`
 export const URL_REPO  = "https://github.com/codex-src/codex-app"
 
-// http://png-pixel.com
 export const IMG_TRANS = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
 /* eslint-enable no-multi-spaces */
