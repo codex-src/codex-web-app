@@ -1,6 +1,4 @@
-import * as constants from "__constants"
 import HeroEditor from "./HeroEditor"
-import Link from "components/Link"
 import React from "react"
 import useTransForwards from "utils/hooks/useTransitionForwards"
 

@@ -1,5 +1,5 @@
 /* eslint-disable no-multi-spaces */
-export const PATH_AUTH = "/auth"
+export const PATH_AUTH = "/open"
 export const PATH_DEMO = "/demo"
 export const PATH_HELP = "/support"
 export const PATH_HOME = "/"
