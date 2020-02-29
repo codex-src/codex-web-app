@@ -9,7 +9,7 @@ import { ReactComponent as CodexLogo } from "svg/codex_4x1.svg"
 import { ReactComponent as GitHubLogo } from "svg/github.svg"
 import { ReactComponent as GoogleLogo } from "svg/google.svg"
 
-const Auth = props => {
+const UserAuth = props => {
 	// const render = ProgressBar.useProgressBar()
 
 	const handleClickGitHub = e => {
@@ -41,14 +41,13 @@ const Auth = props => {
 		<Container>
 			<div className="w-72">
 
-				<div className="my-6 flex flex-row justify-center items-center transform scale-110 origin-bottom">
-					<Feather.Layers className="mr-3 w-6 h-6 text-md-blue-a400" />
-					<CodexLogo className="w-24 h-6" />
+				<div className="mb-6 flex flex-row justify-center items-center transform scale-90 origin-bottom">
+					<Feather.Layers className="mr-3 w-8 h-8 stroke-medium text-md-blue-a400" />
+					<CodexLogo className="w-32 h-8" />
 				</div>
 
-				<p className="my-6 text-center font-medium text-px text-gray-900">
-					Choose one of the following to{" "}
-					continue with <a className="text-md-blue-a400 cursor-pointer" href={constants.URL} target="_blank" rel="noopener noreferrer">Codex</a>:
+				<p className="my-6 text-center font-medium text-lg text-gray-900">
+					Choose one of the following to open your <a className="text-md-blue-a400 cursor-pointer" href={constants.URL} target="_blank" rel="noopener noreferrer">Codex</a>:
 				</p>
 
 				{/* GitHub: */}
@@ -71,10 +70,11 @@ const Auth = props => {
 					</p>
 				</Link>
 
-				<hr className="mx-auto my-8 w-32" />
-				<p className="my-6 text-center font-medium text-px text-gray-900">
-					Just want to look around?{"\u00a0\u00a0"}<span className="emoji" role="img" aria-label="eyes">👀</span><br />
-					<span className="text-md-blue-a400 cursor-pointer" onClick={handleClickGuest}>Continue as a guest</span>
+				<hr className="mx-auto my-6 w-32" />
+
+				<p className="mt-6 text-center font-medium text-lg text-gray-900">
+					Or link your account later and<br />
+					<span className="text-md-blue-a400 cursor-pointer" onClick={handleClickGuest}>continue as a guest</span><br />
 				</p>
 
 			</div>
@@ -82,4 +82,4 @@ const Auth = props => {
 	)
 }
 
-export default Auth
+export default UserAuth

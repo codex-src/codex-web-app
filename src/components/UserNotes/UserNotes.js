@@ -1,11 +1,14 @@
 // import * as User from "components/User"
 // import HeroEditor from "./HeroSection/HeroEditor" // FIXME
 // import HeroSection from "./HeroSection" // FIXME
-// import Nav from "components/Nav"
-// import React from "react"
+import React from "react"
+import Nav from "components/Nav"
 
 const UserNotes = props => (
-	null
+	<React.Fragment>
+		<Nav />
+		{null}
+	</React.Fragment>
 	// <React.Fragment>
 	// 	<Nav />
 	// 	<div className="px-6 py-40 flex flex-row justify-center">

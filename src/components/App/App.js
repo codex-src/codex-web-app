@@ -4,9 +4,9 @@ import * as constants from "__constants"
 import * as random from "utils/random"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
-import Auth from "components/Auth"
 import Homepage from "components/Homepage"
 import React from "react"
+import UserAuth from "components/UserAuth"
 import UserNotes from "components/UserNotes"
 
 const App = props => (
@@ -19,7 +19,7 @@ const App = props => (
 					<User.UnprotectedRoute
 						path={constants.PATH_AUTH}
 						title="Open your Codex"
-						children={<Auth />}
+						children={<UserAuth />}
 					/>
 					{/* <User.UnprotectedRoute */}
 					{/* 	path={constants.PATH_DEMO} */}
