@@ -1,11 +1,9 @@
-You can _finally_ write **and see** your notes using markdown in the browser! 🎉
+# Readme
 
-Format your notes using CommonMark markdown. For example: _italics_, **bold**, `code` and ~strikethrough~.
+_**Note:** This the alpha of the Codex editor — some features are not yet implemented such as links, lists, and images._
 
-> You can create blockquotes like this.
+Codex is based on CommonMark so you can format your notes using special syntax characters called _markdown_.
 
-```
-And code blocks like this!
-```
+You can format _italic_, **bold**, `code`, and ~strikethrough~. We also support the alternate syntax for *italic*, __bold__, and ~~strikethrough~~.
 
-More features coming soon…stay tuned! 📺⚡️
+Also, **your note is synchronized to localStorage after every write,** so you can refresh the page or reopen the browser and your note will persist. 🎉

@@ -164,7 +164,7 @@ function Editor({ state, dispatch, ...props }) {
 	// )
 
 	return (
-		<React.Fragment>
+		<div style={{ fontSize: state.prefs.baseFontSize }}>
 			{React.createElement(
 				"div",
 				{
@@ -367,7 +367,7 @@ function Editor({ state, dispatch, ...props }) {
 				},
 			)}
 			{/* <EditorDebugger state={state} /> */}
-		</React.Fragment>
+		</div>
 	)
 }
 

@@ -3,6 +3,7 @@
 	border-left: 2px solid hsl(var(--blue-a400));
 }
 
+/* FIXME */
 .preview-mode .break {
 	--height: calc(var(--line-height) * 1em);
 	height: var(--height);

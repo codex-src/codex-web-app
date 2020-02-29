@@ -2,6 +2,7 @@ import EnumStylesheets from "./EnumStylesheets"
 
 export const initialState = {
 	// antialiased: true,
+	baseFontSize:   16,
 	classNames:     "",
 	darkMode:       false,
 	paddingX:       0,

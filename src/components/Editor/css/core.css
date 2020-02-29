@@ -40,15 +40,15 @@
 }
 
 .codex-editor .code-block {
-	padding: 0px var(--padding-x);
+	padding: 0px 24px;
 	background: hsl(var(--gray-50));
 	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
-.codex-editor .code-block > [data-node] > span {
-	padding-right: var(--padding-x);
-}
+/* .codex-editor .code-block > [data-node] > span { */
+/* 	padding-right: 24px; */
+/* } */
 
 .codex-editor .paragraph.emojis {
 	font-size: 1.5em;
@@ -72,7 +72,7 @@
 }
 
 .codex-editor .code {
-	padding: calc(1 / 16 * 1em);
+	padding: 0.0625em;
 	box-decoration-break: clone;
 	color: hsl(var(--blue-a400));
 	box-shadow: var(--box-shadow);

@@ -1,9 +1,9 @@
 // import * as ProgressBar from "components/ProgressBar"
-// import Demo from "components/Demo"
 import * as constants from "__constants"
 import * as random from "utils/random"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
+import Demo from "components/Demo"
 import Homepage from "components/Homepage"
 import React from "react"
 import UserAuth from "components/UserAuth"
@@ -21,12 +21,12 @@ const App = props => (
 						title="Open your Codex"
 						children={<UserAuth />}
 					/>
-					{/* <User.UnprotectedRoute */}
-					{/* 	path={constants.PATH_DEMO} */}
-					{/* 	exact */}
-					{/* 	title="Demo" */}
-					{/* 	children={<Demo />} */}
-					{/* /> */}
+					<User.UnprotectedRoute
+						path={constants.PATH_DEMO}
+						exact
+						title="Demo"
+						children={<Demo />}
+					/>
 
 					{/* NOTE: PATH_HOME cannot share the same route */}
 					<User.Context.Consumer>

@@ -6,7 +6,7 @@
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: 16px/var(--line-height) "iA Writer Duo var", monospace;
+	font: 1em/var(--line-height) "iA Writer Duo var", monospace;
 }
 .stylesheet-mono .code-block,
 .stylesheet-mono .code {

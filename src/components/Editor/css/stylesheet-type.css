@@ -3,7 +3,7 @@
 
 	-moz-tab-size: 4;
 	tab-size: 4;
-	font: 19px/var(--line-height) system-ui, sans-serif;
+	font: 1.1875em/var(--line-height) system-ui, sans-serif;
 }
 .stylesheet-type .code-block,
 .stylesheet-type .code {
