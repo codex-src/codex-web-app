@@ -2,22 +2,32 @@ import * as constants from "__constants"
 import HeroEditor from "./HeroEditor"
 import Link from "utils/RouterLink"
 import React from "react"
+import useTransitionForwards from "utils/hooks/useTransitionForwards"
 
 import "./HeroSection.css"
 
 const HeroEditorSlate = props => {
 	const ref = React.useRef()
 
-	React.useEffect(() => {
-		ref.current.classList.add("hero-editor-enter")
-		setTimeout(() => {
-			if (!ref.current) {
-				// No-op
-				return
-			}
-			ref.current.classList.add("hero-editor-active")
-		}, 1e3)
-	}, [])
+	useTransitionForwards({
+		ref,
+		state: true,
+		enterClass: "hero-editor-enter",
+		activeClass: "hero-editor-active",
+		delayMs: 1e3,
+		// durationMs: 1e3,
+	})
+
+	// React.useEffect(() => {
+	// 	ref.current.classList.add("hero-editor-enter")
+	// 	setTimeout(() => {
+	// 		if (!ref.current) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		ref.current.classList.add("hero-editor-active")
+	// 	}, 1e3)
+	// }, [])
 
 	return (
 		<div ref={ref} className="pb-4/5 relative">
@@ -46,11 +56,6 @@ const HeroSection = props => (
 								Sign up now!
 							</p>
 						</Link>
-						{/* <Link className="py-1 block" to={constants.PATH_TODO}> */}
-						{/* 	<p className="font-brand-sans text-2.5xl text-md-blue-a400" style={{ fontWeight: 550 }}> */}
-						{/* 		Learn more */}
-						{/* 	</p> */}
-						{/* </Link> */}
 					</div>
 				</div>
 			</div>

@@ -1,5 +1,5 @@
+// import * as ProgressBar from "components/ProgressBar"
 import * as constants from "__constants"
-import * as ProgressBar from "components/ProgressBar"
 import * as random from "utils/random"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
@@ -11,8 +11,8 @@ import React from "react"
 const App = props => (
 	<Router.BrowserRouter>
 		<User.Provider>
-			<ProgressBar.Provider>
-				<ProgressBar.ProgressBar />
+			{/* <ProgressBar.Provider> */}
+				{/* <ProgressBar.ProgressBar /> */}
 				<Router.Switch>
 
 					<User.UnprotectedRoute
@@ -43,7 +43,7 @@ const App = props => (
 					</User.Context.Consumer>
 
 				</Router.Switch>
-			</ProgressBar.Provider>
+			{/* </ProgressBar.Provider> */}
 		</User.Provider>
 	</Router.BrowserRouter>
 )

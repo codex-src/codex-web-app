@@ -1,6 +1,6 @@
+// import * as ProgressBar from "components/ProgressBar"
 import * as constants from "__constants"
 import * as Feather from "react-feather"
-import * as ProgressBar from "components/ProgressBar"
 import firebase from "__firebase"
 import Link from "components/Link"
 import React from "react"
@@ -9,7 +9,7 @@ import { ReactComponent as GitHubLogo } from "svg/github.svg"
 import { ReactComponent as GoogleLogo } from "svg/google.svg"
 
 const Auth = props => {
-	const render = ProgressBar.useProgressBar()
+	// const render = ProgressBar.useProgressBar()
 
 	const handleClickGitHub = e => {
 		const p = new firebase.auth.GithubAuthProvider()
@@ -28,7 +28,7 @@ const Auth = props => {
 			})
 	}
 	const handleClickGuest = e => {
-		render()
+		// render()
 		firebase.auth()
 			.signInAnonymously()
 			.catch(err => {
