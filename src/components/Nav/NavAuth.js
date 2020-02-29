@@ -38,7 +38,7 @@ const AuthNav = props => {
 			</Link>
 
 			{/* RHS - drop down: */}
-			<div ref={ref} className="-mx-3 -mt-3 py-2 absolute right-0 top-full w-56 bg-white rounded-lg shadow-hero-lg">
+			<div ref={ref} className="-mt-3 py-2 absolute right-0 top-full w-56 bg-white rounded-lg shadow-hero-lg">
 				<Base.DropDownLink
 					to={constants.PATH_TODO}
 					text="Create a new note"

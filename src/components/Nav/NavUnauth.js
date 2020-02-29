@@ -4,6 +4,7 @@ import * as Feather from "react-feather"
 import Link from "components/Link"
 import React from "react"
 import useClickAway from "utils/hooks/useClickAway"
+import useDropDown from "components/hooks/useDropDown"
 import useEscape from "utils/hooks/useEscape"
 import useTransition from "utils/hooks/useTransition"
 
@@ -12,17 +13,7 @@ import "./DropDown.css"
 const UnauthNav = props => {
 	const ref = React.useRef()
 
-	const [dropDown, setDropDown] = React.useState(false)
-
-	useEscape(dropDown, setDropDown)
-	useClickAway(ref, dropDown, setDropDown)
-	useTransition({
-		ref,
-		state: dropDown,
-		enterClass: "drop-down-enter",
-		activeClass: "drop-down-active",
-		durationMs: 300,
-	})
+	const [dropDown, setDropDown] = useDropDown(ref)
 
 	return (
 		<Base.Nav>
