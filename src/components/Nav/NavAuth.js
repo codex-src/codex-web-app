@@ -4,11 +4,7 @@ import * as User from "components/User"
 import firebase from "__firebase"
 import Link from "components/Link"
 import React from "react"
-import useClickAway from "utils/hooks/useClickAway"
-import useEscape from "utils/hooks/useEscape"
-import useTransition from "utils/hooks/useTransition"
-
-import "./DropDown.css"
+import useDropDown from "components/hooks/useDropDown"
 
 // const Shortcut = props => (
 // 	<span className="px-1 py-px font-mono text-xs tracking-widest text-gray-600 bg-gray-50 border rounded">
@@ -20,17 +16,7 @@ const AuthNav = props => {
 	const ref = React.useRef()
 
 	const user = User.useUser()
-	const [dropDown, setDropDown] = React.useState(false)
-
-	useEscape(dropDown, setDropDown)
-	useClickAway(ref, dropDown, setDropDown)
-	useTransition({
-		ref,
-		state: dropDown,
-		enterClass: "drop-down-enter",
-		activeClass: "drop-down-active",
-		durationMs: 300,
-	})
+	const [dropDown, setDropDown] = useDropDown(ref)
 
 	const handleClickSignOut = e => {
 		firebase.auth()
@@ -46,7 +32,7 @@ const AuthNav = props => {
 			{/* LHS: */}
 			<Base.NavLogo to={constants.PATH_HOME} />
 
-			{/* RHS - drop down menu: */}
+			{/* RHS - drop down button: */}
 			<Link className="-mx-3 flex flex-row items-center" onClick={e => setDropDown(!dropDown)}>
 				<img className="mx-3 w-8 h-8 bg-gray-200 rounded-full" src={user.photoURL || constants.IMG_TRANS} alt="TODO" />
 			</Link>
