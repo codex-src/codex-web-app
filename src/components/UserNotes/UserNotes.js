@@ -33,9 +33,9 @@ const UserNotes = props => (
 				{/* <div className="-mx-3 my-6"> */}
 				{/* 	<GridView /> */}
 				{/* </div> */}
-				{/* <div className="-mx-3 my-6"> */}
-				{/* 	<ListView /> */}
-				{/* </div> */}
+				<div className="-mx-3 my-6">
+					<ListView />
+				</div>
 
 			</div>
 		</Container>
