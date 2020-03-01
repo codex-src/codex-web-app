@@ -6,10 +6,10 @@ const data = raw("./MockEditor.md").trimEnd()
 
 const MockEditor = props => {
 	const [state, dispatch] = Editor.useEditor(data, {
-		baseFontSize: 16 * 0.6667,
-		id: "mock-editor",
-		paddingX: 20,
-		paddingY: 20,
+		baseFontSize: props.baseFontSize,
+		id: "mock-editor", // TODO
+		paddingX: props.paddingX,
+		paddingY: props.paddingY,
 		previewMode: true,
 		readOnly: true,
 	})

@@ -1,37 +1,54 @@
+import * as constants from "__constants"
+import CSSDebugger from "utils/CSSDebugger"
+import Link from "components/Link"
 import MockEditor from "./MockEditor"
 import React from "react"
+
+const MODIFIER = 0.25
+
+const ListEditor = props => (
+	<MockEditor
+		baseFontSize={16 * MODIFIER}
+		paddingX={24 * MODIFIER}
+		paddingY={24 * MODIFIER}
+	/>
+)
 
 const ListView = props => (
 	<React.Fragment>
 		{[...new Array(20)].map((_, index) => (
 			<React.Fragment key={index}>
-				<div className="my-3 flex flex-row items-center">
-					<div className="mr-6 w-20">
-						<div className="pb-2/3 relative">
+				<Link className="my-2 px-3 py-4 flex flex-row items-center hover:bg-gray-100 rounded-xl trans-150" to={constants.TODO}>
+					<div className="mr-6 flex-shrink-0 w-24">
+						<div className="pb-3/4 relative">
 							<div className="absolute inset-0">
-								<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl trans-150 overflow-y-scroll scrolling-touch">
-									<MockEditor />
-								</div>
+								<Link className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl overflow-y-hidden trans-150">
+									<ListEditor />
+								</Link>
 							</div>
 						</div>
 					</div>
-					<div>
-						<h2 className="my-1 font-semibold text-lg tracking-px">
-							How to build a beautiful blog
-						</h2>
+					<div className="truncate">
 						<div className="my-1 flex flex-row">
-							<p className="w-16 text-px tracking-px text-gray-600">
-								Feb 9
+							<h2 className="font-semibold text-lg tracking-px truncate">
+								How to build a beautiful blog
+							</h2>
+						</div>
+						<div className="my-1 flex flex-row">
+							<p className="mr-4 text-lg tracking-px text-gray-500">
+								Jan 8
 							</p>
-							<p className="ml-4 text-px tracking-px text-gray-500">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit …
+							<p className="text-lg tracking-px text-gray-500 truncate">
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum dolor sit amet, consectetur adipiscing elit
 							</p>
 						</div>
 					</div>
-				</div>
-				<hr />
+				</Link>
+				{/* <hr /> */}
+				{/* <div className="h-1 bg-gray-100" /> */}
 			</React.Fragment>
 		))}
+		{/* <CSSDebugger /> */}
 	</React.Fragment>
 )
 

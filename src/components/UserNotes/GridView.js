@@ -5,6 +5,16 @@ import React from "react"
 
 import "./GridView.css"
 
+const MODIFIER = 0.67
+
+const GridEditor = props => (
+	<MockEditor
+		baseFontSize={16 * MODIFIER}
+		paddingX={24 * MODIFIER}
+		paddingY={24 * MODIFIER}
+	/>
+)
+
 const GridView = props => (
 	<div className="grid">
 		{[...new Array(20)].map((_, index) => (
@@ -12,7 +22,7 @@ const GridView = props => (
 				<Link className="pb-2/3 relative block" to={constants.TODO}>
 					<div className="absolute inset-0">
 						<div className="h-full bg-white rounded-lg shadow-hero overflow-y-scroll scrolling-touch trans-150">
-							<MockEditor />
+							<GridEditor />
 						</div>
 					</div>
 				</Link>
