@@ -10,6 +10,7 @@ const MockEditor = props => {
 		id: "mock-editor",
 		paddingX: 20,
 		paddingY: 20,
+		previewMode: true,
 		readOnly: true,
 	})
 	return <Editor.Editor state={state} dispatch={dispatch} />

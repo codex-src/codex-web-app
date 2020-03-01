@@ -39,6 +39,4 @@ const UserNotes = props => (
 	</React.Fragment>
 )
 
-
-
 export default UserNotes

@@ -4,7 +4,7 @@ module.exports = {
 	theme: {
 		extend: {
 			borderRadius: {
-				"xl": "1rem",
+				"xl":  "1rem",
 				"2xl": "2rem",
 			},
 			boxShadow: {
