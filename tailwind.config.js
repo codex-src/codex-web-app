@@ -119,6 +119,7 @@ module.exports = {
 	},
 	variants: {
 		backgroundColor: ["responsive", "disabled", "hover", "focus", "active"],
+		borderWidth:     ["hover"],
 		boxShadow:       ["responsive", "disabled", "hover", "focus", "active"],
 		textColor:       ["responsive", "disabled", "hover", "focus", "active"],
 		zIndex:          ["hover"],
