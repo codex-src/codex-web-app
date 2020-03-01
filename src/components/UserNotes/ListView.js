@@ -7,7 +7,7 @@ const ListView = props => (
 			<div className="mr-6 w-20">
 				<div className="pb-2/3 relative">
 					<div className="absolute inset-0">
-						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl tx-150 overflow-y-scroll scrolling-touch">
+						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl trans-150 overflow-y-scroll scrolling-touch">
 							<div className="transform scale-50 origin-top-left">
 								<MockEditor />
 							</div>
@@ -34,7 +34,7 @@ const ListView = props => (
 			<div className="mr-6 w-20">
 				<div className="pb-2/3 relative">
 					<div className="absolute inset-0">
-						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl tx-150 overflow-y-scroll scrolling-touch">
+						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl trans-150 overflow-y-scroll scrolling-touch">
 							<div className="transform scale-50 origin-top-left">
 								<MockEditor />
 							</div>
@@ -61,7 +61,7 @@ const ListView = props => (
 			<div className="mr-6 w-20">
 				<div className="pb-2/3 relative">
 					<div className="absolute inset-0">
-						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl tx-150 overflow-y-scroll scrolling-touch">
+						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl trans-150 overflow-y-scroll scrolling-touch">
 							<div className="transform scale-50 origin-top-left">
 								<MockEditor />
 							</div>
@@ -88,7 +88,7 @@ const ListView = props => (
 			<div className="mr-6 w-20">
 				<div className="pb-2/3 relative">
 					<div className="absolute inset-0">
-						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl tx-150 overflow-y-scroll scrolling-touch">
+						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl trans-150 overflow-y-scroll scrolling-touch">
 							<div className="transform scale-50 origin-top-left">
 								<MockEditor />
 							</div>
@@ -115,7 +115,7 @@ const ListView = props => (
 			<div className="mr-6 w-20">
 				<div className="pb-2/3 relative">
 					<div className="absolute inset-0">
-						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl tx-150 overflow-y-scroll scrolling-touch">
+						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl trans-150 overflow-y-scroll scrolling-touch">
 							<div className="transform scale-50 origin-top-left">
 								<MockEditor />
 							</div>
@@ -142,7 +142,7 @@ const ListView = props => (
 			<div className="mr-6 w-20">
 				<div className="pb-2/3 relative">
 					<div className="absolute inset-0">
-						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl tx-150 overflow-y-scroll scrolling-touch">
+						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl trans-150 overflow-y-scroll scrolling-touch">
 							<div className="transform scale-50 origin-top-left">
 								<MockEditor />
 							</div>
@@ -169,7 +169,7 @@ const ListView = props => (
 			<div className="mr-6 w-20">
 				<div className="pb-2/3 relative">
 					<div className="absolute inset-0">
-						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl tx-150 overflow-y-scroll scrolling-touch">
+						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl trans-150 overflow-y-scroll scrolling-touch">
 							<div className="transform scale-50 origin-top-left">
 								<MockEditor />
 							</div>
@@ -196,7 +196,7 @@ const ListView = props => (
 			<div className="mr-6 w-20">
 				<div className="pb-2/3 relative">
 					<div className="absolute inset-0">
-						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl tx-150 overflow-y-scroll scrolling-touch">
+						<div className="h-full bg-white rounded-lg shadow-hero-lg hover:shadow-hero-xl trans-150 overflow-y-scroll scrolling-touch">
 							<div className="transform scale-50 origin-top-left">
 								<MockEditor />
 							</div>

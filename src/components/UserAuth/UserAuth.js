@@ -52,7 +52,7 @@ const UserAuth = props => {
 				</p>
 
 				{/* GitHub: */}
-				<Link className="my-2 px-4 py-3 flex flex-row items-center bg-black hover:bg-gray-900 active:bg-black rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero tx-150" onClick={handleClickGitHub}>
+				<Link className="my-2 px-4 py-3 flex flex-row items-center bg-black hover:bg-gray-900 active:bg-black rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" onClick={handleClickGitHub}>
 					<div className="mx-4">
 						<GitHubLogo className="w-6 h-6 text-gray-100" />
 					</div>
@@ -62,7 +62,7 @@ const UserAuth = props => {
 				</Link>
 
 				{/* Google: */}
-				<Link className="my-2 px-4 py-3 flex flex-row items-center bg-white hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero tx-150" onClick={handleClickGoogle}>
+				<Link className="my-2 px-4 py-3 flex flex-row items-center bg-white hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" onClick={handleClickGoogle}>
 					<div className="mx-4">
 						<GoogleLogo className="w-6 h-6 text-gray-900" />
 					</div>

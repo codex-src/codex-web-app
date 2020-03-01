@@ -17,7 +17,7 @@ export const NavLogo = props => (
 )
 
 export const NavLink = ({ text, ...props }) => (
-	<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 tx-75" {...props}>
+	<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 trans-75" {...props}>
 		<p className="font-medium">
 			{text}
 		</p>
@@ -26,7 +26,7 @@ export const NavLink = ({ text, ...props }) => (
 
 export const NavLinkCTA = ({ to, text, ...props }) => (
 	<div className="mx-3 flex flex-row items-center" {...props}>
-		<Link className="px-4 py-3 block text-md-blue-a400 bg-white hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero tx-150" to={to}>
+		<Link className="px-4 py-3 block text-md-blue-a400 bg-white hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" to={to}>
 			<p className="font-medium">
 				{text}
 			</p>

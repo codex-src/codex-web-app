@@ -11,7 +11,7 @@ const GridView = props => (
 			<div key={index} className="grid-item">
 				<Link className="pb-2/3 relative block" to={constants.TODO}>
 					<div className="absolute inset-0">
-						<div className="h-full bg-white rounded-lg shadow-hero overflow-y-scroll scrolling-touch tx-150">
+						<div className="h-full bg-white rounded-lg shadow-hero overflow-y-scroll scrolling-touch trans-150">
 							<MockEditor />
 						</div>
 					</div>
