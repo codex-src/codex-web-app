@@ -14,11 +14,9 @@ const UserNotes = props => (
 		<Container>
 			<div className="w-full max-w-screen-lg">
 
-				{/* <div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-white z-30"> */}
-
 				{/* <div className="-mx-6 px-6 sticky inset-x-0 flex flex-row justify-between items-center h-20 bg-white z-30" style={{ top: "5rem" }}> */}
 				<div className="mb-6 flex flex-row justify-between items-baseline">
-					<h1 className="font-semibold text-4xl">
+					<h1 className="font-brand-sans-round font-medium text-4xl -tracking-px">
 						Your notes
 					</h1>
 					<div className="flex flex-row">
@@ -35,10 +33,10 @@ const UserNotes = props => (
 					</div>
 				</div>
 				<div className="-mx-3 mt-6">
-					<GridView />
+					<ListView />
 				</div>
 				<div className="-mx-3 mt-6">
-					<ListView />
+					<GridView />
 				</div>
 
 			</div>
