@@ -89,6 +89,7 @@ module.exports = {
 				"72": "18rem",
 
 				// https://youtube.com/watch?v=jl_tdhBxc_Y
+				"2/1":   "200%",
 				"16/9":  "177.7778%",
 				"16/10": "160%",
 				"3/2":   "150%",
@@ -100,6 +101,7 @@ module.exports = {
 				"2/3":   "66.6667%",
 				"10/16": "62.5%",
 				"9/16":  "56.25%",
+				"1/2":   "50%",
 			},
 			// https://feathericons.com
 			strokeWidth: {

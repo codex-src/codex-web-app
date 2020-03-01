@@ -9,8 +9,8 @@ const MODIFIER = 0.25
 const ListEditor = props => (
 	<MockEditor
 		baseFontSize={16 * MODIFIER}
-		paddingX={24 * MODIFIER}
-		paddingY={24 * MODIFIER}
+		paddingX={32 * MODIFIER}
+		paddingY={32 * MODIFIER}
 	/>
 )
 
