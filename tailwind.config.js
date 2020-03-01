@@ -71,25 +71,6 @@ module.exports = {
 				"brand-duo": "'iA Writer Duo var', monospace",
 				"brand-quattro": "'iA Writer Quattro var', sans-serif",
 			},
-			// fontSize: {
-			// 	"xs":     "0.75rem",   // 12px
-			// 	"sm":     "0.875rem",  // 14px
-			// 	// "-px": "0.9375rem", // 15px
-			// 	"base":   "1rem",      // 16px
-			// 	"px":     "1.0625rem", // 17px
-			// 	"lg":     "1.125rem",  // 18px
-			// 	"xl":     "1.25rem",   // 20px
-			// 	"1.5xl":  "1.375rem",  // 22px
-			// 	"2xl":    "1.5rem",    // 24px
-			// 	"2.5xl":  "1.6875rem", // 27px
-			// 	"3xl":    "1.875rem",  // 30px
-			// 	"3.5xl":  "2.0625rem", // 33px
-			// 	"4xl":    "2.25rem",   // 36px
-			// 	"4.5xl":  "2.625rem",  // 42px
-			// 	"5xl":    "3rem",      // 48px
-			// 	"5.5xl":  "3.5rem",    // 56px
-			// 	"6xl":    "4rem",      // 64px
-			// },
 			inset: {
 				"1/2":  "50%",
 				"full": "100%",
@@ -97,19 +78,6 @@ module.exports = {
 			letterSpacing: {
 				"-px": "-0.0125em",
 				"px":  "0.0125em",
-			},
-			lineHeight: {
-				1.0: "1.0",
-				1.1: "1.1",
-				1.2: "1.2",
-				1.3: "1.3",
-				1.4: "1.4",
-				1.5: "1.5",
-				1.6: "1.6",
-				1.7: "1.7",
-				1.8: "1.8",
-				1.9: "1.9",
-				2.0: "2.0",
 			},
 			opacity: {
 				 5: "0.05",
@@ -149,8 +117,9 @@ module.exports = {
 	},
 	variants: {
 		backgroundColor: ["responsive", "disabled", "hover", "focus", "active"],
-		textColor:       ["responsive", "disabled", "hover", "focus", "active"],
 		boxShadow:       ["responsive", "disabled", "hover", "focus", "active"],
+		textColor:       ["responsive", "disabled", "hover", "focus", "active"],
+		zIndex:          ["hover"],
 	},
 	plugins: [],
 }

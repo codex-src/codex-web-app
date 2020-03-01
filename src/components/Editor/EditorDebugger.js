@@ -3,7 +3,7 @@ import React from "react"
 
 const EditorDebugger = ({ state, ...props }) => (
 	<CSSDebugger>
-		<div className="mt-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-1.3">
+		<div className="mt-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug">
 			{JSON.stringify(
 				{
 					// history: state.history,
