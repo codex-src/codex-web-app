@@ -1,7 +1,8 @@
+// import GridView from "./GridView"
 import * as Feather from "react-feather"
 import Container from "components/Container"
-import GridView from "./GridView"
 import Link from "components/Link"
+import ListView from "./ListView"
 import MockEditor from "./MockEditor"
 import Nav from "components/Nav"
 import React from "react"
@@ -29,9 +30,12 @@ const UserNotes = props => (
 						</Link>
 					</div>
 				</div>
-				<div className="-mx-3 my-6">
-					<GridView />
-				</div>
+				{/* <div className="-mx-3 my-6"> */}
+				{/* 	<GridView /> */}
+				{/* </div> */}
+				{/* <div className="-mx-3 my-6"> */}
+				{/* 	<ListView /> */}
+				{/* </div> */}
 
 			</div>
 		</Container>
