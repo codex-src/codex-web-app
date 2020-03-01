@@ -1,4 +1,5 @@
-import firebase from "firebase/app" // Takes precedence
+import firebase from "firebase/app"
+
 import "firebase/analytics"
 import "firebase/auth"
 import "firebase/firestore"
@@ -14,5 +15,6 @@ firebase.initializeApp({
 	appId:             process.env.REACT_APP_FIREBASE_APP_ID,
 	measurementId:     process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 })
+firebase.analytics()
 
 export default firebase
