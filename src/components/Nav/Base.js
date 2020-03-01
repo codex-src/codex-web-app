@@ -3,7 +3,7 @@ import Link from "components/Link"
 import React from "react"
 
 export const Nav = props => (
-	<div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-white z-30" {...props}>
+	<div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-white z-30">
 		<div className="relative flex flex-row justify-between w-full max-w-screen-lg">
 			{props.children}
 		</div>

@@ -1,6 +1,7 @@
 // import GridView from "./GridView"
 import * as Feather from "react-feather"
 import Container from "components/Container"
+import CSSDebugger from "utils/CSSDebugger"
 import Link from "components/Link"
 import ListView from "./ListView"
 import MockEditor from "./MockEditor"
@@ -13,7 +14,9 @@ const UserNotes = props => (
 		<Container>
 			<div className="w-full max-w-screen-lg">
 
-				<div className="mb-6 flex flex-row justify-between items-baseline">
+				{/* <div className="px-6 fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-white z-30"> */}
+
+				<div className="sticky inset-x-0 flex flex-row justify-between items-center h-20 bg-white shadow-md z-30" style={{ top: "5rem" }}>
 					<h1 className="font-semibold text-4xl">
 						Your notes
 					</h1>
