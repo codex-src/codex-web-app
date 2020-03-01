@@ -32,9 +32,9 @@ const UserNotes = props => (
 						</Link>
 					</div>
 				</div>
-				<div className="-mx-3 mt-6">
-					<ListView />
-				</div>
+				{/* <div className="-mx-3 mt-6"> */}
+					{/* <ListView /> */}
+				{/* </div> */}
 				<div className="-mx-3 mt-6">
 					<GridView />
 				</div>

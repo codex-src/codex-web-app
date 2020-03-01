@@ -16,14 +16,14 @@ const GridEditor = props => (
 )
 
 const GridView = props => (
-	<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+	<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 		{[...new Array(20)].map((_, index) => (
 			!index ? (
 				// NOTE: Use rounded-xl
 				<div className="relative bg-gray-100 rounded-xl trans-150">
 					<Link key={index} className="pb-2/3 relative block" to={constants.TODO}>
-						<div className="-mb-4 absolute inset-0 flex flex-col justify-center items-center">
-							<Feather.Plus className="mb-4 w-8 h-8 text-md-blue-a400" />
+						<div className="-mb-2 absolute inset-0 flex flex-col justify-center items-center">
+							<Feather.Plus className="mb-2 w-8 h-8 text-md-blue-a400" />
 							<h1 className="font-brand-sans-round font-medium text-2xl !-tracking-px text-md-blue-a400">
 								New note
 							</h1>
