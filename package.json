@@ -1,7 +1,5 @@
 {
   "name": "codex-app",
-  "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -27,7 +25,7 @@
     "prebuild": "yarn tailwind-prod",
     "build": "yarn react-scripts build",
     "postbuild": "yarn tailwind-dev",
-    "firebase-build-deploy": "yarn build && yarn firebase deploy",
+    "firebase-build-deploy": "yarn build && yarn firebase deploy && yarn tailwind-dev",
     "eject": "yarn react-scripts eject"
   },
   "eslintConfig": {
@@ -46,11 +44,8 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.7.5",
     "@fullhuman/postcss-purgecss": "^2.0.6",
     "autoprefixer": "^9.7.4",
-    "babel-eslint": "^10.0.3",
-    "eslint": "^6.7.2",
     "firebase-tools": "^7.13.1",
     "postcss-cli": "^7.1.0",
     "raw.macro": "^0.3.0",

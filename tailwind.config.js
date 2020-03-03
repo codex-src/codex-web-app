@@ -34,7 +34,7 @@ module.exports = {
 				`,
 			},
 			colors: {
-				"gray":   {
+				"gray": {
 					...defaultTheme.colors.gray,
 					50: "#fbfdfe",
 				},
@@ -66,7 +66,7 @@ module.exports = {
 			},
 			fontFamily: {
 				"brand-sans": "'Inter var', sans-serif",
-				"brand-sans-round": "'DM Sans', monospace",
+				"brand-sans-round": "'DM Sans', sans-serif",
 				"brand-mono": "'iA Writer Mono var', monospace",
 				"brand-duo": "'iA Writer Duo var', monospace",
 				"brand-quattro": "'iA Writer Quattro var', sans-serif",
