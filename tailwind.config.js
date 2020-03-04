@@ -148,11 +148,32 @@ module.exports = {
 		},
 	},
 	variants: {
+		// Generally, we recommend the following order for the
+		// built-in variants, although you are free to use
+		// whatever order makes the most sense for your own
+		// project:
+		//
+		// [
+		//   "responsive",
+		//   "group-hover",
+		//   "focus-within",
+		//   "first",
+		//   "last",
+		//   "odd",
+		//   "even",
+		//   "hover",
+		//   "focus",
+		//   "active",
+		//   "visited",
+		//   "disabled",
+		// ],
+		//
+		// https://tailwindcss.com/docs/configuring-variants
 		textAlign: ["responsive"],
 
-		backgroundColor: ["responsive", "disabled", "hover", "focus", "active"],
-		boxShadow:       ["responsive", "disabled", "hover", "focus", "active"],
-		textColor:       ["responsive", "disabled", "hover", "focus", "active"],
+		textColor:       ["responsive", "hover", "focus", "active", "disabled"],
+		backgroundColor: ["responsive", "hover", "focus", "active", "disabled"],
+		boxShadow:       ["responsive", "hover", "focus", "active", "disabled"],
 	},
 	plugins: [],
 }

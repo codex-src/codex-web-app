@@ -1,9 +1,8 @@
+import * as Router from "react-router-dom"
 import React from "react"
-import RouterLink from "utils/RouterLink"
 
-const Link = ({ className, ...props }) => {
-	const classString = `${className || ""} block cursor-pointer select-none`.trimStart()
-	return <RouterLink className={classString} {...props} />
-}
+const Link = ({ className, ...props }) => (
+	<Router.Link className={`${className || ""} block`.trim()} {...props} />
+)
 
 export default Link

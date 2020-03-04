@@ -1,6 +1,5 @@
 // import * as ProgressBar from "components/ProgressBar"
 import * as constants from "__constants"
-import * as random from "utils/random"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Auth from "components/Auth"
@@ -35,11 +34,11 @@ const App = props => (
 				<User.Context.Consumer>
 					{user => !user ? (
 						<User.UnprotectedRoute path={constants.PATH_HOME} exact>
-							<Home key={random.newFourByteHash()} />
+							<Home /* key={random.newFourByteHash()} */ />
 						</User.UnprotectedRoute>
 					) : (
 						<User.ProtectedRoute path={constants.PATH_HOME} exact>
-							<UserNotes key={random.newFourByteHash()} />
+							<UserNotes /* key={random.newFourByteHash()} */ />
 						</User.ProtectedRoute>
 					)}
 				</User.Context.Consumer>
