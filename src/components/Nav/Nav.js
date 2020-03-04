@@ -80,9 +80,11 @@ export const AuthNav = props => {
 			<Base.NavLogo to={constants.PATH_HOME} />
 
 			{/* RHS - drop down button */}
-			<Link className="-mx-3 flex flex-row items-center" onClick={e => setDropDown(!dropDown)}>
-				<img className="mx-3 w-8 h-8 bg-gray-200 rounded-full" src={user.photoURL || constants.IMG_TRANS} />
-			</Link>
+			<div className="flex flex-row items-center">
+				<button className="rounded-full focus:outline-none focus:shadow-outline"  onClick={e => setDropDown(!dropDown)}>
+					<img className="w-8 h-8 bg-gray-200 rounded-full" src={user.photoURL || constants.IMG_TRANS} />
+				</button>
+			</div>
 
 			{/* RHS - drop down */}
 			<Base.DropDown ref={ref}>
