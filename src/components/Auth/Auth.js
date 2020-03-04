@@ -15,7 +15,7 @@ const Container = props => (
 )
 
 const Auth = props => {
-	// const render = ProgressBar.useProgressBar()
+	// const trigger = ProgressBar.useProgressBar()
 
 	const handleClickGitHub = e => {
 		const p = new firebase.auth.GithubAuthProvider()
@@ -34,7 +34,7 @@ const Auth = props => {
 			})
 	}
 	const handleClickGuest = e => {
-		// render()
+		// trigger()
 		firebase.auth()
 			.signInAnonymously()
 			.catch(err => {
@@ -62,7 +62,7 @@ const Auth = props => {
 
 			{/* GitHub */}
 			<div className="h-6" />
-			<Link className="px-4 py-3 flex flex-row items-center bg-black rounded-md shadow-hero trans-150" onClick={handleClickGitHub}>
+			<Link className="px-4 py-3 flex flex-row items-center bg-black rounded-lg shadow-hero trans-150" onClick={handleClickGitHub}>
 				<div className="mx-4">
 					<SVG.GitHubLogo className="w-6 h-6 text-gray-100" />
 				</div>
@@ -73,7 +73,7 @@ const Auth = props => {
 
 			{/* Google */}
 			<div className="h-2" />
-			<Link className="px-4 py-3 flex flex-row items-center bg-white rounded-md shadow-hero trans-150" onClick={handleClickGoogle}>
+			<Link className="px-4 py-3 flex flex-row items-center bg-white rounded-lg shadow-hero trans-150" onClick={handleClickGoogle}>
 				<div className="mx-4">
 					<SVG.GoogleLogo className="w-6 h-6 text-gray-900" />
 				</div>

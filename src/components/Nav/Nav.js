@@ -36,7 +36,7 @@ export const UnauthNav = props => {
 
 			{/* RHS - drop down button */}
 			<Link className="-mx-3 flex flex-row items-center md:hidden" onClick={e => setDropDown(!dropDown)}>
-				<Feather.ChevronDown className="mx-3 w-6 h-6 stroke-medium text-gray-800" />
+				<Feather.Menu className="mx-3 w-8 h-8 stroke-medium text-gray-800" />
 			</Link>
 
 			{/* RHS - drop down */}
