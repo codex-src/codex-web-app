@@ -4,7 +4,7 @@ import MockEditor from "./MockEditor"
 import NavContainer from "components/NavContainer"
 import React from "react"
 
-const MODIFIER = 0.67
+const MODIFIER = 0.65
 
 const Editor = props => (
 	<MockEditor
