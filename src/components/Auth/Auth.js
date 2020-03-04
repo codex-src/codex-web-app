@@ -7,7 +7,7 @@ import Link from "components/Link"
 import React from "react"
 
 const Container = props => (
-	<div className="py-32 flex flex-row justify-center items-center min-h-full">
+	<div className="py-40 flex flex-row justify-center items-center min-h-full">
 		<div className="px-6 box-content" style={{ width: "18rem" /* w-72 */ }}>
 			{props.children}
 		</div>
@@ -62,7 +62,7 @@ const Auth = props => {
 
 			{/* GitHub */}
 			<div className="h-6" />
-			<Link className="px-4 py-3 flex flex-row items-center bg-black hover:bg-gray-900 active:bg-black rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" onClick={handleClickGitHub}>
+			<Link className="px-4 py-3 flex flex-row items-center bg-black rounded-md shadow-hero trans-150" onClick={handleClickGitHub}>
 				<div className="mx-4">
 					<SVG.GitHubLogo className="w-6 h-6 text-gray-100" />
 				</div>
@@ -73,7 +73,7 @@ const Auth = props => {
 
 			{/* Google */}
 			<div className="h-2" />
-			<Link className="px-4 py-3 flex flex-row items-center bg-white hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" onClick={handleClickGoogle}>
+			<Link className="px-4 py-3 flex flex-row items-center bg-white rounded-md shadow-hero trans-150" onClick={handleClickGoogle}>
 				<div className="mx-4">
 					<SVG.GoogleLogo className="w-6 h-6 text-gray-900" />
 				</div>

@@ -5,7 +5,7 @@ import Nav from "components/Nav"
 import React from "react"
 
 const Container = props => (
-	<div className="py-32 flex flex-row justify-center min-h-full">
+	<div className="py-40 flex flex-row justify-center min-h-full">
 		<div className="px-6 flex flex-col lg:flex-row lg:items-center w-full max-w-screen-lg">
 			{props.children}
 		</div>
