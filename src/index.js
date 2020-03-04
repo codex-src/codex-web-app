@@ -3,12 +3,11 @@ import innerText from "components/Editor/helpers/innerText"
 import React from "react"
 import ReactDOM from "react-dom"
 
-import "material-colors.css"
 import "debug.css"
+import "material-colors.css"
+import "stylesheets/reset-input.css"
 import "stylesheets/tailwind.generated.css"
 
-// window.getCodex("#editor") -> ...
-//
 // https://github.com/codex-src/codex-playwright
 window.getCodex = (id = "editor") => {
 	const node = document.getElementById(id)

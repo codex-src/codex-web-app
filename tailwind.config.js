@@ -4,8 +4,9 @@ module.exports = {
 	theme: {
 		extend: {
 			borderRadius: {
-				"xl":  "1rem",
-				"2xl": "2rem",
+				"lg-xl": "0.75rem",
+				"xl":    "1rem",
+				"2xl":   "2rem",
 			},
 			boxShadow: {
 				"hero-sm": `
@@ -65,11 +66,14 @@ module.exports = {
 				"md-gray-900":  { default: "#212121" },
 			},
 			fontFamily: {
-				"brand-sans": "'Inter var', sans-serif",
-				"brand-sans-round": "'DM Sans', sans-serif",
-				"brand-mono": "'iA Writer Mono var', monospace",
-				"brand-duo": "'iA Writer Duo var', monospace",
-				"brand-quattro": "'iA Writer Quattro var', sans-serif",
+				"dm-sans":           "'DM Sans', sans-serif",
+				"ia-writer-mono":    "'iA Writer Mono var', monospace",
+				"ia-writer-duo":     "'iA Writer Duo var', monospace",
+				"ia-writer-quattro": "'iA Writer Quattro var', sans-serif",
+			},
+			fontSize: {
+				"sm-md": "0.9375rem",
+				"md-lg": "1.0625rem",
 			},
 			inset: {
 				"1/2":  "50%",
@@ -82,12 +86,16 @@ module.exports = {
 			opacity: {
 				 5: "0.05",
 				10: "0.10",
+				15: "0.15",
+				20: "0.20",
+				25: "0.25",
+				75: "0.75",
+				80: "0.80",
+				85: "0.85",
 				90: "0.90",
 				95: "0.95",
 			},
 			spacing: {
-				"72": "18rem",
-
 				// https://youtube.com/watch?v=jl_tdhBxc_Y
 				"2/1":   "200%",
 				"16/9":  "177.7778%",
@@ -116,13 +124,29 @@ module.exports = {
 				black:     4,    // 900
 			},
 		},
+		screens: {
+			xs: `${512 + 24 + 24}px`,
+			// => @media (min+width: 560px) { ... }
+
+			sm: `${640 + 24 + 24}px`,
+			// => @media (min+width: 688px) { ... }
+
+			md: `${768 + 24 + 24}px`,
+			// => @media (min+width: 816px) { ... }
+
+			lg: `${1024 + 24 + 24}px`,
+			// => @media (min+width: 1072px) { ... }
+
+			xl: `${1280 + 24 + 24}px`,
+			// => @media (min-width: 1328px) { ... }
+		},
 	},
 	variants: {
+		textAlign: ["responsive"],
+
 		backgroundColor: ["responsive", "disabled", "hover", "focus", "active"],
-		borderWidth:     ["hover"],
 		boxShadow:       ["responsive", "disabled", "hover", "focus", "active"],
 		textColor:       ["responsive", "disabled", "hover", "focus", "active"],
-		zIndex:          ["hover"],
 	},
 	plugins: [],
 }

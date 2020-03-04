@@ -1,10 +1,10 @@
+import * as Title from "utils/Title"
 import React from "react"
-import { DocumentTitle } from "utils/DocumentTitle"
 
-const CodexTitle = props => (
-	<DocumentTitle title={!props.title ? "Codex" : `${props.title} – Codex`}>
+const CodexTitle = ({ title, ...props }) => (
+	<Title.Effect title={!title ? "Codex" : `${title} – Codex`}>
 		{props.children}
-	</DocumentTitle>
+	</Title.Effect>
 )
 
 export default CodexTitle

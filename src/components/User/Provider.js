@@ -19,7 +19,11 @@ const Provider = props => {
 	if (loading) {
 		return <StartupScreen />
 	}
-	return <Provider value={user}>{props.children}</Provider>
+	return (
+		<Provider value={user}>
+			{props.children}
+		</Provider>
+	)
 }
 
 export default Provider

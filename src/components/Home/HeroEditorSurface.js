@@ -4,14 +4,18 @@ import useTransForwards from "utils/hooks/useTransitionForwards"
 
 import "./HeroEditorSurface.css"
 
+const enterClass  = "hero-editor-enter"  // eslint-disable-line no-multi-spaces
+const activeClass = "hero-editor-active" // eslint-disable-line no-multi-spaces
+const delayMs     = 1e3                  // eslint-disable-line no-multi-spaces
+
 const HeroEditorSurface = props => {
 	const ref = React.useRef()
 
 	useTransForwards({
 		ref,
-		enterClass: "hero-editor-enter",
-		activeClass: "hero-editor-active",
-		delayMs: 1e3,
+		enterClass,
+		activeClass,
+		delayMs,
 	})
 
 	return (

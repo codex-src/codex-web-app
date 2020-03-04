@@ -11,14 +11,14 @@
 .text-tabs-2 { tab-size: 2; }
 .text-tabs-4 { tab-size: 4; }
 
-.emoji {
-	font-size: 1.2em;
-	line-height: 1;
-	vertical-align: -0.1em;
-}
+/* .text-emoji { */
+/* 	font-size: 1.2em; */
+/* 	line-height: 1; */
+/* 	vertical-align: -0.1em; */
+/* } */
 
-.-text-px { font-size: 0.9375rem; } /* 15px */
-.text-px  { font-size: 1.0625rem; } /* 17px */
+.-text-px { font-size: 0.9375rem; }
+.text-px  { font-size: 1.0625rem; }
 
 .trans-75   { @apply transition duration-75   ease-in-out; }
 .trans-100  { @apply transition duration-100  ease-in-out; }

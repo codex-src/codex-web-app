@@ -2,7 +2,7 @@ import React from "react"
 import RouterLink from "utils/RouterLink"
 
 const Link = ({ className, ...props }) => {
-	const classString = `${className || ""} cursor-pointer select-none`.trimStart()
+	const classString = `${className || ""} block cursor-pointer select-none`.trimStart()
 	return <RouterLink className={classString} {...props} />
 }
 

@@ -1,6 +1,6 @@
 import * as constants from "__constants"
 import * as Feather from "react-feather"
-import * as Hero from "utils/heroicons"
+import * as Hero from "utils/Heroicons"
 import Link from "components/Link"
 import MockEditor from "./MockEditor"
 import React from "react"

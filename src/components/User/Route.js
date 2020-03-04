@@ -12,7 +12,6 @@ const CodexRoute = ({ title, ...props }) => (
 	</CodexTitle>
 )
 
-// Redirect unauthenticated users.
 export const UnprotectedRoute = props => {
 	const user = useUser()
 
@@ -25,7 +24,6 @@ export const UnprotectedRoute = props => {
 	return Component
 }
 
-// Redirect authenticated users.
 export const ProtectedRoute = props => {
 	const user = useUser()
 
