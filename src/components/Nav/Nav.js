@@ -13,7 +13,7 @@ export const UnauthNav = props => {
 	const [dropDown, setDropDown] = useDropDown(ref)
 
 	return (
-		<Base.Nav>
+		<Base.Nav ref={ref}>
 
 			{/* LHS */}
 			<Base.NavLogo to={constants.PATH_HOME} />
@@ -74,7 +74,7 @@ export const AuthNav = props => {
 	}
 
 	return (
-		<Base.Nav>
+		<Base.Nav ref={ref}>
 
 			{/* LHS */}
 			<Base.NavLogo to={constants.PATH_HOME} />

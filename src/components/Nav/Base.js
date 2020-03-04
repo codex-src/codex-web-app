@@ -6,16 +6,34 @@ import React from "react"
  * Nav
  */
 
-export const Nav = props => (
-	<div className="fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-white z-30">
-		<div className="px-6 w-full max-w-screen-lg">
-			{/* NOTE: h-full is needed */}
-			<div className="relative flex flex-row justify-between h-full">
-				{props.children}
+export const Nav = props => {
+	const ref = React.useRef()
+
+	React.useEffect(() => {
+		const handler = e => {
+			if (!window.scrollY) {
+				ref.current.classList.remove("shadow-hero")
+			} else {
+				ref.current.classList.add("shadow-hero")
+			}
+		}
+		window.addEventListener("scroll", handler, false)
+		return () => {
+			window.removeEventListener("scroll", handler, false)
+		}
+	}, [])
+
+	return (
+		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center h-20 bg-white z-30 trans-300">
+			<div className="px-6 w-full max-w-screen-lg">
+				{/* NOTE: h-full is needed */}
+				<div className="relative flex flex-row justify-between h-full">
+					{props.children}
+				</div>
 			</div>
 		</div>
-	</div>
-)
+	)
+}
 
 export const NavLogo = props => (
 	<Link className="-mx-3 flex flex-row items-center" {...props}>
