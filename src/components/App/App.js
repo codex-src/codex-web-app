@@ -37,7 +37,7 @@ const App = props => (
 				/>
 				<User.ProtectedRoute
 					path={constants.PATH_NOTE}
-					// title=""
+					title="Editing note"
 					children={<UserNote />}
 				/>
 
