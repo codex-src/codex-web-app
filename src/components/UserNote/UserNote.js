@@ -24,10 +24,11 @@ const Note = props => {
 			ref.set({
 				id,
 
-				userID:      user.uid,
-				displayName: user.displayName,
 				createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
 				updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+
+				userID:      user.uid,
+				displayName: user.displayName,
 				data:        note.data,
 				byteCount:   note.data.length,
 				wordCount:   note.data.split(/\s+/).length,
@@ -47,8 +48,8 @@ const Note = props => {
 	return (
 		<textarea
 			className="p-6 w-full h-full"
-			data={note.data}
-			onChange={e => setNote({ ...note, data: e.target.data })}
+			value={note.data}
+			onChange={e => setNote({ ...note, data: e.target.value })}
 		/>
 	)
 }
@@ -57,17 +58,19 @@ const UserNote = props => {
 	const params = Router.useParams()
 	const user = User.useUser()
 	const [response, setResponse] = React.useState({
-		loading: false,
+		loading: true,
 		note: {
 			id: "",
 			data: "",
 		},
 	})
 
-	// NOTE: Use useLayoutEffect for speed
-	React.useLayoutEffect(() => {
+	React.useEffect(() => {
 		if (!params.noteID) {
-			// No-op
+			setResponse({
+				...response,
+				loading: false,
+			})
 			return
 		}
 		const db = firebase.firestore()
@@ -79,8 +82,11 @@ const UserNote = props => {
 					// No-op
 					return // TODO: 404?
 				}
-				const response = doc.data()
-				setResponse({ id: params.noteID, data: response.data })
+				const note = doc.data()
+				setResponse({
+					loading: false,
+					note,
+				})
 			})
 	}, [params.noteID])
 
