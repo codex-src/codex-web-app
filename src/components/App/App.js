@@ -15,19 +15,24 @@ const App = props => (
 			{/* <ProgressBar.ProgressBar /> */}
 			<Router.Switch>
 
-				{/* Auth */}
+				{/* Unprotected */}
 				<User.UnprotectedRoute
 					path={constants.PATH_AUTH}
 					title="Open your Codex"
 					children={<Auth />}
 				/>
-
-				{/* Demo */}
 				<User.UnprotectedRoute
 					path={constants.PATH_DEMO}
 					exact
 					title="Demo"
 					children={<Demo />}
+				/>
+
+				{/* Protected */}
+				<User.ProtectedRoute
+					path={constants.PATH_NEW_NOTE}
+					// title=""
+					children={"Hello, world!"}
 				/>
 
 				{/* Home */}

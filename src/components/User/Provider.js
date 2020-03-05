@@ -1,26 +1,31 @@
+import * as Router from "react-router-dom"
 import Context from "./Context"
 import firebase from "__firebase"
 import React from "react"
 import StartupScreen from "./StartupScreen"
 
 const Provider = props => {
-	const [loading, setLoading] = React.useState(true)
-	const [user, setUser] = React.useState(null)
+	const [response, setResponse] = React.useState({
+		loading: true,
+		user: null,
+	})
 
-	React.useLayoutEffect(() => {
+	React.useEffect(() => {
 		const unsub = firebase.auth().onAuthStateChanged(user => {
-			setLoading(false)
-			setUser(user)
+			setResponse({
+				loading: false,
+				user,
+			})
 		})
 		return unsub
 	}, [])
 
 	const { Provider } = Context
-	if (loading) {
+	if (response.loading) {
 		return <StartupScreen />
 	}
 	return (
-		<Provider value={user}>
+		<Provider value={response.user}>
 			{props.children}
 		</Provider>
 	)
