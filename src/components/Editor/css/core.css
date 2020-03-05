@@ -32,11 +32,11 @@
 }
 
 .codex-editor .blockquote {
-	color: hsl(var(--blue-a200));
+	color: hsl(var(--blue-a400));
 }
 .codex-editor .blockquote > [data-node] > .markdown {
 	margin-right: 0.5ch;
-	color: hsla(var(--blue-a200), 0.5);
+	color: hsla(var(--blue-a400), 0.5);
 }
 
 .codex-editor .code-block {

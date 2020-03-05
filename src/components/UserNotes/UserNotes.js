@@ -21,7 +21,7 @@ const UserNotes = props => (
 			<Link className="pb-2/3 relative bg-white hover:bg-gray-100 rounded-xl shadow-hero trans-150">
 				<div className="absolute inset-0 flex flex-row justify-center items-center">
 					<div className="-mt-3 p-2 hover:bg-indigo-100 rounded-full focus:bg-blue-100 transform scale-150 trans-300">
-						<Hero.PlusSolidSm className="p-px w-6 h-6 text-md-blue-a200" />
+						<Hero.PlusSolidSm className="p-px w-6 h-6 text-md-blue-a400" />
 					</div>
 				</div>
 			</Link>
