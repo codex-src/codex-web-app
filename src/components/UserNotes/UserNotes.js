@@ -15,7 +15,6 @@ const EditorThumbnail = props => (
 	</MockEditor>
 )
 
-// overflow-y-scroll scrolling-touch
 const UserNotes = props => {
 	const user = User.useUser()
 	const [response, setResponse] = React.useState({ loading: true, notes: [] })
@@ -40,23 +39,32 @@ const UserNotes = props => {
 	return (
 		<NavContainer>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-				<Link className="pb-2/3 relative bg-white hover:bg-gray-100 rounded-xl shadow-hero trans-150" to={constants.PATH_NEW_NOTE}>
-					<div className="absolute inset-0 flex flex-row justify-center items-center">
-						<div className="-mt-3 p-2 hover:bg-indigo-100 rounded-full focus:bg-blue-100 transform scale-150 trans-300">
-							<Hero.PlusSolidSm className="p-px w-6 h-6 text-md-blue-a400" />
+				{response.loading ? (
+					[...new Array(6)].map((_, index) => (
+						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-xl trans-150">
+							<div className="absolute inset-0" />
 						</div>
-					</div>
-				</Link>
-				{/* TODO: Add loading state */}
-				{response.notes.map((each, index) => (
-					<Link key={each.id} className="pb-2/3 relative bg-white rounded-lg shadow-hero overflow-y-hidden trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
-						<div className="absolute inset-0">
-							<EditorThumbnail>
-								{each.data}
-							</EditorThumbnail>
-						</div>
-					</Link>
-				))}
+					))
+				) : (
+					<React.Fragment>
+						<Link className="pb-2/3 relative bg-white hover:bg-gray-100 rounded-xl shadow-hero trans-150" to={constants.PATH_NEW_NOTE}>
+							<div className="absolute inset-0 flex flex-row justify-center items-center">
+								<div className="-mt-3 p-2 hover:bg-indigo-100 rounded-full focus:bg-blue-100 transform scale-150 trans-300">
+									<Hero.PlusSolidSm className="p-px w-6 h-6 text-md-blue-a400" />
+								</div>
+							</div>
+						</Link>
+						{response.notes.map((each, index) => (
+							<Link key={each.id} className="pb-2/3 relative bg-white rounded-lg shadow-hero overflow-y-hidden trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
+								<div className="absolute inset-0">
+									<EditorThumbnail>
+										{each.data}
+									</EditorThumbnail>
+								</div>
+							</Link>
+						))}
+					</React.Fragment>
+				)}
 			</div>
 		</NavContainer>
 	)
