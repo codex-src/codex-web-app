@@ -51,7 +51,7 @@ const UserNotes = props => {
 				</Link>
 				{/* TODO: Add loading state */}
 				{response.notes.map((each, index) => (
-					<Link key={index} className="pb-2/3 relative bg-white rounded-lg shadow-hero overflow-y-hidden trans-150" to={constants.TODO}>
+					<Link key={index} className="pb-2/3 relative bg-white rounded-lg shadow-hero overflow-y-hidden trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
 						<div className="absolute inset-0">
 							<EditorThumbnail />
 						</div>

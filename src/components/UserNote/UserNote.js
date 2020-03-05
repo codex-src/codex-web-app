@@ -3,24 +3,72 @@ import * as User from "components/User"
 import firebase from "__firebase"
 import React from "react"
 
-// function Child() {
-//   // We can use the `useParams` hook here to access
-//   // the dynamic pieces of the URL.
-//   let { id } = useParams();
-//
-//   return (
-//     <div>
-//       <h3>ID: {id}</h3>
-//     </div>
-//   );
+// const didMount = React.useRef()
+// // ...
+// if (!didMount.current) { // Needed?
+// 	didMount.current = true
+// 	return
 // }
+
+const Note = props => {
+	const user = User.useUser()
+	const [note, setNote] = React.useState(props.note)
+
+	// Create note:
+	React.useEffect(() => {
+		if (note.id) {
+			// No-op
+			return
+		}
+		const id = setTimeout(() => {
+			const db = firebase.firestore()
+			const ref = db.collection("notes").doc()
+			const { id } = ref
+			ref.set({
+				id,
+
+				userID:      user.uid,
+				displayName: user.displayName,
+				createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
+				updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+				data:        note.data,
+				byteCount:   note.data.length,
+				wordCount:   note.data.split(/\s+/).length,
+			})
+				.catch(error => (
+					console.log(error)
+				))
+		}, 1e3)
+		return () => {
+			clearTimeout(id)
+		}
+	}, [user, note])
+
+	// TODO
+	// Update note:
+
+	return (
+		<textarea
+			className="p-6 w-full h-full"
+			data={note.data}
+			onChange={e => setNote({ ...note, data: e.target.data })}
+		/>
+	)
+}
 
 const UserNote = props => {
 	const params = Router.useParams()
 	const user = User.useUser()
-	const [note, setNote] = React.useState({ id: "", value: "" })
+	const [response, setResponse] = React.useState({
+		loading: false,
+		note: {
+			id: "",
+			data: "",
+		},
+	})
 
-	React.useEffect(() => {
+	// NOTE: Use useLayoutEffect for speed
+	React.useLayoutEffect(() => {
 		if (!params.noteID) {
 			// No-op
 			return
@@ -35,49 +83,14 @@ const UserNote = props => {
 					return // TODO: 404?
 				}
 				const response = doc.data()
-				setNote({ id: params.noteID, value: response.value })
+				setResponse({ id: params.noteID, data: response.data })
 			})
 	}, [params.noteID])
 
-	//	const didMount = React.useRef()
-	//	React.useEffect(() => {
-	//		if (!didMount.current) {
-	//			didMount.current = true
-	//			return
-	//		}
-	//		const id = setTimeout(() => {
-	//			const db = firebase.firestore()
-	//			const ref = db.collection("notes").doc()
-	//			const { id } = ref
-	//			ref
-	//				.set({
-	//					id,
-	//
-	//					userID:      user.uid,
-	//					displayName: user.displayName,
-	//					byteCount:   value.length,
-	//					createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
-	//					updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
-	//					value,
-	//					wordCount: value.split(/\s+/).length,
-	//				})
-	//				.catch(error => (
-	//					console.log(error)
-	//				))
-	//
-	//		}, 1e3)
-	//		return () => {
-	//			clearTimeout(id)
-	//		}
-	//	}, [user, value])
-
-	return (
-		<textarea
-			className="p-6 w-full h-full"
-			value={note.value}
-			onChange={e => setNote({ ...note, value: e.target.value })}
-		/>
-	)
+	if (response.loading) {
+		return "loading" // TODO
+	}
+	return <Note note={response.note} />
 }
 
 export default UserNote
