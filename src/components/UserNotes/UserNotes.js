@@ -10,11 +10,9 @@ import React from "react"
 const MODIFIER = 0.65
 
 const EditorThumbnail = props => (
-	<MockEditor
-		baseFontSize={16 * MODIFIER}
-		paddingX={32 * MODIFIER}
-		paddingY={24 * MODIFIER}
-	/>
+	<MockEditor baseFontSize={16 * MODIFIER} paddingX={32 * MODIFIER} paddingY={24 * MODIFIER}>
+		{props.children}
+	</MockEditor>
 )
 
 // overflow-y-scroll scrolling-touch
@@ -51,9 +49,11 @@ const UserNotes = props => {
 				</Link>
 				{/* TODO: Add loading state */}
 				{response.notes.map((each, index) => (
-					<Link key={index} className="pb-2/3 relative bg-white rounded-lg shadow-hero overflow-y-hidden trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
+					<Link key={each.id} className="pb-2/3 relative bg-white rounded-lg shadow-hero overflow-y-hidden trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
 						<div className="absolute inset-0">
-							<EditorThumbnail />
+							<EditorThumbnail>
+								{each.data}
+							</EditorThumbnail>
 						</div>
 					</Link>
 				))}

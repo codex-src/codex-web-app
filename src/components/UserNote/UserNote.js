@@ -3,20 +3,17 @@ import * as User from "components/User"
 import firebase from "__firebase"
 import React from "react"
 
-// const didMount = React.useRef()
-// // ...
-// if (!didMount.current) { // Needed?
-// 	didMount.current = true
-// 	return
-// }
-
 const Note = props => {
 	const user = User.useUser()
 	const [note, setNote] = React.useState(props.note)
 
 	// Create note:
+	const didMount = React.useRef()
 	React.useEffect(() => {
-		if (note.id) {
+		if (!didMount.current) {
+			didMount.current = true
+			return
+		} else if (note.id) {
 			// No-op
 			return
 		}
