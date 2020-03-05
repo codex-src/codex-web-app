@@ -20,18 +20,18 @@ export const NavUnauth = props => {
 
 			{/* RHS */}
 			<div className="-mx-3 hidden md:flex md:flex-row">
-				<Base.NavItem
-					to={constants.TODO}
-					children="Features"
-				/>
-				<Base.NavItem
-					to={constants.TODO}
-					children="Try Codex for free!"
-				/>
-				<Base.NavItem
-					to={constants.TODO}
-					children="Pricing"
-				/>
+				{/* <Base.NavItem */}
+				{/* 	to={constants.TODO} */}
+				{/* 	children="Features" */}
+				{/* /> */}
+				{/* <Base.NavItem */}
+				{/* 	to={constants.TODO} */}
+				{/* 	children="Try Codex for free!" */}
+				{/* /> */}
+				{/* <Base.NavItem */}
+				{/* 	to={constants.TODO} */}
+				{/* 	children="Pricing" */}
+				{/* /> */}
 				<Base.NavItemCTA
 					to={constants.PATH_AUTH}
 					children="Open your Codex"
@@ -45,19 +45,19 @@ export const NavUnauth = props => {
 
 			{/* Drop down */}
 			<Base.DropDown ref={ref}>
-				<Base.DropDownItem
-					to={constants.PATH_AUTH}
-					children="Features"
-				/>
-				<Base.DropDownItem
-					to={constants.PATH_AUTH}
-					children="Try Codex for free!"
-				/>
-				<Base.DropDownItem
-					to={constants.PATH_AUTH}
-					children="Pricing"
-				/>
-				<hr className="my-1" />
+				{/* <Base.DropDownItem */}
+				{/* 	to={constants.PATH_AUTH} */}
+				{/* 	children="Features" */}
+				{/* /> */}
+				{/* <Base.DropDownItem */}
+				{/* 	to={constants.PATH_AUTH} */}
+				{/* 	children="Try Codex for free!" */}
+				{/* /> */}
+				{/* <Base.DropDownItem */}
+				{/* 	to={constants.PATH_AUTH} */}
+				{/* 	children="Pricing" */}
+				{/* /> */}
+				{/* <hr className="my-1" /> */}
 				<Base.DropDownItem
 					to={constants.PATH_AUTH}
 					children="Open your Codex"

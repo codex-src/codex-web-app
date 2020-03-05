@@ -1,41 +1,66 @@
-// import * as ProgressBar from "components/ProgressBar"
 import * as constants from "__constants"
 import * as Feather from "react-feather"
 import * as SVG from "svg"
 import firebase from "__firebase"
-import Link from "components/Link"
 import React from "react"
 
 const Auth = props => {
-	// const trigger = ProgressBar.useProgressBar()
+
+	const signIn = provider => {
+		const db = firebase.firestore()
+		firebase.auth()
+			.signInWithPopup(provider)
+			.then(response => {
+				if (!response.additionalUserInfo.isNewUser) {
+					// No-op
+					return
+				}
+				const { uid: id } = response.user
+				db.collection("users")
+					.doc(id)
+					.set(
+						{
+							id,
+
+							authProvider:  response.additionalUserInfo.providerId,
+							createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
+							displayName:   response.user.displayName,
+							email:         response.user.email,
+							emailVerified: response.user.emailVerified,
+							photoURL:      response.user.photoURL,
+							updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
+							username:      null,
+						},
+						{ merge: true },
+					)
+					.catch(error => {
+						console.warn(error)
+					})
+			})
+			.catch(error => {
+				console.warn(error)
+			})
+	}
 
 	const handleClickGitHub = e => {
-		const p = new firebase.auth.GithubAuthProvider()
-		firebase.auth()
-			.signInWithPopup(p)
-			.catch(err => {
-				console.warn(err)
-			})
+		const provider = new firebase.auth.GithubAuthProvider()
+		signIn(provider)
 	}
 	const handleClickGoogle = e => {
-		const p = new firebase.auth.GoogleAuthProvider()
-		firebase.auth()
-			.signInWithPopup(p)
-			.catch(err => {
-				console.warn(err)
-			})
-	}
-	const handleClickGuest = e => {
-		// trigger()
-		firebase.auth()
-			.signInAnonymously()
-			.catch(err => {
-				console.warn(err)
-			})
+		const provider = new firebase.auth.GoogleAuthProvider()
+		signIn(provider)
 	}
 
+	// const handleClickGuest = e => {
+	// 	firebase.auth()
+	// 		.signInAnonymously()
+	// 		.catch(error => {
+	// 			console.warn(error)
+	// 		})
+	// }
+
 	return (
-		<div className="py-40 flex flex-row justify-center items-center min-h-full">
+		<div className="-mt-6 py-40 flex flex-row justify-center items-center min-h-full">
 			<div className="px-6 box-content" style={{ width: "18rem" /* w-72 */ }}>
 
 				<div className="flex flex-row justify-center items-center transform scale-90 origin-bottom">
