@@ -42,8 +42,32 @@ const Note = props => {
 		}
 	}, [user, note])
 
-	// TODO
 	// Update note:
+	React.useEffect(() => {
+		if (!note.id) {
+			// No-op
+			return
+		}
+		const id = setTimeout(() => {
+			const db = firebase.firestore()
+			const { id } = note
+			db.collection("notes").doc(id).set({
+				id,
+
+				updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+
+				data:        note.data,
+				byteCount:   note.data.length,
+				wordCount:   note.data.split(/\s+/).length,
+			}, { merge: true })
+				.catch(error => (
+					console.log(error)
+				))
+		}, 1e3)
+		return () => {
+			clearTimeout(id)
+		}
+	}, [note])
 
 	return (
 		<textarea
@@ -65,30 +89,33 @@ const UserNote = props => {
 		},
 	})
 
-	React.useEffect(() => {
-		if (!params.noteID) {
-			setResponse({
-				...response,
-				loading: false,
-			})
-			return
-		}
-		const db = firebase.firestore()
-		db.collection("notes")
-			.doc(params.noteID)
-			.get()
-			.then(doc => {
-				if (!doc.exists) {
-					// No-op
-					return // TODO: 404?
-				}
-				const note = doc.data()
+	React.useEffect(
+		React.useCallback(() => {
+			if (!params.noteID) {
 				setResponse({
+					...response,
 					loading: false,
-					note,
 				})
-			})
-	}, [params.noteID])
+				return
+			}
+			const db = firebase.firestore()
+			db.collection("notes")
+				.doc(params.noteID)
+				.get()
+				.then(doc => {
+					if (!doc.exists) {
+						// No-op
+						return // TODO: 404?
+					}
+					const note = doc.data()
+					setResponse({
+						loading: false,
+						note,
+					})
+				})
+		}, [params, response]),
+		[params],
+	)
 
 	if (response.loading) {
 		return "loading" // TODO

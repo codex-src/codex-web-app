@@ -23,6 +23,7 @@ const UserNotes = props => {
 		const db = firebase.firestore()
 		db.collection("notes")
 			.where("userID", "==", user.uid)
+			.limit(50)
 			.get()
 			.then(snap => {
 				const notes = []

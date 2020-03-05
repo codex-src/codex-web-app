@@ -18,21 +18,19 @@ const Auth = props => {
 				const { uid: id } = response.user
 				db.collection("users")
 					.doc(id)
-					.set(
-						{
-							id,
+					.set({
+						id,
 
-							authProvider:  response.additionalUserInfo.providerId,
-							createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
-							displayName:   response.user.displayName,
-							email:         response.user.email,
-							emailVerified: response.user.emailVerified,
-							photoURL:      response.user.photoURL,
-							updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
-							username:      null,
-						},
-						{ merge: true },
-					)
+						createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
+						updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
+
+						displayName:   response.user.displayName,
+						username:      null,
+						authProvider:  response.additionalUserInfo.providerId,
+						email:         response.user.email,
+						emailVerified: response.user.emailVerified,
+						photoURL:      response.user.photoURL,
+					}, { merge: true })
 					.catch(error => {
 						console.warn(error)
 					})
