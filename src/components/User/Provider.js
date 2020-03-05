@@ -1,4 +1,3 @@
-import * as Router from "react-router-dom"
 import Context from "./Context"
 import firebase from "__firebase"
 import React from "react"

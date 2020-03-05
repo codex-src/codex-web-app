@@ -6,6 +6,7 @@ import Auth from "components/Auth"
 import Demo from "components/Demo"
 import Home from "components/Home"
 import React from "react"
+import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
 
 const App = props => (
@@ -31,8 +32,13 @@ const App = props => (
 				{/* Protected */}
 				<User.ProtectedRoute
 					path={constants.PATH_NEW_NOTE}
+					title="New note"
+					children={<UserNote />}
+				/>
+				<User.ProtectedRoute
+					path={constants.PATH_NOTE}
 					// title=""
-					children={"Hello, world!"}
+					children={<UserNote />}
 				/>
 
 				{/* Home */}
