@@ -1,5 +1,6 @@
 import * as constants from "__constants"
 import * as Hero from "utils/Heroicons"
+import * as User from "components/User"
 import firebase from "__firebase"
 import Link from "components/Link"
 import MockEditor from "./MockEditor"
@@ -18,11 +19,25 @@ const EditorThumbnail = props => (
 
 // overflow-y-scroll scrolling-touch
 const UserNotes = props => {
-	const [notes, setNotes] = React.useState([])
+	const user = User.useUser()
+	const [response, setResponse] = React.useState({ loading: true, notes: [] })
 
 	React.useEffect(() => {
-		// TODO
-	}, [])
+		const db = firebase.firestore()
+		db.collection("notes")
+			.where("userID", "==", user.uid)
+			.get()
+			.then(snap => {
+				const notes = []
+				snap.forEach(doc => {
+					notes.push(doc.data())
+				})
+				setResponse({ loading: false, notes })
+			})
+			.catch(error => (
+				console.log(error)
+			))
+	}, [user])
 
 	return (
 		<NavContainer>
@@ -34,7 +49,8 @@ const UserNotes = props => {
 						</div>
 					</div>
 				</Link>
-				{notes.map((each, index) => (
+				{/* TODO: Add loading state */}
+				{response.notes.map((each, index) => (
 					<Link key={index} className="pb-2/3 relative bg-white rounded-lg shadow-hero overflow-y-hidden trans-150" to={constants.TODO}>
 						<div className="absolute inset-0">
 							<EditorThumbnail />

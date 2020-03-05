@@ -53,11 +53,11 @@ const UserNote = props => {
 	//				.set({
 	//					id,
 	//
-	//					userID:    user.uid,
-	//					userEmail: user.email,
-	//					byteCount: value.length,
-	//					createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-	//					updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+	//					userID:      user.uid,
+	//					displayName: user.displayName,
+	//					byteCount:   value.length,
+	//					createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
+	//					updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
 	//					value,
 	//					wordCount: value.split(/\s+/).length,
 	//				})
