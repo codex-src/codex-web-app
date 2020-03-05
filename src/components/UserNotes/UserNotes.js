@@ -40,7 +40,7 @@ const UserNotes = props => {
 		<NavContainer>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{response.loading ? (
-					[...new Array(6)].map((_, index) => (
+					[...new Array(3)].map((_, index) => (
 						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-xl trans-150">
 							<div className="absolute inset-0" />
 						</div>
@@ -55,7 +55,7 @@ const UserNotes = props => {
 							</div>
 						</Link>
 						{response.notes.map((each, index) => (
-							<Link key={each.id} className="pb-2/3 relative bg-white rounded-lg shadow-hero overflow-y-hidden trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
+							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 rounded-lg shadow-hero overflow-y-hidden trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
 								<div className="absolute inset-0">
 									<EditorThumbnail>
 										{each.data}
