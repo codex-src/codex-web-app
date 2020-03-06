@@ -6,6 +6,13 @@ import firebase from "__firebase"
 import Link from "components/Link"
 import NavContainer from "components/NavContainer"
 import React from "react"
+import useUserNotes from "./useUserNotes"
+
+import {
+	ITEMS_SHOWN_DEFAULT,
+	ITEMS_SHOWN_MAX,
+	ITEMS_SHOWN_MIN,
+} from "./constants"
 
 const MODIFIER = 0.65
 
@@ -27,9 +34,8 @@ const ButtonIcon = ({ className, icon: Icon, ...props }) => (
 
 const UserNotes = props => {
 	const user = User.useUser()
+	const [state, dispatch] = useUserNotes()
 	const [response, setResponse] = React.useState({ loading: true, notes: [] })
-
-	// const [sortOrder, setSortOrder] = React.useState()
 
 	React.useEffect(() => {
 		const db = firebase.firestore()
@@ -54,21 +60,20 @@ const UserNotes = props => {
 						className="hidden lg:block"
 						icon={Hero.ZoomOutOutlineMd}
 						onPointerDown={e => e.preventDefault()}
-						// disabled={state.itemsShown === ITEMS_SHOWN_MAX}
-						// onClick={dispatch.showMoreItems}
+						disabled={state.itemsShown === ITEMS_SHOWN_MAX}
+						onClick={dispatch.showMoreItems}
 					/>
 					<ButtonIcon
 						className="hidden lg:block"
 						icon={Hero.ZoomInOutlineMd}
 						onPointerDown={e => e.preventDefault()}
-						// disabled={state.itemsShown === ITEMS_SHOWN_MIN}
-						// onClick={dispatch.showLessItems}
+						disabled={state.itemsShown === ITEMS_SHOWN_MIN}
+						onClick={dispatch.showLessItems}
 					/>
 					<ButtonIcon
-						// icon={!state.sortAscending ? Hero.SortDescendingSolid : Hero.SortAscendingSolid}
-						icon={Hero.SortDescendingOutlineMd}
+						icon={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd}
 						onPointerDown={e => e.preventDefault()}
-						// onClick={dispatch.toggleSortDirection}
+						onClick={dispatch.toggleSortDirection}
 					/>
 					{/* <ButtonIcon */}
 					{/* 	className={!state.scrollEnabled ? "" : "bg-blue-100"} */}
