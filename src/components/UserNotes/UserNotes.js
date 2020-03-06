@@ -119,8 +119,8 @@ const UserNotes = props => {
 							// Note
 							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
 								<div className="absolute inset-0 flex flex-row justify-end items-start z-10">
-									<button className="-m-3 p-1 text-white bg-red-500 rounded-full">
-										<Hero.XSolidSm className="w-4 h-4" />
+									<button className="-m-3 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 trans-300">
+										<Hero.TrashSolidSm className="w-4 h-4" />
 									</button>
 								</div>
 								<div className="absolute inset-0 overflow-y-hidden">
