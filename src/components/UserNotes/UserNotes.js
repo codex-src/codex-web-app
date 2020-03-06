@@ -9,26 +9,32 @@ import React from "react"
 import useUserNotes from "./useUserNotes"
 
 import {
-	ITEMS_SHOWN_DEFAULT,
 	ITEMS_SHOWN_MAX,
 	ITEMS_SHOWN_MIN,
-} from "./constants"
+} from "./__globals"
 
-const MODIFIER = 0.65
-
-const ThumbnailEditor = props => {
+const EditorInstance = props => {
 	const [state, dispatch] = Editor.useEditor(props.children, {
-		baseFontSize: 16 * MODIFIER,
-		paddingX: 32 * MODIFIER,
-		paddingY: 24 * MODIFIER,
+		// baseFontSize: 16 * props.modifier,
+		// paddingX: 32 * props.modifier,
+		// paddingY: 24 * props.modifier,
 		readOnly: true,
 	})
-	return <Editor.Editor state={state} dispatch={dispatch} />
+	return (
+		<Editor.Editor
+			state={state}
+			dispatch={dispatch}
+			baseFontSize={16 * props.modifier}
+			paddingX={32 * props.modifier}
+			paddingY={24 * props.modifier}
+			// readOnly={true}
+		/>
+	)
 }
 
 const ButtonIcon = ({ className, icon: Icon, ...props }) => (
 	<button className={`p-2 text-md-blue-a400 disabled:text-gray-400 disabled:bg-transparent hover:bg-blue-100 focus:bg-blue-100 rounded-full focus:outline-none trans-300 ${className || ""}`.trim()} {...props}>
-		<Icon className="p-px w-6 h-6" />
+		<Icon className="w-6 h-6" />
 	</button>
 )
 
@@ -59,15 +65,15 @@ const UserNotes = props => {
 					<ButtonIcon
 						className="hidden lg:block"
 						icon={Hero.ZoomOutOutlineMd}
-						onPointerDown={e => e.preventDefault()}
 						disabled={state.itemsShown === ITEMS_SHOWN_MAX}
+						onPointerDown={e => e.preventDefault()}
 						onClick={dispatch.showMoreItems}
 					/>
 					<ButtonIcon
 						className="hidden lg:block"
 						icon={Hero.ZoomInOutlineMd}
-						onPointerDown={e => e.preventDefault()}
 						disabled={state.itemsShown === ITEMS_SHOWN_MIN}
+						onPointerDown={e => e.preventDefault()}
 						onClick={dispatch.showLessItems}
 					/>
 					<ButtonIcon
@@ -75,15 +81,10 @@ const UserNotes = props => {
 						onPointerDown={e => e.preventDefault()}
 						onClick={dispatch.toggleSortDirection}
 					/>
-					{/* <ButtonIcon */}
-					{/* 	className={!state.scrollEnabled ? "" : "bg-blue-100"} */}
-					{/* 	icon={Hero.SwitchVerticalSolid} */}
-					{/* 	onClick={dispatch.toggleScrollEnabled} */}
-					{/* /> */}
 				</div>
 			</div>
 			<div className="h-6" />
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+			<div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${state.itemsShown} gap-6`}>
 				{response.loading ? (
 					[...new Array(3)].map((_, index) => (
 						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-xl trans-150">
@@ -102,9 +103,9 @@ const UserNotes = props => {
 						{response.notes.map((each, index) => (
 							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none shadow-hero focus:shadow-outline overflow-y-hidden trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
 								<div className="absolute inset-0">
-									<ThumbnailEditor>
+									<EditorInstance modifier={state.itemsShownModifier}>
 										{each.data}
-									</ThumbnailEditor>
+									</EditorInstance>
 								</div>
 							</Link>
 						))}

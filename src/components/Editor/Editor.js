@@ -164,7 +164,7 @@ function Editor({ state, dispatch, ...props }) {
 	// )
 
 	return (
-		<div style={{ fontSize: state.prefs.baseFontSize }}>
+		<div style={{ fontSize: props.baseFontSize /* state.prefs.baseFontSize */ }}>
 			{React.createElement(
 				"div",
 				{
@@ -175,7 +175,7 @@ function Editor({ state, dispatch, ...props }) {
 					className: ["codex-editor", ...state.prefs.classNames].join(" "),
 
 					style: {
-						padding: `${state.prefs.paddingY}px ${state.prefs.paddingX}px`,
+						padding: `${props.paddingY}px ${props.paddingX}px`, // `${state.prefs.paddingY}px ${state.prefs.paddingX}px`,
 						whiteSpace: "pre-wrap",
 						outline: "none",
 						overflowWrap: "break-word",
