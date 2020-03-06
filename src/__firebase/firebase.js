@@ -18,12 +18,12 @@ import "firebase/storage"
 	})
 	// https://firebase.google.com/docs/firestore/manage-data/enable-offline
 	firebase.firestore().enablePersistence().catch(error => {
-		if (err.code == "failed-precondition") {
+		if (error.code === "failed-precondition") {
 			// Multiple tabs open, persistence can only be enabled
 			// in one tab at a a time.
 			// ...
 			// TODO
-		} else if (err.code == "unimplemented") {
+		} else if (error.code === "unimplemented") {
 			// The current browser does not support all of the
 			// features required to enable persistence
 			// ...
