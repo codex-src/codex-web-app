@@ -7,40 +7,47 @@ const Note = props => {
 	const user = User.useUser()
 	const [note, setNote] = React.useState(props.note)
 
+	// https://github.com/facebook/react/issues/14010#issuecomment-433788147
+	const noteRef = React.useRef(note)
+	noteRef.current = note
+
 	// Create note:
 	const didMount = React.useRef()
-	React.useEffect(() => {
-		if (!didMount.current) {
-			didMount.current = true
-			return
-		} else if (note.id) {
-			// No-op
-			return
-		}
-		const id = setTimeout(() => {
-			const db = firebase.firestore()
-			const ref = db.collection("notes").doc()
-			const { id } = ref
-			ref.set({
-				id,
+	React.useEffect(
+		React.useCallback(() => {
+			if (!didMount.current) {
+				didMount.current = true
+				return
+			} else if (note.id) {
+				// No-op
+				return
+			}
+			const id = setTimeout(() => {
+				const db = firebase.firestore()
+				const dbRef = db.collection("notes").doc()
+				const $note = {
+					id:        dbRef.id,
+					userID:    user.uid,
+					createdAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
+					updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
+					data:      noteRef.current.data,
+					byteCount: noteRef.current.data.length,
+					wordCount: noteRef.current.data.split(/\s+/).length,
 
-				createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
-				updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
-
-				userID:      user.uid,
-				displayName: user.displayName,
-				data:        note.data,
-				byteCount:   note.data.length,
-				wordCount:   note.data.split(/\s+/).length,
-			})
-				.catch(error => (
-					console.log(error)
+					displayNameEmail: `${user.displayName} ${user.email}`,
+				}
+				dbRef.set($note).then(() => {
+					setNote($note)
+				}).catch(error => (
+					console.error(error)
 				))
-		}, 1e3)
-		return () => {
-			clearTimeout(id)
-		}
-	}, [user, note])
+			}, 1e3)
+			return () => {
+				clearTimeout(id)
+			}
+		}, [user, note]),
+		[note],
+	)
 
 	// Update note:
 	React.useEffect(() => {
@@ -50,27 +57,30 @@ const Note = props => {
 		}
 		const id = setTimeout(() => {
 			const db = firebase.firestore()
-			const { id } = note
-			db.collection("notes").doc(id).set({
-				id,
+			const dbRef = db.collection("notes").doc(note.id)
+			const $note = {
+				...noteRef.current,
+				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+				data:      noteRef.current.data,
+				byteCount: noteRef.current.data.length,
+				wordCount: noteRef.current.data.split(/\s+/).length,
 
-				updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
-
-				data:        note.data,
-				byteCount:   note.data.length,
-				wordCount:   note.data.split(/\s+/).length,
-			}, { merge: true })
-				.catch(error => (
-					console.log(error)
-				))
+				displayNameEmail: `${user.displayName} ${user.email}`,
+			}
+			dbRef.set($note, { merge: true }).then(() => {
+				setNote($note)
+			}).catch(error => (
+				console.error(error)
+			))
 		}, 1e3)
 		return () => {
 			clearTimeout(id)
 		}
-	}, [note])
+	}, [user, note])
 
 	return (
 		<textarea
+			id={note.id}
 			className="p-6 w-full h-full"
 			value={note.data}
 			onChange={e => setNote({ ...note, data: e.target.value })}
@@ -79,46 +89,48 @@ const Note = props => {
 }
 
 const UserNote = props => {
-	const params = Router.useParams()
-	const user = User.useUser()
+	const { noteID } = Router.useParams()
+
 	const [response, setResponse] = React.useState({
 		loading: true,
-		note: {
-			id: "",
-			data: "",
-		},
+		note: { id: "", data: "" },
 	})
 
+	// Load note:
+	//
+	// TODO: Refactor to useLoadNote(...)
 	React.useEffect(
 		React.useCallback(() => {
-			if (!params.noteID) {
+			// New note:
+			if (!noteID) {
 				setResponse({
 					...response,
 					loading: false,
 				})
 				return
 			}
+			// Loaded note:
 			const db = firebase.firestore()
-			db.collection("notes")
-				.doc(params.noteID)
-				.get()
-				.then(doc => {
-					if (!doc.exists) {
-						// No-op
-						return // TODO: 404?
-					}
-					const note = doc.data()
-					setResponse({
-						loading: false,
-						note,
-					})
-				})
-		}, [params, response]),
-		[params],
+			const dbRef = db.collection("notes").doc(noteID)
+			dbRef.get().then(doc => {
+				// No such note:
+				//
+				// TODO: 404?
+				if (!doc.exists) {
+					// No-op
+					return
+				}
+				const note = doc.data()
+				setResponse({ loading: false, note })
+			}).catch(error => {
+				console.error(error)
+			})
+		}, [noteID, response]),
+		[noteID],
 	)
 
 	if (response.loading) {
-		return "loading" // TODO
+		return "LOADING" // FIXME
 	}
 	return <Note note={response.note} />
 }
