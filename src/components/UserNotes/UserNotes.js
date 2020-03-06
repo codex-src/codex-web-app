@@ -44,9 +44,10 @@ const UserNotes = props => {
 	const [response, setResponse] = React.useState({ loading: true, notes: [] })
 
 	React.useEffect(() => {
+		setResponse({ ...response, loading: true })
 		const db = firebase.firestore()
 		const dbRef = db.collection("notes")
-		dbRef.where("userID", "==", user.uid).orderBy("updatedAt", "desc").limit(50).get().then(snap => {
+		dbRef.where("userID", "==", user.uid).orderBy("updatedAt", !state.sortAscending ? "desc" : "asc").limit(50).get().then(snap => {
 			const notes = []
 			snap.forEach(doc => {
 				notes.push(doc.data())
@@ -55,7 +56,7 @@ const UserNotes = props => {
 		}).catch(error => (
 			console.error(error)
 		))
-	}, [user])
+	}, [user, state.sortAscending])
 
 	return (
 		<NavContainer>
