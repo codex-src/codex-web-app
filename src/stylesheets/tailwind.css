@@ -20,6 +20,13 @@
 .-text-px { font-size: 0.9375rem; }
 .text-px  { font-size: 1.0625rem; }
 
+/* .bg-transparent-white { */
+/* 	background-image: linear-gradient(transparent 90%, #ffffff); */
+/* } */
+/* .hover\:bg-transparent-gray-100:hover { */
+/* 	background-image: linear-gradient(transparent 90%, #f7fafc); */
+/* } */
+
 .trans-75   { @apply transition duration-75   ease-in-out; }
 .trans-100  { @apply transition duration-100  ease-in-out; }
 .trans-150  { @apply transition duration-150  ease-in-out; }

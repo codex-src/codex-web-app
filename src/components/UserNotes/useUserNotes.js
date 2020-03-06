@@ -34,9 +34,9 @@ const reducer = state => ({
 	toggleSortDirection() {
 		state.sortAscending = !state.sortAscending
 	},
-	// toggleScrollEnabled() {
-	// 	state.scrollEnabled = !state.scrollEnabled
-	// },
+	toggleScrollEnabled() {
+		// state.scrollEnabled = !state.scrollEnabled
+	},
 })
 
 function useUserNotes() {

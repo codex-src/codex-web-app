@@ -43,25 +43,29 @@ const UserNotes = props => {
 	const [state, dispatch] = useUserNotes()
 	const [response, setResponse] = React.useState({ loading: true, notes: [] })
 
-	React.useEffect(() => {
-		setResponse({ ...response, loading: true })
-		const db = firebase.firestore()
-		const dbRef = db.collection("notes")
-		dbRef.where("userID", "==", user.uid).orderBy("updatedAt", !state.sortAscending ? "desc" : "asc").limit(50).get().then(snap => {
-			const notes = []
-			snap.forEach(doc => {
-				notes.push(doc.data())
-			})
-			setResponse({ loading: false, notes })
-		}).catch(error => (
-			console.error(error)
-		))
-	}, [user, state.sortAscending])
+	React.useEffect(
+		React.useCallback(() => {
+			setResponse({ ...response, loading: true })
+			const db = firebase.firestore()
+			const dbRef = db.collection("notes")
+			dbRef.where("userID", "==", user.uid).orderBy("updatedAt", !state.sortAscending ? "desc" : "asc").limit(50).get().then(snap => {
+				const notes = []
+				snap.forEach(doc => {
+					notes.push(doc.data())
+				})
+				setResponse({ loading: false, notes })
+			}).catch(error => (
+				console.error(error)
+			))
+		}, [user, state, response]),
+		[state.sortAscending],
+	)
 
 	return (
 		<NavContainer>
-			<div className="flex flex-row justify-between">
-				<div />
+
+			{/* Top */}
+			<div className="flex flex-row justify-end">
 				<div className="-mx-1 flex flex-row">
 					<ButtonIcon
 						className="hidden lg:block"
@@ -82,10 +86,19 @@ const UserNotes = props => {
 						onPointerDown={e => e.preventDefault()}
 						onClick={dispatch.toggleSortDirection}
 					/>
+					{/* <ButtonIcon */}
+					{/* 	className={state.scrollEnabled && "bg-blue-100"} */}
+					{/* 	icon={Hero.SwitchVerticalOutlineMd} */}
+					{/* 	onPointerDown={e => e.preventDefault()} */}
+					{/* 	onClick={dispatch.toggleScrollEnabled} */}
+					{/* /> */}
 				</div>
 			</div>
+
+			{/* Bottom */}
 			<div className="h-6" />
 			<div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${state.itemsShown} gap-6`}>
+				{/* Loading */}
 				{response.loading ? (
 					[...new Array(3)].map((_, index) => (
 						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-xl trans-150">
@@ -94,6 +107,7 @@ const UserNotes = props => {
 					))
 				) : (
 					<React.Fragment>
+						{/* New note */}
 						<Link className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NEW_NOTE}>
 							<div className="absolute inset-0 flex flex-row justify-center items-center">
 								<div className="-mt-3 p-2 hover:bg-indigo-100 rounded-full focus:bg-blue-100 transform scale-150 trans-300">
@@ -102,8 +116,14 @@ const UserNotes = props => {
 							</div>
 						</Link>
 						{response.notes.map((each, index) => (
-							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none shadow-hero focus:shadow-outline overflow-y-hidden trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
-								<div className="absolute inset-0">
+							// Note
+							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
+								<div className="absolute inset-0 flex flex-row justify-end items-start z-10">
+									<button className="-m-3 p-1 text-white bg-red-500 rounded-full">
+										<Hero.XSolidSm className="w-4 h-4" />
+									</button>
+								</div>
+								<div className="absolute inset-0 overflow-y-hidden">
 									<EditorInstance modifier={state.itemsShownModifier}>
 										{each.data}
 									</EditorInstance>
@@ -113,8 +133,11 @@ const UserNotes = props => {
 					</React.Fragment>
 				)}
 			</div>
+
 		</NavContainer>
 	)
 }
+
+// document.body.classList.add("debug-css")
 
 export default UserNotes
