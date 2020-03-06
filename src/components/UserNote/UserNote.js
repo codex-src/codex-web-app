@@ -36,9 +36,8 @@ const Note = props => {
 
 					displayNameEmail: `${user.displayName} ${user.email}`,
 				}
-				dbRef.set($note).then(() => {
-					setNote($note)
-				}).catch(error => (
+				setNote($note)
+				dbRef.set($note).catch(error => (
 					console.error(error)
 				))
 			}, 1e3)
@@ -67,9 +66,8 @@ const Note = props => {
 
 				displayNameEmail: `${user.displayName} ${user.email}`,
 			}
-			dbRef.set($note, { merge: true }).then(() => {
-				setNote($note)
-			}).catch(error => (
+			setNote($note)
+			dbRef.set($note, { merge: true }).catch(error => (
 				console.error(error)
 			))
 		}, 1e3)
@@ -80,7 +78,6 @@ const Note = props => {
 
 	return (
 		<textarea
-			id={note.id}
 			className="p-6 w-full h-full"
 			value={note.data}
 			onChange={e => setNote({ ...note, data: e.target.value })}

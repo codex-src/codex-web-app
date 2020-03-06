@@ -16,11 +16,24 @@ import "firebase/storage"
 		appId:             process.env.REACT_APP_FIREBASE_APP_ID,
 		measurementId:     process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 	})
-	if (process.env.NODE_ENV !== "production") {
-		// No-op
-		return
+	// https://firebase.google.com/docs/firestore/manage-data/enable-offline
+	firebase.firestore().enablePersistence().catch(error => {
+		if (err.code == "failed-precondition") {
+			// Multiple tabs open, persistence can only be enabled
+			// in one tab at a a time.
+			// ...
+			// TODO
+		} else if (err.code == "unimplemented") {
+			// The current browser does not support all of the
+			// features required to enable persistence
+			// ...
+			// TODO
+		}
+		console.error(error)
+	})
+	if (process.env.NODE_ENV === "production") {
+		firebase.analytics()
 	}
-	firebase.analytics()
 })()
 
 export default firebase
