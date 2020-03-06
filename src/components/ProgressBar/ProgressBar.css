@@ -7,6 +7,6 @@
 .progress-bar-active {
 	width:      100%;
 	background: hsl(var(--blue-a400));
-	/*opacity:    0;*/
+	opacity:    0;
 	transition: width 1e3ms cubic-bezier(1, 0, 0, 1), opacity 2e3ms cubic-bezier(1, 0, 0, 1);
 }

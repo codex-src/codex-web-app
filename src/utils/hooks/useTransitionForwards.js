@@ -2,7 +2,7 @@ import React from "react"
 
 const MICRO_DELAY = 25
 
-function useTransition({ ref, enterClass, activeClass, delayMs, durationMs }) {
+function useTransitionForwards({ ref, enterClass, activeClass, delayMs, durationMs }) {
 	// Once:
 	React.useEffect(() => {
 		if (!ref.current) {
@@ -34,4 +34,4 @@ function useTransition({ ref, enterClass, activeClass, delayMs, durationMs }) {
 	}, [ref, enterClass, activeClass, delayMs, durationMs])
 }
 
-export default useTransition
+export default useTransitionForwards

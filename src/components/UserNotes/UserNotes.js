@@ -1,5 +1,6 @@
 import * as constants from "__constants"
 import * as Hero from "utils/Heroicons"
+import * as ProgressBar from "components/ProgressBar"
 import * as User from "components/User"
 import Editor from "components/Editor"
 import firebase from "__firebase"
@@ -40,6 +41,7 @@ const ButtonIcon = ({ className, icon: Icon, ...props }) => (
 
 const UserNotes = props => {
 	const user = User.useUser()
+	const renderProgressBar = ProgressBar.useProgressBar()
 	const [state, dispatch] = useUserNotes()
 	const [response, setResponse] = React.useState({ loading: true, notes: [] })
 
@@ -60,6 +62,24 @@ const UserNotes = props => {
 		}, [user, state, response]),
 		[state.sortAscending],
 	)
+
+	const handleClickDelete = (e, noteID) => {
+		e.preventDefault(e)
+		const ok = window.confirm("Delete this note immediately? This cannot be undone.")
+		if (!ok) {
+			// No-op
+			return
+		}
+		renderProgressBar()
+		const db = firebase.firestore()
+		const dbRef = db.collection("notes").doc(noteID)
+		setResponse({ ...response, notes: [...response.notes.filter(each => each.id !== noteID)] })
+		dbRef.delete().then(() => {
+			// TODO
+		}).catch(error => {
+			console.error(error)
+		})
+	}
 
 	return (
 		<NavContainer>
@@ -119,7 +139,7 @@ const UserNotes = props => {
 							// Note
 							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
 								<div className="absolute inset-0 flex flex-row justify-end items-start z-10">
-									<button className="-m-3 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 trans-300">
+									<button className="-m-3 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 trans-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.id)}>
 										<Hero.TrashSolidSm className="w-4 h-4" />
 									</button>
 								</div>
