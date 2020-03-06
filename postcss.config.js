@@ -4,6 +4,7 @@ const purgecss = require("@fullhuman/postcss-purgecss")({
 		"./src/**/*.js",
 	],
 	defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
+	whitelistPatterns: [/^([a-z]+:)?grid-cols-\d+$/],
 })
 
 module.exports = {
