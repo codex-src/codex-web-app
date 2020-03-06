@@ -7,6 +7,9 @@ import firebase from "__firebase"
 import Link from "components/Link"
 import NavContainer from "components/NavContainer"
 import React from "react"
+import useClickAway from "utils/hooks/useClickAway"
+import useEscape from "utils/hooks/useEscape"
+import useFixed from "utils/hooks/useFixed"
 import useUserNotes from "./useUserNotes"
 
 import {
@@ -45,6 +48,11 @@ const UserNotes = props => {
 	const [state, dispatch] = useUserNotes()
 	const [response, setResponse] = React.useState({ loading: true, notes: [] })
 
+	const ref = React.useRef()
+	const [open, setOpen] = useFixed()
+	useEscape(open, setOpen)
+	useClickAway(ref, open, setOpen)
+
 	React.useEffect(
 		React.useCallback(() => {
 			setResponse({ ...response, loading: true })
@@ -65,24 +73,57 @@ const UserNotes = props => {
 
 	const handleClickDelete = (e, noteID) => {
 		e.preventDefault(e)
-		const ok = window.confirm("Delete this note immediately? This cannot be undone.")
-		if (!ok) {
-			// No-op
-			return
-		}
-		renderProgressBar()
-		const db = firebase.firestore()
-		const dbRef = db.collection("notes").doc(noteID)
-		setResponse({ ...response, notes: [...response.notes.filter(each => each.id !== noteID)] })
-		dbRef.delete().then(() => {
-			// TODO
-		}).catch(error => {
-			console.error(error)
-		})
+		// const ok = window.confirm("Delete this note immediately? This cannot be undone.")
+		// if (!ok) {
+		// 	// No-op
+		// 	return
+		// }
+		setOpen(true)
+		// renderProgressBar()
+		// const db = firebase.firestore()
+		// const dbRef = db.collection("notes").doc(noteID)
+		// setResponse({ ...response, notes: [...response.notes.filter(each => each.id !== noteID)] })
+		// dbRef.delete().then(() => {
+		// 	setOpen(false)
+		// }).catch(error => {
+		// 	setOpen(false)
+		// 	console.error(error)
+		// })
 	}
 
 	return (
 		<NavContainer>
+
+			{true && (
+				<div className="fixed inset-0 flex flex-row justify-center items-center z-50">
+					<div ref={ref} className="mx-6 -mt-16 p-6 !flex !flex-row w-full max-w-sm bg-white rounded-lg shadow-hero-lg">
+						<div>
+							<h1 className="font-bold text-xl">
+								Delete this note?
+							</h1>
+							<div className="h-6" />
+							<p className="text-px text-gray-700">
+								Are you sure you want to delete this note? This action cannot be undone.
+							</p>
+							<div className="h-6" />
+							<div className="flex flex-row justify-end">
+								<button className="px-6 py-2 text-gray-800 bg-white hover:bg-gray-100 rounded-md focus:outline-none shadow-hero focus:shadow-outline trans-300">
+									<p className="font-semibold tracking-px">
+										Cancel
+									</p>
+								</button>
+								<div className="w-2" />
+								{/* NOTE: Do not use shadow-hero */}
+								<button className="px-6 py-2 text-white bg-red-600 hover:bg-red-600 rounded-md focus:outline-none shadow focus:shadow-outline trans-300">
+									<p className="font-semibold tracking-px">
+										Delete
+									</p>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* Top */}
 			<div className="flex flex-row justify-end">

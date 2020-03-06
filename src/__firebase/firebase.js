@@ -31,6 +31,7 @@ import "firebase/storage"
 		}
 		console.error(error)
 	})
+	firebase.firestore().disableNetwork() // DELETEME
 	if (process.env.NODE_ENV === "production") {
 		firebase.analytics()
 	}

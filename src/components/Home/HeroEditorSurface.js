@@ -1,22 +1,23 @@
 import HeroEditor from "./HeroEditor"
 import React from "react"
-import useTransitionForwards from "utils/hooks/useTransitionForwards"
 
 import "./HeroEditorSurface.css"
 
 const enterClass  = "hero-editor-enter"  // eslint-disable-line no-multi-spaces
 const activeClass = "hero-editor-active" // eslint-disable-line no-multi-spaces
-const delayMs     = 1e3                  // eslint-disable-line no-multi-spaces
 
 const HeroEditorSurface = props => {
 	const ref = React.useRef()
 
-	useTransitionForwards({
-		ref,
-		enterClass,
-		activeClass,
-		delayMs,
-	})
+	React.useLayoutEffect(() => {
+		ref.current.classList.add(enterClass)
+		const id = setTimeout(() => {
+			ref.current.classList.add(activeClass)
+		}, 1e3)
+		return () => {
+			clearTimeout(id)
+		}
+	}, [])
 
 	return (
 		<div ref={ref} className="pb-4/5 relative">
