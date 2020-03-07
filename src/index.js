@@ -5,7 +5,7 @@ import ReactDOM from "react-dom"
 
 import "debug.css"
 import "material-colors.css"
-import "stylesheets/reset-input.css"
+import "reset-input.css"
 import "stylesheets/tailwind.generated.css"
 
 // https://github.com/codex-src/codex-playwright
