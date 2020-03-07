@@ -30,7 +30,7 @@ export const DropDownItemWarn = props => (
 )
 
 export const DropDown = React.forwardRef((props, ref) => (
-	<div ref={ref} className="-mt-3 py-2 absolute right-0 top-full w-56 bg-white rounded-lg shadow-hero-lg" {...props} />
+	<div ref={ref} className="-m-3 py-2 absolute right-0 top-full w-56 bg-white rounded-lg shadow-hero-lg" {...props} />
 ))
 
 export const DropDownMenuButton = props => (

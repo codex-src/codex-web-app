@@ -14,8 +14,6 @@ import {
 	ITEMS_SHOWN_MIN,
 } from "./__globals"
 
-import "./Modal.css"
-
 const EditorInstance = props => {
 	const [state, dispatch] = Editor.useEditor(props.children, {
 		// baseFontSize: 16 * props.modifier,

@@ -9,12 +9,6 @@ module.exports = {
 				"2xl":   "2rem",
 			},
 			boxShadow: {
-				"px": `
-					0 0 0 1px rgba(0, 0, 0, 0.05)
-				`,
-				"2px": `
-					0 0 0 2px rgba(0, 0, 0, 0.05)
-				`,
 				"hero-sm": `
 					0 0 0 1px rgba(0, 0, 0, 0.05),
 					0 1px 2px 0 rgba(0, 0, 0, 0.05)
@@ -45,22 +39,7 @@ module.exports = {
 					...defaultTheme.colors.gray,
 					50: "#fbfdfe",
 				},
-				// https://material.io/design/color/the-color-system.html#tools-for-picking-colors
 				// https://gist.github.com/codex-zaydek/d3d1803f981fc8ed75fc0e4f481f6ecc
-				"md-red-50":    { default: "#ffebee" },
-				"md-red-100":   { default: "#ffcdd2" },
-				"md-red-200":   { default: "#ef9a9a" },
-				"md-red-300":   { default: "#e57373" },
-				"md-red-400":   { default: "#ef5350" },
-				"md-red-500":   { default: "#f44336" },
-				"md-red-600":   { default: "#e53935" },
-				"md-red-700":   { default: "#d32f2f" },
-				"md-red-800":   { default: "#c62828" },
-				"md-red-900":   { default: "#b71c1c" },
-				"md-red-a100":  { default: "#ff8a80" },
-				"md-red-a200":  { default: "#ff5252" },
-				"md-red-a400":  { default: "#ff1744" },
-				"md-red-a700":  { default: "#d50000" },
 				"md-blue-50":   { default: "#e3f2fd" },
 				"md-blue-100":  { default: "#bbdefb" },
 				"md-blue-200":  { default: "#90caf9" },
@@ -85,16 +64,15 @@ module.exports = {
 				"md-gray-700":  { default: "#616161" },
 				"md-gray-800":  { default: "#424242" },
 				"md-gray-900":  { default: "#212121" },
+
+				"twitter-blue": "#1da1f2",
 			},
 			fontFamily: {
+				...defaultTheme.fontFamily,
 				"dm-sans":           "'DM Sans', sans-serif",
 				"ia-writer-mono":    "'iA Writer Mono var', monospace",
 				"ia-writer-duo":     "'iA Writer Duo var', monospace",
 				"ia-writer-quattro": "'iA Writer Quattro var', sans-serif",
-			},
-			fontSize: {
-				"sm-md": "0.9375rem",
-				"md-lg": "1.0625rem",
 			},
 			inset: {
 				"1/2":  "50%",
@@ -104,20 +82,8 @@ module.exports = {
 				"-px": "-0.0125em",
 				"px":  "0.0125em",
 			},
-			opacity: {
-				 5: "0.05",
-				10: "0.10",
-				15: "0.15",
-				20: "0.20",
-				25: "0.25",
-				75: "0.75",
-				80: "0.80",
-				85: "0.85",
-				90: "0.90",
-				95: "0.95",
-			},
+			// https://youtube.com/watch?v=jl_tdhBxc_Y
 			spacing: {
-				// https://youtube.com/watch?v=jl_tdhBxc_Y
 				"2/1":   "200%",
 				"16/9":  "177.7778%",
 				"16/10": "160%",
@@ -132,7 +98,6 @@ module.exports = {
 				"9/16":  "56.25%",
 				"1/2":   "50%",
 			},
-			// https://feathericons.com
 			strokeWidth: {
 				hairline:  1,    // 100
 				thin:      1.33, // 200
@@ -145,50 +110,94 @@ module.exports = {
 				black:     4,    // 900
 			},
 		},
+		// https://tailwindcss.com/docs/breakpoints
 		screens: {
-			xs: `${512 + 24 + 24}px`,
+			xs: `${512 + (6 * 4) * 2}px`,
 			// => @media (min+width: 560px) { ... }
 
-			sm: `${640 + 24 + 24}px`,
+			sm: `${640 + (6 * 4) * 2}px`,
 			// => @media (min+width: 688px) { ... }
 
-			md: `${768 + 24 + 24}px`,
+			md: `${768 + (6 * 4) * 2}px`,
 			// => @media (min+width: 816px) { ... }
 
-			lg: `${1024 + 24 + 24}px`,
+			lg: `${1024 + (6 * 4) * 2}px`,
 			// => @media (min+width: 1072px) { ... }
 
-			xl: `${1280 + 24 + 24}px`,
+			xl: `${1280 + (6 * 4) * 2}px`,
 			// => @media (min-width: 1328px) { ... }
 		},
 	},
+	// https://tailwindcss.com/docs/configuring-variants/#default-variants-reference
 	variants: {
-		// Generally, we recommend the following order for the
-		// built-in variants, although you are free to use
-		// whatever order makes the most sense for your own
-		// project:
-		//
-		// [
-		//   "responsive",
-		//   "group-hover",
-		//   "focus-within",
-		//   "first",
-		//   "last",
-		//   "odd",
-		//   "even",
-		//   "hover",
-		//   "focus",
-		//   "active",
-		//   "visited",
-		//   "disabled",
-		// ],
-		//
-		// https://tailwindcss.com/docs/configuring-variants
 		textAlign: ["responsive"],
 
-		textColor:       ["responsive", "hover", "focus", "active", "disabled"],
-		backgroundColor: ["responsive", "hover", "focus", "active", "disabled"],
-		boxShadow:       ["responsive", "hover", "focus", "active", "disabled"],
+		textColor: [
+			"responsive",
+			"dark",
+			"hover",
+			"hover:dark",
+			"focus",
+			"focus:dark",
+			"active",
+			"active:dark",
+			"disabled",
+			"disabled:dark",
+		],
+		backgroundColor: [
+			"responsive",
+			"dark",
+			"hover",
+			"hover:dark",
+			"focus",
+			"focus:dark",
+			"active",
+			"active:dark",
+			"disabled",
+			"disabled:dark",
+		],
+		boxShadow: [
+			"responsive",
+			"dark",
+			"hover",
+			"hover:dark",
+			"focus",
+			"focus:dark",
+			"active",
+			"active:dark",
+			"disabled",
+			"disabled:dark",
+		],
 	},
-	plugins: [],
+	plugins: [
+		((flag = "dark-mode", prefix = "dark") => {
+			return ({ addVariant, e }) => {
+				addVariant(prefix, ({ modifySelectors }) => {
+					modifySelectors(({ className }) => {
+						return `.${flag} .${e(`${prefix}:${className}`)}`
+					})
+				})
+				addVariant(`hover:${prefix}`, ({ modifySelectors }) => {
+					modifySelectors(({ className }) => {
+						return `.${flag} .${e(`hover:${prefix}:${className}`)}:hover`
+					})
+				})
+				addVariant(`focus:${prefix}`, ({ modifySelectors }) => {
+					modifySelectors(({ className }) => {
+						return `.${flag} .${e(`focus:${prefix}:${className}`)}:focus`
+					})
+				})
+				addVariant(`active:${prefix}`, ({ modifySelectors }) => {
+					modifySelectors(({ className }) => {
+						return `.${flag} .${e(`active:${prefix}:${className}`)}:active`
+					})
+				})
+				addVariant(`disabled:${prefix}`, ({ modifySelectors }) => {
+					modifySelectors(({ className }) => {
+						return `.${flag} .${e(`disabled:${prefix}:${className}`)}:disabled`
+					})
+				})
+			}
+		})(),
+	],
 }
