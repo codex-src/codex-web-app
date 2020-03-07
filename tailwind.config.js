@@ -69,10 +69,11 @@ module.exports = {
 			},
 			fontFamily: {
 				...defaultTheme.fontFamily,
-				"dm-sans":           "'DM Sans', sans-serif",
-				"ia-writer-mono":    "'iA Writer Mono var', monospace",
-				"ia-writer-duo":     "'iA Writer Duo var', monospace",
-				"ia-writer-quattro": "'iA Writer Quattro var', sans-serif",
+				"dm-sans":           ["'DM Sans'", "sans-serif"],
+				"ia-writer-duo":     ["'iA Writer Duo var'", "monospace"],
+				"ia-writer-mono":    ["'iA Writer Mono var'", "monospace"],
+				"ia-writer-quattro": ["'iA Writer Quattro var'", "sans-serif"],
+				"inter":             ["Inter", "sans-serif"],
 			},
 			inset: {
 				"1/2":  "50%",
