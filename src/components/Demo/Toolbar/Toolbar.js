@@ -1,10 +1,10 @@
+// import * as constants from "__constants"
 // import Link from "utils/RouterLink"
-import * as constants from "__constants"
+// import { ReactComponent as GitHubLogo } from "./github.svg"
 import * as Feather from "react-feather"
 import Button from "./Button"
 import React from "react"
 import Tooltip from "./Tooltip"
-import { ReactComponent as GitHubLogo } from "./github.svg"
 
 // {/* Cut, copy, and paste: */}
 // <div className="mx-2 hidden md:flex md:flex-row">

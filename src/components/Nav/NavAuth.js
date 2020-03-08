@@ -31,7 +31,7 @@ export const NavAuth = props => {
 
 			{/* Drop down menu */}
 			<Base.DropDownMenuButton onClick={e => setDropDown(!dropDown)}>
-				<img className="w-8 h-8 bg-gray-200 rounded-full" src={user.photoURL || constants.IMG_TRANS} />
+				<img className="w-8 h-8 bg-gray-200 rounded-full" src={user.photoURL || constants.IMG_TRANS} alt="TODO" />
 			</Base.DropDownMenuButton>
 
 			{/* Drop down */}
