@@ -1,10 +1,23 @@
-import * as Title from "utils/Title"
 import React from "react"
 
+const LayoutEffect = props => {
+	React.useLayoutEffect(() => {
+		document.title = props.title
+	}, [props.title])
+	return props.children
+}
+
+const Effect = props => {
+	React.useEffect(() => {
+		document.title = props.title
+	}, [props.title])
+	return props.children
+}
+
 const CodexTitle = ({ title, ...props }) => (
-	<Title.Effect title={!title ? "Codex" : `${title} – Codex`}>
+	<Effect title={!title ? "Codex" : `${title} – Codex`}>
 		{props.children}
-	</Title.Effect>
+	</Effect>
 )
 
 export default CodexTitle

@@ -9,6 +9,10 @@ import React from "react"
 import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
 
+import * as Hero from "react-heroicons"
+
+console.log(Hero)
+
 const App = props => (
 	<Router.BrowserRouter>
 		<User.Provider>

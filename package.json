@@ -11,6 +11,7 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-feather": "^2.0.3",
+    "react-heroicons": "https://github.com/codex-src/react-heroicons",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "reset-input.css": "https://github.com/codex-src/reset-input.css",

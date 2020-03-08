@@ -1,6 +1,6 @@
 import React from "react"
 import ReactDOMServer from "react-dom/server"
-import renderDOM from "../renderDOM"
+import renderDOM from "../index"
 
 // Parses a React component to markup and then a DOM node.
 function ParseMarkupDOM(Component) {

@@ -1,5 +1,5 @@
 import * as constants from "__constants"
-import * as Hero from "utils/Heroicons"
+import * as Hero from "react-heroicons"
 import * as ProgressBar from "components/ProgressBar"
 import * as User from "components/User"
 import Editor from "components/Editor"

@@ -1,7 +1,7 @@
+// import Link from "utils/RouterLink"
 import * as constants from "__constants"
 import * as Feather from "react-feather"
 import Button from "./Button"
-import Link from "utils/RouterLink"
 import React from "react"
 import Tooltip from "./Tooltip"
 import { ReactComponent as GitHubLogo } from "./github.svg"
@@ -98,17 +98,17 @@ const Toolbar = ({ state, dispatch, ...props }) => (
 					onClick={dispatch.toggleReadme}
 					data-e2e="editor-toolbar-btn-7"
 				/>
-				<Link
-					to={constants.URL_REPO}
-					target="_blank"
-					data-e2e="editor-toolbar-btn-8"
-					children={
-						<ButtonIcon
-							tooltip="Open GitHub"
-							svg={GitHubLogo}
-						/>
-					}
-				/>
+				{/* <Link */}
+				{/* 	to={constants.URL_REPO} */}
+				{/* 	target="_blank" */}
+				{/* 	data-e2e="editor-toolbar-btn-8" */}
+				{/* 	children={ */}
+				{/* 		<ButtonIcon */}
+				{/* 			tooltip="Open GitHub" */}
+				{/* 			svg={GitHubLogo} */}
+				{/* 		/> */}
+				{/* 	} */}
+				{/* /> */}
 			</div>
 		</div>
 	</div>
