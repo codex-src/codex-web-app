@@ -1,6 +1,7 @@
+import * as ProgressBar from "components/ProgressBar"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
-import Editor from "components/Editor" // FIXME
+import Editor from "components/Editor" // FIXME: Exports are wrong
 import firebase from "__firebase"
 import Nav from "components/Nav"
 import React from "react"
@@ -69,6 +70,7 @@ import React from "react"
 
 const Note = props => {
 	const user = User.useUser()
+	const renderProgressBar = ProgressBar.useProgressBar()
 
 	const [meta, setMeta] = React.useState(props.meta) // Copy of meta -- do not rerender parent component
 	const [state, dispatch] = Editor.useEditor(props.children)
@@ -103,9 +105,10 @@ const Note = props => {
 					// NOTE: displayNameEmail is denormalized
 					displayNameEmail: `${user.displayName} ${user.email}`,
 				}
+				renderProgressBar()
 				dbRef.set(note).then(() => {
+					window.history.replaceState({}, "", `/n/${note.id}`)
 					setMeta({ ...meta, new: false, exists: true })
-					window.history.pushState({}, "", `/n/${note.id}`)
 				}).catch(error => {
 					console.error(error)
 				})
@@ -113,7 +116,7 @@ const Note = props => {
 			return () => {
 				clearTimeout(id)
 			}
-		}, [user, meta, state]),
+		}, [user, renderProgressBar, meta]),
 		[state], // Update on state
 	)
 
