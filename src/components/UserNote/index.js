@@ -142,8 +142,6 @@ const Note = props => {
 					data:      stateRef.current.data,
 					byteCount: stateRef.current.data.length,
 					wordCount: stateRef.current.data.split(/\s+/).length,
-
-					displayNameEmail: `${user.displayName} ${user.email}`,
 				}
 				renderProgressBar()
 				dbRef.set(note, { merge: true }).catch(error => {

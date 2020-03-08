@@ -107,12 +107,12 @@ const UserNotes = props => {
 						onPointerDown={e => e.preventDefault()}
 						onClick={dispatch.toggleSortDirection}
 					/>
-					{/* <ButtonIcon */}
-					{/* 	className={state.scrollEnabled && "bg-blue-100"} */}
-					{/* 	icon={Hero.SwitchVerticalOutlineMd} */}
-					{/* 	onPointerDown={e => e.preventDefault()} */}
-					{/* 	onClick={dispatch.toggleScrollEnabled} */}
-					{/* /> */}
+					<ButtonIcon
+						className={state.scrollEnabled && "bg-blue-100"}
+						icon={Hero.SwitchVerticalOutlineMd}
+						onPointerDown={e => e.preventDefault()}
+						onClick={dispatch.toggleScrollEnabled}
+					/>
 				</div>
 			</div>
 
@@ -139,12 +139,12 @@ const UserNotes = props => {
 						{res.notes.map((each, index) => (
 							// Note
 							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
-								<div className="absolute inset-0 flex flex-row justify-end items-start z-10">
+								<div className="absolute right-0 top-0 flex flex-row justify-end items-start z-10">
 									<button className="-m-3 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 trans-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.id)}>
 										<Hero.TrashSolidSm className="w-4 h-4" />
 									</button>
 								</div>
-								<div className="absolute inset-0 overflow-y-hidden">
+								<div className={!state.scrollEnabled ? "absolute inset-0 overflow-y-hidden select-none" : "absolute inset-0 overflow-y-scroll scrolling-touch select-none"}>
 									<EditorInstance modifier={state.itemsShownModifier}>
 										{each.data}
 									</EditorInstance>
