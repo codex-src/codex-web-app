@@ -5,6 +5,7 @@ import "./HeroEditorSurface.css"
 
 const enterClass  = "hero-editor-enter"  // eslint-disable-line no-multi-spaces
 const activeClass = "hero-editor-active" // eslint-disable-line no-multi-spaces
+const delayMs     = 1e3                  // eslint-disable-line no-multi-spaces
 
 const HeroEditorSurface = props => {
 	const ref = React.useRef()
@@ -13,7 +14,7 @@ const HeroEditorSurface = props => {
 		ref.current.classList.add(enterClass)
 		const id = setTimeout(() => {
 			ref.current.classList.add(activeClass)
-		}, 1e3)
+		}, delayMs)
 		return () => {
 			clearTimeout(id)
 		}

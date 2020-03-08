@@ -1,9 +1,10 @@
 import * as Router from "react-router-dom"
 import * as User from "components/User"
 import firebase from "__firebase"
+import NavContainer from "components/NavContainer"
 import React from "react"
 
-const Note = props => {
+const UserNote = props => {
 	const user = User.useUser()
 	const [note, setNote] = React.useState(props.note)
 
@@ -85,7 +86,7 @@ const Note = props => {
 	)
 }
 
-const UserNote = props => {
+const UserNoteLoader = props => {
 	const { noteID } = Router.useParams()
 
 	const [response, setResponse] = React.useState({
@@ -127,9 +128,17 @@ const UserNote = props => {
 	)
 
 	if (response.loading) {
-		return "LOADING" // FIXME
+		return null
 	}
-	return <Note note={response.note} />
+	return React.cloneElement(props.children, { note: response.note })
 }
 
-export default UserNote
+const Component = props => (
+	<NavContainer>
+		<UserNoteLoader>
+			<UserNote />
+		</UserNoteLoader>
+	</NavContainer>
+)
+
+export default Component

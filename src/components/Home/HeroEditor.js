@@ -11,14 +11,7 @@ const HeroEditor = props => {
 		// paddingY: 24,
 		readOnly: true,
 	})
-	return (
-		<Editor.Editor
-			state={state}
-			dispatch={dispatch}
-			paddingX={24}
-			paddingY={24}
-		/>
-	)
+	return <Editor.Editor state={state} dispatch={dispatch} paddingX={24} paddingY={24} />
 }
 
 export default HeroEditor

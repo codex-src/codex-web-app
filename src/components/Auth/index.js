@@ -48,13 +48,13 @@ const Auth = props => {
 		const provider = new firebase.auth.GoogleAuthProvider()
 		signIn(provider)
 	}
-	const handleClickGuest = e => {
-		firebase.auth()
-			.signInAnonymously()
-			.catch(error => {
-				console.warn(error)
-			})
-	}
+	// const handleClickGuest = e => {
+	// 	firebase.auth()
+	// 		.signInAnonymously()
+	// 		.catch(error => {
+	// 			console.warn(error)
+	// 		})
+	// }
 
 	return (
 		<div className="-mt-8 py-40 flex flex-row justify-center items-center min-h-full">
