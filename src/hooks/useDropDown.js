@@ -1,7 +1,7 @@
 import React from "react"
-import useClickAway from "utils/hooks/useClickAway"
-import useEscape from "utils/hooks/useEscape"
-import useTransition from "utils/hooks/useTransition"
+import useClickAway from "./useClickAway"
+import useEscape from "./useEscape"
+import useTransition from "./useTransition"
 
 import "./useDropDown.css"
 
