@@ -1,4 +1,5 @@
 import * as User from "components/User"
+import Context from "./Context"
 import NavAuth from "./NavAuth"
 import NavUnauth from "./NavUnauth"
 import React from "react"
@@ -12,7 +13,12 @@ const Nav = props => {
 	} else {
 		Component = NavAuth
 	}
-	return <Component />
+	const { Provider } = Context
+	return (
+		<Provider value={props}>
+			<Component />
+		</Provider>
+	)
 }
 
 export default Nav

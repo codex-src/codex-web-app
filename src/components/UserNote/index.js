@@ -103,7 +103,7 @@ const Note = props => {
 	//		}
 	//	}, [user, note])
 
-	return <Editor.Editor state={state} dispatch={dispatch} paddingY={160} />
+	return <Editor.Editor state={state} dispatch={dispatch} paddingY={224} />
 }
 
 const NoteLoader = props => {
@@ -144,7 +144,7 @@ const NoteLoader = props => {
 
 const UserNote = props => (
 	<React.Fragment>
-		<Nav />
+		<Nav absolute />
 		{/* NOTE: Defer py-40 to the editor */}
 		<div className="flex flex-row justify-center min-h-full">
 			<div className="px-6 w-full max-w-screen-md">
