@@ -23,52 +23,58 @@ import React from "react"
 // 	)
 // }
 
+// function useCreateUserNote(user, note, setNote) {
+// 	// https://github.com/facebook/react/issues/14010#issuecomment-433788147
+// 	const noteRef = React.useRef(note)
+// 	noteRef.current = note
+//
+// 	const didMount = React.useRef()
+// 	React.useEffect(
+// 		React.useCallback(() => {
+// 			// Ignore mount:
+// 			if (!didMount.current) {
+// 				didMount.current = true
+// 				return
+// 			// Ignore created:
+// 			} else if (note.id) {
+// 				// No-op
+// 				return
+// 			}
+// 			const id = setTimeout(() => {
+// 				const db = firebase.firestore()
+// 				const dbRef = db.collection("notes").doc()
+// 				const $note = {
+// 					id:        dbRef.id,
+// 					userID:    user.uid,
+// 					createdAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
+// 					updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
+// 					data:      noteRef.current.data,
+// 					byteCount: noteRef.current.data.length,
+// 					wordCount: noteRef.current.data.split(/\s+/).length,
+//
+// 					displayNameEmail: `${user.displayName} ${user.email}`,
+// 				}
+// 				setNote($note)
+// 				dbRef.set($note).catch(error => {
+// 					console.error(error)
+// 				})
+// 			}, 1e3)
+// 			return () => {
+// 				clearTimeout(id)
+// 			}
+// 		}, [user, note, setNote]),
+// 		[note], // Update on note, not user
+// 	)
+// }
+
+// function useUpdateNote() {
+//
+// }
+
 const Note = props => {
 	const user = User.useUser()
-	// const [note, setNote] = React.useState(props.note)
-	const [state, dispatch] = Editor.useEditor(props.note.data)
+	const [state, dispatch] = Editor.useEditor(props.children)
 
-	// // https://github.com/facebook/react/issues/14010#issuecomment-433788147
-	// const noteRef = React.useRef(note)
-	// noteRef.current = note
-
-	//	// Create note:
-	//	const didMount = React.useRef()
-	//	React.useEffect(
-	//		React.useCallback(() => {
-	//			if (!didMount.current) {
-	//				didMount.current = true
-	//				return
-	//			} else if (note.id) {
-	//				// No-op
-	//				return
-	//			}
-	//			const id = setTimeout(() => {
-	//				const db = firebase.firestore()
-	//				const dbRef = db.collection("notes").doc()
-	//				const $note = {
-	//					id:        dbRef.id,
-	//					userID:    user.uid,
-	//					createdAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
-	//					updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
-	//					data:      noteRef.current.data,
-	//					byteCount: noteRef.current.data.length,
-	//					wordCount: noteRef.current.data.split(/\s+/).length,
-	//
-	//					displayNameEmail: `${user.displayName} ${user.email}`,
-	//				}
-	//				setNote($note)
-	//				dbRef.set($note).catch(error => (
-	//					console.error(error)
-	//				))
-	//			}, 1e3)
-	//			return () => {
-	//				clearTimeout(id)
-	//			}
-	//		}, [user, note]),
-	//		[note],
-	//	)
-	//
 	//	// Update note:
 	//	React.useEffect(() => {
 	//		if (!note.id) {
@@ -98,60 +104,42 @@ const Note = props => {
 	//	}, [user, note])
 
 	return <Editor.Editor state={state} dispatch={dispatch} paddingY={160} />
-	// <textarea
-	// 	className="p-6 w-full h-full"
-	// 	value={note.data}
-	// 	onChange={e => setNote({ ...note, data: e.target.value })}
-	// />
-	// )
 }
 
 const NoteLoader = props => {
-	const { noteID } = Router.useParams()
+	const params = Router.useParams()
 
-	const [response, setResponse] = React.useState({
-		loading: true,
-		note: { id: "", data: "" },
+	const [res, setRes] = React.useState({
+		new:     params.noteID === "",
+		loading: params.noteID !== "", // Inverse to new
+		exists:  false,
+		data:    "",
 	})
 
-	// Load note:
-	//
-	// TODO: Refactor to useLoadNote(...)
-	React.useEffect(
+	React.useLayoutEffect(
 		React.useCallback(() => {
-			// New note:
-			if (!noteID) {
-				setResponse({
-					...response,
-					loading: false,
-				})
-				return
-			}
-			// Loaded note:
 			const db = firebase.firestore()
-			const dbRef = db.collection("notes").doc(noteID)
+			const dbRef = db.collection("notes").doc(params.noteID)
 			dbRef.get().then(doc => {
-				// No such note:
-				//
-				// TODO: 404?
 				if (!doc.exists) {
-					// No-op
+					setRes({ ...res, loading: false, exists: false })
 					return
 				}
-				const note = doc.data()
-				setResponse({ loading: false, note })
+				const { id, data } = doc.data()
+				setRes({ ...res, loading: false, exists: true, id, data })
 			}).catch(error => {
 				console.error(error)
 			})
-		}, [noteID, response]),
-		[noteID],
+		}, [params, res]),
+		[params], // Update on params, not res
 	)
 
-	if (response.loading) {
-		// TODO
-		return null
+	if (res.loading) {
+		return "Loading"
+	} else if (!res.new && !res.exists) {
+		return "No such note"
 	}
-	return React.cloneElement(props.children, { note: response.note })
+	return React.cloneElement(props.children, { id: res.id, children: res.data })
 }
 
 const UserNote = props => (
@@ -159,7 +147,7 @@ const UserNote = props => (
 		<Nav />
 		{/* NOTE: Defer py-40 to the editor */}
 		<div className="flex flex-row justify-center min-h-full">
-			<div className="px-6 w-full max-w-screen-lg">
+			<div className="px-6 w-full max-w-screen-md">
 				<NoteLoader>
 					<Note />
 				</NoteLoader>
