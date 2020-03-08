@@ -2,6 +2,7 @@ import React from "react"
 
 const MICRO_DELAY = 25
 
+// DEPRECATE
 function useTransition({ ref, state, enterClass, activeClass, durationMs }) {
 	// Once:
 	React.useEffect(() => {
