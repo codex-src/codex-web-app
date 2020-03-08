@@ -2,7 +2,7 @@ import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Editor from "components/Editor" // FIXME
 import firebase from "__firebase"
-import NavContainer from "components/NavContainer"
+import Nav from "components/Nav"
 import React from "react"
 
 // const EditorInstance = props => {
@@ -97,12 +97,12 @@ const Note = props => {
 	//		}
 	//	}, [user, note])
 
-	return <Editor.Editor state={state} dispatch={dispatch} />
-		// <textarea
-		// 	className="p-6 w-full h-full"
-		// 	value={note.data}
-		// 	onChange={e => setNote({ ...note, data: e.target.value })}
-		// />
+	return <Editor.Editor state={state} dispatch={dispatch} paddingY={160} />
+	// <textarea
+	// 	className="p-6 w-full h-full"
+	// 	value={note.data}
+	// 	onChange={e => setNote({ ...note, data: e.target.value })}
+	// />
 	// )
 }
 
@@ -155,11 +155,17 @@ const NoteLoader = props => {
 }
 
 const UserNote = props => (
-	<NavContainer>
-		<NoteLoader>
-			<Note />
-		</NoteLoader>
-	</NavContainer>
+	<React.Fragment>
+		<Nav />
+		{/* NOTE: Defer py-40 to the editor */}
+		<div className="flex flex-row justify-center min-h-full">
+			<div className="px-6 w-full max-w-screen-lg">
+				<NoteLoader>
+					<Note />
+				</NoteLoader>
+			</div>
+		</div>
+	</React.Fragment>
 )
 
 export default UserNote

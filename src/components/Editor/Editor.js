@@ -175,7 +175,7 @@ function Editor({ state, dispatch, ...props }) {
 					className: ["codex-editor", ...state.prefs.classNames].join(" "),
 
 					style: {
-						padding: `${props.paddingY}px ${props.paddingX}px`, // `${state.prefs.paddingY}px ${state.prefs.paddingX}px`,
+						padding: `${props.paddingY || 0}px ${props.paddingX || 0}px`, // `${state.prefs.paddingY}px ${state.prefs.paddingX}px`,
 						whiteSpace: "pre-wrap",
 						outline: "none",
 						overflowWrap: "break-word",
