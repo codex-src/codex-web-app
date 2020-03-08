@@ -106,7 +106,9 @@ const Note = props => {
 					displayNameEmail: `${user.displayName} ${user.email}`,
 				}
 				renderProgressBar()
+				console.log("CREATING NOTE") // DEBUG
 				dbRef.set(note).then(() => {
+					console.log("CREATED NOTE") // DEBUG
 					window.history.replaceState({}, "", `/n/${note.id}`)
 					setMeta({ ...meta, new: false, exists: true })
 				}).catch(error => {
@@ -169,12 +171,15 @@ const NoteLoader = props => {
 			}
 			const db = firebase.firestore()
 			const dbRef = db.collection("notes").doc(params.noteID)
+			console.log("LOADING NOTE") // DEBUG
 			dbRef.get().then(doc => {
 				if (!doc.exists) {
+					console.log("LOADED NOTE: NO SUCH NOTE") // DEBUG
 					setMeta({ ...meta, loading: false, exists: false })
 					return
 				}
 				const { id, data } = doc.data()
+				console.log("LOADED NOTE") // DEBUG
 				setMeta({ ...meta, loading: false, exists: true, id, data })
 			}).catch(error => {
 				console.error(error)
