@@ -42,12 +42,14 @@ const ButtonIcon = ({ className, icon: Icon, ...props }) => (
 const UserNotes = props => {
 	const user = User.useUser()
 	const renderProgressBar = ProgressBar.useProgressBar()
-	const [state, dispatch] = useUserNotes()
-	const [response, setResponse] = React.useState({ loading: true, notes: [] })
 
+	const [state, dispatch] = useUserNotes()
+	const [res, setRes] = React.useState({ loading: true, notes: [] })
+
+	// TODO: Add debug statements?
 	React.useEffect(
 		React.useCallback(() => {
-			setResponse({ ...response, loading: true })
+			setRes({ ...res, loading: true })
 			const db = firebase.firestore()
 			const dbRef = db.collection("notes")
 			dbRef.where("userID", "==", user.uid).orderBy("updatedAt", !state.sortAscending ? "desc" : "asc").limit(50).get().then(snap => {
@@ -55,14 +57,15 @@ const UserNotes = props => {
 				snap.forEach(doc => {
 					notes.push(doc.data())
 				})
-				setResponse({ loading: false, notes })
+				setRes({ loading: false, notes })
 			}).catch(error => (
 				console.error(error)
 			))
-		}, [user, state, response]),
+		}, [user, state, res]),
 		[state.sortAscending],
 	)
 
+	// TODO: Add debug statements?
 	const handleClickDelete = (e, noteID) => {
 		e.preventDefault(e)
 		const ok = window.confirm("Delete this note immediately? This cannot be undone.")
@@ -73,7 +76,7 @@ const UserNotes = props => {
 		renderProgressBar()
 		const db = firebase.firestore()
 		const dbRef = db.collection("notes").doc(noteID)
-		setResponse({ ...response, notes: [...response.notes.filter(each => each.id !== noteID)] })
+		setRes({ ...res, notes: [...res.notes.filter(each => each.id !== noteID)] })
 		dbRef.delete().catch(error => {
 			console.error(error)
 		})
@@ -117,7 +120,7 @@ const UserNotes = props => {
 			<div className="h-6" />
 			<div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${state.itemsShown} gap-6`}>
 				{/* Loading */}
-				{response.loading ? (
+				{res.loading ? (
 					[...new Array(3)].map((_, index) => (
 						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-xl trans-150">
 							<div className="absolute inset-0" />
@@ -133,7 +136,7 @@ const UserNotes = props => {
 								</div>
 							</div>
 						</Link>
-						{response.notes.map((each, index) => (
+						{res.notes.map((each, index) => (
 							// Note
 							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
 								<div className="absolute inset-0 flex flex-row justify-end items-start z-10">

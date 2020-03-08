@@ -6,6 +6,7 @@ export const PATH_DEMO     = "/demo"
 export const PATH_HELP     = "/support"
 export const PATH_HOME     = "/"
 export const PATH_LOST     = "/404"
+export const PATH_MY_NOTES = "/"
 export const PATH_NEW_NOTE = "/new"
 export const PATH_NOTE     = "/n/:noteID"
 export const PATH_USER     = "/u/:userID" // TODO: @:userID

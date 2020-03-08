@@ -1,3 +1,4 @@
+import * as contants from "__constants"
 import * as ProgressBar from "components/ProgressBar"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
@@ -5,6 +6,8 @@ import Editor from "components/Editor" // FIXME: Exports are wrong
 import firebase from "__firebase"
 import Nav from "components/Nav"
 import React from "react"
+
+const NEW_NOTE_TIMEOUT = 1e3
 
 // const EditorInstance = props => {
 // 	const [state, dispatch] = Editor.useEditor(props.children, {
@@ -91,6 +94,7 @@ const Note = props => {
 				return
 			}
 			const id = setTimeout(() => {
+				console.log("CREATING NOTE") // DEBUG
 				const db = firebase.firestore()
 				const dbRef = db.collection("notes").doc()
 				const note = {
@@ -102,19 +106,17 @@ const Note = props => {
 					byteCount: stateRef.current.data.length,
 					wordCount: stateRef.current.data.split(/\s+/).length,
 
-					// NOTE: displayNameEmail is denormalized
 					displayNameEmail: `${user.displayName} ${user.email}`,
 				}
 				renderProgressBar()
-				console.log("CREATING NOTE") // DEBUG
 				dbRef.set(note).then(() => {
-					console.log("CREATED NOTE") // DEBUG
+					console.log(`CREATED NOTE: ${note.id}`) // DEBUG
 					window.history.replaceState({}, "", `/n/${note.id}`)
-					setMeta({ ...meta, new: false, exists: true })
+					setMeta({ ...meta, new: false, id: note.id, exists: true })
 				}).catch(error => {
 					console.error(error)
 				})
-			}, 1e3)
+			}, NEW_NOTE_TIMEOUT)
 			return () => {
 				clearTimeout(id)
 			}
@@ -157,10 +159,11 @@ const NoteLoader = props => {
 	const params = Router.useParams()
 
 	const [meta, setMeta] = React.useState({
-		new:     !params.noteID,
+		new: !params.noteID,
+		id: params.noteID || "",
 		loading: !!params.noteID, // Inverse to new
-		exists:  false,
-		data:    "",
+		exists: false,
+		data: "",
 	})
 
 	React.useLayoutEffect(
@@ -169,29 +172,29 @@ const NoteLoader = props => {
 				// No-op
 				return
 			}
+			console.log(`LOADING NOTE: ${params.noteID}`) // DEBUG
 			const db = firebase.firestore()
 			const dbRef = db.collection("notes").doc(params.noteID)
-			console.log("LOADING NOTE") // DEBUG
 			dbRef.get().then(doc => {
 				if (!doc.exists) {
-					console.log("LOADED NOTE: NO SUCH NOTE") // DEBUG
+					console.log(`LOADED NOTE: NO SUCH NOTE ${params.noteID}`) // DEBUG
 					setMeta({ ...meta, loading: false, exists: false })
 					return
 				}
+				console.log(`LOADED NOTE: ${params.noteID}`) // DEBUG
 				const { id, data } = doc.data()
-				console.log("LOADED NOTE") // DEBUG
-				setMeta({ ...meta, loading: false, exists: true, id, data })
+				setMeta({ ...meta, id, loading: false, exists: true, data })
 			}).catch(error => {
 				console.error(error)
 			})
-		}, [params, meta]),
-		[params], // Update on params, not meta
+		}, [params.noteID, meta]),
+		[params.noteID], // Update on params.noteID
 	)
 
 	if (meta.loading) {
 		return "Loading"
 	} else if (!meta.new && !meta.exists) {
-		return "No such note"
+		return <Router.Redirect to={contants.PATH_LOST} />
 	}
 	return React.cloneElement(props.children, { meta, children: meta.data })
 }

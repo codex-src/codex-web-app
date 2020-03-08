@@ -37,11 +37,11 @@ export const NavAuth = props => {
 			{/* Drop down */}
 			<Base.DropDown ref={ref}>
 				<Base.DropDownItem
-					to={constants.TODO}
+					to={constants.PATH_NEW_NOTE}
 					children="Create a new note"
 				/>
 				<Base.DropDownItem
-					to={constants.TODO}
+					to={constants.PATH_MY_NOTES}
 					children="My notes"
 				/>
 				<hr className="my-1" />
