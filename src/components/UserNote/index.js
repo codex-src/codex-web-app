@@ -7,7 +7,8 @@ import firebase from "__firebase"
 import Nav from "components/Nav"
 import React from "react"
 
-const NEW_NOTE_TIMEOUT = 1e3
+const CREATE_TIMEOUT = 1e3
+const UPDATE_TIMEOUT = 1e3
 
 // const EditorInstance = props => {
 // 	const [state, dispatch] = Editor.useEditor(props.children, {
@@ -83,18 +84,17 @@ const Note = props => {
 	stateRef.current = state
 
 	// Create note:
-	const didMount = React.useRef()
+	const didMount1 = React.useRef()
 	React.useEffect(
 		React.useCallback(() => {
-			if (!didMount.current) {
-				didMount.current = true
+			if (!didMount1.current) {
+				didMount1.current = true
 				return
 			} else if (!meta.new) {
 				// No-op
 				return
 			}
 			const id = setTimeout(() => {
-				console.log("CREATING NOTE") // DEBUG
 				const db = firebase.firestore()
 				const dbRef = db.collection("notes").doc()
 				const note = {
@@ -110,13 +110,12 @@ const Note = props => {
 				}
 				renderProgressBar()
 				dbRef.set(note).then(() => {
-					console.log(`CREATED NOTE: ${note.id}`) // DEBUG
 					window.history.replaceState({}, "", `/n/${note.id}`)
 					setMeta({ ...meta, new: false, id: note.id, exists: true })
 				}).catch(error => {
 					console.error(error)
 				})
-			}, NEW_NOTE_TIMEOUT)
+			}, CREATE_TIMEOUT)
 			return () => {
 				clearTimeout(id)
 			}
@@ -124,33 +123,39 @@ const Note = props => {
 		[state.data], // Update on state.data
 	)
 
-	// // Update note:
-	// React.useEffect(() => {
-	// 	if (!note.id) {
-	// 		// No-op
-	// 		return
-	// 	}
-	// 	const id = setTimeout(() => {
-	// 		const db = firebase.firestore()
-	// 		const dbRef = db.collection("notes").doc(note.id)
-	// 		const $note = {
-	// 			...noteRef.current,
-	// 			updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-	// 			data:      noteRef.current.data,
-	// 			byteCount: noteRef.current.data.length,
-	// 			wordCount: noteRef.current.data.split(/\s+/).length,
-	//
-	// 			displayNameEmail: `${user.displayName} ${user.email}`,
-	// 		}
-	// 		setNote($note)
-	// 		dbRef.set($note, { merge: true }).catch(error => (
-	// 			console.error(error)
-	// 		))
-	// 	}, 1e3)
-	// 	return () => {
-	// 		clearTimeout(id)
-	// 	}
-	// }, [user, note])
+	// Update note:
+	const didMount2 = React.useRef()
+	React.useEffect(
+		React.useCallback(() => {
+			if (!didMount2.current) {
+				didMount2.current = true
+				return
+			} else if (meta.new) {
+				// No-op
+				return
+			}
+			const id = setTimeout(() => {
+				const db = firebase.firestore()
+				const dbRef = db.collection("notes").doc(meta.id)
+				const note = {
+					updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+					data:      stateRef.current.data,
+					byteCount: stateRef.current.data.length,
+					wordCount: stateRef.current.data.split(/\s+/).length,
+
+					displayNameEmail: `${user.displayName} ${user.email}`,
+				}
+				renderProgressBar()
+				dbRef.set(note, { merge: true }).catch(error => {
+					console.error(error)
+				})
+			}, UPDATE_TIMEOUT)
+			return () => {
+				clearTimeout(id)
+			}
+		}, [user, renderProgressBar, meta]),
+		[state.data],
+	)
 
 	return <Editor.Editor state={state} dispatch={dispatch} paddingY={224} />
 }
@@ -172,16 +177,13 @@ const NoteLoader = props => {
 				// No-op
 				return
 			}
-			console.log(`LOADING NOTE: ${params.noteID}`) // DEBUG
 			const db = firebase.firestore()
 			const dbRef = db.collection("notes").doc(params.noteID)
 			dbRef.get().then(doc => {
 				if (!doc.exists) {
-					console.log(`LOADED NOTE: NO SUCH NOTE ${params.noteID}`) // DEBUG
 					setMeta({ ...meta, loading: false, exists: false })
 					return
 				}
-				console.log(`LOADED NOTE: ${params.noteID}`) // DEBUG
 				const { id, data } = doc.data()
 				setMeta({ ...meta, id, loading: false, exists: true, data })
 			}).catch(error => {
