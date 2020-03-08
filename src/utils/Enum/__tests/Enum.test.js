@@ -1,4 +1,4 @@
-import Enum from "../Enum"
+import Enum from "../index"
 
 const DaysOfTheWeek = new Enum(
 	"MONDAY",
