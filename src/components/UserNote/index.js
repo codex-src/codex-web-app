@@ -121,7 +121,7 @@ const Note = props => {
 				clearTimeout(id)
 			}
 		}, [user, renderProgressBar, meta]),
-		[state], // Update on state
+		[state.data], // Update on state.data
 	)
 
 	// // Update note:
