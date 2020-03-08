@@ -1,6 +1,6 @@
 import * as constants from "__constants"
 import * as Feather from "react-feather"
-import * as SVG from "svg"
+import * as SVG from "svgs"
 import firebase from "__firebase"
 import React from "react"
 
