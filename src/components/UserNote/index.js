@@ -99,7 +99,7 @@ const Note = props => {
 				// Generate a new ID:
 				const db = firebase.firestore()
 				const autoID = db.collection("notes").doc().id
-				// Save to notes:
+				// Save to notes/:noteID:
 				const batch = db.batch()
 				const noteRef = db.collection("notes").doc(autoID)
 				batch.set(noteRef, {
@@ -113,7 +113,7 @@ const Note = props => {
 
 					displayNameEmail: `${user.displayName} ${user.email}`,
 				})
-				// Save to notes/content/markdown:
+				// Save to notes/:noteID/content/markdown:
 				const noteContentRef = noteRef.collection("content").doc("markdown")
 				batch.set(noteContentRef, {
 					data: stateRef.current.data,
@@ -145,8 +145,8 @@ const Note = props => {
 			}
 			const id = setTimeout(() => {
 				renderProgressBar()
+				// Save to notes/:noteID:
 				const db = firebase.firestore()
-				// Save to notes:
 				const batch = db.batch()
 				const noteRef = db.collection("notes").doc(meta.id)
 				batch.set(noteRef, {
@@ -155,7 +155,7 @@ const Note = props => {
 					byteCount: stateRef.current.data.length,
 					wordCount: stateRef.current.data.split(/\s+/).length,
 				}, { merge: true })
-				// Save to notes/content/markdown:
+				// Save to notes/:noteID/content/markdown:
 				const noteContentRef = noteRef.collection("content").doc("markdown")
 				batch.set(noteContentRef, {
 					data: stateRef.current.data,
@@ -167,7 +167,7 @@ const Note = props => {
 			return () => {
 				clearTimeout(id)
 			}
-		}, [user, renderProgressBar, meta]),
+		}, [renderProgressBar, meta]),
 		[state.data],
 	)
 
@@ -191,6 +191,7 @@ const NoteLoader = props => {
 				// No-op
 				return
 			}
+			// Load notes/:noteID:
 			const db = firebase.firestore()
 			const dbRef = db.collection("notes").doc(params.noteID).collection("content").doc("markdown")
 			dbRef.get().then(doc => {

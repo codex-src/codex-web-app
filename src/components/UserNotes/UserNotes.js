@@ -72,10 +72,17 @@ const UserNotes = props => {
 			return
 		}
 		renderProgressBar()
-		const db = firebase.firestore()
-		const dbRef = db.collection("notes").doc(noteID)
+		// NOTE: Eagerly rerender notes:
 		setRes({ ...res, notes: [...res.notes.filter(each => each.id !== noteID)] })
-		dbRef.delete().catch(error => {
+		// Delete notes/:noteID:
+		const db = firebase.firestore()
+		const batch = db.batch()
+		const noteRef = db.collection("notes").doc(noteID)
+		batch.delete(noteRef)
+		// Delete notes/:noteID/content/markdown:
+		const noteContentRef = noteRef.collection("content").doc("markdown")
+		batch.delete(noteContentRef)
+		batch.commit().catch(error => {
 			console.error(error)
 		})
 	}
@@ -104,12 +111,6 @@ const UserNotes = props => {
 						icon={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd}
 						onPointerDown={e => e.preventDefault()}
 						onClick={dispatch.toggleSortDirection}
-					/>
-					<ButtonIcon
-						className={state.scrollEnabled && "bg-blue-100"}
-						icon={Hero.SwitchVerticalOutlineMd}
-						onPointerDown={e => e.preventDefault()}
-						onClick={dispatch.toggleScrollEnabled}
 					/>
 				</div>
 			</div>
@@ -142,9 +143,9 @@ const UserNotes = props => {
 										<Hero.TrashSolidSm className="w-4 h-4" />
 									</button>
 								</div>
-								<div className={!state.scrollEnabled ? "absolute inset-0 overflow-y-hidden select-none" : "absolute inset-0 overflow-y-scroll scrolling-touch select-none"}>
+								<div className="absolute inset-0 overflow-y-hidden select-none">
 									<EditorInstance modifier={state.itemsShownModifier}>
-										{each.snippet || ""}
+										{each.snippet}
 									</EditorInstance>
 								</div>
 							</Link>
@@ -156,7 +157,5 @@ const UserNotes = props => {
 		</NavContainer>
 	)
 }
-
-// document.body.classList.add("debug-css")
 
 export default UserNotes

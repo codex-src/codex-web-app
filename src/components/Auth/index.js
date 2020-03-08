@@ -8,36 +8,30 @@ const Auth = props => {
 
 	const signIn = provider => {
 		const db = firebase.firestore()
-		firebase.auth()
-			.signInWithPopup(provider)
-			.then(response => {
-				if (!response.additionalUserInfo.isNewUser) {
-					// No-op
-					return
-				}
-				const { uid: id } = response.user
-				db.collection("users")
-					.doc(id)
-					.set({
-						id,
+		firebase.auth().signInWithPopup(provider).then(response => {
+			if (!response.additionalUserInfo.isNewUser) {
+				// No-op
+				return
+			}
+			const { uid: id } = response.user
+			db.collection("users").doc(id).set({
+				id,
 
-						createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
-						updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
+				createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
+				updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
 
-						displayName:   response.user.displayName,
-						username:      null,
-						authProvider:  response.additionalUserInfo.providerId,
-						email:         response.user.email,
-						emailVerified: response.user.emailVerified,
-						photoURL:      response.user.photoURL,
-					}, { merge: true })
-					.catch(error => {
-						console.warn(error)
-					})
-			})
-			.catch(error => {
+				displayName:   response.user.displayName,
+				username:      null,
+				authProvider:  response.additionalUserInfo.providerId,
+				email:         response.user.email,
+				emailVerified: response.user.emailVerified,
+				photoURL:      response.user.photoURL,
+			}, { merge: true }).catch(error => {
 				console.warn(error)
 			})
+		}).catch(error => {
+			console.warn(error)
+		})
 	}
 
 	const handleClickGitHub = e => {
@@ -48,6 +42,7 @@ const Auth = props => {
 		const provider = new firebase.auth.GoogleAuthProvider()
 		signIn(provider)
 	}
+
 	// const handleClickGuest = e => {
 	// 	firebase.auth()
 	// 		.signInAnonymously()
