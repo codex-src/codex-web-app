@@ -48,17 +48,16 @@ const Auth = props => {
 		const provider = new firebase.auth.GoogleAuthProvider()
 		signIn(provider)
 	}
-
-	// const handleClickGuest = e => {
-	// 	firebase.auth()
-	// 		.signInAnonymously()
-	// 		.catch(error => {
-	// 			console.warn(error)
-	// 		})
-	// }
+	const handleClickGuest = e => {
+		firebase.auth()
+			.signInAnonymously()
+			.catch(error => {
+				console.warn(error)
+			})
+	}
 
 	return (
-		<div className="-mt-6 py-40 flex flex-row justify-center items-center min-h-full">
+		<div className="-mt-8 py-40 flex flex-row justify-center items-center min-h-full">
 			<div className="px-6 box-content" style={{ width: "18rem" /* w-72 */ }}>
 
 				<div className="flex flex-row justify-center items-center transform scale-90 origin-bottom">
@@ -67,7 +66,7 @@ const Auth = props => {
 				</div>
 
 				<div className="h-8" />
-				<p className="text-center font-medium text-px text-gray-900">
+				<p className="text-center font-medium text-lg leading-snug text-gray-900">
 					Choose one of the following to<br />
 					open your{" "}
 					<a className="text-md-blue-a400 cursor-pointer" href={constants.URL} target="_blank" rel="noopener noreferrer">
@@ -82,7 +81,7 @@ const Auth = props => {
 					<div className="mx-4">
 						<SVG.GitHubLogo className="w-6 h-6 text-gray-100" />
 					</div>
-					<p className="font-semibold text-px text-gray-100">
+					<p className="font-semibold text-lg text-gray-100">
 						Continue with GitHub
 					</p>
 				</button>
@@ -93,16 +92,16 @@ const Auth = props => {
 					<div className="mx-4">
 						<SVG.GoogleLogo className="w-6 h-6 text-gray-900" />
 					</div>
-					<p className="font-semibold text-px text-gray-900">
+					<p className="font-semibold text-lg text-gray-900">
 						Continue with Google
 					</p>
 				</button>
 
 				{/* <div className="h-6" /> */}
 				{/* <hr className="mx-auto w-32" /> */}
-				{/* */}
+
 				{/* <div className="h-6" /> */}
-				{/* <p className="text-center font-medium text-px text-gray-900"> */}
+				{/* <p className="text-center font-medium text-lg text-gray-900"> */}
 				{/* 	Or link an account later and<br /> */}
 				{/* 	<button className="text-md-blue-a400 cursor-pointer" onPointerDown={e => e.preventDefault()} onClick={handleClickGuest}> */}
 				{/* 		continue as a guest */}
