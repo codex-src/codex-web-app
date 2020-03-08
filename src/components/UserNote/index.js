@@ -95,23 +95,32 @@ const Note = props => {
 				return
 			}
 			const id = setTimeout(() => {
+				renderProgressBar()
+				// Generate a new ID:
 				const db = firebase.firestore()
-				const dbRef = db.collection("notes").doc()
-				const note = {
-					id:        dbRef.id,
+				const autoID = db.collection("notes").doc().id
+				// Save to notes:
+				const batch = db.batch()
+				const noteRef = db.collection("notes").doc(autoID)
+				batch.set(noteRef, {
+					id:        autoID,
 					userID:    user.uid,
 					createdAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
 					updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
-					data:      stateRef.current.data,
+					snippet:   stateRef.current.data.slice(0, 500),
 					byteCount: stateRef.current.data.length,
 					wordCount: stateRef.current.data.split(/\s+/).length,
 
 					displayNameEmail: `${user.displayName} ${user.email}`,
-				}
-				renderProgressBar()
-				dbRef.set(note).then(() => {
-					window.history.replaceState({}, "", `/n/${note.id}`)
-					setMeta({ ...meta, new: false, id: note.id, exists: true })
+				})
+				// Save to notes/content/markdown:
+				const noteContentRef = noteRef.collection("content").doc("markdown")
+				batch.set(noteContentRef, {
+					data: stateRef.current.data,
+				})
+				batch.commit().then(() => {
+					window.history.replaceState({}, "", `/n/${autoID}`)
+					setMeta({ ...meta, new: false, id: autoID, exists: true })
 				}).catch(error => {
 					console.error(error)
 				})
@@ -135,16 +144,23 @@ const Note = props => {
 				return
 			}
 			const id = setTimeout(() => {
+				renderProgressBar()
 				const db = firebase.firestore()
-				const dbRef = db.collection("notes").doc(meta.id)
-				const note = {
-					updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-					data:      stateRef.current.data,
+				// Save to notes:
+				const batch = db.batch()
+				const noteRef = db.collection("notes").doc(meta.id)
+				batch.set(noteRef, {
+					updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
+					snippet:   stateRef.current.data.slice(0, 500),
 					byteCount: stateRef.current.data.length,
 					wordCount: stateRef.current.data.split(/\s+/).length,
-				}
-				renderProgressBar()
-				dbRef.set(note, { merge: true }).catch(error => {
+				}, { merge: true })
+				// Save to notes/content/markdown:
+				const noteContentRef = noteRef.collection("content").doc("markdown")
+				batch.set(noteContentRef, {
+					data: stateRef.current.data,
+				}, { merge: true })
+				batch.commit().catch(error => {
 					console.error(error)
 				})
 			}, UPDATE_TIMEOUT)
@@ -176,14 +192,14 @@ const NoteLoader = props => {
 				return
 			}
 			const db = firebase.firestore()
-			const dbRef = db.collection("notes").doc(params.noteID)
+			const dbRef = db.collection("notes").doc(params.noteID).collection("content").doc("markdown")
 			dbRef.get().then(doc => {
 				if (!doc.exists) {
 					setMeta({ ...meta, loading: false, exists: false })
 					return
 				}
-				const { id, data } = doc.data()
-				setMeta({ ...meta, id, loading: false, exists: true, data })
+				const { data } = doc.data()
+				setMeta({ ...meta, id: params.noteID, loading: false, exists: true, data })
 			}).catch(error => {
 				console.error(error)
 			})
@@ -192,7 +208,7 @@ const NoteLoader = props => {
 	)
 
 	if (meta.loading) {
-		return "Loading"
+		return null
 	} else if (!meta.new && !meta.exists) {
 		return <Router.Redirect to={contants.PATH_LOST} />
 	}
@@ -202,7 +218,6 @@ const NoteLoader = props => {
 const UserNote = props => (
 	<React.Fragment>
 		<Nav absolute />
-		{/* NOTE: Defer y-axis padding to the editor */}
 		<div className="flex flex-row justify-center min-h-full">
 			<div className="px-6 w-full max-w-screen-md">
 				<NoteLoader>

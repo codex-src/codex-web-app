@@ -46,7 +46,6 @@ const UserNotes = props => {
 	const [state, dispatch] = useUserNotes()
 	const [res, setRes] = React.useState({ loading: true, notes: [] })
 
-	// TODO: Add debug statements?
 	React.useEffect(
 		React.useCallback(() => {
 			setRes({ ...res, loading: true })
@@ -65,7 +64,6 @@ const UserNotes = props => {
 		[state.sortAscending],
 	)
 
-	// TODO: Add debug statements?
 	const handleClickDelete = (e, noteID) => {
 		e.preventDefault(e)
 		const ok = window.confirm("Delete this note immediately? This cannot be undone.")
@@ -146,7 +144,7 @@ const UserNotes = props => {
 								</div>
 								<div className={!state.scrollEnabled ? "absolute inset-0 overflow-y-hidden select-none" : "absolute inset-0 overflow-y-scroll scrolling-touch select-none"}>
 									<EditorInstance modifier={state.itemsShownModifier}>
-										{each.data}
+										{each.snippet || ""}
 									</EditorInstance>
 								</div>
 							</Link>
