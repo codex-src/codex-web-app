@@ -67,41 +67,83 @@ import React from "react"
 // 	)
 // }
 
-// function useUpdateNote() {
-//
-// }
-
 const Note = props => {
 	const user = User.useUser()
+
+	const [meta, setMeta] = React.useState(props.meta) // Copy of meta -- do not rerender parent component
 	const [state, dispatch] = Editor.useEditor(props.children)
 
-	//	// Update note:
-	//	React.useEffect(() => {
-	//		if (!note.id) {
-	//			// No-op
-	//			return
-	//		}
-	//		const id = setTimeout(() => {
-	//			const db = firebase.firestore()
-	//			const dbRef = db.collection("notes").doc(note.id)
-	//			const $note = {
-	//				...noteRef.current,
-	//				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-	//				data:      noteRef.current.data,
-	//				byteCount: noteRef.current.data.length,
-	//				wordCount: noteRef.current.data.split(/\s+/).length,
+	// https://github.com/facebook/react/issues/14010#issuecomment-433788147
+	const stateRef = React.useRef(state)
+	stateRef.current = state
+
+	// Create note:
+	const didMount = React.useRef()
+	React.useEffect(
+		React.useCallback(() => {
+			if (!didMount.current) {
+				didMount.current = true
+				return
+			} else if (!meta.new) {
+				// No-op
+				return
+			}
+			const id = setTimeout(() => {
+				const db = firebase.firestore()
+				const dbRef = db.collection("notes").doc()
+				const note = {
+					id:        dbRef.id,
+					userID:    user.uid,
+					createdAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
+					updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
+					data:      stateRef.current.data,
+					byteCount: stateRef.current.data.length,
+					wordCount: stateRef.current.data.split(/\s+/).length,
+
+					// NOTE: displayNameEmail is denormalized
+					displayNameEmail: `${user.displayName} ${user.email}`,
+				}
+				dbRef.set(note).then(() => {
+					setMeta({ ...meta, new: false, exists: true })
+					window.history.pushState({}, "", `/n/${note.id}`)
+				}).catch(error => {
+					console.error(error)
+				})
+			}, 1e3)
+			return () => {
+				clearTimeout(id)
+			}
+		}, [user, meta, state]),
+		[state], // Update on state
+	)
+
+	// // Update note:
+	// React.useEffect(() => {
+	// 	if (!note.id) {
+	// 		// No-op
+	// 		return
+	// 	}
+	// 	const id = setTimeout(() => {
+	// 		const db = firebase.firestore()
+	// 		const dbRef = db.collection("notes").doc(note.id)
+	// 		const $note = {
+	// 			...noteRef.current,
+	// 			updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+	// 			data:      noteRef.current.data,
+	// 			byteCount: noteRef.current.data.length,
+	// 			wordCount: noteRef.current.data.split(/\s+/).length,
 	//
-	//				displayNameEmail: `${user.displayName} ${user.email}`,
-	//			}
-	//			setNote($note)
-	//			dbRef.set($note, { merge: true }).catch(error => (
-	//				console.error(error)
-	//			))
-	//		}, 1e3)
-	//		return () => {
-	//			clearTimeout(id)
-	//		}
-	//	}, [user, note])
+	// 			displayNameEmail: `${user.displayName} ${user.email}`,
+	// 		}
+	// 		setNote($note)
+	// 		dbRef.set($note, { merge: true }).catch(error => (
+	// 			console.error(error)
+	// 		))
+	// 	}, 1e3)
+	// 	return () => {
+	// 		clearTimeout(id)
+	// 	}
+	// }, [user, note])
 
 	return <Editor.Editor state={state} dispatch={dispatch} paddingY={224} />
 }
@@ -109,43 +151,47 @@ const Note = props => {
 const NoteLoader = props => {
 	const params = Router.useParams()
 
-	const [res, setRes] = React.useState({
-		new:     params.noteID === "",
-		loading: params.noteID !== "", // Inverse to new
+	const [meta, setMeta] = React.useState({
+		new:     !params.noteID,
+		loading: !!params.noteID, // Inverse to new
 		exists:  false,
 		data:    "",
 	})
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
+			if (!params.noteID) {
+				// No-op
+				return
+			}
 			const db = firebase.firestore()
 			const dbRef = db.collection("notes").doc(params.noteID)
 			dbRef.get().then(doc => {
 				if (!doc.exists) {
-					setRes({ ...res, loading: false, exists: false })
+					setMeta({ ...meta, loading: false, exists: false })
 					return
 				}
 				const { id, data } = doc.data()
-				setRes({ ...res, loading: false, exists: true, id, data })
+				setMeta({ ...meta, loading: false, exists: true, id, data })
 			}).catch(error => {
 				console.error(error)
 			})
-		}, [params, res]),
-		[params], // Update on params, not res
+		}, [params, meta]),
+		[params], // Update on params, not meta
 	)
 
-	if (res.loading) {
+	if (meta.loading) {
 		return "Loading"
-	} else if (!res.new && !res.exists) {
+	} else if (!meta.new && !meta.exists) {
 		return "No such note"
 	}
-	return React.cloneElement(props.children, { id: res.id, children: res.data })
+	return React.cloneElement(props.children, { meta, children: meta.data })
 }
 
 const UserNote = props => (
 	<React.Fragment>
 		<Nav absolute />
-		{/* NOTE: Defer py-40 to the editor */}
+		{/* NOTE: Defer y-axis padding to the editor */}
 		<div className="flex flex-row justify-center min-h-full">
 			<div className="px-6 w-full max-w-screen-md">
 				<NoteLoader>
