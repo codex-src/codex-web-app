@@ -1,7 +1,7 @@
+// import * as ProgressBar from "components/ProgressBar"
 import * as constants from "__constants"
 import * as consts from "./consts"
 import * as Hero from "react-heroicons"
-import * as ProgressBar from "components/ProgressBar"
 import * as User from "components/User"
 import Editor from "components/Editor"
 import firebase from "__firebase"
@@ -36,7 +36,7 @@ const Button = ({ extend, svg: SVG, ...props }) => (
 
 const UserNotes = props => {
 	const user = User.useUser()
-	const renderProgressBar = ProgressBar.useProgressBar()
+	// const renderProgressBar = ProgressBar.useProgressBar()
 
 	const [state, dispatch] = useReducer()
 	const [res, setRes] = React.useState({ loading: true, notes: [] })
@@ -74,7 +74,7 @@ const UserNotes = props => {
 			// No-op
 			return
 		}
-		renderProgressBar()
+		// renderProgressBar()
 		setRes({ ...res, notes: [...res.notes.filter(each => each.id !== noteID)] }) // Optimistic
 		// Delete notes/:noteID:
 		const db = firebase.firestore()
