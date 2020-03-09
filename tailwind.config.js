@@ -104,15 +104,15 @@ module.exports = {
 				"1/2":   "50%",
 			},
 			strokeWidth: {
-				hairline:  1,    // 100
-				thin:      1.33, // 200
-				light:     1.67, // 300
+				hairline:  1.25, // 100
+				thin:      1.5,  // 200
+				light:     1.75, // 300
 				normal:    2,    // 400
-				medium:    2.33, // 500
-				semibold:  2.67, // 600
-				bold:      3,    // 700
-				extrabold: 3.33, // 800
-				black:     4,    // 900
+				medium:    2.25, // 500
+				semibold:  2.5,  // 600
+				bold:      2.75, // 700
+				extrabold: 3,    // 800
+				black:     3.25, // 900
 			},
 			zIndex: {
 				"-10": "-10",
