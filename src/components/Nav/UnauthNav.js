@@ -6,13 +6,13 @@ import Link from "components/Link"
 import React from "react"
 import useDropDown from "hooks/useDropDown"
 
-const NavLink = props => (
-	<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 trans-75">
-		<p className="font-medium">
-			{props.text}
-		</p>
-	</Link>
-)
+// const NavLink = props => (
+// 	<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 trans-75">
+// 		<p className="font-medium">
+// 			{props.text}
+// 		</p>
+// 	</Link>
+// )
 
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">

@@ -8,7 +8,7 @@ import firebase from "__firebase"
 import Link from "components/Link"
 import NavContainer from "components/NavContainer"
 import React from "react"
-import useUserNotes from "./useUserNotes"
+import useReducer from "./useReducer"
 
 const EditorInstance = props => {
 	const [state, dispatch] = Editor.useEditor(props.children, {
@@ -29,9 +29,9 @@ const EditorInstance = props => {
 	)
 }
 
-const ButtonIcon = ({ className, icon: Icon, ...props }) => (
-	<button className={`p-2 text-md-blue-a400 disabled:text-gray-400 disabled:bg-transparent hover:bg-blue-100 focus:bg-blue-100 rounded-full focus:outline-none trans-300 ${className || ""}`.trim()} {...props}>
-		<Icon className="w-6 h-6" />
+const Button = ({ extend, svg: SVG, ...props }) => (
+	<button className={`p-2 text-md-blue-a400 disabled:text-gray-400 disabled:bg-transparent hover:bg-blue-100 focus:bg-blue-100 rounded-full focus:outline-none trans-300 ${extend || ""}`.trim()} {...props}>
+		<SVG className="w-6 h-6" />
 	</button>
 )
 
@@ -39,15 +39,14 @@ const UserNotes = props => {
 	const user = User.useUser()
 	const renderProgressBar = ProgressBar.useProgressBar()
 
-	const [state, dispatch] = useUserNotes()
+	const [state, dispatch] = useReducer()
 	const [res, setRes] = React.useState({ loading: true, notes: [] })
 
 	React.useEffect(
 		React.useCallback(() => {
-			setRes({ ...res, loading: true })
 			const db = firebase.firestore()
 			const dbRef = db.collection("notes")
-			dbRef.where("userID", "==", user.uid).orderBy("updatedAt", !state.sortAscending ? "desc" : "asc").limit(50).get().then(snap => {
+			dbRef.where("userID", "==", user.uid).orderBy("updatedAt", !state.sortAscending ? "desc" : "asc").limit(16).get().then(snap => {
 				const notes = []
 				snap.forEach(doc => {
 					notes.push(doc.data())
@@ -56,7 +55,7 @@ const UserNotes = props => {
 			}).catch(error => (
 				console.error(error)
 			))
-		}, [user, state, res]),
+		}, [user, state]),
 		[state.sortAscending],
 	)
 
@@ -68,8 +67,7 @@ const UserNotes = props => {
 			return
 		}
 		renderProgressBar()
-		// NOTE: Eagerly rerender notes:
-		setRes({ ...res, notes: [...res.notes.filter(each => each.id !== noteID)] })
+		setRes({ ...res, notes: [...res.notes.filter(each => each.id !== noteID)] }) // Optimistic
 		// Delete notes/:noteID:
 		const db = firebase.firestore()
 		const batch = db.batch()
@@ -86,44 +84,45 @@ const UserNotes = props => {
 	return (
 		<NavContainer>
 
-			{/* Top */}
+			{/* Buttons */}
 			<div className="flex flex-row justify-end">
 				<div className="-mx-1 flex flex-row">
-					<ButtonIcon
-						className="hidden lg:block"
-						icon={Hero.ZoomOutOutlineMd}
+					<Button
+						extend="hidden lg:block"
+						svg={Hero.ZoomOutOutlineMd}
 						disabled={state.itemsShown === consts.ITEMS_MAX}
 						onPointerDown={e => e.preventDefault()}
 						onClick={dispatch.showMoreItems}
 					/>
-					<ButtonIcon
-						className="hidden lg:block"
-						icon={Hero.ZoomInOutlineMd}
+					<Button
+						extend="hidden lg:block"
+						svg={Hero.ZoomInOutlineMd}
 						disabled={state.itemsShown === consts.ITEMS_MIN}
 						onPointerDown={e => e.preventDefault()}
 						onClick={dispatch.showLessItems}
 					/>
-					<ButtonIcon
-						icon={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd}
+					<Button
+						svg={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd}
 						onPointerDown={e => e.preventDefault()}
 						onClick={dispatch.toggleSortDirection}
 					/>
 				</div>
 			</div>
 
-			{/* Bottom */}
+			{/* Notes */}
 			<div className="h-6" />
 			<div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${state.itemsShown} gap-6`}>
-				{/* Loading */}
 				{res.loading ? (
 					[...new Array(3)].map((_, index) => (
-						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-xl trans-150">
+						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-lg-xl trans-150">
 							<div className="absolute inset-0" />
 						</div>
 					))
 				) : (
 					<React.Fragment>
+
 						{/* New note */}
+						{/* NOTE: Use rounded-xl not rounded-lg-xl */}
 						<Link className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NEW_NOTE}>
 							<div className="absolute inset-0 flex flex-row justify-center items-center">
 								<div className="-mt-3 p-2 hover:bg-indigo-100 rounded-full focus:bg-blue-100 transform scale-150 trans-300">
@@ -131,9 +130,10 @@ const UserNotes = props => {
 								</div>
 							</div>
 						</Link>
+
+						{/* Notes */}
 						{res.notes.map((each, index) => (
-							// Note
-							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
+							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
 								<div className="absolute right-0 top-0 flex flex-row justify-end items-start z-10">
 									<button className="-m-3 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 trans-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.id)}>
 										<Hero.TrashSolidSm className="w-4 h-4" />
@@ -146,6 +146,7 @@ const UserNotes = props => {
 								</div>
 							</Link>
 						))}
+
 					</React.Fragment>
 				)}
 			</div>

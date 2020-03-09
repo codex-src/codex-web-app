@@ -1,7 +1,7 @@
 import * as Router from "react-router-dom"
 import React from "react"
 
-const $Link = ({ className, ...props }) => (
+const LINK = ({ className, ...props }) => (
 	<Router.Link className={`${className || ""} block`.trim()} {...props}>
 		{props.children}
 	</Router.Link>
@@ -12,7 +12,7 @@ const Link = ({ to, ...props }) => {
 	if (!to) {
 		Component = <div {...props} />
 	} else {
-		Component = <$Link to={to} {...props} />
+		Component = <LINK to={to} {...props} />
 	}
 	return Component
 }

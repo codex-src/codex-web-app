@@ -28,11 +28,11 @@ import Tooltip from "./Tooltip"
 // 	/>
 // </div>
 
-const ButtonIcon = ({ tooltip, ...props }) => (
-	<Tooltip tooltip={tooltip}>
-		<Button {...props} />
-	</Tooltip>
-)
+// const ButtonIcon = ({ tooltip, ...props }) => (
+// 	<Tooltip tooltip={tooltip}>
+// 		<Button {...props} />
+// 	</Tooltip>
+// )
 
 const Toolbar = ({ state, dispatch, ...props }) => (
 	null

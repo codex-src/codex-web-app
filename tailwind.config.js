@@ -182,6 +182,10 @@ module.exports = {
 			"disabled",
 			"disabled:dark",
 		],
+
+		// cursor: [
+		// 	"disabled",
+		// ],
 	},
 	plugins: [
 		plugin(((flag = "dark-mode", prefix = "dark") => {
