@@ -1,4 +1,4 @@
-import * as consts from "./__consts"
+import * as consts from "./consts"
 import useMethods from "use-methods"
 
 const initialState = {

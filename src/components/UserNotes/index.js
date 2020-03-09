@@ -1,5 +1,5 @@
 import * as constants from "__constants"
-import * as consts from "./__consts"
+import * as consts from "./consts"
 import * as Hero from "react-heroicons"
 import * as ProgressBar from "components/ProgressBar"
 import * as User from "components/User"
@@ -132,9 +132,7 @@ const UserNotes = props => {
 				) : (
 					<React.Fragment>
 
-						{/* New note */}
-						{/* */}
-						{/* NOTE: Use rounded-xl not rounded-lg-xl */}
+						{/* New note (uses rounded-xl not rounded-lg-xl) */}
 						<Link className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NEW_NOTE}>
 							<div className="absolute inset-0 flex flex-row justify-center items-center">
 								<Hero.PlusSolidSm className="w-8 h-8 text-md-blue-a400" />
