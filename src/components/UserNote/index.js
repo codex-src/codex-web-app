@@ -116,7 +116,15 @@ const Note = props => {
 		[state.data],
 	)
 
-	return <Editor.Editor state={state} dispatch={dispatch} paddingY={160} />
+	return (
+		<Editor.Editor
+			state={state}
+			dispatch={dispatch}
+			paddingY={160}
+			minHeight="100vh"
+			// autoFocus={true} // TODO
+		/>
+	)
 }
 
 const NoteLoader = props => {

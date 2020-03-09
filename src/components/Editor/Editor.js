@@ -176,6 +176,7 @@ function Editor({ state, dispatch, ...props }) {
 
 					style: {
 						padding: `${props.paddingY || 0}px ${props.paddingX || 0}px`, // `${state.prefs.paddingY}px ${state.prefs.paddingX}px`,
+						minHeight: props.minHeight || null,
 						whiteSpace: "pre-wrap",
 						outline: "none",
 						overflowWrap: "break-word",
