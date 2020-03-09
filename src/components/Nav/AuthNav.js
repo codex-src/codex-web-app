@@ -75,9 +75,9 @@ const Content = props => {
 			<div className="-mx-3 flex flex-row">
 				<div className="px-3 relative flex flex-row items-center">
 
-					<button className="text-gray-500 hover:text-blue-500 focus:text-blue-500 rounded-full focus:outline-none focus:shadow-outline trans-150" onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
+					<button className="text-gray-500 hover:text-blue-500 focus:text-blue-500 rounded-full focus:outline-none focus:shadow-outline overflow-hidden trans-150" onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
 						<div className="relative">
-							<img className="w-8 h-8 rounded-full" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
+							<img className="w-8 h-8" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
 							<div className="absolute inset-0 -z-10">
 								<Hero.UserCircleSolidSm className="w-8 h-8 transform scale-125" />
 							</div>

@@ -1,15 +1,15 @@
 import $Link from "components/Link"
 import React from "react"
 
-export const Link = props => (
+export const Link = ({ text, subtext, ...props }) => (
 	<div className="group">
 		<$Link className="px-4 py-1 group-hover:text-white group-hover:bg-md-blue-400 trans-75" {...props}>
 			<p className="font-medium -text-px text-gray-800 group-hover:text-white trans-75">
-				{props.text}
+				{text}
 			</p>
-			{props.subtext && (
+			{subtext && (
 				<p className="mt-1 font-medium tracking-wide text-gray-600 group-hover:text-white trans-75" style={{ fontSize: "0.8125rem" /* 13px */ }}>
-					{props.subtext}
+					{subtext}
 				</p>
 			)}
 		</$Link>
