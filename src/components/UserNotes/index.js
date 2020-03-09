@@ -150,8 +150,8 @@ const UserNotes = props => {
 									</EditorInstance>
 								</div>
 								<div className="absolute right-0 top-0 flex flex-row justify-end items-start z-10">
-									<button className="-m-2 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 trans-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.id)}>
-										<Hero.TrashSolidSm className="w-4 h-4 transform" />
+									<button className="-m-4 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 transform scale-75 trans-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.id)}>
+										<Hero.XOutlineMd className="w-6 h-6 stroke-black" />
 									</button>
 								</div>
 							</Link>
