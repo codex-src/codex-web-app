@@ -1,4 +1,4 @@
-import * as contants from "__constants"
+import * as constants from "__constants"
 import * as ProgressBar from "components/ProgressBar"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
@@ -164,7 +164,7 @@ const NoteLoader = props => {
 	if (meta.loading) {
 		return null
 	} else if (!meta.new && !meta.exists) {
-		return <Router.Redirect to={contants.PATH_LOST} />
+		return <Router.Redirect to={constants.PATH_LOST} />
 	}
 	return React.cloneElement(props.children, { meta, children: meta.data })
 }

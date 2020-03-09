@@ -4,6 +4,7 @@ import * as Route from "components/Route"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Auth from "components/Auth"
+import Changelog from "components/Changelog"
 import Demo from "components/Demo"
 import Home from "components/Home"
 import React from "react"
@@ -16,8 +17,6 @@ const App = props => (
 			<ProgressBar.Provider>
 				<ProgressBar.ProgressBar />
 				<Router.Switch>
-
-					{/* Any */}
 
 					{/* Unprotected */}
 					<Route.Unprotected
@@ -44,15 +43,22 @@ const App = props => (
 						children={<UserNote />}
 					/>
 
+					{/* Any */}
+					<Route.Protected
+						path={constants.PATH_CHANGELOG}
+						title="Changelog"
+						children={<Changelog />}
+					/>
+
 					{/* Home */}
 					<User.Context.Consumer>
 						{user => !user ? (
 							<Route.Route path={constants.PATH_HOME} exact>
-								<Home /* key={random.newFourByteHash()} */ />
+								<Home />
 							</Route.Route>
 						) : (
 							<Route.Route path={constants.PATH_HOME} exact>
-								<UserNotes /* key={random.newFourByteHash()} */ />
+								<UserNotes />
 							</Route.Route>
 						)}
 					</User.Context.Consumer>

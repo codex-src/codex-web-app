@@ -8,10 +8,10 @@ export const Provider = props => {
 	const [response, setResponse] = React.useState({ loading: true, user: null })
 
 	React.useEffect(() => {
-		const unsub = firebase.auth().onAuthStateChanged(user => {
+		const defer = firebase.auth().onAuthStateChanged(user => {
 			setResponse({ loading: false, user })
 		})
-		return unsub
+		return defer
 	}, [])
 
 	const { Provider } = Context
