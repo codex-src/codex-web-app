@@ -10,68 +10,6 @@ import React from "react"
 const CREATE_TIMEOUT = 1e3
 const UPDATE_TIMEOUT = 1e3
 
-// const EditorInstance = props => {
-// 	const [state, dispatch] = Editor.useEditor(props.children, {
-// 		// baseFontSize: 16 * props.modifier,
-// 		// paddingX: 32 * props.modifier,
-// 		// paddingY: 24 * props.modifier,
-// 		// readOnly: true,
-// 	})
-// 	return (
-// 		<Editor.Editor
-// 			state={state}
-// 			dispatch={dispatch}
-// 			// paddingX={32 * props.modifier}
-// 			// paddingY={24 * props.modifier}
-// 			// readOnly={true}
-// 		/>
-// 	)
-// }
-
-// function useCreateUserNote(user, note, setNote) {
-// 	// https://github.com/facebook/react/issues/14010#issuecomment-433788147
-// 	const noteRef = React.useRef(note)
-// 	noteRef.current = note
-//
-// 	const didMount = React.useRef()
-// 	React.useEffect(
-// 		React.useCallback(() => {
-// 			// Ignore mount:
-// 			if (!didMount.current) {
-// 				didMount.current = true
-// 				return
-// 			// Ignore created:
-// 			} else if (note.id) {
-// 				// No-op
-// 				return
-// 			}
-// 			const id = setTimeout(() => {
-// 				const db = firebase.firestore()
-// 				const dbRef = db.collection("notes").doc()
-// 				const $note = {
-// 					id:        dbRef.id,
-// 					userID:    user.uid,
-// 					createdAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
-// 					updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
-// 					data:      noteRef.current.data,
-// 					byteCount: noteRef.current.data.length,
-// 					wordCount: noteRef.current.data.split(/\s+/).length,
-//
-// 					displayNameEmail: `${user.displayName} ${user.email}`,
-// 				}
-// 				setNote($note)
-// 				dbRef.set($note).catch(error => {
-// 					console.error(error)
-// 				})
-// 			}, 1e3)
-// 			return () => {
-// 				clearTimeout(id)
-// 			}
-// 		}, [user, note, setNote]),
-// 		[note], // Update on note, not user
-// 	)
-// }
-
 const Note = props => {
 	const user = User.useUser()
 	const renderProgressBar = ProgressBar.useProgressBar()
@@ -105,8 +43,8 @@ const Note = props => {
 				batch.set(noteRef, {
 					id:        autoID,
 					userID:    user.uid,
-					createdAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
-					updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
+					createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+					updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
 					snippet:   stateRef.current.data.slice(0, 500),
 					byteCount: stateRef.current.data.length,
 					wordCount: stateRef.current.data.split(/\s+/).length,
@@ -150,7 +88,7 @@ const Note = props => {
 				const batch = db.batch()
 				const noteRef = db.collection("notes").doc(meta.id)
 				batch.set(noteRef, {
-					updatedAt: firebase.firestore.FieldValue.serverTimestamp(), // FIXME?
+					updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
 					snippet:   stateRef.current.data.slice(0, 500),
 					byteCount: stateRef.current.data.length,
 					wordCount: stateRef.current.data.split(/\s+/).length,

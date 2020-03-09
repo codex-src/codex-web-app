@@ -44,15 +44,15 @@ export const NavAuth = props => {
 					to={constants.PATH_MY_NOTES}
 					children="My notes"
 				/>
-				<hr className="my-1" />
-				<Base.DropDownItem
-					to={constants.TODO}
-					children="Settings"
-				/>
-				<Base.DropDownItem
-					to={constants.TODO}
-					children="Upgrade to unlimited"
-				/>
+				{/* <hr className="my-1" /> */}
+				{/* <Base.DropDownItem */}
+				{/* 	to={constants.TODO} */}
+				{/* 	children="Settings" */}
+				{/* /> */}
+				{/* <Base.DropDownItem */}
+				{/* 	to={constants.TODO} */}
+				{/* 	children="Upgrade to unlimited" */}
+				{/* /> */}
 				<hr className="my-1" />
 				<Base.DropDownItemWarn
 					onClick={handleClickSignOut}

@@ -17,7 +17,7 @@ const Home = props => (
 					</h1>
 					<div className="h-12" />
 					<Link to={constants.PATH_AUTH}>
-						<p className="font-medium text-3xl -tracking-px text-md-blue-500">
+						<p className="font-medium text-3xl -tracking-px text-md-blue-a400">
 							Open your Codex
 						</p>
 					</Link>
