@@ -10,8 +10,6 @@ export const Provider = props => {
 	React.useEffect(() => {
 		const unsub = firebase.auth().onAuthStateChanged(user => {
 			setResponse({ loading: false, user })
-		}).catch(error => {
-			console.error(error)
 		})
 		return unsub
 	}, [])
