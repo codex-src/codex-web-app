@@ -154,8 +154,19 @@ const NoteLoader = props => {
 	return React.cloneElement(props.children, { meta, children: meta.data })
 }
 
+// {/* <Nav /* absolute */ /> */}
 const UserNote = props => (
 	<React.Fragment>
+		{/* <div className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white shadow"> */}
+		{/* 	<div className="flex flex-row items-between w-full max-w-5xl h-16"> */}
+		{/* 		<div> */}
+		{/* 			hello */}
+		{/* 		</div> */}
+		{/* 		<div> */}
+		{/* 			hello */}
+		{/* 		</div> */}
+		{/* 	</div> */}
+		{/* </div> */}
 		<Nav absolute />
 		<div className="flex flex-row justify-center min-h-full">
 			<div className="px-6 w-full max-w-screen-md">

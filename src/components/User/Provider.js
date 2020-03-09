@@ -1,7 +1,7 @@
 import Context from "./Context"
 import firebase from "__firebase"
 import React from "react"
-import StartupScreen from "./StartupScreen"
+import StartupScreen from "components/StartupScreen"
 
 const Provider = props => {
 	const [response, setResponse] = React.useState({

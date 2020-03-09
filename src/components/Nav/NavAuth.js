@@ -1,6 +1,6 @@
 import * as Base from "./Base"
 import * as constants from "__constants"
-import * as Feather from "react-feather"
+import * as SVG from "svgs"
 import * as User from "components/User"
 import firebase from "__firebase"
 import Link from "components/Link"
@@ -26,7 +26,7 @@ export const NavAuth = props => {
 
 			{/* LHS */}
 			<Link className="-mx-6 px-6 flex flex-row items-center" to={constants.PATH_HOME}>
-				<Feather.Layers className="w-8 h-8 text-md-blue-a400" />
+				<SVG.CodexLogo className="w-8 h-8 text-md-blue-a400" />
 			</Link>
 
 			{/* Drop down menu */}

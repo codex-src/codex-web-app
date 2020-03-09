@@ -1,5 +1,4 @@
 import * as constants from "__constants"
-import * as Feather from "react-feather"
 import * as SVG from "svgs"
 import firebase from "__firebase"
 import React from "react"
@@ -56,7 +55,7 @@ const Auth = props => {
 			<div className="px-6 box-content" style={{ width: "18rem" /* w-72 */ }}>
 
 				<div className="flex flex-row justify-center items-center transform scale-90 origin-bottom">
-					<Feather.Layers className="mr-3 w-8 h-8 stroke-medium text-md-blue-a400" />
+					<SVG.CodexLogo className="mr-3 w-8 h-8 stroke-medium text-md-blue-a400" />
 					<SVG.CodexTextLogo className="w-32 h-8" />
 				</div>
 
