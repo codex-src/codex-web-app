@@ -5,6 +5,7 @@ import * as User from "components/User"
 import Editor from "components/Editor" // FIXME: Exports are wrong
 import firebase from "__firebase"
 import Nav from "components/Nav"
+import NavContainer from "components/NavContainer"
 import React from "react"
 
 const CREATE_TIMEOUT = 1e3
@@ -162,8 +163,7 @@ const NoteLoader = props => {
 }
 
 const UserNote = props => (
-	<React.Fragment>
-		<Nav /* absolute */ />
+	<NavContainer>
 		<div className="flex flex-row justify-center min-h-full">
 			<div className="px-6 w-full max-w-screen-md">
 				<NoteLoader>
@@ -171,7 +171,7 @@ const UserNote = props => (
 				</NoteLoader>
 			</div>
 		</div>
-	</React.Fragment>
+	</NavContainer>
 )
 
 export default UserNote
