@@ -93,7 +93,12 @@ const Content = props => {
 							to={constants.PATH_MY_NOTES}
 							text="My notes"
 						/>
-						<hr className="my-2" />
+						<hr className="my-1" />
+						<DropDown.Link
+							to={constants.PATH_CHANGELOG}
+							text="Changelog"
+						/>
+						<hr className="my-1" />
 						<DropDown.Link
 							onClick={handleClickSignOut}
 							text="Logout"

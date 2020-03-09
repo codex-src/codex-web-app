@@ -16,7 +16,7 @@ export const Link = ({ text, /* subtext, */ ...props }) => (
 )
 
 export const Base = React.forwardRef((props, ref) => (
-	<div ref={ref} className="-mt-2 py-3 absolute right-0 top-full w-48 bg-white rounded-lg shadow-hero-lg">
+	<div ref={ref} className="-mt-2 py-2 absolute right-0 top-full w-48 bg-white rounded-lg shadow-hero-lg">
 		{props.children}
 	</div>
 ))
