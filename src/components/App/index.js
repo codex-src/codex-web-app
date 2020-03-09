@@ -1,5 +1,6 @@
 import * as constants from "__constants"
 import * as ProgressBar from "components/ProgressBar"
+import * as Route from "components/Route"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Auth from "components/Auth"
@@ -16,13 +17,15 @@ const App = props => (
 				<ProgressBar.ProgressBar />
 				<Router.Switch>
 
+					{/* Any */}
+
 					{/* Unprotected */}
-					<User.UnprotectedRoute
+					<Route.Unprotected
 						path={constants.PATH_AUTH}
 						title="Open your Codex"
 						children={<Auth />}
 					/>
-					<User.UnprotectedRoute
+					<Route.Unprotected
 						path={constants.PATH_DEMO}
 						exact
 						title="Demo"
@@ -30,12 +33,12 @@ const App = props => (
 					/>
 
 					{/* Protected */}
-					<User.ProtectedRoute
+					<Route.Protected
 						path={constants.PATH_NEW_NOTE}
 						title="New note"
 						children={<UserNote />}
 					/>
-					<User.ProtectedRoute
+					<Route.Protected
 						path={constants.PATH_NOTE}
 						title="Editing note"
 						children={<UserNote />}
@@ -44,13 +47,13 @@ const App = props => (
 					{/* Home */}
 					<User.Context.Consumer>
 						{user => !user ? (
-							<User.UnprotectedRoute path={constants.PATH_HOME} exact>
+							<Route.Route path={constants.PATH_HOME} exact>
 								<Home /* key={random.newFourByteHash()} */ />
-							</User.UnprotectedRoute>
+							</Route.Route>
 						) : (
-							<User.ProtectedRoute path={constants.PATH_HOME} exact>
+							<Route.Route path={constants.PATH_HOME} exact>
 								<UserNotes /* key={random.newFourByteHash()} */ />
-							</User.ProtectedRoute>
+							</Route.Route>
 						)}
 					</User.Context.Consumer>
 

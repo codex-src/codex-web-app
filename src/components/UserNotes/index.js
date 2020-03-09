@@ -8,7 +8,7 @@ import firebase from "__firebase"
 import Link from "components/Link"
 import NavContainer from "components/NavContainer"
 import React from "react"
-import useReducer from "./useReducer"
+import useReducer from "./reducer"
 
 const DELAY = 100
 
@@ -55,15 +55,15 @@ const UserNotes = props => {
 					const notes = []
 					snap.forEach(doc => notes.push(doc.data()))
 					setRes({ loading: false, notes })
-				}).catch(error => (
+				}).catch(error => {
 					console.error(error)
-				))
+				})
 			}, DELAY)
 			return () => {
 				abort = true
 				clearTimeout(id)
 			}
-		}, [user, state, res]),
+		}, [user, state]),
 		[state.sortAscending],
 	)
 
