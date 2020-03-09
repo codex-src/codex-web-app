@@ -1,4 +1,5 @@
 const defaultTheme = require("tailwindcss/defaultTheme")
+const plugin = require("tailwindcss/plugin")
 
 module.exports = {
 	theme: {
@@ -9,6 +10,8 @@ module.exports = {
 				"2xl":   "2rem",
 			},
 			boxShadow: {
+				"outline-color": "0 0 0 3px currentColor",
+
 				"hero-sm": `
 					0 0 0 1px rgba(0, 0, 0, 0.05),
 					0 1px 2px 0 rgba(0, 0, 0, 0.05)
@@ -39,6 +42,7 @@ module.exports = {
 					...defaultTheme.colors.gray,
 					50: "#fbfdfe",
 				},
+
 				// https://gist.github.com/codex-zaydek/d3d1803f981fc8ed75fc0e4f481f6ecc
 				"md-blue-50":   { default: "#e3f2fd" },
 				"md-blue-100":  { default: "#bbdefb" },
@@ -110,6 +114,9 @@ module.exports = {
 				extrabold: 3.33, // 800
 				black:     4,    // 900
 			},
+			zIndex: {
+				"-10": "-10",
+			},
 		},
 		// https://tailwindcss.com/docs/breakpoints
 		screens: {
@@ -135,6 +142,8 @@ module.exports = {
 
 		textColor: [
 			"responsive",
+			"group-hover",
+			"group-hover:dark",
 			"dark",
 			"hover",
 			"hover:dark",
@@ -147,6 +156,8 @@ module.exports = {
 		],
 		backgroundColor: [
 			"responsive",
+			"group-hover",
+			"group-hover:dark",
 			"dark",
 			"hover",
 			"hover:dark",
@@ -159,6 +170,8 @@ module.exports = {
 		],
 		boxShadow: [
 			"responsive",
+			"group-hover",
+			"group-hover:dark",
 			"dark",
 			"hover",
 			"hover:dark",
@@ -171,8 +184,13 @@ module.exports = {
 		],
 	},
 	plugins: [
-		((flag = "dark-mode", prefix = "dark") => {
+		plugin(((flag = "dark-mode", prefix = "dark") => {
 			return ({ addVariant, e }) => {
+				addVariant(`group-hover:${prefix}`, ({ modifySelectors }) => {
+					modifySelectors(({ className }) => {
+						return `.${flag} .group-hover .${e(`group-hover:${prefix}:${className}`)}`
+					})
+				})
 				addVariant(prefix, ({ modifySelectors }) => {
 					modifySelectors(({ className }) => {
 						return `.${flag} .${e(`${prefix}:${className}`)}`
@@ -199,6 +217,6 @@ module.exports = {
 					})
 				})
 			}
-		})(),
+		})()),
 	],
 }

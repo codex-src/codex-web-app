@@ -14,4 +14,4 @@ export const URL           = process.env.PUBLIC_URL || `http://localhost:${proce
 export const URL_REPO      = "https://github.com/codex-src/codex-app"
 /* eslint-enable no-multi-spaces */
 
-export const IMG_TRANS = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+export const TRANSPARENT_PX = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
