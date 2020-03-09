@@ -32,6 +32,7 @@ const Note = props => {
 				// No-op
 				return
 			}
+			window.onbeforeunload = () => "Changes you made may not be saved."
 			const id = setTimeout(() => {
 				renderProgressBar()
 				// Generate a new ID:
@@ -57,14 +58,17 @@ const Note = props => {
 					data: stateRef.current.data,
 				})
 				batch.commit().then(() => {
-					window.history.replaceState({}, "", `/n/${autoID}`)
 					setMeta({ ...meta, new: false, id: autoID, exists: true })
+					window.history.replaceState({}, "", `/n/${autoID}`)
 				}).catch(error => {
 					console.error(error)
+				}).then(() => {
+					window.onbeforeunload = null
 				})
 			}, CREATE_TIMEOUT)
 			return () => {
 				clearTimeout(id)
+				window.onbeforeunload = null
 			}
 		}, [user, renderProgressBar, meta]),
 		[state.data], // Update on state.data
@@ -81,8 +85,8 @@ const Note = props => {
 				// No-op
 				return
 			}
+			window.onbeforeunload = () => "Changes you made may not be saved."
 			const id = setTimeout(() => {
-				renderProgressBar()
 				// Save to notes/:noteID:
 				const db = firebase.firestore()
 				const batch = db.batch()
@@ -100,50 +104,53 @@ const Note = props => {
 				}, { merge: true })
 				batch.commit().catch(error => {
 					console.error(error)
+				}).then(() => {
+					window.onbeforeunload = null
 				})
 			}, UPDATE_TIMEOUT)
 			return () => {
 				clearTimeout(id)
+				window.onbeforeunload = null
 			}
-		}, [renderProgressBar, meta]),
+		}, [meta]),
 		[state.data],
 	)
 
-	return <Editor.Editor state={state} dispatch={dispatch} paddingY={224} />
+	return <Editor.Editor state={state} dispatch={dispatch} paddingY={160} />
 }
 
 const NoteLoader = props => {
-	const params = Router.useParams()
+	const { noteID } = Router.useParams()
 
 	const [meta, setMeta] = React.useState({
-		new: !params.noteID,
-		id: params.noteID || "",
-		loading: !!params.noteID, // Inverse to new
+		new: !noteID,
+		id: noteID || "",
+		loading: !!noteID, // Inverse to new
 		exists: false,
 		data: "",
 	})
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
-			if (!params.noteID) {
+			if (!noteID) {
 				// No-op
 				return
 			}
 			// Load notes/:noteID:
 			const db = firebase.firestore()
-			const dbRef = db.collection("notes").doc(params.noteID).collection("content").doc("markdown")
+			const dbRef = db.collection("notes").doc(noteID).collection("content").doc("markdown")
 			dbRef.get().then(doc => {
 				if (!doc.exists) {
 					setMeta({ ...meta, loading: false, exists: false })
 					return
 				}
 				const { data } = doc.data()
-				setMeta({ ...meta, id: params.noteID, loading: false, exists: true, data })
+				setMeta({ ...meta, id: noteID, loading: false, exists: true, data })
 			}).catch(error => {
 				console.error(error)
 			})
-		}, [params.noteID, meta]),
-		[params.noteID], // Update on params.noteID
+		}, [noteID, meta]),
+		[noteID],
 	)
 
 	if (meta.loading) {
@@ -154,20 +161,9 @@ const NoteLoader = props => {
 	return React.cloneElement(props.children, { meta, children: meta.data })
 }
 
-// {/* <Nav /* absolute */ /> */}
 const UserNote = props => (
 	<React.Fragment>
-		{/* <div className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white shadow"> */}
-		{/* 	<div className="flex flex-row items-between w-full max-w-5xl h-16"> */}
-		{/* 		<div> */}
-		{/* 			hello */}
-		{/* 		</div> */}
-		{/* 		<div> */}
-		{/* 			hello */}
-		{/* 		</div> */}
-		{/* 	</div> */}
-		{/* </div> */}
-		<Nav absolute />
+		<Nav /* absolute */ />
 		<div className="flex flex-row justify-center min-h-full">
 			<div className="px-6 w-full max-w-screen-md">
 				<NoteLoader>

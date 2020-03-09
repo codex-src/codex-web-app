@@ -12,7 +12,7 @@ export const NavUnauth = props => {
 	const [dropDown, setDropDown] = useDropDown(ref)
 
 	return (
-		<Base.Container>
+		<React.Fragment>
 
 			{/* LHS */}
 			<Link className="-mx-6 px-6 flex flex-row items-center" to={constants.PATH_HOME}>
@@ -65,7 +65,7 @@ export const NavUnauth = props => {
 				/>
 			</Base.DropDown>
 
-		</Base.Container>
+		</React.Fragment>
 	)
 }
 
