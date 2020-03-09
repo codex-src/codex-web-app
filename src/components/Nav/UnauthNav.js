@@ -1,12 +1,30 @@
-import * as Base from "./Base"
 import * as constants from "__constants"
+import * as DropDown from "./DropDown"
 import * as Hero from "react-heroicons"
 import * as SVG from "svgs"
 import Link from "components/Link"
 import React from "react"
 import useDropDown from "hooks/useDropDown"
 
-export const NavUnauth = props => {
+const NavLink = props => (
+	<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 trans-75">
+		<p className="font-medium">
+			{props.text}
+		</p>
+	</Link>
+)
+
+const NavLinkCTA = props => (
+	<div className="mx-3 flex flex-row items-center">
+		<Link className="px-4 py-3 bg-white text-md-blue-a400 hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" to={props.to}>
+			<p className="font-medium">
+				{props.text}
+			</p>
+		</Link>
+	</div>
+)
+
+const Content = props => {
 	const ref = React.useRef()
 
 	const [dropDown, setDropDown] = useDropDown(ref)
@@ -15,58 +33,78 @@ export const NavUnauth = props => {
 		<React.Fragment>
 
 			{/* LHS */}
-			<Link className="-mx-6 px-6 flex flex-row items-center" to={constants.PATH_HOME}>
-				<SVG.CodexLogo className="w-8 h-8 text-md-blue-a400" />
-			</Link>
+			<div className="-mx-3 flex flex-row">
+				<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME}>
+					<SVG.CodexLogo className="w-8 h-8 text-md-blue-a400" />
+				</Link>
+			</div>
 
-			{/* RHS */}
+			{/* RHS (1 of 2) */}
 			<div className="-mx-3 hidden md:flex md:flex-row">
-				{/* <Base.NavItem */}
+				{/* <NavLink */}
 				{/* 	to={constants.TODO} */}
-				{/* 	children="Features" */}
+				{/* 	text="Features" */}
 				{/* /> */}
-				{/* <Base.NavItem */}
+				{/* <NavLink */}
 				{/* 	to={constants.TODO} */}
-				{/* 	children="Try Codex for free!" */}
+				{/* 	text="Try Codex for free!" */}
 				{/* /> */}
-				{/* <Base.NavItem */}
+				{/* <NavLink */}
 				{/* 	to={constants.TODO} */}
-				{/* 	children="Pricing" */}
+				{/* 	text="Pricing" */}
 				{/* /> */}
-				<Base.NavItemCTA
+				<NavLinkCTA
 					to={constants.PATH_AUTH}
-					children="Open your Codex"
+					text="Open your Codex"
 				/>
 			</div>
 
-			{/* Drop down menu */}
-			<Base.DropDownMenuButtonMd onClick={e => setDropDown(!dropDown)}>
-				<Hero.MenuOutlineMd className="w-8 h-8 stroke-medium text-gray-800" />
-			</Base.DropDownMenuButtonMd>
+			{/* RHS (2 of 2) */}
+			<div className="-mx-3 flex flex-row md:hidden">
+				<div className="px-3 relative flex flex-row items-center">
 
-			{/* Drop down */}
-			<Base.DropDown ref={ref}>
-				{/* <Base.DropDownItem */}
-				{/* 	to={constants.PATH_AUTH} */}
-				{/* 	children="Features" */}
-				{/* /> */}
-				{/* <Base.DropDownItem */}
-				{/* 	to={constants.PATH_AUTH} */}
-				{/* 	children="Try Codex for free!" */}
-				{/* /> */}
-				{/* <Base.DropDownItem */}
-				{/* 	to={constants.PATH_AUTH} */}
-				{/* 	children="Pricing" */}
-				{/* /> */}
-				{/* <hr className="my-1" /> */}
-				<Base.DropDownItem
-					to={constants.PATH_AUTH}
-					children="Open your Codex"
-				/>
-			</Base.DropDown>
+					<button onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
+						<Hero.MenuOutlineMd className="w-8 h-8" />
+					</button>
+
+					<DropDown.Base ref={ref}>
+						<DropDown.Link
+							to={constants.PATH_AUTH}
+							text="Open your Codex"
+						/>
+					</DropDown.Base>
+
+				</div>
+			</div>
 
 		</React.Fragment>
 	)
 }
 
-export default NavUnauth
+const UnauthNav = props => {
+	const ref = React.useRef()
+
+	React.useLayoutEffect(() => {
+		const handler = e => {
+			if (!window.scrollY) {
+				ref.current.classList.remove("shadow")
+			} else {
+				ref.current.classList.add("shadow")
+			}
+		}
+		window.addEventListener("scroll", handler, false)
+		return () => {
+			window.removeEventListener("scroll", handler, false)
+		}
+	}, [])
+
+	return (
+		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white z-30 trans-300">
+			<div className="px-6 flex flex-row justify-between w-full max-w-screen-lg h-20">
+				<Content />
+			</div>
+		</div>
+	)
+}
+
+export default UnauthNav

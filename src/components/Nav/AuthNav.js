@@ -1,4 +1,5 @@
 import * as constants from "__constants"
+import * as DropDown from "./DropDown"
 import * as Hero from "react-heroicons"
 import * as SVG from "svgs"
 import * as User from "components/User"
@@ -6,27 +7,6 @@ import firebase from "__firebase"
 import Link from "components/Link"
 import React from "react"
 import useDropDown from "hooks/useDropDown"
-
-const DropDownLink = props => (
-	<div className="group">
-		<Link className="px-4 py-1 group-hover:text-white group-hover:bg-md-blue-400 trans-75" {...props}>
-			<p className="font-medium -text-px text-gray-800 group-hover:text-white trans-75">
-				{props.text}
-			</p>
-			{props.subtext && (
-				<p className="mt-1 font-medium tracking-wide text-gray-600 group-hover:text-white trans-75" style={{ fontSize: "0.8125rem" /* 13px */ }}>
-					{props.subtext}
-				</p>
-			)}
-		</Link>
-	</div>
-)
-
-const DropDown = React.forwardRef((props, ref) => (
-	<div ref={ref} className="-mt-2 py-3 absolute right-0 top-full w-48 bg-gray-50 rounded-lg shadow-hero-lg">
-		{props.children}
-	</div>
-))
 
 // {/* News */}
 // <div className="px-3 relative flex flex-row items-center">
@@ -59,7 +39,7 @@ const DropDown = React.forwardRef((props, ref) => (
 //
 // </div>
 
-export const Content = props => {
+const Content = props => {
 	const ref = React.useRef()
 
 	const user = User.useUser()
@@ -104,21 +84,21 @@ export const Content = props => {
 						</div>
 					</button>
 
-					<DropDown ref={ref}>
-						<DropDownLink
+					<DropDown.Base ref={ref}>
+						<DropDown.Link
 							to={constants.PATH_NEW_NOTE}
 							text="Create a new note"
 						/>
-						<DropDownLink
+						<DropDown.Link
 							to={constants.PATH_MY_NOTES}
 							text="My notes"
 						/>
 						<hr className="my-2" />
-						<DropDownLink
+						<DropDown.Link
 							onClick={handleClickSignOut}
 							text="Logout"
 						/>
-					</DropDown>
+					</DropDown.Base>
 
 				</div>
 			</div>
