@@ -18,6 +18,14 @@ const App = props => (
 				<ProgressBar.ProgressBar />
 				<Router.Switch>
 
+					{/* Any */}
+					<Route.Route
+						path={constants.PATH_CHANGELOG}
+						title="Changelog"
+						exact
+						children={<Changelog />}
+					/>
+
 					{/* Unprotected */}
 					<Route.Unprotected
 						path={constants.PATH_AUTH}
@@ -41,13 +49,6 @@ const App = props => (
 						path={constants.PATH_NOTE}
 						title="Editing note"
 						children={<UserNote />}
-					/>
-
-					{/* Any */}
-					<Route.Protected
-						path={constants.PATH_CHANGELOG}
-						title="Changelog"
-						children={<Changelog />}
 					/>
 
 					{/* Home */}
