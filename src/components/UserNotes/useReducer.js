@@ -5,7 +5,6 @@ const initialState = {
 	itemsShown: consts.ITEMS_DEFAULT,
 	itemsShownModifier: consts.ITEMS_MODIFIER,
 	sortAscending: false,
-	// scrollEnabled: false,
 }
 
 const reducer = state => ({
@@ -28,9 +27,6 @@ const reducer = state => ({
 	toggleSortDirection() {
 		state.sortAscending = !state.sortAscending
 	},
-	// toggleScrollEnabled() {
-	// 	state.scrollEnabled = !state.scrollEnabled
-	// },
 })
 
 function useUserNotes() {

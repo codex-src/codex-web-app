@@ -14,10 +14,7 @@ const DELAY = 100
 
 const EditorInstance = props => {
 	const [state, dispatch] = Editor.useEditor(props.children, {
-		// baseFontSize: 16 * props.modifier,
-		// paddingX: 32 * props.modifier,
-		// paddingY: 24 * props.modifier,
-		readOnly: true,
+		readOnly: true, // FIXME: Move to props
 	})
 	return (
 		<Editor.Editor
