@@ -4,10 +4,10 @@
 		<br>
 		<br>
 	</h1>
-  <h2>
+  <h3>
 		<br>
 		The developer’s web-based notebook
-	</h2>
+	</h3>
 </div>
 
 ![](/public/social@2x.png)
