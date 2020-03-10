@@ -1,10 +1,9 @@
 // import NoteLoader from "components/NoteHOC/NoteLoader"
 import * as constants from "__constants"
-import * as Hero from "react-heroicons"
 import * as Router from "react-router-dom"
 import Editor from "components/Editor"
 import firebase from "__firebase"
-import Nav from "components/Nav"
+import NoteContainer from "components/NoteContainer"
 import React from "react"
 import toHumanDate from "utils/date/toHumanDate"
 
@@ -154,17 +153,11 @@ const Note = props => {
 	const { noteID } = Router.useParams()
 
 	return (
-		<React.Fragment>
-			{/* NOTE: Do not use NavContainer */}
-			<Nav />
-			<div className="py-40 flex flex-row justify-center">
-				<div className="px-6 w-full max-w-screen-md">
-					<NoteLoader noteID={noteID}>
-						<NoteUI />
-					</NoteLoader>
-				</div>
-			</div>
-		</React.Fragment>
+		<NoteContainer>
+			<NoteLoader noteID={noteID}>
+				<NoteUI />
+			</NoteLoader>
+		</NoteContainer>
 	)
 }
 
