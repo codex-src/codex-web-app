@@ -6,6 +6,9 @@ import Editor from "components/Editor"
 import firebase from "__firebase"
 import Nav from "components/Nav"
 import React from "react"
+import toHumanDate from "utils/date/toHumanDate"
+
+const QUERY = { loading: true, error: false }
 
 const EditorInstance = props => {
 	const [state, dispatch] = Editor.useEditor(props.children, {
@@ -23,28 +26,42 @@ const EditorInstance = props => {
 	)
 }
 
-function newQuery(__debug) {
-	const query = {
-		__debug,
-		loading: true,
-		error: false,
-	}
-	return query
-}
+const NoteUI = ({ note, user, ...props }) => (
+	<React.Fragment>
+		<div className="flex flex-row items-center">
 
-const Note = props => {
-	const { noteID } = Router.useParams()
+			{/* User photo */}
+			<div className="mr-3">
+				<img className="w-12 h-12 bg-gray-300 rounded-full" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
+			</div>
 
-	// const [query, setQuery] = React.useState({
-	// 	note: newQuery("notes/:noteID"),
-	// 	noteContent: newQuery("notes/:noteID/content/markdown"),
-	// 	user: newQuery("users/:userID"),
-	// })
+			{/* User name */}
+			<div>
+				<p className="font-semibold">
+					{user.displayName}
+				</p>
+				<p className="text-sm tracking-wide text-gray-600">
+					{toHumanDate(note.createdAt.toDate())}{" "}
+					<span className="text-gray-400">·</span>{" "}
+					Updated {toHumanDate(note.updatedAt.toDate())}
+				</p>
+			</div>
+		</div>
 
+		{/* Note */}
+		<div className="h-16" />
+		<EditorInstance>
+			{props.children}
+		</EditorInstance>
+
+	</React.Fragment>
+)
+
+const NoteLoader = ({ noteID, ...props }) => {
 	const [query, setQuery] = React.useState({
-		note: newQuery("notes/:noteID"),
-		noteContent: newQuery("notes/:noteID/content/markdown"),
-		user: newQuery("users/:userID"),
+		note: { ...QUERY },
+		noteContent: { ...QUERY },
+		user: { ...QUERY },
 		errors() {
 			const keys = Object.keys(this)
 			return keys.some(k => this[k].error)
@@ -100,6 +117,7 @@ const Note = props => {
 		})
 	}, [noteID])
 
+	// Load the user (depends on note):
 	React.useEffect(() => {
 		if (!note.userID) {
 			// No-op
@@ -129,73 +147,25 @@ const Note = props => {
 	} else if (query.errors()) {
 		return <Router.Redirect to={constants.PATH_LOST} />
 	}
+	return React.cloneElement(props.children, { note, user, children: note.content.markdown.data })
+}
+
+const Note = props => {
+	const { noteID } = Router.useParams()
+
 	return (
 		<React.Fragment>
 			{/* NOTE: Do not use NavContainer */}
 			<Nav />
 			<div className="py-40 flex flex-row justify-center">
 				<div className="px-6 w-full max-w-screen-md">
-
-					<div className="flex flex-row items-center">
-
-						{/* User photo */}
-						<div className="mr-3">
-							<img className="w-12 h-12 bg-gray-500 rounded-full" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
-						</div>
-
-						{/* User name */}
-						<div>
-							<p className="font-semibold">
-								{user.displayName}
-							</p>
-							<p className="text-sm tracking-wide text-gray-600">
-								{toHumanDate(note.createdAt.toDate())}{" "}
-								<span className="text-gray-400">·</span>{" "}
-								Updated {toHumanDate(note.updatedAt.toDate())}
-							</p>
-						</div>
-					</div>
-
-					<div className="h-16" />
-					<EditorInstance>
-						{note.content.markdown.data}
-					</EditorInstance>
+					<NoteLoader noteID={noteID}>
+						<NoteUI />
+					</NoteLoader>
 				</div>
 			</div>
 		</React.Fragment>
 	)
-}
-
-const months = [
-	"Jan", // uary",
-	"Feb", // ruary",
-	"Mar", // ch",
-	"Apr", // il",
-	"May", // ",
-	"Jun", // e",
-	"Jul", // y",
-	"Aug", // ust",
-	"Sep", // tember",
-	"Oct", // ober",
-	"Nov", // ember",
-	"Dec", // ember",
-]
-
-// Converts a date to a human-readable string.
-function toHumanDate(date) {
-	const mm = date.getMonth() // NOTE: getMonth is zero-based
-	const dd = date.getDate()
-	const yy = date.getFullYear()
-
-	// let suffix = "th"
-	// if (dd % 10 === 1 && dd !== 11) {
-	// 	suffix = "st"
-	// } else if (dd % 10 === 2 && dd !== 12) {
-	// 	suffix = "nd"
-	// } else if (dd % 10 === 3 && dd !== 13) {
-	// 	suffix = "rd"
-	// }
-	return `${months[mm]} ${dd}, ${yy}`
 }
 
 export default Note
