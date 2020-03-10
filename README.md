@@ -8,6 +8,9 @@
 		<br>
 		The developer’s web-based notebook
 	</h3>
+	<p>
+		Codex makes it easier than ever to express yourself in words <em>and</em> code
+	</p>
 </div>
 
 ![](/public/social@2x.png)
