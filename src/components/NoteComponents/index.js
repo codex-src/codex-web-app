@@ -29,7 +29,7 @@ export const Note = ({ note, user, ...props }) => (
 		{/* User */}
 		<div className="flex flex-row items-center">
 			<div className="mr-3">
-				<img className="w-12 h-12 bg-gray-300 rounded-full" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
+				<img className="w-12 h-12 bg-gray-500 rounded-full" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
 			</div>
 			<div>
 				<p className="font-semibold">

@@ -23,7 +23,7 @@ export const ProgressBar = props => {
 		ref.current.classList.add(enterClass)
 		const id = setTimeout(() => {
 			ref.current.classList.add(activeClass)
-		}, constants.MICRO_DELAY)
+		}, constants.MICRO_DELAY_MS)
 		return () => {
 			clearTimeout(id)
 		}
