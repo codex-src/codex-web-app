@@ -1,13 +1,13 @@
 <div align="center">
-	<h2>
+	<h1>
 		Codex
 		<br>
 		<br>
-	</h2>
-  <h3>
+	</h1>
+  <h2>
 		<br>
 		The developer’s web-based notebook
-	</h3>
+	</h2>
 </div>
 
 ![](/public/social@2x.png)
