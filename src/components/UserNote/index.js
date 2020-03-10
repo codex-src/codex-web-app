@@ -10,11 +10,12 @@ import React from "react"
 const CREATE_TIMEOUT = 1e3
 const UPDATE_TIMEOUT = 1e3
 
-const Note = props => {
+const Note = ({ meta: $meta, ...props }) => {
 	const user = User.useUser()
 	const renderProgressBar = ProgressBar.useProgressBar()
 
-	const [meta, setMeta] = React.useState(props.meta) // Copy of meta -- do not rerender parent component
+	// Copy meta -- do not rerender parent component
+	const [meta, setMeta] = React.useState($meta)
 	const [state, dispatch] = Editor.useEditor(props.children)
 
 	// https://github.com/facebook/react/issues/14010#issuecomment-433788147
@@ -28,14 +29,14 @@ const Note = props => {
 			if (!didMount1.current) {
 				didMount1.current = true
 				return
-			} else if (!meta.new) {
+			} else if (meta.id) {
 				// No-op
 				return
 			}
 			window.onbeforeunload = () => "Changes you made may not be saved."
 			const id = setTimeout(() => {
-				renderProgressBar()
 				// Generate a new ID:
+				renderProgressBar()
 				const db = firebase.firestore()
 				const autoID = db.collection("notes").doc().id
 				// Save to notes/:noteID:
@@ -50,6 +51,7 @@ const Note = props => {
 					byteCount: stateRef.current.data.length,
 					wordCount: stateRef.current.data.split(/\s+/).length,
 
+					// TODO: displayName is denormalized
 					displayNameEmail: `${user.displayName} ${user.email}`,
 				})
 				// Save to notes/:noteID/content/markdown:
@@ -58,8 +60,8 @@ const Note = props => {
 					data: stateRef.current.data,
 				})
 				batch.commit().then(() => {
-					setMeta({ ...meta, new: false, id: autoID, exists: true })
 					window.history.replaceState({}, "", `/n/${autoID}`)
+					setMeta(current => ({ ...current, id: autoID }))
 				}).catch(error => {
 					console.error(error)
 				}).then(() => {
@@ -71,7 +73,7 @@ const Note = props => {
 				window.onbeforeunload = null
 			}
 		}, [user, renderProgressBar, meta]),
-		[state.data], // Update on state.data
+		[state.data],
 	)
 
 	// Update note:
@@ -81,7 +83,7 @@ const Note = props => {
 			if (!didMount2.current) {
 				didMount2.current = true
 				return
-			} else if (meta.new) {
+			} else if (!meta.id) {
 				// No-op
 				return
 			}
@@ -127,60 +129,58 @@ const Note = props => {
 	)
 }
 
-const NoteLoader = props => {
-	const { noteID } = Router.useParams()
-
+const NewNoteLoader = ({ noteID, ...props }) => {
 	const [meta, setMeta] = React.useState({
-		new: !noteID,
+		loading: !!noteID, // Inverse to noteID
+		error: false,
 		id: noteID || "",
-		loading: !!noteID, // Inverse to new
-		exists: false,
 		data: "",
 	})
 
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			if (!noteID) {
-				// No-op
+	React.useEffect(() => {
+		if (!noteID) {
+			// No-op
+			return
+		}
+		// Load notes/:noteID:
+		const db = firebase.firestore()
+		const noteContentRef = db.collection("notes").doc(noteID).collection("content").doc("markdown")
+		noteContentRef.get().then(doc => {
+			if (!doc.exists) {
+				setMeta(current => ({ ...current, loading: false }))
 				return
 			}
-			// Load notes/:noteID:
-			const db = firebase.firestore()
-			const dbRef = db.collection("notes").doc(noteID).collection("content").doc("markdown")
-			dbRef.get().then(doc => {
-				if (!doc.exists) {
-					setMeta({ ...meta, loading: false, exists: false })
-					return
-				}
-				const { data } = doc.data()
-				setMeta({ ...meta, id: noteID, loading: false, exists: true, data })
-			}).catch(error => {
-				console.error(error)
-			})
-		}, [noteID, meta]),
-		[noteID],
-	)
+			const data = doc.data()
+			setMeta(current => ({ ...current, loading: false, ...data }))
+		}).catch(error => {
+			console.error(error)
+		})
+	}, [noteID])
 
 	if (meta.loading) {
 		return null
-	} else if (!meta.new && !meta.exists) {
+	} else if (meta.error) {
 		return <Router.Redirect to={constants.PATH_LOST} />
 	}
 	return React.cloneElement(props.children, { meta, children: meta.data })
 }
 
-const UserNote = props => (
-	<React.Fragment>
-		{/* NOTE: Do not use NavContainer */}
-		<Nav />
-		<div className="flex flex-row justify-center min-h-full">
-			<div className="px-6 w-full max-w-screen-md">
-				<NoteLoader>
-					<Note />
-				</NoteLoader>
+const UserNote = props => {
+	const { noteID } = Router.useParams()
+
+	return (
+		// NOTE: Do not use NoteContainer
+		<React.Fragment>
+			<Nav />
+			<div className="flex flex-row justify-center min-h-full">
+				<div className="px-6 w-full max-w-screen-md">
+					<NewNoteLoader noteID={noteID}>
+						<Note />
+					</NewNoteLoader>
+				</div>
 			</div>
-		</div>
-	</React.Fragment>
-)
+		</React.Fragment>
+	)
+}
 
 export default UserNote
