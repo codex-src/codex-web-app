@@ -10,12 +10,12 @@ import React from "react"
 const CREATE_TIMEOUT = 1e3
 const UPDATE_TIMEOUT = 1e3
 
-const Note = ({ meta: $meta, ...props }) => {
+const Note = ({ id: $id, ...props }) => {
 	const user = User.useUser()
 	const renderProgressBar = ProgressBar.useProgressBar()
 
-	// Copy meta -- do not rerender parent component
-	const [meta, setMeta] = React.useState($meta)
+	// Copy -- do not rerender parent component:
+	const [id, setID] = React.useState($id)
 	const [state, dispatch] = Editor.useEditor(props.children)
 
 	// https://github.com/facebook/react/issues/14010#issuecomment-433788147
@@ -29,12 +29,12 @@ const Note = ({ meta: $meta, ...props }) => {
 			if (!didMount1.current) {
 				didMount1.current = true
 				return
-			} else if (meta.id) {
+			} else if (id) {
 				// No-op
 				return
 			}
 			window.onbeforeunload = () => "Changes you made may not be saved."
-			const id = setTimeout(() => {
+			const timeoutID = setTimeout(() => {
 				// Generate a new ID:
 				renderProgressBar()
 				const db = firebase.firestore()
@@ -60,8 +60,8 @@ const Note = ({ meta: $meta, ...props }) => {
 					data: stateRef.current.data,
 				})
 				batch.commit().then(() => {
-					window.history.replaceState({}, "", `/n/${autoID}`)
-					setMeta(current => ({ ...current, id: autoID }))
+					window.history.replaceState({}, "", `/n/${autoID}`) // Takes precedence
+					setID(autoID)
 				}).catch(error => {
 					console.error(error)
 				}).then(() => {
@@ -69,10 +69,10 @@ const Note = ({ meta: $meta, ...props }) => {
 				})
 			}, CREATE_TIMEOUT)
 			return () => {
-				clearTimeout(id)
-				window.onbeforeunload = null
+				window.onbeforeunload = null // Takes precedence
+				clearTimeout(timeoutID)
 			}
-		}, [user, renderProgressBar, meta]),
+		}, [user, renderProgressBar, id]),
 		[state.data],
 	)
 
@@ -83,21 +83,21 @@ const Note = ({ meta: $meta, ...props }) => {
 			if (!didMount2.current) {
 				didMount2.current = true
 				return
-			} else if (!meta.id) {
+			} else if (!id) {
 				// No-op
 				return
 			}
 			window.onbeforeunload = () => "Changes you made may not be saved."
-			const id = setTimeout(() => {
+			const timeoutID = setTimeout(() => {
 				// Save to notes/:noteID:
 				const db = firebase.firestore()
 				const batch = db.batch()
-				const noteRef = db.collection("notes").doc(meta.id)
+				const noteRef = db.collection("notes").doc(id)
 				batch.set(noteRef, {
 					updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
 					snippet:   stateRef.current.data.slice(0, 500),
 					byteCount: stateRef.current.data.length,
-					wordCount: stateRef.current.data.split(/\s+/).length,
+					wordCount: stateRef.current.data.split(/\s+/).length, // TODO: Ignore markdown syntax
 				}, { merge: true })
 				// Save to notes/:noteID/content/markdown:
 				const noteContentRef = noteRef.collection("content").doc("markdown")
@@ -111,10 +111,10 @@ const Note = ({ meta: $meta, ...props }) => {
 				})
 			}, UPDATE_TIMEOUT)
 			return () => {
-				clearTimeout(id)
-				window.onbeforeunload = null
+				window.onbeforeunload = null // Takes precedence
+				clearTimeout(timeoutID)
 			}
-		}, [meta]),
+		}, [id]),
 		[state.data],
 	)
 
@@ -130,12 +130,12 @@ const Note = ({ meta: $meta, ...props }) => {
 }
 
 const NewNoteLoader = ({ noteID, ...props }) => {
-	const [meta, setMeta] = React.useState({
+	const [query, setQuery] = React.useState({
 		loading: !!noteID, // Inverse to noteID
 		error: false,
-		id: noteID || "",
-		data: "",
 	})
+
+	const [noteContent, setNoteContent] = React.useState("")
 
 	React.useEffect(() => {
 		if (!noteID) {
@@ -147,22 +147,23 @@ const NewNoteLoader = ({ noteID, ...props }) => {
 		const noteContentRef = db.collection("notes").doc(noteID).collection("content").doc("markdown")
 		noteContentRef.get().then(doc => {
 			if (!doc.exists) {
-				setMeta(current => ({ ...current, loading: false }))
+				setQuery(current => ({ ...current, loading: false, error: true }))
 				return
 			}
 			const data = doc.data()
-			setMeta(current => ({ ...current, loading: false, ...data }))
+			setNoteContent(data.data)
+			setQuery(current => ({ ...current, loading: false }))
 		}).catch(error => {
 			console.error(error)
 		})
 	}, [noteID])
 
-	if (meta.loading) {
+	if (query.loading) {
 		return null
-	} else if (meta.error) {
+	} else if (query.error) {
 		return <Router.Redirect to={constants.PATH_LOST} />
 	}
-	return React.cloneElement(props.children, { meta, children: meta.data })
+	return React.cloneElement(props.children, { id: noteID, children: noteContent })
 }
 
 const UserNote = props => {
