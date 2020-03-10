@@ -1,11 +1,10 @@
-// import NoteLoader from "components/NoteHOC/NoteLoader"
 import * as constants from "__constants"
 import * as Router from "react-router-dom"
 import Editor from "components/Editor"
 import firebase from "__firebase"
+import format from "utils/date/toHumanDate"
 import NoteContainer from "components/NoteContainer"
 import React from "react"
-import toHumanDate from "utils/date/toHumanDate"
 
 const QUERY = { loading: true, error: false }
 
@@ -27,22 +26,20 @@ const EditorInstance = props => {
 
 const NoteUI = ({ note, user, ...props }) => (
 	<React.Fragment>
-		<div className="flex flex-row items-center">
 
-			{/* User photo */}
+		{/* User */}
+		<div className="flex flex-row items-center">
 			<div className="mr-3">
 				<img className="w-12 h-12 bg-gray-300 rounded-full" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
 			</div>
-
-			{/* User name */}
 			<div>
 				<p className="font-semibold">
 					{user.displayName}
 				</p>
 				<p className="text-sm tracking-wide text-gray-600">
-					{toHumanDate(note.createdAt.toDate())}{" "}
+					{format(note.createdAt.toDate())}{" "}
 					<span className="text-gray-400">·</span>{" "}
-					Updated {toHumanDate(note.updatedAt.toDate())}
+					Updated {format(note.updatedAt.toDate())}
 				</p>
 			</div>
 		</div>
