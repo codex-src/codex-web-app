@@ -16,11 +16,13 @@
 <h3 align="center">
   The developer’s web-based notebook
 </h2>
-<p align="center">
+<!-- p align="center">
   <img src="https://img.shields.io/badge/Chrome-black.svg?logo=google-chrome">
   <img src="https://img.shields.io/badge/Firefox-black.svg?logo=mozilla-firefox">
   <img src="https://img.shields.io/badge/Safari-black.svg?logo=safari">
-</p>
+</p -->
+
+![](/public/social@2x.png)
 
 <br>
 
