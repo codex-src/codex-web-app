@@ -8,7 +8,7 @@ import Changelog from "components/Changelog"
 import Demo from "components/Demo"
 import Home from "components/Home"
 import KnownIssues from "components/KnownIssues"
-import Note from "components/Note"
+import ReadOnlyNote from "components/ReadOnlyNote"
 import React from "react"
 import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
@@ -38,7 +38,7 @@ const App = props => (
 					<Route.Route path={constants.PATH_NOTE} exact>
 						<User.Context.Consumer>
 							{user => !user ? (
-								<Note />
+								<ReadOnlyNote />
 							) : (
 								<UserNote />
 							)}

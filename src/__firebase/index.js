@@ -22,16 +22,13 @@ import "firebase/storage"
 			// Multiple tabs open, persistence can only be enabled
 			// in one tab at a a time.
 			// ...
-			// TODO
 		} else if (error.code === "unimplemented") {
 			// The current browser does not support all of the
 			// features required to enable persistence
 			// ...
-			// TODO
 		}
 		console.error(error)
 	})
-	// firebase.firestore().disableNetwork() // DELETEME
 	if (process.env.NODE_ENV === "production") {
 		firebase.analytics()
 	}
