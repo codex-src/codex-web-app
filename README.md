@@ -1,5 +1,5 @@
 <div align="center">
-	<h3>Codex</h1>
+	<h2>Codex</h2>
   <h3>The developer’s web-based notebook</h3>
 </div>
 
