@@ -8,6 +8,7 @@ import Changelog from "components/Changelog"
 import Demo from "components/Demo"
 import Home from "components/Home"
 import KnownIssues from "components/KnownIssues"
+import Note from "components/Note"
 import React from "react"
 import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
@@ -19,26 +20,48 @@ const App = props => (
 				<ProgressBar.ProgressBar />
 				<Router.Switch>
 
-					{/* Any */}
+					{/* Changelog */}
 					<Route.Route
 						path={constants.PATH_CHANGELOG}
 						title="Changelog"
 						exact
 						children={<Changelog />}
 					/>
+					{/* Known issues */}
 					<Route.Route
 						path={constants.PATH_KNOWN_ISSUES}
 						title="Known issues"
 						exact
 						children={<KnownIssues />}
 					/>
+					{/* Note */}
+					<Route.Route path={constants.PATH_NOTE} exact>
+						<User.Context.Consumer>
+							{user => !user ? (
+								<Note />
+							) : (
+								<UserNote />
+							)}
+						</User.Context.Consumer>
+					</Route.Route>
+					{/* Home */}
+					<Route.Route path={constants.PATH_HOME} exact>
+						<User.Context.Consumer>
+							{user => !user ? (
+								<Home />
+							) : (
+								<UserNotes />
+							)}
+						</User.Context.Consumer>
+					</Route.Route>
 
-					{/* Unprotected */}
+					{/* Auth */}
 					<Route.Unprotected
 						path={constants.PATH_AUTH}
 						title="Open your Codex"
 						children={<Auth />}
 					/>
+					{/* Demo */}
 					<Route.Unprotected
 						path={constants.PATH_DEMO}
 						exact
@@ -57,19 +80,6 @@ const App = props => (
 						title="Editing note"
 						children={<UserNote />}
 					/>
-
-					{/* Home */}
-					<User.Context.Consumer>
-						{user => !user ? (
-							<Route.Route path={constants.PATH_HOME} exact>
-								<Home />
-							</Route.Route>
-						) : (
-							<Route.Route path={constants.PATH_HOME} exact>
-								<UserNotes />
-							</Route.Route>
-						)}
-					</User.Context.Consumer>
 
 				</Router.Switch>
 			</ProgressBar.Provider>
