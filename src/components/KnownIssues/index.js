@@ -20,13 +20,13 @@ const EditorInstance = props => {
 	)
 }
 
-const Changelog = props => (
+const KnownIssues = props => (
 	<React.Fragment>
 		{/* NOTE: Do not use NavContainer */}
 		<Nav />
 		<div className="py-40 flex flex-row justify-center">
 			<div className="px-6 w-full max-w-screen-md">
-				<NoteLoader noteID={constants.NOTE_ID_CHANGELOG}>
+				<NoteLoader noteID={constants.NOTE_ID_KNOWN_ISSUES}>
 					<EditorInstance />
 				</NoteLoader>
 			</div>
@@ -34,4 +34,4 @@ const Changelog = props => (
 	</React.Fragment>
 )
 
-export default Changelog
+export default KnownIssues

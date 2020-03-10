@@ -7,6 +7,7 @@ import Auth from "components/Auth"
 import Changelog from "components/Changelog"
 import Demo from "components/Demo"
 import Home from "components/Home"
+import KnownIssues from "components/KnownIssues"
 import React from "react"
 import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
@@ -24,6 +25,12 @@ const App = props => (
 						title="Changelog"
 						exact
 						children={<Changelog />}
+					/>
+					<Route.Route
+						path={constants.PATH_KNOWN_ISSUES}
+						title="Known issues"
+						exact
+						children={<KnownIssues />}
 					/>
 
 					{/* Unprotected */}
