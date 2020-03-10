@@ -1,26 +1,7 @@
-<!-- https://github.com/streamich/react-use/blob/master/README.md -->
 <div align="center">
-  <h1>
-    <br>
-    <br>
-    Codex ✍️
-    <br>
-    <br>
-    <br>
-    <br>
-  </h1>
+	<h3>Codex</h1>
+  <h3>The developer’s web-based notebook</h3>
 </div>
-
-<br>
-
-<h3 align="center">
-  The developer’s web-based notebook
-</h2>
-<!-- p align="center">
-  <img src="https://img.shields.io/badge/Chrome-black.svg?logo=google-chrome">
-  <img src="https://img.shields.io/badge/Firefox-black.svg?logo=mozilla-firefox">
-  <img src="https://img.shields.io/badge/Safari-black.svg?logo=safari">
-</p -->
 
 ![](/public/social@2x.png)
 
