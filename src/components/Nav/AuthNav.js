@@ -97,7 +97,6 @@ const Content = props => {
 						<DropDown.Link
 							to={constants.PATH_CHANGELOG}
 							text="Changelog"
-							// subtext="March 9, 2020"
 						/>
 						<DropDown.Link
 							to={constants.PATH_KNOWN_ISSUES}
