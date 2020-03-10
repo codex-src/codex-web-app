@@ -6,17 +6,17 @@ import Link from "components/Link"
 import React from "react"
 import useDropDown from "hooks/useDropDown"
 
-// const NavLink = props => (
-// 	<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 trans-75">
-// 		<p className="font-medium">
-// 			{props.text}
-// 		</p>
-// 	</Link>
-// )
+const NavLink = props => (
+	<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 trans-75" {...props}>
+		<p className="font-medium">
+			{props.text}
+		</p>
+	</Link>
+)
 
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
-		<Link className="px-4 py-3 bg-white text-md-blue-a400 hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" to={props.to}>
+		<Link className="px-4 py-3 bg-white text-md-blue-a400 hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" {...props}>
 			<p className="font-medium">
 				{props.text}
 			</p>
@@ -43,16 +43,16 @@ const Content = props => {
 			<div className="-mx-3 hidden md:flex md:flex-row">
 				{/* <NavLink */}
 				{/* 	to={constants.TODO} */}
-				{/* 	text="Features" */}
+				{/* 	text="Write example" */}
 				{/* /> */}
 				{/* <NavLink */}
 				{/* 	to={constants.TODO} */}
-				{/* 	text="Try Codex for free!" */}
+				{/* 	text="Read example" */}
 				{/* /> */}
-				{/* <NavLink */}
-				{/* 	to={constants.TODO} */}
-				{/* 	text="Pricing" */}
-				{/* /> */}
+				<NavLink
+					to={constants.PATH_CHANGELOG}
+					text="Changelog"
+				/>
 				<NavLinkCTA
 					to={constants.PATH_AUTH}
 					text="Open your Codex"
@@ -68,6 +68,10 @@ const Content = props => {
 					</button>
 
 					<DropDown.Base ref={ref}>
+						<DropDown.Link
+							to={constants.PATH_CHANGELOG}
+							text="Changelog"
+						/>
 						<DropDown.Link
 							to={constants.PATH_AUTH}
 							text="Open your Codex"
