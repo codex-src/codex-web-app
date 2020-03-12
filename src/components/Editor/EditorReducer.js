@@ -73,17 +73,33 @@ const reducer = state => ({
 			state.resetPos = true
 		}
 		this.dropRedos()
+
 		// Update body:
 		const key1 = nodes[0].key
-		const index1 = state.body.findIndex(each => each.key === key1)
-		if (index1 === -1) {
-			throw new Error("FIXME")
-		}
 		const key2 = nodes[nodes.length - 1].key
-		const index2 = !atEnd ? state.body.findIndex(each => each.key === key2) : state.body.length - 1
-		if (index2 === -1) {
+		
+		let index1 = -1;
+		let index2 = -1;
+		if(atEnd){
+			index2 = state.body.length - 1;
+		}
+		for(let i = 0; i < state.body.length; i++) {
+			let item = state.body[i];
+			if(index1 === -1 && item.key === key1){
+				index1 = i;
+			}
+			if(index2 === -1 && item.key === key2){
+				index2 = i;
+			}
+			if(index1 !== -1 && index2 !== -1){
+				break;
+			}
+		}
+
+		if (index1 === -1 || index2 === -1) {
 			throw new Error("FIXME")
 		}
+
 		state.body.splice(index1, (index2 + 1) - index1, ...nodes)
 		// Update data, pos1, and pos2:
 		const data = state.body.map(each => each.data).join("\n")
