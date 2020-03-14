@@ -1,54 +1,66 @@
 import * as constants from "__constants"
+import * as random from "utils/random"
 import * as SVG from "svgs"
 import firebase from "__firebase"
 import React from "react"
 
+const MUTATION_REGISTER_USER = `
+	mutation RegisterUser($user: RegisterUserInput!) {
+		registerUser(user: $user) {
+			userID
+		}
+	}
+`
+
 const Auth = props => {
 
-	const signIn = provider => {
-		const db = firebase.firestore()
-		firebase.auth().signInWithPopup(provider).then(response => {
+	// TODO: Refactor to async
+	const signIn = async provider => {
+		try {
+			const response = await firebase.auth().signInWithPopup(provider)
 			if (!response.additionalUserInfo.isNewUser) {
 				// No-op
 				return
 			}
-			const { uid: id } = response.user
-			db.collection("users").doc(id).set({
-				id,
-
-				createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
-				updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
-
-				displayName:   response.user.displayName,
-				username:      null,
-				authProvider:  response.additionalUserInfo.providerId,
-				email:         response.user.email,
-				emailVerified: response.user.emailVerified,
-				photoURL:      response.user.photoURL,
-			}, { merge: true }).catch(error => {
-				console.warn(error)
+			const idToken = await firebase.auth().currentUser.getIdToken(true)
+			const res = await fetch(constants.URL_PRIVATE_API, {
+				method: "POST",
+				credentials: "include", // TODO: Needed for production?
+				headers: {
+					"Authorization": `Bearer ${idToken}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					query: MUTATION_REGISTER_USER,
+					variables: {
+						user: {
+							userID:        response.user.uid,
+							email:         response.user.email,
+							emailVerified: response.user.emailVerified,
+							authProvider:  response.additionalUserInfo.providerId,
+							photoURL:      response.user.photoURL,
+							displayName:   response.user.displayName,
+						},
+					},
+				}),
 			})
-		}).catch(error => {
-			console.warn(error)
-		})
+			const body = await res.json()
+			if (body.errors) {
+				throw new Error(body.errors.join("; "))
+			}
+		} catch (error) {
+			console.error(error)
+		}
 	}
 
-	const handleClickGitHub = e => {
+	const handleClickGitHub = async e => {
 		const provider = new firebase.auth.GithubAuthProvider()
-		signIn(provider)
+		await signIn(provider)
 	}
-	const handleClickGoogle = e => {
+	const handleClickGoogle = async e => {
 		const provider = new firebase.auth.GoogleAuthProvider()
-		signIn(provider)
+		await signIn(provider)
 	}
-
-	// const handleClickGuest = e => {
-	// 	firebase.auth()
-	// 		.signInAnonymously()
-	// 		.catch(error => {
-	// 			console.warn(error)
-	// 		})
-	// }
 
 	return (
 		<div className="-mt-8 py-40 flex flex-row justify-center items-center min-h-full">
