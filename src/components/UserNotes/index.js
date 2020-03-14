@@ -1,4 +1,3 @@
-// import * as ProgressBar from "components/ProgressBar"
 import * as constants from "__constants"
 import * as consts from "./consts"
 import * as Hero from "react-heroicons"
@@ -9,8 +8,6 @@ import Link from "components/Link"
 import NavContainer from "components/NavContainer"
 import React from "react"
 import useReducer from "./reducer"
-
-const DELAY = 100
 
 const EditorInstance = props => {
 	const [state, dispatch] = Editor.useEditor(props.children, {
@@ -48,9 +45,14 @@ const QUERY_MY_NOTES = `
 	}
 `
 
+const MUTATION_DELETE_NOTE = `
+	mutation DeleteNote($noteID: ID!) {
+		deleteNote(noteID: $noteID)
+	}
+`
+
 const UserNotes = props => {
 	const user = User.useUser()
-	// const renderProgressBar = ProgressBar.useProgressBar()
 
 	const [state, dispatch] = useReducer()
 	const [response, setResponse] = React.useState({ loaded: false, notes: [] })
@@ -95,7 +97,7 @@ const UserNotes = props => {
 						loaded: true,
 					}))
 				}
-			}, 1e3)
+			}, 0)
 			return () => {
 				abort = true // Takes precedence
 				clearTimeout(id)
@@ -103,26 +105,37 @@ const UserNotes = props => {
 		}, [user, state]),
 	[state.sortAscending])
 
-	const handleClickDelete = (e, noteID) => {
+	const handleClickDelete = async (e, noteID) => {
 		e.preventDefault(e)
 		const ok = window.confirm("Delete this note immediately? This cannot be undone.")
 		if (!ok) {
 			// No-op
 			return
 		}
-		// renderProgressBar()
-		setResponse({ ...response, notes: [...response.notes.filter(each => each.noteID !== noteID)] }) // Optimistic
-		// Delete notes/:noteID:
-		const db = firebase.firestore()
-		const batch = db.batch()
-		const noteRef = db.collection("notes").doc(noteID)
-		batch.delete(noteRef)
-		// Delete notes/:noteID/content/markdown:
-		const noteContentRef = noteRef.collection("content").doc("markdown")
-		batch.delete(noteContentRef)
-		batch.commit().catch(error => {
+		// Optimistic UI:
+		setResponse({ ...response, notes: [...response.notes.filter(each => each.noteID !== noteID)] })
+		try {
+			const response = await fetch(constants.URL_PRIVATE_API, {
+				method: "POST",
+				credentials: "include", // TODO: Needed for production?
+				headers: {
+					"Authorization": `Bearer ${user.idToken}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					query: MUTATION_DELETE_NOTE,
+					variables: {
+						noteID,
+					},
+				}),
+			})
+			const body = await response.json()
+			if (body.errors) {
+				throw new Error(JSON.stringify(body.errors))
+			}
+		} catch (error) {
 			console.error(error)
-		})
+		}
 	}
 
 	return (
