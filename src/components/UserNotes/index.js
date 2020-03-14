@@ -34,38 +34,91 @@ const Button = ({ extend, svg: SVG, ...props }) => (
 	</button>
 )
 
+const QUERY_ME_NOTES = `
+	query Me {
+		me {
+			notes {
+				# userID
+				noteID
+				createdAt
+				updatedAt
+				data
+			}
+		}
+	}
+`
+
 const UserNotes = props => {
 	const user = User.useUser()
 	// const renderProgressBar = ProgressBar.useProgressBar()
 
 	const [state, dispatch] = useReducer()
-	const [res, setRes] = React.useState({ loading: true, notes: [] })
+	const [response, setResponse] = React.useState({ loaded: false, notes: [] })
 
 	React.useEffect(
 		React.useCallback(() => {
-			let abort = false
-			const id = setTimeout(() => {
-				const db = firebase.firestore()
-				const dbRef = db.collection("notes")
-				dbRef.where("userID", "==", user.uid).orderBy("updatedAt", !state.sortAscending ? "desc" : "asc").limit(16).get().then(snap => {
-					if (abort) {
-						// No-op
-						return
+			;(async () => {
+				try {
+					const response = await fetch(constants.URL_PRIVATE_API, {
+						method: "POST",
+						credentials: "include", // TODO: Needed for production?
+						headers: {
+							"Authorization": `Bearer ${user.idToken}`,
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							query: QUERY_ME_NOTES,
+							variables: {
+								// ..
+							},
+						}),
+					})
+					const body = await response.json()
+					if (body.errors) {
+						throw new Error(body.errors.join("; "))
 					}
-					const notes = []
-					snap.forEach(doc => notes.push(doc.data()))
-					setRes({ loading: false, notes })
-				}).catch(error => {
+					const { data } = body
+					setResponse(current => ({
+						...current,
+						loaded: true,
+						notes: data.me.notes,
+					}))
+				} catch (error) {
 					console.error(error)
-				})
-			}, DELAY)
-			return () => {
-				abort = true
-				clearTimeout(id)
-			}
-		}, [user, state]),
-		[state.sortAscending],
-	)
+					setResponse(current => ({
+						...current,
+						loaded: true,
+					}))
+				}
+			})()
+		}, [user]),
+	[state.sortAscending])
+
+	// React.useEffect(
+	// 	React.useCallback(() => {
+	// 		let abort = false
+	// 		const id = setTimeout(() => {
+	// 			const db = firebase.firestore()
+	// 			const dbRef = db.collection("notes")
+	// 			dbRef.where("userID", "==", user.uid).orderBy("updatedAt", !state.sortAscending ? "desc" : "asc").limit(16).get().then(snap => {
+	// 				if (abort) {
+	// 					// No-op
+	// 					return
+	// 				}
+	// 				const notes = []
+	// 				snap.forEach(doc => notes.push(doc.data()))
+	// 				setResponse({ loaded: false, notes })
+	// 			}).catch(error => {
+	// 				console.error(error)
+	// 			})
+	// 		}, DELAY)
+	// 		return () => {
+	// 			abort = true
+	// 			clearTimeout(id)
+	// 		}
+	// 	}, [user, state]),
+	// 	[state.sortAscending],
+	// )
 
 	const handleClickDelete = (e, noteID) => {
 		e.preventDefault(e)
@@ -75,7 +128,7 @@ const UserNotes = props => {
 			return
 		}
 		// renderProgressBar()
-		setRes({ ...res, notes: [...res.notes.filter(each => each.id !== noteID)] }) // Optimistic
+		setResponse({ ...response, notes: [...response.notes.filter(each => each.noteID !== noteID)] }) // Optimistic
 		// Delete notes/:noteID:
 		const db = firebase.firestore()
 		const batch = db.batch()
@@ -120,7 +173,7 @@ const UserNotes = props => {
 			{/* Notes */}
 			<div className="h-6" />
 			<div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${state.itemsShown} gap-6`}>
-				{res.loading ? (
+				{!response.loaded ? (
 					[...new Array(3)].map((_, index) => (
 						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-lg-xl trans-150">
 							<div className="absolute inset-0" />
@@ -137,15 +190,15 @@ const UserNotes = props => {
 						</Link>
 
 						{/* Notes */}
-						{res.notes.map((each, index) => (
-							<Link key={each.id} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.id)}>
+						{response.notes.map((each, index) => (
+							<Link key={each.noteID} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
 								<div className="absolute inset-0 overflow-y-hidden select-none">
 									<EditorInstance modifier={state.itemsShownModifier}>
-										{each.snippet}
+										{each.data}
 									</EditorInstance>
 								</div>
 								<div className="absolute right-0 top-0 flex flex-row justify-end items-start z-10">
-									<button className="-m-4 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 transform scale-75 trans-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.id)}>
+									<button className="-m-4 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 transform scale-75 trans-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.noteID)}>
 										<Hero.XOutlineMd className="w-6 h-6 stroke-black" />
 									</button>
 								</div>

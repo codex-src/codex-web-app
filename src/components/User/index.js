@@ -17,6 +17,13 @@ const QUERY_ME = `
 			photoURL
 			displayName
 			username
+			# notes {
+			# 	userID
+			# 	noteID
+			# 	createdAt
+			# 	updatedAt
+			# 	data
+			# }
 		}
 	}
 `
@@ -59,7 +66,10 @@ export const Provider = props => {
 				setResponse(current => ({
 					...current,
 					loaded: true,
-					user: data.me,
+					user: {
+						idToken,
+						...data.me,
+					}
 				}))
 			} catch (error) {
 				console.error(error)
