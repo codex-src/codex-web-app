@@ -34,10 +34,10 @@ const Button = ({ extend, svg: SVG, ...props }) => (
 	</button>
 )
 
-const QUERY_ME_NOTES = `
-	query Me {
+const QUERY_MY_NOTES = `
+	query Me($direction: String) {
 		me {
-			notes {
+			notes(direction: $direction) {
 				# userID
 				noteID
 				createdAt
@@ -57,7 +57,8 @@ const UserNotes = props => {
 
 	React.useEffect(
 		React.useCallback(() => {
-			;(async () => {
+			let abort = false
+			const id = setTimeout(async () => {
 				try {
 					const response = await fetch(constants.URL_PRIVATE_API, {
 						method: "POST",
@@ -67,15 +68,19 @@ const UserNotes = props => {
 							"Content-Type": "application/json",
 						},
 						body: JSON.stringify({
-							query: QUERY_ME_NOTES,
+							query: QUERY_MY_NOTES,
 							variables: {
-								// ..
+								direction: !state.sortAscending ? "desc" : "asc",
 							},
 						}),
 					})
+					if (abort) {
+						// No-op
+						return
+					}
 					const body = await response.json()
 					if (body.errors) {
-						throw new Error(body.errors.join("; "))
+						throw new Error(JSON.stringify(body.errors))
 					}
 					const { data } = body
 					setResponse(current => ({
@@ -90,35 +95,13 @@ const UserNotes = props => {
 						loaded: true,
 					}))
 				}
-			})()
-		}, [user]),
+			}, 1e3)
+			return () => {
+				abort = true // Takes precedence
+				clearTimeout(id)
+			}
+		}, [user, state]),
 	[state.sortAscending])
-
-	// React.useEffect(
-	// 	React.useCallback(() => {
-	// 		let abort = false
-	// 		const id = setTimeout(() => {
-	// 			const db = firebase.firestore()
-	// 			const dbRef = db.collection("notes")
-	// 			dbRef.where("userID", "==", user.uid).orderBy("updatedAt", !state.sortAscending ? "desc" : "asc").limit(16).get().then(snap => {
-	// 				if (abort) {
-	// 					// No-op
-	// 					return
-	// 				}
-	// 				const notes = []
-	// 				snap.forEach(doc => notes.push(doc.data()))
-	// 				setResponse({ loaded: false, notes })
-	// 			}).catch(error => {
-	// 				console.error(error)
-	// 			})
-	// 		}, DELAY)
-	// 		return () => {
-	// 			abort = true
-	// 			clearTimeout(id)
-	// 		}
-	// 	}, [user, state]),
-	// 	[state.sortAscending],
-	// )
 
 	const handleClickDelete = (e, noteID) => {
 		e.preventDefault(e)

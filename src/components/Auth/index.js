@@ -46,7 +46,7 @@ const Auth = props => {
 			})
 			const body = await res.json()
 			if (body.errors) {
-				throw new Error(body.errors.join("; "))
+				throw new Error(JSON.stringify(body.errors))
 			}
 		} catch (error) {
 			console.error(error)
