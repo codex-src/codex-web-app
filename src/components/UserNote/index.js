@@ -1,5 +1,5 @@
 import * as constants from "__constants"
-import * as GraphQL from "components/GraphQL"
+import * as GraphQL from "graphql"
 import * as ProgressBar from "components/ProgressBar"
 import * as random from "utils/random"
 import * as Router from "react-router-dom"
@@ -10,7 +10,7 @@ import Nav from "components/Nav"
 import React from "react"
 
 const TIMEOUT_CREATE_NOTE = 1e3
-const TIMEOUT_UPDATE_NOTE = 1e3
+const TIMEOUT_UPDATE_NOTE = 500
 
 const QUERY_NOTE = `
 	query Note($noteID: ID!) {
@@ -150,17 +150,17 @@ const NoteLoader = ({ noteID, ...props }) => {
 					noteID,
 				})
 				const { data } = body
-				setData(data.note.data) // Takes precedence
-				setResponse(current => ({
-					...current,
-					loaded: true,
-				}))
+				setData(data.note.data)
 			} catch (error) {
 				console.error(error)
 				setResponse(current => ({
 					...current,
-					loaded: true,
 					error,
+				}))
+			} finally {
+				setResponse(current => ({
+					...current,
+					loaded: true,
 				}))
 			}
 		})()

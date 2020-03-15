@@ -1,5 +1,5 @@
 import * as constants from "__constants"
-import * as GraphQL from "components/GraphQL"
+import * as GraphQL from "graphql"
 import * as SVG from "svgs"
 import firebase from "__firebase"
 import React from "react"
@@ -41,6 +41,7 @@ const Auth = props => {
 		const provider = new firebase.auth.GithubAuthProvider()
 		await signIn(provider)
 	}
+
 	const handleClickGoogle = async e => {
 		const provider = new firebase.auth.GoogleAuthProvider()
 		await signIn(provider)

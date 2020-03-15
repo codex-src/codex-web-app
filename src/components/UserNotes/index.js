@@ -1,6 +1,6 @@
 import * as constants from "__constants"
 import * as consts from "./consts"
-import * as GraphQL from "components/GraphQL"
+import * as GraphQL from "graphql"
 import * as Hero from "react-heroicons"
 import * as User from "components/User"
 import Editor from "components/Editor"
@@ -55,7 +55,11 @@ const UserNotes = props => {
 	const user = User.useUser()
 
 	const [state, dispatch] = useReducer()
-	const [response, setResponse] = React.useState({ loaded: false, notes: [] })
+
+	const [response, setResponse] = React.useState({
+		loaded: false,
+		notes: [],
+	})
 
 	React.useEffect(
 		React.useCallback(() => {
@@ -72,11 +76,11 @@ const UserNotes = props => {
 					const { data } = body
 					setResponse(current => ({
 						...current,
-						loaded: true,
 						notes: data.me.notes,
 					}))
 				} catch (error) {
 					console.error(error)
+				} finally {
 					setResponse(current => ({
 						...current,
 						loaded: true,
@@ -99,9 +103,10 @@ const UserNotes = props => {
 			return
 		}
 		// Optimistic UI:
+		const filteredNotes = [...response.notes.filter(each => each.noteID !== noteID)]
 		setResponse(current => ({
 			...current,
-			notes: [...response.notes.filter(each => each.noteID !== noteID)],
+			notes: filteredNotes,
 		}))
 		try {
 			await GraphQL.newQuery(user.idToken, MUTATION_DELETE_NOTE, {

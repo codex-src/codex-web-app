@@ -1,4 +1,4 @@
-import * as GraphQL from "components/GraphQL"
+import * as GraphQL from "graphql"
 import firebase from "__firebase"
 import React from "react"
 import StartupScreen from "components/StartupScreen"
@@ -17,13 +17,6 @@ const QUERY_ME = `
 			photoURL
 			displayName
 			username
-			# notes {
-			# 	userID
-			# 	noteID
-			# 	createdAt
-			# 	updatedAt
-			# 	data
-			# }
 		}
 	}
 `
@@ -50,7 +43,6 @@ export const Provider = props => {
 				const { data } = body
 				setResponse(current => ({
 					...current,
-					loaded: true,
 					user: {
 						idToken,
 						...data.me,
@@ -58,6 +50,7 @@ export const Provider = props => {
 				}))
 			} catch (error) {
 				console.error(error)
+			} finally {
 				setResponse(current => ({
 					...current,
 					loaded: true,
