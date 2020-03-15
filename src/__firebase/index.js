@@ -2,8 +2,8 @@ import firebase from "firebase/app"
 
 import "firebase/analytics"
 import "firebase/auth"
-// import "firebase/firestore" // TODO: Remove
-// import "firebase/storage" // TODO: Remove
+// import "firebase/firestore"
+// import "firebase/storage"
 
 ;(() => {
 	firebase.initializeApp({
@@ -16,19 +16,6 @@ import "firebase/auth"
 		appId:             process.env.REACT_APP_FIREBASE_APP_ID,
 		measurementId:     process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 	})
-	// // https://firebase.google.com/docs/firestore/manage-data/enable-offline
-	// firebase.firestore().enablePersistence({ synchronizeTabs: true }).catch(error => {
-	// 	if (error.code === "failed-precondition") {
-	// 		// Multiple tabs open, persistence can only be enabled
-	// 		// in one tab at a a time.
-	// 		// ...
-	// 	} else if (error.code === "unimplemented") {
-	// 		// The current browser does not support all of the
-	// 		// features required to enable persistence
-	// 		// ...
-	// 	}
-	// 	console.error(error)
-	// })
 	if (process.env.NODE_ENV === "production") {
 		firebase.analytics()
 	}

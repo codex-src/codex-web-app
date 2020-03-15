@@ -6,7 +6,7 @@ export async function newQuery(idToken, query, variables = {}) {
 		method: "POST",
 		credentials: "include", // TODO: Needed for production?
 		headers: {
-			"Authorization": !idToken ? undefined : `Bearer ${idToken}`,
+			...(idToken && { Authorization: `Bearer ${idToken}` }),
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({

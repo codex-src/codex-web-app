@@ -1,5 +1,7 @@
 import * as constants from "__constants"
+import * as GraphQL from "components/GraphQL"
 import * as ProgressBar from "components/ProgressBar"
+import * as random from "utils/random"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Editor from "components/Editor" // FIXME: Exports are wrong
@@ -7,15 +9,33 @@ import firebase from "__firebase"
 import Nav from "components/Nav"
 import React from "react"
 
-const CREATE_TIMEOUT = 1e3
-const UPDATE_TIMEOUT = 1e3
+const TIMEOUT_CREATE_NOTE = 1e3
+const TIMEOUT_UPDATE_NOTE = 1e3
 
-const Note = ({ id: $id, ...props }) => {
+const QUERY_NOTE = `
+	query Note($noteID: ID!) {
+		note(noteID: $noteID) {
+			userID
+			noteID
+			createdAt
+			updatedAt
+			data
+		}
+	}
+`
+
+const MUTATION_CREATE_NOTE = `
+	mutation CreateNote($noteInput: NoteInput!) {
+		createNote(noteInput: $noteInput)
+	}
+`
+
+const Note = ({ noteID: $noteID, ...props }) => {
 	const user = User.useUser()
 	const renderProgressBar = ProgressBar.useProgressBar()
 
 	// Copy -- do not rerender parent component:
-	const [id, setID] = React.useState($id)
+	const [noteID, setNoteID] = React.useState($noteID)
 	const [state, dispatch] = Editor.useEditor(props.children)
 
 	// https://github.com/facebook/react/issues/14010#issuecomment-433788147
@@ -29,94 +49,133 @@ const Note = ({ id: $id, ...props }) => {
 			if (!didMount1.current) {
 				didMount1.current = true
 				return
-			} else if (id) {
+			} else if (noteID) {
 				// No-op
 				return
 			}
+			// Debounce:
 			window.onbeforeunload = () => "Changes you made may not be saved."
-			const timeoutID = setTimeout(() => {
-				// Generate a new ID:
-				renderProgressBar()
-				const db = firebase.firestore()
-				const autoID = db.collection("notes").doc().id
-				// Save to notes/:noteID:
-				const batch = db.batch()
-				const noteRef = db.collection("notes").doc(autoID)
-				batch.set(noteRef, {
-					id:        autoID,
-					userID:    user.uid,
-					createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-					updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-					snippet:   stateRef.current.data.slice(0, 500),
-					byteCount: stateRef.current.data.length,
-					wordCount: stateRef.current.data.split(/\s+/).length,
-
-					// TODO: displayName is denormalized
-					displayNameEmail: `${user.displayName} ${user.email}`,
-				})
-				// Save to notes/:noteID/content/markdown:
-				const noteContentRef = noteRef.collection("content").doc("markdown")
-				batch.set(noteContentRef, {
-					data: stateRef.current.data,
-				})
-				batch.commit().then(() => {
+			const id = setTimeout(async () => {
+				// Create a note:
+				try {
+					renderProgressBar()
+					const autoID = random.newAutoID()
+					await GraphQL.newQuery(user.idToken, MUTATION_CREATE_NOTE, {
+						noteInput: {
+							userID: user.userID,
+							noteID: autoID,
+							data:   stateRef.current.data,
+						},
+					})
 					window.history.replaceState({}, "", `/n/${autoID}`) // Takes precedence
-					setID(autoID)
-				}).catch(error => {
+					setNoteID(autoID)
+				} catch (error) {
 					console.error(error)
-				}).then(() => {
-					window.onbeforeunload = null
-				})
-			}, CREATE_TIMEOUT)
+				}
+			}, TIMEOUT_CREATE_NOTE)
 			return () => {
 				window.onbeforeunload = null // Takes precedence
-				clearTimeout(timeoutID)
+				clearTimeout(id)
 			}
-		}, [user, renderProgressBar, id]),
+		}, [user, renderProgressBar, noteID]),
 		[state.data],
 	)
 
-	// Update note:
-	const didMount2 = React.useRef()
-	React.useEffect(
-		React.useCallback(() => {
-			if (!didMount2.current) {
-				didMount2.current = true
-				return
-			} else if (!id) {
-				// No-op
-				return
-			}
-			window.onbeforeunload = () => "Changes you made may not be saved."
-			const timeoutID = setTimeout(() => {
-				// Save to notes/:noteID:
-				const db = firebase.firestore()
-				const batch = db.batch()
-				const noteRef = db.collection("notes").doc(id)
-				batch.set(noteRef, {
-					updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-					snippet:   stateRef.current.data.slice(0, 500),
-					byteCount: stateRef.current.data.length,
-					wordCount: stateRef.current.data.split(/\s+/).length, // TODO: Ignore markdown syntax
-				}, { merge: true })
-				// Save to notes/:noteID/content/markdown:
-				const noteContentRef = noteRef.collection("content").doc("markdown")
-				batch.set(noteContentRef, {
-					data: stateRef.current.data,
-				}, { merge: true })
-				batch.commit().catch(error => {
-					console.error(error)
-				}).then(() => {
-					window.onbeforeunload = null
-				})
-			}, UPDATE_TIMEOUT)
-			return () => {
-				window.onbeforeunload = null // Takes precedence
-				clearTimeout(timeoutID)
-			}
-		}, [id]),
-		[state.data],
-	)
+	// // Create note:
+	// const didMount1 = React.useRef()
+	// React.useEffect(
+	// 	React.useCallback(() => {
+	// 		if (!didMount1.current) {
+	// 			didMount1.current = true
+	// 			return
+	// 		} else if (id) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		window.onbeforeunload = () => "Changes you made may not be saved."
+	// 		const timeoutID = setTimeout(() => {
+	// 			// Generate a new ID:
+	// 			renderProgressBar()
+	// 			const db = firebase.firestore()
+	// 			const autoID = db.collection("notes").doc().id
+	// 			// Save to notes/:noteID:
+	// 			const batch = db.batch()
+	// 			const noteRef = db.collection("notes").doc(autoID)
+	// 			batch.set(noteRef, {
+	// 				id:        autoID,
+	// 				userID:    user.uid,
+	// 				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+	// 				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+	// 				snippet:   stateRef.current.data.slice(0, 500),
+	// 				byteCount: stateRef.current.data.length,
+	// 				wordCount: stateRef.current.data.split(/\s+/).length,
+	//
+	// 				// TODO: displayName is denormalized
+	// 				displayNameEmail: `${user.displayName} ${user.email}`,
+	// 			})
+	// 			// Save to notes/:noteID/content/markdown:
+	// 			const noteContentRef = noteRef.collection("content").doc("markdown")
+	// 			batch.set(noteContentRef, {
+	// 				data: stateRef.current.data,
+	// 			})
+	// 			batch.commit().then(() => {
+	// 				window.history.replaceState({}, "", `/n/${autoID}`) // Takes precedence
+	// 				setID(autoID)
+	// 			}).catch(error => {
+	// 				console.error(error)
+	// 			}).then(() => {
+	// 				window.onbeforeunload = null
+	// 			})
+	// 		}, CREATE_TIMEOUT)
+	// 		return () => {
+	// 			window.onbeforeunload = null // Takes precedence
+	// 			clearTimeout(timeoutID)
+	// 		}
+	// 	}, [user, renderProgressBar, id]),
+	// 	[state.data],
+	// )
+	//
+	// // Update note:
+	// const didMount2 = React.useRef()
+	// React.useEffect(
+	// 	React.useCallback(() => {
+	// 		if (!didMount2.current) {
+	// 			didMount2.current = true
+	// 			return
+	// 		} else if (!id) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		window.onbeforeunload = () => "Changes you made may not be saved."
+	// 		const timeoutID = setTimeout(() => {
+	// 			// Save to notes/:noteID:
+	// 			const db = firebase.firestore()
+	// 			const batch = db.batch()
+	// 			const noteRef = db.collection("notes").doc(id)
+	// 			batch.set(noteRef, {
+	// 				updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+	// 				snippet:   stateRef.current.data.slice(0, 500),
+	// 				byteCount: stateRef.current.data.length,
+	// 				wordCount: stateRef.current.data.split(/\s+/).length, // TODO: Ignore markdown syntax
+	// 			}, { merge: true })
+	// 			// Save to notes/:noteID/content/markdown:
+	// 			const noteContentRef = noteRef.collection("content").doc("markdown")
+	// 			batch.set(noteContentRef, {
+	// 				data: stateRef.current.data,
+	// 			}, { merge: true })
+	// 			batch.commit().catch(error => {
+	// 				console.error(error)
+	// 			}).then(() => {
+	// 				window.onbeforeunload = null
+	// 			})
+	// 		}, UPDATE_TIMEOUT)
+	// 		return () => {
+	// 			window.onbeforeunload = null // Takes precedence
+	// 			clearTimeout(timeoutID)
+	// 		}
+	// 	}, [id]),
+	// 	[state.data],
+	// )
 
 	return (
 		<Editor.Editor
@@ -129,41 +188,47 @@ const Note = ({ id: $id, ...props }) => {
 	)
 }
 
-const NewNoteLoader = ({ noteID, ...props }) => {
-	const [query, setQuery] = React.useState({
-		loading: !!noteID, // Inverse to noteID
-		error: false,
+const NoteLoader = ({ noteID, ...props }) => {
+	const [response, setResponse] = React.useState({
+		loaded: !noteID, // Inverse to noteID,
+		error: null,
 	})
 
-	const [noteContent, setNoteContent] = React.useState("")
+	const [data, setData] = React.useState("")
 
 	React.useEffect(() => {
 		if (!noteID) {
 			// No-op
 			return
 		}
-		// Load notes/:noteID:
-		const db = firebase.firestore()
-		const noteContentRef = db.collection("notes").doc(noteID).collection("content").doc("markdown")
-		noteContentRef.get().then(doc => {
-			if (!doc.exists) {
-				setQuery(current => ({ ...current, loading: false, error: true }))
-				return
+		;(async () => {
+			try {
+				const body = await GraphQL.newQuery("", QUERY_NOTE, {
+					noteID,
+				})
+				const { data } = body
+				setData(data.note.data) // Takes precedence
+				setResponse(current => ({
+					...current,
+					loaded: true,
+				}))
+			} catch (error) {
+				console.error(error)
+				setResponse(current => ({
+					...current,
+					loaded: true,
+					error,
+				}))
 			}
-			const data = doc.data()
-			setNoteContent(data.data)
-			setQuery(current => ({ ...current, loading: false }))
-		}).catch(error => {
-			console.error(error)
-		})
+		})()
 	}, [noteID])
 
-	if (query.loading) {
+	if (!response.loaded) {
 		return null
-	} else if (query.error) {
+	} else if (response.error) {
 		return <Router.Redirect to={constants.PATH_LOST} />
 	}
-	return React.cloneElement(props.children, { id: noteID, children: noteContent })
+	return React.cloneElement(props.children, { noteID, children: data })
 }
 
 const UserNote = props => {
@@ -175,9 +240,9 @@ const UserNote = props => {
 			<Nav />
 			<div className="flex flex-row justify-center min-h-full">
 				<div className="px-6 w-full max-w-screen-md">
-					<NewNoteLoader noteID={noteID}>
+					<NoteLoader noteID={noteID}>
 						<Note />
-					</NewNoteLoader>
+					</NoteLoader>
 				</div>
 			</div>
 		</React.Fragment>
