@@ -1,5 +1,6 @@
 import * as constants from "__constants"
 import * as consts from "./consts"
+import * as GraphQL from "components/GraphQL"
 import * as Hero from "react-heroicons"
 import * as User from "components/User"
 import Editor from "components/Editor"
@@ -8,6 +9,26 @@ import Link from "components/Link"
 import NavContainer from "components/NavContainer"
 import React from "react"
 import useReducer from "./reducer"
+
+const QUERY_MY_NOTES = `
+	query Me($direction: String) {
+		me {
+			notes(direction: $direction) {
+				userID
+				noteID
+				createdAt
+				updatedAt
+				data
+			}
+		}
+	}
+`
+
+const MUTATION_DELETE_NOTE = `
+	mutation DeleteNote($noteID: ID!) {
+		deleteNote(noteID: $noteID)
+	}
+`
 
 const EditorInstance = props => {
 	const [state, dispatch] = Editor.useEditor(props.children, {
@@ -31,26 +52,6 @@ const Button = ({ extend, svg: SVG, ...props }) => (
 	</button>
 )
 
-const QUERY_MY_NOTES = `
-	query Me($direction: String) {
-		me {
-			notes(direction: $direction) {
-				# userID
-				noteID
-				createdAt
-				updatedAt
-				data
-			}
-		}
-	}
-`
-
-const MUTATION_DELETE_NOTE = `
-	mutation DeleteNote($noteID: ID!) {
-		deleteNote(noteID: $noteID)
-	}
-`
-
 const UserNotes = props => {
 	const user = User.useUser()
 
@@ -62,27 +63,12 @@ const UserNotes = props => {
 			let abort = false
 			const id = setTimeout(async () => {
 				try {
-					const response = await fetch(constants.URL_PRIVATE_API, {
-						method: "POST",
-						credentials: "include", // TODO: Needed for production?
-						headers: {
-							"Authorization": `Bearer ${user.idToken}`,
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify({
-							query: QUERY_MY_NOTES,
-							variables: {
-								direction: !state.sortAscending ? "desc" : "asc",
-							},
-						}),
+					const body = await GraphQL.newQuery(user.idToken, QUERY_MY_NOTES, {
+						direction: !state.sortAscending ? "desc" : "asc",
 					})
 					if (abort) {
 						// No-op
 						return
-					}
-					const body = await response.json()
-					if (body.errors) {
-						throw new Error(JSON.stringify(body.errors))
 					}
 					const { data } = body
 					setResponse(current => ({
@@ -103,7 +89,8 @@ const UserNotes = props => {
 				clearTimeout(id)
 			}
 		}, [user, state]),
-	[state.sortAscending])
+		[state.sortAscending],
+	)
 
 	const handleClickDelete = async (e, noteID) => {
 		e.preventDefault(e)
@@ -113,26 +100,14 @@ const UserNotes = props => {
 			return
 		}
 		// Optimistic UI:
-		setResponse({ ...response, notes: [...response.notes.filter(each => each.noteID !== noteID)] })
+		setResponse(current => ({
+			...current,
+			notes: [...response.notes.filter(each => each.noteID !== noteID)],
+		}))
 		try {
-			const response = await fetch(constants.URL_PRIVATE_API, {
-				method: "POST",
-				credentials: "include", // TODO: Needed for production?
-				headers: {
-					"Authorization": `Bearer ${user.idToken}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					query: MUTATION_DELETE_NOTE,
-					variables: {
-						noteID,
-					},
-				}),
+			const body = await GraphQL.newQuery(user.idToken, MUTATION_DELETE_NOTE, {
+				noteID,
 			})
-			const body = await response.json()
-			if (body.errors) {
-				throw new Error(JSON.stringify(body.errors))
-			}
 		} catch (error) {
 			console.error(error)
 		}

@@ -1,12 +1,12 @@
 import * as constants from "__constants"
-import * as random from "utils/random"
+import * as GraphQL from "components/GraphQL"
 import * as SVG from "svgs"
 import firebase from "__firebase"
 import React from "react"
 
 const MUTATION_REGISTER_USER = `
-	mutation RegisterUser($user: RegisterUserInput!) {
-		registerUser(user: $user) {
+	mutation RegisterUser($userInput: RegisterUserInput!) {
+		registerUser(userInput: $userInput) {
 			userID
 		}
 	}
@@ -14,7 +14,6 @@ const MUTATION_REGISTER_USER = `
 
 const Auth = props => {
 
-	// TODO: Refactor to async
 	const signIn = async provider => {
 		try {
 			const response = await firebase.auth().signInWithPopup(provider)
@@ -23,31 +22,16 @@ const Auth = props => {
 				return
 			}
 			const idToken = await firebase.auth().currentUser.getIdToken(true)
-			const res = await fetch(constants.URL_PRIVATE_API, {
-				method: "POST",
-				credentials: "include", // TODO: Needed for production?
-				headers: {
-					"Authorization": `Bearer ${idToken}`,
-					"Content-Type": "application/json",
+			const body = await GraphQL.newQuery(idToken, MUTATION_REGISTER_USER, {
+				userInput: {
+					userID:        response.user.uid,
+					email:         response.user.email,
+					emailVerified: response.user.emailVerified,
+					authProvider:  response.additionalUserInfo.providerId,
+					photoURL:      response.user.photoURL,
+					displayName:   response.user.displayName,
 				},
-				body: JSON.stringify({
-					query: MUTATION_REGISTER_USER,
-					variables: {
-						user: {
-							userID:        response.user.uid,
-							email:         response.user.email,
-							emailVerified: response.user.emailVerified,
-							authProvider:  response.additionalUserInfo.providerId,
-							photoURL:      response.user.photoURL,
-							displayName:   response.user.displayName,
-						},
-					},
-				}),
 			})
-			const body = await res.json()
-			if (body.errors) {
-				throw new Error(JSON.stringify(body.errors))
-			}
 		} catch (error) {
 			console.error(error)
 		}

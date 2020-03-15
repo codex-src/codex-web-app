@@ -1,4 +1,5 @@
 import * as constants from "__constants"
+import * as GraphQL from "components/GraphQL"
 import firebase from "__firebase"
 import React from "react"
 import StartupScreen from "components/StartupScreen"
@@ -46,22 +47,7 @@ export const Provider = props => {
 			}
 			try {
 				const idToken = await firebase.auth().currentUser.getIdToken(true)
-				const res = await fetch(constants.URL_PRIVATE_API, {
-					method: "POST",         // FIXME: Use GET?
-					credentials: "include", // TODO: Needed for production?
-					headers: {
-						"Authorization": `Bearer ${idToken}`,
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						query: QUERY_ME,
-						variables: {},
-					}),
-				})
-				const body = await res.json()
-				if (body.errors) {
-					throw new Error(JSON.stringify(body.errors))
-				}
+				const body = await GraphQL.newQuery(idToken, QUERY_ME)
 				const { data } = body
 				setResponse(current => ({
 					...current,
