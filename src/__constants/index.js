@@ -17,7 +17,7 @@ export const PATH_NOTE         = "/n/:noteID"
 export const PATH_USER         = "/u/:userID" // TODO: @:username
 
 export const URL             = process.env.PUBLIC_URL || `http://localhost:${process.env.PORT || "3000"}`
-export const URL_PRIVATE_API = "http://localhost:8080/graphql"
+export const URL_PRIVATE_API = "https://codex-server-xtvb7ytqtq-uw.a.run.app/graphql"
 export const URL_REPO        = "https://github.com/codex-src/codex-app"
 
 export const MICRO_DELAY_MS = 25
