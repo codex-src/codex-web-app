@@ -2,8 +2,8 @@ import firebase from "firebase/app"
 
 import "firebase/analytics"
 import "firebase/auth"
-import "firebase/firestore" // TODO: Remove
-import "firebase/storage" // TODO: Remove
+// import "firebase/firestore" // TODO: Remove
+// import "firebase/storage" // TODO: Remove
 
 ;(() => {
 	firebase.initializeApp({

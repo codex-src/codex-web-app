@@ -1,4 +1,3 @@
-import * as constants from "__constants"
 import * as GraphQL from "components/GraphQL"
 import firebase from "__firebase"
 import React from "react"

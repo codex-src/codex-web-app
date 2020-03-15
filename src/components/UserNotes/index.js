@@ -4,7 +4,6 @@ import * as GraphQL from "components/GraphQL"
 import * as Hero from "react-heroicons"
 import * as User from "components/User"
 import Editor from "components/Editor"
-import firebase from "__firebase"
 import Link from "components/Link"
 import NavContainer from "components/NavContainer"
 import React from "react"
@@ -105,7 +104,7 @@ const UserNotes = props => {
 			notes: [...response.notes.filter(each => each.noteID !== noteID)],
 		}))
 		try {
-			const body = await GraphQL.newQuery(user.idToken, MUTATION_DELETE_NOTE, {
+			await GraphQL.newQuery(user.idToken, MUTATION_DELETE_NOTE, {
 				noteID,
 			})
 		} catch (error) {

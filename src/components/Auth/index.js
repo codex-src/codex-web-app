@@ -22,7 +22,7 @@ const Auth = props => {
 				return
 			}
 			const idToken = await firebase.auth().currentUser.getIdToken(true)
-			const body = await GraphQL.newQuery(idToken, MUTATION_REGISTER_USER, {
+			await GraphQL.newQuery(idToken, MUTATION_REGISTER_USER, {
 				userInput: {
 					userID:        response.user.uid,
 					email:         response.user.email,
