@@ -134,7 +134,7 @@ const Note = ({ noteID: $noteID, ...props }) => {
 const NoteLoader = ({ noteID, ...props }) => {
 	const [response, setResponse] = React.useState({
 		loaded: !noteID, // Inverse to noteID,
-		error: null,
+		error: "",
 	})
 
 	const [data, setData] = React.useState("")

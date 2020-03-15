@@ -1,5 +1,5 @@
 import * as constants from "__constants"
-import * as Note from "components/Note"
+import * as NoteX from "components/NoteX"
 import * as ProgressBar from "components/ProgressBar"
 import * as Route from "components/Route"
 import * as Router from "react-router-dom"
@@ -14,17 +14,17 @@ import UserNotes from "components/UserNotes"
 
 const Changelog = props => (
 	<NoteContainer>
-		<Note.Loader noteID={constants.NOTE_ID_CHANGELOG}>
-			<Note.Note />
-		</Note.Loader>
+		<NoteX.Loader noteID={constants.NOTE_ID_CHANGELOG}>
+			<NoteX.Note />
+		</NoteX.Loader>
 	</NoteContainer>
 )
 
 const KnownIssues = props => (
 	<NoteContainer>
-		<Note.Loader noteID={constants.NOTE_ID_KNOWN_ISSUES}>
-			<Note.Note />
-		</Note.Loader>
+		<NoteX.Loader noteID={constants.NOTE_ID_KNOWN_ISSUES}>
+			<NoteX.Note />
+		</NoteX.Loader>
 	</NoteContainer>
 )
 
@@ -33,9 +33,9 @@ const ReadOnlyNote = props => {
 
 	return (
 		<NoteContainer>
-			<Note.Loader noteID={noteID}>
-				<Note.Note />
-			</Note.Loader>
+			<NoteX.Loader noteID={noteID}>
+				<NoteX.Note />
+			</NoteX.Loader>
 		</NoteContainer>
 	)
 }

@@ -14,7 +14,9 @@ const MONTHS = [
 ]
 
 // Converts a date to a human-readable string.
-function toHumanDate(date) {
+function toHumanDate(timestamp) {
+	const date = new Date(timestamp)
+
 	const mm = date.getMonth() // NOTE: getMonth is zero-based
 	const dd = date.getDate()
 	const yy = date.getFullYear()
