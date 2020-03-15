@@ -5,7 +5,6 @@ import * as random from "utils/random"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Editor from "components/Editor" // FIXME: Exports are wrong
-import firebase from "__firebase"
 import Nav from "components/Nav"
 import React from "react"
 
@@ -76,6 +75,8 @@ const Note = ({ noteID: $noteID, ...props }) => {
 					setNoteID(noteID)
 				} catch (error) {
 					console.error(error)
+				} finally {
+					window.onbeforeunload = null
 				}
 			}, TIMEOUT_CREATE_NOTE)
 			return () => {
@@ -110,6 +111,8 @@ const Note = ({ noteID: $noteID, ...props }) => {
 					})
 				} catch (error) {
 					console.error(error)
+				} finally {
+					window.onbeforeunload = null
 				}
 			}, TIMEOUT_UPDATE_NOTE)
 			return () => {
