@@ -24,7 +24,7 @@
 
 ## What is Codex?
 
-Codex is a new kind of editor for developers, based on GitHub Flavored Markdown (GFM).
+Codex is a new kind WYSIWYG markdown editor for developers, based on GitHub Flavored Markdown (GFM).
 
 ## Is Codex ready?
 
