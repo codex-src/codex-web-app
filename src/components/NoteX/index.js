@@ -111,7 +111,21 @@ export const Loader = ({ noteID, ...props }) => {
 	}, [noteID])
 
 	if (!response.loaded) {
-		return null
+		return (
+			<div className="-my-2 py-40">
+				<div className="my-2 h-10 bg-gray-100" style={{ width: "40%" }} />
+				<div className="my-2 h-6" />
+				<div className="my-2 h-6 bg-gray-100" />
+				<div className="my-2 h-6 bg-gray-100" />
+				<div className="my-2 h-6 bg-gray-100" />
+				<div className="my-2 h-6 bg-gray-100" style={{ width: "80%" }} />
+				<div className="my-2 h-6" />
+				<div className="my-2 h-6 bg-gray-100" />
+				<div className="my-2 h-6 bg-gray-100" />
+				<div className="my-2 h-6 bg-gray-100" />
+				<div className="my-2 h-6 bg-gray-100" style={{ width: "60%" }} />
+			</div>
+		)
 	} else if (response.error) {
 		return <Router.Redirect to={constants.PATH_LOST} />
 	}

@@ -30,6 +30,7 @@ const MUTATION_DELETE_NOTE = `
 
 const EditorInstance = props => {
 	const [state, dispatch] = Editor.useEditor(props.children, {
+		previewMode: true,
 		readOnly: true, // FIXME: Move to props
 	})
 	return (
@@ -99,7 +100,7 @@ const UserNotes = props => {
 			// No-op
 			return
 		}
-		// Optimistic render:
+		// Render optimistically:
 		const notes = [...response.notes.filter(each => each.noteID !== noteID)]
 		setResponse(current => ({
 			...current,
