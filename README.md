@@ -12,9 +12,9 @@
 		Codex makes it easier than ever to express yourself in words <em>and</em> code
 	</p>
 	<p>
-	  <img src="https://img.shields.io/badge/Chrome-black.svg?logo=google-chrome&style=for-the-badge">
-	  <img src="https://img.shields.io/badge/Firefox-black.svg?logo=mozilla-firefox&style=for-the-badge">
-  	<img src="https://img.shields.io/badge/Safari-black.svg?logo=safari&style=for-the-badge">
+	  <img src="https://img.shields.io/badge/Chrome-black.svg?logo=google-chrome&style=flat-badge">
+	  <img src="https://img.shields.io/badge/Firefox-black.svg?logo=mozilla-firefox&style=flat-badge">
+  	<img src="https://img.shields.io/badge/Safari-black.svg?logo=safari&style=flat-badge">
 	</p>
 </div>
 
