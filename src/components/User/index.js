@@ -28,7 +28,7 @@ export const Provider = props => {
 	})
 
 	React.useLayoutEffect(() => {
-		const defer = firebase.auth().onAuthStateChanged(async user => {
+		const defer = firebase.auth().onAuthStateChanged(user => {
 			if (!user) {
 				setResponse(current => ({
 					...current,
@@ -37,25 +37,29 @@ export const Provider = props => {
 				}))
 				return
 			}
-			try {
-				const idToken = await firebase.auth().currentUser.getIdToken(true)
-				const body = await GraphQL.newQuery(idToken, QUERY_ME)
-				const { data } = body
-				setResponse(current => ({
-					...current,
-					user: {
-						idToken,
-						...data.me,
-					}
-				}))
-			} catch (error) {
-				console.error(error)
-			} finally {
-				setResponse(current => ({
-					...current,
-					loaded: true,
-				}))
-			}
+			// FIXME: setTimeout is an intermediary fix to prevent
+			// a race condition
+			setTimeout(async () => {
+				try {
+					const idToken = await firebase.auth().currentUser.getIdToken(true)
+					const body = await GraphQL.newQuery(idToken, QUERY_ME)
+					const { data } = body
+					setResponse(current => ({
+						...current,
+						user: {
+							idToken,
+							...data.me,
+						}
+					}))
+				} catch (error) {
+					console.error(error)
+				} finally {
+					setResponse(current => ({
+						...current,
+						loaded: true,
+					}))
+				}
+			}, 1e3)
 		})
 		return defer
 	}, [])

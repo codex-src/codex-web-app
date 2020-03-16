@@ -144,7 +144,10 @@ const NoteLoader = ({ noteID, ...props }) => {
 		error: "",
 	})
 
-	const [note, setNote] = React.useState(null)
+	const [note, setNote] = React.useState({
+		noteID: "",
+		data: "",
+	})
 
 	React.useLayoutEffect(() => {
 		if (!noteID) {

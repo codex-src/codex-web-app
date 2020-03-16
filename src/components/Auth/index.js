@@ -15,14 +15,13 @@ const MUTATION_REGISTER_USER = `
 const Auth = props => {
 
 	const signIn = async provider => {
+		const response = await firebase.auth().signInWithPopup(provider)
+		if (!response.additionalUserInfo.isNewUser) {
+			// No-op
+			return
+		}
 		try {
-			const response = await firebase.auth().signInWithPopup(provider)
-			if (!response.additionalUserInfo.isNewUser) {
-				// No-op
-				return
-			}
-			const idToken = await firebase.auth().currentUser.getIdToken(true)
-			await GraphQL.newQuery(idToken, MUTATION_REGISTER_USER, {
+			await GraphQL.newQuery("", MUTATION_REGISTER_USER, {
 				userInput: {
 					userID:        response.user.uid,
 					email:         response.user.email,
