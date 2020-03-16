@@ -23,6 +23,6 @@ export const TODO                 = "/TODO"
 export const TRANSPARENT_PX       = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
 
 export const URL                  = "https://opencodex.dev"
-export const URL_API              = "http://localhost:8080/graphql" // "https://api.opencodex.dev/graphql"
+export const URL_API              = "https://api.opencodex.dev/graphql" // "http://localhost:8080/graphql"
 export const URL_REPO             = "https://github.com/codex-src/codex-app"
 /* eslint-enable no-multi-spaces */
