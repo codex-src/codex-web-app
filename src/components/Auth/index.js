@@ -6,9 +6,7 @@ import React from "react"
 
 const MUTATION_REGISTER_USER = `
 	mutation RegisterUser($userInput: RegisterUserInput!) {
-		registerUser(userInput: $userInput) {
-			userID
-		}
+		registerUser(userInput: $userInput)
 	}
 `
 
