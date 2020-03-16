@@ -63,10 +63,12 @@ const Content = props => {
 			<div className="-mx-3 flex flex-row md:hidden">
 				<div className="px-3 relative flex flex-row items-center">
 
+					{/* Button */}
 					<button onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
 						<Hero.MenuOutlineMd className="w-8 h-8" />
 					</button>
 
+					{/* Drop down */}
 					<DropDown.Base ref={ref}>
 						<DropDown.Link
 							to={constants.PATH_README}

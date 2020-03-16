@@ -51,7 +51,7 @@ const NoteLayout = ({ note, ...props }) => (
 		{/* User */}
 		<div className="flex flex-row items-center">
 			<div className="mr-4">
-				<img className="w-16 h-16 bg-gray-500 rounded-full" src={note.user.photoURL || constants.TRANSPARENT_PX} alt="" />
+				<img className="w-16 h-16 bg-gray-100 rounded-full" src={note.user.photoURL || constants.TRANSPARENT_PX} alt="" />
 			</div>
 			<div>
 				<p className="font-semibold text-px">
@@ -130,7 +130,7 @@ const NoteLoader = ({ noteID, ...props }) => {
 					<div className="my-2 h-6 bg-gray-100" />
 					<div className="my-2 h-6 bg-gray-100" />
 					<div className="my-2 h-6 bg-gray-100" />
-					<div className="my-2 h-6 bg-gray-100" style={{ width: "75%" }} />
+					<div className="my-2 h-6 bg-gray-100" style={{ width: "50%" }} />
 				</div>
 			</React.Fragment>
 		)

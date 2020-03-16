@@ -75,7 +75,8 @@ const Content = props => {
 			<div className="-mx-3 flex flex-row">
 				<div className="px-3 relative flex flex-row items-center">
 
-					<button className="text-gray-500 hover:text-blue-500 focus:text-blue-500 rounded-full focus:outline-none focus:shadow-outline overflow-hidden trans-150" onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
+					{/* Button */}
+					<button className="text-gray-100 hover:text-blue-500 focus:text-blue-500 rounded-full focus:outline-none focus:shadow-outline overflow-hidden trans-150" onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
 						<div className="relative">
 							<img className="w-8 h-8" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
 							<div className="absolute inset-0 -z-10">
@@ -84,6 +85,7 @@ const Content = props => {
 						</div>
 					</button>
 
+					{/* Drop down */}
 					<DropDown.Base ref={ref}>
 						<DropDown.Link
 							to={constants.PATH_NEW_NOTE}

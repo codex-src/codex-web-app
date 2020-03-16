@@ -15,6 +15,12 @@ import UserNotes from "components/UserNotes"
 
 const Data404 = `# 404\n\nSorry about that, we couldn’t find the page you’re looking for.`
 
+const AnonNote = props => {
+	const { noteID } = Router.useParams()
+
+	return <Note noteID={noteID} />
+}
+
 const Editor404 = props => {
 	const [state, dispatch] = Editor.useEditor(Data404, {
 		previewMode: true, // TOOD: Move to props
@@ -63,7 +69,7 @@ const App = props => (
 					<Route.Any path={constants.PATH_NOTE} exact>
 						<User.Context.Consumer>
 							{user => !user ? (
-								<Note noteID={Router.useParams().noteID} />
+								<AnonNote />
 							) : (
 								<UserNote />
 							)}

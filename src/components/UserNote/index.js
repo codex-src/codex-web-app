@@ -181,7 +181,7 @@ const NoteLoader = ({ noteID, ...props }) => {
 				<div className="my-2 h-6 bg-gray-100" />
 				<div className="my-2 h-6 bg-gray-100" />
 				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" style={{ width: "75%" }} />
+				<div className="my-2 h-6 bg-gray-100" style={{ width: "50%" }} />
 			</div>
 		)
 	} else if (response.error) {
