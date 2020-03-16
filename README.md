@@ -1,9 +1,11 @@
 <div align="center">
-	<h1>
-		<img src="https://opencodex.dev/favicon.ico" width="36px" align="center">&nbsp;&nbsp;Codex
-		<br>
-		<br>
-	</h1>
+	<a href="https://opencodex.dev">
+		<h1>
+			<img src="https://opencodex.dev/favicon.ico" width="36px" align="center">&nbsp;&nbsp;Codex
+			<br>
+			<br>
+		</h1>
+	</a>
   <h3>
 		<br>
 		The developer’s notebook in the cloud&nbsp;&nbsp;☁️
@@ -18,7 +20,7 @@
 	</p>
 </div>
 
-![](https://opencodex.dev/social@2x.png)
+[![](https://opencodex.dev/social@2x.png)](https://opencodex.dev)
 
 <br>
 
