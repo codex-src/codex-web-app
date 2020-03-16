@@ -41,10 +41,6 @@ const Content = props => {
 
 			{/* RHS (1 of 2) */}
 			<div className="-mx-3 hidden md:flex md:flex-row">
-				{/* <NavLink */}
-				{/* 	to={constants.TODO} */}
-				{/* 	text="Write example" */}
-				{/* /> */}
 				<NavLink
 					to={constants.PATH_README}
 					text="Readme"
@@ -72,6 +68,14 @@ const Content = props => {
 					</button>
 
 					<DropDown.Base ref={ref}>
+						<DropDown.Link
+							to={constants.PATH_README}
+							text="Readme"
+						/>
+						<DropDown.Link
+							to={constants.PATH_DEMO}
+							text="Demo"
+						/>
 						<DropDown.Link
 							to={constants.PATH_CHANGELOG}
 							text="Changelog"

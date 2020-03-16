@@ -49,14 +49,14 @@ export const Note = ({ note, ...props }) => (
 
 		{/* User */}
 		<div className="flex flex-row items-center">
-			<div className="mr-3">
-				<img className="w-12 h-12 bg-gray-500 rounded-full" src={note.user.photoURL || constants.TRANSPARENT_PX} alt="" />
+			<div className="mr-4">
+				<img className="w-16 h-16 bg-gray-500 rounded-full" src={note.user.photoURL || constants.TRANSPARENT_PX} alt="" />
 			</div>
 			<div>
-				<p className="font-semibold">
+				<p className="font-semibold text-px">
 					{note.user.displayName}
 				</p>
-				<p className="text-sm tracking-wide text-gray-600">
+				<p className="text-px tracking-wide text-gray-600">
 					{toHumanDate(note.createdAt)}{" "}
 					{note.updatedAt.slice(0, 10) !== note.createdAt.slice(0, 10) && (
 						<React.Fragment>
