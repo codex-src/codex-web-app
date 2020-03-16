@@ -24,10 +24,12 @@
 
 ## What is Codex?
 
-Codex is a new kind of editor for developers, based on [GitHub Flavored Markdown (GFM)](https://github.github.com/gfm). Note that Codex uses a subset of GFM.
+Codex is a new kind of editor for developers, based on GitHub Flavored Markdown (GFM).
 
-_Note that Codex is currently in a closed beta and not yet ready for general use._
+## Is Codex ready?
+
+Codex is currently in an _open alpha_; you’re welcome to sign up and get started, but the editor is limited. You can follow the [changelog](https://opencodex.dev/changelog) for updates. [Known issues](https://changelog.opencodex.dev/issues) are documented here.
 
 ## Is Codex open source?
 
-You may be surprised to learn that Codex is MIT open source. Why? Building an editor is _hard_ and the more companies build products based on hard-to-learn technologies in the general domain, the better for the world.
+Codex is MIT open source. This includes the [frontend](https://github.com/codex-src/codex-app) based on React and the [backend](https://github.com/codex-src/codex-server2) based on Go/GraphQL.
