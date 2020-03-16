@@ -80,7 +80,7 @@ export const Note = ({ note, ...props }) => (
 export const Loader = ({ noteID, ...props }) => {
 	const [response, setResponse] = React.useState({
 		loaded: false,
-		error: "",
+		error: "", // TODO: Change to exists
 		note: null,
 	})
 
@@ -112,18 +112,30 @@ export const Loader = ({ noteID, ...props }) => {
 
 	if (!response.loaded) {
 		return (
-			<div className="-my-2 py-40">
-				<div className="my-2 h-10 bg-gray-100" style={{ width: "40%" }} />
-				<div className="my-2 h-6" />
-				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" style={{ width: "80%" }} />
-				<div className="my-2 h-6" />
-				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" style={{ width: "60%" }} />
+			<div>
+				<div className="flex flex-row items-center">
+					<div className="mr-4">
+						<div className="w-16 h-16 bg-gray-100 rounded-full" />
+					</div>
+					<div className="-my-2">
+						<div className="my-2 w-48 h-5 bg-gray-100" />
+						<div className="my-2 w-24 h-5 bg-gray-100" />
+					</div>
+				</div>
+				<div className="h-16" />
+				<div className="-my-2">
+					<div className="my-2 h-8 bg-gray-100" style={{ width: "40%" }} />
+					<div className="my-2 h-6" />
+					<div className="my-2 h-6 bg-gray-100" />
+					<div className="my-2 h-6 bg-gray-100" />
+					<div className="my-2 h-6 bg-gray-100" />
+					<div className="my-2 h-6 bg-gray-100" style={{ width: "80%" }} />
+					<div className="my-2 h-6" />
+					<div className="my-2 h-6 bg-gray-100" />
+					<div className="my-2 h-6 bg-gray-100" />
+					<div className="my-2 h-6 bg-gray-100" />
+					<div className="my-2 h-6 bg-gray-100" style={{ width: "60%" }} />
+				</div>
 			</div>
 		)
 	} else if (response.error) {
