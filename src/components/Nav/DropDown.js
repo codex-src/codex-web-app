@@ -1,7 +1,8 @@
-import $Link from "components/Link" // eslint-disable-line react/jsx-pascal-case
+import $Link from "components/Link"
 import React from "react"
 
 export const Link = ({ text, subtext, ...props }) => (
+	// eslint-disable-next-line react/jsx-pascal-case
 	<$Link className="px-4 py-1 text-gray-800 hover:text-white hover:bg-blue-500" {...props}>
 		<p className="font-medium -text-px">
 			{text}

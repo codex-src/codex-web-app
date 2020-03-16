@@ -35,13 +35,14 @@ const MUTATION_UPDATE_NOTE = `
 	}
 `
 
-const Note = ({ noteID: $noteID, ...props }) => {
+const Note = ({ note, ...props }) => {
 	const user = User.useUser()
 	const renderProgressBar = ProgressBar.useProgressBar()
 
 	// Copy -- do not rerender parent component:
-	const [noteID, setNoteID] = React.useState($noteID)
-	const [state, dispatch] = Editor.useEditor(props.children, {
+	const [noteID, setNoteID] = React.useState(note.noteID)
+
+	const [state, dispatch] = Editor.useEditor(note.data || "", {
 		shortcuts: true,
 		statusBar: true,
 	})
@@ -132,7 +133,6 @@ const Note = ({ noteID: $noteID, ...props }) => {
 			dispatch={dispatch}
 			paddingY={160}
 			minHeight="100vh"
-			// autoFocus={true} // TODO
 		/>
 	)
 }
@@ -140,10 +140,11 @@ const Note = ({ noteID: $noteID, ...props }) => {
 const NoteLoader = ({ noteID, ...props }) => {
 	const [response, setResponse] = React.useState({
 		loaded: !noteID, // Inverse to noteID,
+		// exists
 		error: "",
 	})
 
-	const [data, setData] = React.useState("")
+	const [note, setNote] = React.useState(null)
 
 	React.useLayoutEffect(() => {
 		if (!noteID) {
@@ -156,7 +157,7 @@ const NoteLoader = ({ noteID, ...props }) => {
 					noteID,
 				})
 				const { data } = body
-				setData(data.note.data)
+				setNote(data.note)
 			} catch (error) {
 				console.error(error)
 				setResponse(current => ({
@@ -181,31 +182,23 @@ const NoteLoader = ({ noteID, ...props }) => {
 				<div className="my-2 h-6 bg-gray-100" />
 				<div className="my-2 h-6 bg-gray-100" />
 				<div className="my-2 h-6 bg-gray-100" style={{ width: "75%" }} />
-				<div className="my-2 h-6" />
-				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" style={{ width: "50%" }} />
 			</div>
 		)
 	} else if (response.error) {
 		return <Router.Redirect to={constants.PATH_LOST} />
 	}
-	return React.cloneElement(props.children, { noteID, children: data })
+	return <Note note={note} />
 }
 
 const UserNote = props => {
 	const { noteID } = Router.useParams()
 
 	return (
-		// NOTE: Do not use NoteContainer
 		<React.Fragment>
 			<Nav />
 			<div className="flex flex-row justify-center min-h-full">
 				<div className="px-6 w-full max-w-screen-md">
-					<NoteLoader noteID={noteID}>
-						<Note />
-					</NoteLoader>
+					<NoteLoader noteID={noteID} />
 				</div>
 			</div>
 		</React.Fragment>

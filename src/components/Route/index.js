@@ -4,7 +4,7 @@ import * as User from "components/User"
 import CodexTitle from "components/CodexTitle"
 import React from "react"
 
-export const Route = ({ title, ...props }) => (
+export const Any = ({ title, ...props }) => (
 	<CodexTitle title={title}>
 		<Router.Route {...props}>
 			{props.children}
@@ -19,7 +19,7 @@ export const Unprotected = props => {
 	if (user) {
 		Component = <Router.Redirect to={constants.PATH_HOME} />
 	} else {
-		Component = <Route {...props} />
+		Component = <Any {...props} />
 	}
 	return Component
 }
@@ -31,7 +31,7 @@ export const Protected = props => {
 	if (!user) {
 		Component = <Router.Redirect to={constants.PATH_AUTH} />
 	} else {
-		Component = <Route {...props} />
+		Component = <Any {...props} />
 	}
 	return Component
 }

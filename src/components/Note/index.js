@@ -113,7 +113,7 @@ const NoteLoader = ({ noteID, ...props }) => {
 
 	if (!response.loaded) {
 		return (
-			<div>
+			<React.Fragment>
 				<div className="flex flex-row items-center">
 					<div className="mr-4">
 						<div className="w-16 h-16 bg-gray-100 rounded-full" />
@@ -131,13 +131,8 @@ const NoteLoader = ({ noteID, ...props }) => {
 					<div className="my-2 h-6 bg-gray-100" />
 					<div className="my-2 h-6 bg-gray-100" />
 					<div className="my-2 h-6 bg-gray-100" style={{ width: "75%" }} />
-					<div className="my-2 h-6" />
-					<div className="my-2 h-6 bg-gray-100" />
-					<div className="my-2 h-6 bg-gray-100" />
-					<div className="my-2 h-6 bg-gray-100" />
-					<div className="my-2 h-6 bg-gray-100" style={{ width: "50%" }} />
 				</div>
-			</div>
+			</React.Fragment>
 		)
 	} else if (response.error) {
 		return <Router.Redirect to={constants.PATH_LOST} />

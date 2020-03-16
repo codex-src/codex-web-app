@@ -5,19 +5,23 @@ import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Auth from "components/Auth"
 import Demo from "components/Demo"
+import Editor from "components/Editor"
 import Home from "components/Home"
-import Nav from "components/Nav"
 import Note from "components/Note"
 import NoteContainer from "components/NoteContainer"
 import React from "react"
 import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
 
-// const ReadOnlyNote = props => {
-// 	const { noteID } = Router.useParams()
-//
-// 	return <Note noteID={noteID} />
-// }
+const Data404 = `# 404\n\nSorry about that, we couldn’t find the page you’re looking for.`
+
+const Editor404 = props => {
+	const [state, dispatch] = Editor.useEditor(Data404, {
+		previewMode: true, // TOOD: Move to props
+	})
+
+	return <Editor.Editor state={state} dispatch={dispatch} />
+}
 
 const App = props => (
 	<Router.BrowserRouter>
@@ -26,39 +30,28 @@ const App = props => (
 				<ProgressBar.ProgressBar />
 				<Router.Switch>
 
-					{/* Readme */}
-					<Route.Route
+					{/* Any */}
+					<Route.Any
 						path={constants.PATH_README}
 						title="Readme"
 						exact
 						children={<Note noteID={constants.NOTE_ID_README} />}
 					/>
-					{/* Changelog */}
-					<Route.Route
+					<Route.Any
 						path={constants.PATH_CHANGELOG}
 						title="Changelog"
 						exact
 						children={<Note noteID={constants.NOTE_ID_CHANGELOG} />}
 					/>
-					{/* Known issues */}
-					<Route.Route
+					<Route.Any
 						path={constants.PATH_KNOWN_ISSUES}
 						title="Known issues"
 						exact
 						children={<Note noteID={constants.NOTE_ID_KNOWN_ISSUES} />}
 					/>
-					{/* Note */}
-					<Route.Route path={constants.PATH_NOTE} exact>
-						<User.Context.Consumer>
-							{user => !user ? (
-								<Note noteID={Router.useParams().noteID} />
-							) : (
-								<UserNote />
-							)}
-						</User.Context.Consumer>
-					</Route.Route>
-					{/* Home */}
-					<Route.Route path={constants.PATH_HOME} exact>
+
+					{/* Both */}
+					<Route.Any path={constants.PATH_HOME} exact>
 						<User.Context.Consumer>
 							{user => !user ? (
 								<Home />
@@ -66,20 +59,28 @@ const App = props => (
 								<UserNotes />
 							)}
 						</User.Context.Consumer>
-					</Route.Route>
+					</Route.Any>
+					<Route.Any path={constants.PATH_NOTE} exact>
+						<User.Context.Consumer>
+							{user => !user ? (
+								<Note noteID={Router.useParams().noteID} />
+							) : (
+								<UserNote />
+							)}
+						</User.Context.Consumer>
+					</Route.Any>
 
-					{/* Auth */}
-					<Route.Unprotected
-						path={constants.PATH_AUTH}
-						title="Open your Codex"
-						children={<Auth />}
-					/>
-					{/* Demo */}
+					{/* Unprotected */}
 					<Route.Unprotected
 						path={constants.PATH_DEMO}
 						exact
 						title="Demo"
 						children={<Demo />}
+					/>
+					<Route.Unprotected
+						path={constants.PATH_AUTH}
+						title="Open your Codex"
+						children={<Auth />}
 					/>
 
 					{/* Protected */}
@@ -92,6 +93,19 @@ const App = props => (
 						path={constants.PATH_NOTE}
 						title="Editing note"
 						children={<UserNote />}
+					/>
+
+					{/* 404 */}
+					<Route.Any
+						path="/"
+						title="Page not found"
+						children={
+							<NoteContainer>
+								<div className="text-center">
+									<Editor404 />
+								</div>
+							</NoteContainer>
+						}
 					/>
 
 				</Router.Switch>
