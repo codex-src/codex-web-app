@@ -1,5 +1,6 @@
 import * as constants from "__constants"
 import * as ProgressBar from "components/ProgressBar"
+import * as random from "utils/random"
 import * as Route from "components/Route"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
@@ -41,19 +42,22 @@ const App = props => (
 						path={constants.PATH_README}
 						title="Readme"
 						exact
-						children={<Note noteID={constants.NOTE_ID_README} />}
+						// NOTE: Use key because <Note> is shared
+						children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_README} />}
 					/>
 					<Route.Any
 						path={constants.PATH_CHANGELOG}
 						title="Changelog"
 						exact
-						children={<Note noteID={constants.NOTE_ID_CHANGELOG} />}
+						// NOTE: Use key because <Note> is shared
+						children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_CHANGELOG} />}
 					/>
 					<Route.Any
 						path={constants.PATH_KNOWN_ISSUES}
 						title="Known issues"
 						exact
-						children={<Note noteID={constants.NOTE_ID_KNOWN_ISSUES} />}
+						// NOTE: Use key because <Note> is shared
+						children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_KNOWN_ISSUES} />}
 					/>
 
 					{/* Both */}

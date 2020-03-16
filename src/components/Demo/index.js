@@ -26,7 +26,7 @@ const Demo = props => {
 						state={state}
 						dispatch={dispatch}
 						paddingX={24}
-						paddingY={128}
+						paddingY={160}
 					/>
 				</div>
 			</div>

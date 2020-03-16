@@ -140,12 +140,12 @@ const NoteLoader = ({ noteID, ...props }) => {
 	return <NoteLayout note={response.note} />
 }
 
-const Note = props => (
+const Note = ({ noteID, ...props }) => (
 	<React.Fragment>
 		<Nav />
 		<div className="py-40 flex flex-row justify-center">
 			<div className="px-6 w-full max-w-screen-md">
-				<NoteLoader noteID={constants.NOTE_ID_README} />
+				<NoteLoader noteID={noteID} />
 			</div>
 		</div>
 	</React.Fragment>
