@@ -95,6 +95,10 @@ const Content = props => {
 						/>
 						<hr className="my-1" />
 						<DropDown.Link
+							to={constants.PATH_README}
+							text="Readme"
+						/>
+						<DropDown.Link
 							to={constants.PATH_CHANGELOG}
 							text="Changelog"
 						/>

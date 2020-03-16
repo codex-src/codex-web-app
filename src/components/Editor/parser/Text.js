@@ -1,26 +1,26 @@
 import Markdown from "./Markdown"
 import React from "react"
 
-export const Em = props => (
+export const Em = ({ syntax, ...props }) => (
 	<span className="em">
-		<Markdown start={props.syntax} end={props.syntax}>
+		<Markdown start={syntax} end={syntax}>
 			{props.children}
 		</Markdown>
 	</span>
 )
 
-export const Strong = props => (
+export const Strong = ({ syntax, ...props }) => (
 	<span className="strong">
-		<Markdown start={props.syntax} end={props.syntax}>
+		<Markdown start={syntax} end={syntax}>
 			{props.children}
 		</Markdown>
 	</span>
 )
 
-export const StrongEm = props => (
+export const StrongEm = ({ syntax, ...props }) => (
 	<span className="strong em">
-		<Markdown start={props.syntax.slice(0, 2)} end={props.syntax.slice(1)}>
-			<Markdown start={props.syntax.slice(-1)} end={props.syntax.slice(0, 1)}>
+		<Markdown start={syntax.slice(0, 2)} end={syntax.slice(1)}>
+			<Markdown start={syntax.slice(-1)} end={syntax.slice(0, 1)}>
 				{props.children}
 			</Markdown>
 		</Markdown>
@@ -35,9 +35,9 @@ export const Code = props => (
 	</span>
 )
 
-export const Strikethrough = props => (
+export const Strikethrough = ({ syntax, ...props }) => (
 	<span className="strikethrough">
-		<Markdown start={props.syntax} end={props.syntax} >
+		<Markdown start={syntax} end={syntax} >
 			{props.children}
 		</Markdown>
 	</span>

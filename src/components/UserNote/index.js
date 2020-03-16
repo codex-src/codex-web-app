@@ -41,7 +41,10 @@ const Note = ({ noteID: $noteID, ...props }) => {
 
 	// Copy -- do not rerender parent component:
 	const [noteID, setNoteID] = React.useState($noteID)
-	const [state, dispatch] = Editor.useEditor(props.children)
+	const [state, dispatch] = Editor.useEditor(props.children, {
+		shortcuts: true,
+		statusBar: true,
+	})
 
 	// https://github.com/facebook/react/issues/14010#issuecomment-433788147
 	const stateRef = React.useRef(state)
@@ -142,7 +145,7 @@ const NoteLoader = ({ noteID, ...props }) => {
 
 	const [data, setData] = React.useState("")
 
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		if (!noteID) {
 			// No-op
 			return

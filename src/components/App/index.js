@@ -12,6 +12,14 @@ import React from "react"
 import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
 
+const Readme = props => (
+	<NoteContainer>
+		<NoteX.Loader noteID={constants.NOTE_ID_README}>
+			<NoteX.Note />
+		</NoteX.Loader>
+	</NoteContainer>
+)
+
 const Changelog = props => (
 	<NoteContainer>
 		<NoteX.Loader noteID={constants.NOTE_ID_CHANGELOG}>
@@ -47,6 +55,13 @@ const App = props => (
 				<ProgressBar.ProgressBar />
 				<Router.Switch>
 
+					{/* Readme */}
+					<Route.Route
+						path={constants.PATH_README}
+						title="Readme"
+						exact
+						children={<Readme />}
+					/>
 					{/* Changelog */}
 					<Route.Route
 						path={constants.PATH_CHANGELOG}

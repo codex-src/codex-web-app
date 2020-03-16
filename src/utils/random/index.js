@@ -6,8 +6,6 @@ const baseURL62 = (
 	"0123456789"
 )
 
-// const baseURL64 = `${baseURL62}-_`
-
 export function newFourByteHash() {
 	return Math.random().toString(16).slice(2, 6)
 }
@@ -31,15 +29,6 @@ export function newURL62(length) {
 export function newAutoID() {
 	return newURL62(20)
 }
-
-// export function newURL64(length) {
-// 	let hash = ""
-// 	for (let index = 0; index < length; index++) {
-// 		const rand = Math.floor(Math.random() * baseURL64.length)
-// 		hash += baseURL64[rand]
-// 	}
-// 	return hash
-// }
 
 export function newUUID() {
 	return uuidv4()

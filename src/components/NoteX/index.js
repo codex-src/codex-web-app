@@ -58,8 +58,12 @@ export const Note = ({ note, ...props }) => (
 				</p>
 				<p className="text-sm tracking-wide text-gray-600">
 					{toHumanDate(note.createdAt)}{" "}
-					<span className="text-gray-400">·</span>{" "}
-					Updated {toHumanDate(note.updatedAt)}
+					{note.updatedAt.slice(0, 10) !== note.createdAt.slice(0, 10) && (
+						<React.Fragment>
+							<span className="text-gray-400">·</span>{" "}
+							Updated {toHumanDate(note.updatedAt)}
+						</React.Fragment>
+					)}
 				</p>
 			</div>
 		</div>
@@ -80,7 +84,7 @@ export const Loader = ({ noteID, ...props }) => {
 		note: null,
 	})
 
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		;(async () => {
 			try {
 				const body = await GraphQL.newQuery("", QUERY_NOTE_USER, {

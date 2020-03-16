@@ -45,10 +45,14 @@ const Content = props => {
 				{/* 	to={constants.TODO} */}
 				{/* 	text="Write example" */}
 				{/* /> */}
-				{/* <NavLink */}
-				{/* 	to={constants.TODO} */}
-				{/* 	text="Read example" */}
-				{/* /> */}
+				<NavLink
+					to={constants.PATH_README}
+					text="Readme"
+				/>
+				<NavLink
+					to={constants.PATH_DEMO}
+					text="Demo"
+				/>
 				<NavLink
 					to={constants.PATH_CHANGELOG}
 					text="Changelog"

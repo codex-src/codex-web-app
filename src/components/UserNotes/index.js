@@ -61,7 +61,7 @@ const UserNotes = props => {
 		notes: [],
 	})
 
-	React.useEffect(
+	React.useLayoutEffect(
 		React.useCallback(() => {
 			let abort = false
 			const id = setTimeout(async () => {

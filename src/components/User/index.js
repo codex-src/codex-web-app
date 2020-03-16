@@ -27,7 +27,7 @@ export const Provider = props => {
 		user: null,
 	})
 
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		const defer = firebase.auth().onAuthStateChanged(async user => {
 			if (!user) {
 				setResponse(current => ({
