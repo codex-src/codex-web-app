@@ -1,5 +1,4 @@
 import * as constants from "__constants"
-import * as consts from "./consts"
 import * as GraphQL from "graphql"
 import * as Hero from "react-heroicons"
 import * as User from "components/User"
@@ -45,10 +44,8 @@ const EditorInstance = props => {
 	)
 }
 
-const Button = ({ extend, svg: SVG, ...props }) => (
-	<button className={`p-2 text-md-blue-a400 disabled:text-gray-400 disabled:bg-transparent hover:bg-blue-100 focus:bg-blue-100 rounded-full focus:outline-none trans-300 ${extend || ""}`.trim()} {...props}>
-		<SVG className="w-6 h-6" />
-	</button>
+const SVG = ({ svg: SVG, ...props }) => (
+	<SVG {...props} />
 )
 
 const UserNotes = props => {
@@ -102,11 +99,11 @@ const UserNotes = props => {
 			// No-op
 			return
 		}
-		// Optimistic UI:
-		const filteredNotes = [...response.notes.filter(each => each.noteID !== noteID)]
+		// Optimistic render:
+		const notes = [...response.notes.filter(each => each.noteID !== noteID)]
 		setResponse(current => ({
 			...current,
-			notes: filteredNotes,
+			notes,
 		}))
 		try {
 			await GraphQL.newQuery(user.idToken, MUTATION_DELETE_NOTE, {
@@ -120,41 +117,19 @@ const UserNotes = props => {
 	return (
 		<NavContainer>
 
-			{/* Buttons */}
+			{/* Action bar */}
 			<div className="flex flex-row justify-end h-10">
 				{!response.loaded ? (
 					<div className="-mx-1 flex flex-row">
 						<div className="p-2">
 							<div className="w-6 h-6 bg-gray-100 rounded-full" />
 						</div>
-						<div className="p-2">
-							<div className="w-6 h-6 bg-gray-100 rounded-full" />
-						</div>
-						<div className="p-2">
-							<div className="w-6 h-6 bg-gray-100 rounded-full" />
-						</div>
 					</div>
 				) : (
 					<div className="-mx-1 flex flex-row">
-						{/* <Button */}
-						{/* 	extend="hidden lg:block" */}
-						{/* 	svg={Hero.ZoomOutOutlineMd} */}
-						{/* 	disabled={state.itemsShown === consts.ITEMS_MAX} */}
-						{/* 	onPointerDown={e => e.preventDefault()} */}
-						{/* 	onClick={dispatch.showMoreItems} */}
-						{/* /> */}
-						{/* <Button */}
-						{/* 	extend="hidden lg:block" */}
-						{/* 	svg={Hero.ZoomInOutlineMd} */}
-						{/* 	disabled={state.itemsShown === consts.ITEMS_MIN} */}
-						{/* 	onPointerDown={e => e.preventDefault()} */}
-						{/* 	onClick={dispatch.showLessItems} */}
-						{/* /> */}
-						<Button
-							svg={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd}
-							onPointerDown={e => e.preventDefault()}
-							onClick={dispatch.toggleSortDirection}
-						/>
+						<button className="p-2 text-md-blue-a400 hover:bg-blue-100 focus:bg-blue-100 rounded-full focus:outline-none trans-300" onPointerDown={e => e.preventDefault()} onClick={dispatch.toggleSortDirection}>
+							<SVG className="w-6 h-6" svg={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd} />
+						</button>
 					</div>
 				)}
 			</div>
