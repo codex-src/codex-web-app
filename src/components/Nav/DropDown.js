@@ -8,15 +8,16 @@ import React from "react"
 // )}
 
 export const Link = ({ text, subtext, ...props }) => (
-	<LINK className="px-4 py-2 hover:bg-gray-100 trans-75" {...props}>
-		<p className="font-medium -text-px text-gray-800">
+	<LINK className="px-4 py-1 text-gray-800 hover:text-white hover:bg-blue-500 trans-75" {...props}>
+		<p className="font-medium -text-px">
 			{text}
 		</p>
 	</LINK>
 )
 
 export const Base = React.forwardRef((props, ref) => (
-	<div ref={ref} className="-mt-2 py-2 absolute right-0 top-full w-56 bg-white rounded-lg shadow-hero-lg">
+	// NOTE: Use py-2 because Link uses py-1
+	<div ref={ref} className="-mt-2 py-2 absolute right-0 top-full w-48 bg-gray-50 rounded-lg shadow-hero-lg">
 		{props.children}
 	</div>
 ))
