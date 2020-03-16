@@ -1,33 +1,35 @@
 <div align="center">
 	<h1>
-		Codex
+		<img src="https://opencodex.dev/icon-github@1x.png" width="36px" align="center">&nbsp;&nbsp;Codex
 		<br>
 		<br>
 	</h1>
   <h3>
 		<br>
-		The developer’s web-based notebook
+		The developer’s notebook in the cloud&nbsp;&nbsp;☁️
 	</h3>
 	<p>
 		Codex makes it easier than ever to express yourself in words <em>and</em> code
 	</p>
 	<p>
-	  <img src="https://img.shields.io/badge/Chrome-black.svg?logo=google-chrome">
-	  <img src="https://img.shields.io/badge/Firefox-black.svg?logo=mozilla-firefox">
-  	<img src="https://img.shields.io/badge/Safari-black.svg?logo=safari">
+	  <img src="https://img.shields.io/badge/Chrome-black.svg?logo=google-chrome&style=flat-square">
+	  <img src="https://img.shields.io/badge/Firefox-black.svg?logo=mozilla-firefox&style=flat-square">
+  	<img src="https://img.shields.io/badge/Safari-black.svg?logo=safari&style=flat-square">
 	</p>
 </div>
 
-![](/public/social@2x.png)
+[![](https://opencodex.dev/social@2x.png)](https://opencodex.dev)
 
 <br>
 
 ## What is Codex?
 
-Codex is a new kind of editor for developers, based on [GitHub Flavored Markdown (GFM)](https://github.github.com/gfm). Note that Codex uses a subset of GFM.
+Codex is a new kind WYSIWYG markdown editor for developers, based on GitHub Flavored Markdown (GFM).
 
-_Note that Codex is currently in a closed beta and not yet ready for general use._
+## Is Codex ready?
 
-## Is Codex open source?
+Codex is currently in an open alpha — you’re welcome to sign up and get started, but the editor is limited. You can follow the [changelog](https://changelog.opencodex.dev) for updates. [Known issues](https://issues.opencodex.dev) are documented here.
 
-You may be surprised to learn that Codex is MIT open source. Why? Building an editor is _hard_ and the more companies build products based on hard-to-learn technologies in the general domain, the better for the world.
+## License
+
+Codex is MIT open source. This includes the [frontend based on React](https://github.com/codex-src/codex-app) and the [backend based on Go/GraphQL](https://github.com/codex-src/codex-server2).
