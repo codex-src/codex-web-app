@@ -11,6 +11,11 @@
 	<p>
 		Codex makes it easier than ever to express yourself in words <em>and</em> code
 	</p>
+	<p>
+	  <img src="https://img.shields.io/badge/Chrome-black.svg?logo=google-chrome">
+	  <img src="https://img.shields.io/badge/Firefox-black.svg?logo=mozilla-firefox">
+  	<img src="https://img.shields.io/badge/Safari-black.svg?logo=safari">
+	</p>
 </div>
 
 ![](https://opencodex.dev/social@2x.png)
