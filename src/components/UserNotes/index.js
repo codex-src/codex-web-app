@@ -141,7 +141,7 @@ const UserNotes = props => {
 				{!response.loaded ? (
 					[...new Array(3)].map((_, index) => (
 						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-lg-xl trans-150">
-							<div className="absolute inset-0" />
+							{/* <div className="absolute inset-0" /> */}
 						</div>
 					))
 				) : (
