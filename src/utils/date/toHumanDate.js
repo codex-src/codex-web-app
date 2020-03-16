@@ -13,7 +13,6 @@ const MONTHS = [
 	"December",
 ]
 
-// Converts a date to a human-readable string.
 function toHumanDate(timestamp) {
 	const date = new Date(timestamp)
 

@@ -175,17 +175,17 @@ const NoteLoader = ({ noteID, ...props }) => {
 	if (!response.loaded) {
 		return (
 			<div className="-my-2 py-40">
-				<div className="my-2 h-10 bg-gray-100" style={{ width: "40%" }} />
+				<div className="my-2 h-8 bg-gray-100" style={{ width: "25%" }} />
 				<div className="my-2 h-6" />
 				<div className="my-2 h-6 bg-gray-100" />
 				<div className="my-2 h-6 bg-gray-100" />
 				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" style={{ width: "80%" }} />
+				<div className="my-2 h-6 bg-gray-100" style={{ width: "75%" }} />
 				<div className="my-2 h-6" />
 				<div className="my-2 h-6 bg-gray-100" />
 				<div className="my-2 h-6 bg-gray-100" />
 				<div className="my-2 h-6 bg-gray-100" />
-				<div className="my-2 h-6 bg-gray-100" style={{ width: "60%" }} />
+				<div className="my-2 h-6 bg-gray-100" style={{ width: "50%" }} />
 			</div>
 		)
 	} else if (response.error) {

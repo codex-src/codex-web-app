@@ -2,6 +2,7 @@ import * as constants from "__constants"
 import * as GraphQL from "graphql"
 import * as Router from "react-router-dom"
 import Editor from "components/Editor"
+import Nav from "components/Nav"
 import React from "react"
 import toHumanDate from "utils/date/toHumanDate"
 
@@ -44,7 +45,7 @@ const EditorInstance = props => {
 	)
 }
 
-export const Note = ({ note, ...props }) => (
+const NoteLayout = ({ note, ...props }) => (
 	<React.Fragment>
 
 		{/* User */}
@@ -71,13 +72,13 @@ export const Note = ({ note, ...props }) => (
 		{/* Note */}
 		<div className="h-16" />
 		<EditorInstance>
-			{props.children}
+			{note.data}
 		</EditorInstance>
 
 	</React.Fragment>
 )
 
-export const Loader = ({ noteID, ...props }) => {
+const NoteLoader = ({ noteID, ...props }) => {
 	const [response, setResponse] = React.useState({
 		loaded: false,
 		error: "", // TODO: Change to exists
@@ -124,22 +125,35 @@ export const Loader = ({ noteID, ...props }) => {
 				</div>
 				<div className="h-16" />
 				<div className="-my-2">
-					<div className="my-2 h-8 bg-gray-100" style={{ width: "40%" }} />
+					<div className="my-2 h-8 bg-gray-100" style={{ width: "25%" }} />
 					<div className="my-2 h-6" />
 					<div className="my-2 h-6 bg-gray-100" />
 					<div className="my-2 h-6 bg-gray-100" />
 					<div className="my-2 h-6 bg-gray-100" />
-					<div className="my-2 h-6 bg-gray-100" style={{ width: "80%" }} />
+					<div className="my-2 h-6 bg-gray-100" style={{ width: "75%" }} />
 					<div className="my-2 h-6" />
 					<div className="my-2 h-6 bg-gray-100" />
 					<div className="my-2 h-6 bg-gray-100" />
 					<div className="my-2 h-6 bg-gray-100" />
-					<div className="my-2 h-6 bg-gray-100" style={{ width: "60%" }} />
+					<div className="my-2 h-6 bg-gray-100" style={{ width: "50%" }} />
 				</div>
 			</div>
 		)
 	} else if (response.error) {
 		return <Router.Redirect to={constants.PATH_LOST} />
 	}
-	return React.cloneElement(props.children, { note: response.note, children: response.note.data })
+	return <NoteLayout note={response.note} />
 }
+
+const Note = props => (
+	<React.Fragment>
+		<Nav />
+		<div className="py-40 flex flex-row justify-center">
+			<div className="px-6 w-full max-w-screen-md">
+				<NoteLoader noteID={constants.NOTE_ID_README} />
+			</div>
+		</div>
+	</React.Fragment>
+)
+
+export default Note

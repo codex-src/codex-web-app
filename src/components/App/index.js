@@ -1,5 +1,4 @@
 import * as constants from "__constants"
-import * as Note from "components/Note"
 import * as ProgressBar from "components/ProgressBar"
 import * as Route from "components/Route"
 import * as Router from "react-router-dom"
@@ -7,46 +6,18 @@ import * as User from "components/User"
 import Auth from "components/Auth"
 import Demo from "components/Demo"
 import Home from "components/Home"
+import Nav from "components/Nav"
+import Note from "components/Note"
 import NoteContainer from "components/NoteContainer"
 import React from "react"
 import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
 
-const Readme = props => (
-	<NoteContainer>
-		<Note.Loader noteID={constants.NOTE_ID_README}>
-			<Note.Note />
-		</Note.Loader>
-	</NoteContainer>
-)
-
-const Changelog = props => (
-	<NoteContainer>
-		<Note.Loader noteID={constants.NOTE_ID_CHANGELOG}>
-			<Note.Note />
-		</Note.Loader>
-	</NoteContainer>
-)
-
-const KnownIssues = props => (
-	<NoteContainer>
-		<Note.Loader noteID={constants.NOTE_ID_KNOWN_ISSUES}>
-			<Note.Note />
-		</Note.Loader>
-	</NoteContainer>
-)
-
-const ReadOnlyNote = props => {
-	const { noteID } = Router.useParams()
-
-	return (
-		<NoteContainer>
-			<Note.Loader noteID={noteID}>
-				<Note.Note />
-			</Note.Loader>
-		</NoteContainer>
-	)
-}
+// const ReadOnlyNote = props => {
+// 	const { noteID } = Router.useParams()
+//
+// 	return <Note noteID={noteID} />
+// }
 
 const App = props => (
 	<Router.BrowserRouter>
@@ -60,27 +31,27 @@ const App = props => (
 						path={constants.PATH_README}
 						title="Readme"
 						exact
-						children={<Readme />}
+						children={<Note noteID={constants.NOTE_ID_README} />}
 					/>
 					{/* Changelog */}
 					<Route.Route
 						path={constants.PATH_CHANGELOG}
 						title="Changelog"
 						exact
-						children={<Changelog />}
+						children={<Note noteID={constants.NOTE_ID_CHANGELOG} />}
 					/>
 					{/* Known issues */}
 					<Route.Route
 						path={constants.PATH_KNOWN_ISSUES}
 						title="Known issues"
 						exact
-						children={<KnownIssues />}
+						children={<Note noteID={constants.NOTE_ID_KNOWN_ISSUES} />}
 					/>
 					{/* Note */}
 					<Route.Route path={constants.PATH_NOTE} exact>
 						<User.Context.Consumer>
 							{user => !user ? (
-								<ReadOnlyNote />
+								<Note noteID={Router.useParams().noteID} />
 							) : (
 								<UserNote />
 							)}
