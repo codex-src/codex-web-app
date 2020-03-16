@@ -1,6 +1,6 @@
 <div align="center">
 	<h1>
-		<img src="https://opencodex.dev/icon-github@1x.png" width="32px" align="center">&nbsp;&nbsp;Codex
+		<img src="https://opencodex.dev/icon-github@1x.png" width="40px" align="center">&nbsp;&nbsp;Codex
 		<br>
 		<br>
 	</h1>
