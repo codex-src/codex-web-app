@@ -32,4 +32,4 @@ Codex is currently in an _open alpha_; you’re welcome to sign up and get start
 
 ## Is Codex open source?
 
-Codex is MIT open source. This includes the [frontend](https://github.com/codex-src/codex-app) based on React and the [backend](https://github.com/codex-src/codex-server2) based on Go/GraphQL.
+Codex is MIT open source. This includes the [frontend based on React](https://github.com/codex-src/codex-app) and the [backend based on Go/GraphQL](https://github.com/codex-src/codex-server2).
