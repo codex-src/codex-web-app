@@ -28,8 +28,8 @@ Codex is a new kind of editor for developers, based on GitHub Flavored Markdown 
 
 ## Is Codex ready?
 
-Codex is currently in an _open alpha_; you’re welcome to sign up and get started, but the editor is limited. You can follow the [changelog](https://opencodex.dev/changelog) for updates. [Known issues](https://changelog.opencodex.dev/issues) are documented here.
+Codex is currently in an _open alpha_ — you’re welcome to sign up and get started, but the editor is limited. You can follow the [changelog](https://opencodex.dev/changelog) for updates. [Known issues](https://changelog.opencodex.dev/issues) are documented here.
 
-## Is Codex open source?
+## License
 
 Codex is MIT open source. This includes the [frontend based on React](https://github.com/codex-src/codex-app) and the [backend based on Go/GraphQL](https://github.com/codex-src/codex-server2).
