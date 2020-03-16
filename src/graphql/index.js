@@ -3,7 +3,6 @@ import * as constants from "__constants"
 export async function newQuery(idToken, query, variables = {}) {
 	const response = await fetch(constants.URL_API, {
 		method: "POST",
-		credentials: "include",
 		headers: {
 			...(idToken && { Authorization: `Bearer ${idToken}` }),
 			"Content-Type": "application/json",
