@@ -18,7 +18,7 @@
 	</p>
 </div>
 
-[![](https://opencodex.dev/social@1x.png)](https://opencodex.dev)
+[![](https://opencodex.dev/social@2x.png)](https://opencodex.dev)
 
 <br>
 
