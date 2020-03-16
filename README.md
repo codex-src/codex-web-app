@@ -6,7 +6,7 @@
 	</h1>
   <h3>
 		<br>
-		The developer’s web-based notebook
+		The developer’s notebook in the clouds ☁️
 	</h3>
 	<p>
 		Codex makes it easier than ever to express yourself in words <em>and</em> code
