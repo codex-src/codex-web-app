@@ -1,11 +1,9 @@
 <div align="center">
-	<a href="https://opencodex.dev">
-		<h1>
-			<img src="https://opencodex.dev/favicon.ico" width="36px" align="center">&nbsp;&nbsp;Codex
-			<br>
-			<br>
-		</h1>
-	</a>
+	<h1>
+		<img src="https://opencodex.dev/favicon.ico" width="36px" align="center">&nbsp;&nbsp;Codex
+		<br>
+		<br>
+	</h1>
   <h3>
 		<br>
 		The developer’s notebook in the cloud&nbsp;&nbsp;☁️
