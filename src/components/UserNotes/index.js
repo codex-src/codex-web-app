@@ -121,28 +121,42 @@ const UserNotes = props => {
 		<NavContainer>
 
 			{/* Buttons */}
-			<div className="flex flex-row justify-end">
-				<div className="-mx-1 flex flex-row">
-					<Button
-						extend="hidden lg:block"
-						svg={Hero.ZoomOutOutlineMd}
-						disabled={state.itemsShown === consts.ITEMS_MAX}
-						onPointerDown={e => e.preventDefault()}
-						onClick={dispatch.showMoreItems}
-					/>
-					<Button
-						extend="hidden lg:block"
-						svg={Hero.ZoomInOutlineMd}
-						disabled={state.itemsShown === consts.ITEMS_MIN}
-						onPointerDown={e => e.preventDefault()}
-						onClick={dispatch.showLessItems}
-					/>
-					<Button
-						svg={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd}
-						onPointerDown={e => e.preventDefault()}
-						onClick={dispatch.toggleSortDirection}
-					/>
-				</div>
+			<div className="flex flex-row justify-end h-10">
+				{!response.loaded ? (
+					<div className="-mx-1 flex flex-row">
+						<div className="p-2">
+							<div className="w-6 h-6 bg-gray-100 rounded-full" />
+						</div>
+						<div className="p-2">
+							<div className="w-6 h-6 bg-gray-100 rounded-full" />
+						</div>
+						<div className="p-2">
+							<div className="w-6 h-6 bg-gray-100 rounded-full" />
+						</div>
+					</div>
+				) : (
+					<div className="-mx-1 flex flex-row">
+						{/* <Button */}
+						{/* 	extend="hidden lg:block" */}
+						{/* 	svg={Hero.ZoomOutOutlineMd} */}
+						{/* 	disabled={state.itemsShown === consts.ITEMS_MAX} */}
+						{/* 	onPointerDown={e => e.preventDefault()} */}
+						{/* 	onClick={dispatch.showMoreItems} */}
+						{/* /> */}
+						{/* <Button */}
+						{/* 	extend="hidden lg:block" */}
+						{/* 	svg={Hero.ZoomInOutlineMd} */}
+						{/* 	disabled={state.itemsShown === consts.ITEMS_MIN} */}
+						{/* 	onPointerDown={e => e.preventDefault()} */}
+						{/* 	onClick={dispatch.showLessItems} */}
+						{/* /> */}
+						<Button
+							svg={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd}
+							onPointerDown={e => e.preventDefault()}
+							onClick={dispatch.toggleSortDirection}
+						/>
+					</div>
+				)}
 			</div>
 
 			{/* Notes */}
