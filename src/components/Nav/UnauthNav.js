@@ -11,7 +11,7 @@ import useDropDown from "hooks/useDropDown"
 
 const NavLink = props => (
 	<Link className="px-3 flex flex-row items-center" {...props}>
-		<p className="font-medium text-gray-800 dark:text-gray-200">
+		<p className="text-px tracking-wide text-gray-900 dark:text-gray-100">
 			{props.children}
 		</p>
 	</Link>
@@ -22,15 +22,26 @@ const NavButtonDarkMode = props => {
 
 	return (
 		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-			<DarkModeIcon className="w-6 h-6 text-gray-800 dark:text-gray-200 transform scale-110" darkMode={darkMode} />
+			<DarkModeIcon className="w-6 h-6 text-gray-900 dark:text-gray-100" darkMode={darkMode} />
 		</button>
 	)
 }
 
+// // Previous implementation:
+// const NavLinkCTA = props => (
+// 	<div className="mx-3 flex flex-row items-center">
+// 		<Link className="px-4 py-3 bg-white text-md-blue-a400 hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" {...props}>
+// 			<p className="font-medium">
+// 				{props.children}
+// 			</p>
+// 		</Link>
+// 	</div>
+// )
+
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
-		<Link className="px-4 py-3 bg-white dark:bg-md-blue-a400 rounded-md shadow-hero-md" {...props}>
-			<p className="font-medium text-md-blue-a400 dark:text-gray-200">
+		<Link className="px-4 py-3 bg-white dark:bg-md-blue-a400 rounded-md shadow-hero-md" /* style={{ boxShadow: "0 8px 16px -8px hsla(210, 100%, 50%, 0.75)" }} */ {...props}>
+			<p className="text-px tracking-wide text-md-blue-a400 dark:text-gray-100">
 				{props.children}
 			</p>
 		</Link>
@@ -60,7 +71,7 @@ const Nav = props => {
 				/>
 				<NavLink
 					to={constants.PATH_DEMO}
-					children="Demo"
+					children="Try the Demo!"
 				/>
 				<NavLink
 					to={constants.PATH_CHANGELOG}
@@ -78,15 +89,14 @@ const Nav = props => {
 
 				<NavButtonDarkMode />
 
-				{/* Drop down */}
 				<div className="px-3 relative flex flex-row items-center">
 
-					{/* Menu */}
+					{/* Button */}
 					<button onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
 						<Hero.MenuOutlineMd className="w-8 h-8 dark:text-gray-100" />
 					</button>
 
-					{/* Items */}
+					{/* Drop down */}
 					<DropDown.Base ref={ref}>
 						<DropDown.Link
 							to={constants.PATH_README}
@@ -94,7 +104,7 @@ const Nav = props => {
 						/>
 						<DropDown.Link
 							to={constants.PATH_DEMO}
-							text="Demo"
+							text="Try the demo!"
 						/>
 						<DropDown.Link
 							to={constants.PATH_CHANGELOG}
@@ -136,7 +146,7 @@ const UnauthNav = props => {
 					ref.current.style.boxShadow = ""
 				} else if (darkMode) {
 					ref.current.classList.replace("dark:bg-gray-900", "dark:bg-gray-875")
-					ref.current.style.boxShadow = "0 0 0 1px var(--gray-800)"
+					ref.current.style.boxShadow = "0 0 0 1px var(--gray-900)"
 				}
 				// FIXME: Cannot have more than one box-shadow;
 				// style takes precedence
