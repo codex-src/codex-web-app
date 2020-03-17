@@ -124,25 +124,25 @@ const UnauthNav = props => {
 
 	React.useLayoutEffect(() => {
 		const handler = e => {
-			const shadowClass = !darkMode ? "shadow" : "shadow-lg"
 			if (!window.scrollY) {
-				if (darkMode) {
-					ref.current.classList.replace(
-						"dark:bg-gray-890",
-						"dark:bg-gray-900",
-					)
+				if (!darkMode) {
+					ref.current.style.boxShadow = ""
+				} else {
+					ref.current.classList.replace("dark:bg-gray-875", "dark:bg-gray-900")
+					ref.current.style.boxShadow = ""
 				}
-				ref.current.classList.remove(shadowClass)
+				ref.current.classList.remove("shadow")
 			} else {
-				if (darkMode) {
-					ref.current.classList.replace(
-						"dark:bg-gray-900",
-						"dark:bg-gray-890",
-					)
+				if (!darkMode) {
+					ref.current.style.boxShadow = ""
+				} else if (darkMode) {
+					ref.current.classList.replace("dark:bg-gray-900", "dark:bg-gray-875")
+					ref.current.style.boxShadow = "0 0 0 1px var(--gray-800)"
 				}
-				ref.current.classList.add(shadowClass)
+				ref.current.classList.add("shadow")
 			}
 		}
+		handler()
 		window.addEventListener("scroll", handler, false)
 		return () => {
 			window.removeEventListener("scroll", handler, false)
