@@ -1,11 +1,12 @@
 import * as constants from "__constants"
+import * as Containers from "components/Containers"
 import * as GraphQL from "graphql"
 import * as ProgressBar from "components/ProgressBar"
 import * as random from "utils/random"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Editor from "components/Editor" // FIXME: Exports are wrong
-import Nav from "components/Nav"
+import Error404 from "components/Error404"
 import React from "react"
 
 const TIMEOUT_CREATE_NOTE = 1e3
@@ -131,8 +132,7 @@ const Note = ({ note, ...props }) => {
 		<Editor.Editor
 			state={state}
 			dispatch={dispatch}
-			paddingY={160}
-			minHeight="100vh"
+			style={{ margin: "-160px 0", padding: "160px 0", minHeight: "100vh" }}
 		/>
 	)
 }
@@ -140,14 +140,10 @@ const Note = ({ note, ...props }) => {
 const NoteLoader = ({ noteID, ...props }) => {
 	const [response, setResponse] = React.useState({
 		loaded: !noteID, // Inverse to noteID,
-		// exists
-		error: "",
+		exists: true,
 	})
 
-	const [note, setNote] = React.useState({
-		noteID: "",
-		data: "",
-	})
+	const [note, setNote] = React.useState(null)
 
 	React.useLayoutEffect(() => {
 		if (!noteID) {
@@ -165,7 +161,7 @@ const NoteLoader = ({ noteID, ...props }) => {
 				console.error(error)
 				setResponse(current => ({
 					...current,
-					error,
+					exists: false,
 				}))
 			} finally {
 				setResponse(current => ({
@@ -178,7 +174,7 @@ const NoteLoader = ({ noteID, ...props }) => {
 
 	if (!response.loaded) {
 		return (
-			<div className="-my-2 py-40">
+			<div className="-my-2">
 				<div className="my-2 h-8 bg-gray-100" style={{ width: "25%" }} />
 				<div className="my-2 h-6" />
 				<div className="my-2 h-6 bg-gray-100" />
@@ -187,8 +183,8 @@ const NoteLoader = ({ noteID, ...props }) => {
 				<div className="my-2 h-6 bg-gray-100" style={{ width: "50%" }} />
 			</div>
 		)
-	} else if (response.error) {
-		return <Router.Redirect to={constants.PATH_LOST} />
+	} else if (!response.exists) {
+		return <Error404 />
 	}
 	return <Note note={note} />
 }
@@ -197,14 +193,9 @@ const UserNote = props => {
 	const { noteID } = Router.useParams()
 
 	return (
-		<React.Fragment>
-			<Nav />
-			<div className="flex flex-row justify-center min-h-full">
-				<div className="px-6 w-full max-w-screen-md">
-					<NoteLoader noteID={noteID} />
-				</div>
-			</div>
-		</React.Fragment>
+		<Containers.Note>
+			<NoteLoader noteID={noteID} />
+		</Containers.Note>
 	)
 }
 

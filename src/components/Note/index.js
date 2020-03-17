@@ -1,12 +1,12 @@
 import * as constants from "__constants"
+import * as Containers from "components/Containers"
 import * as GraphQL from "graphql"
 import * as Router from "react-router-dom"
 import Editor from "components/Editor"
-import Nav from "components/Nav"
 import React from "react"
 import toHumanDate from "utils/date/toHumanDate"
 
-const QUERY_NOTE_USER = `
+const QUERY_NOTE = `
 	query Note($noteID: ID!) {
 		note(noteID: $noteID) {
 			userID
@@ -81,26 +81,26 @@ const NoteLayout = ({ note, ...props }) => (
 const NoteLoader = ({ noteID, ...props }) => {
 	const [response, setResponse] = React.useState({
 		loaded: false,
-		error: "", // TODO: Change to exists
-		note: null,
+		exists: true,
+		data: null,
 	})
 
 	React.useLayoutEffect(() => {
 		;(async () => {
 			try {
-				const body = await GraphQL.newQuery("", QUERY_NOTE_USER, {
+				const body = await GraphQL.newQuery("", QUERY_NOTE, {
 					noteID,
 				})
 				const { data } = body
 				setResponse(current => ({
 					...current,
-					note: data.note,
+					data: data.note,
 				}))
 			} catch (error) {
 				console.error(error)
 				setResponse(current => ({
 					...current,
-					error,
+					exists: false,
 				}))
 			} finally {
 				setResponse(current => ({
@@ -134,21 +134,16 @@ const NoteLoader = ({ noteID, ...props }) => {
 				</div>
 			</React.Fragment>
 		)
-	} else if (response.error) {
+	} else if (!response.exists) {
 		return <Router.Redirect to={constants.PATH_LOST} />
 	}
-	return <NoteLayout note={response.note} />
+	return <NoteLayout note={response.data} />
 }
 
 const Note = ({ noteID, ...props }) => (
-	<React.Fragment>
-		<Nav />
-		<div className="py-40 flex flex-row justify-center">
-			<div className="px-6 w-full max-w-screen-md">
-				<NoteLoader noteID={noteID} />
-			</div>
-		</div>
-	</React.Fragment>
+	<Containers.Note>
+		<NoteLoader noteID={noteID} />
+	</Containers.Note>
 )
 
 export default Note

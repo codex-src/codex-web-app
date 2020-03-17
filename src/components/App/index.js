@@ -7,6 +7,7 @@ import * as User from "components/User"
 import Auth from "components/Auth"
 import Demo from "components/Demo"
 import Editor from "components/Editor"
+import Error404 from "components/Error404"
 import Home from "components/Home"
 import Note from "components/Note"
 import NoteContainer from "components/NoteContainer"
@@ -20,14 +21,6 @@ const AnonNote = props => {
 	const { noteID } = Router.useParams()
 
 	return <Note noteID={noteID} />
-}
-
-const Editor404 = props => {
-	const [state, dispatch] = Editor.useEditor(Data404, {
-		previewMode: true, // TOOD: Move to props
-	})
-
-	return <Editor.Editor state={state} dispatch={dispatch} />
 }
 
 const App = props => (
@@ -111,9 +104,7 @@ const App = props => (
 						title="Page not found"
 						children={
 							<NoteContainer>
-								<div className="text-center">
-									<Editor404 />
-								</div>
+								<Error404 />
 							</NoteContainer>
 						}
 					/>

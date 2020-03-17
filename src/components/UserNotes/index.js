@@ -1,10 +1,10 @@
 import * as constants from "__constants"
+import * as Containers from "components/Containers"
 import * as GraphQL from "graphql"
 import * as Hero from "react-heroicons"
 import * as User from "components/User"
 import Editor from "components/Editor"
 import Link from "components/Link"
-import NavContainer from "components/NavContainer"
 import React from "react"
 import useReducer from "./reducer"
 
@@ -37,9 +37,8 @@ const EditorInstance = props => {
 		<Editor.Editor
 			state={state}
 			dispatch={dispatch}
-			baseFontSize={16 * props.modifier}
-			paddingX={32 * props.modifier}
-			paddingY={24 * props.modifier}
+			baseFontSize={16 * 0.75}
+			style={{ padding: `${24 * 0.75}px ${32 * 0.75}px` }}
 			// readOnly={true}
 		/>
 	)
@@ -86,7 +85,7 @@ const UserNotes = props => {
 				}
 			}, 0)
 			return () => {
-				abort = true // Takes precedence
+				abort = true
 				clearTimeout(id)
 			}
 		}, [user, state]),
@@ -116,14 +115,14 @@ const UserNotes = props => {
 	}
 
 	return (
-		<NavContainer>
+		<Containers.App>
 
 			{/* Action bar */}
 			<div className="flex flex-row justify-end h-10">
 				{!response.loaded ? (
 					<div className="-mx-1 flex flex-row">
-						<div className="p-2">
-							<div className="w-6 h-6 bg-gray-100 rounded-full" />
+						<div className="p-2 bg-gray-100 rounded-full">
+							<div className="w-6 h-6" />
 						</div>
 					</div>
 				) : (
@@ -137,12 +136,10 @@ const UserNotes = props => {
 
 			{/* Notes */}
 			<div className="h-6" />
-			<div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${state.itemsShown} gap-6`}>
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{!response.loaded ? (
 					[...new Array(3)].map((_, index) => (
-						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-lg-xl trans-150">
-							{/* <div className="absolute inset-0" /> */}
-						</div>
+						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-lg-xl trans-150" />
 					))
 				) : (
 					<React.Fragment>
@@ -158,7 +155,7 @@ const UserNotes = props => {
 						{response.notes.map((each, index) => (
 							<Link key={each.noteID} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
 								<div className="absolute inset-0 overflow-y-hidden select-none">
-									<EditorInstance modifier={state.itemsShownModifier}>
+									<EditorInstance>
 										{each.data}
 									</EditorInstance>
 								</div>
@@ -174,7 +171,7 @@ const UserNotes = props => {
 				)}
 			</div>
 
-		</NavContainer>
+		</Containers.App>
 	)
 }
 

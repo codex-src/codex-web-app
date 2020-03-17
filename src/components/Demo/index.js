@@ -1,5 +1,5 @@
+import * as Containers from "components/Containers"
 import Editor from "components/Editor"
-import Nav from "components/Nav"
 import React from "react"
 
 const LOCALSTORAGE_KEY = "codex-app"
@@ -8,9 +8,8 @@ const data = localStorage.getItem(LOCALSTORAGE_KEY) || "# Hello, world!"
 
 const Demo = props => {
 	const [state, dispatch] = Editor.useEditor(data, {
-		id: "editor",
-		shortcuts: true,
-		statusBar: true,
+		shortcuts: true, // TODO: Move to props
+		statusBar: true, // FIXME
 	})
 
 	React.useEffect(() => {
@@ -18,19 +17,13 @@ const Demo = props => {
 	}, [state.data])
 
 	return (
-		<React.Fragment>
-			<Nav />
-			<div className="flex flex-row justify-center min-h-full">
-				<div className="px-6 w-full max-w-screen-md">
-					<Editor.Editor
-						state={state}
-						dispatch={dispatch}
-						paddingX={24}
-						paddingY={160}
-					/>
-				</div>
-			</div>
-		</React.Fragment>
+		<Containers.Note>
+			<Editor.Editor
+				state={state}
+				dispatch={dispatch}
+				style={{ margin: "-160px 0", padding: "160px 0" }}
+			/>
+		</Containers.Note>
 	)
 }
 
