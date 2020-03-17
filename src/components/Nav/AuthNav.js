@@ -1,14 +1,26 @@
 import * as constants from "__constants"
+import * as DarkMode from "components/DarkMode"
 import * as DropDown from "./DropDown"
 import * as Icons from "svgs"
 import * as User from "components/User"
+import DarkModeIcon from "./DarkModeIcon"
 import firebase from "__firebase"
 import Icon from "utils/Icon"
 import Link from "components/Link"
 import React from "react"
 import useDropDown from "hooks/useDropDown"
 
-const Content = props => {
+const NavButtonDarkMode = props => {
+	const [darkMode, setDarkMode] = DarkMode.useDarkMode()
+
+	return (
+		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
+			<DarkModeIcon className="w-6 h-6 text-gray-900 dark:text-gray-100" darkMode={darkMode} />
+		</button>
+	)
+}
+
+const Nav = props => {
 	const ref = React.useRef()
 
 	const user = User.useUser()
@@ -76,6 +88,9 @@ const Content = props => {
 					</DropDown.Base>
 
 				</div>
+
+				<NavButtonDarkMode />
+
 			</div>
 
 		</React.Fragment>
@@ -100,9 +115,9 @@ const AuthNav = props => {
 	}, [])
 
 	return (
-		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white z-30 trans-300">
+		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 trans-300">
 			<div className="px-6 flex flex-row justify-between w-full max-w-screen-lg h-16">
-				<Content />
+				<Nav />
 			</div>
 		</div>
 	)

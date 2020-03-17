@@ -13,10 +13,10 @@ export const ProgressBar = props => {
 
 	const [counter] = React.useContext(Context)
 
-	const didMount = React.useRef()
+	const mounted = React.useRef()
 	React.useEffect(() => {
-		if (!didMount.current) {
-			didMount.current = true
+		if (!mounted.current) {
+			mounted.current = true
 			return
 		}
 		ref.current.classList.remove(activeClass)

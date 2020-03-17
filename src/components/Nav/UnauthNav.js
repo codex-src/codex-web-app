@@ -7,6 +7,7 @@ import DarkModeIcon from "./DarkModeIcon"
 import Icon from "utils/Icon"
 import Link from "components/Link"
 import React from "react"
+import useDarkModeNav from "./useDarkModeNav"
 import useDropDown from "hooks/useDropDown"
 
 const NavLink = props => (
@@ -129,36 +130,7 @@ const UnauthNav = props => {
 
 	const [darkMode] = DarkMode.useDarkMode()
 
-	React.useLayoutEffect(() => {
-		const handler = e => {
-			if (!window.scrollY) {
-				if (!darkMode) {
-					ref.current.style.boxShadow = ""
-				} else {
-					ref.current.classList.replace("dark:bg-gray-875", "dark:bg-gray-900")
-					ref.current.style.boxShadow = ""
-				}
-				// FIXME: Cannot have more than one box-shadow;
-				// style takes precedence
-				ref.current.classList.remove("shadow", "shadow-md")
-			} else {
-				if (!darkMode) {
-					ref.current.style.boxShadow = ""
-				} else if (darkMode) {
-					ref.current.classList.replace("dark:bg-gray-900", "dark:bg-gray-875")
-					ref.current.style.boxShadow = "0 0 0 1px var(--gray-900)"
-				}
-				// FIXME: Cannot have more than one box-shadow;
-				// style takes precedence
-				ref.current.classList.add(!darkMode ? "shadow" : "shadow-md")
-			}
-		}
-		handler()
-		window.addEventListener("scroll", handler, false)
-		return () => {
-			window.removeEventListener("scroll", handler, false)
-		}
-	}, [darkMode])
+	useDarkModeNav(ref, darkMode)
 
 	return (
 		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 transition duration-300 ease-in-out">

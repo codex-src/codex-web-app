@@ -1,12 +1,12 @@
 .progress-bar-enter {
-	width:      0%;
-	background: hsl(var(--blue-a400));
-	opacity:    1;
+	width:            0%;
+	background-color: var(--md-blue-a400);
+	opacity:          1;
 }
 
 .progress-bar-active {
-	width:      100%;
-	background: hsl(var(--blue-a400));
-	opacity:    0;
-	transition: width 1e3ms cubic-bezier(1, 0, 0, 1), opacity 2e3ms cubic-bezier(1, 0, 0, 1);
+	width:            100%;
+	background-color: var(--md-blue-a400);
+	opacity:          0;
+	transition:       width 1e3ms cubic-bezier(1, 0, 0, 1), opacity 2e3ms cubic-bezier(1, 0, 0, 1);
 }

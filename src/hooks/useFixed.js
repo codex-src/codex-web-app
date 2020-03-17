@@ -4,10 +4,10 @@ import React from "react"
 function useFixed() {
 	const [open, setOpen] = React.useState(false)
 
-	const didMount = React.useRef()
+	const mounted = React.useRef()
 	React.useEffect(() => {
-		if (!didMount.current) {
-			didMount.current = true
+		if (!mounted.current) {
+			mounted.current = true
 			return
 		}
 		/* eslint-disable no-multi-spaces */
