@@ -28,7 +28,7 @@ Codex is a new kind WYSIWYG markdown editor for developers, based on GitHub Flav
 
 ## Is Codex ready?
 
-Codex is currently in an open alpha — you’re welcome to sign up and get started, but the editor is limited. You can follow the [changelog](https://changelog.opencodex.dev) for updates.
+Codex is currently in an open alpha — you’re welcome to sign up and get started, but the editor is limited. Follow the [changelog](https://changelog.opencodex.dev) for updates.
 
 ## License
 
