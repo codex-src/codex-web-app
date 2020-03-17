@@ -122,24 +122,32 @@ const UnauthNav = props => {
 
 	const [darkMode, setDarkMode] = useDarkMode()
 
-	// React.useLayoutEffect(() => {
-	// 	const handler = e => {
-	// 		const shadowClass = !darkMode ? "shadow" : "shadow-md"
-	// 		if (!window.scrollY) {
-	// 			ref.current.classList.remove(shadowClass)
-	// 			ref.current.style.backgroundColor= "" // Reset
-	// 		} else {
-	// 			ref.current.classList.add(shadowClass)
-	// 			if (darkMode) {
-	// 				ref.current.style.backgroundColor = "#1f2737" // "#1b2230"
-	// 			}
-	// 		}
-	// 	}
-	// 	window.addEventListener("scroll", handler, false)
-	// 	return () => {
-	// 		window.removeEventListener("scroll", handler, false)
-	// 	}
-	// }, [darkMode])
+	React.useLayoutEffect(() => {
+		const handler = e => {
+			const shadowClass = !darkMode ? "shadow" : "shadow-lg"
+			if (!window.scrollY) {
+				if (darkMode) {
+					ref.current.classList.replace(
+						"dark:bg-gray-890",
+						"dark:bg-gray-900",
+					)
+				}
+				ref.current.classList.remove(shadowClass)
+			} else {
+				if (darkMode) {
+					ref.current.classList.replace(
+						"dark:bg-gray-900",
+						"dark:bg-gray-890",
+					)
+				}
+				ref.current.classList.add(shadowClass)
+			}
+		}
+		window.addEventListener("scroll", handler, false)
+		return () => {
+			window.removeEventListener("scroll", handler, false)
+		}
+	}, [darkMode])
 
 	return (
 		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 trans-300">

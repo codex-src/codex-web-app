@@ -8,12 +8,12 @@ const Home = props => (
 	// NOTE: Do not use <Containers.App>
 	<React.Fragment>
 		<Nav />
-		<div className="py-40 flex flex-row justify-center min-h-full dark:bg-gray-900">
+		<div className="py-40 flex flex-row justify-center min-h-full">
 			<div className="px-6 flex flex-col lg:flex-row items-center w-full max-w-screen-lg">
 
 				{/* LHS */}
 				<div className="w-full max-w-lg text-center lg:text-left">
-					<h1 className="font-bold text-4xl -tracking-px leading-snug dark:text-gray-100">
+					<h1 className="font-bold text-4xl -tracking-px leading-snug text-black dark:text-gray-100">
 						Codex makes it easier than ever to express yourself in words <em>and</em> code
 					</h1>
 					<div className="h-12" />

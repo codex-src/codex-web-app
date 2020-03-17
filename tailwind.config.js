@@ -39,12 +39,20 @@ module.exports = {
 			},
 			colors: {
 				"gray": {
-					// https://meyerweb.com/eric/tools/color-blend/#424242:212121:3:hex
+					// https://meyerweb.com/eric/tools/color-blend/#424242:212121:9:hex
 					...defaultTheme.colors.gray,
-					"50":  "#fbfdfe",
-					"825": "#3a3a3a",
-					"850": "#323232",
-					"875": "#292929",
+					50:  "#fbfdfe",
+					810: "#3f3f3f",
+					820: "#3b3b3b",
+					825: "#3a3a3a",
+					830: "#383838",
+					840: "#353535",
+					850: "#323232",
+					860: "#2e2e2e",
+					870: "#2b2b2b",
+					875: "#292929",
+					880: "#282828",
+					890: "#242424",
 				},
 				// https://gist.github.com/codex-zaydek/d3d1803f981fc8ed75fc0e4f481f6ecc
 				"md-blue-50":   { default: "#e3f2fd" },
