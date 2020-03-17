@@ -6,7 +6,7 @@
 	</h1>
   <h3>
 		<br>
-		The developer’s notebook in the cloud&nbsp;&nbsp;☁️
+		WYSIWYG markdown for devs
 	</h3>
 	<p>
 		Codex makes it easier than ever to express yourself in words <em>and</em> code
@@ -28,7 +28,7 @@ Codex is a new kind WYSIWYG markdown editor for developers, based on GitHub Flav
 
 ## Is Codex ready?
 
-Codex is currently in an open alpha — you’re welcome to sign up and get started, but the editor is limited. You can follow the [changelog](https://changelog.opencodex.dev) for updates. [Known issues](https://issues.opencodex.dev) are documented here.
+Codex is currently in an open alpha — you’re welcome to sign up and get started, but the editor is limited. You can follow the [changelog](https://changelog.opencodex.dev) for updates.
 
 ## License
 
