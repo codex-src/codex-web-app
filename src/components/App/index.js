@@ -4,7 +4,7 @@ import * as random from "utils/random"
 import * as Route from "components/Route"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
-import Auth from "components/Auth"
+import UserAuth from "components/UserAuth"
 import Demo from "components/Demo"
 import Error404 from "components/Error404"
 import Home from "components/Home"
@@ -80,7 +80,7 @@ const App = props => (
 					<Route.Unprotected
 						path={constants.PATH_AUTH}
 						title="Open your Codex"
-						children={<Auth />}
+						children={<UserAuth />}
 					/>
 
 					{/* Protected */}

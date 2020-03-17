@@ -24,7 +24,7 @@ const QUERY_ME = `
 export const Provider = props => {
 	const [response, setResponse] = React.useState({
 		loaded: false,
-		user: null,
+		data: null,
 	})
 
 	React.useLayoutEffect(() => {
@@ -33,7 +33,7 @@ export const Provider = props => {
 				setResponse(current => ({
 					...current,
 					loaded: true,
-					user: null, // Reset
+					data: null, // Reset
 				}))
 				return
 			}
@@ -46,7 +46,7 @@ export const Provider = props => {
 					const { data } = body
 					setResponse(current => ({
 						...current,
-						user: {
+						data: {
 							idToken,
 							...data.me,
 						}
@@ -69,7 +69,7 @@ export const Provider = props => {
 		return <StartupScreen />
 	}
 	return (
-		<Provider value={response.user}>
+		<Provider value={response.data}>
 			{props.children}
 		</Provider>
 	)

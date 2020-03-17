@@ -1,5 +1,6 @@
 import * as constants from "__constants"
 import * as GraphQL from "graphql"
+import * as ProgressBar from "components/ProgressBar"
 import * as SVG from "svgs"
 import firebase from "__firebase"
 import React from "react"
@@ -10,7 +11,8 @@ const MUTATION_REGISTER_USER = `
 	}
 `
 
-const Auth = props => {
+const UserAuth = props => {
+	const renderProgressBar = ProgressBar.useProgressBar()
 
 	const signIn = async provider => {
 		const response = await firebase.auth().signInWithPopup(provider)
@@ -29,6 +31,7 @@ const Auth = props => {
 					displayName:   response.user.displayName,
 				},
 			})
+			renderProgressBar()
 		} catch (error) {
 			console.error(error)
 		}
@@ -85,20 +88,9 @@ const Auth = props => {
 					</p>
 				</button>
 
-				{/* <div className="h-6" /> */}
-				{/* <hr className="mx-auto w-32" /> */}
-
-				{/* <div className="h-6" /> */}
-				{/* <p className="text-center font-medium text-lg text-gray-900"> */}
-				{/* 	Or link an account later and<br /> */}
-				{/* 	<button className="text-md-blue-a400 cursor-pointer" onPointerDown={e => e.preventDefault()} onClick={handleClickGuest}> */}
-				{/* 		continue as a guest */}
-				{/* 	</button> */}
-				{/* </p> */}
-
 			</div>
 		</div>
 	)
 }
 
-export default Auth
+export default UserAuth

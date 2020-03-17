@@ -1,10 +1,11 @@
 import * as constants from "__constants"
-import HeroEditorSurface from "./HeroEditorSurface"
+import HeroEditor from "./HeroEditor"
 import Link from "components/Link"
 import Nav from "components/Nav"
 import React from "react"
 
 const Home = props => (
+	// NOTE: Do not use <Containers.App>
 	<React.Fragment>
 		<Nav />
 		<div className="py-40 flex flex-row justify-center min-h-full">
@@ -26,7 +27,7 @@ const Home = props => (
 				{/* RHS */}
 				<div className="w-12 h-12" />
 				<Link className="w-full" to={constants.PATH_DEMO}>
-					<HeroEditorSurface />
+					<HeroEditor />
 				</Link>
 
 			</div>

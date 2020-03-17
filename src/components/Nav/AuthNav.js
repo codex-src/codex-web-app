@@ -1,6 +1,5 @@
 import * as constants from "__constants"
 import * as DropDown from "./DropDown"
-import * as Hero from "react-heroicons"
 import * as SVG from "svgs"
 import * as User from "components/User"
 import firebase from "__firebase"
@@ -76,13 +75,8 @@ const Content = props => {
 				<div className="px-3 relative flex flex-row items-center">
 
 					{/* Button */}
-					<button className="text-gray-100 hover:text-blue-500 focus:text-blue-500 rounded-full focus:outline-none focus:shadow-outline overflow-hidden trans-150" onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
-						<div className="relative">
-							<img className="w-8 h-8" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
-							<div className="absolute inset-0 -z-10">
-								<Hero.UserCircleSolidSm className="w-8 h-8 transform scale-125" />
-							</div>
-						</div>
+					<button className="bg-gray-100 rounded-full focus:outline-none focus:shadow-outline overflow-hidden trans-150" onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
+						<img className="w-8 h-8" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
 					</button>
 
 					{/* Drop down */}

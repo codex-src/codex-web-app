@@ -48,6 +48,6 @@ export const Provider = props => {
 }
 
 export function useProgressBar() {
-	const [, renderProgressBar] = React.useContext(Context)
-	return renderProgressBar
+	const [, setCounter] = React.useContext(Context)
+	return setCounter // renderProgressBar
 }
