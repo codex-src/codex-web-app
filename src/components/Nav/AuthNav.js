@@ -67,10 +67,6 @@ const Content = props => {
 							to={constants.PATH_CHANGELOG}
 							text="Changelog"
 						/>
-						{/* <DropDown.Link */}
-						{/* 	to={constants.PATH_KNOWN_ISSUES} */}
-						{/* 	text="Known issues" */}
-						{/* /> */}
 						<hr className="my-2" />
 						<DropDown.Link
 							onClick={handleClickSignOut}

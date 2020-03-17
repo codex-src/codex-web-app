@@ -42,13 +42,13 @@ const App = props => (
 						// NOTE: Use key because <Note> is shared
 						children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_CHANGELOG} />}
 					/>
-					<Route.Any
-						path={constants.PATH_KNOWN_ISSUES}
-						title="Known issues"
-						exact
-						// NOTE: Use key because <Note> is shared
-						children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_KNOWN_ISSUES} />}
-					/>
+					{/* <Route.Any */}
+					{/* 	path={constants.PATH_KNOWN_ISSUES} */}
+					{/* 	title="Known issues" */}
+					{/* 	exact */}
+					{/* 	// NOTE: Use key because <Note> is shared */}
+					{/* 	children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_KNOWN_ISSUES} />} */}
+					{/* /> */}
 
 					{/* Both */}
 					<Route.Any path={constants.PATH_HOME} exact>
