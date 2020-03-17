@@ -1,4 +1,5 @@
 import * as constants from "__constants"
+import * as DarkMode from "components/DarkMode"
 import * as DropDown from "./DropDown"
 import * as Hero from "react-heroicons"
 import * as SVG from "svgs"
@@ -16,12 +17,15 @@ const NavLink = props => (
 	</Link>
 )
 
-// NOTE: Does not accept props
-const NavButtonDarkMode = ({ darkMode, setDarkMode }) => (
-	<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-		<DarkModeIcon className="w-6 h-6 text-gray-800 dark:text-gray-200 transform scale-110" darkMode={darkMode} />
-	</button>
-)
+const NavButtonDarkMode = props => {
+	const [darkMode, setDarkMode] = DarkMode.useDarkMode()
+
+	return (
+		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
+			<DarkModeIcon className="w-6 h-6 text-gray-800 dark:text-gray-200 transform scale-110" darkMode={darkMode} />
+		</button>
+	)
+}
 
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
@@ -66,20 +70,13 @@ const Nav = ({ darkMode, setDarkMode, ...props }) => {
 					to={constants.PATH_AUTH}
 					children="Open your Codex"
 				/>
-				<NavButtonDarkMode
-					darkMode={darkMode}
-					setDarkMode={setDarkMode}
-				/>
+				<NavButtonDarkMode />
 			</div>
 
 			{/* RHS (2 of 2) */}
 			<div className="-mx-3 flex flex-row md:hidden">
 
-				{/* Dark mode */}
-				<NavButtonDarkMode
-					darkMode={darkMode}
-					setDarkMode={setDarkMode}
-				/>
+				<NavButtonDarkMode />
 
 				{/* Drop down */}
 				<div className="px-3 relative flex flex-row items-center">
@@ -120,7 +117,7 @@ const Nav = ({ darkMode, setDarkMode, ...props }) => {
 const UnauthNav = props => {
 	const ref = React.useRef()
 
-	const [darkMode, setDarkMode] = useDarkMode()
+	const [darkMode] = DarkMode.useDarkMode()
 
 	React.useLayoutEffect(() => {
 		const handler = e => {
@@ -152,13 +149,10 @@ const UnauthNav = props => {
 	return (
 		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 trans-300">
 			<div className="px-6 flex flex-row justify-between w-full max-w-screen-lg h-20">
-				<Nav darkMode={darkMode} setDarkMode={setDarkMode} />
+				<Nav />
 			</div>
 		</div>
 	)
 }
 
 export default UnauthNav
-
-
-

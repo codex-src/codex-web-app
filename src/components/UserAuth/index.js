@@ -48,7 +48,8 @@ const UserAuth = props => {
 	}
 
 	return (
-		<div className="-mt-8 py-40 flex flex-row justify-center items-center min-h-full">
+		// NOTE: bg-* is needed because there is no <Nav>
+		<div className="-mt-8 py-40 flex flex-row justify-center items-center min-h-full bg-white dark:bg-gray-900">
 			<div className="px-6 box-content" style={{ width: "18rem" /* w-72 */ }}>
 
 				<div className="flex flex-row justify-center items-center transform scale-90 origin-bottom">
