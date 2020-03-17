@@ -23,7 +23,7 @@ const HeroEditor = props => {
 	return (
 		<div ref={ref} className="pb-4/5 relative">
 			<div className="absolute inset-0">
-				<div className="h-full bg-white rounded-xl shadow-hero-xl overflow-y-scroll scrolling-touch">
+				<div className="h-full bg-white dark:bg-gray-800 rounded-xl shadow-hero-xl overflow-y-scroll scrolling-touch">
 					<EditorInstance />
 				</div>
 			</div>

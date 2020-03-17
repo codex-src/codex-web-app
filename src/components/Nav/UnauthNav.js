@@ -7,16 +7,26 @@ import React from "react"
 import useDropDown from "hooks/useDropDown"
 
 const NavLink = props => (
-	<Link className="px-3 flex flex-row items-center text-gray-800 hover:text-md-blue-a400 trans-75" {...props}>
+	<Link className="px-3 flex flex-row items-center text-gray-800 dark:text-gray-200 trans-75" {...props}>
 		<p className="font-medium">
 			{props.text}
 		</p>
 	</Link>
 )
 
+// const NavLinkCTA = props => (
+// 	<div className="mx-3 flex flex-row items-center">
+// 		<Link className="px-4 py-3 bg-white text-md-blue-a400 hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" {...props}>
+// 			<p className="font-medium">
+// 				{props.text}
+// 			</p>
+// 		</Link>
+// 	</div>
+// )
+
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
-		<Link className="px-4 py-3 bg-white text-md-blue-a400 hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" {...props}>
+		<Link className="px-4 py-3 text-gray-200 dark:bg-md-blue-a400 rounded-md" {...props}>
 			<p className="font-medium">
 				{props.text}
 			</p>
@@ -24,7 +34,7 @@ const NavLinkCTA = props => (
 	</div>
 )
 
-const Content = props => {
+const Nav = props => {
 	const ref = React.useRef()
 
 	const [dropDown, setDropDown] = useDropDown(ref)
@@ -113,9 +123,9 @@ const UnauthNav = props => {
 	}, [])
 
 	return (
-		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white z-30 trans-300">
+		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 trans-300">
 			<div className="px-6 flex flex-row justify-between w-full max-w-screen-lg h-20">
-				<Content />
+				<Nav />
 			</div>
 		</div>
 	)

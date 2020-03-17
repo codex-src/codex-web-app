@@ -3,8 +3,10 @@ import innerText from "components/Editor/helpers/innerText"
 import React from "react"
 import ReactDOM from "react-dom"
 
+// import "material-colors.css"
+
+import "stylesheets/colors.css" // Takes precedence
 import "debug.css"
-import "material-colors.css"
 import "reset-input.css"
 import "stylesheets/tailwind.generated.css"
 

@@ -16,11 +16,11 @@ import {
 	detectUndo,
 } from "utils/platform"
 
-import "./css/core.css"
-import "./css/preview-mode.css"
-import "./css/stylesheet-mono.css"
-import "./css/stylesheet-type.css"
-import "./css/text-background.css"
+import "./stylesheets/core.css"
+import "./stylesheets/preview-mode.css"
+import "./stylesheets/stylesheet-mono.css"
+import "./stylesheets/stylesheet-type.css"
+import "./stylesheets/text-background.css"
 
 const SCROLL_BUFFER = 12
 

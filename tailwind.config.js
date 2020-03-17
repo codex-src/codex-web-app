@@ -73,11 +73,8 @@ module.exports = {
 			},
 			fontFamily: {
 				...defaultTheme.fontFamily,
-				"dm-sans":           ["'DM Sans'", "sans-serif"],
-				"ia-writer-duo":     ["'iA Writer Duo var'", "monospace"],
-				"ia-writer-mono":    ["'iA Writer Mono var'", "monospace"],
-				"ia-writer-quattro": ["'iA Writer Quattro var'", "sans-serif"],
-				"inter":             ["Inter", "sans-serif"],
+				"ia-writer-mono": ["'iA Writer Mono var'", "monospace"],
+				"inter":          ["Inter", "sans-serif"],
 			},
 			inset: {
 				"1/2":  "50%",
@@ -114,9 +111,6 @@ module.exports = {
 				extrabold: 3,    // 800
 				black:     3.25, // 900
 			},
-			zIndex: {
-				"-10": "-10",
-			},
 		},
 		// https://tailwindcss.com/docs/breakpoints
 		screens: {
@@ -142,8 +136,6 @@ module.exports = {
 
 		textColor: [
 			"responsive",
-			"group-hover",
-			"group-hover:dark",
 			"dark",
 			"hover",
 			"hover:dark",
@@ -156,8 +148,6 @@ module.exports = {
 		],
 		backgroundColor: [
 			"responsive",
-			"group-hover",
-			"group-hover:dark",
 			"dark",
 			"hover",
 			"hover:dark",
@@ -170,8 +160,6 @@ module.exports = {
 		],
 		boxShadow: [
 			"responsive",
-			"group-hover",
-			"group-hover:dark",
 			"dark",
 			"hover",
 			"hover:dark",
@@ -182,19 +170,10 @@ module.exports = {
 			"disabled",
 			"disabled:dark",
 		],
-
-		// cursor: [
-		// 	"disabled",
-		// ],
 	},
 	plugins: [
 		plugin(((flag = "dark-mode", prefix = "dark") => {
 			return ({ addVariant, e }) => {
-				addVariant(`group-hover:${prefix}`, ({ modifySelectors }) => {
-					modifySelectors(({ className }) => {
-						return `.${flag} .group-hover .${e(`group-hover:${prefix}:${className}`)}`
-					})
-				})
 				addVariant(prefix, ({ modifySelectors }) => {
 					modifySelectors(({ className }) => {
 						return `.${flag} .${e(`${prefix}:${className}`)}`

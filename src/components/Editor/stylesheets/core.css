@@ -2,9 +2,14 @@
 	--padding-x: 24px;
 	--box-shadow: 0px 0px 0px 1px hsl(var(--gray-300));
 
-	color: hsl(var(--black));
-	caret-color: hsl(var(--black));
+	color: var(--black);
+	caret-color: var(--black);
 }
+.dark-mode .codex-editor {
+	color: var(--gray-100);
+	caret-color: var(--gray-100);
+}
+
 .codex-editor *::selection {
 	background: #2979ff3f;
 }

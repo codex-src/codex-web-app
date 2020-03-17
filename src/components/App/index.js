@@ -1,4 +1,5 @@
 import * as constants from "__constants"
+import * as Containers from "components/Containers"
 import * as ProgressBar from "components/ProgressBar"
 import * as random from "utils/random"
 import * as Route from "components/Route"
@@ -9,13 +10,12 @@ import Demo from "components/Demo"
 import Error404 from "components/Error404"
 import Home from "components/Home"
 import Note from "components/Note"
-import NoteContainer from "components/NoteContainer"
 import React from "react"
 import UserAuth from "components/UserAuth"
 import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
 
-const AnonNote = props => {
+const AnyNote = props => {
 	const { noteID } = Router.useParams()
 
 	return <Note noteID={noteID} />
@@ -51,7 +51,7 @@ const App = props => (
 						children={
 							<User.Context.Consumer>
 								{user => !user ? (
-									// <CodexTitle>
+									// <CodexTitle title="TODO">
 										<Home />
 									// </CodexTitle>
 								) : (
@@ -68,11 +68,13 @@ const App = props => (
 						children={
 							<User.Context.Consumer>
 								{user => !user ? (
-									// TODO: Put <CodexTitle> in the component
-									<AnonNote />
+									// <CodexTitle title="TODO">
+										<AnyNote />
+									// </CodexTitle>
 								) : (
-									// TODO: Put <CodexTitle> in the component
-									<UserNote />
+									// <CodexTitle title="TODO">
+										<UserNote />
+									// </CodexTitle>
 								)}
 							</User.Context.Consumer>
 						}
@@ -108,9 +110,9 @@ const App = props => (
 						path="/"
 						title="Page not found"
 						children={
-							<NoteContainer>
+							<Containers.Note>
 								<Error404 />
-							</NoteContainer>
+							</Containers.Note>
 						}
 					/>
 
