@@ -6,7 +6,6 @@ import * as SVG from "svgs"
 import DarkModeIcon from "./DarkModeIcon"
 import Link from "components/Link"
 import React from "react"
-import useDarkMode from "./hooks/useDarkMode"
 import useDropDown from "hooks/useDropDown"
 
 const NavLink = props => (
@@ -37,7 +36,7 @@ const NavLinkCTA = props => (
 	</div>
 )
 
-const Nav = ({ darkMode, setDarkMode, ...props }) => {
+const Nav = props => {
 	const ref = React.useRef()
 
 	const [dropDown, setDropDown] = useDropDown(ref)
