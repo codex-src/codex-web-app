@@ -51,15 +51,18 @@ const UserAuth = props => {
 	return (
 		// NOTE: bg-* is needed because there is no <Nav>
 		<div className="-mt-8 py-40 flex flex-row justify-center items-center min-h-full bg-white dark:bg-gray-900">
-			<div className="px-6 box-content" style={{ width: "18rem" /* w-72 */ }}>
+			<div className="px-6 box-content" style={{ width: "18rem" }}>
 
 				<div className="flex flex-row justify-center items-center transform scale-90 origin-bottom">
-					<Icon className="mr-3 w-8 h-8 stroke-medium text-md-blue-a400" svg={Icons.CodexLogo} />
-					<Icon className="w-32 h-8" svg={Icons.CodexTextLogo} />
+					{/* NOTE: mr-* is preferred because of flex */}
+					<div className="mr-3">
+						<Icon className="w-8 h-8 stroke-medium text-md-blue-a400 transform scale-110" svg={Icons.CodexLogo} />
+					</div>
+					<Icon className="w-32 h-8 text-black dark:text-white" svg={Icons.CodexTextLogo} />
 				</div>
 
-				<div className="h-8" />
-				<p className="text-center font-medium text-lg leading-snug text-gray-900">
+				<div className="h-6" />
+				<p className="text-center font-medium text-lg leading-snug text-gray-800 dark:text-gray-200">
 					Choose one of the following to<br />
 					open your{" "}
 					<a className="text-md-blue-a400 cursor-pointer" href={constants.URL} target="_blank" rel="noopener noreferrer">
@@ -69,23 +72,23 @@ const UserAuth = props => {
 				</p>
 
 				{/* GitHub */}
-				<div className="h-6" />
-				<button className="px-4 py-3 flex flex-row items-center w-full bg-black rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGitHub}>
+				<div className="h-8" />
+				<button className="px-4 py-3 flex flex-row items-center w-full bg-black dark:bg-gray-800 rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGitHub}>
 					<div className="mx-4">
-						<Icon className="w-6 h-6 text-gray-100" svg={Icons.GitHubLogo} />
+						<Icon className="w-6 h-6 text-gray-100 transform scale-110" svg={Icons.GitHubLogo} />
 					</div>
-					<p className="font-semibold text-lg text-gray-100">
+					<p className="font-semibold text-lg text-gray-100 dark:text-gray-100">
 						Continue with GitHub
 					</p>
 				</button>
 
 				{/* Google */}
 				<div className="h-2" />
-				<button className="px-4 py-3 flex flex-row items-center w-full bg-white rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGoogle}>
+				<button className="px-4 py-3 flex flex-row items-center w-full bg-white dark:bg-gray-800 rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGoogle}>
 					<div className="mx-4">
-						<Icon className="w-6 h-6 text-gray-900" svg={Icons.GoogleLogo} />
+						<Icon className="w-6 h-6 text-gray-100 transform scale-110" svg={Icons.GoogleLogo} />
 					</div>
-					<p className="font-semibold text-lg text-gray-900">
+					<p className="font-semibold text-lg text-gray-900 dark:text-gray-100">
 						Continue with Google
 					</p>
 				</button>
@@ -94,5 +97,27 @@ const UserAuth = props => {
 		</div>
 	)
 }
+
+// {/* GitHub */}
+// <div className="h-6" />
+// <button className="px-4 py-3 flex flex-row items-center w-full bg-black rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGitHub}>
+// 	<div className="mx-4">
+// 		<Icon className="w-6 h-6 text-gray-100" svg={Icons.GitHubLogo} />
+// 	</div>
+// 	<p className="font-semibold text-lg text-gray-100">
+// 		Continue with GitHub
+// 	</p>
+// </button>
+//
+// {/* Google */}
+// <div className="h-2" />
+// <button className="px-4 py-3 flex flex-row items-center w-full bg-white rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGoogle}>
+// 	<div className="mx-4">
+// 		<Icon className="w-6 h-6 text-gray-900" svg={Icons.GoogleLogo} />
+// 	</div>
+// 	<p className="font-semibold text-lg text-gray-900">
+// 		Continue with Google
+// 	</p>
+// </button>
 
 export default UserAuth

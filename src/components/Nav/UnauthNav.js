@@ -128,7 +128,9 @@ const UnauthNav = props => {
 					ref.current.classList.replace("dark:bg-gray-875", "dark:bg-gray-900")
 					ref.current.style.boxShadow = ""
 				}
-				ref.current.classList.remove("shadow")
+				// FIXME: Cannot have more than one box-shadow;
+				// style takes precedence
+				ref.current.classList.remove("shadow", "shadow-md")
 			} else {
 				if (!darkMode) {
 					ref.current.style.boxShadow = ""
@@ -136,7 +138,9 @@ const UnauthNav = props => {
 					ref.current.classList.replace("dark:bg-gray-900", "dark:bg-gray-875")
 					ref.current.style.boxShadow = "0 0 0 1px var(--gray-800)"
 				}
-				ref.current.classList.add("shadow")
+				// FIXME: Cannot have more than one box-shadow;
+				// style takes precedence
+				ref.current.classList.add(!darkMode ? "shadow" : "shadow-md")
 			}
 		}
 		handler()
