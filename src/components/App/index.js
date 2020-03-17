@@ -4,13 +4,14 @@ import * as random from "utils/random"
 import * as Route from "components/Route"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
-import UserAuth from "components/UserAuth"
+import CodexTitle from "components/CodexTitle"
 import Demo from "components/Demo"
 import Error404 from "components/Error404"
 import Home from "components/Home"
 import Note from "components/Note"
 import NoteContainer from "components/NoteContainer"
 import React from "react"
+import UserAuth from "components/UserAuth"
 import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
 
@@ -42,33 +43,40 @@ const App = props => (
 						// NOTE: Use key because <Note> is shared
 						children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_CHANGELOG} />}
 					/>
-					{/* <Route.Any */}
-					{/* 	path={constants.PATH_KNOWN_ISSUES} */}
-					{/* 	title="Known issues" */}
-					{/* 	exact */}
-					{/* 	// NOTE: Use key because <Note> is shared */}
-					{/* 	children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_KNOWN_ISSUES} />} */}
-					{/* /> */}
 
-					{/* Both */}
-					<Route.Any path={constants.PATH_HOME} exact>
-						<User.Context.Consumer>
-							{user => !user ? (
-								<Home />
-							) : (
-								<UserNotes />
-							)}
-						</User.Context.Consumer>
-					</Route.Any>
-					<Route.Any path={constants.PATH_NOTE} exact>
-						<User.Context.Consumer>
-							{user => !user ? (
-								<AnonNote />
-							) : (
-								<UserNote />
-							)}
-						</User.Context.Consumer>
-					</Route.Any>
+					{/* Shared */}
+					<Route.Any
+						path={constants.PATH_HOME}
+						exact
+						children={
+							<User.Context.Consumer>
+								{user => !user ? (
+									// <CodexTitle>
+										<Home />
+									// </CodexTitle>
+								) : (
+									<CodexTitle title="My notes">
+										<UserNotes />
+									</CodexTitle>
+								)}
+							</User.Context.Consumer>
+						}
+					/>
+					<Route.Any
+						path={constants.PATH_NOTE}
+						exact
+						children={
+							<User.Context.Consumer>
+								{user => !user ? (
+									// TODO: Put <CodexTitle> in the component
+									<AnonNote />
+								) : (
+									// TODO: Put <CodexTitle> in the component
+									<UserNote />
+								)}
+							</User.Context.Consumer>
+						}
+					/>
 
 					{/* Unprotected */}
 					<Route.Unprotected
