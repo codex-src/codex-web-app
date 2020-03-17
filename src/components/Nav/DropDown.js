@@ -3,7 +3,7 @@ import React from "react"
 
 export const Link = ({ text, subtext, ...props }) => (
 	// eslint-disable-next-line react/jsx-pascal-case
-	<$Link className="px-4 py-1 text-gray-800 dark:text-gray-300 hover:text-white hover:bg-md-blue-a400" {...props}>
+	<$Link className="px-4 py-1 text-gray-800 dark:text-gray-200 hover:text-white hover:bg-md-blue-a400" {...props}>
 		<p className="font-medium -text-px">
 			{text}
 		</p>

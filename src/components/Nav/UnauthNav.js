@@ -75,14 +75,22 @@ const Nav = props => {
 
 			{/* RHS (2 of 2) */}
 			<div className="-mx-3 flex flex-row md:hidden">
+
+				{/* Dark mode */}
+				<NavButtonDarkMode
+					darkMode={darkMode}
+					setDarkMode={setDarkMode}
+				/>
+
+				{/* Drop down */}
 				<div className="px-3 relative flex flex-row items-center">
 
-					{/* Button */}
+					{/* Menu */}
 					<button onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
 						<Hero.MenuOutlineMd className="w-8 h-8 dark:text-gray-100" />
 					</button>
 
-					{/* Drop down */}
+					{/* Items */}
 					<DropDown.Base ref={ref}>
 						<DropDown.Link
 							to={constants.PATH_README}
@@ -103,6 +111,7 @@ const Nav = props => {
 					</DropDown.Base>
 
 				</div>
+
 			</div>
 
 		</React.Fragment>
