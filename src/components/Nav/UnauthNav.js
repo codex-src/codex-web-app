@@ -33,10 +33,9 @@ const NavLinkCTA = props => (
 	</div>
 )
 
-const Nav = props => {
+const Nav = ({ darkMode, setDarkMode, ...props }) => {
 	const ref = React.useRef()
 
-	const [darkMode, setDarkMode] = useDarkMode()
 	const [dropDown, setDropDown] = useDropDown(ref)
 
 	return (
@@ -121,27 +120,37 @@ const Nav = props => {
 const UnauthNav = props => {
 	const ref = React.useRef()
 
-	React.useLayoutEffect(() => {
-		const handler = e => {
-			if (!window.scrollY) {
-				ref.current.classList.remove("shadow")
-			} else {
-				ref.current.classList.add("shadow")
-			}
-		}
-		window.addEventListener("scroll", handler, false)
-		return () => {
-			window.removeEventListener("scroll", handler, false)
-		}
-	}, [])
+	const [darkMode, setDarkMode] = useDarkMode()
+
+	// React.useLayoutEffect(() => {
+	// 	const handler = e => {
+	// 		const shadowClass = !darkMode ? "shadow" : "shadow-md"
+	// 		if (!window.scrollY) {
+	// 			ref.current.classList.remove(shadowClass)
+	// 			ref.current.style.backgroundColor= "" // Reset
+	// 		} else {
+	// 			ref.current.classList.add(shadowClass)
+	// 			if (darkMode) {
+	// 				ref.current.style.backgroundColor = "#1f2737" // "#1b2230"
+	// 			}
+	// 		}
+	// 	}
+	// 	window.addEventListener("scroll", handler, false)
+	// 	return () => {
+	// 		window.removeEventListener("scroll", handler, false)
+	// 	}
+	// }, [darkMode])
 
 	return (
-		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30">
+		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 trans-300">
 			<div className="px-6 flex flex-row justify-between w-full max-w-screen-lg h-20">
-				<Nav />
+				<Nav darkMode={darkMode} setDarkMode={setDarkMode} />
 			</div>
 		</div>
 	)
 }
 
 export default UnauthNav
+
+
+

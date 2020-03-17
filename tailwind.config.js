@@ -39,10 +39,13 @@ module.exports = {
 			},
 			colors: {
 				"gray": {
+					// https://meyerweb.com/eric/tools/color-blend/#424242:212121:3:hex
 					...defaultTheme.colors.gray,
-					50: "#fbfdfe",
+					"50":  "#fbfdfe",
+					"825": "#3a3a3a",
+					"850": "#323232",
+					"875": "#292929",
 				},
-
 				// https://gist.github.com/codex-zaydek/d3d1803f981fc8ed75fc0e4f481f6ecc
 				"md-blue-50":   { default: "#e3f2fd" },
 				"md-blue-100":  { default: "#bbdefb" },
@@ -68,7 +71,7 @@ module.exports = {
 				"md-gray-700":  { default: "#616161" },
 				"md-gray-800":  { default: "#424242" },
 				"md-gray-900":  { default: "#212121" },
-
+				// https://twitter.com
 				"twitter-blue": "#1da1f2",
 			},
 			fontFamily: {
