@@ -25,8 +25,10 @@ function useDarkMode() {
 	React.useLayoutEffect(() => {
 		if (!darkMode) {
 			document.body.classList.remove("dark-mode")
+			document.documentElement.style.backgroundColor = "#ffffff" // white
 		} else {
 			document.body.classList.add("dark-mode")
+			document.documentElement.style.backgroundColor = "#1a202c" // bg-gray-900
 		}
 	}, [darkMode])
 
