@@ -63,7 +63,7 @@ const Nav = props => {
 				<div className="px-3 relative flex flex-row items-center">
 
 					{/* Button */}
-					<button className="bg-gray-100 rounded-full focus:outline-none focus:shadow-outline overflow-hidden trans-150" onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
+					<button className="bg-gray-100 rounded-full focus:outline-none focus:shadow-outline overflow-hidden transition duration-150 ease-in-out" onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
 						<img className="w-8 h-8" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
 					</button>
 
@@ -77,7 +77,7 @@ const Nav = props => {
 							to={constants.PATH_MY_NOTES}
 							text="My notes"
 						/>
-						<hr className="my-2 border-gray-300 dark:border-gray-700" />
+						<DropDown.HR />
 						<DropDown.Link
 							to={constants.PATH_README}
 							text="Readme"
@@ -86,7 +86,7 @@ const Nav = props => {
 							to={constants.PATH_CHANGELOG}
 							text="Changelog"
 						/>
-						<hr className="my-2 border-gray-300 dark:border-gray-700" />
+						<DropDown.HR />
 						<DropDown.Link
 							onClick={handleClickSignOut}
 							text="Logout"

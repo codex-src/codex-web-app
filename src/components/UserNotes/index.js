@@ -118,7 +118,7 @@ const UserNotes = props => {
 			<div className="flex flex-row justify-end h-10">
 				{!response.loaded ? (
 					<div className="-mx-1 flex flex-row">
-						<div className="p-2 bg-gray-100 rounded-full">
+						<div className="p-2 bg-gray-100 dark:bg-gray-850 rounded-full">
 							<div className="w-6 h-6" />
 						</div>
 					</div>
@@ -136,13 +136,13 @@ const UserNotes = props => {
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{!response.loaded ? (
 					[...new Array(3)].map((_, index) => (
-						<div key={index} className="pb-2/3 relative bg-gray-100 rounded-lg-xl trans-150" />
+						<div key={index} className="pb-2/3 relative bg-gray-100 dark:bg-gray-850 rounded-lg-xl" />
 					))
 				) : (
 					<React.Fragment>
 
 						{/* New note (uses rounded-xl not rounded-lg-xl) */}
-						<Link className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NEW_NOTE}>
+						<Link className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 focus:bg-gray-100 rounded-xl border dark:border-gray-700 focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NEW_NOTE}>
 							<div className="absolute inset-0 flex flex-row justify-center items-center">
 								<Hero.PlusSolidSm className="w-8 h-8 text-md-blue-a400" />
 							</div>
@@ -150,7 +150,7 @@ const UserNotes = props => {
 
 						{/* Notes */}
 						{response.data.map((each, index) => (
-							<Link key={each.noteID} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
+							<Link key={each.noteID} className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 focus:bg-gray-100 rounded-lg-xl border dark:border-gray-700 focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
 								<div className="absolute inset-0 overflow-y-hidden select-none">
 									<EditorInstance>
 										{each.data}
