@@ -75,7 +75,7 @@ const Nav = props => {
 							to={constants.PATH_MY_NOTES}
 							text="My notes"
 						/>
-						<hr className="my-2" />
+						<hr className="my-2 border-gray-300 dark:border-gray-700" />
 						<DropDown.Link
 							to={constants.PATH_README}
 							text="Readme"
@@ -84,7 +84,7 @@ const Nav = props => {
 							to={constants.PATH_CHANGELOG}
 							text="Changelog"
 						/>
-						<hr className="my-2" />
+						<hr className="my-2 border-gray-300 dark:border-gray-700" />
 						<DropDown.Link
 							onClick={handleClickSignOut}
 							text="Logout"

@@ -169,6 +169,9 @@ module.exports = {
 			"disabled",
 			"disabled:dark",
 		],
+		borderColor: [
+			"dark",
+		],
 		boxShadow: [
 			"responsive",
 			"dark",
