@@ -111,21 +111,21 @@ const NoteLoader = ({ noteID, ...props }) => {
 			<React.Fragment>
 				<div className="flex flex-row items-center">
 					<div className="mr-4">
-						<div className="w-16 h-16 bg-gray-100 rounded-full" />
+						<div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full" />
 					</div>
 					<div className="-my-2">
-						<div className="my-2 w-48 h-5 bg-gray-100" />
-						<div className="my-2 w-24 h-5 bg-gray-100" />
+						<div className="my-2 w-48 h-5 bg-gray-100 dark:bg-gray-800" />
+						<div className="my-2 w-24 h-5 bg-gray-100 dark:bg-gray-800" />
 					</div>
 				</div>
 				<div className="h-16" />
 				<div className="-my-2">
-					<div className="my-2 h-8 bg-gray-100" style={{ width: "25%" }} />
+					<div className="my-2 h-8 bg-gray-100 dark:bg-gray-800" style={{ width: "25%" }} />
 					<div className="my-2 h-6" />
-					<div className="my-2 h-6 bg-gray-100" />
-					<div className="my-2 h-6 bg-gray-100" />
-					<div className="my-2 h-6 bg-gray-100" />
-					<div className="my-2 h-6 bg-gray-100" style={{ width: "50%" }} />
+					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-800" />
+					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-800" />
+					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-800" />
+					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-800" style={{ width: "50%" }} />
 				</div>
 			</React.Fragment>
 		)
