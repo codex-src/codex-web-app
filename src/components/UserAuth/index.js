@@ -53,22 +53,22 @@ const UserAuth = props => {
 		<div className="-mt-8 py-40 flex flex-row justify-center items-center min-h-full bg-white dark:bg-gray-900">
 			<div className="px-6 box-content" style={{ width: "18rem" }}>
 
-				<div className="flex flex-row justify-center items-center transform scale-90 origin-bottom">
+				<div className="flex flex-row justify-center items-center transform scale-125">
 					{/* NOTE: mr-* is preferred because of flex */}
-					<div className="mr-3">
-						<Icon className="w-8 h-8 stroke-medium text-md-blue-a400 transform scale-110" svg={Icons.CodexLogo} />
+					<div className="mr-2">
+						<Icon className="w-6 h-6 stroke-medium text-md-blue-a400" svg={Icons.CodexLogo} />
 					</div>
-					<Icon className="w-32 h-8 text-black dark:text-white" svg={Icons.CodexTextLogo} />
+					<Icon className="w-24 h-6 text-black dark:text-white" svg={Icons.CodexTextLogo} />
 				</div>
 
 				<div className="h-8" />
 				<p className="text-center font-medium text-lg leading-snug text-gray-800 dark:text-gray-200">
 					Choose one of the following to<br />
-					open your{" "}
-					<a className="text-md-blue-a400 cursor-pointer" href={constants.URL} target="_blank" rel="noopener noreferrer">
-						Codex
-					</a>
-					:
+					open your Codex:
+					{/* <a className="text-md-blue-a400 cursor-pointer" href={constants.URL} target="_blank" rel="noopener noreferrer"> */}
+					{/* 	Codex */}
+					{/* </a> */}
+					{/* : */}
 				</p>
 
 				{/* GitHub */}
