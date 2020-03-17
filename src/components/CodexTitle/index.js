@@ -1,6 +1,6 @@
 import React from "react"
 
-const Effect = props => {
+const DocumentTitle = props => {
 	React.useEffect(() => {
 		document.title = props.title
 	}, [props.title])
@@ -8,9 +8,9 @@ const Effect = props => {
 }
 
 const CodexTitle = ({ title, ...props }) => (
-	<Effect title={!title ? "Codex" : `${title} – Codex`}>
+	<DocumentTitle title={!title ? "Codex" : `${title} - Codex`}>
 		{props.children}
-	</Effect>
+	</DocumentTitle>
 )
 
 export default CodexTitle
