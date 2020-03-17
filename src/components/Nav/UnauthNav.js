@@ -11,7 +11,7 @@ import useDropDown from "hooks/useDropDown"
 
 const NavLink = props => (
 	<Link className="px-3 flex flex-row items-center" {...props}>
-		<p className="text-px tracking-wide text-gray-900 dark:text-gray-100">
+		<p className="tracking-wide text-gray-900 dark:text-gray-100">
 			{props.children}
 		</p>
 	</Link>
@@ -41,7 +41,7 @@ const NavButtonDarkMode = props => {
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
 		<Link className="px-4 py-3 bg-white dark:bg-md-blue-a400 rounded-md shadow-hero-md" /* style={{ boxShadow: "0 8px 16px -8px hsla(210, 100%, 50%, 0.75)" }} */ {...props}>
-			<p className="text-px tracking-wide text-md-blue-a400 dark:text-gray-100">
+			<p className="font-medium text-md-blue-a400 dark:text-gray-100">
 				{props.children}
 			</p>
 		</Link>
