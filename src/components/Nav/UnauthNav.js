@@ -2,8 +2,9 @@ import * as constants from "__constants"
 import * as DarkMode from "components/DarkMode"
 import * as DropDown from "./DropDown"
 import * as Hero from "react-heroicons"
-import * as SVG from "svgs"
+import * as Icons from "svgs"
 import DarkModeIcon from "./DarkModeIcon"
+import Icon from "utils/Icon"
 import Link from "components/Link"
 import React from "react"
 import useDropDown from "hooks/useDropDown"
@@ -47,7 +48,7 @@ const Nav = props => {
 			{/* LHS */}
 			<div className="-mx-3 flex flex-row">
 				<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME}>
-					<SVG.CodexLogo className="w-8 h-8 text-md-blue-a400 transform scale-110" />
+					<Icon className="w-8 h-8 text-md-blue-a400 transform scale-110" svg={Icons.CodexLogo} />
 				</Link>
 			</div>
 

@@ -1,8 +1,9 @@
 import * as constants from "__constants"
 import * as DropDown from "./DropDown"
-import * as SVG from "svgs"
+import * as Icons from "svgs"
 import * as User from "components/User"
 import firebase from "__firebase"
+import Icon from "utils/Icon"
 import Link from "components/Link"
 import React from "react"
 import useDropDown from "hooks/useDropDown"
@@ -35,7 +36,7 @@ const Content = props => {
 			{/* LHS */}
 			<div className="-mx-3 flex flex-row">
 				<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME}>
-					<SVG.CodexLogo className="w-8 h-8 text-md-blue-a400" />
+					<Icon className="w-8 h-8 text-md-blue-a400" svg={Icons.CodexLogo} />
 				</Link>
 			</div>
 

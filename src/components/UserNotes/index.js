@@ -4,6 +4,7 @@ import * as GraphQL from "graphql"
 import * as Hero from "react-heroicons"
 import * as User from "components/User"
 import Editor from "components/Editor"
+import Icon from "utils/Icon"
 import Link from "components/Link"
 import React from "react"
 import useReducer from "./reducer"
@@ -128,7 +129,7 @@ const UserNotes = props => {
 				) : (
 					<div className="-mx-1 flex flex-row">
 						<button className="p-2 text-md-blue-a400 hover:bg-blue-100 focus:bg-blue-100 rounded-full focus:outline-none trans-300" onPointerDown={e => e.preventDefault()} onClick={dispatch.toggleSortDirection}>
-							<SVG className="w-6 h-6" svg={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd} />
+							<Icon className="w-6 h-6" svg={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd} />
 						</button>
 					</div>
 				)}

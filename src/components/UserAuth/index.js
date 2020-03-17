@@ -1,8 +1,9 @@
 import * as constants from "__constants"
 import * as GraphQL from "graphql"
 import * as ProgressBar from "components/ProgressBar"
-import * as SVG from "svgs"
+import * as Icons from "svgs"
 import firebase from "__firebase"
+import Icon from "utils/Icon"
 import React from "react"
 
 const MUTATION_REGISTER_USER = `
@@ -53,8 +54,8 @@ const UserAuth = props => {
 			<div className="px-6 box-content" style={{ width: "18rem" /* w-72 */ }}>
 
 				<div className="flex flex-row justify-center items-center transform scale-90 origin-bottom">
-					<SVG.CodexLogo className="mr-3 w-8 h-8 stroke-medium text-md-blue-a400" />
-					<SVG.CodexTextLogo className="w-32 h-8" />
+					<Icon className="mr-3 w-8 h-8 stroke-medium text-md-blue-a400" svg={Icons.CodexLogo} />
+					<Icon className="w-32 h-8" svg={Icons.CodexTextLogo} />
 				</div>
 
 				<div className="h-8" />
@@ -71,7 +72,7 @@ const UserAuth = props => {
 				<div className="h-6" />
 				<button className="px-4 py-3 flex flex-row items-center w-full bg-black rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGitHub}>
 					<div className="mx-4">
-						<SVG.GitHubLogo className="w-6 h-6 text-gray-100" />
+						<Icon className="w-6 h-6 text-gray-100" svg={Icons.GitHubLogo} />
 					</div>
 					<p className="font-semibold text-lg text-gray-100">
 						Continue with GitHub
@@ -82,7 +83,7 @@ const UserAuth = props => {
 				<div className="h-2" />
 				<button className="px-4 py-3 flex flex-row items-center w-full bg-white rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGoogle}>
 					<div className="mx-4">
-						<SVG.GoogleLogo className="w-6 h-6 text-gray-900" />
+						<Icon className="w-6 h-6 text-gray-900" svg={Icons.GoogleLogo} />
 					</div>
 					<p className="font-semibold text-lg text-gray-900">
 						Continue with Google
