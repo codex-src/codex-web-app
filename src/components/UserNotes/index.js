@@ -142,7 +142,7 @@ const UserNotes = props => {
 					<React.Fragment>
 
 						{/* New note (uses rounded-xl not rounded-lg-xl) */}
-						<Link className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 focus:bg-gray-100 rounded-xl border dark:border-gray-700 focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NEW_NOTE}>
+						<Link className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 focus:bg-gray-100 rounded-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline" to={constants.PATH_NEW_NOTE}>
 							<div className="absolute inset-0 flex flex-row justify-center items-center">
 								<Hero.PlusSolidSm className="w-8 h-8 text-md-blue-a400" />
 							</div>
@@ -150,7 +150,7 @@ const UserNotes = props => {
 
 						{/* Notes */}
 						{response.data.map((each, index) => (
-							<Link key={each.noteID} className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 focus:bg-gray-100 rounded-lg-xl border dark:border-gray-700 focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
+							<Link key={each.noteID} className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 focus:bg-gray-100 rounded-lg-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
 								<div className="absolute inset-0 overflow-y-hidden select-none">
 									<EditorInstance>
 										{each.data}

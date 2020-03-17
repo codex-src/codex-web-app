@@ -15,8 +15,11 @@ export const Link = ({ text, subtext, ...props }) => (
 )
 
 export const Base = React.forwardRef((props, ref) => (
-	// NOTE: Use py-2 because Link uses py-1
-	<div ref={ref} className="-mt-2 py-2 absolute right-0 top-full w-48 bg-white dark:bg-gray-800 rounded-lg shadow-hero-lg dark:shadow-hero-2xl">
-		{props.children}
+	<div ref={ref} className="-mt-2 absolute right-0 top-full w-48 bg-white dark:bg-gray-750 rounded-lg shadow-hero-lg">
+		{/* NOTE (1): Use py-2 because Link uses py-1 */}
+		{/* NOTE (2): py-* needs to be inside */}
+		<div className="py-2 rounded-lg" style={{ boxShadow: "0 0 0 1px var(--gray-700), var(--shadow-md)" }}>
+			{props.children}
+		</div>
 	</div>
 ))
