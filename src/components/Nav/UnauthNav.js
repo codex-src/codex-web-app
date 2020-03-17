@@ -8,16 +8,6 @@ import React from "react"
 import useDarkMode from "./hooks/useDarkMode"
 import useDropDown from "hooks/useDropDown"
 
-// const NavLinkCTA = props => (
-// 	<div className="mx-3 flex flex-row items-center">
-// 		<Link className="px-4 py-3 bg-white text-md-blue-a400 hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" {...props}>
-// 			<p className="font-medium">
-// 				{props.text}
-// 			</p>
-// 		</Link>
-// 	</div>
-// )
-
 const NavLink = props => (
 	<Link className="px-3 flex flex-row items-center text-gray-800 dark:text-gray-200" {...props}>
 		<p className="font-medium">
@@ -26,19 +16,16 @@ const NavLink = props => (
 	</Link>
 )
 
-const NavLinkDarkModeButton = props => {
-	const [darkMode, setDarkMode] = useDarkMode()
-
-	return (
-		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-			<DarkModeIcon className="w-6 h-6 text-orange-300 transform scale-110" darkMode={darkMode} />
-		</button>
-	)
-}
+// NOTE: Does not accept props
+const NavButtonDarkMode = ({ darkMode, setDarkMode }) => (
+	<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
+		<DarkModeIcon className="w-6 h-6 text-indigo-700 dark:text-orange-300 transform scale-110" darkMode={darkMode} />
+	</button>
+)
 
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
-		<Link className="px-4 py-3 text-gray-200 dark:bg-md-blue-a400 rounded-md" {...props}>
+		<Link className="px-4 py-3 text-md-blue-a400 dark:text-gray-200 bg-white dark:bg-md-blue-a400 rounded-md shadow-hero-md" {...props}>
 			<p className="font-medium">
 				{props.children}
 			</p>
@@ -46,12 +33,10 @@ const NavLinkCTA = props => (
 	</div>
 )
 
-// Hero.SunOutlineMd
-// Hero.SunSolidSm
-
 const Nav = props => {
 	const ref = React.useRef()
 
+	const [darkMode, setDarkMode] = useDarkMode()
 	const [dropDown, setDropDown] = useDropDown(ref)
 
 	return (
@@ -60,7 +45,7 @@ const Nav = props => {
 			{/* LHS */}
 			<div className="-mx-3 flex flex-row">
 				<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME}>
-					<SVG.CodexLogo className="w-8 h-8 text-md-blue-a400" />
+					<SVG.CodexLogo className="w-8 h-8 text-md-blue-a400 transform scale-110" />
 				</Link>
 			</div>
 
@@ -82,8 +67,10 @@ const Nav = props => {
 					to={constants.PATH_AUTH}
 					children="Open your Codex"
 				/>
-				<NavLinkDarkModeButton />
-
+				<NavButtonDarkMode
+					darkMode={darkMode}
+					setDarkMode={setDarkMode}
+				/>
 			</div>
 
 			{/* RHS (2 of 2) */}
@@ -140,7 +127,7 @@ const UnauthNav = props => {
 	}, [])
 
 	return (
-		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 trans-300">
+		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30">
 			<div className="px-6 flex flex-row justify-between w-full max-w-screen-lg h-20">
 				<Nav />
 			</div>
