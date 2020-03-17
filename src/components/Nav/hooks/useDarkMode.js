@@ -1,5 +1,8 @@
 import React from "react"
 
+const BODY = document.body
+const HTML = document.documentElement
+
 // https://codesandbox.io/s/dead-simple-usedarkmode-implementation-sl71k
 function useDarkMode() {
 	const [darkMode, setDarkMode] = React.useState(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
@@ -21,14 +24,14 @@ function useDarkMode() {
 		}
 	}, [])
 
-	// Update body.dark-mode:
+	// Dark mode side effects:
 	React.useLayoutEffect(() => {
 		if (!darkMode) {
-			document.body.classList.remove("dark-mode")
-			document.documentElement.style.backgroundColor = "#ffffff" // white
+			BODY.classList.remove("dark-mode")
+			HTML.style.backgroundColor = "#ffffff" // white
 		} else {
-			document.body.classList.add("dark-mode")
-			document.documentElement.style.backgroundColor = "#1a202c" // bg-gray-900
+			BODY.classList.add("dark-mode")
+			HTML.style.backgroundColor = "#1a202c" // bg-gray-900
 		}
 	}, [darkMode])
 
