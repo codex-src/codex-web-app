@@ -46,7 +46,7 @@ const NoteLayout = ({ note, ...props }) => (
 		{/* User */}
 		<div className="flex flex-row items-center">
 			<div className="mr-4">
-				<img className="w-16 h-16 bg-gray-100 dark:bg-gray-875 rounded-full" src={note.user.photoURL || constants.TRANSPARENT_PX} alt="" />
+				<img className="w-16 h-16 bg-gray-100 dark:bg-gray-850 rounded-full" src={note.user.photoURL || constants.TRANSPARENT_PX} alt="" />
 			</div>
 			<div>
 				<p className="font-semibold text-px text-black dark:text-white">
@@ -111,21 +111,21 @@ const NoteLoader = ({ noteID, ...props }) => {
 			<React.Fragment>
 				<div className="flex flex-row items-center">
 					<div className="mr-4">
-						<div className="w-16 h-16 bg-gray-100 dark:bg-gray-875 rounded-full" />
+						<div className="w-16 h-16 bg-gray-100 dark:bg-gray-850 rounded-full" />
 					</div>
 					<div className="-my-2">
-						<div className="my-2 w-48 h-5 bg-gray-100 dark:bg-gray-875" />
-						<div className="my-2 w-24 h-5 bg-gray-100 dark:bg-gray-875" />
+						<div className="my-2 w-48 h-5 bg-gray-100 dark:bg-gray-850" />
+						<div className="my-2 w-24 h-5 bg-gray-100 dark:bg-gray-850" />
 					</div>
 				</div>
 				<div className="h-16" />
 				<div className="-my-2">
-					<div className="my-2 h-8 bg-gray-100 dark:bg-gray-875" style={{ width: "25%" }} />
+					<div className="my-2 h-8 bg-gray-100 dark:bg-gray-850" style={{ width: "25%" }} />
 					<div className="my-2 h-6" />
-					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-875" />
-					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-875" />
-					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-875" />
-					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-875" style={{ width: "50%" }} />
+					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-850" />
+					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-850" />
+					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-850" />
+					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-850" style={{ width: "50%" }} />
 				</div>
 			</React.Fragment>
 		)

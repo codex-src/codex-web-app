@@ -9,8 +9,8 @@ import useDarkMode from "./hooks/useDarkMode"
 import useDropDown from "hooks/useDropDown"
 
 const NavLink = props => (
-	<Link className="px-3 flex flex-row items-center text-gray-800 dark:text-gray-200" {...props}>
-		<p className="font-medium">
+	<Link className="px-3 flex flex-row items-center" {...props}>
+		<p className="font-medium text-gray-800 dark:text-gray-200">
 			{props.children}
 		</p>
 	</Link>
@@ -19,14 +19,14 @@ const NavLink = props => (
 // NOTE: Does not accept props
 const NavButtonDarkMode = ({ darkMode, setDarkMode }) => (
 	<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-		<DarkModeIcon className="w-6 h-6 text-indigo-700 dark:text-orange-300 transform scale-110" darkMode={darkMode} />
+		<DarkModeIcon className="w-6 h-6 text-gray-800 dark:text-gray-200 transform scale-110" darkMode={darkMode} />
 	</button>
 )
 
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
-		<Link className="px-4 py-3 text-md-blue-a400 dark:text-gray-200 bg-white dark:bg-md-blue-a400 rounded-md shadow-hero-md" {...props}>
-			<p className="font-medium">
+		<Link className="px-4 py-3 bg-white dark:bg-md-blue-a400 rounded-md shadow-hero-md" {...props}>
+			<p className="font-medium text-md-blue-a400 dark:text-gray-200">
 				{props.children}
 			</p>
 		</Link>
