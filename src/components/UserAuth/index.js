@@ -73,7 +73,7 @@ const UserAuth = props => {
 
 				{/* GitHub */}
 				<div className="h-6" />
-				<button className="px-4 py-3 flex flex-row items-center w-full bg-black dark:bg-gray-800 rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGitHub}>
+				<button className="px-4 py-4 flex flex-row items-center w-full bg-black dark:bg-gray-800 rounded-lg-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGitHub}>
 					<div className="mx-4">
 						<Icon className="w-6 h-6 text-gray-100 transform scale-110" svg={Icons.GitHubLogo} />
 					</div>
@@ -84,7 +84,7 @@ const UserAuth = props => {
 
 				{/* Google */}
 				<div className="h-2" />
-				<button className="px-4 py-3 flex flex-row items-center w-full bg-white dark:bg-gray-800 rounded-lg focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGoogle}>
+				<button className="px-4 py-4 flex flex-row items-center w-full bg-white dark:bg-gray-800 rounded-lg-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" onClick={handleClickGoogle}>
 					<div className="mx-4">
 						<Icon className="w-6 h-6 text-gray-100 transform scale-110" svg={Icons.GoogleLogo} />
 					</div>
