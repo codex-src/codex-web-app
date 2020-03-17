@@ -5,7 +5,7 @@ import ReactDOM from "react-dom"
 
 // import "material-colors.css"
 
-import "stylesheets/colors.css" // Takes precedence
+import "stylesheets/tailwind-bootstrap.css" // Takes precedence
 import "debug.css"
 import "reset-input.css"
 import "stylesheets/tailwind.generated.css"

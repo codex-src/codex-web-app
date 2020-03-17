@@ -2,17 +2,11 @@ import * as constants from "__constants"
 import * as DropDown from "./DropDown"
 import * as Hero from "react-heroicons"
 import * as SVG from "svgs"
+import DarkModeIcon from "./DarkModeIcon"
 import Link from "components/Link"
 import React from "react"
+import useDarkMode from "./hooks/useDarkMode"
 import useDropDown from "hooks/useDropDown"
-
-const NavLink = props => (
-	<Link className="px-3 flex flex-row items-center text-gray-800 dark:text-gray-200 trans-75" {...props}>
-		<p className="font-medium">
-			{props.text}
-		</p>
-	</Link>
-)
 
 // const NavLinkCTA = props => (
 // 	<div className="mx-3 flex flex-row items-center">
@@ -24,15 +18,36 @@ const NavLink = props => (
 // 	</div>
 // )
 
+const NavLink = props => (
+	<Link className="px-3 flex flex-row items-center text-gray-800 dark:text-gray-200" {...props}>
+		<p className="font-medium">
+			{props.children}
+		</p>
+	</Link>
+)
+
+const NavLinkDarkModeButton = props => {
+	const [darkMode, setDarkMode] = useDarkMode()
+
+	return (
+		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
+			<DarkModeIcon className="w-6 h-6 text-orange-300 transform scale-110" darkMode={darkMode} />
+		</button>
+	)
+}
+
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
 		<Link className="px-4 py-3 text-gray-200 dark:bg-md-blue-a400 rounded-md" {...props}>
 			<p className="font-medium">
-				{props.text}
+				{props.children}
 			</p>
 		</Link>
 	</div>
 )
+
+// Hero.SunOutlineMd
+// Hero.SunSolidSm
 
 const Nav = props => {
 	const ref = React.useRef()
@@ -53,20 +68,22 @@ const Nav = props => {
 			<div className="-mx-3 hidden md:flex md:flex-row">
 				<NavLink
 					to={constants.PATH_README}
-					text="Readme"
+					children="Readme"
 				/>
 				<NavLink
 					to={constants.PATH_DEMO}
-					text="Demo"
+					children="Demo"
 				/>
 				<NavLink
 					to={constants.PATH_CHANGELOG}
-					text="Changelog"
+					children="Changelog"
 				/>
 				<NavLinkCTA
 					to={constants.PATH_AUTH}
-					text="Open your Codex"
+					children="Open your Codex"
 				/>
+				<NavLinkDarkModeButton />
+
 			</div>
 
 			{/* RHS (2 of 2) */}

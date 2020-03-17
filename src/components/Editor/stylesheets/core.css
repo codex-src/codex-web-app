@@ -37,20 +37,27 @@
 }
 
 .codex-editor .blockquote {
-	color: hsl(var(--blue-a400));
+	color: var(--md-blue-a400);
 }
 .codex-editor .blockquote > [data-node] > .markdown {
 	margin-right: 0.5ch;
-	color: hsla(var(--blue-a400), 0.5);
+	/* FIXME */
+	/* color: hsla(var(--md-blue-a400), 0.5); */
 }
 
 .codex-editor .code-block {
 	padding: 0px 24px;
-	background: hsl(var(--gray-50));
-	box-shadow: var(--box-shadow);
+	/*background: var(--md-gray-50);*/
+	/*box-shadow: var(--box-shadow);*/
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
+.dark-mode .code-block {
+	background: hsla(0, 0%, 100%, 0.1);
+	border-radius: var(--rounded-md);
+	box-shadow: 0 0 0 1px var(--gray-700), var(--shadow-md);
+}
+
 /* .codex-editor .code-block > [data-node] > span { */
 /* 	padding-right: 24px; */
 /* } */
@@ -79,7 +86,7 @@
 .codex-editor .code {
 	padding: 0.0625em;
 	box-decoration-break: clone;
-	color: hsl(var(--blue-a400));
+	color: var(--md-blue-a400);
 	box-shadow: var(--box-shadow);
 }
 .codex-editor .code > .markdown {
@@ -87,12 +94,12 @@
 }
 
 .codex-editor .strikethrough {
-	--blue-a400: var(--gray);
+	--md-blue-a400: var(--gray);
 	font-style: italic;
 	color: hsl(var(--gray));
 	text-decoration: line-through;
 }
 
 .codex-editor .markdown {
-	color: hsl(var(--blue-a400));
+	color: var(--md-blue-a400);
 }
