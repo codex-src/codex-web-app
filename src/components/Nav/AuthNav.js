@@ -8,6 +8,7 @@ import firebase from "__firebase"
 import Icon from "utils/Icon"
 import Link from "components/Link"
 import React from "react"
+import useDarkModeNav from "./useDarkModeNav"
 import useDropDown from "hooks/useDropDown"
 
 const NavButtonDarkMode = props => {
@@ -15,7 +16,7 @@ const NavButtonDarkMode = props => {
 
 	return (
 		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-			<DarkModeIcon className="w-6 h-6 text-gray-900 dark:text-gray-100" darkMode={darkMode} />
+			<DarkModeIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-300" darkMode={darkMode} />
 		</button>
 	)
 }
@@ -54,6 +55,9 @@ const Nav = props => {
 
 			{/* RHS */}
 			<div className="-mx-3 flex flex-row">
+
+				<NavButtonDarkMode />
+
 				<div className="px-3 relative flex flex-row items-center">
 
 					{/* Button */}
@@ -89,8 +93,6 @@ const Nav = props => {
 
 				</div>
 
-				<NavButtonDarkMode />
-
 			</div>
 
 		</React.Fragment>
@@ -100,19 +102,9 @@ const Nav = props => {
 const AuthNav = props => {
 	const ref = React.useRef()
 
-	React.useLayoutEffect(() => {
-		const handler = e => {
-			if (!window.scrollY) {
-				ref.current.classList.remove("shadow")
-			} else {
-				ref.current.classList.add("shadow")
-			}
-		}
-		window.addEventListener("scroll", handler, false)
-		return () => {
-			window.removeEventListener("scroll", handler, false)
-		}
-	}, [])
+	const [darkMode] = DarkMode.useDarkMode()
+
+	useDarkModeNav(ref, darkMode)
 
 	return (
 		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 trans-300">
