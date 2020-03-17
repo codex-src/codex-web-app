@@ -16,6 +16,7 @@ const UserAuth = props => {
 
 	const signIn = async provider => {
 		const response = await firebase.auth().signInWithPopup(provider)
+		renderProgressBar()
 		if (!response.additionalUserInfo.isNewUser) {
 			// No-op
 			return
@@ -31,7 +32,6 @@ const UserAuth = props => {
 					displayName:   response.user.displayName,
 				},
 			})
-			renderProgressBar()
 		} catch (error) {
 			console.error(error)
 		}

@@ -7,37 +7,6 @@ import Link from "components/Link"
 import React from "react"
 import useDropDown from "hooks/useDropDown"
 
-// {/* News */}
-// <div className="px-3 relative flex flex-row items-center">
-//
-// 	{/* Icon */}
-// 	<button className="text-gray-500 hover:text-blue-500 focus:text-blue-500 focus:outline-none trans-150" onClick={e => setDropDown(!dropDown)}>
-// 		<Hero.AnnotationSolidSm className="w-6 h-6" />
-// 	</button>
-//
-// 	{/* Links */}
-// 	<DropDown ref={ref}>
-// 		<DropDownLink
-// 			to={constants.TODO}
-// 			text="Version 0.1"
-// 			subtext="Released March 9"
-// 		/>
-// 		<hr className="my-2" />
-// 		<DropDownLink
-// 			to={constants.TODO}
-// 			text="Version 0.2"
-// 			subtext="Released March 10"
-// 		/>
-// 		<hr className="my-2" />
-// 		<DropDownLink
-// 			to={constants.TODO}
-// 			text="Version 0.3"
-// 			subtext="Released March 11"
-// 		/>
-// 	</DropDown>
-//
-// </div>
-
 const Content = props => {
 	const ref = React.useRef()
 
