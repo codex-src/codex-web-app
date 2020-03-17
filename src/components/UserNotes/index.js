@@ -45,10 +45,6 @@ const EditorInstance = props => {
 	)
 }
 
-const SVG = ({ svg: SVG, ...props }) => (
-	<SVG {...props} />
-)
-
 const UserNotes = props => {
 	const user = User.useUser()
 
