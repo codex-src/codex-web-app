@@ -1,4 +1,3 @@
-import * as constants from "__constants"
 import * as Containers from "components/Containers"
 import * as GraphQL from "graphql"
 import * as ProgressBar from "components/ProgressBar"
@@ -41,11 +40,11 @@ const Note = ({ note, ...props }) => {
 	const renderProgressBar = ProgressBar.useProgressBar()
 
 	// Copy -- do not rerender parent component:
-	const [noteID, setNoteID] = React.useState(note.noteID)
+	const [noteID, setNoteID] = React.useState(!note ? "" : note.noteID)
 
-	const [state, dispatch] = Editor.useEditor(note.data || "", {
-		shortcuts: true,
-		statusBar: true,
+	const [state, dispatch] = Editor.useEditor(!note ? "" : note.data, {
+		shortcuts: true, // TODO: Move to props
+		statusBar: true, // TODO: Move to props
 	})
 
 	// https://github.com/facebook/react/issues/14010#issuecomment-433788147
@@ -141,9 +140,8 @@ const NoteLoader = ({ noteID, ...props }) => {
 	const [response, setResponse] = React.useState({
 		loaded: !noteID, // Inverse to noteID,
 		exists: true,
+		data: null,
 	})
-
-	const [note, setNote] = React.useState(null)
 
 	React.useLayoutEffect(() => {
 		if (!noteID) {
@@ -156,7 +154,10 @@ const NoteLoader = ({ noteID, ...props }) => {
 					noteID,
 				})
 				const { data } = body
-				setNote(data.note)
+				setResponse(current => ({
+					...current,
+					data: data.note,
+				}))
 			} catch (error) {
 				console.error(error)
 				setResponse(current => ({
@@ -186,7 +187,7 @@ const NoteLoader = ({ noteID, ...props }) => {
 	} else if (!response.exists) {
 		return <Error404 />
 	}
-	return <Note note={note} />
+	return <Note note={response.data} />
 }
 
 const UserNote = props => {

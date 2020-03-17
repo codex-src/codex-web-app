@@ -1,8 +1,8 @@
 import * as constants from "__constants"
 import * as Containers from "components/Containers"
 import * as GraphQL from "graphql"
-import * as Router from "react-router-dom"
 import Editor from "components/Editor"
+import Error404 from "components/Error404"
 import React from "react"
 import toHumanDate from "utils/date/toHumanDate"
 
@@ -16,11 +16,6 @@ const QUERY_NOTE = `
 			data
 			user {
 				userID
-				# createdAt
-				# updatedAt
-				# email
-				# emailVerified
-				# authProvider
 				photoURL
 				displayName
 				username
@@ -135,7 +130,7 @@ const NoteLoader = ({ noteID, ...props }) => {
 			</React.Fragment>
 		)
 	} else if (!response.exists) {
-		return <Router.Redirect to={constants.PATH_LOST} />
+		return <Error404 />
 	}
 	return <NoteLayout note={response.data} />
 }

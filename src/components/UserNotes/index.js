@@ -55,7 +55,7 @@ const UserNotes = props => {
 
 	const [response, setResponse] = React.useState({
 		loaded: false,
-		notes: [],
+		data: null,
 	})
 
 	React.useLayoutEffect(
@@ -73,7 +73,7 @@ const UserNotes = props => {
 					const { data } = body
 					setResponse(current => ({
 						...current,
-						notes: data.me.notes,
+						data: data.me.notes,
 					}))
 				} catch (error) {
 					console.error(error)
@@ -100,10 +100,10 @@ const UserNotes = props => {
 			return
 		}
 		// Render optimistically:
-		const notes = [...response.notes.filter(each => each.noteID !== noteID)]
+		const filteredNotes = [...response.data.filter(each => each.noteID !== noteID)]
 		setResponse(current => ({
 			...current,
-			notes,
+			data: filteredNotes,
 		}))
 		try {
 			await GraphQL.newQuery(user.idToken, MUTATION_DELETE_NOTE, {
@@ -152,7 +152,7 @@ const UserNotes = props => {
 						</Link>
 
 						{/* Notes */}
-						{response.notes.map((each, index) => (
+						{response.data.map((each, index) => (
 							<Link key={each.noteID} className="pb-2/3 relative bg-white hover:bg-gray-100 focus:bg-gray-100 rounded-lg-xl focus:outline-none shadow-hero focus:shadow-outline trans-150" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
 								<div className="absolute inset-0 overflow-y-hidden select-none">
 									<EditorInstance>

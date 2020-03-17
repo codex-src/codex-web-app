@@ -6,7 +6,6 @@ import * as Router from "react-router-dom"
 import * as User from "components/User"
 import Auth from "components/Auth"
 import Demo from "components/Demo"
-import Editor from "components/Editor"
 import Error404 from "components/Error404"
 import Home from "components/Home"
 import Note from "components/Note"
@@ -14,8 +13,6 @@ import NoteContainer from "components/NoteContainer"
 import React from "react"
 import UserNote from "components/UserNote"
 import UserNotes from "components/UserNotes"
-
-const Data404 = `# 404\n\nSorry about that, we couldn’t find the page you’re looking for.`
 
 const AnonNote = props => {
 	const { noteID } = Router.useParams()
