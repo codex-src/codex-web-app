@@ -1,4 +1,3 @@
-import * as constants from "__constants"
 import * as GraphQL from "graphql"
 import * as Icons from "svgs"
 import * as ProgressBar from "components/ProgressBar"

@@ -6,7 +6,7 @@ export const Provider = props => {
 	// https://codesandbox.io/s/dead-simple-usedarkmode-implementation-sl71k
 	const [darkMode, setDarkMode] = React.useState(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
 
-	// Listen for dark mode (from the user):
+	// Watch dark mode (based on OS):
 	React.useLayoutEffect(() => {
 		if (!window.matchMedia) {
 			// No-op
@@ -23,7 +23,7 @@ export const Provider = props => {
 		}
 	}, [])
 
-	// .transition-dark-mode
+	// .dark-mode-transition (order does not matter)
 	const mounted = React.useRef()
 	React.useLayoutEffect(() => {
 		if (!mounted.current) {

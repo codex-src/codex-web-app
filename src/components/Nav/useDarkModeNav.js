@@ -30,7 +30,7 @@ function useDarkModeNav(ref, darkMode) {
 		return () => {
 			window.removeEventListener("scroll", handler, false)
 		}
-	}, [darkMode])
+	}, [ref, darkMode])
 }
 
 export default useDarkModeNav

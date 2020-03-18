@@ -2,19 +2,30 @@ import * as Containers from "components/Containers"
 import Editor from "components/Editor"
 import React from "react"
 
-const LOCALSTORAGE_KEY = "codex-app"
-
-const data = localStorage.getItem(LOCALSTORAGE_KEY) || "# Hello, world!"
+// Returns a getter and setter for localStorage.
+//
+// TODO: Extract out of Demo
+function newLocalStorage(key, initialState) {
+	const getter = () => {
+		return localStorage.getItem(key) || initialState
+	}
+	const setter = data => {
+		localStorage.setItem(key, data)
+	}
+	return [getter, setter]
+}
 
 const Demo = props => {
-	const [state, dispatch] = Editor.useEditor(data, {
+	const [getLocalStorage, setLocalStorage] = newLocalStorage("codex-app", "# Hello, world!")
+
+	const [state, dispatch] = Editor.useEditor(getLocalStorage(), {
 		shortcuts: true, // TODO: Move to props
 		statusBar: true, // FIXME
 	})
 
 	React.useEffect(() => {
-		localStorage.setItem(LOCALSTORAGE_KEY, state.data)
-	}, [state.data])
+		setLocalStorage(state.data)
+	}, [setLocalStorage, state.data])
 
 	return (
 		<Containers.Note>
