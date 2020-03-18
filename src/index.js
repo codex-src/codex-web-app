@@ -3,11 +3,15 @@ import innerText from "components/Editor/helpers/innerText"
 import React from "react"
 import ReactDOM from "react-dom"
 
-// import "material-colors.css"
-
-import "stylesheets/tailwind-bootstrap.css" // Takes precedence
+// Debuggers:
 import "debug.css"
 import "reset-input.css"
+
+// CSS:
+import "stylesheets/tailwind-bootstrap.css" // Takes precedence
+import "stylesheets/dark-mode.css"
+
+// Generated CSS:
 import "stylesheets/tailwind.generated.css"
 
 // https://github.com/codex-src/codex-playwright

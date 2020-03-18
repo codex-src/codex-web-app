@@ -1,0 +1,18 @@
+.dark-mode-in-progress *[class*="black"],
+.dark-mode-in-progress *[class*="blue"],
+.dark-mode-in-progress *[class*="gray"],
+.dark-mode-in-progress *[class*="green"],
+.dark-mode-in-progress *[class*="indigo"],
+.dark-mode-in-progress *[class*="orange"],
+.dark-mode-in-progress *[class*="pink"],
+.dark-mode-in-progress *[class*="purple"],
+.dark-mode-in-progress *[class*="red"],
+.dark-mode-in-progress *[class*="teal"],
+.dark-mode-in-progress *[class*="white"],
+.dark-mode-in-progress *[class*="yellow"],
+.dark-mode-in-progress *[class*="shadow"] {
+	/*background: red !important;*/
+	transition-property: color, background-color, border-color, outline-color, box-shadow !important;
+	transition-duration: 2s !important;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
