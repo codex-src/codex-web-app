@@ -23,7 +23,7 @@ export const Provider = props => {
 		}
 	}, [])
 
-	// .dark-mode-in-progress
+	// .transition-dark-mode
 	const mounted = React.useRef()
 	React.useLayoutEffect(() => {
 		if (!mounted.current) {
@@ -33,9 +33,9 @@ export const Provider = props => {
 		// NOTE: Timeout should be equal to or greater than the
 		// duration of the transition
 		const { body } = document
-		body.classList.add("dark-mode-in-progress")
+		body.classList.add("dark-mode-transition")
 		const id = setTimeout(() => {
-			body.classList.remove("dark-mode-in-progress")
+			body.classList.remove("dark-mode-transition")
 		}, 1e3)
 		return () => {
 			clearTimeout(id)

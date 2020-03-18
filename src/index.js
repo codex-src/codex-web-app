@@ -8,8 +8,8 @@ import "debug.css"
 import "reset-input.css"
 
 // CSS:
-import "stylesheets/tailwind-vars.css" // Takes precedence
-import "stylesheets/dark-mode-in-progress.css"
+import "stylesheets/tailwind-variables.css" // Takes precedence
+import "stylesheets/dark-mode-transition.css"
 
 // Generated CSS:
 import "stylesheets/tailwind.generated.css"
