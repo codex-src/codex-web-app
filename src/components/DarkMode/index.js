@@ -35,9 +35,12 @@ export const Provider = props => {
 		} else {
 			body.classList.add("dark-mode")
 		}
-		setTimeout(() => {
+		const id = setTimeout(() => {
 			body.classList.remove("dark-mode-in-progress")
 		}, 2e3)
+		return () => {
+			clearTimeout(id)
+		}
 	}, [darkMode])
 
 	const { Provider } = Context
