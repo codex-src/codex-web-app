@@ -1,3 +1,4 @@
+html,
 .dark-mode-in-progress *[class*="black"],   /* color, background-color, border-color */
 .dark-mode-in-progress *[class*="blue"],    /* color, background-color, border-color */
 .dark-mode-in-progress *[class*="gray"],    /* color, background-color, border-color */
@@ -11,8 +12,9 @@
 .dark-mode-in-progress *[class*="white"],   /* color, background-color, border-color */
 .dark-mode-in-progress *[class*="yellow"],  /* color, background-color, border-color */
 .dark-mode-in-progress *[class*="outline"], /* outline-color */
-.dark-mode-in-progress *[class*="shadow"] { /* box-shadow */
+.dark-mode-in-progress *[class*="shadow"],  /* box-shadow */
+.dark-mode-in-progress .codex-editor {
 	transition-property: color, background-color, border-color, outline-color, box-shadow !important;
-	transition-duration: 2s !important;
+	transition-duration: 150ms !important;
 	transition-timing-function: var(--ease-linear) !important;
 }

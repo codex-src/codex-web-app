@@ -1,8 +1,6 @@
 import React from "react"
 
-// Assumes never changes...
-const html = document.documentElement
-const body = document.body
+const TIMEOUT_DARK_MODE = 150
 
 const Context = React.createContext()
 
@@ -20,7 +18,7 @@ export const Provider = props => {
 		const handler = () => {
 			setDarkMode(media.matches)
 		}
-		handler() // Once
+		// handler() // Once
 		media.addListener(handler)
 		return () => {
 			media.removeListener(handler)
@@ -28,16 +26,25 @@ export const Provider = props => {
 	}, [])
 
 	// Effects:
+	const mounted = React.useRef()
 	React.useLayoutEffect(() => {
-		body.classList.add("dark-mode-in-progress")
+		const html = document.documentElement
+		if (!mounted.current) {
+			mounted.current = true
+			html.style.backgroundColor = !darkMode ? "#ffffff" : "#1a202c"
+			return
+		}
+		document.body.classList.add("dark-mode-in-progress")
 		if (!darkMode) {
-			body.classList.remove("dark-mode")
+			document.body.classList.remove("dark-mode")
+			html.style.backgroundColor = "#ffffff" // white
 		} else {
-			body.classList.add("dark-mode")
+			document.body.classList.add("dark-mode")
+			html.style.backgroundColor = "#1a202c" // bg-gray-900
 		}
 		const id = setTimeout(() => {
-			body.classList.remove("dark-mode-in-progress")
-		}, 2e3)
+			document.body.classList.remove("dark-mode-in-progress")
+		}, TIMEOUT_DARK_MODE)
 		return () => {
 			clearTimeout(id)
 		}
