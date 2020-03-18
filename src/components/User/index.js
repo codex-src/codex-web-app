@@ -1,5 +1,7 @@
 import * as GraphQL from "graphql"
+import * as Icons from "svgs"
 import firebase from "__firebase"
+import Icon from "utils/Icon"
 import React from "react"
 import StartupScreen from "components/StartupScreen"
 
@@ -66,7 +68,11 @@ export const Provider = props => {
 
 	const { Provider } = Context
 	if (!response.loaded) {
-		return <StartupScreen />
+		return (
+			<div className="flex flex-row justify-center items-center h-full">
+				<Icon className="w-10 h-10 text-gray-300 dark:text-gray-700" svg={Icons.CodexLogo} />
+			</div>
+		)
 	}
 	return (
 		<Provider value={response.data}>
@@ -78,3 +84,5 @@ export const Provider = props => {
 export function useUser() {
 	return React.useContext(Context)
 }
+
+export default StartupScreen
