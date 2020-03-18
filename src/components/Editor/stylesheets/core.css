@@ -1,6 +1,6 @@
 .codex-editor {
 	--padding-x: 24px;
-	--box-shadow: 0px 0px 0px 1px hsl(var(--gray-300));
+	--box-shadow: 0px 0px 0px 1px var(--gray-300);
 
 	color: var(--black);
 	caret-color: var(--black);
@@ -41,14 +41,13 @@
 }
 .codex-editor .blockquote > [data-node] > .markdown {
 	margin-right: 0.5ch;
-	/* FIXME */
-	/* color: hsla(var(--md-blue-a400), 0.5); */
+	color: var(--md-blue-a400);
 }
 
 .codex-editor .code-block {
 	padding: 0px 24px;
-	/* background: var(--md-gray-50); */
-	/* box-shadow: var(--box-shadow); */
+	background: var(--md-gray-50);
+	box-shadow: var(--box-shadow);
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
@@ -90,13 +89,13 @@
 	box-shadow: var(--box-shadow);
 }
 .codex-editor .code > .markdown {
-	color: hsl(var(--gray));
+	color: var(--md-gray-500);
 }
 
 .codex-editor .strikethrough {
-	--md-blue-a400: var(--gray);
+	--md-blue-a400: var(--md-gray-500);
 	font-style: italic;
-	color: hsl(var(--gray));
+	color: var(--md-gray-500);
 	text-decoration: line-through;
 }
 

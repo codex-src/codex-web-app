@@ -1,10 +1,9 @@
 import * as Containers from "components/Containers"
 import Editor from "components/Editor"
+import raw from "raw.macro"
 import React from "react"
 
 // Returns a getter and setter for localStorage.
-//
-// TODO: Extract out of Demo
 function newLocalStorage(key, initialState) {
 	const getter = () => {
 		return localStorage.getItem(key) || initialState
@@ -16,7 +15,7 @@ function newLocalStorage(key, initialState) {
 }
 
 const Demo = props => {
-	const [getLocalStorage, setLocalStorage] = newLocalStorage("codex-app", "# Hello, world!")
+	const [getLocalStorage, setLocalStorage] = newLocalStorage("codex-app", raw("./index.md"))
 
 	const [state, dispatch] = Editor.useEditor(getLocalStorage(), {
 		shortcuts: true, // TODO: Move to props

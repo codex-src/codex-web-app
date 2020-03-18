@@ -72,7 +72,7 @@ const Nav = props => {
 				/>
 				<NavLink
 					to={constants.PATH_DEMO}
-					children="Try the Demo!"
+					children="Try the demo"
 				/>
 				<NavLink
 					to={constants.PATH_CHANGELOG}
@@ -105,7 +105,7 @@ const Nav = props => {
 						/>
 						<DropDown.Link
 							to={constants.PATH_DEMO}
-							text="Try the demo!"
+							text="Try the demo"
 						/>
 						<DropDown.Link
 							to={constants.PATH_CHANGELOG}

@@ -1,6 +1,6 @@
 .preview-mode .blockquote {
 	padding-left: 32px;
-	border-left: 2px solid hsl(var(--blue-a400));
+	border-left: 2px solid var(--md-blue-a400);
 }
 
 /* FIXME */
@@ -10,8 +10,8 @@
 	background:
 		linear-gradient(
 			transparent calc(var(--height) / 2 - 2px),
-			hsl(var(--gray-200)) calc(var(--height) / 2 - 2px),
-			hsl(var(--gray-200)) calc(var(--height) / 2 + 2px),
+			var(--gray-200) calc(var(--height) / 2 - 2px),
+			var(--gray-200) calc(var(--height) / 2 + 2px),
 			transparent calc(var(--height) / 2 + 2px)
 		);
 }
