@@ -47,8 +47,8 @@
 
 .codex-editor .code-block {
 	padding: 0px 24px;
-	/*background: var(--md-gray-50);*/
-	/*box-shadow: var(--box-shadow);*/
+	/* background: var(--md-gray-50); */
+	/* box-shadow: var(--box-shadow); */
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }

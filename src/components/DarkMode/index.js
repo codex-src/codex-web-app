@@ -1,7 +1,5 @@
 import React from "react"
 
-const TIMEOUT_DARK_MODE = 150
-
 const Context = React.createContext()
 
 export const Provider = props => {
@@ -25,28 +23,34 @@ export const Provider = props => {
 		}
 	}, [])
 
-	// Effects:
+	// .dark-mode-in-progress
 	const mounted = React.useRef()
 	React.useLayoutEffect(() => {
-		const html = document.documentElement
 		if (!mounted.current) {
 			mounted.current = true
-			html.style.backgroundColor = !darkMode ? "#ffffff" : "#1a202c"
 			return
 		}
-		document.body.classList.add("dark-mode-in-progress")
-		if (!darkMode) {
-			document.body.classList.remove("dark-mode")
-			html.style.backgroundColor = "#ffffff" // white
-		} else {
-			document.body.classList.add("dark-mode")
-			html.style.backgroundColor = "#1a202c" // bg-gray-900
-		}
+		// NOTE: Timeout should be equal to or greater than the
+		// duration of the transition
+		const { body } = document
+		body.classList.add("dark-mode-in-progress")
 		const id = setTimeout(() => {
-			document.body.classList.remove("dark-mode-in-progress")
-		}, TIMEOUT_DARK_MODE)
+			body.classList.remove("dark-mode-in-progress")
+		}, 1e3)
 		return () => {
 			clearTimeout(id)
+		}
+	}, [darkMode])
+
+	// .dark-mode
+	React.useLayoutEffect(() => {
+		const { documentElement, body } = document
+		if (!darkMode) {
+			documentElement.classList.remove("dark-mode")
+			body.classList.replace("bg-gray-900", "bg-white")
+		} else {
+			documentElement.classList.add("dark-mode")
+			body.classList.replace("bg-white", "bg-gray-900")
 		}
 	}, [darkMode])
 
