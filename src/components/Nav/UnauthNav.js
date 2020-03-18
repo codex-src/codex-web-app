@@ -23,7 +23,7 @@ const NavButtonDarkMode = props => {
 
 	return (
 		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-			<DarkModeIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-300" darkMode={darkMode} />
+			<DarkModeIcon darkMode={darkMode} />
 		</button>
 	)
 }

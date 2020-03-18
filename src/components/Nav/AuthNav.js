@@ -16,7 +16,7 @@ const NavButtonDarkMode = props => {
 
 	return (
 		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-			<DarkModeIcon className="w-6 h-6 text-indigo-600 dark:text-indigo-300" darkMode={darkMode} />
+			<DarkModeIcon darkMode={darkMode} />
 		</button>
 	)
 }
@@ -51,7 +51,7 @@ const Nav = props => {
 				<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME}>
 					{/* NOTE: Do not use transform scale-110 because
 					AuthNav is shorter */}
-					<Icon className="w-8 h-8 text-md-blue-a400" svg={Icons.CodexLogo} />
+					<Icon className="p-px w-8 h-8 text-md-blue-a400" svg={Icons.CodexLogo} />
 				</Link>
 			</div>
 
@@ -63,7 +63,7 @@ const Nav = props => {
 				<div className="px-3 relative flex flex-row items-center">
 
 					{/* Button */}
-					<button className="bg-gray-100 rounded-full focus:outline-none focus:shadow-outline overflow-hidden transition duration-150 ease-in-out" onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
+					<button className="bg-gray-100 dark:bg-gray-850 rounded-full focus:outline-none focus:shadow-outline overflow-hidden transition duration-150 ease-in-out" onPointerDown={e => e.preventDefault()} onClick={e => setDropDown(!dropDown)}>
 						<img className="w-8 h-8" src={user.photoURL || constants.TRANSPARENT_PX} alt="" />
 					</button>
 

@@ -41,13 +41,13 @@ export const Provider = props => {
 
 	const { Provider } = Context
 	return (
-		<Provider value={[counter, () => setCounter(counter + 1)]}>
+		<Provider value={[counter, setCounter]}>
 			{props.children}
 		</Provider>
 	)
 }
 
 export function useProgressBar() {
-	const [, setCounter] = React.useContext(Context)
-	return setCounter // renderProgressBar
+	const [counter, setCounter] = React.useContext(Context)
+	return () => setCounter(counter + 1) // renderProgressBar
 }

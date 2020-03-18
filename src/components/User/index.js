@@ -3,7 +3,6 @@ import * as Icons from "svgs"
 import firebase from "__firebase"
 import Icon from "utils/Icon"
 import React from "react"
-import StartupScreen from "components/StartupScreen"
 
 export const Context = React.createContext()
 
@@ -40,7 +39,8 @@ export const Provider = props => {
 				return
 			}
 			// FIXME: setTimeout is an intermediary fix to prevent
-			// a race condition
+			// a race condition; onAuthStateChanged fires before
+			// signInWithPopup has ended
 			setTimeout(async () => {
 				try {
 					const idToken = await firebase.auth().currentUser.getIdToken(true)
@@ -66,7 +66,6 @@ export const Provider = props => {
 		return defer
 	}, [])
 
-	const { Provider } = Context
 	if (!response.loaded) {
 		return (
 			<div className="flex flex-row justify-center items-center h-full">
@@ -74,6 +73,7 @@ export const Provider = props => {
 			</div>
 		)
 	}
+	const { Provider } = Context
 	return (
 		<Provider value={response.data}>
 			{props.children}
@@ -84,5 +84,3 @@ export const Provider = props => {
 export function useUser() {
 	return React.useContext(Context)
 }
-
-export default StartupScreen
