@@ -142,7 +142,7 @@ const UserNotes = props => {
 					<React.Fragment>
 
 						{/* New note (uses rounded-xl not rounded-lg-xl) */}
-						<Link className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 focus:bg-gray-100 rounded-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline" to={constants.PATH_NEW_NOTE}>
+						<Link className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 hover:bg-gray-750 focus:bg-gray-100 focus:dark:bg-gray-900 rounded-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline transition duration-75 ease-in-out" to={constants.PATH_NEW_NOTE}>
 							<div className="absolute inset-0 flex flex-row justify-center items-center">
 								<Hero.PlusSolidSm className="w-8 h-8 text-md-blue-a400" />
 							</div>
@@ -150,7 +150,7 @@ const UserNotes = props => {
 
 						{/* Notes */}
 						{response.data.map((each, index) => (
-							<Link key={each.noteID} className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 focus:bg-gray-100 rounded-lg-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
+							<Link key={each.noteID} className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-750 hover:bg-gray-100 focus:dark:bg-gray-900 focus:bg-gray-100 rounded-lg-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline transition duration-75 ease-in-out" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
 								<div className="absolute inset-0 overflow-y-hidden select-none">
 									<EditorInstance>
 										{each.data}
@@ -171,5 +171,23 @@ const UserNotes = props => {
 		</Containers.App>
 	)
 }
+
+// export const Link = ({ text, subtext, ...props }) => (
+// 	// eslint-disable-next-line react/jsx-pascal-case
+// 	<$Link className="-mx-px px-4 py-1 text-gray-800 dark:text-gray-200 hover:text-white hover:bg-md-blue-a400" {...props}>
+// 		<p className="font-medium -text-px">
+// 			{text}
+// 		</p>
+// 	</$Link>
+// )
+//
+// export const Base = React.forwardRef((props, ref) => (
+// 	// NOTE: Use py-2 because Link uses py-1
+// 	<div ref={ref} className="-mt-2 absolute right-0 top-full w-48 bg-white dark:bg-gray-750 rounded-lg shadow-hero-lg">
+// 		<div className="py-2 border border-transparent dark:border-gray-700 rounded-lg dark:shadow-hero-lg">
+// 			{props.children}
+// 		</div>
+// 	</div>
+// ))
 
 export default UserNotes

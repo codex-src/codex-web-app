@@ -10,6 +10,27 @@ export const Provider = props => {
 	// https://codesandbox.io/s/dead-simple-usedarkmode-implementation-sl71k
 	const [darkMode, setDarkMode] = React.useState(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
 
+	// TODO (1): Refactor to CSS
+	// TODO (2): Target timing function classes
+	const $setDarkMode = $darkMode => {
+		const map = new Map() // Map of elements
+		const elements = document.getElementsByClassName("transition")
+		for (const element of elements) {
+			;[...element.classList].map(className => {
+				if (!className.match(/duration-\d+/)) { // TODO: Convert to regex in advance
+					// No-op
+					return
+				}
+				map[element] = className
+				element.classList.replace(className, "duration-300")
+			})
+		}
+		setDarkMode($darkMode)
+		map.forEach(element => {
+			element.classList.replace("duration-300", map[element])
+		})
+	}
+
 	// Listen for dark mode (from the user):
 	React.useLayoutEffect(() => {
 		if (!window.matchMedia) {
@@ -18,7 +39,7 @@ export const Provider = props => {
 		}
 		const media = window.matchMedia("(prefers-color-scheme: dark)")
 		const handler = () => {
-			setDarkMode(media.matches)
+			$setDarkMode(media.matches)
 		}
 		handler() // Once
 		media.addListener(handler)
@@ -27,7 +48,7 @@ export const Provider = props => {
 		}
 	}, [])
 
-	// Dark mode side effects:
+	// Soft background:
 	React.useLayoutEffect(() => {
 		if (!darkMode) {
 			body.classList.remove("dark-mode")
@@ -40,7 +61,7 @@ export const Provider = props => {
 
 	const { Provider } = Context
 	return (
-		<Provider value={[darkMode, setDarkMode]}>
+		<Provider value={[darkMode, $setDarkMode]}>
 			{props.children}
 		</Provider>
 	)
