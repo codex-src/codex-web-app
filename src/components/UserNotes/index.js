@@ -124,7 +124,7 @@ const UserNotes = props => {
 					</div>
 				) : (
 					<div className="-mx-1 flex flex-row">
-						<button className="p-2 text-md-blue-a400 hover:bg-blue-100 focus:bg-blue-100 rounded-full focus:outline-none trans-300" onPointerDown={e => e.preventDefault()} onClick={dispatch.toggleSortDirection}>
+						<button className="p-2 text-md-blue-a400 hover:bg-blue-100 focus:bg-blue-100 rounded-full focus:outline-none transition duration-300" onPointerDown={e => e.preventDefault()} onClick={dispatch.toggleSortDirection}>
 							<Icon className="w-6 h-6" svg={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd} />
 						</button>
 					</div>
@@ -142,7 +142,7 @@ const UserNotes = props => {
 					<React.Fragment>
 
 						{/* New note (uses rounded-xl not rounded-lg-xl) */}
-						<Link className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 hover:bg-gray-750 focus:bg-gray-100 focus:dark:bg-gray-900 rounded-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline transition duration-75 ease-in-out" to={constants.PATH_NEW_NOTE}>
+						<Link className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 hover:bg-gray-750 focus:bg-gray-100 focus:dark:bg-gray-900 rounded-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline transition duration-150" to={constants.PATH_NEW_NOTE}>
 							<div className="absolute inset-0 flex flex-row justify-center items-center">
 								<Hero.PlusSolidSm className="w-8 h-8 text-md-blue-a400" />
 							</div>
@@ -150,14 +150,14 @@ const UserNotes = props => {
 
 						{/* Notes */}
 						{response.data.map((each, index) => (
-							<Link key={each.noteID} className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-750 hover:bg-gray-100 focus:dark:bg-gray-900 focus:bg-gray-100 rounded-lg-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline transition duration-75 ease-in-out" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
+							<Link key={each.noteID} className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-750 hover:bg-gray-100 focus:dark:bg-gray-900 focus:bg-gray-100 rounded-lg-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline transition duration-150" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
 								<div className="absolute inset-0 overflow-y-hidden select-none">
 									<EditorInstance>
 										{each.data}
 									</EditorInstance>
 								</div>
 								<div className="absolute right-0 top-0 flex flex-row justify-end items-start z-10">
-									<button className="-m-4 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 transform scale-75 trans-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.noteID)}>
+									<button className="-m-4 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 transform scale-75 transition duration-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.noteID)}>
 										<Hero.XOutlineMd className="w-6 h-6 stroke-black" />
 									</button>
 								</div>

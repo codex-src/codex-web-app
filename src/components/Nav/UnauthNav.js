@@ -133,7 +133,7 @@ const UnauthNav = props => {
 	useDarkModeNav(ref, darkMode)
 
 	return (
-		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 transition duration-300 ease-in-out">
+		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 transition duration-300">
 			<div className="px-6 flex flex-row justify-between w-full max-w-screen-lg h-20">
 				<Nav />
 			</div>
