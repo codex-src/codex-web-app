@@ -42,7 +42,7 @@ const Note = ({ note, ...props }) => {
 	// Copy -- do not rerender parent component:
 	const [noteID, setNoteID] = React.useState(!note ? "" : note.noteID)
 
-	const [state, dispatch] = Editor.useEditor(!note ? "" : note.data, {
+	const [state, dispatch] = Editor.useEditor(!note ? "# " : note.data, {
 		shortcuts: true, // TODO: Move to props
 		statusBar: true, // TODO: Move to props
 	})

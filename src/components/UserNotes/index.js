@@ -149,7 +149,9 @@ const UserNotes = props => {
 						</Link>
 
 						{/* Notes */}
-						{response.data.map((each, index) => (
+						{/* NOTE: Use [] as a zero value for data
+						because of a possible error state */}
+						{(response.data || []).map((each, index) => (
 							<Link key={each.noteID} className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-750 hover:bg-gray-100 focus:dark:bg-gray-900 focus:bg-gray-100 rounded-lg-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline transition duration-150" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
 								<div className="absolute inset-0 overflow-y-hidden select-none">
 									<EditorInstance>
