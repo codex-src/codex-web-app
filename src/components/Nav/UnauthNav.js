@@ -41,7 +41,7 @@ const NavButtonDarkMode = props => {
 
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
-		<Link className="px-4 py-3 bg-white dark:bg-gray-800 border border-transparent dark:border-gray-750 rounded-md shadow-hero-md" /* style={{ boxShadow: "0 8px 16px -8px hsla(210, 100%, 50%, 0.75)" }} */ {...props}>
+		<Link className="px-4 py-3 bg-white dark:bg-gray-800 border border-transparent dark:border-gray-750 rounded-md focus:outline-none shadow-hero focus:shadow-outline transition duration-150" {...props}>
 			<p className="font-medium text-md-blue-a400 dark:text-white">
 				{props.children}
 			</p>

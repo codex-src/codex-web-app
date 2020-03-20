@@ -44,13 +44,10 @@ export const Provider = props => {
 
 	// .dark-mode
 	React.useLayoutEffect(() => {
-		const { documentElement, body } = document
 		if (!darkMode) {
-			documentElement.classList.remove("dark-mode")
-			body.classList.replace("bg-gray-900", "bg-white")
+			document.documentElement.classList.remove("dark-mode")
 		} else {
-			documentElement.classList.add("dark-mode")
-			body.classList.replace("bg-white", "bg-gray-900")
+			document.documentElement.classList.add("dark-mode")
 		}
 	}, [darkMode])
 
