@@ -120,8 +120,8 @@ const NoteLoader = ({ noteID, ...props }) => {
 				</div>
 				<div className="h-16" />
 				<div className="-my-2">
-					<div className="my-2 h-8 bg-gray-100 dark:bg-gray-850" style={{ width: "25%" }} />
-					<div className="my-2 h-6" />
+					{/* <div className="my-2 h-8 bg-gray-100 dark:bg-gray-850" style={{ width: "25%" }} /> */}
+					{/* <div className="my-2 h-6" /> */}
 					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-850" />
 					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-850" />
 					<div className="my-2 h-6 bg-gray-100 dark:bg-gray-850" />

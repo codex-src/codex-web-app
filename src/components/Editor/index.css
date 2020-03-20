@@ -64,19 +64,19 @@
 	font-size: 1.75em;
 }
 .codex-editor > .header.h2 {
-	font-size: 1.5em;
-}
-.codex-editor > .header.h3 {
-	font-size: 1.4em;
-}
-.codex-editor > .header.h4 {
 	font-size: 1.3em;
 }
-.codex-editor > .header.h5 {
+.codex-editor > .header.h3 {
+	font-size: 1.3em;
+}
+.codex-editor > .header.h4 {
 	font-size: 1.2em;
 }
-.codex-editor > .header.h6 {
+.codex-editor > .header.h5 {
 	font-size: 1.1em;
+}
+.codex-editor > .header.h6 {
+	font-size: 1.05em;
 }
 
 .codex-editor > .blockquote {
