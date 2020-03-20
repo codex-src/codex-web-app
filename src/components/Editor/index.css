@@ -4,7 +4,7 @@
 .codex-editor.stylesheet-type {
 	-moz-tab-size: 4;
 	tab-size: 4;
-	font: calc(20 / 16 * 1em)/1.75 system-ui, sans-serif;
+	font: calc(18 / 16 * 1em)/1.75 system-ui, sans-serif;
 }
 .codex-editor.stylesheet-type .code-block,
 .codex-editor.stylesheet-type .code {
@@ -13,7 +13,7 @@
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: calc(14 / 16 * 1em)/1.35 "iA Writer Mono var", monospace;
+	font: calc(13.5 / 16 * 1em)/1.35 "iA Writer Mono var", monospace;
 }
 
 /*

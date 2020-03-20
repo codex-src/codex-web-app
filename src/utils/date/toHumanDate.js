@@ -14,7 +14,8 @@ const MONTHS = [
 ]
 
 function toHumanDate(timestamp) {
-	// NOTE: Use IS08601 for better browser compatibility
+	// NOTE: Use strict IS08601 for better browser
+	// compatibility
 	//
 	// 2006-01-02 15:04:05.000Z -> 2006-01-02T15:04:05.000Z
 	const date = new Date(timestamp.replace(" ", "T"))
