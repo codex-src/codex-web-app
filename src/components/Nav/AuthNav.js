@@ -7,25 +7,10 @@ import * as User from "components/User"
 import firebase from "__firebase"
 import Icon from "utils/Icon"
 import Link from "components/Link"
+import NavButtonDarkMode from "./NavButtonDarkMode"
 import React from "react"
 import useDarkModeNav from "./useDarkModeNav"
 import useDropDown from "hooks/useDropDown"
-
-const NavButtonDarkMode = props => {
-	const [darkMode, setDarkMode] = DarkMode.useDarkMode()
-
-	return (
-		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-			<Icon
-				className="w-6 h-6 text-md-blue-a400 dark:text-md-blue-a100"
-				svg={!darkMode
-					? Hero.SunOutlineMd
-					: Hero.SunSolidSm
-				}
-			/>
-		</button>
-	)
-}
 
 const Nav = props => {
 	const ref = React.useRef()

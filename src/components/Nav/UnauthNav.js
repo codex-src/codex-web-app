@@ -5,6 +5,7 @@ import * as Hero from "react-heroicons"
 import * as Icons from "svgs"
 import Icon from "utils/Icon"
 import Link from "components/Link"
+import NavButtonDarkMode from "./NavButtonDarkMode"
 import React from "react"
 import useDarkModeNav from "./useDarkModeNav"
 import useDropDown from "hooks/useDropDown"
@@ -17,22 +18,6 @@ const NavLink = props => (
 		</p>
 	</Link>
 )
-
-const NavButtonDarkMode = props => {
-	const [darkMode, setDarkMode] = DarkMode.useDarkMode()
-
-	return (
-		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-			<Icon
-				className="w-6 h-6 text-md-blue-a400 dark:text-md-blue-a100"
-				svg={!darkMode
-					? Hero.SunOutlineMd
-					: Hero.SunSolidSm
-				}
-			/>
-		</button>
-	)
-}
 
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
