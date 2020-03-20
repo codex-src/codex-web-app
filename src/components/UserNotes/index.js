@@ -7,7 +7,6 @@ import Editor from "components/Editor"
 import Icon from "utils/Icon"
 import Link from "components/Link"
 import React from "react"
-import useReducer from "./reducer"
 
 const QUERY_MY_NOTES = `
 	query Me($direction: String) {
@@ -48,46 +47,41 @@ const EditorInstance = props => {
 const UserNotes = props => {
 	const user = User.useUser()
 
-	const [state, dispatch] = useReducer()
-
 	const [response, setResponse] = React.useState({
 		loaded: false,
 		data: null,
 	})
 
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			let abort = false
-			const id = setTimeout(async () => {
-				try {
-					const body = await GraphQL.newQuery(user.idToken, QUERY_MY_NOTES, {
-						direction: !state.sortAscending ? "desc" : "asc",
-					})
-					if (abort) {
-						// No-op
-						return
-					}
-					const { data } = body
-					setResponse(current => ({
-						...current,
-						data: data.me.notes,
-					}))
-				} catch (error) {
-					console.error(error)
-				} finally {
-					setResponse(current => ({
-						...current,
-						loaded: true,
-					}))
+	React.useLayoutEffect(() => {
+		let abort = false
+		const id = setTimeout(async () => {
+			try {
+				const body = await GraphQL.newQuery(user.idToken, QUERY_MY_NOTES, {
+					limit: 100,
+				})
+				if (abort) {
+					// No-op
+					return
 				}
-			}, 0)
-			return () => {
-				abort = true
-				clearTimeout(id)
+				const { data } = body
+				setResponse(current => ({
+					...current,
+					data: data.me.notes,
+				}))
+			} catch (error) {
+				console.error(error)
+			} finally {
+				setResponse(current => ({
+					...current,
+					loaded: true,
+				}))
 			}
-		}, [user, state]),
-		[state.sortAscending],
-	)
+		}, 0)
+		return () => {
+			abort = true
+			clearTimeout(id)
+		}
+	}, [user])
 
 	const handleClickDelete = async (e, noteID) => {
 		e.preventDefault(e)
@@ -113,26 +107,6 @@ const UserNotes = props => {
 
 	return (
 		<Containers.App>
-
-			{/* Action bar */}
-			<div className="flex flex-row justify-end h-10">
-				{!response.loaded ? (
-					<div className="-mx-1 flex flex-row">
-						<div className="p-2 bg-gray-100 dark:bg-gray-850 rounded-full">
-							<div className="w-6 h-6" />
-						</div>
-					</div>
-				) : (
-					<div className="-mx-1 flex flex-row">
-						<button className="p-2 text-md-blue-a400 hover:bg-blue-100 focus:bg-blue-100 rounded-full focus:outline-none transition duration-300" onPointerDown={e => e.preventDefault()} onClick={dispatch.toggleSortDirection}>
-							<Icon className="w-6 h-6" svg={!state.sortAscending ? Hero.SortDescendingOutlineMd : Hero.SortAscendingOutlineMd} />
-						</button>
-					</div>
-				)}
-			</div>
-
-			{/* Notes */}
-			<div className="h-6" />
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{!response.loaded ? (
 					[...new Array(3)].map((_, index) => (
@@ -142,9 +116,9 @@ const UserNotes = props => {
 					<React.Fragment>
 
 						{/* New note (uses rounded-xl not rounded-lg-xl) */}
-						<Link className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 hover:bg-gray-750 focus:bg-gray-100 focus:dark:bg-gray-900 rounded-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline transition duration-150" to={constants.PATH_NEW_NOTE}>
+						<Link className="pb-2/3 relative bg-white dark:bg-gray-800 hover:bg-gray-100 hover:dark:bg-gray-790 rounded-xl border border-transparent dark:border-gray-750 focus:outline-none shadow-hero focus:shadow-outline transition duration-150" to={constants.PATH_NEW_NOTE}>
 							<div className="absolute inset-0 flex flex-row justify-center items-center">
-								<Hero.PlusSolidSm className="w-8 h-8 text-md-blue-a400" />
+								<Icon className="w-8 h-8 text-md-blue-a400" svg={Hero.PlusSolidSm} />
 							</div>
 						</Link>
 
@@ -160,7 +134,7 @@ const UserNotes = props => {
 								</div>
 								<div className="absolute right-0 top-0 flex flex-row justify-end items-start z-10">
 									<button className="-m-4 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 transform scale-75 transition duration-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.noteID)}>
-										<Hero.XOutlineMd className="w-6 h-6 stroke-black" />
+										<Icon className="w-6 h-6 stroke-black" svg={Hero.XOutlineMd} />
 									</button>
 								</div>
 							</Link>
@@ -169,7 +143,6 @@ const UserNotes = props => {
 					</React.Fragment>
 				)}
 			</div>
-
 		</Containers.App>
 	)
 }

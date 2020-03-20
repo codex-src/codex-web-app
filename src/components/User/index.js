@@ -66,6 +66,7 @@ export const Provider = props => {
 		return defer
 	}, [])
 
+	const { Provider } = Context
 	if (!response.loaded) {
 		return (
 			<div className="flex flex-row justify-center items-center h-full">
@@ -74,7 +75,6 @@ export const Provider = props => {
 			</div>
 		)
 	}
-	const { Provider } = Context
 	return (
 		<Provider value={response.data}>
 			{props.children}

@@ -6,17 +6,17 @@ import React from "react"
 // <Link>                  -> <div>
 //
 const Link = ({ className, to, ...props }) => {
-	className = `${className || ""} block`.trim()
+	const extendedClassName = `${className || ""} block`.trim()
 	let Component = null
 	switch (true) {
 	case !!to && to.startsWith("https://"): // Takes precedence
-		Component = <a className={className} href={to} {...props} /> // eslint-disable-line jsx-a11y/anchor-has-content
+		Component = <a className={extendedClassName} href={to} {...props} /> // eslint-disable-line jsx-a11y/anchor-has-content
 		break
 	case !!to:
-		Component = <Router.Link className={className} to={to} {...props} />
+		Component = <Router.Link className={extendedClassName} to={to} {...props} />
 		break
 	default:
-		Component = <div {...props} />
+		Component = <div className={className} {...props} />
 		break
 	}
 	return Component
