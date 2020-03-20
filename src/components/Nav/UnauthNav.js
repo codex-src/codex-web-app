@@ -3,7 +3,6 @@ import * as DarkMode from "components/DarkMode"
 import * as DropDown from "./DropDown"
 import * as Hero from "react-heroicons"
 import * as Icons from "svgs"
-import DarkModeIcon from "./DarkModeIcon"
 import Icon from "utils/Icon"
 import Link from "components/Link"
 import React from "react"
@@ -24,21 +23,16 @@ const NavButtonDarkMode = props => {
 
 	return (
 		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-			<DarkModeIcon darkMode={darkMode} />
+			<Icon
+				className="w-6 h-6 text-md-blue-a400 dark:text-md-blue-a100"
+				svg={!darkMode
+					? Hero.SunOutlineMd
+					: Hero.SunSolidSm
+				}
+			/>
 		</button>
 	)
 }
-
-// // Previous implementation:
-// const NavLinkCTA = props => (
-// 	<div className="mx-3 flex flex-row items-center">
-// 		<Link className="px-4 py-3 bg-white text-md-blue-a400 hover:bg-gray-100 active:bg-white rounded-md shadow-hero-md hover:shadow-hero-lg active:shadow-hero trans-150" {...props}>
-// 			<p className="font-medium">
-// 				{props.children}
-// 			</p>
-// 		</Link>
-// 	</div>
-// )
 
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
@@ -101,20 +95,26 @@ const Nav = props => {
 					{/* Drop down */}
 					<DropDown.Base ref={ref}>
 						<DropDown.Link
+							to={constants.PATH_HOME}
+							children="Home"
+						/>
+						<DropDown.HR />
+						<DropDown.Link
 							to={constants.PATH_README}
-							text="Readme"
+							children="Readme"
 						/>
 						<DropDown.Link
 							to={constants.PATH_DEMO}
-							text="Try the demo"
+							children="Try the demo"
 						/>
 						<DropDown.Link
 							to={constants.PATH_CHANGELOG}
-							text="Changelog"
+							children="Changelog"
 						/>
+						<DropDown.HR />
 						<DropDown.Link
 							to={constants.PATH_AUTH}
-							text="Open your Codex"
+							children="Open your Codex"
 						/>
 					</DropDown.Base>
 

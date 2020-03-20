@@ -9,7 +9,7 @@
 	transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1071px) {
 
 .hero-editor-active {
 	opacity: 1;

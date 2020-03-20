@@ -1,9 +1,9 @@
 import * as constants from "__constants"
 import * as DarkMode from "components/DarkMode"
 import * as DropDown from "./DropDown"
+import * as Hero from "react-heroicons"
 import * as Icons from "svgs"
 import * as User from "components/User"
-import DarkModeIcon from "./DarkModeIcon"
 import firebase from "__firebase"
 import Icon from "utils/Icon"
 import Link from "components/Link"
@@ -16,7 +16,13 @@ const NavButtonDarkMode = props => {
 
 	return (
 		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
-			<DarkModeIcon darkMode={darkMode} />
+			<Icon
+				className="w-6 h-6 text-md-blue-a400 dark:text-md-blue-a100"
+				svg={!darkMode
+					? Hero.SunOutlineMd
+					: Hero.SunSolidSm
+				}
+			/>
 		</button>
 	)
 }
@@ -69,25 +75,25 @@ const Nav = props => {
 					<DropDown.Base ref={ref}>
 						<DropDown.Link
 							to={constants.PATH_NEW_NOTE}
-							text="Create a new note"
+							children="Create a new note"
 						/>
 						<DropDown.Link
 							to={constants.PATH_MY_NOTES}
-							text="My notes"
+							children="My notes"
 						/>
 						<DropDown.HR />
 						<DropDown.Link
 							to={constants.PATH_README}
-							text="Readme"
+							children="Readme"
 						/>
 						<DropDown.Link
 							to={constants.PATH_CHANGELOG}
-							text="Changelog"
+							children="Changelog"
 						/>
 						<DropDown.HR />
 						<DropDown.Link
 							onClick={handleClickSignOut}
-							text="Logout"
+							children="Logout"
 						/>
 					</DropDown.Base>
 
