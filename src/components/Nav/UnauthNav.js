@@ -73,6 +73,10 @@ const Nav = props => {
 					to={constants.PATH_CHANGELOG}
 					children="Changelog"
 				/>
+				<NavLink
+					to={constants.URL_GITHUB_REPO}
+					children="GitHub"
+				/>
 				<NavLinkCTA
 					to={constants.PATH_AUTH}
 					children="Open your Codex"
@@ -95,11 +99,6 @@ const Nav = props => {
 					{/* Drop down */}
 					<DropDown.Base ref={ref}>
 						<DropDown.Link
-							to={constants.PATH_HOME}
-							children="Home"
-						/>
-						<DropDown.HR />
-						<DropDown.Link
 							to={constants.PATH_README}
 							children="Readme"
 						/>
@@ -107,9 +106,14 @@ const Nav = props => {
 							to={constants.PATH_DEMO}
 							children="Try the demo"
 						/>
+						<DropDown.HR />
 						<DropDown.Link
 							to={constants.PATH_CHANGELOG}
 							children="Changelog"
+						/>
+						<DropDown.Link
+							to={constants.URL_GITHUB_REPO}
+							children="GitHub"
 						/>
 						<DropDown.HR />
 						<DropDown.Link

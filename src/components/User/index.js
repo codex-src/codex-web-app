@@ -69,7 +69,8 @@ export const Provider = props => {
 	if (!response.loaded) {
 		return (
 			<div className="flex flex-row justify-center items-center h-full">
-				<Icon className="w-10 h-10 text-gray-300 dark:text-gray-700" svg={Icons.CodexLogo} />
+				{/* NOTE: Use md-gray-* for light mode */}
+				<Icon className="w-10 h-10 text-md-gray-300 dark:text-gray-700" svg={Icons.CodexLogo} />
 			</div>
 		)
 	}

@@ -31,7 +31,7 @@ export const ProgressBar = props => {
 
 	return (
 		<div className="fixed inset-x-0 top-0 z-40">
-			<div ref={ref} className="-mt-px h-1" />
+			<div ref={ref} className="h-1" />
 		</div>
 	)
 }
