@@ -1,8 +1,49 @@
 import * as constants from "__constants"
-import HeroEditor from "./HeroEditor"
+import Editor from "components/Editor"
 import Link from "components/Link"
 import Nav from "components/Nav"
+import raw from "raw.macro"
 import React from "react"
+
+import "./index.css"
+
+const EditorInstance = props => {
+	const [state, dispatch] = Editor.useEditor(raw("./index.md"), {
+		readOnly: true, // TODO: Move to props
+	})
+
+	return (
+		<Editor.Editor
+			state={state}
+			dispatch={dispatch}
+			style={{ padding: 24 }}
+		/>
+	)
+}
+
+const HeroEditor = props => {
+	const ref = React.useRef()
+
+	React.useLayoutEffect(() => {
+		ref.current.classList.add("hero-editor-enter")
+		const id = setTimeout(() => {
+			ref.current.classList.add("hero-editor-active")
+		}, 1e3)
+		return () => {
+			clearTimeout(id)
+		}
+	}, [])
+
+	return (
+		<div ref={ref} className="pb-4/5 relative">
+			<div className="absolute inset-0">
+				<div className="h-full bg-white dark:bg-gray-800 border border-transparent dark:border-gray-750 rounded-xl shadow-hero-xl overflow-y-scroll scrolling-touch">
+					<EditorInstance />
+				</div>
+			</div>
+		</div>
+	)
+}
 
 const Home = props => (
 	// NOTE: Do not use <Containers.App>
