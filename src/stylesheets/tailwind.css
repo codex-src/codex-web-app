@@ -3,11 +3,11 @@
 @import "tailwindcss/components";
 /* purgecss end ignore */
 
-.font-salt { font-feature-settings: "salt"; }
-.font-tnum { font-feature-settings: "tnum"; }
+.salt { font-feature-settings: "salt"; }
+.tnum { font-feature-settings: "tnum"; }
 
-.text-tabs-2 { tab-size: 2; }
-.text-tabs-4 { tab-size: 4; }
+.tabs-2 { tab-size: 2; }
+.tabs-4 { tab-size: 4; }
 
 .-text-px { font-size: 0.9375rem; }
 .text-px  { font-size: 1.0625rem; }

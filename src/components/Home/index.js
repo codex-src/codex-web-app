@@ -13,12 +13,12 @@ const Home = props => (
 
 				{/* LHS */}
 				<div className="w-full max-w-lg text-center lg:text-left">
-					<h1 className="font-bold text-4xl -tracking-px leading-snug text-black dark:text-gray-100">
+					<h1 className="font-inter font-semibold text-4xl tracking-tight leading-snug text-black dark:text-gray-100">
 						Codex makes it easier than ever to express yourself in words <em>and</em> code
 					</h1>
 					<div className="h-12" />
 					<Link to={constants.PATH_AUTH}>
-						<p className="font-medium text-3xl -tracking-px text-md-blue-a400">
+						<p className="font-inter font-medium text-3xl tracking-tight text-md-blue-a400">
 							Open your Codex
 						</p>
 					</Link>
