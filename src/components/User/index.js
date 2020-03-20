@@ -1,6 +1,6 @@
 import * as GraphQL from "graphql"
 import * as Icons from "svgs"
-import firebase from "__firebase"
+import firebase from "firebase/app"
 import Icon from "utils/Icon"
 import React from "react"
 

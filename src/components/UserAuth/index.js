@@ -1,7 +1,7 @@
 import * as GraphQL from "graphql"
 import * as Icons from "svgs"
 import * as ProgressBar from "components/ProgressBar"
-import firebase from "__firebase"
+import firebase from "firebase/app"
 import Icon from "utils/Icon"
 import React from "react"
 
