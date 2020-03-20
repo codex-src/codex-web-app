@@ -17,11 +17,6 @@ const Nav = props => {
 	const user = User.useUser()
 	const [dropDown, setDropDown] = useDropDown(ref)
 
-	// Force blur:
-	React.useLayoutEffect(() => {
-		ref.current.blur()
-	}, [dropDown])
-
 	const handleClickSignOut = e => {
 		const ok = window.confirm("Are you sure you want logout?")
 		if (!ok) {

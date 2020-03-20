@@ -147,7 +147,6 @@
 
 .codex-editor .code {
 	margin: 0 1px;
-	padding: 1px;
 	box-decoration-break: clone;
 	color: var(--md-blue-a400);
 	box-shadow: 0 0 0 1px var(--gray-300);
