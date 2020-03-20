@@ -38,15 +38,24 @@
 }
 
 .codex-editor .blockquote {
-	color: var(--gray-700);
+	color: var(--md-gray-700);
 }
 .dark-mode .blockquote {
-	color: var(--gray-300);
+	color: var(--md-gray-300);
+}
+
+.blockquote {
+	border-left: 0.25em solid var(--md-gray-300);
+}
+.dark-mode .blockquote {
+	border-left: 0.25em solid var(--md-gray-700);
 }
 
 .codex-editor .blockquote > [data-node] > .markdown {
-	padding-right: 0.25em;
-	color: var(--md-blue-a400);
+	padding-right: 2px;
+	color: transparent;
+	/* NOTE: Do not use display: none because Chrome errors */
+	visibility: hidden;
 }
 
 .codex-editor .code-block {

@@ -46,16 +46,16 @@ function parse(body) {
 		// Blockquote:
 		case char === ">":
 			if (
-				(each.data.length >= 2 && each.data.slice(0, 2) === "> ") ||
-				(each.data.length === 1 && each.data === ">")
+				(each.data.length >= 2 && each.data.slice(0, 2) === "> ") // ||
+				// (each.data.length === 1 && each.data === ">")
 			) {
 				const from = index
 				let to = from
 				to++
 				while (to < MAX_LENGTH) {
 					if (
-						(body[to].data.length < 2 || body[to].data.slice(0, 2) !== "> ") &&
-						(body[to].data.length !== 1 || body[to].data !== ">")
+						(body[to].data.length < 2 || body[to].data.slice(0, 2) !== "> ") // &&
+						// (body[to].data.length !== 1 || body[to].data !== ">")
 					) {
 						to-- // Decrement -- one too many
 						break
