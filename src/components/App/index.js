@@ -45,6 +45,12 @@ const App = props => (
 							// NOTE: Use key because <Note> is shared
 							children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_CHANGELOG} />}
 						/>
+						<Route.Any
+							path={constants.PATH_DEMO}
+							exact
+							title="Demo"
+							children={<Demo />}
+						/>
 
 						{/* Shared */}
 						<Route.Any
@@ -83,12 +89,6 @@ const App = props => (
 						/>
 
 						{/* Unprotected */}
-						<Route.Unprotected
-							path={constants.PATH_DEMO}
-							exact
-							title="Demo"
-							children={<Demo />}
-						/>
 						<Route.Unprotected
 							path={constants.PATH_AUTH}
 							title="Open your Codex"

@@ -1,11 +1,9 @@
-Codex is a WYSIWYG markdown editor for devs.
+Codex is a WYSIWYG markdown editor for devs. (Codex is currently in an open alpha)
 
-Format your notes using CommonMark markdown. For example: _italics_, **bold**, `code` and ~strikethrough~.
+Format your notes using GitHub Flavored Markdown. For example: _italics_, **bold**, `code` and ~strikethrough~.
 
-> You can create blockquotes like this.
+> You can create blockquotes.
 
 ```
-And code blocks like this!
+And block quotes.
 ```
-
-More features coming soon…stay tuned! 📺⚡️
