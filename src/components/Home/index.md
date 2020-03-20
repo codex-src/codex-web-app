@@ -1,4 +1,4 @@
-You can _finally_ write **and see** your notes using markdown in the browser! 🎉
+Codex is a WYSIWYG markdown editor for devs.
 
 Format your notes using CommonMark markdown. For example: _italics_, **bold**, `code` and ~strikethrough~.
 
