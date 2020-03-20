@@ -7,7 +7,7 @@ import ReactDOM from "react-dom"
 import "firebase/analytics"
 import "firebase/auth"
 
-import "debug.css"                          // Takes precedence
+import "debug.css"
 import "stylesheets/tailwind-variables.css" // Takes precedence
 import "stylesheets/dark-mode-transition.css"
 

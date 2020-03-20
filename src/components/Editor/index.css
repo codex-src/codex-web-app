@@ -1,0 +1,193 @@
+/*
+ * Type stylesheet
+ */
+.codex-editor.stylesheet-type {
+	-moz-tab-size: 4;
+	tab-size: 4;
+	font: calc(20 / 16 * 1em)/1.75 system-ui, sans-serif;
+}
+.codex-editor.stylesheet-type .code-block,
+.codex-editor.stylesheet-type .code {
+	-moz-osx-font-smoothing: auto;
+	-webkit-font-smoothing:  auto;
+
+	-moz-tab-size: 2;
+	tab-size: 2;
+	font: calc(14 / 16 * 1em)/1.35 "iA Writer Mono var", monospace;
+}
+
+/*
+ * Mono stylesheet
+ */
+.codex-editor.stylesheet-mono {
+	-moz-osx-font-smoothing: auto;
+	-webkit-font-smoothing:  auto;
+
+	-moz-tab-size: 2;
+	tab-size: 2;
+	font: 1em/1.75 "iA Writer Mono var", monospace;
+}
+.codex-editor.stylesheet-mono .code-block,
+.codex-editor.stylesheet-mono .code {
+	-moz-tab-size: 2;
+	tab-size: 2;
+	font: 1em/1.35 "iA Writer Mono var", monospace;
+}
+
+/*
+ * Base
+ */
+.codex-editor {
+	color: var(--black);
+	caret-color: var(--black);
+}
+.dark-mode .codex-editor {
+	color: var(--white);
+	caret-color: var(--white);
+}
+
+.codex-editor ::selection {
+	background: #2979ff3f;
+}
+.dark-mode .codex-editor ::selection {
+	background: #ffffff3f;
+}
+
+/*
+ * Block elements
+ */
+.codex-editor > .header {
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}
+.codex-editor > .header.h1 {
+	font-size: 1.75em;
+}
+.codex-editor > .header.h2 {
+	font-size: 1.5em;
+}
+.codex-editor > .header.h3 {
+	font-size: 1.4em;
+}
+.codex-editor > .header.h4 {
+	font-size: 1.3em;
+}
+.codex-editor > .header.h5 {
+	font-size: 1.2em;
+}
+.codex-editor > .header.h6 {
+	font-size: 1.1em;
+}
+
+.codex-editor > .blockquote {
+	color: var(--md-gray-700);
+	border-left: 0.25em solid var(--md-gray-300);
+}
+.dark-mode .codex-editor > .blockquote {
+	color: var(--md-gray-300);
+	border-left: 0.25em solid var(--md-gray-700);
+}
+
+.codex-editor > .blockquote > [data-node] > .markdown {
+	padding-right: 0.1875em;
+	color: transparent;
+	/* NOTE: Do not use display: none */
+	visibility: hidden;
+}
+.codex-editor.preview-mode > .blockquote {
+ 	padding-left: 1em;
+}
+
+.codex-editor > .code-block {
+	padding: 0 1.5em;
+	background: var(--md-gray-50);
+	box-shadow: 0 0 0 1px var(--gray-300);
+}
+.dark-mode .codex-editor > .code-block {
+	background: hsla(0, 0%, 100%, 0.1);
+	box-shadow: 0 0 0 1px var(--gray-700);
+}
+.codex-editor.preview-mode > .code-block > [data-start-node] > .markdown,
+.codex-editor.preview-mode > .code-block > [data-end-node] > .markdown {
+	display: inline;
+	visibility: hidden;
+}
+
+.codex-editor > .paragraph.emojis {
+	font-size: 1.6em; /* Resolves to 2em because of 1.25em */
+}
+
+.codex-editor.preview-mode > .break {
+	--line-height: 1.75em;
+
+	background:
+		linear-gradient(
+			transparent calc(var(--line-height) / 2 - 2px),
+			var(--md-gray-300) calc(var(--line-height) / 2 - 2px),
+			var(--md-gray-300) calc(var(--line-height) / 2 + 2px),
+			transparent calc(var(--line-height) / 2 + 2px)
+		);
+}
+.dark-mode .codex-editor.preview-mode > .break {
+	--line-height: 1.75em;
+
+	background:
+		linear-gradient(
+			transparent calc(var(--line-height) / 2 - 2px),
+			var(--md-gray-700) calc(var(--line-height) / 2 - 2px),
+			var(--md-gray-700) calc(var(--line-height) / 2 + 2px),
+			transparent calc(var(--line-height) / 2 + 2px)
+		);
+}
+
+/*
+ * Inline elements
+ */
+.codex-editor .emoji {
+	margin: 0 1px;
+	font-size: 1.25em;
+	line-height: 1;
+	vertical-align: -0.1em;
+}
+
+.codex-editor .em {
+	font-style: italic;
+}
+
+.codex-editor .strong {
+	font-weight: 700;
+}
+
+.codex-editor .code {
+	margin: 0 1px;
+	padding: 1px;
+	box-decoration-break: clone;
+	color: var(--md-blue-a400);
+	box-shadow: 0 0 0 1px var(--gray-300);
+}
+.dark-mode .codex-editor .code {
+	color: var(--md-blue-a200);
+	box-shadow: 0 0 0 1px var(--gray-700);
+}
+.codex-editor .code > .markdown {
+	color: var(--md-gray-500);
+}
+
+.codex-editor .strikethrough {
+	--md-blue-a400: var(--md-gray-500);
+	--md-blue-a200: var(--md-gray-500);
+
+	font-style: italic;
+	color: var(--md-gray-500);
+	text-decoration: line-through;
+}
+
+.codex-editor .markdown {
+	color: var(--md-blue-a400);
+}
+.dark-mode .codex-editor .markdown {
+	color: var(--md-blue-a200);
+}
+.codex-editor.preview-mode .markdown {
+	display: none;
+}

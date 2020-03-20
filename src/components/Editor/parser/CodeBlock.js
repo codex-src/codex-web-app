@@ -75,14 +75,14 @@ const CodeBlock = React.memo(props => {
 					data-start-node={(parsed.length > 1 && !index) || null}
 					data-end-node={(parsed.length > 1 && index + 1 === parsed.length) || null}
 				>
-					<span>
-						<Markdown
-							start={each.atStart ? `\`\`\`${props.metadata}` : null}
-							end={each.atEnd ? "```" : null}
-						>
-							{each.children}
-						</Markdown>
-					</span>
+					{/* <span> */}
+					<Markdown
+						start={each.atStart ? `\`\`\`${props.metadata}` : null}
+						end={each.atEnd ? "```" : null}
+					>
+						{each.children}
+					</Markdown>
+					{/* </span> */}
 				</Node>
 			))}
 		</CompoundNode>

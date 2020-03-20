@@ -70,16 +70,17 @@ function parse(body) {
 			break
 		// Code block:
 		case char === "`":
-			// // Single line code block:
-			// if (
-			// 	each.data.length >= 6 &&
-			// 	each.data.slice(0, 3) === "```" && // Start syntax
-			// 	each.data.slice(-3) === "```"      // End syntax
-			// ) {
-			// 	const nodes = body.slice(index, index + 1).map(each => ({ ...each })) // Read proxy
-			// 	components.push(<CodeBlock key={each.key} metadata="">{nodes}</CodeBlock>)
-			// 	continue
-			// }
+			// Single line:
+			if (
+				each.data.length >= 6 &&
+				each.data.slice(0, 3) === "```" && // Start syntax
+				each.data.slice(-3) === "```"      // End syntax
+			) {
+				const nodes = body.slice(index, index + 1).map(each => ({ ...each })) // Read proxy
+				components.push(<CodeBlock key={each.key} metadata="">{nodes}</CodeBlock>)
+				continue
+			}
+			// Multiline:
 			if (
 				each.data.length >= 3 &&
 				each.data.slice(0, 3) === "```" &&

@@ -16,7 +16,9 @@ import {
 	detectUndo,
 } from "utils/platform"
 
-import "./stylesheets/index.css"
+/* purgecss start ignore */
+import "./index.css"
+/* purgecss end ignore */
 
 // import "./stylesheets/core.css"
 // import "./stylesheets/preview-mode.css"
