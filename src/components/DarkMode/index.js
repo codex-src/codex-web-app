@@ -16,14 +16,22 @@ export const Provider = props => {
 		const handler = () => {
 			setDarkMode(media.matches)
 		}
-		// handler() // Once
 		media.addListener(handler)
 		return () => {
 			media.removeListener(handler)
 		}
 	}, [])
 
-	// .dark-mode-transition (order does not matter)
+	// .dark-mode
+	React.useLayoutEffect(() => {
+		if (!darkMode) {
+			document.documentElement.classList.remove("dark-mode")
+		} else {
+			document.documentElement.classList.add("dark-mode")
+		}
+	}, [darkMode])
+
+	// .dark-mode-transition
 	const mounted = React.useRef()
 	React.useLayoutEffect(() => {
 		if (!mounted.current) {
@@ -39,15 +47,6 @@ export const Provider = props => {
 		}, 1e3)
 		return () => {
 			clearTimeout(id)
-		}
-	}, [darkMode])
-
-	// .dark-mode
-	React.useLayoutEffect(() => {
-		if (!darkMode) {
-			document.documentElement.classList.remove("dark-mode")
-		} else {
-			document.documentElement.classList.add("dark-mode")
 		}
 	}, [darkMode])
 

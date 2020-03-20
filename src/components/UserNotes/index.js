@@ -108,11 +108,14 @@ const UserNotes = props => {
 	return (
 		<Containers.App>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
 				{!response.loaded ? (
 					[...new Array(3)].map((_, index) => (
 						<div key={index} className="pb-2/3 relative bg-gray-100 dark:bg-gray-850 rounded-lg-xl" />
 					))
 				) : (
+
+					// Loaded
 					<React.Fragment>
 
 						{/* New note */}
@@ -127,20 +130,27 @@ const UserNotes = props => {
 						because of a possible error state */}
 						{(response.data || []).map((each, index) => (
 							<Link key={each.noteID} className="pb-2/3 relative bg-white dark:bg-gray-800 border border-transparent dark:border-gray-750 rounded-lg-xl focus:outline-none shadow-hero focus:shadow-outline transition duration-150" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
+
+								{/* X button */}
+								<div className="absolute right-0 top-0 flex flex-row justify-end items-start z-10">
+									{/* NOTE: Use -m-4 instead of -m-5 */}
+									<button className="-m-4 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 transform scale-75 transition duration-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.noteID)}>
+										<Icon className="w-6 h-6 stroke-black" svg={Hero.XOutlineMd} />
+									</button>
+								</div>
+
+								{/* Editor instance */}
 								<div className="absolute inset-0 overflow-y-hidden select-none">
 									<EditorInstance>
 										{each.data}
 									</EditorInstance>
 								</div>
-								<div className="absolute right-0 top-0 flex flex-row justify-end items-start z-10">
-									<button className="-m-4 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 transform scale-75 transition duration-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.noteID)}>
-										<Icon className="w-6 h-6 stroke-black" svg={Hero.XOutlineMd} />
-									</button>
-								</div>
+
 							</Link>
 						))}
 
 					</React.Fragment>
+
 				)}
 			</div>
 		</Containers.App>

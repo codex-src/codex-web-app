@@ -1,5 +1,4 @@
-html,
-body,
+.dark-mode-transition,
 .dark-mode-transition [class*="text-"],
 .dark-mode-transition [class*="bg-"],
 .dark-mode-transition [class*="border-"], /* TODO: rounded? */
