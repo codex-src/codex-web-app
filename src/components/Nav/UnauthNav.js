@@ -12,7 +12,7 @@ import useDropDown from "hooks/useDropDown"
 
 const NavLink = props => (
 	<Link className="px-3 flex flex-row items-center" {...props}>
-		<p className="tracking-wide text-gray-900 dark:text-gray-100">
+		<p className="tracking-wide text-black dark:text-white">
 			{props.children}
 		</p>
 	</Link>
@@ -41,8 +41,8 @@ const NavButtonDarkMode = props => {
 
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
-		<Link className="px-4 py-3 bg-white dark:bg-md-blue-a400 rounded-md shadow-hero-md" /* style={{ boxShadow: "0 8px 16px -8px hsla(210, 100%, 50%, 0.75)" }} */ {...props}>
-			<p className="font-medium text-md-blue-a400 dark:text-gray-100">
+		<Link className="px-4 py-3 bg-white dark:bg-gray-800 border border-transparent dark:border-gray-750 rounded-md shadow-hero-md" /* style={{ boxShadow: "0 8px 16px -8px hsla(210, 100%, 50%, 0.75)" }} */ {...props}>
+			<p className="font-medium text-md-blue-a400 dark:text-white">
 				{props.children}
 			</p>
 		</Link>
@@ -60,7 +60,7 @@ const Nav = props => {
 			{/* LHS */}
 			<div className="-mx-3 flex flex-row">
 				<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME}>
-					<Icon className="w-8 h-8 text-md-blue-a400 transform scale-110" svg={Icons.CodexLogo} />
+					<Icon className="w-8 h-8 text-md-blue-a400" svg={Icons.CodexLogo} />
 				</Link>
 			</div>
 

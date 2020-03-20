@@ -49,9 +49,7 @@ const Nav = props => {
 			{/* LHS */}
 			<div className="-mx-3 flex flex-row">
 				<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME}>
-					{/* NOTE: Do not use transform scale-110 because
-					AuthNav is shorter */}
-					<Icon className="p-px w-8 h-8 text-md-blue-a400" svg={Icons.CodexLogo} />
+					<Icon className="w-8 h-8 text-md-blue-a400" svg={Icons.CodexLogo} />
 				</Link>
 			</div>
 
