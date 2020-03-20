@@ -1,10 +1,6 @@
-import * as constants from "__constants"
 import React from "react"
 
 import "./ProgressBar.css"
-
-const enterClass  = "progress-bar-enter"  // eslint-disable-line no-multi-spaces
-const activeClass = "progress-bar-active" // eslint-disable-line no-multi-spaces
 
 export const Context = React.createContext()
 
@@ -19,11 +15,11 @@ export const ProgressBar = props => {
 			mounted.current = true
 			return
 		}
-		ref.current.classList.remove(activeClass)
-		ref.current.classList.add(enterClass)
+		ref.current.classList.remove("progress-bar-active")
+		ref.current.classList.add("progress-bar-enter")
 		const id = setTimeout(() => {
-			ref.current.classList.add(activeClass)
-		}, constants.MICRO_DELAY_MS)
+			ref.current.classList.add("progress-bar-active")
+		}, 25)
 		return () => {
 			clearTimeout(id)
 		}
@@ -49,5 +45,5 @@ export const Provider = props => {
 
 export function useProgressBar() {
 	const [counter, setCounter] = React.useContext(Context)
-	return () => setCounter(counter + 1) // renderProgressBar
+	return () => setCounter(counter + 1) // const renderProgressBar = ...
 }

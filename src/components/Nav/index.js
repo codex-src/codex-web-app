@@ -6,13 +6,7 @@ import UnauthNav from "./UnauthNav"
 const Nav = props => {
 	const user = User.useUser()
 
-	let Component = null
-	if (!user) {
-		Component = UnauthNav
-	} else {
-		Component = AuthNav
-	}
-	return <Component />
+	return React.createElement(!user ? UnauthNav : AuthNav)
 }
 
 export default Nav

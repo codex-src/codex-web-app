@@ -46,7 +46,6 @@ const HeroEditor = props => {
 }
 
 const Home = props => (
-	// NOTE: Do not use <Containers.App>
 	<React.Fragment>
 		<Nav />
 		<div className="py-40 flex flex-row justify-center min-h-full">
@@ -59,7 +58,7 @@ const Home = props => (
 					</h1>
 					<div className="h-12" />
 					<Link to={constants.PATH_AUTH}>
-						<p className="font-inter font-medium text-3xl tracking-tight text-md-blue-a400">
+						<p className="font-inter font-medium text-3xl tracking-tight text-md-blue-a400 dark:md-blue-a200">
 							Open your Codex
 						</p>
 					</Link>

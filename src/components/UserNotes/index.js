@@ -115,13 +115,12 @@ const UserNotes = props => {
 					))
 				) : (
 
-					// Loaded
 					<React.Fragment>
 
 						{/* New note */}
 						<Link className="pb-2/3 relative bg-white dark:bg-gray-800 border border-transparent dark:border-gray-750 rounded-xl focus:outline-none shadow-hero focus:shadow-outline transition duration-150" to={constants.PATH_NEW_NOTE}>
 							<div className="absolute inset-0 flex flex-row justify-center items-center">
-								<Icon className="w-8 h-8 text-md-blue-a400" svg={Hero.PlusSolidSm} />
+								<Icon className="w-8 h-8 text-md-blue-a400 dark:text-md-blue-a200" svg={Hero.PlusSolidSm} />
 							</div>
 						</Link>
 

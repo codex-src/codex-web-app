@@ -1,7 +1,4 @@
 .codex-editor {
-	--padding-x: 24px;
-	--box-shadow: 0px 0px 0px 1px var(--gray-300);
-
 	color: var(--black);
 	caret-color: var(--black);
 }
@@ -10,44 +7,52 @@
 	caret-color: var(--gray-100);
 }
 
-.codex-editor *::selection {
+.codex-editor ::selection {
 	background: #2979ff3f;
+}
+.dark-mode .codex-editor ::selection {
+	background: #ffffff3f;
 }
 
 .codex-editor .header {
-	font-weight: bold;
+	font-weight: 600;
+	letter-spacing: -0.01em;
 }
 .codex-editor .header.h1 {
-	font-size: 1.50em;
+	font-size: 1.75em;
 }
 .codex-editor .header.h2 {
-	font-size: 1.25em;
+	font-size: 1.5em;
 }
 .codex-editor .header.h3 {
-	font-size: 1.20em;
+	font-size: 1.4em;
 }
 .codex-editor .header.h4 {
-	font-size: 1.15em;
+	font-size: 1.3em;
 }
 .codex-editor .header.h5 {
-	font-size: 1.10em;
+	font-size: 1.2em;
 }
 .codex-editor .header.h6 {
-	font-size: 1.05em;
+	font-size: 1.1em;
 }
 
 .codex-editor .blockquote {
-	color: var(--md-blue-a400);
+	color: var(--gray-700);
 }
+.dark-mode .blockquote {
+	color: var(--gray-300);
+}
+
 .codex-editor .blockquote > [data-node] > .markdown {
-	margin-right: 0.5ch;
+	padding-right: 0.25em;
 	color: var(--md-blue-a400);
 }
 
 .codex-editor .code-block {
-	padding: 0px 24px;
+	padding: 0 1.5em;
 	background: var(--md-gray-50);
-	box-shadow: var(--box-shadow);
+	box-shadow: 0 0 0 1px var(--gray-300);
 	-webkit-overflow-scrolling: touch;
 	overflow-x: scroll;
 }
@@ -57,16 +62,14 @@
 	box-shadow: 0 0 0 1px var(--gray-700), var(--shadow-md);
 }
 
-/* .codex-editor .code-block > [data-node] > span { */
-/* 	padding-right: 24px; */
-/* } */
-
 .codex-editor .paragraph.emojis {
-	font-size: 1.5em;
+	/* 1.6 * 1.25 === 2 */
+	font-size: 1.6em;
 }
 
 .codex-editor .emoji {
-	font-size: 1.2em;
+	margin: 0 1px;
+	font-size: 1.25em;
 	line-height: 1;
 	vertical-align: -0.1em;
 }
@@ -76,17 +79,15 @@
 }
 
 .codex-editor .strong {
-	font-weight: 600;
-}
-.codex-editor .header .strong {
 	font-weight: 700;
 }
 
 .codex-editor .code {
-	padding: 0.0625em;
+	margin: 0 1px;
+	padding: 1px;
 	box-decoration-break: clone;
 	color: var(--md-blue-a400);
-	box-shadow: var(--box-shadow);
+	box-shadow: 0 0 0 1px var(--gray-300);
 }
 .codex-editor .code > .markdown {
 	color: var(--md-gray-500);
@@ -101,4 +102,7 @@
 
 .codex-editor .markdown {
 	color: var(--md-blue-a400);
+}
+.dark-mode .markdown {
+	color: var(--md-blue-a200);
 }

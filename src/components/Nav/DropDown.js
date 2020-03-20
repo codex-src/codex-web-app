@@ -6,8 +6,11 @@ export const Separator = props => (
 )
 
 export const Link = props => (
+	// NOTE: Use md-blue-a200 for light mode; md-blue-a400 has
+	// too much contrast
+	//
 	// eslint-disable-next-line react/jsx-pascal-case
-	<$Link className="-mx-px px-4 py-1 text-black dark:text-white hover:text-white hover:bg-md-blue-a400" {...props}>
+	<$Link className="-mx-px px-4 py-1 text-black dark:text-white hover:text-white hover:bg-md-blue-a200" {...props}>
 		<p className="font-medium -text-px">
 			{props.children}
 		</p>

@@ -1,6 +1,4 @@
 /* eslint-disable no-multi-spaces */
-export const MICRO_DELAY_MS    = 25
-
 export const NOTE_ID_CHANGELOG = "m0kTABTb8aNRCIiiEPAD" // DO NOT EDIT
 export const NOTE_ID_README    = "m5cHzQLJN4d4RGpBQo4O" // DO NOT EDIT
 

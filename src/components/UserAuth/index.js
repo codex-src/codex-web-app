@@ -53,9 +53,9 @@ const UserAuth = props => {
 			<div className="px-6 box-content" style={{ width: "18rem" }}>
 
 				<div className="flex flex-row justify-center items-center transform scale-125">
-					{/* NOTE: mr-* is preferred because of flex */}
+					{/* NOTE: div.mr-* is preferred because of flex */}
 					<div className="mr-2">
-						<Icon className="w-6 h-6 stroke-medium text-md-blue-a400" svg={Icons.CodexLogo} />
+						<Icon className="w-6 h-6 stroke-medium text-md-blue-a400 dark:text-md-blue-a200" svg={Icons.CodexLogo} />
 					</div>
 					<Icon className="w-24 h-6 text-black dark:text-white" svg={Icons.CodexTextLogo} />
 				</div>
@@ -64,10 +64,6 @@ const UserAuth = props => {
 				<p className="text-center font-medium text-lg leading-snug text-gray-800 dark:text-gray-200">
 					Choose one of the following to<br />
 					open your Codex:
-					{/* <a className="text-md-blue-a400 cursor-pointer" href={constants.URL} target="_blank" rel="noopener noreferrer"> */}
-					{/* 	Codex */}
-					{/* </a> */}
-					{/* : */}
 				</p>
 
 				{/* GitHub */}
