@@ -11,8 +11,9 @@ import useDarkModeNav from "./useDarkModeNav"
 import useDropDown from "hooks/useDropDown"
 
 const NavLink = props => (
-	<Link className="px-3 flex flex-row items-center" {...props}>
-		<p className="tracking-wide text-black dark:text-white">
+	// NOTE: Use hover:text-md-blue-a200 for light mode
+	<Link className="px-3 text-black dark:text-white hover:text-md-blue-a400 hover:dark:text-md-blue-a200 flex flex-row items-center transition duration-75" {...props}>
+		<p className="tracking-wide">
 			{props.children}
 		</p>
 	</Link>
