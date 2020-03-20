@@ -131,7 +131,7 @@ const UserNotes = props => {
 						{(response.data || []).map((each, index) => (
 							<Link key={each.noteID} className="pb-2/3 relative bg-white dark:bg-gray-800 border border-transparent dark:border-gray-750 rounded-lg-xl focus:outline-none shadow-hero focus:shadow-outline transition duration-150" to={constants.PATH_NOTE.replace(":noteID", each.noteID)}>
 
-								{/* X button */}
+								{/* Delete button */}
 								<div className="absolute right-0 top-0 flex flex-row justify-end items-start z-10">
 									{/* NOTE: Use -m-4 instead of -m-5 */}
 									<button className="-m-4 p-2 text-white bg-red-500 rounded-full focus:outline-none opacity-0 hover:opacity-100 focus:opacity-100 transform scale-75 transition duration-300" onPointerDown={e => e.preventDefault()} onClick={e => handleClickDelete(e, each.noteID)}>
@@ -139,7 +139,7 @@ const UserNotes = props => {
 									</button>
 								</div>
 
-								{/* Editor instance */}
+								{/* Editor */}
 								<div className="absolute inset-0 overflow-y-hidden select-none">
 									<EditorInstance>
 										{each.data}

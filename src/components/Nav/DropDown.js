@@ -1,7 +1,7 @@
 import $Link from "components/Link"
 import React from "react"
 
-export const HR = props => (
+export const Separator = props => (
 	<hr className="-mx-px my-2 border-gray-300 dark:border-gray-650" />
 )
 

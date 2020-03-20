@@ -106,7 +106,7 @@ const Nav = props => {
 							to={constants.PATH_DEMO}
 							children="Try the demo"
 						/>
-						<DropDown.HR />
+						<DropDown.Separator />
 						<DropDown.Link
 							to={constants.PATH_CHANGELOG}
 							children="Changelog"
@@ -115,7 +115,7 @@ const Nav = props => {
 							to={constants.URL_GITHUB_REPO}
 							children="GitHub"
 						/>
-						<DropDown.HR />
+						<DropDown.Separator />
 						<DropDown.Link
 							to={constants.PATH_AUTH}
 							children="Open your Codex"

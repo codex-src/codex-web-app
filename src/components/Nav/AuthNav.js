@@ -81,7 +81,7 @@ const Nav = props => {
 							to={constants.PATH_MY_NOTES}
 							children="My notes"
 						/>
-						<DropDown.HR />
+						<DropDown.Separator />
 						<DropDown.Link
 							to={constants.PATH_README}
 							children="Readme"
@@ -90,7 +90,11 @@ const Nav = props => {
 							to={constants.PATH_CHANGELOG}
 							children="Changelog"
 						/>
-						<DropDown.HR />
+						<DropDown.Link
+							to={constants.URL_GITHUB_REPO}
+							children="GitHub"
+						/>
+						<DropDown.Separator />
 						<DropDown.Link
 							onClick={handleClickSignOut}
 							children="Logout"
@@ -113,7 +117,7 @@ const AuthNav = props => {
 	useDarkModeNav(ref, darkMode)
 
 	return (
-		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 z-30 transition duration-300">
+		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 border-b border-transparent dark:border-gray-750 shadow z-30 transition duration-300">
 			<div className="px-6 flex flex-row justify-between w-full max-w-screen-lg h-16">
 				<Nav />
 			</div>
