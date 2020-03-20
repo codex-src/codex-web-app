@@ -42,8 +42,8 @@
 	caret-color: var(--black);
 }
 .dark-mode .codex-editor {
-	color: var(--white);
-	caret-color: var(--white);
+	color: var(--gray-200);
+	caret-color: var(--gray-200);
 }
 
 .codex-editor ::selection {
@@ -109,7 +109,7 @@
 }
 .codex-editor.preview-mode > .code-block > [data-start-node] > .markdown,
 .codex-editor.preview-mode > .code-block > [data-end-node] > .markdown {
-	display: inline;
+	display: inline; /* Prevent display: none */
 	visibility: hidden;
 }
 
@@ -120,24 +120,11 @@
 .codex-editor.preview-mode > .break {
 	--line-height: 1.75em;
 
-	background:
-		linear-gradient(
-			transparent calc(var(--line-height) / 2 - 2px),
-			var(--md-gray-300) calc(var(--line-height) / 2 - 2px),
-			var(--md-gray-300) calc(var(--line-height) / 2 + 2px),
-			transparent calc(var(--line-height) / 2 + 2px)
-		);
+	background: linear-gradient(transparent calc(var(--line-height) / 2 - 0.125em), var(--md-gray-300) calc(var(--line-height) / 2 - 0.125em), var(--md-gray-300) calc(var(--line-height) / 2 + 0.125em), transparent calc(var(--line-height) / 2 + 0.125em));
 }
 .dark-mode .codex-editor.preview-mode > .break {
 	--line-height: 1.75em;
-
-	background:
-		linear-gradient(
-			transparent calc(var(--line-height) / 2 - 2px),
-			var(--md-gray-700) calc(var(--line-height) / 2 - 2px),
-			var(--md-gray-700) calc(var(--line-height) / 2 + 2px),
-			transparent calc(var(--line-height) / 2 + 2px)
-		);
+	background: linear-gradient(transparent calc(var(--line-height) / 2 - 0.125em), var(--md-gray-700) calc(var(--line-height) / 2 - 0.125em), var(--md-gray-700) calc(var(--line-height) / 2 + 0.125em), transparent calc(var(--line-height) / 2 + 0.125em));
 }
 
 /*
