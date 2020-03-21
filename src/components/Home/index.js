@@ -8,17 +8,10 @@ import React from "react"
 import "./index.css"
 
 const EditorInstance = props => {
-	const [state, dispatch] = Editor.useEditor(raw("./index.md"), {
-		readOnly: true, // TODO: Move to props
-	})
+	const [state, dispatch] = Editor.useEditor(raw("./index.md"))
 
-	return (
-		<Editor.Editor
-			state={state}
-			dispatch={dispatch}
-			style={{ padding: 24 }}
-		/>
-	)
+	const style = { padding: 24 }
+	return <Editor.Editor state={state} dispatch={dispatch} readOnly style={style} />
 }
 
 const HeroEditor = props => {
