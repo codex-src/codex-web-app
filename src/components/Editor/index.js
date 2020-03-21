@@ -133,6 +133,9 @@ export function Editor({
 		React.useCallback(() => {
 			ReactDOM.render(state.components, state.reactDOM, () => {
 				// Sync the DOMs:
+				//
+				// NOTE: Force render on paste events because paste
+				// can become a no-op (same data)
 				const mutations = syncTrees(ref.current, state.reactDOM)
 				if ((!state.shouldRender || !mutations) && state.actionType !== "PASTE") {
 					dispatch.rendered()
@@ -182,28 +185,21 @@ export function Editor({
 	// 	[state.shouldRender /* before */, state.pos1, state.pos2],
 	// )
 
-	const idleTimeoutID = React.useRef()
 	React.useEffect(
 		React.useCallback(() => {
-			if (state.prefs.readOnly || state.prefs.previewMode) {
-				// No-op
-				return
-			}
-			if (!state.shouldRender) {
+			// if (state.prefs.readOnly || state.prefs.previewMode) {
+			// 	// No-op
+			// 	return
+			// }
+			const id = setTimeout(() => {
 				dispatch.storeUndo()
-				return
-			}
-			idleTimeoutID.current = setTimeout(() => {
-				dispatch.storeUndo()
-			}, 250)
+			}, 500)
 			return () => {
-				clearTimeout(idleTimeoutID.current)
+				clearTimeout(id)
 			}
-		}, [state, dispatch]),
-		[state.shouldRender], // state.data?
-	)
+		}, [dispatch]),
+	[state.shouldRender])
 
-	// useUndo(state, dispatch)
 	useShortcuts(state, dispatch)
 
 	React.useEffect(() => {
