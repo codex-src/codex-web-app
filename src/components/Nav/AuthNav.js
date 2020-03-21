@@ -33,6 +33,8 @@ const Nav = props => {
 
 			{/* LHS */}
 			<div className="-mx-3 flex flex-row">
+
+				{/* Logo */}
 				<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME}>
 					{/* NOTE: Use p-px to match the perceived size of
 					the user photo */}
