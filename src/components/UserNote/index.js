@@ -143,13 +143,8 @@ const Note = ({ note, ...props }) => {
 		)
 	}, [saveStatus])
 
-	return (
-		<Editor.Editor
-			state={state}
-			dispatch={dispatch}
-			style={{ margin: "-160px 0", padding: "160px 0", minHeight: "100vh" }}
-		/>
-	)
+	const style = { margin: "-160px 0", padding: "160px 0", minHeight: "100vh" }
+	return <Editor.Editor state={state} dispatch={dispatch} style={style} />
 }
 
 const NoteLoader = ({ noteID, ...props }) => {

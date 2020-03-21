@@ -25,19 +25,9 @@ const QUERY_NOTE = `
 `
 
 const EditorInstance = props => {
-	const [state, dispatch] = Editor.useEditor(props.children, {
-		previewMode: true, // TODO: Move to props
-		readOnly: true,    // TODO: Move to props
-	})
+	const [state, dispatch] = Editor.useEditor(props.children)
 
-	return (
-		<Editor.Editor
-			state={state}
-			dispatch={dispatch}
-			previewMode={true}
-			/* readOnly={true} */
-		/>
-	)
+	return <Editor.Editor state={state} dispatch={dispatch} readOnly />
 }
 
 const NoteLayout = ({ note, ...props }) => (

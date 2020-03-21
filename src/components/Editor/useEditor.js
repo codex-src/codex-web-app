@@ -383,7 +383,10 @@ function init(data) {
 	return fn
 }
 
-function useEditor(data) {
+function useEditor(data, ...args) {
+	if (args.length) {
+		throw new Error("useEditor only accepts data=<String> as an argument")
+	}
 	return useMethods(reducer, initialState, init(data))
 }
 
