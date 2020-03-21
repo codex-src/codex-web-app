@@ -8,7 +8,7 @@ Format _italics_, **bold**, `code`, and ~strikethrough~ using syntax characters.
 
 ***Bold and italics*** and ___bold and italics___ are also supported.
 
-Finally, emojis are 20% bigger 😀 and emojis on their own line are 50% bigger:
+Finally, emojis are 20% bigger 😀 and emojis on their own line are 100% bigger:
 
 😂
 
