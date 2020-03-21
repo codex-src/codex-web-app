@@ -123,6 +123,7 @@ export function Editor({ state, dispatch, ...props }) {
 	const propsRef = React.useRef(props)
 	React.useLayoutEffect(() => {
 		dispatch.registerProps(propsRef.current)
+		dispatch.getClass()
 	}, [dispatch])
 
 	React.useLayoutEffect(
@@ -237,7 +238,6 @@ export function Editor({ state, dispatch, ...props }) {
 					className: state.className,
 
 					style: {
-						// ...props.style, // Takes precedence
 						...{ ...props.style, fontSize: null },
 
 						// NOTE: Imperative styles needed for the editor

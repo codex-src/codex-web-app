@@ -51,13 +51,13 @@ const reducer = state => ({
 
 	setStylesheet(stylesheet) {
 		state.props.stylesheet = stylesheet
-		this.getClassName()
+		this.getClass()
 	},
 	toggleReadOnly() {
 		state.props.readOnly = !state.props.readOnly
-		this.getClassName()
+		this.getClass()
 	},
-	getClassName() {
+	getClass() {
 		const classNames = ["codex-editor"]
 		if (state.props.readOnly) {
 			classNames.push("feature-read-only")
