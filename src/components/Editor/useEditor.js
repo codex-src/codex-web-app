@@ -20,7 +20,10 @@ const ActionTypes = new Enum(
 )
 
 const initialState = {
-	props: {},          // User-specified props
+	className: "codex-editor",
+	props: {
+		stylesheet: "TYPE",
+	},
 	actionType: "",     // The type of the current action
 	actionTimeStamp: 0, // The time stamp of the current action
 	focused: false,     // Is the editor focused?
@@ -45,6 +48,24 @@ const reducer = state => ({
 	registerProps(props) {
 		Object.assign(state.props, props)
 	},
+
+	setStylesheet(stylesheet) {
+		state.props.stylesheet = stylesheet
+		this.getClassName()
+	},
+	toggleReadOnly() {
+		state.props.readOnly = !state.props.readOnly
+		this.getClassName()
+	},
+	getClassName() {
+		const classNames = ["codex-editor"]
+		if (state.props.readOnly) {
+			classNames.push("feature-read-only")
+		}
+		classNames.push(state.props.stylesheet === "TYPE" ? "feature-stylesheet-type" : "feature-stylesheet-mono")
+		state.className = classNames.join(" ")
+	},
+
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
 		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {

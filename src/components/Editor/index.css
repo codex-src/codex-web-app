@@ -94,7 +94,7 @@
 	/* NOTE: Do not use display: none */
 	visibility: hidden;
 }
-.codex-editor.feature-preview-mode > .blockquote {
+.codex-editor.feature-read-only > .blockquote {
  	padding-left: 1em;
 }
 
@@ -107,8 +107,8 @@
 	/* background: hsla(0, 0%, 100%, 0.1); */
 	box-shadow: 0 0 0 1px var(--gray-700);
 }
-.codex-editor.feature-preview-mode > .code-block > [data-start-node] > .markdown,
-.codex-editor.feature-preview-mode > .code-block > [data-end-node] > .markdown {
+.codex-editor.feature-read-only > .code-block > [data-start-node] > .markdown,
+.codex-editor.feature-read-only > .code-block > [data-end-node] > .markdown {
 	display: inline; /* Prevent display: none */
 	visibility: hidden;
 }
@@ -117,7 +117,7 @@
 	font-size: 1.6em; /* Resolves to 2em because of 1.25em */
 }
 
-.codex-editor.feature-preview-mode > .break {
+.codex-editor.feature-read-only > .break {
 	--line-height: 1.75em;
 
 	height: var(--line-height);
@@ -127,7 +127,7 @@
 		var(--md-gray-300) calc(var(--line-height) / 2 + 0.125em),
 		transparent        calc(var(--line-height) / 2 + 0.125em));
 }
-.dark-mode .codex-editor.feature-preview-mode > .break {
+.dark-mode .codex-editor.feature-read-only > .break {
 	--line-height: 1.75em;
 
 	height: var(--line-height);
@@ -194,8 +194,8 @@
 }
 
 /*
- * feature-preview-mode
+ * feature-read-only
  */
-.codex-editor.feature-preview-mode .markdown {
+.codex-editor.feature-read-only .markdown {
 	display: none;
 }

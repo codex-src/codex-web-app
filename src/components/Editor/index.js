@@ -1,4 +1,5 @@
 // import getCoords from "./helpers/getCoords"
+// import shallowEqual from "utils/shallowEqual"
 // import useShortcuts from "./hooks/useShortcuts"
 // import useUndo from "./hooks/useUndo"
 import * as platform from "./helpers/platform"
@@ -8,7 +9,6 @@ import innerText from "./helpers/innerText"
 import NodeIterator from "./helpers/NodeIterator"
 import React from "react"
 import ReactDOM from "react-dom"
-import shallowEqual from "utils/shallowEqual"
 import syncTrees from "./helpers/syncTrees"
 import { newUUID } from "utils/random"
 
@@ -120,8 +120,6 @@ export function Editor({ state, dispatch, ...props }) {
 	//
 	// NOTE: Do not use props as a dependency because the
 	// reference (object) changes on every render
-	//
-	// TODO: Does not update when props changes
 	const propsRef = React.useRef(props)
 	React.useLayoutEffect(() => {
 		dispatch.registerProps(propsRef.current)
@@ -195,43 +193,39 @@ export function Editor({ state, dispatch, ...props }) {
 		}, [dispatch, props.readOnly]),
 	[state.shouldRender]) // TODO: state.data?
 
-	// // Shortcuts:
-	// React.useEffect(
-	// 	React.useCallback(() => {
-	// 		if (!state.prefs.shortcuts) {
-	// 			// No-op
-	// 			return
-	// 		}
-	// 		const onKeyDown = e => {
-	// 			switch (true) {
-	// 			case platform.detectKeyCode(e, KEY_CODE_1, { shiftKey: true }):
-	// 				e.preventDefault()
-	// 				dispatch.toggleStylesheet("TYPE")
-	// 				return
-	// 			case platform.detectKeyCode(e, KEY_CODE_2, { shiftKey: true }):
-	// 				e.preventDefault()
-	// 				dispatch.toggleStylesheet("MONO")
-	// 				return
-	// 			// case detectKeyCode(e, KEY_CODE_P, { shiftKey: true }):
-	// 			// 	e.preventDefault()
-	// 			// 	dispatch.toggleTextBackground()
-	// 			// 	return
-	// 			case platform.detectKeyCode(e, KEY_CODE_P):
-	// 				e.preventDefault()
-	// 				dispatch.togglePreviewMode()
-	// 				return
-	// 			default:
-	// 				// No-op
-	// 				break
-	// 			}
-	// 		}
-	// 		document.addEventListener("keydown", onKeyDown)
-	// 		return () => {
-	// 			document.removeEventListener("keydown", onKeyDown)
-	// 		}
-	// 	}, [state, dispatch]),
-	// 	[state.prefs.shortcuts],
-	// )
+	// Shortcuts:
+	React.useEffect(
+		React.useCallback(() => {
+			if (!state.props.shortcuts) {
+				// No-op
+				return
+			}
+			const onKeyDown = e => {
+				switch (true) {
+				case platform.detectKeyCode(e, KEY_CODE_1, { shiftKey: true }):
+					e.preventDefault()
+					dispatch.setStylesheet("TYPE")
+					return
+				case platform.detectKeyCode(e, KEY_CODE_2, { shiftKey: true }):
+					e.preventDefault()
+					dispatch.setStylesheet("MONO")
+					return
+				case platform.detectKeyCode(e, KEY_CODE_P):
+					e.preventDefault()
+					dispatch.toggleReadOnly()
+					return
+				default:
+					// No-op
+					break
+				}
+			}
+			document.addEventListener("keydown", onKeyDown)
+			return () => {
+				document.removeEventListener("keydown", onKeyDown)
+			}
+		}, [state, dispatch]),
+		[state.props.shortcuts],
+	)
 
 	return (
 		<div style={{ fontSize: props.style.fontSize }}>
@@ -240,8 +234,7 @@ export function Editor({ state, dispatch, ...props }) {
 				{
 					ref,
 
-					// className: ["codex-editor", ...state.prefs.classNames].join(" "),
-					className: "codex-editor feature-stylesheet-type", // FIXME
+					className: state.className,
 
 					style: {
 						// ...props.style, // Takes precedence

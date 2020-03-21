@@ -43,11 +43,7 @@ const Note = ({ note, ...props }) => {
 
 	// Copy -- do not rerender parent component:
 	const [noteID, setNoteID] = React.useState(!note ? "" : note.noteID)
-
-	const [state, dispatch] = Editor.useEditor(!note ? "# " : note.data, {
-		shortcuts: true, // TODO: Move to props
-		statusBar: true, // TODO: Move to props
-	})
+	const [state, dispatch] = Editor.useEditor(!note ? "# " : note.data)
 
 	// https://github.com/facebook/react/issues/14010#issuecomment-433788147
 	const stateRef = React.useRef(state)
@@ -144,7 +140,7 @@ const Note = ({ note, ...props }) => {
 	}, [saveStatus])
 
 	const style = { margin: "-160px 0", padding: "160px 0", minHeight: "100vh" }
-	return <Editor.Editor state={state} dispatch={dispatch} style={style} />
+	return <Editor.Editor state={state} dispatch={dispatch} shortcuts style={style} />
 }
 
 const NoteLoader = ({ noteID, ...props }) => {
