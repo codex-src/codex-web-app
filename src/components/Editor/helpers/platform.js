@@ -1,19 +1,20 @@
-import { isMacOS } from "./userAgent"
+// TODO: Write tests
 
 const KEY_CODE_Y = 89
 const KEY_CODE_Z = 90
 
-// Returns whether an key down event exclusively uses meta
-// or control.
+// Returns whether an key down event exclusively uses the
+// meta or control key.
 function isMetaOrCtrlKey(e) {
-	if (isMacOS) {
+	// https://css-tricks.com/snippets/javascript/test-mac-pc-javascript
+	if (navigator.userAgent.includes("Mac OS X")) {
 		return !e.ctrlKey && e.metaKey
 	}
 	return e.ctrlKey && !e.metaKey
 }
 
 // Detects whether a key down event matches a key code.
-export function detectKeyCode(e, keyCode, { shiftKey } = { shiftKey: false }) {
+export function detectKeyCode(e, keyCode, { shiftKey } = { shiftKey: false }) { // FIXME: { shiftKey }?
 	const ok = (
 		e.shiftKey === shiftKey &&
 		!e.altKey &&

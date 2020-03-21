@@ -1,6 +1,6 @@
 import EnumStylesheets from "../EnumStylesheets"
 import React from "react"
-import { detectKeyCode } from "utils/platform"
+import { detectKeyCode } from "../helpers/platform"
 
 const KEY_CODE_1 = 49
 const KEY_CODE_2 = 50

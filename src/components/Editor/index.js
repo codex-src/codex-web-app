@@ -10,11 +10,10 @@ import useShortcuts from "./hooks/useShortcuts"
 import useUndo from "./hooks/useUndo"
 import { newUUID } from "utils/random"
 
-// TODO: Inline
 import {
 	detectRedo,
 	detectUndo,
-} from "utils/platform"
+} from "./helpers/platform"
 
 /* purgecss start ignore */
 import "./index.css"
@@ -129,11 +128,10 @@ function getNodesFromIterators(rootNode, [start, end]) {
 // // wordWrap:       false,
 
 export function Editor({ state, dispatch, ...props }) {
-	// Core references:
 	const ref = React.useRef()
 	const target = React.useRef()
 
-	// Extraneous references:
+	// Extraneous refs:
 	const pointerDown = React.useRef()
 	const dedupedCompositionEnd = React.useRef()
 
