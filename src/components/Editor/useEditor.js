@@ -327,7 +327,7 @@ const reducer = state => ({
 		state.history.stack.splice(state.history.index + 1)
 	},
 	undo() {
-		if (state.prefs.readOnly || state.prefs.previewMode) {
+		if (state.props.readOnly) {
 			// No-op
 			return
 		}
@@ -344,7 +344,7 @@ const reducer = state => ({
 		this.render()
 	},
 	redo() {
-		if (state.prefs.readOnly || state.prefs.previewMode) {
+		if (state.props.readOnly) {
 			// No-op
 			return
 		}

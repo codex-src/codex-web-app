@@ -8,6 +8,7 @@ import innerText from "./helpers/innerText"
 import NodeIterator from "./helpers/NodeIterator"
 import React from "react"
 import ReactDOM from "react-dom"
+import shallowEqual from "utils/shallowEqual"
 import syncTrees from "./helpers/syncTrees"
 import { newUUID } from "utils/random"
 
@@ -119,6 +120,8 @@ export function Editor({ state, dispatch, ...props }) {
 	//
 	// NOTE: Do not use props as a dependency because the
 	// reference (object) changes on every render
+	//
+	// TODO: Does not update when props changes
 	const propsRef = React.useRef(props)
 	React.useLayoutEffect(() => {
 		dispatch.registerProps(propsRef.current)
