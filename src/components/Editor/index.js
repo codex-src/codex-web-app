@@ -1,5 +1,5 @@
-import getCoords from "./helpers/getCoords"
-import getPosFromRange2 from "./helpers/getPosFromRange2"
+// import getCoords from "./helpers/getCoords"
+import getPosFromRange from "./helpers/getPosFromRange"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
 import NodeIterator from "./helpers/NodeIterator"
@@ -20,7 +20,7 @@ import {
 import "./index.css"
 /* purgecss end ignore */
 
-const SCROLL_BUFFER = 12
+// const SCROLL_BUFFER = 12
 
 // Gets the cursors.
 //
@@ -29,10 +29,10 @@ const SCROLL_BUFFER = 12
 function getPos(rootNode) {
 	const selection = document.getSelection()
 	const range = selection.getRangeAt(0)
-	const pos1 = getPosFromRange2(rootNode, range.startContainer, range.startOffset)
+	const pos1 = getPosFromRange(rootNode, range.startContainer, range.startOffset)
 	let pos2 = { ...pos1 }
 	if (!range.collapsed) {
-		pos2 = getPosFromRange2(rootNode, range.endContainer, range.endOffset)
+		pos2 = getPosFromRange(rootNode, range.endContainer, range.endOffset)
 	}
 	return [pos1, pos2]
 }
@@ -90,27 +90,52 @@ function getNodesFromIterators(rootNode, [start, end]) {
 	return { nodes, atEnd }
 }
 
-const Debugger = ({ state, ...props }) => (
-	<div className="mt-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug">
-		{JSON.stringify(
-			{
-				// history: state.history,
+// const Debugger = ({ state, ...props }) => (
+// 	<div className="mt-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug">
+// 		{JSON.stringify(
+// 			{
+// 				// history: state.history,
+//
+// 				...state,
+// 				components: undefined,
+// 				reactDOM: undefined,
+// 			},
+// 			null,
+// 			"\t",
+// 		)}
+// 	</div>
+// )
 
-				...state,
-				components: undefined,
-				reactDOM: undefined,
-			},
-			null,
-			"\t",
-		)}
-	</div>
-)
+// TODO: Transition to props
+//
+// // antialiased:    true,
+// // baseFontSize:   16,
+// classNames:        "",
+// // darkMode:       false,
+// // paddingX:       0,
+// // paddingY:       0,
+// // placeholder:    "Hello, world! 👋",
+// previewMode:       false,
+// // primary:        false,
+// // readme:         false,
+// // readOnly:       false,
+// // scrollPastEnd:  false,
+// // shortcuts:      false,
+// // statusBars:     false,
+// stylesheet:        EnumStylesheets.TYPE,
+// // textBackground: false,
+// // toolbar:        false,
+// // whiteSpace:     false,
+// // wordWrap:       false,
 
 export function Editor({ state, dispatch, ...props }) {
+	// Core references:
 	const ref = React.useRef()
 	const target = React.useRef()
-	const isPointerDownRef = React.useRef()
-	const dedupeCompositionEndRef = React.useRef()
+
+	// Extraneous references:
+	const pointerDown = React.useRef()
+	const dedupedCompositionEnd = React.useRef()
 
 	const [forceRender, setForceRender] = React.useState(false)
 
@@ -146,27 +171,27 @@ export function Editor({ state, dispatch, ...props }) {
 		[state.shouldRender],
 	)
 
-	// TODO: Drag-based scrolling (e.g. hasSelection) jumps
-	//
-	// FIXME
-	React.useLayoutEffect(
-		React.useCallback(() => {
-			if (!state.isFocused) {
-				// No-op
-				return
-			}
-			const [pos1, pos2] = getCoords()
-			if (state.pos1.y !== state.pos2.y) {
-				// No-op
-				return
-			} else if (pos1.y < SCROLL_BUFFER) {
-				window.scrollBy(0, pos1.y - SCROLL_BUFFER)
-			} else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
-				window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
-			}
-		}, [state]),
-		[state.shouldRender /* before */, state.pos1, state.pos2],
-	)
+	// // TODO: Drag-based scrolling (e.g. selected) jumps
+	// //
+	// // FIXME
+	// React.useLayoutEffect(
+	// 	React.useCallback(() => {
+	// 		if (!state.focused) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		const [pos1, pos2] = getCoords()
+	// 		if (state.pos1.y !== state.pos2.y) {
+	// 			// No-op
+	// 			return
+	// 		} else if (pos1.y < SCROLL_BUFFER) {
+	// 			window.scrollBy(0, pos1.y - SCROLL_BUFFER)
+	// 		} else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
+	// 			window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
+	// 		}
+	// 	}, [state]),
+	// 	[state.shouldRender /* before */, state.pos1, state.pos2],
+	// )
 
 	useUndo(state, dispatch)
 	useShortcuts(state, dispatch)
@@ -174,13 +199,6 @@ export function Editor({ state, dispatch, ...props }) {
 	React.useEffect(() => {
 		dispatch.getClassNames()
 	}, [dispatch])
-
-	// React.useEffect(
-	// 	React.useCallback(() => {
-	// 		dispatch.getClassNames()
-	// 	}, [dispatch]),
-	// 	[],
-	// )
 
 	return (
 		<div style={{ fontSize: props.baseFontSize /* state.prefs.baseFontSize */ }}>
@@ -191,12 +209,11 @@ export function Editor({ state, dispatch, ...props }) {
 
 					id: state.prefs.id || null,
 
+					// TODO: Deprecate state.prefs.classNames
 					className: ["codex-editor", ...state.prefs.classNames].join(" "),
 
 					style: {
 						...props.style, // Takes precedence
-						// padding: `${props.paddingY || 0}px ${props.paddingX || 0}px`, // `${state.prefs.paddingY}px ${state.prefs.paddingX}px`,
-						// minHeight: props.minHeight || null,
 						whiteSpace: "pre-wrap",
 						outline: "none",
 						overflowWrap: "break-word",
@@ -209,7 +226,7 @@ export function Editor({ state, dispatch, ...props }) {
 					onBlur:  dispatch.actionBlur,
 
 					onSelect: e => {
-						if (!state.isFocused) {
+						if (!state.focused) {
 							// No-op
 							return
 						}
@@ -239,13 +256,13 @@ export function Editor({ state, dispatch, ...props }) {
 						target.current = newNodeIterators()
 					},
 					onPointerDown: e => {
-						isPointerDownRef.current = true
+						pointerDown.current = true
 					},
 					onPointerMove: e => {
-						if (!state.isFocused) {
-							isPointerDownRef.current = false // Reset
+						if (!state.focused) {
+							pointerDown.current = false // Reset
 							return
-						} else if (!isPointerDownRef.current) {
+						} else if (!pointerDown.current) {
 							// No-op
 							return
 						}
@@ -254,7 +271,7 @@ export function Editor({ state, dispatch, ...props }) {
 						target.current = newNodeIterators()
 					},
 					onPointerUp: e => {
-						isPointerDownRef.current = false
+						pointerDown.current = false
 					},
 
 					onKeyDown: e => {
@@ -287,15 +304,15 @@ export function Editor({ state, dispatch, ...props }) {
 
 					onCompositionEnd: e => {
 						// https://github.com/w3c/uievents/issues/202#issue-316461024
-						dedupeCompositionEndRef.current = true
+						dedupedCompositionEnd.current = true
 						// Input:
 						const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
 						const [pos1, pos2] = getPos(ref.current)
 						dispatch.actionInput(nodes, atEnd, pos1, pos2)
 					},
 					onInput: e => {
-						if (dedupeCompositionEndRef.current) {
-							dedupeCompositionEndRef.current = false // Reset
+						if (dedupedCompositionEnd.current) {
+							dedupedCompositionEnd.current = false // Reset
 							return
 						}
 						if (e.nativeEvent.isComposing) {
@@ -346,7 +363,7 @@ export function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						e.preventDefault()
-						if (!state.hasSelection) {
+						if (!state.selected) {
 							// No-op
 							return
 						}
@@ -360,7 +377,7 @@ export function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						e.preventDefault()
-						if (!state.hasSelection) {
+						if (!state.selected) {
 							// No-op
 							return
 						}

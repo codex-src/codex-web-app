@@ -23,10 +23,10 @@ function useShortcuts(state, dispatch) {
 					e.preventDefault()
 					dispatch.toggleStylesheet(EnumStylesheets.MONO)
 					return
-				case detectKeyCode(e, KEY_CODE_P, { shiftKey: true }):
-					e.preventDefault()
-					dispatch.toggleTextBackground()
-					return
+				// case detectKeyCode(e, KEY_CODE_P, { shiftKey: true }):
+				// 	e.preventDefault()
+				// 	dispatch.toggleTextBackground()
+				// 	return
 				case detectKeyCode(e, KEY_CODE_P):
 					e.preventDefault()
 					dispatch.togglePreviewMode()

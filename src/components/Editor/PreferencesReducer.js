@@ -1,5 +1,6 @@
 import EnumStylesheets from "./EnumStylesheets"
 
+// TODO: Deprecate
 export const initialState = {
 	// antialiased:    true,
 	// baseFontSize:   16,
@@ -11,7 +12,7 @@ export const initialState = {
 	previewMode:       false,
 	// primary:        false,
 	// readme:         false,
-	// readOnly:       false,
+	readOnly:          false,
 	// scrollPastEnd:  false,
 	// shortcuts:      false,
 	// statusBars:     false,
@@ -22,6 +23,7 @@ export const initialState = {
 	// wordWrap:       false,
 }
 
+// TODO: Deprecate
 export const reducer = ({ prefs }) => ({
 	getClassNames() {
 		const classNames = []

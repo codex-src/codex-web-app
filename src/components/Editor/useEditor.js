@@ -1,70 +1,75 @@
 import * as Preferences from "./PreferencesReducer"
+import * as utf8 from "utils/encoding/utf8"
 import emoji from "emoji-trie"
-import EnumActionTypes from "./EnumActionTypes"
+import Enum from "utils/Enum"
 import newNodes from "./helpers/newNodes"
 import newPos from "./helpers/newPos"
 import parse from "./parser"
 import useMethods from "use-methods"
 
-import {
-	atEnd,
-	atStart,
-	isAlphanum,
-	isHWhiteSpace,
-	isVWhiteSpace,
-	isWhiteSpace,
-} from "utils/encoding/utf8"
+const ActionTypes = new Enum(
+	"FOCUS",
+	"BLUR",
+	"SELECT",
+	"INPUT",
+	"CUT",
+	"COPY",
+	"PASTE",
+	"UNDO",
+	"REDO",
+)
 
-// history: ...History.initialState,
 const initialState = {
+	// TODO: Deprecate
 	prefs: {
 		...Preferences.initialState,
 	},
-	actionType: "",      // The type of the current action
-	actionTimeStamp: 0,  // The time stamp of the current action
-	isFocused: false,    // Is the editor focused?
-	hasSelection: false, // Does the editor have a selection?
-	data: "",            // The plain text data
-	body: null,          // The parsed nodes
-	pos1: newPos(),      // The start cursor
-	pos2: newPos(),      // The end cursor
-	components: null,    // The React components
-	shouldRender: 0,     // Should rerender React components?
-	didRender: 0,        // Did rerender React components?
-	reactDOM: null,      // The React DOM (not what the user sees)
-	history: {           //
-		stack: [],         // The history state stack
-		index: 0,          // The history state stack index
-	},                   //
-	resetPos: false,     // Did reset the cursors?
+	actionType: "",     // The type of the current action
+	actionTimeStamp: 0, // The time stamp of the current action
+	focused: false,     // Is the editor focused?
+	selected: false,    // Is the editor selected? Does the editor have a selection?
+	data: "",           // The plain text data
+	body: null,         // The parsed nodes
+	pos1: newPos(),     // The start cursor
+	pos2: newPos(),     // The end cursor
+	components: null,   // The React components
+	shouldRender: 0,    // Should rerender React components?
+	didRender: 0,       // Did rerender React components?
+	reactDOM: null,     // The React DOM (not what the user sees)
+	history: {          //
+		stack: [],        // The history state stack
+		index: 0,         // The history state stack index
+	},                  //
+	resetPos: false,    // Did reset the cursors?
 }
 
 const reducer = state => ({
+	// TODO: Deprecate
 	...Preferences.reducer(state),
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
-		if (actionType === EnumActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
+		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
 			// No-op
 			return
 		}
 		Object.assign(state, { actionType, actionTimeStamp })
 	},
 	actionFocus() {
-		this.newAction(EnumActionTypes.FOCUS)
-		state.isFocused = true
+		this.newAction(ActionTypes.FOCUS)
+		state.focused = true
 	},
 	actionBlur() {
-		this.newAction(EnumActionTypes.BLUR)
-		state.isFocused = false // Reset
+		this.newAction(ActionTypes.BLUR)
+		state.focused = false // Reset
 	},
 	actionSelect(pos1, pos2) {
-		this.newAction(EnumActionTypes.SELECT)
-		const hasSelection = pos1.pos !== pos2.pos
-		Object.assign(state, { hasSelection, pos1, pos2 })
+		this.newAction(ActionTypes.SELECT)
+		const selected = pos1.pos !== pos2.pos
+		Object.assign(state, { selected, pos1, pos2 })
 	},
 	actionInput(nodes, atEnd, pos1, pos2) {
 		// Create a new action:
-		this.newAction(EnumActionTypes.INPUT)
+		this.newAction(ActionTypes.INPUT)
 		if (!state.history.index && !state.resetPos) {
 			Object.assign(state.history.stack[0], {
 				pos1: state.pos1,
@@ -92,7 +97,7 @@ const reducer = state => ({
 	},
 	write(substr, dropL = 0, dropR = 0) {
 		// Create a new action:
-		this.newAction(EnumActionTypes.INPUT)
+		this.newAction(ActionTypes.INPUT)
 		if (!state.history.index && !state.resetPos) {
 			Object.assign(state.history.stack[0], {
 				pos1: state.pos1,
@@ -149,15 +154,15 @@ const reducer = state => ({
 	},
 	backspaceChar() {
 		let dropL = 0
-		if (!state.hasSelection && state.pos1.pos) { // Inverse
+		if (!state.selected && state.pos1.pos) { // Inverse
 			const substr = state.data.slice(0, state.pos1.pos)
-			const rune = emoji.atEnd(substr) || atEnd(substr)
+			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
 			dropL = rune.length
 		}
 		this.write("", dropL, 0)
 	},
 	backspaceWord() {
-		if (state.hasSelection) {
+		if (state.selected) {
 			this.write("")
 			return
 		}
@@ -165,8 +170,8 @@ const reducer = state => ({
 		let index = state.pos1.pos
 		while (index) {
 			const substr = state.data.slice(0, index)
-			const rune = emoji.atEnd(substr) || atEnd(substr)
-			if (!rune || !isHWhiteSpace(rune)) {
+			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+			if (!rune || !utf8.isHWhiteSpace(rune)) {
 				// No-op
 				break
 			}
@@ -174,26 +179,26 @@ const reducer = state => ({
 		}
 		// Get the next rune:
 		const substr = state.data.slice(0, index)
-		const rune = emoji.atEnd(substr) || atEnd(substr)
+		const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
 		// Iterate to an alphanumeric rune OR a non-alphanumeric
 		// rune based on the next rune:
-		if (rune && !isAlphanum(rune)) {
+		if (rune && !utf8.isAlphanum(rune)) {
 			// Iterate to an alphanumeric rune:
 			while (index) {
 				const substr = state.data.slice(0, index)
-				const rune = emoji.atEnd(substr) || atEnd(substr)
-				if (!rune || isAlphanum(rune) || isWhiteSpace(rune)) {
+				const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+				if (!rune || utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
 					// No-op
 					break
 				}
 				index -= rune.length
 			}
-		} else if (rune && isAlphanum(rune)) {
+		} else if (rune && utf8.isAlphanum(rune)) {
 			// Iterate to a non-alphanumeric rune:
 			while (index) {
 				const substr = state.data.slice(0, index)
-				const rune = emoji.atEnd(substr) || atEnd(substr)
-				if (!rune || !isAlphanum(rune) || isWhiteSpace(rune)) {
+				const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+				if (!rune || !utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
 					// No-op
 					break
 				}
@@ -208,7 +213,7 @@ const reducer = state => ({
 		this.write("", dropL, 0)
 	},
 	backspaceLine() {
-		if (state.hasSelection) {
+		if (state.selected) {
 			this.write("")
 			return
 		}
@@ -216,8 +221,8 @@ const reducer = state => ({
 		let index = state.pos1.pos
 		while (index >= 0) {
 			const substr = state.data.slice(0, index)
-			const rune = emoji.atEnd(substr) || atEnd(substr)
-			if (!rune || isVWhiteSpace(rune)) {
+			const rune = emoji.atEnd(substr) || utf8.atEnd(substr)
+			if (!rune || utf8.isVWhiteSpace(rune)) {
 				// No-op
 				break
 			}
@@ -232,15 +237,15 @@ const reducer = state => ({
 	},
 	backspaceCharForwards() {
 		let dropR = 0
-		if (!state.hasSelection && state.pos1.pos < state.data.length) { // Inverse
+		if (!state.selected && state.pos1.pos < state.data.length) { // Inverse
 			const substr = state.data.slice(state.pos1.pos)
-			const rune = emoji.atStart(substr) || atStart(substr)
+			const rune = emoji.atStart(substr) || utf8.atStart(substr)
 			dropR = rune.length
 		}
 		this.write("", 0, dropR)
 	},
 	backspaceWordForwards() {
-		if (state.hasSelection) {
+		if (state.selected) {
 			this.write("")
 			return
 		}
@@ -248,8 +253,8 @@ const reducer = state => ({
 		let index = state.pos1.pos
 		while (index < state.data.length) {
 			const substr = state.data.slice(index)
-			const rune = emoji.atStart(substr) || atStart(substr)
-			if (!rune || !isHWhiteSpace(rune)) {
+			const rune = emoji.atStart(substr) || utf8.atStart(substr)
+			if (!rune || !utf8.isHWhiteSpace(rune)) {
 				// No-op
 				break
 			}
@@ -257,26 +262,26 @@ const reducer = state => ({
 		}
 		// Get the next rune:
 		const substr = state.data.slice(index)
-		const rune = emoji.atStart(substr) || atStart(substr)
+		const rune = emoji.atStart(substr) || utf8.atStart(substr)
 		// Iterate to an alphanumeric rune OR a non-alphanumeric
 		// rune based on the next rune:
-		if (rune && !isAlphanum(rune)) {
+		if (rune && !utf8.isAlphanum(rune)) {
 			// Iterate to an alphanumeric rune:
 			while (index < state.data.length) {
 				const substr = state.data.slice(index)
-				const rune = emoji.atStart(substr) || atStart(substr)
-				if (!rune || isAlphanum(rune) || isWhiteSpace(rune)) {
+				const rune = emoji.atStart(substr) || utf8.atStart(substr)
+				if (!rune || utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
 					// No-op
 					break
 				}
 				index += rune.length
 			}
-		} else if (rune && isAlphanum(rune)) {
+		} else if (rune && utf8.isAlphanum(rune)) {
 			// Iterate to a non-alphanumeric rune:
 			while (index < state.data.length) {
 				const substr = state.data.slice(index)
-				const rune = emoji.atStart(substr) || atStart(substr)
-				if (!rune || !isAlphanum(rune) || isWhiteSpace(rune)) {
+				const rune = emoji.atStart(substr) || utf8.atStart(substr)
+				if (!rune || !utf8.isAlphanum(rune) || utf8.isWhiteSpace(rune)) {
 					// No-op
 					break
 				}
@@ -297,14 +302,14 @@ const reducer = state => ({
 		this.write("\n")
 	},
 	cut() {
-		this.newAction(EnumActionTypes.CUT)
+		this.newAction(ActionTypes.CUT)
 		this.write("")
 	},
 	copy() {
-		this.newAction(EnumActionTypes.COPY)
+		this.newAction(ActionTypes.COPY)
 	},
 	paste(substr) {
-		this.newAction(EnumActionTypes.PASTE)
+		this.newAction(ActionTypes.PASTE)
 		this.write(substr)
 	},
 	storeUndo() {
@@ -325,7 +330,7 @@ const reducer = state => ({
 			// No-op
 			return
 		}
-		this.newAction(EnumActionTypes.UNDO)
+		this.newAction(ActionTypes.UNDO)
 		if (state.history.index === 1 && state.resetPos) {
 			state.resetPos = false
 		}
@@ -342,7 +347,7 @@ const reducer = state => ({
 			// No-op
 			return
 		}
-		this.newAction(EnumActionTypes.REDO)
+		this.newAction(ActionTypes.REDO)
 		if (state.history.index + 1 === state.history.stack.length) {
 			// No-op
 			return
@@ -361,20 +366,25 @@ const reducer = state => ({
 	},
 })
 
-const init = (data, prefs) => initialState => {
-	const body = newNodes(data)
-	const state = {
-		...initialState,
-		prefs: { ...initialState.prefs, ...prefs },
-		data,
-		body,
-		components: parse(body),
-		reactDOM: document.createElement("div"),
-		history: { ...initialState.history, stack: [{ data, body, pos1: newPos(), pos2: newPos() }], index: 0 },
+function init(data, prefs) {
+	const fn = initialState => {
+		const body = newNodes(data)
+		const state = {
+			...initialState,
+			prefs: { ...initialState.prefs, ...prefs },
+			data,
+			body,
+			components: parse(body),
+			reactDOM: document.createElement("div"),
+			history: { ...initialState.history, stack: [{ data, body, pos1: newPos(), pos2: newPos() }], index: 0 },
+		}
+		return state
 	}
-	return state
+	return fn
 }
 
-const useEditor = (data, prefs) => useMethods(reducer, initialState, init(data, prefs))
+function useEditor(data, prefs) {
+	return useMethods(reducer, initialState, init(data, prefs))
+}
 
 export default useEditor
