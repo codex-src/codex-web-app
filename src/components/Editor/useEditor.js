@@ -20,10 +20,7 @@ const ActionTypes = new Enum(
 )
 
 const initialState = {
-	// // TODO: Deprecate
-	// prefs: {
-	// 	...Preferences.initialState,
-	// },
+	props: {},          // User-specified props
 	actionType: "",     // The type of the current action
 	actionTimeStamp: 0, // The time stamp of the current action
 	focused: false,     // Is the editor focused?
@@ -44,8 +41,10 @@ const initialState = {
 }
 
 const reducer = state => ({
-	// // TODO: Deprecate
-	// ...Preferences.reducer(state),
+	// Registers user-specified props.
+	registerProps(props) {
+		Object.assign(state.props, props)
+	},
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
 		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
@@ -368,12 +367,11 @@ const reducer = state => ({
 	},
 })
 
-function init(data, prefs) {
+function init(data) {
 	const fn = initialState => {
 		const body = newNodes(data)
 		const state = {
 			...initialState,
-			prefs: { ...initialState.prefs, ...prefs },
 			data,
 			body,
 			components: parse(body),
@@ -385,8 +383,8 @@ function init(data, prefs) {
 	return fn
 }
 
-function useEditor(data, prefs) {
-	return useMethods(reducer, initialState, init(data, prefs))
+function useEditor(data) {
+	return useMethods(reducer, initialState, init(data))
 }
 
 export default useEditor

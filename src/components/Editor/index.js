@@ -47,12 +47,12 @@ function newNodeIterators() {
 	const selection = document.getSelection()
 	const range = selection.getRangeAt(0)
 	const { startContainer, endContainer } = range
-	// Extend the target start (2x):
+	// Extend the target start (up to 2x):
 	const start = new NodeIterator(startContainer)
 	while (start.count < 2 && start.getPrev()) {
 		start.prev()
 	}
-	// Extend the target end (2x):
+	// Extend the target end (up to 2x):
 	const end = new NodeIterator(endContainer)
 	while (end.count < 2 && end.getNext()) {
 		end.next()
@@ -93,36 +93,21 @@ function getNodesFromIterators(rootNode, [start, end]) {
 	return { nodes, atEnd }
 }
 
-// const Debugger = ({ state, ...props }) => (
-// 	<div className="mt-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug">
-// 		{JSON.stringify(
-// 			{
-// 				// history: state.history,
-//
-// 				...state,
-// 				components: undefined,
-// 				reactDOM: undefined,
-// 			},
-// 			null,
-// 			"\t",
-// 		)}
-// 	</div>
-// )
+const Debugger = ({ state, ...props }) => (
+	<div className="mt-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug text-black dark:text-white">
+		{JSON.stringify(
+			{
+				...state,
+				components: undefined,
+				reactDOM: undefined,
+			},
+			null,
+			"\t",
+		)}
+	</div>
+)
 
-// TODO:
-//
-// React.useLayoutEffect(() => {
-//   dispatch.registerPreferences(...) OR dispatch.registerProps(props)
-// }, [dispatch])
-//
-// This means we can expose props to customize the editor
-// externally and consolidate props internally
-//
-export function Editor({
-	state,
-	dispatch,
-	...props
-}) {
+export function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const target = React.useRef()
 
@@ -130,9 +115,14 @@ export function Editor({
 	const pointerDown = React.useRef()
 	const dedupedCompositionEnd = React.useRef()
 
-	// React.useLayoutEffect(() => {
-	// 	dispatch.registerProps(props)
-	// }, [dispatch])
+	// Register props:
+	//
+	// NOTE: Do not use props as a dependency because the
+	// reference (object) changes on every render
+	const propsRef = React.useRef(props)
+	React.useLayoutEffect(() => {
+		dispatch.registerProps(propsRef.current)
+	}, [dispatch])
 
 	React.useLayoutEffect(
 		React.useCallback(() => {
@@ -257,12 +247,14 @@ export function Editor({
 
 					style: {
 						...props.style, // Takes precedence
+
+						// NOTE: Imperative styles needed for the editor
+						// to work
 						whiteSpace: "pre-wrap",
 						outline: "none",
 						overflowWrap: "break-word",
 					},
 
-					// FIXME: prefs
 					contentEditable: !props.readOnly && true,
 					suppressContentEditableWarning: !props.readOnly && true,
 
@@ -362,6 +354,9 @@ export function Editor({
 							// No-op
 							return
 						}
+						// FIXME: This implementation is flawed; Chrome
+						// emits the wrong inputType
+						//
 						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
 						switch (e.nativeEvent.inputType) {
 						case "insertLineBreak":
@@ -371,7 +366,7 @@ export function Editor({
 						case "deleteContentBackward":
 							dispatch.backspaceChar()
 							return
-						case "deleteWordBackward": // FIXME/Chrome
+						case "deleteWordBackward":
 							dispatch.backspaceWord()
 							return
 						case "deleteSoftLineBackward":
@@ -446,7 +441,7 @@ export function Editor({
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			{/* <Debugger state={state} /> */}
+			<Debugger state={state} />
 		</div>
 	)
 }

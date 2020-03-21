@@ -7,11 +7,7 @@ import ReactDOM from "react-dom"
 const LS_KEY = "codex-app"
 
 const Demo = props => {
-	const [state, dispatch] = Editor.useEditor(localStorage.getItem(LS_KEY) || raw("./index.md"), {
-		shortcuts: true, // TODO: Move to props
-		statusBar: true, // FIXME
-	})
-
+	const [state, dispatch] = Editor.useEditor(localStorage.getItem(LS_KEY) || raw("./index.md"))
 	const [saveStatus, setSaveStatus] = React.useState(null)
 
 	const mounted = React.useRef()
@@ -42,6 +38,8 @@ const Demo = props => {
 			<Editor.Editor
 				state={state}
 				dispatch={dispatch}
+				// shortcuts={true} // TODO
+				// statusBar={true} // TODO
 				style={{ margin: "-160px 0", padding: "160px 0" }}
 			/>
 		</Containers.Note>
