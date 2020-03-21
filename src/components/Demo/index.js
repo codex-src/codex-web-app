@@ -4,8 +4,10 @@ import raw from "raw.macro"
 import React from "react"
 import ReactDOM from "react-dom"
 
+const LS_KEY = "codex-app"
+
 const Demo = props => {
-	const [state, dispatch] = Editor.useEditor(localStorage.getItem("codex-app") || raw("./index.md"), {
+	const [state, dispatch] = Editor.useEditor(localStorage.getItem(LS_KEY) || raw("./index.md"), {
 		shortcuts: true, // TODO: Move to props
 		statusBar: true, // FIXME
 	})
@@ -20,7 +22,7 @@ const Demo = props => {
 		}
 		setSaveStatus("Saving…")
 		const id = setTimeout(() => {
-			localStorage.setItem("codex-app", state.data)
+			localStorage.setItem(LS_KEY, state.data)
 			setSaveStatus("Saved")
 		}, 500)
 		return () => {
