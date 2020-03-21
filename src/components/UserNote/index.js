@@ -100,7 +100,9 @@ const Note = ({ note, ...props }) => {
 	React.useEffect(
 		React.useCallback(() => {
 			if (!mounted2.current) {
-				setSaveStatus(`Last updated ${toHumanDate(note.updatedAt)}`)
+				if (note) {
+					setSaveStatus(`Last updated ${toHumanDate(note.updatedAt)}`)
+				}
 				mounted2.current = true
 				return
 			} else if (!noteID) {
