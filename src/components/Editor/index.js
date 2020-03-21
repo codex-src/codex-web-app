@@ -115,7 +115,7 @@ export function Editor({ state, dispatch, ...props }) {
 	const pointerDown = React.useRef()
 	const dedupedCompositionEnd = React.useRef()
 
-	// Register props:
+	// Register props (once):
 	//
 	// NOTE: Do not use props as a dependency because the
 	// reference (object) changes on every render
@@ -230,13 +230,8 @@ export function Editor({ state, dispatch, ...props }) {
 	// 	[state.prefs.shortcuts],
 	// )
 
-	// FIXME
-	// React.useEffect(() => {
-	// 	dispatch.getClassNames()
-	// }, [dispatch])
-
 	return (
-		<div style={{ fontSize: props.fontSize }}>
+		<div style={{ fontSize: props.style.fontSize }}>
 			{React.createElement(
 				"div",
 				{
@@ -246,7 +241,8 @@ export function Editor({ state, dispatch, ...props }) {
 					className: "codex-editor feature-stylesheet-type", // FIXME
 
 					style: {
-						...props.style, // Takes precedence
+						// ...props.style, // Takes precedence
+						...{ ...props.style, fontSize: null },
 
 						// NOTE: Imperative styles needed for the editor
 						// to work

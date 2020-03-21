@@ -31,8 +31,8 @@ const MUTATION_DELETE_NOTE = `
 const EditorInstance = props => {
 	const [state, dispatch] = Editor.useEditor(props.children)
 
-	const style = { padding: `${24 * 0.75}px ${32 * 0.75}px` }
-	return <Editor.Editor state={state} dispatch={dispatch} fontSize="0.75rem" readOnly style={style} />
+	const style = { padding: `${24 * 0.75}px ${32 * 0.75}px`, fontSize: "0.75rem" }
+	return <Editor.Editor state={state} dispatch={dispatch} readOnly style={style} />
 }
 
 const UserNotes = props => {
