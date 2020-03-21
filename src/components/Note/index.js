@@ -1,7 +1,7 @@
 import * as constants from "__constants"
 import * as Containers from "components/Containers"
+import * as Editor from "components/Editor"
 import * as GraphQL from "graphql"
-import Editor from "components/Editor"
 import Error404 from "components/Error404"
 import React from "react"
 import toHumanDate from "utils/date/toHumanDate"

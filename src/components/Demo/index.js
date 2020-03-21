@@ -1,5 +1,5 @@
 import * as Containers from "components/Containers"
-import Editor from "components/Editor"
+import * as Editor from "components/Editor"
 import raw from "raw.macro"
 import React from "react"
 import ReactDOM from "react-dom"

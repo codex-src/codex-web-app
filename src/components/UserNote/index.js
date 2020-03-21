@@ -1,10 +1,10 @@
 import * as Containers from "components/Containers"
+import * as Editor from "components/Editor"
 import * as GraphQL from "graphql"
 import * as ProgressBar from "components/ProgressBar"
 import * as random from "utils/random"
 import * as Router from "react-router-dom"
 import * as User from "components/User"
-import Editor from "components/Editor" // FIXME: Exports are wrong
 import Error404 from "components/Error404"
 import React from "react"
 import ReactDOM from "react-dom"

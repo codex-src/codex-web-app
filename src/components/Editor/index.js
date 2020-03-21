@@ -1,9 +1,9 @@
-import Editor from "./Editor"
-import useEditor from "./EditorReducer"
+export { default as Editor } from "./Editor"
+export { default as useEditor } from "./EditorReducer"
 
-const exports = {
-	Editor,
-	useEditor,
-}
-
-export default exports
+// const exports = {
+// 	Editor,
+// 	useEditor,
+// }
+//
+// export default exports

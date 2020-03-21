@@ -1,5 +1,5 @@
 import * as constants from "__constants"
-import Editor from "components/Editor"
+import * as Editor from "components/Editor"
 import Link from "components/Link"
 import Nav from "components/Nav"
 import raw from "raw.macro"

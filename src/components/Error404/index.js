@@ -1,4 +1,4 @@
-import Editor from "components/Editor"
+import * as Editor from "components/Editor"
 import React from "react"
 
 const data = "# 404\n\nSorry about that, we couldn’t find the page you’re looking for."
