@@ -302,15 +302,17 @@ const reducer = state => ({
 		this.write("\n")
 	},
 	cut() {
-		this.newAction(ActionTypes.CUT)
+		// NOTE: Inverse order because write sets actionType
 		this.write("")
+		this.newAction(ActionTypes.CUT)
 	},
 	copy() {
 		this.newAction(ActionTypes.COPY)
 	},
 	paste(substr) {
-		this.newAction(ActionTypes.PASTE)
+		// NOTE: Inverse order because write sets actionType
 		this.write(substr)
+		this.newAction(ActionTypes.PASTE)
 	},
 	storeUndo() {
 		const undo = state.history.stack[state.history.index]

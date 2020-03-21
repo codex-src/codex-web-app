@@ -7,7 +7,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
 import useShortcuts from "./hooks/useShortcuts"
-import useUndo from "./hooks/useUndo"
+// import useUndo from "./hooks/useUndo"
 import { newUUID } from "utils/random"
 
 import {
@@ -105,29 +105,23 @@ function getNodesFromIterators(rootNode, [start, end]) {
 // 	</div>
 // )
 
-// TODO: Transition to props
-//
-// // antialiased:    true,
-// // baseFontSize:   16,
-// classNames:        "",
-// // darkMode:       false,
-// // paddingX:       0,
-// // paddingY:       0,
-// // placeholder:    "Hello, world! 👋",
-// previewMode:       false,
-// // primary:        false,
-// // readme:         false,
-// // readOnly:       false,
-// // scrollPastEnd:  false,
-// // shortcuts:      false,
-// // statusBars:     false,
-// stylesheet:        EnumStylesheets.TYPE,
-// // textBackground: false,
-// // toolbar:        false,
-// // whiteSpace:     false,
-// // wordWrap:       false,
+export function Editor({
+	state,
+	dispatch,
 
-export function Editor({ state, dispatch, ...props }) {
+	// Preferences:
+	placeholder, // <String>
+	fontSize,    // <CSS>
+
+	// classNames:        "",
+	// previewMode:       false,
+	// // readOnly:       false,
+	// // shortcuts:      false,
+	// // whiteSpace:     false,
+	// // wordWrap:       false,
+
+	...props
+}) {
 	const ref = React.useRef()
 	const target = React.useRef()
 
@@ -135,18 +129,15 @@ export function Editor({ state, dispatch, ...props }) {
 	const pointerDown = React.useRef()
 	const dedupedCompositionEnd = React.useRef()
 
-	const [forceRender, setForceRender] = React.useState(false)
-
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(state.components, state.reactDOM, () => {
 				// Sync the DOMs:
 				const mutations = syncTrees(ref.current, state.reactDOM)
-				if ((!state.shouldRender || !mutations) && !forceRender) {
+				if ((!state.shouldRender || !mutations) && state.actionType !== "PASTE") {
 					dispatch.rendered()
 					return
 				}
-				setForceRender(false) // Reset
 				// Reset the cursor:
 				const selection = document.getSelection()
 				if (selection.rangeCount) {
@@ -165,7 +156,7 @@ export function Editor({ state, dispatch, ...props }) {
 				selection.addRange(range)
 				dispatch.rendered()
 			})
-		}, [state, dispatch, forceRender]),
+		}, [state, dispatch]),
 		[state.shouldRender],
 	)
 
@@ -191,7 +182,28 @@ export function Editor({ state, dispatch, ...props }) {
 	// 	[state.shouldRender /* before */, state.pos1, state.pos2],
 	// )
 
-	useUndo(state, dispatch)
+	const idleTimeoutID = React.useRef()
+	React.useEffect(
+		React.useCallback(() => {
+			if (state.prefs.readOnly || state.prefs.previewMode) {
+				// No-op
+				return
+			}
+			if (!state.shouldRender) {
+				dispatch.storeUndo()
+				return
+			}
+			idleTimeoutID.current = setTimeout(() => {
+				dispatch.storeUndo()
+			}, 250)
+			return () => {
+				clearTimeout(idleTimeoutID.current)
+			}
+		}, [state, dispatch]),
+		[state.shouldRender], // state.data?
+	)
+
+	// useUndo(state, dispatch)
 	useShortcuts(state, dispatch)
 
 	React.useEffect(() => {
@@ -199,7 +211,7 @@ export function Editor({ state, dispatch, ...props }) {
 	}, [dispatch])
 
 	return (
-		<div style={{ fontSize: props.baseFontSize /* state.prefs.baseFontSize */ }}>
+		<div style={{ fontSize }}>
 			{React.createElement(
 				"div",
 				{
@@ -394,7 +406,6 @@ export function Editor({ state, dispatch, ...props }) {
 							// No-op
 							return
 						}
-						setForceRender(true)
 						dispatch.paste(substr)
 					},
 

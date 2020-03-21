@@ -37,7 +37,7 @@ const EditorInstance = props => {
 		<Editor.Editor
 			state={state}
 			dispatch={dispatch}
-			baseFontSize={16 * 0.75}
+			fontSize={16 * 0.75}
 			style={{ padding: `${24 * 0.75}px ${32 * 0.75}px` }}
 			// readOnly={true}
 		/>
