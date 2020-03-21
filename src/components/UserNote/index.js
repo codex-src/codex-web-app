@@ -7,6 +7,8 @@ import * as User from "components/User"
 import Editor from "components/Editor" // FIXME: Exports are wrong
 import Error404 from "components/Error404"
 import React from "react"
+import ReactDOM from "react-dom"
+import toHumanDate from "utils/date/toHumanDate"
 
 const TIMEOUT_CREATE_NOTE = 1e3
 const TIMEOUT_UPDATE_NOTE = 500
@@ -52,6 +54,8 @@ const Note = ({ note, ...props }) => {
 	stateRef.current = state
 
 	// Create note:
+	//
+	// E.g. useCreateNote(...)
 	const mounted1 = React.useRef()
 	React.useEffect(
 		React.useCallback(() => {
@@ -87,32 +91,52 @@ const Note = ({ note, ...props }) => {
 				window.onbeforeunload = null
 				clearTimeout(id)
 			}
-		}, [user, renderProgressBar, noteID]),
+		}, [renderProgressBar, user, noteID]),
 		[state.data],
 	)
 
 	// Update note:
+	//
+	// E.g. useUpdateNote(...)
 	const mounted2 = React.useRef()
 	React.useEffect(
 		React.useCallback(() => {
 			if (!mounted2.current) {
+				ReactDOM.render(
+					`Last updated ${toHumanDate(note.updatedAt)}`,
+					document.getElementById("user-note-save-status"),
+				)
 				mounted2.current = true
 				return
 			} else if (!noteID) {
 				// No-op
 				return
 			}
-			// Debounce:
 			window.onbeforeunload = () => "Changes you made may not be saved."
+			// Debounce:
 			const id = setTimeout(async () => {
 				// Update note:
 				try {
+					ReactDOM.render(
+						"Saving…",
+						document.getElementById("user-note-save-status"),
+					)
 					await GraphQL.newQuery(user.idToken, MUTATION_UPDATE_NOTE, {
 						noteInput: {
 							noteID,
 							data: stateRef.current.data,
 						},
 					})
+					ReactDOM.render(
+						"Saved",
+						document.getElementById("user-note-save-status"),
+					)
+					// setTimeout(() => {
+					// 	ReactDOM.render(
+					// 		null,
+					// 		document.getElementById("user-note-save-status"),
+					// 	)
+					// }, 1e3)
 				} catch (error) {
 					console.error(error)
 				} finally {
@@ -123,9 +147,16 @@ const Note = ({ note, ...props }) => {
 				window.onbeforeunload = null
 				clearTimeout(id)
 			}
-		}, [user, noteID]),
+		}, [user, note, noteID]),
 		[state.data],
 	)
+
+	// ReactDOM.createPortal(
+	// 	<div>
+	// 		hello, world!
+	// 	</div>,
+	// 	document.getElementById("user-note-save-status"),
+	// )
 
 	return (
 		<Editor.Editor

@@ -25,8 +25,8 @@ const AnyNote = props => {
 const App = props => (
 	<Router.BrowserRouter>
 		<DarkMode.Provider>
-			<User.Provider>
-				<ProgressBar.Provider>
+			<ProgressBar.Provider>
+				<User.Provider>
 					<ProgressBar.ProgressBar />
 					<Router.Switch>
 
@@ -119,8 +119,8 @@ const App = props => (
 						/>
 
 					</Router.Switch>
-				</ProgressBar.Provider>
-			</User.Provider>
+				</User.Provider>
+			</ProgressBar.Provider>
 		</DarkMode.Provider>
 	</Router.BrowserRouter>
 )

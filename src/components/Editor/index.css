@@ -117,42 +117,25 @@
 	font-size: 1.6em; /* Resolves to 2em because of 1.25em */
 }
 
-/* .codex-editor.preview-mode > .break { */
-/* 	--line-height: 1.75em; */
-/*  */
-/* 	height: var(--line-height); */
-/* 	background: */
-/* 		linear-gradient( */
-/* 			transparent calc(var(--line-height) / 2 - 0.125em), */
-/* 			var(--md-gray-300) calc(var(--line-height) / 2 - 0.125em), */
-/* 			var(--md-gray-300) calc(var(--line-height) / 2 + 0.125em), */
-/* 			transparent calc(var(--line-height) / 2 + 0.125em) */
-/* 		); */
-/* } */
-/* .dark-mode .codex-editor.preview-mode > .break { */
-/* 	--line-height: 1.75em; */
-/*  */
-/* 	height: var(--line-height); */
-/* 	background: */
-/* 		linear-gradient( */
-/* 			transparent        calc(var(--line-height) / 2 - 0.125em), */
-/* 			var(--md-gray-700) calc(var(--line-height) / 2 - 0.125em), */
-/* 			var(--md-gray-700) calc(var(--line-height) / 2 + 0.125em), */
-/* 			transparent        calc(var(--line-height) / 2 + 0.125em) */
-/* 		); */
-/* } */
-
 .codex-editor.preview-mode > .break {
 	--line-height: 1.75em;
 
 	height: var(--line-height);
-	background: linear-gradient(transparent calc(var(--line-height) / 2 - 0.125em), var(--md-gray-300) calc(var(--line-height) / 2 - 0.125em), var(--md-gray-300) calc(var(--line-height) / 2 + 0.125em), transparent calc(var(--line-height) / 2 + 0.125em));
+	background: linear-gradient(
+		transparent        calc(var(--line-height) / 2 - 0.125em),
+		var(--md-gray-300) calc(var(--line-height) / 2 - 0.125em),
+		var(--md-gray-300) calc(var(--line-height) / 2 + 0.125em),
+		transparent        calc(var(--line-height) / 2 + 0.125em));
 }
 .dark-mode .codex-editor.preview-mode > .break {
 	--line-height: 1.75em;
 
 	height: var(--line-height);
-	background: linear-gradient(transparent calc(var(--line-height) / 2 - 0.125em), var(--md-gray-700) calc(var(--line-height) / 2 - 0.125em), var(--md-gray-700) calc(var(--line-height) / 2 + 0.125em), transparent calc(var(--line-height) / 2 + 0.125em));
+	background: linear-gradient(
+		transparent        calc(var(--line-height) / 2 - 0.125em),
+		var(--md-gray-700) calc(var(--line-height) / 2 - 0.125em),
+		var(--md-gray-700) calc(var(--line-height) / 2 + 0.125em),
+		transparent        calc(var(--line-height) / 2 + 0.125em));
 }
 
 /*
@@ -175,6 +158,7 @@
 
 .codex-editor .code {
 	margin: 0 1px;
+	padding: 0 1px;
 	box-decoration-break: clone;
 	color: var(--md-blue-a400);
 	box-shadow: 0 0 0 1px var(--gray-300);
