@@ -1,4 +1,4 @@
-// import getCoords from "./helpers/getCoords"
+import getCoords from "./helpers/getCoords"
 // import shallowEqual from "utils/shallowEqual"
 // import useShortcuts from "./hooks/useShortcuts"
 // import useUndo from "./hooks/useUndo"
@@ -24,7 +24,7 @@ const KEY_CODE_2     = 50
 const KEY_CODE_P     = 80
 /* eslint-enable no-multi-spaces */
 
-// const SCROLL_BUFFER = 12
+const SCROLL_BUFFER = 12
 
 // Gets the cursors.
 //
@@ -108,6 +108,30 @@ const Debugger = ({ state, ...props }) => (
 	</div>
 )
 
+// if (pos1.y < SCROLL_BUFFER) {
+// 	window.scrollBy(0, pos1.y - SCROLL_BUFFER)
+// } else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
+// 	window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
+// }
+
+function scrollIntoViewIfNeeded() {
+	const [pos1, pos2] = getCoords()
+	// // if (state.pos1.y !== state.pos2.y) {
+	// // 	// No-op
+	// // 	return
+	// if (pos1.y < SCROLL_BUFFER) {
+	// 	window.scrollBy(0, pos1.y - SCROLL_BUFFER)
+	// } else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
+	// 	window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
+	// }
+	// console.log(window.scrollY, pos1.y, pos2.y)
+	if (pos1.y < 112) {
+		window.scrollBy(0, pos1.y - 112)
+	} else if (pos2.y > window.innerHeight - 32) {
+		window.scrollBy(0, pos2.y - window.innerHeight + 32)
+	}
+}
+
 export function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const target = React.useRef()
@@ -126,6 +150,8 @@ export function Editor({ state, dispatch, ...props }) {
 		dispatch.getClass()
 	}, [dispatch])
 
+	// TODO (1): useEffect?
+	// TODO (2): Can we separate pos from components?
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(state.components, state.reactDOM, () => {
@@ -150,6 +176,7 @@ export function Editor({ state, dispatch, ...props }) {
 					range.setEnd(node, offset)
 				}
 				selection.addRange(range)
+				scrollIntoViewIfNeeded()
 				dispatch.rendered()
 			})
 		}, [state, dispatch]),
@@ -175,7 +202,7 @@ export function Editor({ state, dispatch, ...props }) {
 	// 			window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
 	// 		}
 	// 	}, [state]),
-	// 	[state.shouldRender /* before */, state.pos1, state.pos2],
+	// 	[state.pos1, state.pos2],
 	// )
 
 	// Undo (store the next undo -- debounced 500ms):
@@ -192,7 +219,8 @@ export function Editor({ state, dispatch, ...props }) {
 				clearTimeout(id)
 			}
 		}, [dispatch, props.readOnly]),
-	[state.shouldRender]) // TODO: state.data?
+		[state.shouldRender],
+	) // TODO: state.data?
 
 	// Shortcuts:
 	React.useEffect(
@@ -229,7 +257,7 @@ export function Editor({ state, dispatch, ...props }) {
 	)
 
 	return (
-		<div style={{ fontSize: props.style.fontSize }}>
+		<div style={{ fontSize: props.style && props.style.fontSize }}>
 			{React.createElement(
 				"div",
 				{
@@ -239,16 +267,13 @@ export function Editor({ state, dispatch, ...props }) {
 
 					style: {
 						...{ ...props.style, fontSize: null },
-
-						// NOTE: Imperative styles needed for the editor
-						// to work
 						whiteSpace: "pre-wrap",
 						outline: "none",
 						overflowWrap: "break-word",
 					},
 
-					contentEditable: !props.readOnly && true,
-					suppressContentEditableWarning: !props.readOnly && true,
+					contentEditable: !state.props.readOnly,
+					suppressContentEditableWarning: !state.props.readOnly,
 
 					onFocus: dispatch.actionFocus,
 					onBlur: dispatch.actionBlur,
@@ -433,7 +458,7 @@ export function Editor({ state, dispatch, ...props }) {
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			<Debugger state={state} />
+			{/* <Debugger state={state} /> */}
 		</div>
 	)
 }

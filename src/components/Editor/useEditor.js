@@ -22,6 +22,7 @@ const ActionTypes = new Enum(
 const initialState = {
 	className: "codex-editor",
 	props: {
+		readOnly: false,
 		stylesheet: "TYPE",
 	},
 	actionType: "",     // The type of the current action
@@ -66,7 +67,7 @@ const reducer = state => ({
 		state.className = classNames.join(" ")
 	},
 
-	newAction(actionType) {
+	registerAction(actionType) {
 		const actionTimeStamp = Date.now()
 		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
 			// No-op
@@ -75,21 +76,21 @@ const reducer = state => ({
 		Object.assign(state, { actionType, actionTimeStamp })
 	},
 	actionFocus() {
-		this.newAction(ActionTypes.FOCUS)
+		this.registerAction(ActionTypes.FOCUS)
 		state.focused = true
 	},
 	actionBlur() {
-		this.newAction(ActionTypes.BLUR)
+		this.registerAction(ActionTypes.BLUR)
 		state.focused = false // Reset
 	},
 	actionSelect(pos1, pos2) {
-		this.newAction(ActionTypes.SELECT)
+		this.registerAction(ActionTypes.SELECT)
 		const selected = pos1.pos !== pos2.pos
 		Object.assign(state, { selected, pos1, pos2 })
 	},
 	actionInput(nodes, atEnd, pos1, pos2) {
 		// Create a new action:
-		this.newAction(ActionTypes.INPUT)
+		this.registerAction(ActionTypes.INPUT)
 		if (!state.history.index && !state.resetPos) {
 			Object.assign(state.history.stack[0], {
 				pos1: state.pos1,
@@ -117,7 +118,7 @@ const reducer = state => ({
 	},
 	write(substr, dropL = 0, dropR = 0) {
 		// Create a new action:
-		this.newAction(ActionTypes.INPUT)
+		this.registerAction(ActionTypes.INPUT)
 		if (!state.history.index && !state.resetPos) {
 			Object.assign(state.history.stack[0], {
 				pos1: state.pos1,
@@ -324,15 +325,15 @@ const reducer = state => ({
 	cut() {
 		// NOTE: Inverse order because write sets actionType
 		this.write("")
-		this.newAction(ActionTypes.CUT)
+		this.registerAction(ActionTypes.CUT)
 	},
 	copy() {
-		this.newAction(ActionTypes.COPY)
+		this.registerAction(ActionTypes.COPY)
 	},
 	paste(substr) {
 		// NOTE: Inverse order because write sets actionType
 		this.write(substr)
-		this.newAction(ActionTypes.PASTE)
+		this.registerAction(ActionTypes.PASTE)
 	},
 	storeUndo() {
 		const undo = state.history.stack[state.history.index]
@@ -352,7 +353,7 @@ const reducer = state => ({
 			// No-op
 			return
 		}
-		this.newAction(ActionTypes.UNDO)
+		this.registerAction(ActionTypes.UNDO)
 		if (state.history.index === 1 && state.resetPos) {
 			state.resetPos = false
 		}
@@ -369,7 +370,7 @@ const reducer = state => ({
 			// No-op
 			return
 		}
-		this.newAction(ActionTypes.REDO)
+		this.registerAction(ActionTypes.REDO)
 		if (state.history.index + 1 === state.history.stack.length) {
 			// No-op
 			return

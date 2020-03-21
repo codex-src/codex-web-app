@@ -33,15 +33,10 @@ const Demo = props => {
 		)
 	}, [saveStatus])
 
+	const style = { margin: "-160px 0", padding: "160px 0" }
 	return (
 		<Containers.Note>
-			<Editor.Editor
-				state={state}
-				dispatch={dispatch}
-				// shortcuts={true} // TODO
-				// statusBar={true} // TODO
-				style={{ margin: "-160px 0", padding: "160px 0" }}
-			/>
+			<Editor.Editor state={state} dispatch={dispatch} shortcuts style={style} />
 		</Containers.Note>
 	)
 }
