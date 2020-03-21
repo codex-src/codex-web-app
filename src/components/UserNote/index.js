@@ -53,9 +53,9 @@ const Note = ({ note, ...props }) => {
 	const stateRef = React.useRef(state)
 	stateRef.current = state
 
+	const [saveStatus, setSaveStatus] = React.useState(null)
+
 	// Create note:
-	//
-	// E.g. useCreateNote(...)
 	const mounted1 = React.useRef()
 	React.useEffect(
 		React.useCallback(() => {
@@ -96,16 +96,11 @@ const Note = ({ note, ...props }) => {
 	)
 
 	// Update note:
-	//
-	// E.g. useUpdateNote(...)
 	const mounted2 = React.useRef()
 	React.useEffect(
 		React.useCallback(() => {
 			if (!mounted2.current) {
-				ReactDOM.render(
-					`Last updated ${toHumanDate(note.updatedAt)}`,
-					document.getElementById("user-note-save-status"),
-				)
+				setSaveStatus(`Last updated ${toHumanDate(note.updatedAt)}`)
 				mounted2.current = true
 				return
 			} else if (!noteID) {
@@ -117,26 +112,14 @@ const Note = ({ note, ...props }) => {
 			const id = setTimeout(async () => {
 				// Update note:
 				try {
-					ReactDOM.render(
-						"Saving…",
-						document.getElementById("user-note-save-status"),
-					)
+					setSaveStatus("Saving…")
 					await GraphQL.newQuery(user.idToken, MUTATION_UPDATE_NOTE, {
 						noteInput: {
 							noteID,
 							data: stateRef.current.data,
 						},
 					})
-					ReactDOM.render(
-						"Saved",
-						document.getElementById("user-note-save-status"),
-					)
-					// setTimeout(() => {
-					// 	ReactDOM.render(
-					// 		null,
-					// 		document.getElementById("user-note-save-status"),
-					// 	)
-					// }, 1e3)
+					setSaveStatus("Saved")
 				} catch (error) {
 					console.error(error)
 				} finally {
@@ -151,12 +134,12 @@ const Note = ({ note, ...props }) => {
 		[state.data],
 	)
 
-	// ReactDOM.createPortal(
-	// 	<div>
-	// 		hello, world!
-	// 	</div>,
-	// 	document.getElementById("user-note-save-status"),
-	// )
+	React.useEffect(() => {
+		ReactDOM.render(
+			saveStatus,
+			document.getElementById("user-note-save-status"),
+		)
+	}, [saveStatus])
 
 	return (
 		<Editor.Editor
