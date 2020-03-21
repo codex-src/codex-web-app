@@ -1,4 +1,4 @@
-import * as Preferences from "./PreferencesReducer"
+// import * as Preferences from "./PreferencesReducer"
 import * as utf8 from "utils/encoding/utf8"
 import emoji from "emoji-trie"
 import Enum from "utils/Enum"
@@ -20,10 +20,10 @@ const ActionTypes = new Enum(
 )
 
 const initialState = {
-	// TODO: Deprecate
-	prefs: {
-		...Preferences.initialState,
-	},
+	// // TODO: Deprecate
+	// prefs: {
+	// 	...Preferences.initialState,
+	// },
 	actionType: "",     // The type of the current action
 	actionTimeStamp: 0, // The time stamp of the current action
 	focused: false,     // Is the editor focused?
@@ -44,8 +44,8 @@ const initialState = {
 }
 
 const reducer = state => ({
-	// TODO: Deprecate
-	...Preferences.reducer(state),
+	// // TODO: Deprecate
+	// ...Preferences.reducer(state),
 	newAction(actionType) {
 		const actionTimeStamp = Date.now()
 		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {

@@ -1,4 +1,7 @@
 // import getCoords from "./helpers/getCoords"
+// import useShortcuts from "./hooks/useShortcuts"
+// import useUndo from "./hooks/useUndo"
+import * as platform from "./helpers/platform"
 import getPosFromRange from "./helpers/getPosFromRange"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
@@ -6,18 +9,19 @@ import NodeIterator from "./helpers/NodeIterator"
 import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
-import useShortcuts from "./hooks/useShortcuts"
-// import useUndo from "./hooks/useUndo"
 import { newUUID } from "utils/random"
-
-import {
-	detectRedo,
-	detectUndo,
-} from "./helpers/platform"
 
 /* purgecss start ignore */
 import "./index.css"
 /* purgecss end ignore */
+
+/* eslint-disable no-multi-spaces */
+const KEY_CODE_TAB   = 9
+const KEY_CODE_ENTER = 13
+const KEY_CODE_1     = 49
+const KEY_CODE_2     = 50
+const KEY_CODE_P     = 80
+/* eslint-enable no-multi-spaces */
 
 // const SCROLL_BUFFER = 12
 
@@ -105,21 +109,18 @@ function getNodesFromIterators(rootNode, [start, end]) {
 // 	</div>
 // )
 
+// TODO:
+//
+// React.useLayoutEffect(() => {
+//   dispatch.registerPreferences(...) OR dispatch.registerProps(props)
+// }, [dispatch])
+//
+// This means we can expose props to customize the editor
+// externally and consolidate props internally
+//
 export function Editor({
 	state,
 	dispatch,
-
-	// Preferences:
-	placeholder, // <String>
-	fontSize,    // <CSS>
-
-	// classNames:        "",
-	// previewMode:       false,
-	// // readOnly:       false,
-	// // shortcuts:      false,
-	// // whiteSpace:     false,
-	// // wordWrap:       false,
-
 	...props
 }) {
 	const ref = React.useRef()
@@ -129,13 +130,14 @@ export function Editor({
 	const pointerDown = React.useRef()
 	const dedupedCompositionEnd = React.useRef()
 
+	// React.useLayoutEffect(() => {
+	// 	dispatch.registerProps(props)
+	// }, [dispatch])
+
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(state.components, state.reactDOM, () => {
 				// Sync the DOMs:
-				//
-				// NOTE: Force render on paste events because paste
-				// can become a no-op (same data)
 				const mutations = syncTrees(ref.current, state.reactDOM)
 				if ((!state.shouldRender || !mutations) && state.actionType !== "PASTE") {
 					dispatch.rendered()
@@ -150,7 +152,6 @@ export function Editor({
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
 				range.setStart(node, offset)
 				range.collapse()
-				// NOTE: Use pos1 and pos2
 				if (state.pos1.pos !== state.pos2.pos) {
 					// TODO: Use state.pos1 as a shortcut
 					const { node, offset } = getRangeFromPos(ref.current, state.pos2.pos)
@@ -185,38 +186,74 @@ export function Editor({
 	// 	[state.shouldRender /* before */, state.pos1, state.pos2],
 	// )
 
+	// Undo (store the next undo -- debounced 500ms):
 	React.useEffect(
 		React.useCallback(() => {
-			// if (state.prefs.readOnly || state.prefs.previewMode) {
-			// 	// No-op
-			// 	return
-			// }
+			if (props.readOnly) {
+				// No-op
+				return
+			}
 			const id = setTimeout(() => {
 				dispatch.storeUndo()
 			}, 500)
 			return () => {
 				clearTimeout(id)
 			}
-		}, [dispatch]),
-	[state.shouldRender])
+		}, [dispatch, props.readOnly]),
+	[state.shouldRender]) // TODO: state.data?
 
-	useShortcuts(state, dispatch)
+	// // Shortcuts:
+	// React.useEffect(
+	// 	React.useCallback(() => {
+	// 		if (!state.prefs.shortcuts) {
+	// 			// No-op
+	// 			return
+	// 		}
+	// 		const onKeyDown = e => {
+	// 			switch (true) {
+	// 			case platform.detectKeyCode(e, KEY_CODE_1, { shiftKey: true }):
+	// 				e.preventDefault()
+	// 				dispatch.toggleStylesheet("TYPE")
+	// 				return
+	// 			case platform.detectKeyCode(e, KEY_CODE_2, { shiftKey: true }):
+	// 				e.preventDefault()
+	// 				dispatch.toggleStylesheet("MONO")
+	// 				return
+	// 			// case detectKeyCode(e, KEY_CODE_P, { shiftKey: true }):
+	// 			// 	e.preventDefault()
+	// 			// 	dispatch.toggleTextBackground()
+	// 			// 	return
+	// 			case platform.detectKeyCode(e, KEY_CODE_P):
+	// 				e.preventDefault()
+	// 				dispatch.togglePreviewMode()
+	// 				return
+	// 			default:
+	// 				// No-op
+	// 				break
+	// 			}
+	// 		}
+	// 		document.addEventListener("keydown", onKeyDown)
+	// 		return () => {
+	// 			document.removeEventListener("keydown", onKeyDown)
+	// 		}
+	// 	}, [state, dispatch]),
+	// 	[state.prefs.shortcuts],
+	// )
 
-	React.useEffect(() => {
-		dispatch.getClassNames()
-	}, [dispatch])
+	// FIXME
+	// React.useEffect(() => {
+	// 	dispatch.getClassNames()
+	// }, [dispatch])
 
 	return (
-		<div style={{ fontSize }}>
+		<div style={{ fontSize: props.fontSize }}>
 			{React.createElement(
 				"div",
 				{
 					ref,
 
-					id: state.prefs.id || null,
-
-					// TODO: Deprecate state.prefs.classNames
-					className: ["codex-editor", ...state.prefs.classNames].join(" "),
+					// className: ["codex-editor", ...state.prefs.classNames].join(" "),
+					className: "codex-editor feature-stylesheet-type", // FIXME
 
 					style: {
 						...props.style, // Takes precedence
@@ -225,11 +262,12 @@ export function Editor({
 						overflowWrap: "break-word",
 					},
 
-					contentEditable: !state.prefs.readOnly && !state.prefs.previewMode && true,
-					suppressContentEditableWarning: !state.prefs.readOnly && !state.prefs.previewMode && true,
+					// FIXME: prefs
+					contentEditable: !props.readOnly && true,
+					suppressContentEditableWarning: !props.readOnly && true,
 
 					onFocus: dispatch.actionFocus,
-					onBlur:  dispatch.actionBlur,
+					onBlur: dispatch.actionBlur,
 
 					onSelect: e => {
 						if (!state.focused) {
@@ -283,22 +321,22 @@ export function Editor({
 					onKeyDown: e => {
 						switch (true) {
 						// Tab:
-						case !e.ctrlKey && e.keyCode === 9: // Tab
+						case !e.ctrlKey && e.keyCode === KEY_CODE_TAB:
 							e.preventDefault()
 							dispatch.tab()
 							return
 						// Enter:
-						case e.keyCode === 13: // Enter
+						case e.keyCode === KEY_CODE_ENTER:
 							e.preventDefault()
 							dispatch.enter()
 							return
 						// Undo:
-						case detectUndo(e):
+						case platform.detectUndo(e):
 							e.preventDefault()
 							dispatch.undo()
 							return
 						// Redo:
-						case detectRedo(e):
+						case platform.detectRedo(e):
 							e.preventDefault()
 							dispatch.redo()
 							return
@@ -320,8 +358,7 @@ export function Editor({
 						if (dedupedCompositionEnd.current) {
 							dedupedCompositionEnd.current = false // Reset
 							return
-						}
-						if (e.nativeEvent.isComposing) {
+						} else if (e.nativeEvent.isComposing) {
 							// No-op
 							return
 						}
@@ -364,7 +401,7 @@ export function Editor({
 					},
 
 					onCut: e => {
-						if (state.prefs.readOnly || state.prefs.previewMode) {
+						if (props.readOnly) {
 							// No-op
 							return
 						}
@@ -378,7 +415,7 @@ export function Editor({
 						dispatch.cut()
 					},
 					onCopy: e => {
-						if (state.prefs.readOnly || state.prefs.previewMode) {
+						if (props.readOnly) {
 							// No-op
 							return
 						}
@@ -392,7 +429,7 @@ export function Editor({
 						dispatch.copy()
 					},
 					onPaste: e => {
-						if (state.prefs.readOnly || state.prefs.previewMode) {
+						if (props.readOnly) {
 							// No-op
 							return
 						}

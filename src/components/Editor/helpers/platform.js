@@ -14,7 +14,7 @@ function isMetaOrCtrlKey(e) {
 }
 
 // Detects whether a key down event matches a key code.
-export function detectKeyCode(e, keyCode, { shiftKey } = { shiftKey: false }) { // FIXME: { shiftKey }?
+export function detectKeyCode(e, keyCode, { shiftKey } = { shiftKey: false }) {
 	const ok = (
 		e.shiftKey === shiftKey &&
 		!e.altKey &&

@@ -1,25 +1,25 @@
 /*
- * Type stylesheet
+ * feature-stylesheet-type
  */
-.codex-editor.stylesheet-type {
+.codex-editor.feature-stylesheet-type {
 	-moz-tab-size: 4;
 	tab-size: 4;
 	font: calc(18 / 16 * 1em)/1.75 system-ui, sans-serif;
 }
-.codex-editor.stylesheet-type .code-block,
-.codex-editor.stylesheet-type .code {
+.codex-editor.feature-stylesheet-type .code-block,
+.codex-editor.feature-stylesheet-type .code {
 	-moz-osx-font-smoothing: auto;
 	-webkit-font-smoothing:  auto;
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: calc(13.5 / 16 * 1em)/1.35 "iA Writer Mono var", monospace;
+	font: calc(14 / 16 * 1em)/1.35 "iA Writer Mono var", monospace;
 }
 
 /*
- * Mono stylesheet
+ * feature-stylesheet-type
  */
-.codex-editor.stylesheet-mono {
+.codex-editor.feature-stylesheet-mono {
 	-moz-osx-font-smoothing: auto;
 	-webkit-font-smoothing:  auto;
 
@@ -27,8 +27,8 @@
 	tab-size: 2;
 	font: 1em/1.75 "iA Writer Mono var", monospace;
 }
-.codex-editor.stylesheet-mono .code-block,
-.codex-editor.stylesheet-mono .code {
+.codex-editor.feature-stylesheet-mono .code-block,
+.codex-editor.feature-stylesheet-mono .code {
 	-moz-tab-size: 2;
 	tab-size: 2;
 	font: 1em/1.35 "iA Writer Mono var", monospace;
@@ -94,21 +94,21 @@
 	/* NOTE: Do not use display: none */
 	visibility: hidden;
 }
-.codex-editor.preview-mode > .blockquote {
+.codex-editor.feature-preview-mode > .blockquote {
  	padding-left: 1em;
 }
 
 .codex-editor > .code-block {
 	padding: 0 1.5em;
-	background: var(--md-gray-50);
+	/* background: var(--md-gray-50); */
 	box-shadow: 0 0 0 1px var(--gray-300);
 }
 .dark-mode .codex-editor > .code-block {
-	background: hsla(0, 0%, 100%, 0.1);
+	/* background: hsla(0, 0%, 100%, 0.1); */
 	box-shadow: 0 0 0 1px var(--gray-700);
 }
-.codex-editor.preview-mode > .code-block > [data-start-node] > .markdown,
-.codex-editor.preview-mode > .code-block > [data-end-node] > .markdown {
+.codex-editor.feature-preview-mode > .code-block > [data-start-node] > .markdown,
+.codex-editor.feature-preview-mode > .code-block > [data-end-node] > .markdown {
 	display: inline; /* Prevent display: none */
 	visibility: hidden;
 }
@@ -117,7 +117,7 @@
 	font-size: 1.6em; /* Resolves to 2em because of 1.25em */
 }
 
-.codex-editor.preview-mode > .break {
+.codex-editor.feature-preview-mode > .break {
 	--line-height: 1.75em;
 
 	height: var(--line-height);
@@ -127,7 +127,7 @@
 		var(--md-gray-300) calc(var(--line-height) / 2 + 0.125em),
 		transparent        calc(var(--line-height) / 2 + 0.125em));
 }
-.dark-mode .codex-editor.preview-mode > .break {
+.dark-mode .codex-editor.feature-preview-mode > .break {
 	--line-height: 1.75em;
 
 	height: var(--line-height);
@@ -192,6 +192,10 @@
 .dark-mode .codex-editor .markdown {
 	color: var(--md-blue-a200);
 }
-.codex-editor.preview-mode .markdown {
+
+/*
+ * feature-preview-mode
+ */
+.codex-editor.feature-preview-mode .markdown {
 	display: none;
 }
