@@ -1,7 +1,9 @@
+import * as DarkMode from "components/DarkMode"
 import React from "react"
 
-// border-b border-transparent dark:border-gray-750
-function useDarkModeNav(ref, darkMode) {
+function useTransitionNav(ref) {
+	const [darkMode] = DarkMode.useDarkMode()
+
 	// Disable border-color and box-shadow:
 	React.useLayoutEffect(() => {
 		ref.current.style.borderColor = "transparent"
@@ -27,4 +29,4 @@ function useDarkModeNav(ref, darkMode) {
 	}, [ref, darkMode])
 }
 
-export default useDarkModeNav
+export default useTransitionNav

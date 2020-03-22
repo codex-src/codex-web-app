@@ -1,15 +1,14 @@
+import $NavLink from "components/Link/NavLink"
 import * as constants from "__constants"
-import * as DarkMode from "components/DarkMode"
 import * as DropDown from "./DropDown"
 import * as Hero from "react-heroicons"
 import * as Icons from "svgs"
 import Icon from "utils/Icon"
 import Link from "components/Link"
 import NavButtonDarkMode from "./NavButtonDarkMode"
-import $NavLink from "components/Link/NavLink"
 import React from "react"
-import useDarkModeNav from "./useDarkModeNav"
 import useDropDown from "hooks/useDropDown"
+import useTransitionNav from "./useTransitionNav"
 
 const NavLink = props => (
 	// eslint-disable-next-line react/jsx-pascal-case
@@ -128,9 +127,7 @@ const Nav = props => {
 const UnauthNav = props => {
 	const ref = React.useRef()
 
-	const [darkMode] = DarkMode.useDarkMode()
-
-	useDarkModeNav(ref, darkMode)
+	useTransitionNav(ref)
 
 	return (
 		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 border-b border-transparent dark:border-gray-750 shadow z-30 transition duration-300">

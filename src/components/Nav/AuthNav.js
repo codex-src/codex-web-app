@@ -1,5 +1,4 @@
 import * as constants from "__constants"
-import * as DarkMode from "components/DarkMode"
 import * as DropDown from "./DropDown"
 import * as Icons from "svgs"
 import * as User from "components/User"
@@ -8,8 +7,8 @@ import Icon from "utils/Icon"
 import Link from "components/Link"
 import NavButtonDarkMode from "./NavButtonDarkMode"
 import React from "react"
-import useDarkModeNav from "./useDarkModeNav"
 import useDropDown from "hooks/useDropDown"
+import useTransitionNav from "./useTransitionNav"
 
 const Nav = props => {
 	const ref = React.useRef()
@@ -102,9 +101,7 @@ const Nav = props => {
 const AuthNav = props => {
 	const ref = React.useRef()
 
-	const [darkMode] = DarkMode.useDarkMode()
-
-	useDarkModeNav(ref, darkMode)
+	useTransitionNav(ref)
 
 	return (
 		<div ref={ref} className="fixed inset-x-0 top-0 flex flex-row justify-center bg-white dark:bg-gray-900 border-b border-transparent dark:border-gray-750 shadow z-30 transition duration-300">
