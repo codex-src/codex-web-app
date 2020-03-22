@@ -1,7 +1,7 @@
 import Markdown from "./Markdown"
 import parseInline from "./parseInline"
 import React from "react"
-import { Emoji } from "./InlineElements"
+import { Emoji } from "./InlineComponents"
 
 export const Node = ({ reactKey, ...props }) => (
 	<div style={{ whiteSpace: "pre-wrap" }} data-node={reactKey} {...props}>
@@ -42,6 +42,9 @@ function areEqualBlockQuotes(prev, next) {
 	return true
 }
 
+// FIXME: Emojis?
+//
+// TODO: Embed raw for React.memo
 export const Blockquote = React.memo(props => {
 	const parsed = props.children.map(each => ({
 		key:      each.key,
@@ -63,34 +66,6 @@ export const Blockquote = React.memo(props => {
 	)
 }, areEqualBlockQuotes)
 
-// const CodeBlock = React.memo(props => {
-// 	let html = ""
-// 	const lang = getPrismLang(props.lang)
-// 	if (lang) {
-// 		try {
-// 			html = window.Prism.highlight(props.children, lang, props.lang)
-// 		} catch (e) {
-// 			console.warn(e)
-// 		}
-// 	}
-// 	const className = `language-${props.lang}`
-// 	return (
-// 		<div style={{ ...stylex.parse("m-x:-24 p-x:24 b:white"), boxShadow: "0px 0px 1px hsl(var(--gray))" }}>
-// 			<Markdown style={stylex.parse("c:gray")} start={`\`\`\`${props.lang}`} end="```">
-// 				{!html ? (
-// 					<code>
-// 						{props.children}
-// 					</code>
-// 				) : (
-// 					<code className={className} dangerouslySetInnerHTML={{
-// 						__html: html,
-// 					}} />
-// 				)}
-// 			</Markdown>
-// 		</div>
-// 	)
-// })
-
 function areEqualCodeBlocks(prev, next) {
 	if (prev.metadata !== next.metadata) {
 		return false
@@ -108,6 +83,7 @@ function areEqualCodeBlocks(prev, next) {
 	return true
 }
 
+// TODO: Embed raw for React.memo
 export const CodeBlock = React.memo(props => {
 	const parsed = props.children.map((each, index) => ({
 		key:      each.key,
@@ -146,26 +122,12 @@ export const CodeBlock = React.memo(props => {
 	)
 }, areEqualCodeBlocks)
 
-// Returns whether components are emoji components.
-function areEmojis(components) {
-	const ok = (
-		components &&
-		components.length <= 3 &&
-		components.every(each => each && each.type && each.type === Emoji)
-	)
-	return ok
-}
-
-// FIXME
-export const Paragraph = React.memo(({ reactKey, ...props }) => {
-	const parsed = parseInline(props.children)
-
-	return (
-		<Node reactKey={reactKey} className={`paragraph ${!areEmojis(parsed) ? "" : "emojis"}`.trim()}>
-			{parsed}
-		</Node>
-	)
-})
+// FIXME: Emojis?
+export const Paragraph = React.memo(({ reactKey, ...props }) => (
+	<Node reactKey={reactKey} className="paragraph">
+		{parseInline(props.children)}
+	</Node>
+))
 
 export const Break = React.memo(({ reactKey, ...props }) => (
 	<Node reactKey={reactKey} className="break">

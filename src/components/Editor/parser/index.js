@@ -6,7 +6,7 @@ import {
 	CodeBlock,
 	Header,
 	Paragraph,
-} from "./BlockElements"
+} from "./BlockComponents"
 
 // Parses an array of components from an array of nodes.
 function parse(body) {

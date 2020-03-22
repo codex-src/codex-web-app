@@ -8,7 +8,7 @@ import {
 	Strikethrough,
 	Strong,
 	StrongEm,
-} from "./InlineElements"
+} from "./InlineComponents"
 
 // Parses an array of components from a string.
 function parseInline(data) { // TODO: Rename to str
