@@ -6,17 +6,18 @@ import * as Icons from "svgs"
 import Icon from "utils/Icon"
 import Link from "components/Link"
 import NavButtonDarkMode from "./NavButtonDarkMode"
+import $NavLink from "components/Link/NavLink"
 import React from "react"
 import useDarkModeNav from "./useDarkModeNav"
 import useDropDown from "hooks/useDropDown"
 
 const NavLink = props => (
-	// NOTE: Use hover:text-md-blue-a200 for light mode
-	<Link className="px-3 text-black dark:text-white hover:text-md-blue-a400 hover:dark:text-md-blue-a200 flex flex-row items-center" {...props}>
+	// eslint-disable-next-line react/jsx-pascal-case
+	<$NavLink className="px-3 text-black dark:text-white hover:text-md-blue-a400 hover:dark:text-md-blue-a200 flex flex-row items-center" activeClassName="text-md-blue-a400 dark:text-md-blue-a200" {...props}>
 		<p className="tracking-wide">
 			{props.children}
 		</p>
-	</Link>
+	</$NavLink>
 )
 
 const NavLinkCTA = props => (
