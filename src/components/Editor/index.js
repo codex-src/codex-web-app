@@ -1,5 +1,5 @@
 // import getCoords from "./helpers/getCoords"
-import * as platform from "./helpers/platform"
+import * as detect from "./helpers/detect"
 import getPos from "./helpers/getPos"
 import getPosFromRange from "./helpers/getPosFromRange"
 import getRangeFromPos from "./helpers/getRangeFromPos"
@@ -187,15 +187,15 @@ export function Editor({ state, dispatch, ...props }) {
 				return
 			}
 			const onKeyDown = e => {
-				if (platform.detectKeyCode(e, KEY_CODE_1, { shiftKey: true })) {
+				if (detect.keyCode(e, KEY_CODE_1, { shiftKey: true })) {
 					e.preventDefault()
 					dispatch.setStylesheet("TYPE")
 					return
-				} else if (platform.detectKeyCode(e, KEY_CODE_2, { shiftKey: true })) {
+				} else if (detect.keyCode(e, KEY_CODE_2, { shiftKey: true })) {
 					e.preventDefault()
 					dispatch.setStylesheet("MONO")
 					return
-				} else if (platform.detectKeyCode(e, KEY_CODE_P)) {
+				} else if (detect.keyCode(e, KEY_CODE_P)) {
 					e.preventDefault()
 					dispatch.toggleReadOnly()
 					return
@@ -291,12 +291,12 @@ export function Editor({ state, dispatch, ...props }) {
 							dispatch.enter()
 							return
 						// Undo:
-						} else if (platform.detectUndo(e)) {
+						} else if (detect.undo(e)) {
 							e.preventDefault()
 							dispatch.undo()
 							return
 						// Redo:
-						} else if (platform.detectRedo(e)) {
+						} else if (detect.redo(e)) {
 							e.preventDefault()
 							dispatch.redo()
 							return

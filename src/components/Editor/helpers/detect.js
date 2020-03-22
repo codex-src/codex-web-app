@@ -5,8 +5,9 @@ const KEY_CODE_Z = 90
 
 // Returns whether an key down event exclusively uses the
 // meta or control key.
+//
+// https://css-tricks.com/snippets/javascript/test-mac-pc-javascript
 function isMetaOrCtrlKey(e) {
-	// https://css-tricks.com/snippets/javascript/test-mac-pc-javascript
 	if (navigator.userAgent.includes("Mac OS X")) {
 		return !e.ctrlKey && e.metaKey
 	}
@@ -14,7 +15,7 @@ function isMetaOrCtrlKey(e) {
 }
 
 // Detects whether a key down event matches a key code.
-export function detectKeyCode(e, keyCode, { shiftKey } = { shiftKey: false }) {
+export function keyCode(e, keyCode, { shiftKey } = { shiftKey: false }) {
 	const ok = (
 		e.shiftKey === shiftKey &&
 		!e.altKey &&
@@ -25,7 +26,7 @@ export function detectKeyCode(e, keyCode, { shiftKey } = { shiftKey: false }) {
 }
 
 // Detects whether a key down event is undo.
-export function detectUndo(e) {
+export function undo(e) {
 	const ok = (
 		!e.shiftKey &&
 		!e.altKey &&
@@ -36,7 +37,7 @@ export function detectUndo(e) {
 }
 
 // Detects whether a key down event is redo.
-export function detectRedo(e) {
+export function redo(e) {
 	const ok = (
 		e.shiftKey &&
 		!e.altKey &&

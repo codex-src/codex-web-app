@@ -1,22 +1,17 @@
-import Emoji from "./Emoji"
 import emojiTrie from "emoji-trie"
 import React from "react"
 
 import {
 	Code,
 	Em,
+	Emoji,
 	Strikethrough,
 	Strong,
 	StrongEm,
-} from "./Text"
-
-// Shorthand for parseText.
-function recurse(data) {
-	return parseText(data)
-}
+} from "./InlineElements"
 
 // Parses an array of components from a string.
-function parseText(data) { // TODO: Rename to str
+function parseInline(data) { // TODO: Rename to str
 	if (!data) {
 		return ""
 	}
@@ -44,7 +39,7 @@ function parseText(data) { // TODO: Rename to str
 					break
 				}
 				index += syntax.length
-				const children = recurse(data.slice(index, index + offset))
+				const children = parseInline(data.slice(index, index + offset))
 				components.push(<StrongEm key={components.length} syntax={syntax}>{children}</StrongEm>)
 				index += offset + syntax.length - 1
 				continue
@@ -57,7 +52,7 @@ function parseText(data) { // TODO: Rename to str
 					break
 				}
 				index += syntax.length
-				const children = recurse(data.slice(index, index + offset))
+				const children = parseInline(data.slice(index, index + offset))
 				components.push(<Strong key={components.length} syntax={syntax}>{children}</Strong>)
 				index += offset + syntax.length - 1
 				continue
@@ -70,7 +65,7 @@ function parseText(data) { // TODO: Rename to str
 					break
 				}
 				index += syntax.length
-				const children = recurse(data.slice(index, index + offset))
+				const children = parseInline(data.slice(index, index + offset))
 				components.push(<Em key={components.length} syntax={syntax}>{children}</Em>)
 				index += offset + syntax.length - 1
 				continue
@@ -104,7 +99,7 @@ function parseText(data) { // TODO: Rename to str
 					break
 				}
 				index += syntax.length
-				const children = recurse(data.slice(index, index + offset))
+				const children = parseInline(data.slice(index, index + offset))
 				components.push(<Strikethrough key={components.length} syntax={syntax}>{children}</Strikethrough>)
 				index += offset + syntax.length - 1
 				continue
@@ -117,7 +112,7 @@ function parseText(data) { // TODO: Rename to str
 					break
 				}
 				index += syntax.length
-				const children = recurse(data.slice(index, index + offset))
+				const children = parseInline(data.slice(index, index + offset))
 				components.push(<Strikethrough key={components.length} syntax={syntax}>{children}</Strikethrough>)
 				index += offset + syntax.length - 1
 				continue
@@ -144,4 +139,4 @@ function parseText(data) { // TODO: Rename to str
 	return components
 }
 
-export default parseText
+export default parseInline

@@ -42,3 +42,9 @@ export const Strikethrough = ({ syntax, ...props }) => (
 		</Markdown>
 	</span>
 )
+
+export const Emoji = props => (
+	<span className="emoji">
+		{props.children}
+	</span>
+)
