@@ -21,6 +21,12 @@ export const CompoundNode = ({ ...props }) => (
 	</div>
 )
 
+// Assumes references are not shared because of
+// state.nodes.splice(...).
+function areEqualReferences(prevProps, nextProps) {
+	return prevProps === nextProps
+}
+
 export const Header = React.memo(({ reactKey, ...props }) => (
 	<Node reactKey={reactKey} className={`header h${props.start.length - 1}`}>
 		<Markdown start={props.start}>
@@ -29,20 +35,20 @@ export const Header = React.memo(({ reactKey, ...props }) => (
 	</Node>
 ))
 
-function areEqualBlockQuotes(prev, next) {
-	if (prev.children.length !== next.children.length) {
-		return false
-	}
-	const { length } = prev.children
-	for (let x = 0; x < length; x++) {
-		if (prev.children[x].key !== next.children[x].key ||
-				prev.children[x].data.length !== next.children[x].data.length ||
-				prev.children[x].data !== next.children[x].data) {
-			return false
-		}
-	}
-	return true
-}
+// function areEqualBlockQuotes(prev, next) {
+// 	if (prev.children.length !== next.children.length) {
+// 		return false
+// 	}
+// 	const { length } = prev.children
+// 	for (let x = 0; x < length; x++) {
+// 		if (prev.children[x].key !== next.children[x].key ||
+// 				prev.children[x].data.length !== next.children[x].data.length ||
+// 				prev.children[x].data !== next.children[x].data) {
+// 			return false
+// 		}
+// 	}
+// 	return true
+// }
 
 // FIXME: Emojis?
 //
@@ -66,24 +72,24 @@ export const Blockquote = React.memo(props => {
 			))}
 		</CompoundNode>
 	)
-}, areEqualBlockQuotes)
+}, areEqualReferences)
 
-function areEqualCodeBlocks(prev, next) {
-	if (prev.metadata !== next.metadata) {
-		return false
-	} else if (prev.children.length !== next.children.length) {
-		return false
-	}
-	const { length } = prev.children
-	for (let x = 0; x < length; x++) {
-		if (prev.children[x].key !== next.children[x].key ||
-				prev.children[x].data.length !== next.children[x].data.length ||
-				prev.children[x].data !== next.children[x].data) {
-			return false
-		}
-	}
-	return true
-}
+// function areEqualCodeBlocks(prev, next) {
+// 	if (prev.metadata !== next.metadata) {
+// 		return false
+// 	} else if (prev.children.length !== next.children.length) {
+// 		return false
+// 	}
+// 	const { length } = prev.children
+// 	for (let x = 0; x < length; x++) {
+// 		if (prev.children[x].key !== next.children[x].key ||
+// 				prev.children[x].data.length !== next.children[x].data.length ||
+// 				prev.children[x].data !== next.children[x].data) {
+// 			return false
+// 		}
+// 	}
+// 	return true
+// }
 
 // TODO: Embed raw for React.memo
 export const CodeBlock = React.memo(props => {
@@ -122,7 +128,7 @@ export const CodeBlock = React.memo(props => {
 			))}
 		</CompoundNode>
 	)
-}, areEqualCodeBlocks)
+}, areEqualReferences)
 
 // FIXME: Emojis?
 export const Paragraph = React.memo(({ reactKey, ...props }) => (

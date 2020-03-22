@@ -43,7 +43,7 @@ function shallowEqual(objA: mixed, objB: mixed): boolean {
 	for (let i = 0; i < keysA.length; i++) {
 		if (
 			!hasOwnProperty.call(objB, keysA[i]) ||
-      !is(objA[keysA[i]], objB[keysA[i]])
+			!is(objA[keysA[i]], objB[keysA[i]])
 		) {
 			return false
 		}

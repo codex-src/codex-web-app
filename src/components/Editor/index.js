@@ -326,22 +326,22 @@ export function Editor({ state, dispatch, ...props }) {
 						case "insertParagraph":
 							dispatch.enter()
 							return
-							// case "deleteContentBackward":
-							// 	dispatch.backspaceChar()
-							// 	return
-							// case "deleteWordBackward":
-							// 	dispatch.backspaceWord()
-							// 	return
-							// case "deleteSoftLineBackward":
-							// case "deleteHardLineBackward":
-							// 	dispatch.backspaceLine()
-							// 	return
-							// case "deleteContentForward":
-							// 	dispatch.backspaceCharForwards()
-							// 	return
-							// case "deleteWordForward":
-							// 	dispatch.backspaceWordForwards()
-							// 	return
+							case "deleteContentBackward":
+								dispatch.backspaceChar()
+								return
+							case "deleteWordBackward":
+								dispatch.backspaceWord()
+								return
+							case "deleteSoftLineBackward":
+							case "deleteHardLineBackward":
+								dispatch.backspaceLine()
+								return
+							case "deleteContentForward":
+								dispatch.backspaceCharForwards()
+								return
+							case "deleteWordForward":
+								dispatch.backspaceWordForwards()
+								return
 						case "historyUndo":
 							dispatch.undo()
 							return
@@ -409,7 +409,7 @@ export function Editor({ state, dispatch, ...props }) {
 			)}
 
 			{/* Debugger */}
-			{(true && process.env.NODE_ENV !== "production") && (
+			{(false && process.env.NODE_ENV !== "production") && (
 				<div className="py-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug text-black dark:text-white">
 					{JSON.stringify(
 						{
