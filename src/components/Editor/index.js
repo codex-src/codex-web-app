@@ -76,32 +76,6 @@ function getNodesFromIterators(rootNode, [start, end]) {
 	return { nodes, atEnd }
 }
 
-// // https://reactjs.org/docs/error-boundaries.html#introducing-error-boundaries
-// class ErrorBoundary extends React.Component {
-// 	constructor(props) {
-// 		super(props)
-// 		this.state = {
-// 			errored: false,
-// 		}
-// 	}
-// 	static getDerivedStateFromError(error) {
-// 		return { errored: true }
-// 	}
-// 	componentDidCatch(error, errorInfo) {
-// 		// TODO
-// 		// logErrorToMyService(error, errorInfo)
-// 		console.error(error)
-// 		console.error(errorInfo)
-// 	}
-// 	render() {
-// 		// TODO
-// 		// if (this.state.errored) {
-// 		// 	return <h1>Something went wrong.</h1>
-// 		// }
-// 		return this.props.children
-// 	}
-// }
-
 export function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
 	const target = React.useRef()
@@ -114,6 +88,9 @@ export function Editor({ state, dispatch, ...props }) {
 	//
 	// NOTE: Do not use props as a dependency because the
 	// reference (object) changes on every render
+	//
+	// TODO: Can use known props (props members) as
+	// dependencies
 	const propsRef = React.useRef(props)
 	React.useLayoutEffect(() => {
 		dispatch.registerProps(propsRef.current)
@@ -137,7 +114,7 @@ export function Editor({ state, dispatch, ...props }) {
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(state.components, state.reactDOM, () => {
-				// Sync the DOMs:
+				// Sync the user and React-managed DOMs:
 				const mutations = syncTrees(ref.current, state.reactDOM)
 				if ((!state.components || !mutations) && state.actionType !== "PASTE") {
 					// No-op
@@ -185,7 +162,7 @@ export function Editor({ state, dispatch, ...props }) {
 	// 	[state.pos1, state.pos2],
 	// )
 
-	// Undo (store the next undo -- debounced 500ms):
+	// Store the next undo -- debounced 500ms:
 	React.useEffect(
 		React.useCallback(() => {
 			if (props.readOnly) {
@@ -202,7 +179,7 @@ export function Editor({ state, dispatch, ...props }) {
 		[state.components],
 	)
 
-	// Shortcuts:
+	// Enable shortcuts:
 	React.useEffect(
 		React.useCallback(() => {
 			if (!state.props.shortcuts) {
@@ -210,22 +187,18 @@ export function Editor({ state, dispatch, ...props }) {
 				return
 			}
 			const onKeyDown = e => {
-				switch (true) {
-				case platform.detectKeyCode(e, KEY_CODE_1, { shiftKey: true }):
+				if (platform.detectKeyCode(e, KEY_CODE_1, { shiftKey: true })) {
 					e.preventDefault()
 					dispatch.setStylesheet("TYPE")
 					return
-				case platform.detectKeyCode(e, KEY_CODE_2, { shiftKey: true }):
+				} else if (platform.detectKeyCode(e, KEY_CODE_2, { shiftKey: true })) {
 					e.preventDefault()
 					dispatch.setStylesheet("MONO")
 					return
-				case platform.detectKeyCode(e, KEY_CODE_P):
+				} else if (platform.detectKeyCode(e, KEY_CODE_P)) {
 					e.preventDefault()
 					dispatch.toggleReadOnly()
 					return
-				default:
-					// No-op
-					break
 				}
 			}
 			document.addEventListener("keydown", onKeyDown)
@@ -238,134 +211,121 @@ export function Editor({ state, dispatch, ...props }) {
 
 	return (
 		// <ErrorBoundary>
-			<div style={{ fontSize: props.style && props.style.fontSize }}>
-				{React.createElement(
-					"div",
-					{
-						ref,
+		<div style={{ fontSize: props.style && props.style.fontSize }}>
+			{React.createElement(
+				"div",
+				{
+					ref,
 
-						className: `codex-editor ${state.featureClassName}`,
+					className: `codex-editor ${state.featureClassName}`,
 
-						style: {
-							...{ ...props.style, fontSize: null },
-							whiteSpace: "pre-wrap",
-							outline: "none",
-							overflowWrap: "break-word",
-						},
+					style: {
+						...{ ...props.style, fontSize: null },
+						whiteSpace: "pre-wrap",
+						outline: "none",
+						overflowWrap: "break-word",
+					},
 
-						contentEditable: !state.props.readOnly,
+					contentEditable: !state.props.readOnly,
 
-						onFocus: dispatch.actionFocus,
-						onBlur:  dispatch.actionBlur,
+					onFocus: dispatch.actionFocus,
+					onBlur:  dispatch.actionBlur,
 
-						onSelect: e => {
-							if (!state.focused) {
-								// No-op
-								return
+					onSelect: e => {
+						// Guard the root node:
+						const selection = document.getSelection()
+						const range = selection.getRangeAt(0)
+						if (range.startContainer === ref.current || range.endContainer === ref.current) {
+							// Iterate to the innermost start node:
+							let startNode = ref.current.childNodes[0]
+							while (startNode.childNodes.length) {
+								startNode = startNode.childNodes[0]
 							}
-							// Guard the root node:
-							const selection = document.getSelection()
-							const range = selection.getRangeAt(0)
-							if (range.startContainer === ref.current || range.endContainer === ref.current) {
-								// Iterate to the innermost start node:
-								let startNode = ref.current.childNodes[0]
-								while (startNode.childNodes.length) {
-									startNode = startNode.childNodes[0]
-								}
-								// Iterate to the innermost end node:
-								let endNode = ref.current.childNodes[ref.current.childNodes.length - 1]
-								while (endNode.childNodes.length) {
-									endNode = endNode.childNodes[endNode.childNodes.length - 1]
-								}
-								// Reset the range:
-								const range = document.createRange()
-								range.setStart(startNode, 0)
-								range.setEnd(endNode, (endNode.nodeValue || "").length)
-								selection.removeAllRanges()
-								selection.addRange(range)
+							// Iterate to the innermost end node:
+							let endNode = ref.current.childNodes[ref.current.childNodes.length - 1]
+							while (endNode.childNodes.length) {
+								endNode = endNode.childNodes[endNode.childNodes.length - 1]
 							}
-							const [pos1, pos2] = getPos(ref.current)
-							dispatch.actionSelect(pos1, pos2)
-							target.current = newNodeIterators()
-						},
+							// Reset the range:
+							const range = document.createRange()
+							range.setStart(startNode, 0)
+							range.setEnd(endNode, (endNode.nodeValue || "").length)
+							selection.removeAllRanges()
+							selection.addRange(range)
+						}
+						const [pos1, pos2] = getPos(ref.current)
+						dispatch.actionSelect(pos1, pos2)
+						target.current = newNodeIterators()
+					},
 
-						onPointerDown: e => {
-							pointerDown.current = true
-						},
+					onPointerDown: e => {
+						pointerDown.current = true
+					},
 
-						onPointerMove: e => {
-							if (!state.focused) {
-								pointerDown.current = false
-								return
-							} else if (!pointerDown.current) {
-								// No-op
-								return
-							}
-							const [pos1, pos2] = getPos(ref.current)
-							dispatch.actionSelect(pos1, pos2)
-							target.current = newNodeIterators()
-						},
-
-						onPointerUp: e => {
+					onPointerMove: e => {
+						if (!state.focused) {
 							pointerDown.current = false
-						},
+							return
+						} else if (!pointerDown.current) {
+							// No-op
+							return
+						}
+						const [pos1, pos2] = getPos(ref.current)
+						dispatch.actionSelect(pos1, pos2)
+						target.current = newNodeIterators()
+					},
 
-						onKeyDown: e => {
-							// const selection = document.getSelection()
-							// const range = selection.getRangeAt(0)
-							// if (range) {
-							// 	console.log(range.getBoundingClientRect())
-							// }
-							switch (true) {
-							// Tab:
-							case !e.ctrlKey && e.keyCode === KEY_CODE_TAB:
-								e.preventDefault()
-								dispatch.tab()
-								return
-							// Enter:
-							case e.keyCode === KEY_CODE_ENTER:
-								e.preventDefault()
-								dispatch.enter()
-								return
-							// Undo:
-							case platform.detectUndo(e):
-								e.preventDefault()
-								dispatch.undo()
-								return
-							// Redo:
-							case platform.detectRedo(e):
-								e.preventDefault()
-								dispatch.redo()
-								return
-							default:
-								// No-op
-								break
-							}
-						},
+					onPointerUp: e => {
+						pointerDown.current = false
+					},
 
-						onCompositionEnd: e => {
-							// https://github.com/w3c/uievents/issues/202#issue-316461024
-							dedupedCompositionEnd.current = true
-							const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
-							const [pos1, pos2] = getPos(ref.current)
-							dispatch.actionInput(nodes, atEnd, pos1, pos2)
-						},
+					onKeyDown: e => {
+						// Tab:
+						if (!e.ctrlKey && e.keyCode === KEY_CODE_TAB) {
+							e.preventDefault()
+							dispatch.tab()
+							return
+						// Enter:
+						} else if (e.keyCode === KEY_CODE_ENTER) {
+							e.preventDefault()
+							dispatch.enter()
+							return
+						// Undo:
+						} else if (platform.detectUndo(e)) {
+							e.preventDefault()
+							dispatch.undo()
+							return
+						// Redo:
+						} else if (platform.detectRedo(e)) {
+							e.preventDefault()
+							dispatch.redo()
+							return
+						}
+					},
 
-						onInput: e => {
-							// https://github.com/w3c/uievents/issues/202#issue-316461024
-							if (dedupedCompositionEnd.current) {
-								dedupedCompositionEnd.current = false
-								return
-							} else if (e.nativeEvent.isComposing) {
-								// No-op
-								return
-							}
-							// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
-							switch (e.nativeEvent.inputType) {
-							case "insertLineBreak":
-							case "insertParagraph":
-								dispatch.enter()
-								return
+					onCompositionEnd: e => {
+						// https://github.com/w3c/uievents/issues/202#issue-316461024
+						dedupedCompositionEnd.current = true
+						const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
+						const [pos1, pos2] = getPos(ref.current)
+						dispatch.actionInput(nodes, atEnd, pos1, pos2)
+					},
+
+					onInput: e => {
+						// https://github.com/w3c/uievents/issues/202#issue-316461024
+						if (dedupedCompositionEnd.current) {
+							dedupedCompositionEnd.current = false
+							return
+						} else if (e.nativeEvent.isComposing) {
+							// No-op
+							return
+						}
+						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
+						switch (e.nativeEvent.inputType) {
+						case "insertLineBreak":
+						case "insertParagraph":
+							dispatch.enter()
+							return
 							// case "deleteContentBackward":
 							// 	dispatch.backspaceChar()
 							// 	return
@@ -382,88 +342,88 @@ export function Editor({ state, dispatch, ...props }) {
 							// case "deleteWordForward":
 							// 	dispatch.backspaceWordForwards()
 							// 	return
-							case "historyUndo":
-								dispatch.undo()
-								return
-							case "historyRedo":
-								dispatch.redo()
-								return
-							default:
-								// No-op
-								break
-							}
-							// Input:
-							const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
-							const [pos1, pos2] = getPos(ref.current)
-							dispatch.actionInput(nodes, atEnd, pos1, pos2)
-						},
-
-						onCut: e => {
-							if (props.readOnly) {
-								// No-op
-								return
-							}
-							e.preventDefault()
-							if (!state.selected) {
-								// No-op
-								return
-							}
-							const data = state.data.slice(state.pos1.pos, state.pos2.pos)
-							e.clipboardData.setData("text/plain", data)
-							dispatch.cut()
-						},
-
-						onCopy: e => {
-							if (props.readOnly) {
-								// No-op
-								return
-							}
-							e.preventDefault()
-							if (!state.selected) {
-								// No-op
-								return
-							}
-							const data = state.data.slice(state.pos1.pos, state.pos2.pos)
-							e.clipboardData.setData("text/plain", data)
-							dispatch.copy()
-						},
-
-						onPaste: e => {
-							if (props.readOnly) {
-								// No-op
-								return
-							}
-							e.preventDefault()
-							const data = e.clipboardData.getData("text/plain")
-							if (!data) {
-								// No-op
-								return
-							}
-							dispatch.paste(data)
-						},
-
-						// TODO?
-						onDrag: e => e.preventDefault(),
-						onDrop: e => e.preventDefault(),
+						case "historyUndo":
+							dispatch.undo()
+							return
+						case "historyRedo":
+							dispatch.redo()
+							return
+						default:
+							// No-op
+							break
+						}
+						// Input:
+						const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
+						const [pos1, pos2] = getPos(ref.current)
+						dispatch.actionInput(nodes, atEnd, pos1, pos2)
 					},
-				)}
 
-				{/* Debugger */}
-				{(true && process.env.NODE_ENV !== "production") && (
-					<div className="py-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug text-black dark:text-white">
-						{JSON.stringify(
-							{
-								...state,
-								components: undefined,
-								reactDOM:   undefined,
-							},
-							null,
-							"\t",
-						)}
-					</div>
-				)}
+					onCut: e => {
+						if (props.readOnly) {
+							// No-op
+							return
+						}
+						e.preventDefault()
+						if (!state.selected) {
+							// No-op
+							return
+						}
+						const data = state.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", data)
+						dispatch.cut()
+					},
 
-			</div>
+					onCopy: e => {
+						if (props.readOnly) {
+							// No-op
+							return
+						}
+						e.preventDefault()
+						if (!state.selected) {
+							// No-op
+							return
+						}
+						const data = state.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", data)
+						dispatch.copy()
+					},
+
+					onPaste: e => {
+						if (props.readOnly) {
+							// No-op
+							return
+						}
+						e.preventDefault()
+						const data = e.clipboardData.getData("text/plain")
+						if (!data) {
+							// No-op
+							return
+						}
+						dispatch.paste(data)
+					},
+
+					// TODO?
+					onDrag: e => e.preventDefault(),
+					onDrop: e => e.preventDefault(),
+				},
+			)}
+
+			{/* Debugger */}
+			{(true && process.env.NODE_ENV !== "production") && (
+				<div className="py-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug text-black dark:text-white">
+					{JSON.stringify(
+						{
+							...state,
+							components: undefined,
+							reactDOM:   undefined,
+						},
+						null,
+						"\t",
+					)}
+				</div>
+			)}
+
+		</div>
 		// </ErrorBoundary>
 	)
 }

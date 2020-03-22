@@ -71,7 +71,7 @@ const reducer = state => ({
 		state.props.readOnly = !state.props.readOnly
 		this.generateFeatureClassName()
 	},
-	// Generates the feature-* class name.
+	// Generates the feature-* etc. class name.
 	generateFeatureClassName() {
 		const classNames = []
 		if (state.props.readOnly) {
