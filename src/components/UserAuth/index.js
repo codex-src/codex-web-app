@@ -1,3 +1,4 @@
+import * as DarkMode from "components/DarkMode"
 import * as GraphQL from "graphql"
 import * as Icons from "svgs"
 import * as ProgressBar from "components/ProgressBar"
@@ -12,6 +13,8 @@ const MUTATION_REGISTER_USER = `
 `
 
 const UserAuth = props => {
+	const [darkMode] = DarkMode.useDarkMode()
+
 	const renderProgressBar = ProgressBar.useProgressBar()
 
 	const signIn = async provider => {
@@ -81,7 +84,7 @@ const UserAuth = props => {
 				<div className="h-2" />
 				<button className="px-4 py-3 flex flex-row items-center w-full bg-white dark:bg-gray-800 border border-transparent dark:border-gray-750 rounded-lg focus:outline-none shadow-hero focus:shadow-outline transition duration-150" onClick={handleClickGoogle}>
 					<div className="mx-4">
-						<Icon className="w-6 h-6 text-gray-100 transform scale-110" svg={Icons.GoogleLogo} />
+						<Icon className="w-6 h-6 text-gray-100 transform scale-110" svg={!darkMode ? Icons.GoogleLogo : Icons.GoogleSolidLogo} />
 					</div>
 					<p className="font-semibold text-lg text-gray-900 dark:text-gray-100">
 						Continue with Google

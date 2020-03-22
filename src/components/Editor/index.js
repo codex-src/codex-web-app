@@ -114,23 +114,14 @@ const Debugger = ({ state, ...props }) => (
 // 	window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
 // }
 
-function scrollIntoViewIfNeeded() {
-	const [pos1, pos2] = getCoords()
-	// // if (state.pos1.y !== state.pos2.y) {
-	// // 	// No-op
-	// // 	return
-	// if (pos1.y < SCROLL_BUFFER) {
-	// 	window.scrollBy(0, pos1.y - SCROLL_BUFFER)
-	// } else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
-	// 	window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
-	// }
-	// console.log(window.scrollY, pos1.y, pos2.y)
-	if (pos1.y < 112) {
-		window.scrollBy(0, pos1.y - 112)
-	} else if (pos2.y > window.innerHeight - 32) {
-		window.scrollBy(0, pos2.y - window.innerHeight + 32)
-	}
-}
+// function scrollIntoViewIfNeeded() {
+// 	const [pos1, pos2] = getCoords()
+// 	if (pos1.y < 80) {
+// 		window.scrollBy(0, pos1.y - 80 - 12)
+// 	} else if (pos2.y > window.innerHeight) {
+// 		window.scrollBy(0, pos2.y - window.innerHeight + 12)
+// 	}
+// }
 
 export function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
@@ -150,6 +141,26 @@ export function Editor({ state, dispatch, ...props }) {
 		dispatch.getClass()
 	}, [dispatch])
 
+	// React.useLayoutEffect(() => {
+	// 	if (!state.focused) {
+	// 		// No-op
+	// 		return
+	// 	} else if (!document.getSelection().anchorNode) {
+	// 		// No-op
+	// 		return
+	// 	}
+	// 	console.log("Test")
+	// 	scrollIntoViewIfNeeded()
+	// }, [state.focused, state.pos1.pos, state.pos2.pos])
+
+	// React.useLayoutEffect(() => {
+	// 	if (!document.getSelection().anchorNode) {
+	// 		// No-op
+	// 		return
+	// 	}
+	// 	scrollIntoViewIfNeeded()
+	// }, [state.pos1.pos, state.pos2.pos])
+
 	// TODO (1): useEffect?
 	// TODO (2): Can we separate pos from components?
 	React.useLayoutEffect(
@@ -158,6 +169,9 @@ export function Editor({ state, dispatch, ...props }) {
 				// Sync the DOMs:
 				const mutations = syncTrees(ref.current, state.reactDOM)
 				if ((!state.shouldRender || !mutations) && state.actionType !== "PASTE") {
+					// if (state.focused) {
+					// 	scrollIntoViewIfNeeded()
+					// }
 					dispatch.rendered()
 					return
 				}
@@ -176,7 +190,6 @@ export function Editor({ state, dispatch, ...props }) {
 					range.setEnd(node, offset)
 				}
 				selection.addRange(range)
-				scrollIntoViewIfNeeded()
 				dispatch.rendered()
 			})
 		}, [state, dispatch]),
@@ -328,6 +341,11 @@ export function Editor({ state, dispatch, ...props }) {
 					},
 
 					onKeyDown: e => {
+						const selection = document.getSelection()
+						const range = selection.getRangeAt(0)
+						if (range) {
+							console.log(range.getBoundingClientRect())
+						}
 						switch (true) {
 						// Tab:
 						case !e.ctrlKey && e.keyCode === KEY_CODE_TAB:

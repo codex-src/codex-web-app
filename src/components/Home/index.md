@@ -5,5 +5,5 @@ Format your notes using GitHub Flavored Markdown. For example: _italics_, **bold
 > You can create blockquotes.
 
 ```
-And block quotes.
+And code blocks.
 ```

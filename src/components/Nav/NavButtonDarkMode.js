@@ -9,8 +9,7 @@ const NavButtonDarkMode = props => {
 	return (
 		<button className="px-3 flex flex-row items-center" onPointerDown={e => e.preventDefault()} onClick={e => setDarkMode(!darkMode)}>
 			<Icon
-				// NOTE: Use md-blue-a100 for dark mode
-				className="w-6 h-6 text-md-blue-a400 dark:text-md-blue-a100"
+				className="w-6 h-6 text-md-blue-a400 dark:text-gray-400"
 				svg={!darkMode
 					? Hero.SunOutlineMd
 					: Hero.SunSolidSm
