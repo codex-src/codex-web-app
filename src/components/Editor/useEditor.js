@@ -20,69 +20,87 @@ const ActionTypes = new Enum(
 )
 
 const initialState = {
-	className: "codex-editor",
-	props: {
-		readOnly: false,
-		stylesheet: "TYPE",
+	/*
+	 * Preferences
+	 */
+	featureClassName: "",   // Generated feature-* class name
+	props: {                // User-defined preferences
+		"readOnly": false,    //
+		"stylesheet": "TYPE", //
+		"shortcuts": true,    //
+		"style": null,        //
 	},
-	actionType: "",     // The type of the current action
-	actionTimeStamp: 0, // The time stamp of the current action
-	focused: false,     // Is the editor focused?
-	selected: false,    // Is the editor selected? Does the editor have a selection?
-	data: "",           // The plain text data
-	body: null,         // The parsed nodes
-	pos1: newPos(),     // The start cursor
-	pos2: newPos(),     // The end cursor
-	components: null,   // The React components
-	shouldRender: 0,    // Should rerender React components?
-	didRender: 0,       // Did rerender React components?
-	reactDOM: null,     // The React DOM (not what the user sees)
-	history: {          //
-		stack: [],        // The history state stack
-		index: 0,         // The history state stack index
-	},                  //
-	resetPos: false,    // Did reset the cursors?
+	/*
+	 * Actions
+	 */
+	actionType: "",         // The type of the current action
+	actionTimestamp: 0,     // The timestamp of the current action
+	focused: false,         // Is the editor focused?
+	selected: false,        // Is the editor selected?
+	data: "",               // The plain text data
+	body: null,             // The parsed nodes
+	pos1: newPos(),         // The start cursor
+	pos2: newPos(),         // The end cursor
+	components: null,       // The React components
+	reactDOM: null,         // The React-managed DOM
+	history: {              //
+		stack: null,          // The history state stack
+		index: -1,            // The history state stack index
+	},                      //
+	resetPos: false,        // Did reset the cursors?
 }
 
 const reducer = state => ({
-	// Registers user-specified props.
+	/*
+	 * Preferences
+	 */
+	// Registers user-defined props.
 	registerProps(props) {
 		Object.assign(state.props, props)
+		this.generateFeatureClassName()
 	},
-
+	// Sets the stylesheet, e.g. TYPE or MONO.
 	setStylesheet(stylesheet) {
 		state.props.stylesheet = stylesheet
-		this.getClass()
+		this.generateFeatureClassName()
 	},
+	// Toggles read-only; hides markdown and prevents editing.
 	toggleReadOnly() {
 		state.props.readOnly = !state.props.readOnly
-		this.getClass()
+		this.generateFeatureClassName()
 	},
-	getClass() {
-		const classNames = ["codex-editor"]
+	// Generates the feature-* class name.
+	generateFeatureClassName() {
+		const classNames = []
 		if (state.props.readOnly) {
 			classNames.push("feature-read-only")
 		}
 		classNames.push(state.props.stylesheet === "TYPE" ? "feature-stylesheet-type" : "feature-stylesheet-mono")
-		state.className = classNames.join(" ")
+		state.featureClassName = classNames.join(" ")
 	},
-
+	/*
+	 * Actions
+	 */
 	registerAction(actionType) {
-		const actionTimeStamp = Date.now()
-		if (actionType === ActionTypes.SELECT && actionTimeStamp - state.actionTimeStamp < 200) {
+		// Do not register actions sooner than 200ms:
+		const actionTimestamp = Date.now()
+		if (actionType === ActionTypes.SELECT && actionTimestamp - state.actionTimestamp < 200) {
 			// No-op
 			return
 		}
-		Object.assign(state, { actionType, actionTimeStamp })
+		Object.assign(state, { actionType, actionTimestamp })
 	},
+	// Focuses the editor.
 	actionFocus() {
 		this.registerAction(ActionTypes.FOCUS)
 		state.focused = true
 	},
+	// Unfocuses (blurs) the editor.
 	actionBlur() {
 		this.registerAction(ActionTypes.BLUR)
-		state.focused = false // Reset
+		state.focused = false
 	},
+	// Selects from cursors pos1 to pos2.
 	actionSelect(pos1, pos2) {
 		this.registerAction(ActionTypes.SELECT)
 		const selected = pos1.pos !== pos2.pos
@@ -316,25 +334,31 @@ const reducer = state => ({
 		}
 		this.write("", 0, dropR)
 	},
+	// Inserts a tab character.
 	tab() {
 		this.write("\t")
 	},
+	// Inserts an EOL character.
 	enter() {
 		this.write("\n")
 	},
+	// (Self-explanatory)
 	cut() {
 		// NOTE: Inverse order because write sets actionType
 		this.write("")
 		this.registerAction(ActionTypes.CUT)
 	},
+	// (Self-explanatory)
 	copy() {
 		this.registerAction(ActionTypes.COPY)
 	},
-	paste(substr) {
+	// (Self-explanatory)
+	paste(data) {
 		// NOTE: Inverse order because write sets actionType
-		this.write(substr)
+		this.write(data)
 		this.registerAction(ActionTypes.PASTE)
 	},
+	// Stores the next undo state.
 	storeUndo() {
 		const undo = state.history.stack[state.history.index]
 		if (undo.data.length === state.data.length && undo.data === state.data) {
@@ -345,9 +369,11 @@ const reducer = state => ({
 		state.history.stack.push({ data, body: body.map(each => ({ ...each })), pos1: { ...pos1 }, pos2: { ...pos2 } })
 		state.history.index++
 	},
+	// Drops future undo states.
 	dropRedos() {
 		state.history.stack.splice(state.history.index + 1)
 	},
+	// (Self-explanatory)
 	undo() {
 		if (state.props.readOnly) {
 			// No-op
@@ -365,6 +391,7 @@ const reducer = state => ({
 		Object.assign(state, undo)
 		this.render()
 	},
+	// (Self-explanatory)
 	redo() {
 		if (state.props.readOnly) {
 			// No-op

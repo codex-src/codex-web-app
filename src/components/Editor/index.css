@@ -58,25 +58,26 @@
  */
 .codex-editor > .header {
 	font-weight: 600;
-	letter-spacing: -0.01em;
+	line-height: 1.4;
 }
 .codex-editor > .header.h1 {
-	font-size: 1.5em;
+	font-weight: 500;
+	font-size: 2em;
 }
 .codex-editor > .header.h2 {
-	font-size: 1.25em;
+	font-size: 1.5em;
 }
 .codex-editor > .header.h3 {
-	font-size: 1.2em;
+	font-size: 1.4em;
 }
 .codex-editor > .header.h4 {
-	font-size: 1.15em;
+	font-size: 1.3em;
 }
 .codex-editor > .header.h5 {
-	font-size: 1.10em;
+	font-size: 1.2em;
 }
 .codex-editor > .header.h6 {
-	font-size: 1.05em;
+	font-size: 1.1em;
 }
 
 .codex-editor > .blockquote {
@@ -153,6 +154,9 @@
 }
 
 .codex-editor .strong {
+	font-weight: 600;
+}
+.codex-editor > .header.h1 .strong {
 	font-weight: 600;
 }
 .codex-editor > .header .strong {

@@ -94,20 +94,6 @@ function getNodesFromIterators(rootNode, [start, end]) {
 	return { nodes, atEnd }
 }
 
-const Debugger = ({ state, ...props }) => (
-	<div className="mt-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug text-black dark:text-white">
-		{JSON.stringify(
-			{
-				...state,
-				components: undefined,
-				reactDOM: undefined,
-			},
-			null,
-			"\t",
-		)}
-	</div>
-)
-
 // if (pos1.y < SCROLL_BUFFER) {
 // 	window.scrollBy(0, pos1.y - SCROLL_BUFFER)
 // } else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
@@ -138,28 +124,7 @@ export function Editor({ state, dispatch, ...props }) {
 	const propsRef = React.useRef(props)
 	React.useLayoutEffect(() => {
 		dispatch.registerProps(propsRef.current)
-		dispatch.getClass()
 	}, [dispatch])
-
-	// React.useLayoutEffect(() => {
-	// 	if (!state.focused) {
-	// 		// No-op
-	// 		return
-	// 	} else if (!document.getSelection().anchorNode) {
-	// 		// No-op
-	// 		return
-	// 	}
-	// 	console.log("Test")
-	// 	scrollIntoViewIfNeeded()
-	// }, [state.focused, state.pos1.pos, state.pos2.pos])
-
-	// React.useLayoutEffect(() => {
-	// 	if (!document.getSelection().anchorNode) {
-	// 		// No-op
-	// 		return
-	// 	}
-	// 	scrollIntoViewIfNeeded()
-	// }, [state.pos1.pos, state.pos2.pos])
 
 	// TODO (1): useEffect?
 	// TODO (2): Can we separate pos from components?
@@ -168,7 +133,7 @@ export function Editor({ state, dispatch, ...props }) {
 			ReactDOM.render(state.components, state.reactDOM, () => {
 				// Sync the DOMs:
 				const mutations = syncTrees(ref.current, state.reactDOM)
-				if ((!state.shouldRender || !mutations) && state.actionType !== "PASTE") {
+				if ((!state.components || !mutations) && state.actionType !== "PASTE") {
 					// if (state.focused) {
 					// 	scrollIntoViewIfNeeded()
 					// }
@@ -193,7 +158,7 @@ export function Editor({ state, dispatch, ...props }) {
 				dispatch.rendered()
 			})
 		}, [state, dispatch]),
-		[state.shouldRender],
+		[state.components],
 	)
 
 	// // TODO: Drag-based scrolling (e.g. selected) jumps
@@ -232,8 +197,8 @@ export function Editor({ state, dispatch, ...props }) {
 				clearTimeout(id)
 			}
 		}, [dispatch, props.readOnly]),
-		[state.shouldRender],
-	) // TODO: state.data?
+		[state.components],
+	)
 
 	// Shortcuts:
 	React.useEffect(
@@ -276,17 +241,17 @@ export function Editor({ state, dispatch, ...props }) {
 				{
 					ref,
 
-					className: state.className,
+					className: `codex-editor ${state.featureClassName}`,
 
 					style: {
 						...{ ...props.style, fontSize: null },
+
 						whiteSpace: "pre-wrap",
 						outline: "none",
 						overflowWrap: "break-word",
 					},
 
 					contentEditable: !state.props.readOnly,
-					suppressContentEditableWarning: !state.props.readOnly,
 
 					onFocus: dispatch.actionFocus,
 					onBlur: dispatch.actionBlur,
@@ -341,11 +306,11 @@ export function Editor({ state, dispatch, ...props }) {
 					},
 
 					onKeyDown: e => {
-						const selection = document.getSelection()
-						const range = selection.getRangeAt(0)
-						if (range) {
-							console.log(range.getBoundingClientRect())
-						}
+						// const selection = document.getSelection()
+						// const range = selection.getRangeAt(0)
+						// if (range) {
+						// 	console.log(range.getBoundingClientRect())
+						// }
 						switch (true) {
 						// Tab:
 						case !e.ctrlKey && e.keyCode === KEY_CODE_TAB:
@@ -440,8 +405,8 @@ export function Editor({ state, dispatch, ...props }) {
 							// No-op
 							return
 						}
-						const substr = state.data.slice(state.pos1.pos, state.pos2.pos)
-						e.clipboardData.setData("text/plain", substr)
+						const data = state.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", data)
 						dispatch.cut()
 					},
 					onCopy: e => {
@@ -454,8 +419,8 @@ export function Editor({ state, dispatch, ...props }) {
 							// No-op
 							return
 						}
-						const substr = state.data.slice(state.pos1.pos, state.pos2.pos)
-						e.clipboardData.setData("text/plain", substr)
+						const data = state.data.slice(state.pos1.pos, state.pos2.pos)
+						e.clipboardData.setData("text/plain", data)
 						dispatch.copy()
 					},
 					onPaste: e => {
@@ -464,19 +429,34 @@ export function Editor({ state, dispatch, ...props }) {
 							return
 						}
 						e.preventDefault()
-						const substr = e.clipboardData.getData("text/plain")
-						if (!substr) {
+						const data = e.clipboardData.getData("text/plain")
+						if (!data) {
 							// No-op
 							return
 						}
-						dispatch.paste(substr)
+						dispatch.paste(data)
 					},
 
 					onDrag: e => e.preventDefault(),
 					onDrop: e => e.preventDefault(),
 				},
 			)}
-			{/* <Debugger state={state} /> */}
+
+			{/* Debugger */}
+			{true && (
+				<div className="py-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug text-black dark:text-white">
+					{JSON.stringify(
+						{
+							...state,
+							components: undefined,
+							reactDOM: undefined,
+						},
+						null,
+						"\t",
+					)}
+				</div>
+			)}
+
 		</div>
 	)
 }
