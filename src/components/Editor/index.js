@@ -1,7 +1,4 @@
 // import getCoords from "./helpers/getCoords"
-// import shallowEqual from "utils/shallowEqual"
-// import useShortcuts from "./hooks/useShortcuts"
-// import useUndo from "./hooks/useUndo"
 import * as platform from "./helpers/platform"
 import getPos from "./helpers/getPos"
 import getPosFromRange from "./helpers/getPosFromRange"
@@ -31,8 +28,7 @@ const KEY_CODE_P     = 80
 //
 // TODO: Extract to helpers?
 function newNodeIterators() {
-	const selection = document.getSelection()
-	const range = selection.getRangeAt(0)
+	const range = document.getSelection().getRangeAt(0)
 	const { startContainer, endContainer } = range
 	// Extend the target start (up to 2x):
 	const start = new NodeIterator(startContainer)
@@ -51,7 +47,7 @@ function newNodeIterators() {
 //
 // TODO: Extract to helpers?
 function getNodesFromIterators(rootNode, [start, end]) {
-	// Re-extend the target start (1x):
+	// Re-extend the target start (up to 1x):
 	if (!start.count && start.getPrev()) {
 		start.prev()
 	}
@@ -80,29 +76,31 @@ function getNodesFromIterators(rootNode, [start, end]) {
 	return { nodes, atEnd }
 }
 
-// https://reactjs.org/docs/error-boundaries.html#introducing-error-boundaries
-class ErrorBoundary extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			errored: false,
-		}
-	}
-	static getDerivedStateFromError(error) {
-		return { errored: true }
-	}
-	componentDidCatch(error, errorInfo) {
-		// TODO
-		// logErrorToMyService(error, errorInfo)
-	}
-	render() {
-		// TODO
-		// if (this.state.errored) {
-		// 	return <h1>Something went wrong.</h1>
-		// }
-		return this.props.children
-	}
-}
+// // https://reactjs.org/docs/error-boundaries.html#introducing-error-boundaries
+// class ErrorBoundary extends React.Component {
+// 	constructor(props) {
+// 		super(props)
+// 		this.state = {
+// 			errored: false,
+// 		}
+// 	}
+// 	static getDerivedStateFromError(error) {
+// 		return { errored: true }
+// 	}
+// 	componentDidCatch(error, errorInfo) {
+// 		// TODO
+// 		// logErrorToMyService(error, errorInfo)
+// 		console.error(error)
+// 		console.error(errorInfo)
+// 	}
+// 	render() {
+// 		// TODO
+// 		// if (this.state.errored) {
+// 		// 	return <h1>Something went wrong.</h1>
+// 		// }
+// 		return this.props.children
+// 	}
+// }
 
 export function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
@@ -121,15 +119,28 @@ export function Editor({ state, dispatch, ...props }) {
 		dispatch.registerProps(propsRef.current)
 	}, [dispatch])
 
-	// TODO (1): useEffect?
-	// TODO (2): Can we separate pos from components?
+	// import getPosFromRange from "./getPosFromRange"
+	//
+	// // Gets the cursors.
+	// //
+	// // TODO: Can optimize pos2 by reusing pos1
+	// function getPos(rootNode) {
+	// 	const range = document.getSelection().getRangeAt(0)
+	// 	const pos1 = getPosFromRange(rootNode, range.startContainer, range.startOffset)
+	// 	let pos2 = { ...pos1 }
+	// 	if (!range.collapsed) {
+	// 		pos2 = getPosFromRange(rootNode, range.endContainer, range.endOffset)
+	// 	}
+	// 	return [pos1, pos2]
+	// }
+
 	React.useLayoutEffect(
 		React.useCallback(() => {
 			ReactDOM.render(state.components, state.reactDOM, () => {
 				// Sync the DOMs:
 				const mutations = syncTrees(ref.current, state.reactDOM)
 				if ((!state.components || !mutations) && state.actionType !== "PASTE") {
-					dispatch.rendered()
+					// No-op
 					return
 				}
 				// Reset the cursor:
@@ -141,15 +152,14 @@ export function Editor({ state, dispatch, ...props }) {
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
 				range.setStart(node, offset)
 				range.collapse()
+				// TODO: Can optimize pos2 by reusing pos1
 				if (state.pos1.pos !== state.pos2.pos) {
-					// TODO: Use state.pos1 as a shortcut
 					const { node, offset } = getRangeFromPos(ref.current, state.pos2.pos)
 					range.setEnd(node, offset)
 				}
 				selection.addRange(range)
-				dispatch.rendered()
 			})
-		}, [state, dispatch]),
+		}, [state]),
 		[state.components],
 	)
 
@@ -227,7 +237,7 @@ export function Editor({ state, dispatch, ...props }) {
 	)
 
 	return (
-		<ErrorBoundary>
+		// <ErrorBoundary>
 			<div style={{ fontSize: props.style && props.style.fontSize }}>
 				{React.createElement(
 					"div",
@@ -285,7 +295,7 @@ export function Editor({ state, dispatch, ...props }) {
 
 						onPointerMove: e => {
 							if (!state.focused) {
-								pointerDown.current = false // Reset
+								pointerDown.current = false
 								return
 							} else if (!pointerDown.current) {
 								// No-op
@@ -336,45 +346,42 @@ export function Editor({ state, dispatch, ...props }) {
 						onCompositionEnd: e => {
 							// https://github.com/w3c/uievents/issues/202#issue-316461024
 							dedupedCompositionEnd.current = true
-							// Input:
 							const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
 							const [pos1, pos2] = getPos(ref.current)
 							dispatch.actionInput(nodes, atEnd, pos1, pos2)
 						},
 
 						onInput: e => {
+							// https://github.com/w3c/uievents/issues/202#issue-316461024
 							if (dedupedCompositionEnd.current) {
-								dedupedCompositionEnd.current = false // Reset
+								dedupedCompositionEnd.current = false
 								return
 							} else if (e.nativeEvent.isComposing) {
 								// No-op
 								return
 							}
-							// FIXME: This implementation is flawed; Chrome
-							// emits the wrong inputType
-							//
 							// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
 							switch (e.nativeEvent.inputType) {
 							case "insertLineBreak":
 							case "insertParagraph":
 								dispatch.enter()
 								return
-							case "deleteContentBackward":
-								dispatch.backspaceChar()
-								return
-							case "deleteWordBackward":
-								dispatch.backspaceWord()
-								return
-							case "deleteSoftLineBackward":
-							case "deleteHardLineBackward":
-								dispatch.backspaceLine()
-								return
-							case "deleteContentForward":
-								dispatch.backspaceCharForwards()
-								return
-							case "deleteWordForward":
-								dispatch.backspaceWordForwards()
-								return
+							// case "deleteContentBackward":
+							// 	dispatch.backspaceChar()
+							// 	return
+							// case "deleteWordBackward":
+							// 	dispatch.backspaceWord()
+							// 	return
+							// case "deleteSoftLineBackward":
+							// case "deleteHardLineBackward":
+							// 	dispatch.backspaceLine()
+							// 	return
+							// case "deleteContentForward":
+							// 	dispatch.backspaceCharForwards()
+							// 	return
+							// case "deleteWordForward":
+							// 	dispatch.backspaceWordForwards()
+							// 	return
 							case "historyUndo":
 								dispatch.undo()
 								return
@@ -447,7 +454,6 @@ export function Editor({ state, dispatch, ...props }) {
 						{JSON.stringify(
 							{
 								...state,
-
 								components: undefined,
 								reactDOM:   undefined,
 							},
@@ -458,7 +464,7 @@ export function Editor({ state, dispatch, ...props }) {
 				)}
 
 			</div>
-		</ErrorBoundary>
+		// </ErrorBoundary>
 	)
 }
 

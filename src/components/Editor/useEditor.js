@@ -407,17 +407,17 @@ const reducer = state => ({
 		Object.assign(state, redo)
 		this.render()
 	},
+	// Parses the data structure to React components.
 	render() {
 		state.components = parse(state.body)
-		state.shouldRender++
-	},
-	rendered() {
-		state.didRender++
 	},
 })
 
+// Returns a lazy function.
+//
+// https://reactjs.org/docs/hooks-reference.html#lazy-initial-state
 function init(data) {
-	const fn = initialState => {
+	const lazy = initialState => {
 		const body = newNodes(data)
 		const state = {
 			...initialState,
@@ -429,7 +429,7 @@ function init(data) {
 		}
 		return state
 	}
-	return fn
+	return lazy
 }
 
 function useEditor(data, ...args) {
