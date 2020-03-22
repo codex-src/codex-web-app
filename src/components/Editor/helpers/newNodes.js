@@ -1,11 +1,12 @@
-import { newUUID } from "utils/random"
+import uuidv4 from "uuid/v4"
 
-function newNodes(data) {
-	const nodes = data.split("\n").map(each => ({
-		key: newUUID(),
+// Parses a data structure from a plain text value.
+function newNodes(value) {
+	const data = value.split("\n").map(each => ({
+		key:  uuidv4(),
 		data: each,
 	}))
-	return nodes
+	return data
 }
 
 export default newNodes

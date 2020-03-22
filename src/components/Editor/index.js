@@ -1,8 +1,9 @@
-import getCoords from "./helpers/getCoords"
+// import getCoords from "./helpers/getCoords"
 // import shallowEqual from "utils/shallowEqual"
 // import useShortcuts from "./hooks/useShortcuts"
 // import useUndo from "./hooks/useUndo"
 import * as platform from "./helpers/platform"
+import getPos from "./helpers/getPos"
 import getPosFromRange from "./helpers/getPosFromRange"
 import getRangeFromPos from "./helpers/getRangeFromPos"
 import innerText from "./helpers/innerText"
@@ -10,7 +11,7 @@ import NodeIterator from "./helpers/NodeIterator"
 import React from "react"
 import ReactDOM from "react-dom"
 import syncTrees from "./helpers/syncTrees"
-import { newUUID } from "utils/random"
+import uuidv4 from "uuid/v4"
 
 /* purgecss start ignore */
 import "./index.css"
@@ -24,22 +25,7 @@ const KEY_CODE_2     = 50
 const KEY_CODE_P     = 80
 /* eslint-enable no-multi-spaces */
 
-const SCROLL_BUFFER = 12
-
-// Gets the cursors.
-//
-// TODO (1): Get pos1 and pos2 together
-// TODO (2): Extract to helpers?
-function getPos(rootNode) {
-	const selection = document.getSelection()
-	const range = selection.getRangeAt(0)
-	const pos1 = getPosFromRange(rootNode, range.startContainer, range.startOffset)
-	let pos2 = { ...pos1 }
-	if (!range.collapsed) {
-		pos2 = getPosFromRange(rootNode, range.endContainer, range.endOffset)
-	}
-	return [pos1, pos2]
-}
+// const SCROLL_BUFFER = 12
 
 // Creates a new start and end node iterator.
 //
@@ -78,7 +64,7 @@ function getNodesFromIterators(rootNode, [start, end]) {
 		// Read the key:
 		let key = start.currentNode.getAttribute("data-node")
 		if (seenKeys[key]) {
-			key = newUUID()
+			key = uuidv4()
 			start.currentNode.setAttribute("data-node", key)
 		}
 		// Read the data:
@@ -94,20 +80,29 @@ function getNodesFromIterators(rootNode, [start, end]) {
 	return { nodes, atEnd }
 }
 
-// if (pos1.y < SCROLL_BUFFER) {
-// 	window.scrollBy(0, pos1.y - SCROLL_BUFFER)
-// } else if (pos2.y > window.innerHeight - SCROLL_BUFFER) {
-// 	window.scrollBy(0, pos2.y - window.innerHeight + SCROLL_BUFFER)
-// }
-
-// function scrollIntoViewIfNeeded() {
-// 	const [pos1, pos2] = getCoords()
-// 	if (pos1.y < 80) {
-// 		window.scrollBy(0, pos1.y - 80 - 12)
-// 	} else if (pos2.y > window.innerHeight) {
-// 		window.scrollBy(0, pos2.y - window.innerHeight + 12)
-// 	}
-// }
+// https://reactjs.org/docs/error-boundaries.html#introducing-error-boundaries
+class ErrorBoundary extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			errored: false,
+		}
+	}
+	static getDerivedStateFromError(error) {
+		return { errored: true }
+	}
+	componentDidCatch(error, errorInfo) {
+		// TODO
+		// logErrorToMyService(error, errorInfo)
+	}
+	render() {
+		// TODO
+		// if (this.state.errored) {
+		// 	return <h1>Something went wrong.</h1>
+		// }
+		return this.props.children
+	}
+}
 
 export function Editor({ state, dispatch, ...props }) {
 	const ref = React.useRef()
@@ -134,9 +129,6 @@ export function Editor({ state, dispatch, ...props }) {
 				// Sync the DOMs:
 				const mutations = syncTrees(ref.current, state.reactDOM)
 				if ((!state.components || !mutations) && state.actionType !== "PASTE") {
-					// if (state.focused) {
-					// 	scrollIntoViewIfNeeded()
-					// }
 					dispatch.rendered()
 					return
 				}
@@ -235,229 +227,238 @@ export function Editor({ state, dispatch, ...props }) {
 	)
 
 	return (
-		<div style={{ fontSize: props.style && props.style.fontSize }}>
-			{React.createElement(
-				"div",
-				{
-					ref,
+		<ErrorBoundary>
+			<div style={{ fontSize: props.style && props.style.fontSize }}>
+				{React.createElement(
+					"div",
+					{
+						ref,
 
-					className: `codex-editor ${state.featureClassName}`,
+						className: `codex-editor ${state.featureClassName}`,
 
-					style: {
-						...{ ...props.style, fontSize: null },
-
-						whiteSpace: "pre-wrap",
-						outline: "none",
-						overflowWrap: "break-word",
-					},
-
-					contentEditable: !state.props.readOnly,
-
-					onFocus: dispatch.actionFocus,
-					onBlur: dispatch.actionBlur,
-
-					onSelect: e => {
-						if (!state.focused) {
-							// No-op
-							return
-						}
-						// Guard the root node:
-						const selection = document.getSelection()
-						const range = selection.getRangeAt(0)
-						if (range.startContainer === ref.current || range.endContainer === ref.current) {
-							// Iterate to the innermost start node:
-							let startNode = ref.current.childNodes[0]
-							while (startNode.childNodes.length) {
-								startNode = startNode.childNodes[0]
-							}
-							// Iterate to the innermost end node:
-							let endNode = ref.current.childNodes[ref.current.childNodes.length - 1]
-							while (endNode.childNodes.length) {
-								endNode = endNode.childNodes[endNode.childNodes.length - 1]
-							}
-							// Reset the range:
-							const range = document.createRange()
-							range.setStart(startNode, 0)
-							range.setEnd(endNode, (endNode.nodeValue || "").length)
-							selection.removeAllRanges()
-							selection.addRange(range)
-						}
-						const [pos1, pos2] = getPos(ref.current)
-						dispatch.actionSelect(pos1, pos2)
-						target.current = newNodeIterators()
-					},
-					onPointerDown: e => {
-						pointerDown.current = true
-					},
-					onPointerMove: e => {
-						if (!state.focused) {
-							pointerDown.current = false // Reset
-							return
-						} else if (!pointerDown.current) {
-							// No-op
-							return
-						}
-						const [pos1, pos2] = getPos(ref.current)
-						dispatch.actionSelect(pos1, pos2)
-						target.current = newNodeIterators()
-					},
-					onPointerUp: e => {
-						pointerDown.current = false
-					},
-
-					onKeyDown: e => {
-						// const selection = document.getSelection()
-						// const range = selection.getRangeAt(0)
-						// if (range) {
-						// 	console.log(range.getBoundingClientRect())
-						// }
-						switch (true) {
-						// Tab:
-						case !e.ctrlKey && e.keyCode === KEY_CODE_TAB:
-							e.preventDefault()
-							dispatch.tab()
-							return
-						// Enter:
-						case e.keyCode === KEY_CODE_ENTER:
-							e.preventDefault()
-							dispatch.enter()
-							return
-						// Undo:
-						case platform.detectUndo(e):
-							e.preventDefault()
-							dispatch.undo()
-							return
-						// Redo:
-						case platform.detectRedo(e):
-							e.preventDefault()
-							dispatch.redo()
-							return
-						default:
-							// No-op
-							break
-						}
-					},
-
-					onCompositionEnd: e => {
-						// https://github.com/w3c/uievents/issues/202#issue-316461024
-						dedupedCompositionEnd.current = true
-						// Input:
-						const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
-						const [pos1, pos2] = getPos(ref.current)
-						dispatch.actionInput(nodes, atEnd, pos1, pos2)
-					},
-					onInput: e => {
-						if (dedupedCompositionEnd.current) {
-							dedupedCompositionEnd.current = false // Reset
-							return
-						} else if (e.nativeEvent.isComposing) {
-							// No-op
-							return
-						}
-						// FIXME: This implementation is flawed; Chrome
-						// emits the wrong inputType
-						//
-						// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
-						switch (e.nativeEvent.inputType) {
-						case "insertLineBreak":
-						case "insertParagraph":
-							dispatch.enter()
-							return
-						case "deleteContentBackward":
-							dispatch.backspaceChar()
-							return
-						case "deleteWordBackward":
-							dispatch.backspaceWord()
-							return
-						case "deleteSoftLineBackward":
-						case "deleteHardLineBackward":
-							dispatch.backspaceLine()
-							return
-						case "deleteContentForward":
-							dispatch.backspaceCharForwards()
-							return
-						case "deleteWordForward":
-							dispatch.backspaceWordForwards()
-							return
-						case "historyUndo":
-							dispatch.undo()
-							return
-						case "historyRedo":
-							dispatch.redo()
-							return
-						default:
-							// No-op
-							break
-						}
-						// Input:
-						const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
-						const [pos1, pos2] = getPos(ref.current)
-						dispatch.actionInput(nodes, atEnd, pos1, pos2)
-					},
-
-					onCut: e => {
-						if (props.readOnly) {
-							// No-op
-							return
-						}
-						e.preventDefault()
-						if (!state.selected) {
-							// No-op
-							return
-						}
-						const data = state.data.slice(state.pos1.pos, state.pos2.pos)
-						e.clipboardData.setData("text/plain", data)
-						dispatch.cut()
-					},
-					onCopy: e => {
-						if (props.readOnly) {
-							// No-op
-							return
-						}
-						e.preventDefault()
-						if (!state.selected) {
-							// No-op
-							return
-						}
-						const data = state.data.slice(state.pos1.pos, state.pos2.pos)
-						e.clipboardData.setData("text/plain", data)
-						dispatch.copy()
-					},
-					onPaste: e => {
-						if (props.readOnly) {
-							// No-op
-							return
-						}
-						e.preventDefault()
-						const data = e.clipboardData.getData("text/plain")
-						if (!data) {
-							// No-op
-							return
-						}
-						dispatch.paste(data)
-					},
-
-					onDrag: e => e.preventDefault(),
-					onDrop: e => e.preventDefault(),
-				},
-			)}
-
-			{/* Debugger */}
-			{true && (
-				<div className="py-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug text-black dark:text-white">
-					{JSON.stringify(
-						{
-							...state,
-							components: undefined,
-							reactDOM: undefined,
+						style: {
+							...{ ...props.style, fontSize: null },
+							whiteSpace: "pre-wrap",
+							outline: "none",
+							overflowWrap: "break-word",
 						},
-						null,
-						"\t",
-					)}
-				</div>
-			)}
 
-		</div>
+						contentEditable: !state.props.readOnly,
+
+						onFocus: dispatch.actionFocus,
+						onBlur:  dispatch.actionBlur,
+
+						onSelect: e => {
+							if (!state.focused) {
+								// No-op
+								return
+							}
+							// Guard the root node:
+							const selection = document.getSelection()
+							const range = selection.getRangeAt(0)
+							if (range.startContainer === ref.current || range.endContainer === ref.current) {
+								// Iterate to the innermost start node:
+								let startNode = ref.current.childNodes[0]
+								while (startNode.childNodes.length) {
+									startNode = startNode.childNodes[0]
+								}
+								// Iterate to the innermost end node:
+								let endNode = ref.current.childNodes[ref.current.childNodes.length - 1]
+								while (endNode.childNodes.length) {
+									endNode = endNode.childNodes[endNode.childNodes.length - 1]
+								}
+								// Reset the range:
+								const range = document.createRange()
+								range.setStart(startNode, 0)
+								range.setEnd(endNode, (endNode.nodeValue || "").length)
+								selection.removeAllRanges()
+								selection.addRange(range)
+							}
+							const [pos1, pos2] = getPos(ref.current)
+							dispatch.actionSelect(pos1, pos2)
+							target.current = newNodeIterators()
+						},
+
+						onPointerDown: e => {
+							pointerDown.current = true
+						},
+
+						onPointerMove: e => {
+							if (!state.focused) {
+								pointerDown.current = false // Reset
+								return
+							} else if (!pointerDown.current) {
+								// No-op
+								return
+							}
+							const [pos1, pos2] = getPos(ref.current)
+							dispatch.actionSelect(pos1, pos2)
+							target.current = newNodeIterators()
+						},
+
+						onPointerUp: e => {
+							pointerDown.current = false
+						},
+
+						onKeyDown: e => {
+							// const selection = document.getSelection()
+							// const range = selection.getRangeAt(0)
+							// if (range) {
+							// 	console.log(range.getBoundingClientRect())
+							// }
+							switch (true) {
+							// Tab:
+							case !e.ctrlKey && e.keyCode === KEY_CODE_TAB:
+								e.preventDefault()
+								dispatch.tab()
+								return
+							// Enter:
+							case e.keyCode === KEY_CODE_ENTER:
+								e.preventDefault()
+								dispatch.enter()
+								return
+							// Undo:
+							case platform.detectUndo(e):
+								e.preventDefault()
+								dispatch.undo()
+								return
+							// Redo:
+							case platform.detectRedo(e):
+								e.preventDefault()
+								dispatch.redo()
+								return
+							default:
+								// No-op
+								break
+							}
+						},
+
+						onCompositionEnd: e => {
+							// https://github.com/w3c/uievents/issues/202#issue-316461024
+							dedupedCompositionEnd.current = true
+							// Input:
+							const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
+							const [pos1, pos2] = getPos(ref.current)
+							dispatch.actionInput(nodes, atEnd, pos1, pos2)
+						},
+
+						onInput: e => {
+							if (dedupedCompositionEnd.current) {
+								dedupedCompositionEnd.current = false // Reset
+								return
+							} else if (e.nativeEvent.isComposing) {
+								// No-op
+								return
+							}
+							// FIXME: This implementation is flawed; Chrome
+							// emits the wrong inputType
+							//
+							// https://w3.org/TR/input-events-2/#interface-InputEvent-Attributes
+							switch (e.nativeEvent.inputType) {
+							case "insertLineBreak":
+							case "insertParagraph":
+								dispatch.enter()
+								return
+							case "deleteContentBackward":
+								dispatch.backspaceChar()
+								return
+							case "deleteWordBackward":
+								dispatch.backspaceWord()
+								return
+							case "deleteSoftLineBackward":
+							case "deleteHardLineBackward":
+								dispatch.backspaceLine()
+								return
+							case "deleteContentForward":
+								dispatch.backspaceCharForwards()
+								return
+							case "deleteWordForward":
+								dispatch.backspaceWordForwards()
+								return
+							case "historyUndo":
+								dispatch.undo()
+								return
+							case "historyRedo":
+								dispatch.redo()
+								return
+							default:
+								// No-op
+								break
+							}
+							// Input:
+							const { nodes, atEnd } = getNodesFromIterators(ref.current, target.current)
+							const [pos1, pos2] = getPos(ref.current)
+							dispatch.actionInput(nodes, atEnd, pos1, pos2)
+						},
+
+						onCut: e => {
+							if (props.readOnly) {
+								// No-op
+								return
+							}
+							e.preventDefault()
+							if (!state.selected) {
+								// No-op
+								return
+							}
+							const data = state.data.slice(state.pos1.pos, state.pos2.pos)
+							e.clipboardData.setData("text/plain", data)
+							dispatch.cut()
+						},
+
+						onCopy: e => {
+							if (props.readOnly) {
+								// No-op
+								return
+							}
+							e.preventDefault()
+							if (!state.selected) {
+								// No-op
+								return
+							}
+							const data = state.data.slice(state.pos1.pos, state.pos2.pos)
+							e.clipboardData.setData("text/plain", data)
+							dispatch.copy()
+						},
+
+						onPaste: e => {
+							if (props.readOnly) {
+								// No-op
+								return
+							}
+							e.preventDefault()
+							const data = e.clipboardData.getData("text/plain")
+							if (!data) {
+								// No-op
+								return
+							}
+							dispatch.paste(data)
+						},
+
+						// TODO?
+						onDrag: e => e.preventDefault(),
+						onDrop: e => e.preventDefault(),
+					},
+				)}
+
+				{/* Debugger */}
+				{(true && process.env.NODE_ENV !== "production") && (
+					<div className="py-6 whitespace-pre-wrap tabs-2 font-mono text-xs leading-snug text-black dark:text-white">
+						{JSON.stringify(
+							{
+								...state,
+
+								components: undefined,
+								reactDOM:   undefined,
+							},
+							null,
+							"\t",
+						)}
+					</div>
+				)}
+
+			</div>
+		</ErrorBoundary>
 	)
 }
 

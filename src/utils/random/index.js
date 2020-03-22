@@ -1,5 +1,3 @@
-import uuidv4 from "uuid/v4"
-
 const baseURL62 = (
 	"abcdefghijklmnopqrstuvwxyz" +
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
@@ -28,8 +26,4 @@ export function newURL62(length) {
 // https://github.com/firebase/firebase-js-sdk/blob/6abd6484730971e2390b2b9acbb61800852fb350/packages/firestore/src/util/misc.ts#L35
 export function newAutoID() {
 	return newURL62(20)
-}
-
-export function newUUID() {
-	return uuidv4()
 }
