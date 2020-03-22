@@ -1,5 +1,6 @@
-// Gets the cursor from a range. Code based on innerText.
-function getPosFromRange(rootNode, node, offset) {
+// Gets the cursor from a range (code based on innerText).
+function getPosFromRange(element, node, offset) {
+	// TODO: Use constructor
 	const pos = {
 		x: 0,   // The character index (of the current paragraph)
 		y: 0,   // The paragraph index
@@ -7,7 +8,7 @@ function getPosFromRange(rootNode, node, offset) {
 	}
 	// NOTE: Gecko/Firefox can select the end element node
 	if (node.nodeType === Node.ELEMENT_NODE && offset && !(offset < node.childNodes.length)) {
-		// return getPosFromRange(rootNode, null, 0)
+		// return getPosFromRange(element, null, 0)
 		node = null
 		offset = 0
 	}
@@ -32,7 +33,6 @@ function getPosFromRange(rootNode, node, offset) {
 			}
 			const { nextSibling } = childNodes[index]
 			if (nextSibling && nextSibling.nodeType === Node.ELEMENT_NODE &&
-					// nextSibling.hasAttribute("data-node")) {
 					(nextSibling.hasAttribute("data-compound-node") || nextSibling.hasAttribute("data-node"))) {
 				Object.assign(pos, {
 					x: 0, // Reset
@@ -44,7 +44,7 @@ function getPosFromRange(rootNode, node, offset) {
 		}
 		return false
 	}
-	recurse(rootNode)
+	recurse(element)
 	return pos
 }
 

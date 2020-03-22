@@ -1,5 +1,5 @@
-// Mocks the browser; recursively reads from a root node.
-function innerText(rootNode) {
+// Recursively reads an element.
+function innerText(element) {
 	let data = ""
 	const recurse = startNode => {
 		const { childNodes } = startNode
@@ -9,14 +9,13 @@ function innerText(rootNode) {
 			recurse(childNodes[index])
 			const { nextSibling } = childNodes[index]
 			if (nextSibling && nextSibling.nodeType === Node.ELEMENT_NODE &&
-					// nextSibling.hasAttribute("data-node")) {
 					(nextSibling.hasAttribute("data-compound-node") || nextSibling.hasAttribute("data-node"))) {
 				data += "\n"
 			}
 			index++
 		}
 	}
-	recurse(rootNode)
+	recurse(element)
 	return data
 }
 

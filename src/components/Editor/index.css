@@ -13,7 +13,7 @@
 
 	-moz-tab-size: 2;
 	tab-size: 2;
-	font: calc(14 / 16 * 1em)/1.35 "iA Writer Mono var", monospace;
+	font: calc(15 / 16 * 1em)/1.35 "iA Writer Mono var", monospace;
 }
 
 /*
@@ -89,6 +89,7 @@
 	border-left: 0.25em solid var(--md-gray-700);
 }
 
+/* FIXME */
 .codex-editor > .blockquote > [data-node] > .markdown {
 	padding-right: 0.1875em;
 	color: transparent;
@@ -164,12 +165,7 @@
 }
 
 .codex-editor .code {
-	/* NOTE: margin and padding do not work as expected unless
-	display: inline-block is set */
-	/* margin: 0 1px; */
-	/* padding: 0 1px; */
-	box-decoration-break: clone;
-	vertical-align: 1px; /* For strikethrough */
+	/* vertical-align: 1px; */ /* For strikethrough */
 	color: var(--md-blue-a400);
 	box-shadow: 0 0 0 1px var(--gray-300);
 }

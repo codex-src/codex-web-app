@@ -1,7 +1,7 @@
-// Gets the range from a cursor. Code based on innerText.
+// Gets the range from a cursor (code based on innerText).
 //
 // TODO: Add tests
-function getRangeFromPos(rootNode, pos) {
+function getRangeFromPos(element, pos) {
 	let node = null
 	let offset = 0
 	const recurse = startNode => {
@@ -21,7 +21,6 @@ function getRangeFromPos(rootNode, pos) {
 			}
 			const { nextSibling } = childNodes[index]
 			if (nextSibling && nextSibling.nodeType === Node.ELEMENT_NODE &&
-					// nextSibling.hasAttribute("data-node")) {
 					(nextSibling.hasAttribute("data-compound-node") || nextSibling.hasAttribute("data-node"))) {
 				pos--
 			}
@@ -29,7 +28,7 @@ function getRangeFromPos(rootNode, pos) {
 		}
 		return false
 	}
-	recurse(rootNode)
+	recurse(element)
 	return { node, offset }
 }
 

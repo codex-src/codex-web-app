@@ -3,6 +3,8 @@ import parseInline from "./parseInline"
 import React from "react"
 import { Emoji } from "./InlineComponents"
 
+// TODO: Can React.memo be based off of references?
+
 export const Node = ({ reactKey, ...props }) => (
 	<div style={{ whiteSpace: "pre-wrap" }} data-node={reactKey} {...props}>
 		{props.children || (

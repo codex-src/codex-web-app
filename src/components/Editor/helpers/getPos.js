@@ -1,6 +1,8 @@
 import getPosFromRange from "./getPosFromRange"
 
 // Gets the cursors.
+//
+// TODO: Inline
 function getPos(rootNode) {
 	const range = document.getSelection().getRangeAt(0)
 	const pos1 = getPosFromRange(rootNode, range.startContainer, range.startOffset)

@@ -1,4 +1,4 @@
-// Eagerly drops the range for performance reasons.
+// Eagerly drops the range (for performance reasons).
 //
 // https://bugs.chromium.org/p/chromium/issues/detail?id=138439#c10
 function eagerlyDropRange() {
