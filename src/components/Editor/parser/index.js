@@ -10,18 +10,15 @@ import {
 
 // Parses an array of components from an array of nodes.
 function parse(body) {
-	const MAX_LENGTH = body.length
+	const MAX_LEN = body.length
 
 	const components = []
-	for (let index = 0; index < MAX_LENGTH; index++) {
+	for (let index = 0; index < MAX_LEN; index++) {
 		const each = body[index]
-		let char = ""
-		if (each.data.length) {
-			char = each.data[0]
-		}
+		const char = each.data.charAt(0)
 		switch (true) {
 		// Paragraph (fast pass):
-		case !char || (char >= "A" && char <= "Z") || (char >= "a" && char <= "z"):
+		case !char || (char >= "A" && char <= "Z") || (char >= "a" && char <= "z"): // Uppercase takes precedence
 			// No-op
 			break
 		// Header:
@@ -49,7 +46,7 @@ function parse(body) {
 				const from = index
 				let to = from
 				to++
-				while (to < MAX_LENGTH) {
+				while (to < MAX_LEN) {
 					if (
 						(body[to].data.length < 2 || body[to].data.slice(0, 2) !== "> ") // &&
 						// (body[to].data.length !== 1 || body[to].data !== ">")
@@ -67,7 +64,7 @@ function parse(body) {
 			break
 		// Code block:
 		case char === "`":
-			// Single line:
+			// ```Code```
 			if (
 				each.data.length >= 6 &&
 				each.data.slice(0, 3) === "```" && // Start syntax
@@ -77,23 +74,25 @@ function parse(body) {
 				components.push(<CodeBlock key={each.key} metadata="">{nodes}</CodeBlock>)
 				continue
 			}
-			// Multiline:
+			// ```
+			// Code
+			// ```
 			if (
 				each.data.length >= 3 &&
 				each.data.slice(0, 3) === "```" &&
-				index + 1 < MAX_LENGTH
+				index + 1 < MAX_LEN
 			) {
 				const from = index
 				let to = from
 				to++
-				while (to < MAX_LENGTH) {
+				while (to < MAX_LEN) {
 					if (body[to].data.length === 3 && body[to].data === "```") {
 						break
 					}
 					to++
 				}
 				// Unterminated code block:
-				if (to === MAX_LENGTH) {
+				if (to === MAX_LEN) {
 					index = from // Reset
 					break
 				}

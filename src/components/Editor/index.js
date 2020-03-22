@@ -129,8 +129,8 @@ export function Editor({ state, dispatch, ...props }) {
 				const { node, offset } = getRangeFromPos(ref.current, state.pos1.pos)
 				range.setStart(node, offset)
 				range.collapse()
-				// TODO: Can optimize pos2 by reusing pos1
 				if (state.pos1.pos !== state.pos2.pos) {
+					// TODO: Can optimize pos2 by reusing pos1
 					const { node, offset } = getRangeFromPos(ref.current, state.pos2.pos)
 					range.setEnd(node, offset)
 				}
@@ -179,7 +179,7 @@ export function Editor({ state, dispatch, ...props }) {
 		[state.components],
 	)
 
-	// Enable shortcuts:
+	// Listen for shortcuts:
 	React.useEffect(
 		React.useCallback(() => {
 			if (!state.props.shortcuts) {

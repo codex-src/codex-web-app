@@ -22,10 +22,7 @@ function parseInline(data) { // TODO: Rename to str
 		const length = MAX_LENGTH - index // Faster access
 		switch (true) {
 		// Text (fast pass):
-		//
-		// NOTE: Do not match #️⃣, *️⃣, 0️⃣, 1️⃣, 2️⃣, 3️⃣, 4️⃣,
-		// 5️⃣, 6️⃣, 7️⃣, 8️⃣, 9️⃣
-		case char === " " || (char >= "a" && char <= "z") || (char >= "A" && char <= "Z"):
+		case char === " " || (char >= "a" && char <= "z") || (char >= "A" && char <= "Z"): // Lowercase takes precedence
 			// No-op
 			break
 		// Emphasis and or strong:
