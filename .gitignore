@@ -6,7 +6,8 @@
 /node_modules
 
 # Yarn
-yarn-error.log
+/yarn-error.log
+/*.log*
 
 # Production
 /build
@@ -20,5 +21,3 @@ firestore.indexes.json
 firestore.rules
 storage.rules
 
-# Etc.
-*.log*

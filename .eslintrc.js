@@ -12,7 +12,7 @@ module.exports = {
 	rules: {
 		"no-unused-vars":                   0, // disallow unused variables
 
-		"array-bracket-newline":            1, // enforce linebreaks after opening and before closing array brackets
+		"array-bracket-newline":            [1, "consistent"], // enforce linebreaks after opening and before closing array brackets
 		"array-bracket-spacing":            1, // enforce consistent spacing inside array brackets
 		"array-element-newline":            [1, "consistent"], // enforce line breaks after each array element
 		"arrow-body-style":                 0, // require braces around arrow function bodies
@@ -85,7 +85,7 @@ module.exports = {
 		"prefer-exponentiation-operator":   1, // disallow the use of `Math.pow` in favor of the `**` operator
 		"prefer-numeric-literals":          1, // disallow `parseInt()` and `Number.parseInt()` in favor of binary, octal, and hexadecimal literals
 		"prefer-object-spread":             1, // disallow using Object.assign with an object literal as the first argument and prefer the use of object spread instead.
-		"prefer-template":                  1, // require template literals instead of string concatenation
+		"prefer-template":                  0, // require template literals instead of string concatenation
 		"quote-props":                      [1, "consistent-as-needed"], // require quotes around object literal property names
 		"quotes":                           1, // enforce the consistent use of either backticks, double, or single quotes
 		"rest-spread-spacing":              1, // enforce spacing between rest and spread operators and their expressions

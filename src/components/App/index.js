@@ -1,128 +1,63 @@
-import * as constants from "__constants"
-import * as Containers from "components/Containers"
-import * as DarkMode from "components/DarkMode"
-import * as ProgressBar from "components/ProgressBar"
-import * as random from "utils/random"
-import * as Route from "components/Route"
-import * as Router from "react-router-dom"
-import * as User from "components/User"
-import CodexTitle from "components/CodexTitle"
-import Demo from "components/Demo"
-import Error404 from "components/Error404"
-import Home from "components/Home"
-import Note from "components/Note"
 import React from "react"
-import UserAuth from "components/UserAuth"
-import UserNote from "components/UserNote"
-import UserNotes from "components/UserNotes"
+import { CodexLogoSm } from "components/CodexLogo"
+import { Surface } from "components/Styled/Surface"
 
-const AnyNote = props => {
-	const { noteID } = Router.useParams()
+import {
+	LinkText,
+	Text,
+} from "components/Styled/Text"
 
-	return <Note noteID={noteID} />
-}
+import {
+	BrowserRouter,
+	Link,
+} from "react-router-dom"
 
-const App = props => (
-	<Router.BrowserRouter>
-		<DarkMode.Provider>
-			<ProgressBar.Provider>
-				<User.Provider>
-					<ProgressBar.ProgressBar />
-					<Router.Switch>
+// document.body.classList.toggle("debug-css")
 
-						{/* Any */}
-						<Route.Any
-							path={constants.PATH_README}
-							title="Readme"
-							exact
-							// NOTE: Use key because <Note> is shared
-							children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_README} />}
-						/>
-						<Route.Any
-							path={constants.PATH_CHANGELOG}
-							title="Changelog"
-							exact
-							// NOTE: Use key because <Note> is shared
-							children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_CHANGELOG} />}
-						/>
-						<Route.Any
-							path={constants.PATH_DEMO}
-							exact
-							title="Demo"
-							children={<Demo />}
-						/>
+const App = () => (
+	<BrowserRouter>
+		<div className="px-6 flex flex-row justify-center">
+			<div className="w-full max-w-5xl">
 
-						{/* Shared */}
-						<Route.Any
-							path={constants.PATH_HOME}
-							exact
-							children={
-								<User.Context.Consumer>
-									{user => !user ? (
-										// <CodexTitle title="TODO">
-											<Home />
-										// </CodexTitle>
-									) : (
-										<CodexTitle title="My notes">
-											<UserNotes />
-										</CodexTitle>
-									)}
-								</User.Context.Consumer>
-							}
-						/>
-						<Route.Any
-							path={constants.PATH_NOTE}
-							exact
-							children={
-								<User.Context.Consumer>
-									{user => !user ? (
-										// <CodexTitle title="TODO">
-											<AnyNote />
-										// </CodexTitle>
-									) : (
-										// <CodexTitle title="TODO">
-											<UserNote />
-										// </CodexTitle>
-									)}
-								</User.Context.Consumer>
-							}
-						/>
+				{/* Nav */}
+				<div className="flex flex-row justify-between items-center h-20">
 
-						{/* Unprotected */}
-						<Route.Unprotected
-							path={constants.PATH_AUTH}
-							title="Open your Codex"
-							children={<UserAuth />}
-						/>
+					{/* LHS */}
+					<div className="flex flex-row h-full">
+						<Link to="/" className="flex flex-row" style={{ fontSize: "50%" }}>
+							<CodexLogoSm />
+						</Link>
+					</div>
 
-						{/* Protected */}
-						<Route.Protected
-							path={constants.PATH_NEW_NOTE}
-							title="New note"
-							children={<UserNote />}
-						/>
-						<Route.Protected
-							path={constants.PATH_NOTE}
-							title="Editing note"
-							children={<UserNote />}
-						/>
+					{/* RHS */}
+					<div className="flex flex-row h-full">
+						<LinkText host="button" className="px-3 tracking-px transition ease-out duration-150">
+							Features
+						</LinkText>
+						<LinkText host="button" className="px-3 tracking-px transition ease-out duration-150">
+							Demo
+						</LinkText>
+						<LinkText host="button" className="px-3 tracking-px transition ease-out duration-150">
+							Changelog
+						</LinkText>
+						<LinkText host="button" className="px-3 tracking-px transition ease-out duration-150">
+							Open Source
+						</LinkText>
+						<div className="w-3" />
+						<div className="flex flex-row items-center">
+							<Surface host="button" className="rounded-lg focus:outline-none focus:shadow-outline transition ease-out duration-150">
+								<Text className="px-4 py-3 font-medium tracking-px text-md-blue-a400">
+									Open your Codex
+								</Text>
+							</Surface>
+						</div>
+					</div>
 
-						{/* 404 */}
-						<Route.Any
-							path="/"
-							title="Page not found"
-							children={
-								<Containers.Note>
-									<Error404 />
-								</Containers.Note>
-							}
-						/>
+				</div>
 
-					</Router.Switch>
-				</User.Provider>
-			</ProgressBar.Provider>
-		</DarkMode.Provider>
-	</Router.BrowserRouter>
+			</div>
+		</div>
+	</BrowserRouter>
 )
 
 export default App

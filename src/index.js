@@ -1,9 +1,9 @@
 import App from "components/App"
-import firebase from "firebase/app"
 import React from "react"
 import ReactDOM from "react-dom"
+import firebase from "firebase/app"
 
-import "firebase/analytics"
+// import "firebase/analytics"
 import "firebase/auth"
 
 import "debug.css"
@@ -22,9 +22,9 @@ import "stylesheets/tailwind.generated.css"
 		appId: process.env.REACT_APP_FIREBASE_APP_ID,
 		measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 	})
-	if (process.env.NODE_ENV === "production") {
-		firebase.analytics()
-	}
+	// if (process.env.NODE_ENV === "production") {
+	// 	firebase.analytics()
+	// }
 })()
 
 ReactDOM.render(

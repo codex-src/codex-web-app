@@ -5,3 +5,10 @@
 .Poppins {
 	font-family: "Poppins";
 }
+
+.-text-px {
+	font-size: 0.9375rem;
+}
+.text-px {
+	font-size: 1.0625rem;
+}

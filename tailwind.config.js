@@ -1,4 +1,5 @@
 const defaultTheme = require("tailwindcss/defaultTheme")
+const defaultVariants = require("./tailwind-variants")
 
 module.exports = {
 	purge: [
@@ -151,5 +152,9 @@ module.exports = {
 			dark: { raw: "(prefers-color-scheme: dark)" },
 			// => @media (prefers-color-scheme: dark) { ... }
 		},
+	},
+	variants: {
+		...defaultVariants,
+		boxShadow: [...defaultVariants.boxShadow, "active"],
 	},
 }
