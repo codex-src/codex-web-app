@@ -5,6 +5,7 @@ import * as Hero from "react-heroicons"
 import * as Icons from "svgs"
 import Icon from "utils/Icon"
 import Link from "components/Link"
+import Logo from "components/Logo"
 import NavButtonDarkMode from "./NavButtonDarkMode"
 import React from "react"
 import useDropDown from "hooks/useDropDown"
@@ -18,18 +19,6 @@ const NavLink = props => (
 		</p>
 	</$NavLink>
 )
-
-// const NavLinkCTA = props => (
-// 	<div className="mx-3 flex flex-row items-center">
-// 		{/* NOTE: Use flex flex-row items-center ...
-// 		height: 3.3125rem to match <UserAuth> button aesthetic */}
-// 		<Link className="px-4 flex flex-row items-center bg-white dark:bg-gray-800 border border-transparent dark:border-gray-750 rounded-lg focus:outline-none shadow-hero focus:shadow-outline transition duration-150" style={{ height: "3.3125rem" /* 53px */ }} {...props}>
-// 			<p className="font-medium text-md-blue-a400 dark:text-white">
-// 				{props.children}
-// 			</p>
-// 		</Link>
-// 	</div>
-// )
 
 const NavLinkCTA = props => (
 	<div className="mx-3 flex flex-row items-center">
@@ -54,7 +43,9 @@ const Nav = props => {
 
 				{/* Logo */}
 				<Link className="px-3 flex flex-row items-center" to={constants.PATH_HOME}>
-					<Icon className="w-8 h-8 text-md-blue-a400 dark:text-md-blue-a200" svg={Icons.CodexLogo} />
+					<div style={{ fontSize: "50%" }}>
+						<Logo />
+					</div>
 				</Link>
 
 				{/* Save status -- for <Demo> */}
