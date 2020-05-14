@@ -1,5 +1,5 @@
+import * as emojiTrie from "emoji-trie"
 import * as utf8 from "utils/encoding/utf8"
-import emojiTrie from "emoji-trie"
 import Enum from "utils/Enum"
 import parse from "./parser"
 import useMethods from "use-methods"

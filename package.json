@@ -1,14 +1,11 @@
 {
   "name": "codex-app",
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
     "debug.css": "https://github.com/codex-src/debug.css",
     "emoji-trie": "https://github.com/codex-src/emoji-trie.js",
     "firebase": "^7.9.1",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "react-heroicons": "https://github.com/codex-src/react-heroicons",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
@@ -44,12 +41,9 @@
     ]
   },
   "devDependencies": {
-    "@fullhuman/postcss-purgecss": "^2.0.6",
-    "autoprefixer": "^9.7.4",
     "firebase-tools": "^7.13.1",
-    "postcss-cli": "^7.1.0",
     "raw.macro": "^0.3.0",
     "serve": "^11.3.0",
-    "tailwindcss": "^1.2.0"
+    "tailwindcss": "^1.4.6"
   }
 }

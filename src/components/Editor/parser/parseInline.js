@@ -1,4 +1,4 @@
-import emojiTrie from "emoji-trie"
+import * as emojiTrie from "emoji-trie"
 import React from "react"
 
 import {
