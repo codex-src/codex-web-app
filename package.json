@@ -13,17 +13,13 @@
     "uuidv4": "^6.0.6"
   },
   "scripts": {
-    "lint": "yarn eslint --ignore-pattern=build --ignore-pattern=\"**/*.min.js\" .",
-    "tailwind-dev": "yarn tailwind build src/stylesheets/tailwind.css -o src/stylesheets/tailwind.generated.css",
-    "tailwind-prod": "yarn postcss src/stylesheets/tailwind.css --output src/stylesheets/tailwind.generated.css --env production",
-    "prestart": "yarn tailwind-dev",
-    "start": "yarn react-scripts start",
-    "test": "yarn react-scripts test",
-    "prebuild": "yarn tailwind-prod",
-    "build": "yarn react-scripts build",
-    "postbuild": "yarn tailwind-dev",
-    "firebase-build-deploy": "yarn build && yarn firebase deploy && yarn tailwind-dev",
-    "eject": "yarn react-scripts eject"
+    "tailwind-start": "tailwind build src/stylesheets/tailwind.css -o src/stylesheets/tailwind.generated.css",
+    "start": "react-scripts start",
+    "tailwind-build": "NODE_ENV=production yarn tailwind-start",
+    "build": "yarn tailwind-build && yarn react-scripts build && osascript -e 'display notification \"Production build ready\" with title \"yarn build\"' && yarn tailwind-start",
+    "firebase-build-deploy": "yarn build && yarn firebase deploy && yarn tailwind-start",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
