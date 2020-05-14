@@ -1,4 +1,3 @@
-// import innerText from "components/Editor/helpers/innerText"
 import App from "components/App"
 import firebase from "firebase/app"
 import React from "react"
@@ -8,10 +7,8 @@ import "firebase/analytics"
 import "firebase/auth"
 
 import "debug.css"
-import "stylesheets/tailwind-variables.css" // Takes precedence
-import "stylesheets/dark-mode-transition.css"
-
-// Generated CSS:
+import "stylesheets/tailwind-color-variables.css"
+import "stylesheets/tailwind-em-context.css"
 import "stylesheets/tailwind.generated.css"
 
 ;(() => {
@@ -30,15 +27,9 @@ import "stylesheets/tailwind.generated.css"
 	}
 })()
 
-// // https://github.com/codex-src/codex-playwright
-// window.getCodex = (id = "editor") => {
-// 	const node = document.getElementById(id)
-// 	return innerText(node)
-// }
-
 ReactDOM.render(
-	<React.StrictMode>
-		<App />
-	</React.StrictMode>,
+	// <React.StrictMode>
+	<App />,
+	// </React.StrictMode>,
 	document.getElementById("root"),
 )

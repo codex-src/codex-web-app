@@ -1,17 +1,13 @@
 const defaultTheme = require("tailwindcss/defaultTheme")
-const plugin = require("tailwindcss/plugin")
 
 module.exports = {
+	purge: [
+		"./public/**/*.html",
+		"./src/**/*.js",
+	],
 	theme: {
 		extend: {
-			borderRadius: {
-				"lg-xl": "0.75rem",
-				"xl":    "1rem",
-				"2xl":   "2rem",
-			},
 			boxShadow: {
-				"outline-color": "0 0 0 3px currentColor",
-
 				"hero-sm": `
 					0 0 0 1px rgba(0, 0, 0, 0.05),
 					0 1px 2px 0 rgba(0, 0, 0, 0.05)
@@ -39,11 +35,10 @@ module.exports = {
 			},
 			colors: {
 				"gray": {
-					// https://meyerweb.com/eric/tools/color-blend
 					...defaultTheme.colors.gray,
-					// 50:
+
+					// https://meyerweb.com/eric/tools/color-blend
 					50:  "#fbfdfe",
-					// 6XX:
 					610: "#6d7c91",
 					620: "#69778d",
 					625: "#67758b",
@@ -55,7 +50,6 @@ module.exports = {
 					675: "#546074",
 					680: "#525e71",
 					690: "#4e596d",
-					// 7XX:
 					710: "#475265",
 					720: "#444f62",
 					725: "#434e60",
@@ -67,7 +61,6 @@ module.exports = {
 					775: "#343f50",
 					780: "#333d4e",
 					790: "#303a4b",
-					// 8XX:
 					810: "#2b3545",
 					820: "#293242",
 					825: "#283141",
@@ -105,17 +98,6 @@ module.exports = {
 				"md-gray-700":  { default: "#616161" },
 				"md-gray-800":  { default: "#424242" },
 				"md-gray-900":  { default: "#212121" },
-				// https://twitter.com
-				"twitter-blue": "#1da1f2",
-			},
-			fontFamily: {
-				...defaultTheme.fontFamily,
-				"ia-writer-mono": ["'iA Writer Mono var'", "monospace"],
-				"inter":          ["Inter", "sans-serif"],
-			},
-			inset: {
-				"1/2":  "50%",
-				"full": "100%",
 			},
 			letterSpacing: {
 				"-px": "-0.0125em",
@@ -138,108 +120,36 @@ module.exports = {
 				"1/2":   "50%",
 			},
 			strokeWidth: {
-				hairline:  1.25, // 100
-				thin:      1.5,  // 200
-				light:     1.75, // 300
-				normal:    2,    // 400
-				medium:    2.25, // 500
-				semibold:  2.5,  // 600
-				bold:      2.75, // 700
-				extrabold: 3,    // 800
-				black:     3.25, // 900
+				hairline:  1.25, // -> font-weight: 100;
+				thin:      1.5,  // -> font-weight: 200;
+				light:     1.75, // -> font-weight: 300;
+				normal:    2,    // -> font-weight: 400;
+				medium:    2.25, // -> font-weight: 500;
+				semibold:  2.5,  // -> font-weight: 600;
+				bold:      2.75, // -> font-weight: 700;
+				extrabold: 3,    // -> font-weight: 800;
+				black:     3.25, // -> font-weight: 900;
 			},
 		},
 		// https://tailwindcss.com/docs/breakpoints
 		screens: {
-			xs: `${512 + (6 * 4) * 2}px`,
+			xs: `${24 + 512 + 24}px`,
 			// => @media (min-width: 560px) { ... }
 
-			sm: `${640 + (6 * 4) * 2}px`,
+			sm: `${24 + 640 + 24}px`,
 			// => @media (min-width: 688px) { ... }
 
-			md: `${768 + (6 * 4) * 2}px`,
+			md: `${24 + 768 + 24}px`,
 			// => @media (min-width: 816px) { ... }
 
-			lg: `${1024 + (6 * 4) * 2}px`,
+			lg: `${24 + 1024 + 24}px`,
 			// => @media (min-width: 1072px) { ... }
 
-			xl: `${1280 + (6 * 4) * 2}px`,
+			xl: `${24 + 1280 + 24}px`,
 			// => @media (min-width: 1328px) { ... }
+
+			dark: { raw: "(prefers-color-scheme: dark)" },
+			// => @media (prefers-color-scheme: dark) { ... }
 		},
 	},
-	// https://tailwindcss.com/docs/configuring-variants/#default-variants-reference
-	variants: {
-		textAlign: ["responsive"],
-
-		textColor: [
-			"responsive",
-			"dark",
-			"hover",
-			"hover:dark",
-			"focus",
-			"focus:dark",
-			"active",
-			"active:dark",
-			"disabled",
-			"disabled:dark",
-		],
-		backgroundColor: [
-			"responsive",
-			"dark",
-			"hover",
-			"hover:dark",
-			"focus",
-			"focus:dark",
-			"active",
-			"active:dark",
-			"disabled",
-			"disabled:dark",
-		],
-		borderColor: [
-			"dark",
-		],
-		boxShadow: [
-			"responsive",
-			"dark",
-			"hover",
-			"hover:dark",
-			"focus",
-			"focus:dark",
-			"active",
-			"active:dark",
-			"disabled",
-			"disabled:dark",
-		],
-	},
-	plugins: [
-		plugin(((flag = "dark-mode", prefix = "dark") => {
-			return ({ addVariant, e }) => {
-				addVariant(prefix, ({ modifySelectors }) => {
-					modifySelectors(({ className }) => {
-						return `.${flag} .${e(`${prefix}:${className}`)}`
-					})
-				})
-				addVariant(`hover:${prefix}`, ({ modifySelectors }) => {
-					modifySelectors(({ className }) => {
-						return `.${flag} .${e(`hover:${prefix}:${className}`)}:hover`
-					})
-				})
-				addVariant(`focus:${prefix}`, ({ modifySelectors }) => {
-					modifySelectors(({ className }) => {
-						return `.${flag} .${e(`focus:${prefix}:${className}`)}:focus`
-					})
-				})
-				addVariant(`active:${prefix}`, ({ modifySelectors }) => {
-					modifySelectors(({ className }) => {
-						return `.${flag} .${e(`active:${prefix}:${className}`)}:active`
-					})
-				})
-				addVariant(`disabled:${prefix}`, ({ modifySelectors }) => {
-					modifySelectors(({ className }) => {
-						return `.${flag} .${e(`disabled:${prefix}:${className}`)}:disabled`
-					})
-				})
-			}
-		})()),
-	],
 }

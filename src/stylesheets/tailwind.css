@@ -1,15 +1,3 @@
-/* purgecss start ignore */
 @import "tailwindcss/base";
 @import "tailwindcss/components";
-/* purgecss end ignore */
-
-.salt { font-feature-settings: "salt"; }
-.tnum { font-feature-settings: "tnum"; }
-
-.tabs-2 { tab-size: 2; }
-.tabs-4 { tab-size: 4; }
-
-.-text-px { font-size: 0.9375rem; }
-.text-px  { font-size: 1.0625rem; }
-
 @import "tailwindcss/utilities";
