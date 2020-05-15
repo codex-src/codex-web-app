@@ -7,7 +7,7 @@ import { WideAppContainer } from "components/AppContainers"
 // and children[1] is an <Answer>.
 const QuestionBlock = ({ children }) => (
 	<div>
-		<h3 className="font-medium text-xl Poppins text-black">
+		<h3 className="font-medium text-lg Poppins">
 			{children[0]}
 		</h3>
 		<div className="h-2" />
@@ -17,7 +17,7 @@ const QuestionBlock = ({ children }) => (
 
 // Renders an answer.
 const Answer = ({ children }) => (
-	<div className="text-px text-gray-800">
+	<div className="text-gray-800">
 		{children}
 	</div>
 )
@@ -27,9 +27,10 @@ const FAQ = () => (
 		<WideAppContainer>
 
 			{/* Questions */}
-			<h2 className="flex flex-row items-center text-4xl md:text-5xl font-semibold Poppins text-gray-900">
-				<span style={{ clipPath: "inset(0 0 18.75% 0)" }}>Frequent questions</span>{"\u00a0"}
-				<span aria-label="face with monocle" role="img">🧐</span>
+			<h2 className="flex flex-row items-center text-3xl md:text-4xl font-semibold Poppins text-gray-900">
+				<span style={{ clipPath: "inset(0 0 18.75% 0)" }}>Frequent questions</span>
+				{/* {"\u00a0"} */}
+				{/* <span aria-label="face with monocle" role="img">🧐</span> */}
 			</h2>
 
 			{/* Answers */}
