@@ -2,7 +2,7 @@ import Button from "lib/Button"
 import ExternalLink from "lib/ExternalLink"
 import React from "react"
 import paths from "paths"
-import { AppContainer } from "components/AppContainers"
+import { WideAppContainer } from "components/AppContainers"
 import { CodexLogoSm } from "components/CodexLogo"
 import { Link } from "react-router-dom"
 
@@ -53,7 +53,7 @@ const Nav = () => {
 	}, [showDropDown])
 
 	return (
-		<AppContainer>
+		<WideAppContainer>
 			<div className="flex flex-row justify-between items-center h-20">
 
 				{/* LHS */}
@@ -64,7 +64,7 @@ const Nav = () => {
 				</div>
 
 				{/* RHS */}
-				<div className="hidden md:flex md:flex-row h-full">
+				<div className="hidden lg:flex lg:flex-row h-full">
 					<Link
 						to={paths.demo}
 						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
@@ -111,7 +111,7 @@ const Nav = () => {
 				</div>
 
 				{/* RHS -- drop down */}
-				<div className="flex flex-row md:hidden h-full">
+				<div className="flex flex-row lg:hidden h-full">
 
 					{/* Container */}
 					<div className="relative flex flex-row">
@@ -181,7 +181,7 @@ const Nav = () => {
 				</div>
 
 			</div>
-		</AppContainer>
+		</WideAppContainer>
 	)
 }
 
