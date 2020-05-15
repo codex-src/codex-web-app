@@ -187,9 +187,9 @@ const FAQ = () => (
 					<QuestionBlock>
 						Can I use Codex for my personal blog?
 						<Answer>
-							Not yet, but this is a planned feature I’m excited to build. I myself want to use Codex to host my <em>future</em> blog. Don’t you?<br />
+							Not yet, but this is a planned feature I’m excited to build. I myself want to use Codex to host my blog. Don’t you?<br />
 							<br />
-							If you have ideas for how blogging on Codex should work, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM</a>.
+							If you have ideas for how blogging should work on Codex, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM</a>.
 						</Answer>
 					</QuestionBlock>
 
