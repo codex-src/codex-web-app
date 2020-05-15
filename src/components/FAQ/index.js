@@ -27,8 +27,9 @@ const FAQ = () => (
 		<WideAppContainer>
 
 			{/* Questions */}
-			<h2 className="text-4xl md:text-5xl font-semibold Poppins text-gray-900">
-				Questions&nbsp;<span aria-label="face with monocle" role="img">🧐</span>
+			<h2 className="flex flex-row items-center text-4xl md:text-5xl font-semibold Poppins text-gray-900">
+				<span style={{ clipPath: "inset(0 0 18.75% 0)" }}>Frequent questions</span>{"\u00a0"}
+				<span aria-label="face with monocle" role="img">🧐</span>
 			</h2>
 
 			{/* Answers */}
