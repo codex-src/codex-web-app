@@ -6,14 +6,6 @@ import { AppContainer } from "components/AppContainers"
 import { CodexLogoSm } from "components/CodexLogo"
 import { Link } from "react-router-dom"
 
-import {
-	LinkText,
-	RaisedSurface,
-	RaisedSurfaceSeparator as Separator,
-	Surface,
-	Text,
-} from "components/Styled"
-
 const Nav = () => {
 	const dropDownRef = React.useRef()
 	const [showDropDown, setShowDropDown] = React.useState(false)
@@ -73,31 +65,27 @@ const Nav = () => {
 
 				{/* RHS */}
 				<div className="hidden md:flex md:flex-row h-full">
-					<LinkText
-						host={Link}
+					<Link
 						to={paths.demo}
-						className="px-3 flex flex-row items-center tracking-px transition ease-out duration-150"
+						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
 						Try the Demo!
-					</LinkText>
-					<LinkText
-						host={Link}
+					</Link>
+					<Link
 						to={paths.pricing}
-						className="px-3 flex flex-row items-center tracking-px transition ease-out duration-150"
+						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
-						Pricing
-					</LinkText>
-					<LinkText
-						host={Link}
+						Pricing and FAQ
+					</Link>
+					<Link
 						to={paths.blog}
-						className="px-3 flex flex-row items-center tracking-px transition ease-out duration-150"
+						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
 						Blog
-					</LinkText>
-					<LinkText
-						host={ExternalLink}
+					</Link>
+					<ExternalLink
 						href="https://github.com/codex-src"
-						className="px-3 flex flex-row items-center tracking-px transition ease-out duration-150"
+						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
 						Open Source
 						<svg
@@ -111,14 +99,14 @@ const Nav = () => {
 						>
 							<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
 						</svg>
-					</LinkText>
+					</ExternalLink>
 					<div className="w-3" />
 					<div className="flex flex-row items-center">
-						<Surface host={Link} to={paths.continue} className="rounded-lg focus:outline-none focus:shadow-outline transition ease-out duration-150">
-							<Text className="px-4 py-3 !-text-px tracking-px text-md-blue-a400">
+						<Link to={paths.continue} className="bg-white rounded-lg focus:outline-none shadow-hero focus:shadow-outline transition ease-out duration-150">
+							<p className="px-4 py-3 !-text-px tracking-px text-md-blue-a400">
 								Open your Codex
-							</Text>
-						</Surface>
+							</p>
+						</Link>
 					</div>
 				</div>
 
@@ -130,8 +118,7 @@ const Nav = () => {
 
 						{/* Menu */}
 						<Button className="px-4" onClick={() => setShowDropDown(true)}>
-							<Text
-								host="svg"
+							<svg
 								className="w-8 h-8 transform"
 								fill="none"
 								strokeLinecap="round"
@@ -141,53 +128,52 @@ const Nav = () => {
 								viewBox="0 0 24 24"
 							>
 								<path d="M4 6h16M4 12h16M4 18h16" />
-							</Text>
+							</svg>
 						</Button>
 
 						{/* Drop down */}
 						{showDropDown && (
 							<div ref={dropDownRef} className="mt-16 absolute top-0 right-0">
-								<RaisedSurface className="py-2 w-48 rounded-lg">
-									{/* NOTE: Use bg-md-blue-a200 exclusively
-									for <RaisedSurface> */}
+								<div className="py-2 w-48 bg-white rounded-lg shadow-hero-lg">
+									{/* NOTE: Use bg-md-blue-a200 exclusively */}
 									<Link
 										to={paths.demo}
-										className="-mx-px px-4 py-1 block -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
 										Try the Demo!
 									</Link>
 									<Link
 										to={paths.pricing}
-										className="-mx-px px-4 py-1 block -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
 										Pricing
 									</Link>
-									<Separator className="my-2" />
+									<hr className="my-2" />
 									<Link
 										to={paths.blog}
-										className="-mx-px px-4 py-1 block -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
 										Blog
 									</Link>
 									<ExternalLink
 										href="https://github.com/codex-src"
-										className="-mx-px px-4 py-1 block -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
 										Open Source
 									</ExternalLink>
-									<Separator className="my-2" />
+									<hr className="my-2" />
 									<Link
 										to={paths.continue}
-										className="-mx-px px-4 py-1 block -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
 										Open your Codex
 									</Link>
-								</RaisedSurface>
+								</div>
 							</div>
 						)}
 
