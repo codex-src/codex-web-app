@@ -23,7 +23,7 @@ const Answer = ({ children }) => (
 )
 
 const FAQ = () => (
-	<div className="py-24 bg-gray-100">
+	<div className="py-24 border-t">
 		<WideAppContainer>
 
 			{/* Questions */}
@@ -64,7 +64,7 @@ const FAQ = () => (
 						<Answer>
 							Yes! The Codex parser is based on <a className="text-md-blue-a400" href="https://guides.github.com/features/mastering-markdown" target="_blank" rel="noopener noreferrer">GitHub Flavored Markdown</a>. There are <em>few</em> changes where the parser was designed to emphasize WYSIWYG editing, but for all intents and purposes, Codex is GFM-compatible.<br />
 							<br />
-							So far, Codex supports:<br />
+							Codex supports (so far):<br />
 							<br />
 							<ul>
 								<li>
