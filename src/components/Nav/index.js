@@ -75,13 +75,7 @@ const Nav = () => {
 						to={paths.pricing}
 						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
-						Pricing and FAQ
-					</Link>
-					<Link
-						to={paths.blog}
-						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
-					>
-						Blog
+						Pricing
 					</Link>
 					<ExternalLink
 						href="https://github.com/codex-src"
@@ -151,13 +145,6 @@ const Nav = () => {
 										Pricing
 									</Link>
 									<hr className="my-2" />
-									<Link
-										to={paths.blog}
-										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
-										onClick={() => setShowDropDown(false)}
-									>
-										Blog
-									</Link>
 									<ExternalLink
 										href="https://github.com/codex-src"
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"

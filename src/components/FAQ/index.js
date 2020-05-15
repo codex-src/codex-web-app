@@ -37,7 +37,7 @@ const FAQ = () => (
 			<div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: "2.25rem" /* gap-9 */ }}>
 
 				{/* LHS */}
-				<div className="grid grid-cols-1" style={{ gap: "2.25rem" /* gap-9 */ }}>
+				<div>
 					<QuestionBlock>
 						What is Codex?
 						<Answer>
@@ -47,21 +47,23 @@ const FAQ = () => (
 						</Answer>
 					</QuestionBlock>
 
+					<div style={{ height: "2.25rem" /* h-9 */ }} />
 					<QuestionBlock>
 						Why is it called /ˈkōˌdeks/?
 						<Answer>
-							The name ‘Codex’ is primarily inspired by <a className="text-blue-500" href="https://en.wikipedia.org/wiki/Codex_Leicester" target="_blank" rel="noopener noreferrer">Leonardo da Vinci’s Codex Leicester</a>. His codex was one of many for documenting his discoveries. I actually found out when writing this that <a className="text-blue-500" href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7" target="_blank" rel="noopener noreferrer">Bill Gates bought Codex Leicester at auction for $30 million dollars in 1994</a>.&nbsp;<span aria-label="exploding head" role="img">🤯</span><br />
+							The name ‘Codex’ is primarily inspired by <a className="text-blue-500" href="https://en.wikipedia.org/wiki/Codex_Leicester" target="_blank" rel="noopener noreferrer">Leonardo da Vinci’s Codex Leicester</a>. I actually found out when writing this that <a className="text-blue-500" href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7" target="_blank" rel="noopener noreferrer">Bill Gates bought Codex Leicester at auction for $30 million dollars in 1994</a>.&nbsp;<span aria-label="exploding head" role="img">🤯</span><br />
 							<br />
 							About a year ago, I got really inspired by this idea of ‘what would a modern, technical journal look like?’ and ‘why don’t we have more sophisticated tools for knowledge-sharing over the Internet?’ This led me to building Codex.
 						</Answer>
 					</QuestionBlock>
 
+					<div style={{ height: "2.25rem" /* h-9 */ }} />
 					<QuestionBlock>
 						Does Codex support GitHub Flavored Markdown?
 						<Answer>
 							Yes! The Codex parser is based on <a className="text-blue-500" href="https://guides.github.com/features/mastering-markdown" target="_blank" rel="noopener noreferrer">GitHub Flavored Markdown</a>. There are <em>few</em> changes where the parser was designed to emphasize WYSIWYG editing, but for all intents and purposes, Codex is GFM-compatible.<br />
 							<br />
-							Codex supports:<br />
+							So far, Codex supports:<br />
 							<br />
 							<ul>
 								<li>
@@ -90,7 +92,7 @@ const FAQ = () => (
 								</li>
 								<li>
 									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
-									Block-level images and linked block-level images
+									Images
 								</li>
 								<li>
 									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
@@ -121,48 +123,48 @@ const FAQ = () => (
 									<strike>Strikethrough</strike>
 								</li>
 							</ul>
-							<br />
-							<em>More elements</em> are also planned!
+							{/* <br /> */}
+							{/* <em>More elements</em> are also planned! */}
 						</Answer>
 					</QuestionBlock>
 
+					{/* <QuestionBlock> */}
+					{/* 	What if I don’t like markdown syntax? */}
+					{/* 	<Answer> */}
+					{/* 		The decision to render markdown was intentional to make authoring <em>and maintaining</em> markdown easier over time.<br /> */}
+					{/* 		<br /> */}
+					{/* 		That being said, I’ve taken great efforts to minimize the impact of markdown; some elements are rendered purely as WYSIWYG (like lists and section breaks), and all markdown syntax can be hidden in ‘Preview Mode’, which also locks the document from editing. */}
+					{/* 	</Answer> */}
+					{/* </QuestionBlock> */}
+
+					<div style={{ height: "2.25rem" /* h-9 */ }} />
 					<QuestionBlock>
-						What if I don’t like markdown syntax?
+						Does Codex support embeds and tables?
 						<Answer>
-							The decision to render markdown was intentional to make authoring <em>and maintaining</em> markdown easier over time.<br />
-							<br />
-							That being said, I’ve taken great efforts to minimize the impact of markdown; some elements are rendered purely as WYSIWYG (like lists and section breaks), and all markdown syntax can be hidden in ‘Preview Mode’, which also locks the document from editing.
+							Not yet, but these are planned features.
 						</Answer>
 					</QuestionBlock>
 
+					<div style={{ height: "2.25rem" /* h-9 */ }} />
 					<QuestionBlock>
-						Does Codex support embedding media and tables?
+						Does Codex support collaborative features?
 						<Answer>
-							Not yet, but these are planned features. Not only do I want to provide these kinds of rich elements for you, but I want them myself!
+							Not yet. Everything you see has been designed and engineered by one person — that’s me, hello!&nbsp;<span aria-label="waving hand" role="img">👋</span> — and I simply haven’t figured out how to engineer collaborative features…yet.
 						</Answer>
 					</QuestionBlock>
 
-					<QuestionBlock>
-						Does Codex support collaborative features like Google Docs or Figma?
-						<Answer>
-							Not yet. Everything you see has been designed and engineered by one person — that’s me, hello!&nbsp;<span aria-label="waving hand" role="img">👋</span> — and I simply haven’t figured out how to engineer collaborative features…yet.<br />
-							<br />
-							That being said, I deeply want to add collaborative editing! If you’ve worked on collaborative editors before, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM</a>.
-						</Answer>
-					</QuestionBlock>
-
-					<QuestionBlock>
-						Who is Codex designed for?
-						<Answer>
-							Ultimately, Codex is designed for <em>anyone</em> who wants to author written content on the web more easily. Specifically, Codex is being developed for the developer community.&nbsp;<span aria-label="hugging face" role="img">🤗</span><br />
-							<br />
-							In the future, I’d like to make the editor more useful in order to support the greater technical community. I plan on adding support for LaTeX elements and more.
-						</Answer>
-					</QuestionBlock>
+					{/* <QuestionBlock> */}
+					{/* 	Who is Codex designed for? */}
+					{/* 	<Answer> */}
+					{/* 		Ultimately, Codex is designed for <em>anyone</em> who wants to author written content on the web more easily. Specifically, Codex is being developed for the developer community.&nbsp;<span aria-label="hugging face" role="img">🤗</span><br /> */}
+					{/* 		<br /> */}
+					{/* 		In the future, I’d like to make the editor more useful in order to support the greater technical community. I plan on adding support for LaTeX elements and more. */}
+					{/* 	</Answer> */}
+					{/* </QuestionBlock> */}
 				</div>
 
 				{/* RHS */}
-				<div className="grid grid-cols-1" style={{ gap: "2.25rem" /* gap-9 */ }}>
+				<div>
 					<QuestionBlock>
 						Why are you making Codex?
 						<Answer>
@@ -172,19 +174,21 @@ const FAQ = () => (
 						</Answer>
 					</QuestionBlock>
 
+					<div style={{ height: "2.25rem" /* h-9 */ }} />
 					<QuestionBlock>
 						How does the Codex editor actually work?
 						<Answer>
 							You might be surprised to learn that the Codex editor (and pretty much all the technology Codex uses) is <a className="text-blue-500" href="https://github.com/codex-src" target="_blank" rel="noopener noreferrer">MIT-licensed open source</a>. It’s important to me that everything I’ve learned <em>be learnable</em>.<br />
 							<br />
-							Back to the question: essentially, I use React and <code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">contenteditable</code> to seed control of user-editing to a virtual representation of the document. <code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">input</code> events, among other events, manipulate the virtual document. React then re-renders the virtual document <em>back</em> to the screen, diffing changes a long the way.<br />
+							Back to the question: essentially, I use React and <code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">contenteditable</code> to seed control of user-editing to a virtual representation of the document. <code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">input</code> events, among other events, manipulate the virtual document. React then re-renders the virtual document <em>back</em> to the screen.<br />
+							{/* <br /> */}
+							{/* Of course, the implementation is far more subtle and <em>treacherous</em>.&nbsp;<span aria-label="ghost" role="img">👻</span> If you are personally interested in contributing to the Codex editor, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM so I can onboard</a>.<br /> */}
 							<br />
-							Of course, the implementation is far more subtle and <em>treacherous</em>.&nbsp;<span aria-label="ghost" role="img">👻</span> If you are personally interested in contributing to the Codex editor, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM so I can onboard</a>.<br />
-							<br />
-							(No — I’m not using a popular open source library like <a className="text-blue-500" href="https://github.com/facebook/draft-js" target="_blank" rel="noopener noreferrer">Draft.js</a> or <a className="text-blue-500" href="https://github.com/codemirror/CodeMirror" target="_blank" rel="noopener noreferrer">CodeMirror</a> to engineer Codex. This was an intentional decision to make sure I could learn <em>how</em> editors work and own the editor experience I’m building.)
+							(No — I’m not using a popular open source library like <a className="text-blue-500" href="https://github.com/facebook/draft-js" target="_blank" rel="noopener noreferrer">Draft.js</a> or <a className="text-blue-500" href="https://github.com/codemirror/CodeMirror" target="_blank" rel="noopener noreferrer">CodeMirror</a> to engineer Codex.)
 						</Answer>
 					</QuestionBlock>
 
+					<div style={{ height: "2.25rem" /* h-9 */ }} />
 					<QuestionBlock>
 						Can I use Codex for my personal blog?
 						<Answer>
@@ -194,12 +198,11 @@ const FAQ = () => (
 						</Answer>
 					</QuestionBlock>
 
+					<div style={{ height: "2.25rem" /* h-9 */ }} />
 					<QuestionBlock>
 						Why should I pay for Codex?
 						<Answer>
-							You don’t have to. The free tier offers unlimited documents, each capped at 2k words.<br />
-							<br />
-							For reference, 2k words is <em>a lot</em> — a 400-page book is on the order of 100k words, so 2k words gets you 1/50th of a book, for free!<br />
+							You don’t have to. The free tier offers unlimited documents, each capped at 2k words. For reference, 2k words is <em>a lot</em> — a 400-page book is on the order of 100k words, so 2k words gets you 1/50th of a book, for free!<br />
 							<br />
 							However, when you pay for Codex, you get <em>a lot</em> more:<br />
 							<br />
@@ -234,28 +237,27 @@ const FAQ = () => (
 						</Answer>
 					</QuestionBlock>
 
-					<QuestionBlock>
-						Why do you offer a self-service discount?
-						<Answer>
-							If you need a discount, <Link to={paths.pricing} className="text-blue-500">simply toggle the ‘I need a discount’ checkbox on the pricing page</Link>. This discount exists to support users who need it.<br />
-							<br />
-							Codex as a service is already designed to be inexpensive, but when you apply the self-service discount, you take up to 20% off.<br />
-							<br />
-							Please don’t apply the discount if you don’t need it.&nbsp;<span aria-label="face with raised eyebrow" role="img">🤨</span>
-						</Answer>
-					</QuestionBlock>
+					{/* <QuestionBlock> */}
+					{/* 	Why do you offer a self-service discount? */}
+					{/* 	<Answer> */}
+					{/* 		If you need a discount, <Link to={paths.pricing} className="text-blue-500">simply toggle the ‘I need a discount’ checkbox on the pricing page</Link>. This discount exists to support users who need it.<br /> */}
+					{/* 		<br /> */}
+					{/* 		Codex as a service is already designed to be inexpensive, but when you apply the self-service discount, you take up to 20% off.<br /> */}
+					{/* 		<br /> */}
+					{/* 		Please don’t apply the discount if you don’t need it.&nbsp;<span aria-label="face with raised eyebrow" role="img">🤨</span> */}
+					{/* 	</Answer> */}
+					{/* </QuestionBlock> */}
 
-					<QuestionBlock>
-						Do you offer refunds?
-						<Answer>
-							Yes. If you’re not satisfied with Codex, email me at <a className="text-blue-500" href="mailto:support@codex.md" target="_blank" rel="noopener noreferrer">support@codex.md</a> within 30 days and I’ll refund you in full, no questions asked.<br />
-							<br />
-							That being said, if you have ideas for how to improve Codex, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">DM me with feedback</a>. Don’t hesitate to share your honest and open feedback!<br />
-							<br />
-							<span aria-label="red heart" role="img">❤️</span>
-						</Answer>
-					</QuestionBlock>
-
+					{/* <QuestionBlock> */}
+					{/* 	Do you offer refunds? */}
+					{/* 	<Answer> */}
+					{/* 		Yes. If you’re not satisfied with Codex, email me at <a className="text-blue-500" href="mailto:support@codex.md" target="_blank" rel="noopener noreferrer">support@codex.md</a> within 30 days and I’ll refund you in full, no questions asked.<br /> */}
+					{/* 		<br /> */}
+					{/* 		That being said, if you have ideas for how to improve Codex, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">DM me with feedback</a>. Don’t hesitate to share your honest and open feedback!<br /> */}
+					{/* 		<br /> */}
+					{/* 		<span aria-label="red heart" role="img">❤️</span> */}
+					{/* 	</Answer> */}
+					{/* </QuestionBlock> */}
 				</div>
 			</div>
 
