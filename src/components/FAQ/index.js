@@ -32,7 +32,7 @@ const FAQ = () => (
 			</h2>
 
 			{/* Answers */}
-			<div className="h-12" />
+			<div style={{ height: "2.25rem" /* h-9 */ }} />
 			<div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: "2.25rem" /* gap-9 */ }}>
 
 				{/* LHS */}
@@ -47,7 +47,7 @@ const FAQ = () => (
 					</QuestionBlock>
 
 					<QuestionBlock>
-						Why is it called \cō·dex\?
+						Why is it called /ˈkōˌdeks/?
 						<Answer>
 							The name ‘Codex’ is primarily inspired by <a className="text-blue-500" href="https://en.wikipedia.org/wiki/Codex_Leicester" target="_blank" rel="noopener noreferrer">Leonardo da Vinci’s Codex Leicester</a>. His codex was one of many for documenting his discoveries. I actually found out when writing this that <a className="text-blue-500" href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7" target="_blank" rel="noopener noreferrer">Bill Gates bought Codex Leicester at auction for $30 million dollars in 1994</a>.&nbsp;<span aria-label="exploding head" role="img">🤯</span><br />
 							<br />
