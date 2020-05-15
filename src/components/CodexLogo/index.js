@@ -6,7 +6,7 @@ import React from "react"
 const CodexLogo = ({ sizeLarge } = { sizeLarge: false }) => (
 	<div className="em-context flex flex-row items-center select-none">
 		<svg
-			className="w-16 h-16 text-md-blue-a400 dark:text-md-blue-a200"
+			className="w-16 h-16 text-md-blue-a400 dark:text-md-blue-a200 transform scale-95"
 			fill="none"
 			strokeLinecap="round"
 			strokeLinejoin="round"
