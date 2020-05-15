@@ -8,7 +8,7 @@ import {
 } from "svgs"
 
 const Footer = () => (
-	<div className="py-4 border-t border-gray-300 dark:border-gray-700">
+	<div className="py-4 border-t">
 		<AppContainer>
 			<div className="flex flex-col sm:flex-row justify-between items-center">
 
@@ -26,15 +26,16 @@ const Footer = () => (
 						{/* GitHub */}
 						<ExternalLink
 							href="https://github.com/codex-src"
-							className="p-4 text-gray-500 hover:text-md-blue-a400 dark:hover:text-md-blue-a200 transition ease-out duration-150"
+							className="p-4 text-gray-500 hover:text-blue-500 transition ease-out duration-150"
 						>
 							<GitHubLogo className="w-6 h-6" />
 						</ExternalLink>
 
 						{/* Twitter */}
+						<div className="-mx-2" />
 						<ExternalLink
 							href="https://twitter.com/username_ZAYDEK"
-							className="p-4 text-gray-500 hover:text-md-blue-a400 dark:hover:text-md-blue-a200 transition ease-out duration-150"
+							className="p-4 text-gray-500 hover:text-blue-500 transition ease-out duration-150"
 						>
 							<TwitterLogo className="w-6 h-6" />
 						</ExternalLink>
