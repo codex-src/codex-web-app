@@ -37,6 +37,7 @@
     ]
   },
   "devDependencies": {
+    "@tailwindcss/custom-forms": "^0.2.1",
     "firebase-tools": "^7.13.1",
     "raw.macro": "^0.3.0",
     "serve": "^11.3.0",

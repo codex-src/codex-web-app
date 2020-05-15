@@ -157,4 +157,8 @@ module.exports = {
 		...defaultVariants,
 		boxShadow: [...defaultVariants.boxShadow, "active"],
 	},
+	// https://tailwindcss-custom-forms.netlify.app
+	plugins: [
+		require("@tailwindcss/custom-forms"),
+	],
 }

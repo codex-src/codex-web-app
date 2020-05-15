@@ -5,7 +5,6 @@ import React from "react"
 // and children[1] is an <Answer>.
 const QuestionBlock = ({ children }) => (
 	<div>
-		{/* style={{ clipPath: "inset(0 0 18.75% 0)" }} */}
 		<h3 className="font-medium Poppins text-xl text-gray-900">
 			{children[0]}
 		</h3>
@@ -16,7 +15,7 @@ const QuestionBlock = ({ children }) => (
 
 // Renders an answer.
 const Answer = ({ children }) => (
-	<p className="text-px tracking-px text-gray-600">
+	<p className="text-px tracking-px text-gray-700">
 		{children}
 	</p>
 )
@@ -27,7 +26,7 @@ const FAQ = () => (
 
 			{/* Title */}
 			<h2 className="text-3xl md:text-5xl font-semibold Poppins text-gray-900" style={{ clipPath: "inset(0 0 18.75% 0)" }}>
-				Frequent questions
+				Questions <span ariaLabel="face with monocle" role="img">🧐</span>
 			</h2>
 
 			{/* Questions and answers */}
@@ -57,65 +56,65 @@ const FAQ = () => (
 					<QuestionBlock>
 						Does Codex support GitHub Flavored Markdown?
 						<Answer>
-							Yes! The Codex parser is based on <a className="text-blue-500" href="https://guides.github.com/features/mastering-markdown" target="_blank" rel="noopener noreferrer">GitHub Flavored Markdown</a>. There are <em>few</em> changes where the parser was designed to emphasize WYSIWYG editing, but for all intents and purposes, Codex is GFM-compatible.
+							Yes! The Codex parser is based on <a className="text-blue-500" href="https://guides.github.com/features/mastering-markdown" target="_blank" rel="noopener noreferrer">GitHub Flavored Markdown</a>. There are <em>few</em> changes where the parser was designed to emphasize WYSIWYG editing, but for all intents and purposes, Codex is GFM-compatible.<br />
 							<br />
 							Codex supports:<br />
 							<br />
 							<ul>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									Headers
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									Blockquotes
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									Unordered lists
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									Ordered lists
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									Task items (also known as checklists)
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									Code blocks (incl. syntax highlighting)
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									Block-level images and linked block-level images
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									Section breaks
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									<em>Italics</em>
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									<strong>Bold</strong>
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									<code>code</code>
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									<a className="text-blue-500" href="/" target="_blank" rel="noopener noreferrer">Links</a>
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									Naked links: <a className="text-blue-500" href="https://codex.md" target="_blank" rel="noopener noreferrer">codex.md</a>
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									<strike>Strikethrough</strike>
 								</li>
 							</ul>
@@ -173,7 +172,7 @@ const FAQ = () => (
 							The original plan was to self-publish programming courses on the Internet — I love programming, and I want to share my love of programming with the world. However, I immediately noticed just how inconvenient authoring on the web is. So instead of making courses, I decided to try to solve the bigger problem.<br />
 							<br />
 							{/* TODO: Small caps? */}
-							TL;DR: Editors are <em>hard</em>, and web-based editors are a nightmare. <span ariaLabel="face screaming in fear" role="img">😱</span> This is why you see so few <em>good ones</em>. But anything hard is worth doing, so I’m committed to building Codex for myself and others.
+							TL;DR: Editors are <em>hard</em>, and web-based editors are a nightmare. <span ariaLabel="face screaming in fear" role="img">😱</span> This is why you see so few good ones. But anything hard is worth doing, so I’m committed to building Codex for myself and others.
 						</Answer>
 					</QuestionBlock>
 
@@ -195,7 +194,7 @@ const FAQ = () => (
 						<Answer>
 							Not yet, but this is a planned feature I’m excited to build. I myself want to use Codex to self-host my own blog. Don’t you?<br />
 							<br />
-							If you have ideas for how blogging on Codex should work, <a href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM so we can talk at length</a>.
+							If you have ideas for how blogging on Codex should work, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM so we can talk at length</a>.
 						</Answer>
 					</QuestionBlock>
 
@@ -208,30 +207,31 @@ const FAQ = () => (
 							For reference, 2,000 words is <em>a lot</em> — a 400-page book is on the order of 100,000 words, so 2,000 words gets you 1/50th of a book, for free!<br />
 							<br />
 							However, when you pay for Codex, you get <em>a lot</em> more:<br />
+							<br />
 							<ul>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									<span ariaLabel="books" role="img">📚</span> Unlimited documents (included free)
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									<span ariaLabel="open book" role="img">📖</span> Unlimited document-length
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									<span ariaLabel="sunglasses" role="img">🕶</span> Dark mode
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									<span ariaLabel="alien monster" role="img">👾</span> Monospace-mode
 								</li>
 								<li>
-									<input type="checkbox" checked />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
 									<span ariaLabel="man artist: light skin tone" role="img">👨🏻‍🎨</span> Custom color theming and font-styling
 								</li>
 								<li>
-									<input type="checkbox" checked />
-									<span ariaLabel="rocket" role="img">🚀</span> Export your documents to HTML, syntax highlighting included
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" checked tabIndex="-1" />
+									<span ariaLabel="rocket" role="img">🚀</span> Export your documents to HTML
 								</li>
 							</ul>
 							<br />
@@ -242,7 +242,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						Why do you offer a self-service discount?
 						<Answer>
-							If you need a discount, <a href="TODO" target="_blank" rel="noopener noreferrer">simply toggle the ‘I need a discount’ checkbox on the checkout page</a>. This discount exists to support users who need it.<br />
+							If you need a discount, <a className="text-blue-500" href="TODO" target="_blank" rel="noopener noreferrer">simply toggle the ‘I need a discount’ checkbox on the checkout page</a>. This discount exists to support users who need it.<br />
 							<br />
 							Codex as a service is already designed to be inexpensive, but when you apply the self-service discount, you take up to 20% off.<br />
 							<br />
@@ -253,11 +253,11 @@ const FAQ = () => (
 					<QuestionBlock>
 						Do you offer refunds?
 						<Answer>
-							Yes. If you’re not satisfied with Codex, send an email to me at <a href="todo" target="_blank" rel="noopener noreferrer">refunds@getcodex.dev</a>. No questions asked.<br />
+							Yes. If you’re not satisfied with Codex, send an email to me at <a className="text-blue-500" href="mailto@getcodex.dev" target="_blank" rel="noopener noreferrer">refunds@getcodex.dev</a>. No questions asked.<br />
 							<br />
 							Please note that refunds are <em>not</em> prorated. <strong>If you didn’t enjoy your experience with Codex, I’ll refund you 100% of your original purchase</strong>, regardless of how long you actually used Codex for. I do this because I mean it when I say I want you to enjoy your stay.<br />
 							<br />
-							That being said, if you have ideas for how to improve Codex, I graciously ask you share your feedback <em>instead</em> so I can do everything we can to serve you better. <a href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">Simply DM me with your feedback.</a> I’m making Codex to make our collective lives easier, so your feedback potentially helps other people, too. Don’t hesitate to share your honest and open feedback!<br />
+							That being said, if you have ideas for how to improve Codex, I graciously ask you share your feedback <em>instead</em> so I can do everything we can to serve you better. <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">Simply DM me with your feedback.</a> I’m making Codex to make our collective lives easier, so your feedback potentially helps other people, too. Don’t hesitate to share your honest and open feedback!<br />
 							<br />
 							<span ariaLabel="red heart" role="img">❤️</span>
 						</Answer>
