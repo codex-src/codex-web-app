@@ -1,4 +1,5 @@
 import AppContainer from "components/AppContainer"
+import Footer from "components/Footer"
 import Nav from "components/Nav"
 import React from "react"
 import paths from "paths"
@@ -15,9 +16,15 @@ const App = () => (
 	<BrowserRouter>
 		<Switch>
 
-			<AppContainer>
-				<Nav />
-			</AppContainer>
+			<React.Fragment>
+				<AppContainer>
+					<Nav />
+				</AppContainer>
+
+				<div className="h-full" />
+
+				<Footer />
+			</React.Fragment>
 
 			<Route path={paths.blog}>
 				blog
