@@ -1,4 +1,5 @@
 import Button from "lib/Button"
+import ExternalLink from "lib/ExternalLink"
 import React from "react"
 import paths from "paths"
 import { CodexLogoSm } from "components/CodexLogo"
@@ -23,8 +24,15 @@ const Nav = () => {
 			return
 		}
 		const handler = e => {
-			setShowDropDown(e.target === dropDownRef.current ||
-				dropDownRef.current.contains(e.target))
+ 			if (!dropDownRef.current) {
+				// No-op
+				return
+			}
+			const ok = (
+				e.target === dropDownRef.current ||
+				dropDownRef.current.contains(e.target)
+			)
+			setShowDropDown(ok)
 		}
 		document.addEventListener("click", handler)
 		return () => {
@@ -39,6 +47,10 @@ const Nav = () => {
 			return
 		}
 		const handler = e => {
+ 			if (!dropDownRef.current) {
+				// No-op
+				return
+			}
 			setShowDropDown(e.keyCode !== 27) // Escape
 		}
 		document.addEventListener("keydown", handler)
@@ -81,8 +93,8 @@ const Nav = () => {
 					Blog
 				</LinkText>
 				<LinkText
-					host={Link}
-					to="TODO" // GitHub
+					host={ExternalLink}
+					href="https://github.com/codex-src"
 					className="px-3 flex flex-row items-center tracking-px transition ease-out duration-150"
 				>
 					Open Source
@@ -127,33 +139,38 @@ const Nav = () => {
 								for <RaisedSurface> */}
 								<Link
 									to={paths.demo}
-									className="-mx-px px-4 py-1 -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+									className="-mx-px px-4 py-1 block -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+									onClick={() => setShowDropDown(false)}
 								>
 									Try the Demo!
 								</Link>
 								<Link
 									to={paths.pricing}
-									className="-mx-px px-4 py-1 -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+									className="-mx-px px-4 py-1 block -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+									onClick={() => setShowDropDown(false)}
 								>
 									Pricing
 								</Link>
 								<Separator className="my-2" />
 								<Link
 									to={paths.blog}
-									className="-mx-px px-4 py-1 -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+									className="-mx-px px-4 py-1 block -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+									onClick={() => setShowDropDown(false)}
 								>
 									Blog
 								</Link>
-								<Link
-									to="TODO"
-									className="-mx-px px-4 py-1 -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+								<ExternalLink
+									href="https://github.com/codex-src"
+									className="-mx-px px-4 py-1 block -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+									onClick={() => setShowDropDown(false)}
 								>
 									Open Source
-								</Link>
+								</ExternalLink>
 								<Separator className="my-2" />
 								<Link
 									to={paths.continue}
-									className="-mx-px px-4 py-1 -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+									className="-mx-px px-4 py-1 block -text-px tracking-px text-black hover:text-white dark:text-white hover:bg-md-blue-a200"
+									onClick={() => setShowDropDown(false)}
 								>
 									Open your Codex
 								</Link>
