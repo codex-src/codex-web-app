@@ -12,3 +12,9 @@
 .text-px {
 	font-size: 1.0625rem;
 }
+
+[aria-label][role="img"] {
+	vertical-align: -10%;
+	font-size: 120%;
+	line-height: 1;
+}

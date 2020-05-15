@@ -1,6 +1,6 @@
-import AppContainer from "components/AppContainer"
 import ExternalLink from "lib/ExternalLink"
 import React from "react"
+import { AppContainer } from "components/AppContainers"
 
 import {
 	GitHubLogo,
@@ -14,7 +14,7 @@ const Footer = () => (
 
 				{/* Copyright */}
 				<div className="order-2 sm:order-1">
-					<p className="flex flex-row items-center tracking-px text-gray-500" style={{ height: "3.5rem" /* h-14 */ }}>
+					<p className="flex flex-row items-center text-gray-500" style={{ height: "3.5rem" /* h-14 */ }}>
 						© 2020 Codex, Inc. All rights reserved.
 					</p>
 				</div>

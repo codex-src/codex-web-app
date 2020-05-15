@@ -1,4 +1,3 @@
-import AppContainer from "components/AppContainer"
 import FAQ from "components/FAQ"
 import Footer from "components/Footer"
 import Nav from "components/Nav"
@@ -19,9 +18,7 @@ const App = () => (
 
 			{/* TODO: Extract to <UnauthHome> */}
 			<React.Fragment>
-				<AppContainer>
-					<Nav />
-				</AppContainer>
+				<Nav />
 
 				<div className="h-full" />
 
