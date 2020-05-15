@@ -1,17 +1,49 @@
+import AppContainer from "components/AppContainer"
 import Nav from "components/Nav"
 import React from "react"
-import { BrowserRouter } from "react-router-dom"
+import paths from "paths"
+
+import {
+	BrowserRouter,
+	Route,
+	Switch,
+} from "react-router-dom"
 
 // document.body.classList.toggle("debug-css")
 
 const App = () => (
 	<BrowserRouter>
-		<div className="px-6 flex flex-row justify-center">
-			<div className="w-full max-w-5xl">
-				<Nav />
+		<Switch>
 
-			</div>
-		</div>
+			<AppContainer>
+				<Nav />
+			</AppContainer>
+
+			<Route path={paths.blog}>
+				blog
+			</Route>
+			<Route path={paths.continue}>
+				continue
+			</Route>
+			<Route path={paths.demo}>
+				demo
+			</Route>
+			<Route path={paths.home}>
+				home
+			</Route>
+			<Route path={paths.pricing}>
+				pricing
+			</Route>
+
+			{/* <Route */}
+			{/* 	path={constants.PATH_README} */}
+			{/* 	title="Readme" */}
+			{/* 	exact */}
+			{/* 	// NOTE: Use key because <Note> is shared */}
+			{/* 	children={<Note key={random.newFourByteHash()} noteID={constants.NOTE_ID_README} />} */}
+			{/* /> */}
+
+		</Switch>
 	</BrowserRouter>
 )
 
