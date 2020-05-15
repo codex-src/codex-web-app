@@ -121,7 +121,7 @@ const FAQ = () => (
 								</li>
 								<li>
 									<input className="form-checkbox mr-3 text-md-blue-a200 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
-									<strike>Strikethrough</strike>
+									<strike className="text-gray-500">Strikethrough</strike>
 								</li>
 							</ul>
 							{/* <br /> */}
