@@ -60,7 +60,7 @@ const FAQ = () => (
 
 					<div style={{ height: "2.25rem" /* h-9 */ }} />
 					<QuestionBlock>
-						Does Codex support GitHub Flavored Markdown?
+						Is Codex based on GitHub Flavored Markdown?
 						<Answer>
 							Yes! The Codex parser is based on <a className="text-blue-500" href="https://guides.github.com/features/mastering-markdown" target="_blank" rel="noopener noreferrer">GitHub Flavored Markdown</a>. There are <em>few</em> changes where the parser was designed to emphasize WYSIWYG editing, but for all intents and purposes, Codex is GFM-compatible.<br />
 							<br />
@@ -68,59 +68,59 @@ const FAQ = () => (
 							<br />
 							<ul>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									Headers
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									Blockquotes
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									Unordered lists
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									Ordered lists
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									Task items (also known as checklists)
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									Code blocks (includes syntax highlighting)
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									Images
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									Section breaks
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<em>Italics</em>
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<strong>Bold</strong>
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">code</code>
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<Link to={paths.home} className="text-blue-500">Links</Link>
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									Naked links: <Link to={paths.home} className="text-blue-500">https://codex.md</Link>
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<strike>Strikethrough</strike>
 								</li>
 							</ul>
@@ -209,27 +209,27 @@ const FAQ = () => (
 							<br />
 							<ul>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="books" role="img">📚</span> Unlimited documents (included in the free tier)
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="open book" role="img">📖</span> Unlimited document-length
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="sunglasses" role="img">🕶</span> Dark mode
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="alien monster" role="img">👾</span> Monospace-mode
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="man artist: light skin tone" role="img">👨🏻‍🎨</span> Custom color theming and font-styling
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="rocket" role="img">🚀</span> Export documents to HTML
 								</li>
 							</ul>
