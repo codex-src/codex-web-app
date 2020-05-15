@@ -94,14 +94,19 @@ const Nav = () => {
 							<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
 						</svg>
 					</ExternalLink>
-					<div className="w-3" />
-					<div className="flex flex-row items-center">
+					<div className="px-3 flex flex-row items-center">
 						<Link to={paths.continue} className="bg-white rounded-lg focus:outline-none shadow-hero focus:shadow-outline transition ease-out duration-150">
 							<p className="px-4 py-3 !-text-px tracking-px text-md-blue-a400">
-								Open your Codex
+								Sign up for Codex
 							</p>
 						</Link>
 					</div>
+					<Link
+						to="TODO"
+						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
+					>
+						Sign in
+					</Link>
 				</div>
 
 				{/* RHS -- drop down */}
@@ -158,7 +163,14 @@ const Nav = () => {
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
-										Open your Codex
+										Sign up for Codex
+									</Link>
+									<Link
+										to="TODO"
+										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
+										onClick={() => setShowDropDown(false)}
+									>
+										Sign in
 									</Link>
 								</div>
 							</div>
