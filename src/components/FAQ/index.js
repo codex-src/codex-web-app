@@ -205,7 +205,7 @@ const FAQ = () => (
 							<ul>
 								<li>
 									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
-									<span aria-label="books" role="img">📚</span> Unlimited documents (included free)
+									<span aria-label="books" role="img">📚</span> Unlimited documents (included in the free tier)
 								</li>
 								<li>
 									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow" type="checkbox" defaultChecked tabIndex="-1" />
