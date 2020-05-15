@@ -98,6 +98,17 @@ const Nav = () => {
 					className="px-3 flex flex-row items-center tracking-px transition ease-out duration-150"
 				>
 					Open Source
+					<svg
+						className="ml-1 w-5 h-5 opacity-50 transform scale-90"
+						fill="none"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+					</svg>
 				</LinkText>
 				<div className="w-3" />
 				<div className="flex flex-row items-center">
