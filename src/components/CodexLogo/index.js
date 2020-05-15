@@ -20,7 +20,7 @@ const CodexLogo = ({ sizeLarge } = { sizeLarge: false }) => (
 		<div className="-mt-2">
 			<h1
 				// NOTE: Uses Poppins as a dependency
-				className="Poppins text-6xl leading-none lowercase text-black dark:text-white"
+				className="text-6xl leading-none Poppins lowercase text-black dark:text-white"
 				style={{
 					clipPath: "inset(18.75% 0 0 0)",
 					letterSpacing: "-0.025em",

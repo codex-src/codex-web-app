@@ -7,7 +7,7 @@ import { WideAppContainer } from "components/AppContainers"
 // and children[1] is an <Answer>.
 const QuestionBlock = ({ children }) => (
 	<div>
-		<h3 className="font-medium Poppins text-xl">
+		<h3 className="font-medium text-xl Poppins text-black">
 			{children[0]}
 		</h3>
 		<div className="h-2" />
