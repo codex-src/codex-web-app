@@ -69,7 +69,7 @@ const Nav = () => {
 						to={paths.demo}
 						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
-						Try the Demo!
+						Try the Demo
 					</Link>
 					<Link
 						to={paths.pricing}
@@ -135,7 +135,7 @@ const Nav = () => {
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
-										Try the Demo!
+										Try the Demo
 									</Link>
 									<Link
 										to={paths.pricing}
