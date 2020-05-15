@@ -70,7 +70,7 @@ const Nav = () => {
 			</div>
 
 			{/* RHS */}
-			<div className="hidden lg:flex lg:flex-row h-full">
+			<div className="hidden md:flex md:flex-row h-full">
 				<LinkText
 					host={Link}
 					to={paths.demo}
@@ -110,7 +110,7 @@ const Nav = () => {
 			</div>
 
 			{/* RHS -- drop down */}
-			<div className="flex flex-row lg:hidden h-full">
+			<div className="flex flex-row md:hidden h-full">
 
 				{/* Container */}
 				<div className="relative flex flex-row">
