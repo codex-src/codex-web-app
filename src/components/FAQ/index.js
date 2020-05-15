@@ -52,7 +52,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						Why is it called /ˈkōˌdeks/?
 						<Answer>
-							The name ‘Codex’ is primarily inspired by <a className="text-blue-500" href="https://en.wikipedia.org/wiki/Codex_Leicester" target="_blank" rel="noopener noreferrer">Leonardo da Vinci’s Codex Leicester</a>. I actually found out when writing this that <a className="text-blue-500" href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7" target="_blank" rel="noopener noreferrer">Bill Gates bought Codex Leicester at auction for $30 million dollars in 1994</a>.&nbsp;<span aria-label="exploding head" role="img">🤯</span><br />
+							The name ‘Codex’ is primarily inspired by <a className="text-md-blue-a400" href="https://en.wikipedia.org/wiki/Codex_Leicester" target="_blank" rel="noopener noreferrer">Leonardo da Vinci’s Codex Leicester</a>. I actually found out when writing this that <a className="text-md-blue-a400" href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7" target="_blank" rel="noopener noreferrer">Bill Gates bought the Codex Leicester for $30 million dollars back in 1994</a>.&nbsp;<span aria-label="exploding head" role="img">🤯</span><br />
 							<br />
 							About a year ago, I got really inspired by this idea of ‘what would a modern, technical journal look like?’ and ‘why don’t we have more sophisticated tools for knowledge-sharing over the Internet?’ This led me to building Codex.
 						</Answer>
@@ -62,65 +62,65 @@ const FAQ = () => (
 					<QuestionBlock>
 						Is Codex based on GitHub Flavored Markdown?
 						<Answer>
-							Yes! The Codex parser is based on <a className="text-blue-500" href="https://guides.github.com/features/mastering-markdown" target="_blank" rel="noopener noreferrer">GitHub Flavored Markdown</a>. There are <em>few</em> changes where the parser was designed to emphasize WYSIWYG editing, but for all intents and purposes, Codex is GFM-compatible.<br />
+							Yes! The Codex parser is based on <a className="text-md-blue-a400" href="https://guides.github.com/features/mastering-markdown" target="_blank" rel="noopener noreferrer">GitHub Flavored Markdown</a>. There are <em>few</em> changes where the parser was designed to emphasize WYSIWYG editing, but for all intents and purposes, Codex is GFM-compatible.<br />
 							<br />
 							So far, Codex supports:<br />
 							<br />
 							<ul>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									Headers
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									Blockquotes
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									Unordered lists
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									Ordered lists
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									Task items (also known as checklists)
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									Code blocks (includes syntax highlighting)
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									Images
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									Section breaks
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									<em>Italics</em>
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									<strong>Bold</strong>
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									<code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">code</code>
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
-									<Link to={paths.home} className="text-blue-500">Links</Link>
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Link to={paths.home} className="text-md-blue-a400">Links</Link>
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
-									Naked links: <Link to={paths.home} className="text-blue-500">https://codex.md</Link>
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									Naked links: <Link to={paths.home} className="text-md-blue-a400">https://codex.md</Link>
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									<strike>Strikethrough</strike>
 								</li>
 							</ul>
@@ -179,13 +179,13 @@ const FAQ = () => (
 					<QuestionBlock>
 						How does the Codex editor actually work?
 						<Answer>
-							You might be surprised to learn that the Codex editor (and pretty much all the technology Codex uses) is <a className="text-blue-500" href="https://github.com/codex-src" target="_blank" rel="noopener noreferrer">MIT-licensed open source</a>. It’s important to me that everything I’ve learned <em>be learnable</em>.<br />
+							You might be surprised to learn that the Codex editor (and pretty much all the technology Codex uses) is <a className="text-md-blue-a400" href="https://github.com/codex-src" target="_blank" rel="noopener noreferrer">MIT-licensed open source</a>. It’s important to me that everything I’ve learned <em>be learnable</em>.<br />
 							<br />
 							Back to the question: essentially, I use React and <code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">contenteditable</code> to seed control of user-editing to a virtual representation of the document. <code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">input</code> events, among other events, manipulate the virtual document. React then re-renders the virtual document <em>back</em> to the screen.<br />
 							{/* <br /> */}
-							{/* Of course, the implementation is far more subtle and <em>treacherous</em>.&nbsp;<span aria-label="ghost" role="img">👻</span> If you are personally interested in contributing to the Codex editor, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM so I can onboard</a>.<br /> */}
+							{/* Of course, the implementation is far more subtle and <em>treacherous</em>.&nbsp;<span aria-label="ghost" role="img">👻</span> If you are personally interested in contributing to the Codex editor, <a className="text-md-blue-a400" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM so I can onboard</a>.<br /> */}
 							<br />
-							(No — I’m not using a popular open source library like <a className="text-blue-500" href="https://github.com/facebook/draft-js" target="_blank" rel="noopener noreferrer">Draft.js</a> or <a className="text-blue-500" href="https://github.com/codemirror/CodeMirror" target="_blank" rel="noopener noreferrer">CodeMirror</a> to engineer Codex.)
+							(No — I’m not using a popular open source library like <a className="text-md-blue-a400" href="https://github.com/facebook/draft-js" target="_blank" rel="noopener noreferrer">Draft.js</a> or <a className="text-md-blue-a400" href="https://github.com/codemirror/CodeMirror" target="_blank" rel="noopener noreferrer">CodeMirror</a> to engineer Codex.)
 						</Answer>
 					</QuestionBlock>
 
@@ -195,7 +195,7 @@ const FAQ = () => (
 						<Answer>
 							Not yet, but this is a planned feature I’m excited to build. I myself want to use Codex to host my blog. Don’t you?<br />
 							<br />
-							If you have ideas for how blogging should work on Codex, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM</a>.
+							If you have ideas for how blogging should work on Codex, <a className="text-md-blue-a400" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">send me a DM</a>.
 						</Answer>
 					</QuestionBlock>
 
@@ -209,27 +209,27 @@ const FAQ = () => (
 							<br />
 							<ul>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="books" role="img">📚</span> Unlimited documents (included in the free tier)
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="open book" role="img">📖</span> Unlimited document-length
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="sunglasses" role="img">🕶</span> Dark mode
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="alien monster" role="img">👾</span> Monospace-mode
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="man artist: light skin tone" role="img">👨🏻‍🎨</span> Custom color theming and font-styling
 								</li>
 								<li>
-									<input className="form-checkbox mr-4 text-green-400 rounded-full shadow transform scale-105" type="checkbox" defaultChecked tabIndex="-1" />
+									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
 									<span aria-label="rocket" role="img">🚀</span> Export documents to HTML
 								</li>
 							</ul>
@@ -241,7 +241,7 @@ const FAQ = () => (
 					{/* <QuestionBlock> */}
 					{/* 	Why do you offer a self-service discount? */}
 					{/* 	<Answer> */}
-					{/* 		If you need a discount, <Link to={paths.pricing} className="text-blue-500">simply toggle the ‘I need a discount’ checkbox on the pricing page</Link>. This discount exists to support users who need it.<br /> */}
+					{/* 		If you need a discount, <Link to={paths.pricing} className="text-md-blue-a400">simply toggle the ‘I need a discount’ checkbox on the pricing page</Link>. This discount exists to support users who need it.<br /> */}
 					{/* 		<br /> */}
 					{/* 		Codex as a service is already designed to be inexpensive, but when you apply the self-service discount, you take up to 20% off.<br /> */}
 					{/* 		<br /> */}
@@ -252,9 +252,9 @@ const FAQ = () => (
 					{/* <QuestionBlock> */}
 					{/* 	Do you offer refunds? */}
 					{/* 	<Answer> */}
-					{/* 		Yes. If you’re not satisfied with Codex, email me at <a className="text-blue-500" href="mailto:support@codex.md" target="_blank" rel="noopener noreferrer">support@codex.md</a> within 30 days and I’ll refund you in full, no questions asked.<br /> */}
+					{/* 		Yes. If you’re not satisfied with Codex, email me at <a className="text-md-blue-a400" href="mailto:support@codex.md" target="_blank" rel="noopener noreferrer">support@codex.md</a> within 30 days and I’ll refund you in full, no questions asked.<br /> */}
 					{/* 		<br /> */}
-					{/* 		That being said, if you have ideas for how to improve Codex, <a className="text-blue-500" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">DM me with feedback</a>. Don’t hesitate to share your honest and open feedback!<br /> */}
+					{/* 		That being said, if you have ideas for how to improve Codex, <a className="text-md-blue-a400" href="https://twitter.com/username_ZAYDEK" target="_blank" rel="noopener noreferrer">DM me with feedback</a>. Don’t hesitate to share your honest and open feedback!<br /> */}
 					{/* 		<br /> */}
 					{/* 		<span aria-label="red heart" role="img">❤️</span> */}
 					{/* 	</Answer> */}
