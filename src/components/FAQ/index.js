@@ -33,10 +33,10 @@ const FAQ = () => (
 
 			{/* Answers */}
 			<div className="h-12" />
-			<div className="grid md:grid-cols-2 gap-8">
+			<div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: "2.25rem" /* gap-9 */ }}>
 
 				{/* LHS */}
-				<div className="grid gap-8">
+				<div className="grid grid-cols-1" style={{ gap: "2.25rem" /* gap-9 */ }}>
 					<QuestionBlock>
 						What is Codex?
 						<Answer>
@@ -161,7 +161,7 @@ const FAQ = () => (
 				</div>
 
 				{/* RHS */}
-				<div className="grid gap-8">
+				<div className="grid grid-cols-1" style={{ gap: "2.25rem" /* gap-9 */ }}>
 					<QuestionBlock>
 						Why are you making Codex?
 						<Answer>
