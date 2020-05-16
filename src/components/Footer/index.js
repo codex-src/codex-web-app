@@ -8,7 +8,7 @@ import {
 } from "svgs"
 
 const Footer = () => (
-	<div className="py-4 border-t">
+	<div className="py-4 border-t-4 border-gray-100">
 		<WideAppContainer>
 			<div className="flex flex-col sm:flex-row justify-between items-center">
 

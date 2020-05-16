@@ -23,7 +23,7 @@ const Answer = ({ children }) => (
 )
 
 const FAQ = () => (
-	<div className="py-24 border-t">
+	<div className="py-24 border-t-4 border-gray-100">
 		<WideAppContainer>
 
 			{/* Questions */}
