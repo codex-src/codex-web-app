@@ -201,7 +201,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						Why should I pay for Codex?
 						<Answer>
-							You don’t have to. The free tier offers unlimited documents, each capped at 2k words. For reference, 2k words is <em>a lot</em> — a 400-page book is on the order of 100k words, so 2k words gets you 1/50th of a book, for free!<br />
+							You don’t have to. The free tier offers unlimited documents, each limited to 2,000 words. For reference, 2k words is <em>a lot</em> — a 400-page book is on the order of 100k words, so 2k words gets you 1/50th of a book, for free!<br />
 							<br />
 							However, when you pay for Codex, you get <em>a lot</em> more:<br />
 							<br />
