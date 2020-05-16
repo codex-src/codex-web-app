@@ -54,11 +54,11 @@ const Nav = () => {
 
 	return (
 		<WideAppContainer>
-			<div className="flex flex-row justify-between items-center h-20">
+			<div className="-mx-3 flex flex-row justify-between items-center h-20">
 
 				{/* LHS */}
 				<div className="flex flex-row h-full">
-					<Link to={paths.home} className="flex flex-row" style={{ fontSize: "50%" }}>
+					<Link to={paths.home} className="px-3 flex flex-row" style={{ fontSize: "50%" }}>
 						<CodexLogoSm />
 					</Link>
 				</div>
@@ -94,6 +94,12 @@ const Nav = () => {
 							<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
 						</svg>
 					</ExternalLink>
+					<Link
+						to="TODO"
+						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
+					>
+						Sign in
+					</Link>
 					<div className="px-3 flex flex-row items-center">
 						<Link to={paths.continue} className="bg-white rounded-lg focus:outline-none shadow-hero focus:shadow-outline transition ease-out duration-150">
 							<p className="px-4 py-3 !-text-px tracking-px text-md-blue-a400">
@@ -101,12 +107,6 @@ const Nav = () => {
 							</p>
 						</Link>
 					</div>
-					<Link
-						to="TODO"
-						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
-					>
-						Sign in
-					</Link>
 				</div>
 
 				{/* RHS -- drop down */}

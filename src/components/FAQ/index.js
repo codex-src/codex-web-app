@@ -27,10 +27,8 @@ const FAQ = () => (
 		<WideAppContainer>
 
 			{/* Questions */}
-			<h2 className="flex flex-row items-center text-3xl md:text-4xl font-semibold Poppins text-gray-900">
-				<span style={{ clipPath: "inset(0 0 18.75% 0)" }}>Frequent questions</span>
-				{/* {"\u00a0"} */}
-				{/* <span aria-label="face with monocle" role="img">🧐</span> */}
+			<h2 className="flex flex-row items-center text-3xl md:text-4xl font-semibold Poppins text-gray-900" style={{ clipPath: "inset(0 0 18.75% 0)" }}>
+				Frequently asked questions
 			</h2>
 
 			{/* Answers */}
@@ -42,7 +40,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						What is Codex?
 						<Answer>
-							Codex is a new WYSIWYG, what-you-see-is-what-you-get, markdown editor and notebook, based on web technologies.&nbsp;<span aria-label="atom symbol" role="img">⚛️</span><br />
+							Codex is a new WYSIWYG, what-you-see-is-what-you-get, markdown editor and notebook for developers, based on web technologies.<br />
 							<br />
 							<strong>Codex enables you to work more productively by helping you focus on what matters — your writing.</strong>
 						</Answer>
