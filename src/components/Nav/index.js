@@ -3,7 +3,7 @@ import ExternalLink from "lib/ExternalLink"
 import React from "react"
 import paths from "paths"
 import { WideAppContainer } from "components/AppContainers"
-import { CodexLogoSm } from "components/CodexLogo"
+import { CodexLogoLg } from "components/CodexLogo"
 import { Link } from "react-router-dom"
 
 const Nav = () => {
@@ -60,7 +60,7 @@ const Nav = () => {
 				{/* LHS */}
 				<div className="flex flex-row h-full">
 					<Link to={paths.home} className="px-3 flex flex-row" style={{ fontSize: "50%" }}>
-						<CodexLogoSm />
+						<CodexLogoLg />
 					</Link>
 				</div>
 
