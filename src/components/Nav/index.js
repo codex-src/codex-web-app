@@ -53,6 +53,7 @@ const Nav = () => {
 	}, [showDropDown])
 
 	return (
+		// <div className="border-b border-gray-200">
 		<WideAppContainer>
 			<div className="-mx-3 flex flex-row justify-between items-center h-20">
 
@@ -98,12 +99,12 @@ const Nav = () => {
 						to="TODO"
 						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
-						Sign in
+						Sign In
 					</Link>
 					<div className="px-3 flex flex-row items-center">
 						<Link to={paths.continue} className="bg-white rounded-lg focus:outline-none shadow-hero focus:shadow-outline transition ease-out duration-150">
 							<p className="px-4 py-3 !-text-px tracking-px text-md-blue-a400">
-								Sign up for Codex
+								Sign Up for Codex
 							</p>
 						</Link>
 					</div>
@@ -159,18 +160,18 @@ const Nav = () => {
 									</ExternalLink>
 									<hr className="my-2" />
 									<Link
-										to={paths.continue}
-										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
-										onClick={() => setShowDropDown(false)}
-									>
-										Sign up for Codex
-									</Link>
-									<Link
 										to="TODO"
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
-										Sign in
+										Sign In
+									</Link>
+									<Link
+										to={paths.continue}
+										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
+										onClick={() => setShowDropDown(false)}
+									>
+										Sign Up for Codex
 									</Link>
 								</div>
 							</div>
@@ -181,6 +182,7 @@ const Nav = () => {
 
 			</div>
 		</WideAppContainer>
+		// </div>
 	)
 }
 
