@@ -99,6 +99,9 @@ module.exports = {
 				"md-gray-700":  { default: "#616161" },
 				"md-gray-800":  { default: "#424242" },
 				"md-gray-900":  { default: "#212121" },
+
+				"github-gray":  { default: "#24292e" },
+				"twitter-blue": { default: "#1da1f2" },
 			},
 			letterSpacing: {
 				"-px": "-0.0125em",
@@ -120,6 +123,7 @@ module.exports = {
 				"9/16":  "56.25%",
 				"1/2":   "50%",
 			},
+			// TODO: Deprecate
 			strokeWidth: {
 				hairline:  1.25, // -> font-weight: 100;
 				thin:      1.5,  // -> font-weight: 200;

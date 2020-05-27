@@ -26,7 +26,7 @@ const Footer = () => (
 						{/* GitHub */}
 						<ExternalLink
 							href="https://github.com/codex-src"
-							className="p-4 pr-2 text-gray-500 hover:text-md-blue-a200 transition ease-out duration-150"
+							className="p-4 pr-2 text-gray-500 hover:text-github-gray transition ease-out duration-150"
 						>
 							<GitHubLogo className="w-6 h-6" />
 						</ExternalLink>
@@ -34,7 +34,7 @@ const Footer = () => (
 						{/* Twitter */}
 						<ExternalLink
 							href="https://twitter.com/username_ZAYDEK"
-							className="p-4 pl-2 text-gray-500 hover:text-md-blue-a200 transition ease-out duration-150"
+							className="p-4 pl-2 text-gray-500 hover:text-twitter-blue transition ease-out duration-150"
 						>
 							<TwitterLogo className="w-6 h-6" />
 						</ExternalLink>
