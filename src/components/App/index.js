@@ -1,8 +1,7 @@
-import FAQ from "components/FAQ"
-import Footer from "components/Footer"
-import Nav from "components/Nav"
-import React from "react"
+import Home from "pages/Home"
 import paths from "paths"
+import Pricing from "pages/Pricing"
+import React from "react"
 
 import {
 	BrowserRouter,
@@ -17,15 +16,6 @@ const App = () => (
 		<Switch>
 
 			{/* TODO: Extract to <UnauthHome> */}
-			<React.Fragment>
-				<Nav />
-
-				<div className="h-full" />
-
-				<FAQ />
-
-				<Footer />
-			</React.Fragment>
 
 			<Route path={paths.blog}>
 				blog
@@ -36,11 +26,12 @@ const App = () => (
 			<Route path={paths.demo}>
 				demo
 			</Route>
-			<Route path={paths.home}>
-				home
-			</Route>
 			<Route path={paths.pricing}>
-				pricing
+				<Pricing />
+			</Route>
+
+			<Route path={paths.home}>
+				<Home />
 			</Route>
 
 			{/* <Route */}
