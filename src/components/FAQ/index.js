@@ -50,7 +50,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						Why is it called /ˈkōˌdeks/?
 						<Answer>
-							The name ‘Codex’ was inspired by <a className="text-blue-500 hover:underline" href="https://en.wikipedia.org/wiki/Codex_Leicester" target="_blank" rel="noopener noreferrer">Leonardo da Vinci’s Codex Leicester</a>. I actually found out when writing this that <a className="text-blue-500 hover:underline" href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7" target="_blank" rel="noopener noreferrer">Bill Gates bought Leonardo da Vinci’s Codex for $30 million</a>.&nbsp;<span aria-label="exploding head" role="img">🤯</span><br />
+							The name ‘Codex’ is actually inspired by <a className="text-blue-500 hover:underline" href="https://en.wikipedia.org/wiki/Codex_Leicester" target="_blank" rel="noopener noreferrer">Leonardo da Vinci’s Codex Leicester</a>. I actually found out when writing this that <a className="text-blue-500 hover:underline" href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7" target="_blank" rel="noopener noreferrer">Bill Gates bought Leonardo da Vinci’s Codex for $30 million</a>.&nbsp;<span aria-label="exploding head" role="img">🤯</span><br />
 							<br />
 							I got really inspired by this idea of ‘what would a modern, technical journal look like?’ and ‘why don’t we have one?’ This led me to building Codex.
 						</Answer>
