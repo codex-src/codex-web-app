@@ -1,7 +1,8 @@
-import Home from "pages/Home"
+import HomePage from "pages/HomePage"
 import paths from "paths"
-import Pricing from "pages/Pricing"
+import PricingPage from "pages/PricingPage"
 import React from "react"
+import SignUpPage from "pages/SignUpPage"
 
 import {
 	BrowserRouter,
@@ -18,20 +19,23 @@ const App = () => (
 			{/* TODO: Extract to <UnauthHome> */}
 
 			<Route path={paths.blog}>
-				blog
+				{/* TODO */}
 			</Route>
 			<Route path={paths.continue}>
-				continue
+				{/* TODO */}
 			</Route>
 			<Route path={paths.demo}>
-				demo
+				{/* TODO */}
 			</Route>
 			<Route path={paths.pricing}>
-				<Pricing />
+				<PricingPage />
+			</Route>
+			<Route path={paths.signUp}>
+				<SignUpPage />
 			</Route>
 
 			<Route path={paths.home}>
-				<Home />
+				<HomePage />
 			</Route>
 
 			{/* <Route */}

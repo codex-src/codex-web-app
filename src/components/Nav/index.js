@@ -1,9 +1,9 @@
+import AppContainer from "components/AppContainer"
 import Button from "lib/Button"
+import CodexLogo from "components/CodexLogo"
 import ExternalLink from "lib/ExternalLink"
-import React from "react"
 import paths from "paths"
-import { WideAppContainer } from "components/AppContainers"
-import { CodexLogoLg } from "components/CodexLogo"
+import React from "react"
 import { Link } from "react-router-dom"
 
 const Nav = () => {
@@ -54,13 +54,13 @@ const Nav = () => {
 
 	return (
 		// <div className="border-b border-gray-200">
-		<WideAppContainer>
+		<AppContainer>
 			<div className="-mx-3 flex flex-row justify-between items-center h-20">
 
 				{/* LHS */}
 				<div className="flex flex-row h-full">
 					<Link to={paths.home} className="px-3 flex flex-row" style={{ fontSize: "50%" }}>
-						<CodexLogoLg />
+						<CodexLogo />
 					</Link>
 				</div>
 
@@ -181,7 +181,7 @@ const Nav = () => {
 				</div>
 
 			</div>
-		</WideAppContainer>
+		</AppContainer>
 		// </div>
 	)
 }

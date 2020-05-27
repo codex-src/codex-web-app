@@ -3,14 +3,15 @@ import React from "react"
 // Renders the Codex logo.
 //
 // https://codepen.io/zaydek/pen/rNOZNwZ
-const CodexLogo = ({ sizeLarge } = { sizeLarge: false }) => (
+const CodexLogo = () => (
 	<div className="em-context flex flex-row items-center select-none">
 		<svg
-			className="w-16 h-16 text-md-blue-a400 !dark:text-md-blue-a200"
+			className="w-16 h-16 text-md-blue-a400"
 			fill="none"
 			strokeLinecap="round"
 			strokeLinejoin="round"
-			strokeWidth={!sizeLarge ? "2" : "1.75"}
+			// strokeWidth="2"
+			strokeWidth="1.75"
 			stroke="currentColor"
 			viewBox="0 0 24 24"
 		>
@@ -19,12 +20,10 @@ const CodexLogo = ({ sizeLarge } = { sizeLarge: false }) => (
 		<div className="w-2"></div>
 		<div className="-mt-2">
 			<h1
-				// NOTE: Uses Poppins as a dependency
-				className="text-6xl leading-none Poppins lowercase text-black !dark:text-white"
+				className="text-6xl leading-none Poppins lowercase text-black"
 				style={{
 					clipPath: "inset(18.75% 0 0 0)",
 					letterSpacing: "-0.025em",
-					fontWeight: !sizeLarge ? 500 : 400,
 				}}
 			>
 				Codex
@@ -33,14 +32,4 @@ const CodexLogo = ({ sizeLarge } = { sizeLarge: false }) => (
 	</div>
 )
 
-// Renders the thicker Codex logo, which more suitable for
-// small sizes.
-export const CodexLogoSm = () => (
-	<CodexLogo />
-)
-
-// Renders the thinner Codex logo, which more suitable for
-// large sizes.
-export const CodexLogoLg = () => (
-	<CodexLogo sizeLarge />
-)
+export default CodexLogo

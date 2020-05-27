@@ -1,6 +1,6 @@
+import AppContainer from "components/AppContainer"
 import ExternalLink from "lib/ExternalLink"
 import React from "react"
-import { WideAppContainer } from "components/AppContainers"
 
 import {
 	GitHubLogo,
@@ -9,7 +9,7 @@ import {
 
 const Footer = () => (
 	<div className="py-4 border-t-4 border-gray-100">
-		<WideAppContainer>
+		<AppContainer>
 			<div className="flex flex-col sm:flex-row justify-between items-center">
 
 				{/* Copyright */}
@@ -43,7 +43,7 @@ const Footer = () => (
 				</div>
 
 			</div>
-		</WideAppContainer>
+		</AppContainer>
 	</div>
 )
 
