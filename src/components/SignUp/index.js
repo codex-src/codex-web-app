@@ -9,7 +9,7 @@ import {
 	TwitterLogo,
 } from "svgs"
 
-const Focusable = ({ className, children }) => (
+const MetaFocusable = ({ className, children }) => (
 	React.cloneElement(children, {
 		className: trimSpaces(`
 			focus:outline-none focus:shadow-outline-blue transition duration-150 ease-in-out
@@ -38,7 +38,7 @@ const MetaHeaderBlock = ({ className, children: [h1, h2] }) => (
 const MetaLabel = ({ className, children }) => (
 	React.cloneElement(children, {
 		className: trimSpaces(`
-			block font-medium text-sm tracking-px leading-5 text-gray-700
+			block font-medium text-sm leading-5 text-gray-700
 				${children.props.className}
 					${className}`),
 	})
@@ -55,7 +55,7 @@ const MetaInputBlock = ({ className, children: [label, input] }) => (
 			{label}
 		</MetaLabel>
 		<div className="mt-1 rounded-md shadow-sm">
-			{/* NOTE: <Focusable> is not needed because of
+			{/* NOTE: <MetaFocusable> is not needed because of
 			form-input */}
 			{React.cloneElement(input, {
 				className: trimSpaces(`
@@ -100,22 +100,22 @@ const SignUpFormFragment = () => (
 			<div className="mt-1 grid grid-cols-2 gap-3">
 				<div>
 					<span className="w-full inline-flex rounded-md shadow-sm">
-						<Focusable>
+						<MetaFocusable>
 							{/* Added bg-github-gray, removed border
 							border-gray-300 */}
 							<button className="form-input flex flex-row justify-center w-full h-12 bg-github-gray border-none hover:opacity-90 active:opacity-100" aria-label="Sign in with GitHub">
 								<GitHubLogo className="w-6 h-6 text-white" />
 							</button>
-						</Focusable>
+						</MetaFocusable>
 					</span>
 				</div>
 				<div>
 					<span className="w-full inline-flex rounded-md shadow-sm">
-						<Focusable>
+						<MetaFocusable>
 							<button className="form-input flex flex-row justify-center w-full h-12 border border-gray-300 hover:opacity-90 active:opacity-100" type="button" aria-label="Sign in with Google">
 								<GoogleLogo className="w-6 h-6" />
 							</button>
-						</Focusable>
+						</MetaFocusable>
 					</span>
 				</div>
 			</div>
@@ -153,7 +153,7 @@ const SignUpFormFragment = () => (
 
 					{/* Sign Up for Codex */}
 					<div className="mt-12">
-						<Focusable>
+						<MetaFocusable>
 							{/* Uses shadow-md */}
 							<button className="flex flex-row justify-center w-full h-12 bg-md-blue-a400 rounded-md shadow-md hover:opacity-90 active:opacity-100" type="submit">
 								<p className="flex flex-row items-center text-px tracking-px font-medium text-white">
@@ -162,7 +162,7 @@ const SignUpFormFragment = () => (
 									{/* <span className="ml-2" aria-label="partying face" role="img">🥳</span> */}
 								</p>
 							</button>
-						</Focusable>
+						</MetaFocusable>
 					</div>
 
 					{/* Legal disclaimer */}
