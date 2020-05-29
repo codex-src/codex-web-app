@@ -35,13 +35,25 @@ const MetaHeaderBlock = ({ className, children: [h1, h2] }) => (
 	</div>
 )
 
+const MetaLabel = ({ className, children }) => (
+	React.cloneElement(children, {
+		className: trimSpaces(`
+			block font-medium text-sm tracking-px leading-5 text-gray-700
+				${children.props.className}
+					${className}`),
+	})
+)
+
 const MetaInputBlock = ({ className, children: [label, input] }) => (
 	<div className={className}>
-		{React.cloneElement(label, {
-			className: trimSpaces(`
-				block font-medium text-sm leading-5 text-gray-700
-					${label.props.className}`),
-		})}
+		{/* {React.cloneElement(label, { */}
+		{/* 	className: trimSpaces(` */}
+		{/* 		block font-medium text-sm tracking-px leading-5 text-gray-700 */}
+		{/* 			${label.props.className}`), */}
+		{/* })} */}
+		<MetaLabel>
+			{label}
+		</MetaLabel>
 		<div className="mt-1 rounded-md shadow-sm">
 			{/* NOTE: <Focusable> is not needed because of
 			form-input */}
@@ -75,94 +87,94 @@ const SignUpFormFragment = () => (
 		{/* Form */}
 		<div className="mt-8">
 
-			{/* Sign in with container */}
+			{/* Sign in with */}
 			<div>
+				<MetaLabel>
+					<p>
+						Sign up with
+					</p>
+				</MetaLabel>
+			</div>
 
-				{/* Sign in with */}
-				<p className="font-medium text-sm leading-5 text-gray-700">
-					Sign up with
-				</p>
-
-				{/* Sign in with */}
-				<div className="mt-1 grid grid-cols-2 gap-3">
-					<div>
-						<span className="w-full inline-flex rounded-md shadow-sm">
-							<Focusable>
-								{/* Added bg-github-gray, removed border
-								border-gray-300 */}
-								<button className="form-input flex flex-row justify-center w-full h-12 bg-github-gray border-none hover:opacity-90 active:opacity-100" aria-label="Sign in with GitHub">
-									<GitHubLogo className="w-6 h-6 text-white" />
-								</button>
-							</Focusable>
-						</span>
-					</div>
-					<div>
-						<span className="w-full inline-flex rounded-md shadow-sm">
-							<Focusable>
-								<button className="form-input flex flex-row justify-center w-full h-12 border border-gray-300 hover:opacity-90 active:opacity-100" type="button" aria-label="Sign in with Google">
-									<GoogleLogo className="w-6 h-6" />
-								</button>
-							</Focusable>
-						</span>
-					</div>
+			{/* Sign in with */}
+			<div className="mt-1 grid grid-cols-2 gap-3">
+				<div>
+					<span className="w-full inline-flex rounded-md shadow-sm">
+						<Focusable>
+							{/* Added bg-github-gray, removed border
+							border-gray-300 */}
+							<button className="form-input flex flex-row justify-center w-full h-12 bg-github-gray border-none hover:opacity-90 active:opacity-100" aria-label="Sign in with GitHub">
+								<GitHubLogo className="w-6 h-6 text-white" />
+							</button>
+						</Focusable>
+					</span>
 				</div>
-
-				{/* Or sign up using email below */}
-				<div className="mt-6 relative">
-					<div className="absolute inset-0 flex flex-row items-center">
-						<div className="w-full border-t border-gray-300"></div>
-					</div>
-					<div className="relative flex flex-row justify-center text-sm leading-5">
-						<span className="px-2 bg-white text-gray-500">
-							Or sign up using email below
-						</span>
-					</div>
+				<div>
+					<span className="w-full inline-flex rounded-md shadow-sm">
+						<Focusable>
+							<button className="form-input flex flex-row justify-center w-full h-12 border border-gray-300 hover:opacity-90 active:opacity-100" type="button" aria-label="Sign in with Google">
+								<GoogleLogo className="w-6 h-6" />
+							</button>
+						</Focusable>
+					</span>
 				</div>
+			</div>
 
-				<div className="mt-6">
-					<form action="#" method="POST">
-
-						{/* Email address */}
-						<MetaInputBlock className="mt-6">
-							<label htmlFor="email">
-								Email address
-							</label>
-							<input id="email" type="email" required spellCheck={false} />
-						</MetaInputBlock>
-
-						{/* Password */}
-						<MetaInputBlock className="mt-6">
-							<label htmlFor="password">
-								Password
-							</label>
-							<input id="password" type="password" required spellCheck={false} />
-						</MetaInputBlock>
-
-						{/* Sign Up for Codex */}
-						<div className="mt-12">
-							<Focusable>
-								<button className="flex flex-row justify-center w-full h-14 bg-md-blue-a400 rounded-md shadow-md hover:opacity-90 active:opacity-100" type="submit">
-									<p className="flex flex-row items-center font-medium text-px tracking-px text-white">
-										Sign Up for Codex
-										{/* {" "} */}
-										{/* <span className="ml-2" aria-label="partying face" role="img">🥳</span> */}
-									</p>
-								</button>
-							</Focusable>
-						</div>
-
-						{/* Legal disclaimer */}
-						<div className="mt-6">
-							<p className="text-sm text-gray-600">
-								By clicking ‘Sign Up for Codex’,{" "}
-								you agree to our <a href="TODO" className="underline">Terms of Service</a> and <a href="TODO" className="underline">Privacy Policy</a>.{" "}
-								We’ll occasionally send you account related emails.
-							</p>
-						</div>
-
-					</form>
+			{/* Or use your email address */}
+			<div className="mt-6 relative">
+				<div className="absolute inset-0 flex flex-row items-center">
+					<div className="w-full border-t border-gray-300"></div>
 				</div>
+				<div className="relative flex flex-row justify-center text-sm leading-5">
+					<span className="px-2 bg-white text-gray-500">
+						Or use your email address
+					</span>
+				</div>
+			</div>
 
+			<div className="mt-6">
+				<form action="#" method="POST">
+
+					{/* Email address */}
+					<MetaInputBlock className="mt-6">
+						<label htmlFor="email">
+							Email address
+						</label>
+						<input id="email" type="email" required spellCheck={false} />
+					</MetaInputBlock>
+
+					{/* Password */}
+					<MetaInputBlock className="mt-6">
+						<label htmlFor="password">
+							Password
+						</label>
+						<input id="password" type="password" required spellCheck={false} />
+					</MetaInputBlock>
+
+					{/* Sign Up for Codex */}
+					<div className="mt-12">
+						<Focusable>
+							{/* Uses shadow-md */}
+							<button className="flex flex-row justify-center w-full h-12 bg-md-blue-a400 rounded-md shadow-md hover:opacity-90 active:opacity-100" type="submit">
+								<p className="flex flex-row items-center text-px tracking-px font-medium text-white">
+									Create Your Codex
+									{/* {" "} */}
+									{/* <span className="ml-2" aria-label="partying face" role="img">🥳</span> */}
+								</p>
+							</button>
+						</Focusable>
+					</div>
+
+					{/* Legal disclaimer */}
+					<div className="mt-6">
+						<p className="text-sm text-gray-600">
+							By clicking ‘Create Your Codex’,{" "}
+							you agree to our <a href="TODO" className="underline">Terms of Service</a> and <a href="TODO" className="underline">Privacy Policy</a>.{" "}
+							We’ll occasionally send you account related emails.
+						</p>
+					</div>
+
+				</form>
 			</div>
 
 		</div>
