@@ -1,11 +1,23 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
-@import "tailwindcss/utilities";
 
 .Poppins {
 	font-family: "Poppins";
 }
+.Poppins-clip-path-top {
+	clip-path: inset(15% 0 0 0);
+}
+.Poppins-clip-path-bottom {
+	clip-path: inset(0 0 15% 0);
+}
+.Poppins-clip-path-top-loose {
+	clip-path: inset(15% 0 0 0);
+}
+.Poppins-clip-path-bottom-loose {
+	clip-path: inset(0 0 15% 0);
+}
 
+/* DEPRECATE? */
 .-text-px {
 	font-size: 0.9375rem;
 }
@@ -19,7 +31,4 @@
 	line-height: 1;
 }
 
-.focusable:focus {
-	border-color: #a4cafe;
-	box-shadow: 0 0 0 3px rgba(164, 202, 254, 0.45);
-}
+@import "tailwindcss/utilities";

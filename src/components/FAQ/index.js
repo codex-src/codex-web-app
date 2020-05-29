@@ -26,7 +26,7 @@ const FAQ = () => (
 		<AppContainer>
 
 			{/* Questions */}
-			<h2 className="font-semibold text-3xl md:text-4xl Poppins text-gray-900" style={{ clipPath: "inset(0 0 18.75% 0)" }}>
+			<h2 className="font-medium text-3xl md:text-4xl Poppins Poppins-clip-path-bottom">
 				Frequently asked questions
 			</h2>
 

@@ -1,113 +1,191 @@
 import CodexLogo from "components/CodexLogo"
+import trimSpaces from "lib/trimSpaces"
 import CodexSVG from "components/CodexSVG"
 import React from "react"
 
-// <div className="px-24 py-32 w-full max-w-xl">
-// 	<CodexSVG className="w-10 h-10 text-md-blue-a400" />
-// 	<div className="h-2" />
-// 	<h2 className="font-semibold text-3xl Poppins text-gray-900">
-// 		Welcome to Codex
-// 		{/* &nbsp;<span aria-label="waving hand" role="img">👋</span> */}
-// 	</h2>
+import {
+	GitHubLogo,
+	GoogleLogo,
+	TwitterLogo,
+} from "svgs"
 
-// <SplitView>
-//
-// 	{/* LHS */}
-// 	{/* ... */}
-//
-// 	{/* RHS */}
-// 	{/* ... */}
-//
-// </SplitView>
-//
-const SplitView = ({ children }) => (
-	<div className="flex flex-row h-full">
-		<div className="hidden xl:block w-full">
-			{children[0]}
-		</div>
-		{/* FIXME */}
-		<div className="-mx-8 w-full">
-			{children[1]}
+const Focusable = ({ className, children }) => (
+	React.cloneElement(children, {
+		className: trimSpaces(`
+			focus:outline-none focus:shadow-outline-blue transition duration-150 ease-in-out
+				${children.props.className}
+					${className}`),
+	})
+)
+
+const MetaHeaderBlock = ({ className, children: [h1, h2] }) => (
+	<div className={trimSpaces(`select-none ${className}`)}>
+		{React.cloneElement(h1, {
+			className: trimSpaces(`
+				font-medium text-3xl sm:text-4xl Poppins
+					${h1.props.className}`),
+		})}
+		{h2 && (
+			React.cloneElement(h2, {
+				className: trimSpaces(`
+					text-lg Poppins
+						${h2.props.className}`),
+			})
+		)}
+	</div>
+)
+
+const MetaInputBlock = ({ className, children: [label, input] }) => (
+	<div className={className}>
+		{React.cloneElement(label, {
+			className: trimSpaces(`
+				block font-medium text-sm leading-5 text-gray-700
+					${label.props.className}`),
+		})}
+		<div className="mt-1 rounded-md shadow-sm">
+			{/* NOTE: <Focusable> is not needed because of
+			form-input */}
+			{React.cloneElement(input, {
+				className: trimSpaces(`
+					form-input w-full transition duration-150 ease-in-out
+						${input.props.className}`),
+			})}
 		</div>
 	</div>
 )
 
 // document.body.classList.toggle("debug-css")
 
-const featured = [
-	{
-		href: "https://unsplash.com/photos/pVt9j3iWtPM",
-		src:  "https://images.unsplash.com/photo-1528297506728-9533d2ac3fa4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-		text: "Photo by Leone Venter",
-	},
-]
+const SignUpFormFragment = () => (
+	<React.Fragment>
+
+		{/* Header */}
+		<MetaHeaderBlock>
+			<h1>
+				Sign <span className="Poppins-clip-path-bottom">Up</span>
+			</h1>
+			<h2 className="flex flex-row items-center">
+				<span className="Poppins-clip-path-bottom">to continue with</span>
+				<span className="ml-1" style={{ fontSize: "31.25%" }}>
+					<CodexLogo />
+				</span>
+			</h2>
+		</MetaHeaderBlock>
+
+		{/* Form */}
+		<div className="mt-8">
+
+			{/* Sign in with container */}
+			<div>
+
+				{/* Sign in with */}
+				<p className="font-medium text-sm leading-5 text-gray-700">
+					Sign up with
+				</p>
+
+				{/* Sign in with */}
+				<div className="mt-1 grid grid-cols-2 gap-3">
+					<div>
+						<span className="w-full inline-flex rounded-md shadow-sm">
+							<Focusable>
+								{/* Added bg-github-gray, removed border
+								border-gray-300 */}
+								<button className="form-input flex flex-row justify-center w-full h-12 bg-github-gray border-none hover:opacity-90 active:opacity-100" aria-label="Sign in with GitHub">
+									<GitHubLogo className="w-6 h-6 text-white" />
+								</button>
+							</Focusable>
+						</span>
+					</div>
+					<div>
+						<span className="w-full inline-flex rounded-md shadow-sm">
+							<Focusable>
+								<button className="form-input flex flex-row justify-center w-full h-12 border border-gray-300 hover:opacity-90 active:opacity-100" type="button" aria-label="Sign in with Google">
+									<GoogleLogo className="w-6 h-6" />
+								</button>
+							</Focusable>
+						</span>
+					</div>
+				</div>
+
+				{/* Or sign up using email below */}
+				<div className="mt-6 relative">
+					<div className="absolute inset-0 flex flex-row items-center">
+						<div className="w-full border-t border-gray-300"></div>
+					</div>
+					<div className="relative flex flex-row justify-center text-sm leading-5">
+						<span className="px-2 bg-white text-gray-500">
+							Or sign up using email below
+						</span>
+					</div>
+				</div>
+
+				<div className="mt-6">
+					<form action="#" method="POST">
+
+						{/* Email address */}
+						<MetaInputBlock className="mt-6">
+							<label htmlFor="email">
+								Email address
+							</label>
+							<input id="email" type="email" required spellCheck={false} />
+						</MetaInputBlock>
+
+						{/* Password */}
+						<MetaInputBlock className="mt-6">
+							<label htmlFor="password">
+								Password
+							</label>
+							<input id="password" type="password" required spellCheck={false} />
+						</MetaInputBlock>
+
+						{/* Sign Up for Codex */}
+						<div className="mt-12">
+							<Focusable>
+								<button className="flex flex-row justify-center w-full h-14 bg-md-blue-a400 rounded-md shadow-md hover:opacity-90 active:opacity-100" type="submit">
+									<p className="flex flex-row items-center font-medium text-px tracking-px text-white">
+										Sign Up for Codex
+										{/* {" "} */}
+										{/* <span className="ml-2" aria-label="partying face" role="img">🥳</span> */}
+									</p>
+								</button>
+							</Focusable>
+						</div>
+
+						{/* Legal disclaimer */}
+						<div className="mt-6">
+							<p className="text-sm text-gray-600">
+								By clicking ‘Sign Up for Codex’,{" "}
+								you agree to our <a href="TODO" className="underline">Terms of Service</a> and <a href="TODO" className="underline">Privacy Policy</a>.{" "}
+								We’ll occasionally send you account related emails.
+							</p>
+						</div>
+
+					</form>
+				</div>
+
+			</div>
+
+		</div>
+
+	</React.Fragment>
+)
 
 const SignUp = () => (
-	<SplitView>
+	<div className="flex flex-row justify-center min-h-screen">
 
 		{/* LHS */}
-		<div className="relative h-full">
-
-			{(({ src, href, text }) => (
-				<React.Fragment>
-
-					{/* Featured photo */}
-					<img className="absolute inset-0 h-full w-full object-cover" src={src} alt="" />
-					<div className="absolute bottom-0 left-0">
-
-						{/* Featured photo tag */}
-						<a className="m-2 px-2 py-1 flex flex-row items-center text-sm bg-white bg-opacity-75 rounded-md" style={{ boxShadow: "0 0 0 0.1875rem #0001" }} href={href} target="_blank" rel="noopener noreferrer">
-							<svg className="mr-2 w-4 h-4 text-md-blue-a400 transform scale-110" fill="currentColor" viewBox="0 0 20 20">
-								<path d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" fillRule="evenodd" />
-							</svg>
-							{text}
-						</a>
-					</div>
-
-				</React.Fragment>
-			))(featured[Math.floor(Math.random() * featured.length)])}
-
+		<div className="flex-1 hidden lg:block bg-gray-100">
+			<img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1528297506728-9533d2ac3fa4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" />
 		</div>
 
 		{/* RHS */}
-		<div className="px-24 py-48">
-
-			<div className="h-6" />
-			<div className="flex flex-col items-center">
-				<h2 className="flex flex-row items-center whitespace-pre font-medium text-4xl Poppins" style={{ clipPath: "inset(0 0 18.75% 0)" }}>
-					Create your
-					<div className="ml-2" style={{ fontSize: "28.75%" }}>
-						<CodexLogo />
-					</div>
-				</h2>
+		<div className="lg:mr-12 flex-none flex flex-row justify-center w-full max-w-xl">
+			<div className="px-6 py-24 sm:pt-32 sm:pb-12 flex-none w-full max-w-md">
+				<SignUpFormFragment />
 			</div>
-
-			<div className="h-6" />
-			<label for="email" className="block text-sm tracking-wide text-md-blue-a400">
-				Email address
-				<div className="mt-1 rounded-md shadow-sm">
-					{/* focusable w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5 */}
-					<input type="email" required className="px-3 py-2 block w-full border rounded-md focus:outline-none" />
-				</div>
-			</label>
-
 		</div>
 
-	</SplitView>
+	</div>
 )
-
-// <div className="h-6" />
-// <div className="flex flex-col items-center">
-// 	<h2 className="font-medium text-4xl Poppins">
-// 		Sign Up
-// 	</h2>
-// 	<div className="h-2" />
-// 	<h3 className="flex flex-row items-center text-lg Poppins">
-// 		to continue with
-// 		<div className="ml-1" style={{ fontSize: "37.5%" }}>
-// 			<CodexLogo />
-// 		</div>
-// 	</h3>
-// </div>
 
 export default SignUp

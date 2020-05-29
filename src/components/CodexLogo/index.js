@@ -5,12 +5,13 @@ import React from "react"
 const CodexLogo = () => (
 	<div className="em-context flex flex-row items-center select-none">
 		<CodexSVG className="w-16 h-16 text-md-blue-a400" />
-		<div className="w-2"></div>
+		<div className="w-1" />
 		<div className="-mt-2">
 			<h1
-				className="text-6xl leading-none Poppins lowercase text-black"
+				className="text-6xl leading-none Poppins Poppins-clip-path-top lowercase text-black"
 				style={{
-					clipPath: "inset(18.75% 0 0 0)",
+					// Do not inherit font-weight or letter-spacing:
+					fontWeight: 400,
 					letterSpacing: "-0.025em",
 				}}
 			>
