@@ -179,8 +179,8 @@ const SignUp = () => (
 		</div>
 
 		{/* RHS */}
-		<div className="lg:mr-12 flex-none flex flex-row justify-center w-full max-w-xl">
-			<div className="px-6 py-24 sm:pt-32 sm:pb-12 flex-none w-full max-w-md">
+		<div className="lg:mr-12 flex-none flex flex-row justify-center items-center w-full max-w-xl">
+			<div className="px-6 py-24 flex-none w-full max-w-md">
 				<SignUpFormFragment />
 			</div>
 		</div>
