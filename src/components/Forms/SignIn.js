@@ -11,7 +11,7 @@ const SignInForm = () => (
 
 		<Meta.HeaderBlock>
 			<h1>
-				Sign <span className="Poppins-clip-path-bottom">Up</span>
+				Sign In
 			</h1>
 			<h2 className="flex flex-row items-center">
 				<span className="Poppins-clip-path-bottom">to continue with</span>
@@ -24,7 +24,7 @@ const SignInForm = () => (
 		<div className="mt-8">
 			<Meta.Label>
 				<p>
-					Sign up with
+					Sign in with
 				</p>
 			</Meta.Label>
 		</div>
@@ -67,9 +67,9 @@ const SignInForm = () => (
 				// Sorted
 				autoComplete="username"
 				id="email"
-				required
+				placeholder="email@address.com"
 				spellCheck={false}
-				type="email"
+				type="text"
 			/>
 		</Meta.InputBlock>
 
@@ -80,8 +80,9 @@ const SignInForm = () => (
 			<input
 				// Sorted
 				autoComplete="new-password"
+				className="tracking-wider"
 				id="password"
-				required
+				placeholder="••••••••••"
 				spellCheck={false}
 				type="password"
 			/>
@@ -92,21 +93,21 @@ const SignInForm = () => (
 				<Meta.Focusable>
 					<button className="flex flex-row justify-center w-full h-12 bg-md-blue-a400 rounded-md hover:opacity-90 active:opacity-100" type="submit">
 						<p className="flex flex-row items-center font-semibold text-px tracking-px text-white">
-							Create Your Codex{" "}
-							<span className="ml-2" aria-label="partying face" role="img">🥳</span>
+							Sign In{" "}
+							<span className="ml-2" style={{ transform: "scaleX(-1)" }} aria-label="waving hand" role="img">👋</span>
 						</p>
 					</button>
 				</Meta.Focusable>
 			</div>
 		</div>
 
-		<div className="mt-6">
-			<p className="text-sm text-gray-600">
-				By clicking ‘Create Your Codex’,{" "}
-				you agree to our <a href="TODO" className="underline">Terms of Service</a> and <a href="TODO" className="underline">Privacy Policy</a>.{" "}
-				We’ll occasionally send you account related emails.
-			</p>
-		</div>
+		{/* <div className="mt-6"> */}
+		{/* 	<p className="text-sm text-gray-600"> */}
+		{/* 		By clicking ‘Create Your Codex’,{" "} */}
+		{/* 		you agree to our <a href="TODO" className="underline">Terms of Service</a> and <a href="TODO" className="underline">Privacy Policy</a>.{" "} */}
+		{/* 		We’ll occasionally send you account related emails. */}
+		{/* 	</p> */}
+		{/* </div> */}
 
 	</form>
 )
@@ -114,7 +115,7 @@ const SignInForm = () => (
 const SignIn = () => (
 	<SplitViewLHSBlock>
 		<SignInForm />
-		<img src="https://images.unsplash.com/photo-1488998427799-e3362cec87c3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80" alt="" />
+		<img src="https://images.unsplash.com/photo-1528297506728-9533d2ac3fa4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="" />
 	</SplitViewLHSBlock>
 )
 

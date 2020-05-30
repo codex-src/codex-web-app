@@ -67,9 +67,9 @@ const SignUpForm = () => (
 				// Sorted
 				autoComplete="username"
 				id="email"
-				required
+				placeholder="email@address.com"
 				spellCheck={false}
-				type="email"
+				type="text"
 			/>
 		</Meta.InputBlock>
 
@@ -80,8 +80,9 @@ const SignUpForm = () => (
 			<input
 				// Sorted
 				autoComplete="new-password"
+				className="tracking-wider"
 				id="password"
-				required
+				placeholder="••••••••••"
 				spellCheck={false}
 				type="password"
 			/>
@@ -100,13 +101,13 @@ const SignUpForm = () => (
 			</div>
 		</div>
 
-		<div className="mt-6">
-			<p className="text-sm text-gray-600">
-				By clicking ‘Create Your Codex’,{" "}
-				you agree to our <a href="TODO" className="underline">Terms of Service</a> and <a href="TODO" className="underline">Privacy Policy</a>.{" "}
-				We’ll occasionally send you account related emails.
-			</p>
-		</div>
+		{/* <div className="mt-6"> */}
+		{/* 	<p className="text-sm text-gray-600"> */}
+		{/* 		By clicking ‘Create Your Codex’,{" "} */}
+		{/* 		you agree to our <a href="TODO" className="underline">Terms of Service</a> and <a href="TODO" className="underline">Privacy Policy</a>.{" "} */}
+		{/* 		We’ll occasionally send you account related emails. */}
+		{/* 	</p> */}
+		{/* </div> */}
 
 	</form>
 )
