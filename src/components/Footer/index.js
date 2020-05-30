@@ -4,6 +4,7 @@ import AppContainer from "components/AppContainer"
 import ExternalLink from "lib/ExternalLink"
 import React from "react"
 
+// TODO: Reference https://tailwindui.com/components/marketing/sections/footers#component-9841e88626b7f5254528b3846f6ed3b6
 const Footer = () => (
 	<div className="py-4 border-t-4 border-gray-100">
 		<AppContainer>
