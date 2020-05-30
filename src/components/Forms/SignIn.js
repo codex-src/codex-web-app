@@ -92,22 +92,22 @@ const SignInForm = () => (
 			<div className="rounded-md shadow-sm">
 				<Meta.Focusable>
 					<button className="flex flex-row justify-center w-full h-12 bg-md-blue-a400 rounded-md hover:opacity-90 active:opacity-100" type="submit">
-						<p className="flex flex-row items-center font-semibold text-px tracking-px text-white">
-							Sign In{" "}
-							<span className="ml-2" style={{ transform: "scaleX(-1)" }} aria-label="waving hand" role="img">👋</span>
-						</p>
+						<Meta.SelectNone>
+							<p className="flex flex-row items-center font-semibold text-px tracking-px text-white">
+								Sign In{" "}
+								<span className="ml-2" style={{ transform: "scaleX(-1)" }} aria-label="waving hand" role="img">👋</span>
+							</p>
+						</Meta.SelectNone>
 					</button>
 				</Meta.Focusable>
 			</div>
 		</div>
 
-		{/* <div className="mt-6"> */}
-		{/* 	<p className="text-sm text-gray-600"> */}
-		{/* 		By clicking ‘Create Your Codex’,{" "} */}
-		{/* 		you agree to our <a href="TODO" className="underline">Terms of Service</a> and <a href="TODO" className="underline">Privacy Policy</a>.{" "} */}
-		{/* 		We’ll occasionally send you account related emails. */}
-		{/* 	</p> */}
-		{/* </div> */}
+		<div className="mt-6">
+			<p className="text-sm text-gray-600">
+				We’ll keep you signed in until you click <span className="underline">Sign Out</span>.
+			</p>
+		</div>
 
 	</form>
 )

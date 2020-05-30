@@ -1,19 +1,29 @@
 import React from "react"
 import trimSpaces from "lib/trimSpaces"
 
+export const SelectNone = ({ className, children }) => (
+	React.cloneElement(children, {
+		className: trimSpaces(`select-none
+			${children.props.className}
+				${className}`),
+	})
+)
+
 export const HeaderBlock = ({ className, children }) => (
-	<div className={className}>
-		{React.cloneElement(children[0], {
-			className: trimSpaces(`font-medium text-3xl sm:text-4xl Poppins
-				${children[0].props.className}`),
-		})}
-		{children[1] && (
-			React.cloneElement(children[1], {
-				className: trimSpaces(`text-lg Poppins
-					${children[1].props.className}`),
-			})
-		)}
-	</div>
+	<SelectNone>
+		<div className={className}>
+			{React.cloneElement(children[0], {
+				className: trimSpaces(`font-medium text-3xl sm:text-4xl Poppins
+					${children[0].props.className}`),
+			})}
+			{children[1] && (
+				React.cloneElement(children[1], {
+					className: trimSpaces(`text-lg Poppins
+						${children[1].props.className}`),
+				})
+			)}
+		</div>
+	</SelectNone>
 )
 
 export const Focusable = ({ className, children }) => (
@@ -43,5 +53,10 @@ export const InputBlock = ({ className, children }) => (
 					${children[1].props.className}`),
 			})}
 		</div>
+		{children[2] && (
+  		<p className="mt-2 text-sm text-gray-500">
+				{children[2]}
+			</p>
+		)}
 	</div>
 )

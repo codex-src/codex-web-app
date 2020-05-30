@@ -71,6 +71,7 @@ const SignUpForm = () => (
 				spellCheck={false}
 				type="text"
 			/>
+			{"You can always change your email address."}
 		</Meta.InputBlock>
 
 		<Meta.InputBlock className="mt-6">
@@ -86,16 +87,19 @@ const SignUpForm = () => (
 				spellCheck={false}
 				type="password"
 			/>
+			{"You can always change your password."}
 		</Meta.InputBlock>
 
 		<div className="mt-12">
 			<div className="rounded-md shadow-sm">
 				<Meta.Focusable>
 					<button className="flex flex-row justify-center w-full h-12 bg-md-blue-a400 rounded-md hover:opacity-90 active:opacity-100" type="submit">
-						<p className="flex flex-row items-center font-semibold text-px tracking-px text-white">
-							Create Your Codex{" "}
-							<span className="ml-2" aria-label="partying face" role="img">🥳</span>
-						</p>
+						<Meta.SelectNone>
+							<p className="flex flex-row items-center font-semibold text-px tracking-px text-white">
+								Create Your Codex{" "}
+								<span className="ml-2" aria-label="partying face" role="img">🥳</span>
+							</p>
+						</Meta.SelectNone>
 					</button>
 				</Meta.Focusable>
 			</div>
@@ -108,6 +112,12 @@ const SignUpForm = () => (
 		{/* 		We’ll occasionally send you account related emails. */}
 		{/* 	</p> */}
 		{/* </div> */}
+
+		<div className="mt-6">
+			<p className="text-sm text-gray-600">
+				We’ll keep you signed in until you click <span className="underline">Sign Out</span>.
+			</p>
+		</div>
 
 	</form>
 )
