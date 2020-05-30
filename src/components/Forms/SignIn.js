@@ -2,11 +2,11 @@ import * as Meta from "./Meta"
 import * as SVG from "svgs"
 import CodexLogo from "components/CodexLogo"
 import React from "react"
-import { SplitViewRHSBlock } from "./SplitView"
+import { SplitViewLHSBlock } from "./SplitView"
 
 // document.body.classList.toggle("debug-css")
 
-const SignUpForm = () => (
+const SignInForm = () => (
 	<form>
 
 		<Meta.HeaderBlock>
@@ -111,11 +111,11 @@ const SignUpForm = () => (
 	</form>
 )
 
-const SignUp = () => (
-	<SplitViewRHSBlock>
-		<img src="https://images.unsplash.com/photo-1528297506728-9533d2ac3fa4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="" />
-		<SignUpForm />
-	</SplitViewRHSBlock>
+const SignIn = () => (
+	<SplitViewLHSBlock>
+		<SignInForm />
+		<img src="https://images.unsplash.com/photo-1488998427799-e3362cec87c3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80" alt="" />
+	</SplitViewLHSBlock>
 )
 
-export default SignUp
+export default SignIn

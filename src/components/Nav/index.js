@@ -1,8 +1,8 @@
+import * as paths from "paths"
 import AppContainer from "components/AppContainer"
 import Button from "lib/Button"
 import CodexLogo from "components/CodexLogo"
 import ExternalLink from "lib/ExternalLink"
-import paths from "paths"
 import React from "react"
 import { Link } from "react-router-dom"
 
@@ -53,13 +53,13 @@ const Nav = () => {
 	}, [showDropDown])
 
 	return (
-		// <div className="border-b border-gray-200">
+		// <div className="border-t border-gray-200">
 		<AppContainer>
 			<div className="-mx-3 flex flex-row justify-between items-center h-20">
 
 				{/* LHS */}
 				<div className="flex flex-row h-full">
-					<Link to={paths.home} className="px-3 flex flex-row" style={{ fontSize: "50%" }}>
+					<Link to={paths.HOME} className="px-3 flex flex-row" style={{ fontSize: "50%" }}>
 						<CodexLogo />
 					</Link>
 				</div>
@@ -67,13 +67,13 @@ const Nav = () => {
 				{/* RHS */}
 				<div className="hidden lg:flex lg:flex-row h-full">
 					<Link
-						to={paths.demo}
+						to={paths.DEMO}
 						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
 						Try the Demo!
 					</Link>
 					<Link
-						to={paths.pricing}
+						to={paths.PRICING}
 						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
 						Pricing
@@ -96,13 +96,13 @@ const Nav = () => {
 						</svg>
 					</ExternalLink>
 					<Link
-						to="TODO"
+						to={paths.SIGN_IN}
 						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
 						Sign In
 					</Link>
 					<div className="px-3 flex flex-row items-center">
-						<Link to={paths.continue} className="bg-white rounded-lg focus:outline-none shadow-hero focus:shadow-outline transition ease-out duration-150">
+						<Link to={paths.SIGN_UP} className="bg-white rounded-lg focus:outline-none shadow-hero focus:shadow-outline transition ease-out duration-150">
 							<p className="px-4 py-3 !-text-px tracking-px text-md-blue-a400">
 								Sign Up for Codex
 							</p>
@@ -137,14 +137,14 @@ const Nav = () => {
 								<div className="py-2 w-48 bg-white rounded-lg shadow-hero-lg">
 									{/* NOTE: Use bg-md-blue-a200 exclusively */}
 									<Link
-										to={paths.demo}
+										to={paths.DEMO}
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
 										Try the Demo!
 									</Link>
 									<Link
-										to={paths.pricing}
+										to={paths.PRICING}
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
@@ -160,14 +160,14 @@ const Nav = () => {
 									</ExternalLink>
 									<hr className="my-2" />
 									<Link
-										to="TODO"
+										to={paths.SIGN_IN}
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
 										Sign In
 									</Link>
 									<Link
-										to={paths.continue}
+										to={paths.SIGN_UP}
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>

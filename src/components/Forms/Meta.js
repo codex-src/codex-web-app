@@ -1,7 +1,7 @@
 import React from "react"
 import trimSpaces from "lib/trimSpaces"
 
-export const MetaHeaderBlock = ({ className, children }) => (
+export const HeaderBlock = ({ className, children }) => (
 	<div className={className}>
 		{React.cloneElement(children[0], {
 			className: trimSpaces(`font-medium text-3xl sm:text-4xl Poppins
@@ -16,7 +16,7 @@ export const MetaHeaderBlock = ({ className, children }) => (
 	</div>
 )
 
-export const MetaFocusable = ({ className, children }) => (
+export const Focusable = ({ className, children }) => (
 	React.cloneElement(children, {
 		className: trimSpaces(`focus:outline-none focus:shadow-outline-blue transition duration-150 ease-in-out
 			${children.props.className}
@@ -24,7 +24,7 @@ export const MetaFocusable = ({ className, children }) => (
 	})
 )
 
-export const MetaLabel = ({ className, children }) => (
+export const Label = ({ className, children }) => (
 	React.cloneElement(children, {
 		className: trimSpaces(`block font-medium text-sm leading-5 text-gray-700
 			${children.props.className}
@@ -32,11 +32,11 @@ export const MetaLabel = ({ className, children }) => (
 	})
 )
 
-export const MetaInputBlock = ({ className, children }) => (
+export const InputBlock = ({ className, children }) => (
 	<div className={className}>
-		<MetaLabel>
+		<Label>
 			{children[0]}
-		</MetaLabel>
+		</Label>
 		<div className="mt-1 rounded-md shadow-sm">
 			{React.cloneElement(children[1], {
 				className: trimSpaces(`form-input w-full transition duration-150 ease-in-out
