@@ -9,22 +9,25 @@ export const SelectNone = ({ className, children }) => (
 	})
 )
 
-export const HeaderBlock = ({ className, children }) => (
-	<SelectNone>
-		<div className={className}>
-			{React.cloneElement(children[0], {
-				className: trimSpaces(`font-medium text-3xl sm:text-4xl Poppins
-					${children[0].props.className}`),
-			})}
-			{children[1] && (
-				React.cloneElement(children[1], {
-					className: trimSpaces(`text-lg Poppins
-						${children[1].props.className}`),
-				})
-			)}
-		</div>
-	</SelectNone>
-)
+export const HeaderBlock = ({ className, children: child }) => {
+	const children = !Array.isArray(child) ? [child] : child
+	return (
+		<SelectNone>
+			<div className={className}>
+				{React.cloneElement(children[0], {
+					className: trimSpaces(`font-medium text-3xl sm:text-4xl Poppins
+						${children[0].props.className}`),
+				})}
+				{children.length === 2 && (
+					React.cloneElement(children[1], {
+						className: trimSpaces(`text-lg Poppins
+							${children[1].props.className}`),
+					})
+				)}
+			</div>
+		</SelectNone>
+	)
+}
 
 export const Transition = ({ className, duration, children }) => (
 	React.cloneElement(children, {

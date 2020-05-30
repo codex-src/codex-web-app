@@ -9,11 +9,10 @@ const SignUpForm = () => (
 
 		<Meta.HeaderBlock>
 			<h1>
-				{/* Sign <span style={{ clipPath: "inset(0 0 15% 0)" }}>Up</span> */}
-				Sign <span className="Poppins-clip-path-bottom">Up</span>
+				Sign <span className="inline-block Poppins-clip-path-bottom">Up</span>
 			</h1>
 			<h2 className="flex flex-row items-center">
-				<span className="Poppins-clip-path-bottom">to continue with</span>
+				to continue with
 				<span className="ml-1" style={{ fontSize: "31.25%" }}>
 					<CodexLogo />
 				</span>

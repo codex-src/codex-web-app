@@ -12,7 +12,7 @@ const SignInForm = () => (
 				Sign In
 			</h1>
 			<h2 className="flex flex-row items-center">
-				<span className="Poppins-clip-path-bottom">to continue with</span>
+				to continue with
 				<span className="ml-1" style={{ fontSize: "31.25%" }}>
 					<CodexLogo />
 				</span>
