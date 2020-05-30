@@ -5,6 +5,8 @@ import CodexLogo from "components/CodexLogo"
 import ExternalLink from "lib/ExternalLink"
 import React from "react"
 import trimSpaces from "lib/trimSpaces"
+import useClickAway from "components/hooks/useClickAway"
+import useEscape from "components/hooks/useEscape"
 import { Link } from "react-router-dom"
 
 const MetaDropDownItem = ({ className, children }) => (
@@ -16,7 +18,17 @@ const MetaDropDownItem = ({ className, children }) => (
 )
 
 const DropDown = () => {
+	const ref = React.useRef()
+
 	const [open, setOpen] = React.useState(false)
+
+	useClickAway(ref, () => {
+		setOpen(false)
+	})
+
+	useEscape(ref, () => {
+		setOpen(false)
+	})
 
 	return (
 		<div className="relative block lg:hidden">
@@ -41,16 +53,22 @@ const DropDown = () => {
 			</Meta.Transition>
 
 			{open && (
-				<div className="mt-2 absolute right-0 w-56 rounded-md shadow-lg">
+				<div ref={ref} className="mt-2 absolute right-0 w-56 rounded-md shadow-lg">
 					<div className="bg-white rounded-md shadow-xs">
 						<div className="py-1">
 							<MetaDropDownItem>
-								<Link to={routes.DEMO}>
+								<Link
+									to={routes.DEMO}
+									onClick={() => setOpen(false)}
+								>
 									Try the Demo!
 								</Link>
 							</MetaDropDownItem>
 							<MetaDropDownItem>
-								<Link to={routes.PRICING}>
+								<Link
+									to={routes.PRICING}
+									onClick={() => setOpen(false)}
+								>
 									Pricing
 								</Link>
 							</MetaDropDownItem>
@@ -77,12 +95,18 @@ const DropDown = () => {
 						<div className="border-t border-gray-100" />
 						<div className="py-1">
 							<MetaDropDownItem>
-								<Link to={routes.SIGN_IN}>
+								<Link
+									to={routes.SIGN_IN}
+									onClick={() => setOpen(false)}
+								>
 									Sign In
 								</Link>
 							</MetaDropDownItem>
 							<MetaDropDownItem>
-								<Link to={routes.SIGN_UP}>
+								<Link
+									to={routes.SIGN_UP}
+									onClick={() => setOpen(false)}
+								>
 									Sign Up for Codex
 								</Link>
 							</MetaDropDownItem>
