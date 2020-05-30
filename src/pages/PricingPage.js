@@ -6,7 +6,7 @@ import React from "react"
 const PricingPage = () => (
 	<React.Fragment>
 		<Nav />
-		<div className="h-full" />
+		<div className="min-h-screen" />
 		<FAQ />
 		<Footer />
 	</React.Fragment>

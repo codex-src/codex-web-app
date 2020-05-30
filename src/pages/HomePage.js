@@ -5,7 +5,7 @@ import React from "react"
 const HomePage = () => (
 	<React.Fragment>
 		<Nav />
-		<div className="h-full" />
+		<div className="min-h-screen" />
 		<Footer />
 	</React.Fragment>
 )
