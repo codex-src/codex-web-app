@@ -1,4 +1,5 @@
 import AppContainer from "components/AppContainer"
+import E from "lib/Emoji"
 import React from "react"
 
 // Renders a question block -- children[0] is the question
@@ -15,9 +16,27 @@ const QuestionBlock = ({ children }) => (
 
 // Renders an answer.
 const Answer = ({ children }) => (
-	<div className="text-px text-gray-800">
+	<div className="text-gray-900">
 		{children}
 	</div>
+)
+
+const A = ({ href, children }) => (
+	<a className="font-medium text-gray-900" href={href} target="_blank" rel="noopener noreferrer">
+		{children}
+	</a>
+)
+
+const Checkmark = () => (
+	// <input className="form-checkbox mr-3 text-green-400 rounded-full transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+
+	// https://refactoringui.com/book
+	<svg className="mr-3 inline-block h-5 w-5" viewBox="0 0 20 20">
+		<g fill="none" fillRule="evenodd">
+			<circle className="text-green-100" cx="10" cy="10" r="10" fill="currentColor" />
+			<polyline className="text-green-400" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" points="6 10 8.667 12.667 14 7.333" />
+		</g>
+	</svg>
 )
 
 const FAQ = () => (
@@ -39,7 +58,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						What is Codex?
 						<Answer>
-							Codex is a new WYSIWYG, what-you-see-is-what-you-get, markdown editor and notebook for the developer community.&nbsp;<span aria-label="thumbs up" role="img">👍</span><br />
+							Codex is a new WYSIWYG, what-you-see-is-what-you-get, markdown editor and notebook for the developer community.&nbsp;<E>👍</E><br />
 							<br />
 							<strong>Codex enables you to be more productive by helping you focus on what matters.</strong>
 						</Answer>
@@ -49,7 +68,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						Why is it called /ˈkōˌdeks/?
 						<Answer>
-							The name ‘Codex’ is actually inspired by <a className="text-blue-500 hover:underline" href="https://en.wikipedia.org/wiki/Codex_Leicester" target="_blank" rel="noopener noreferrer">Leonardo da Vinci’s Codex Leicester</a>. I actually found out when writing this that <a className="text-blue-500 hover:underline" href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7" target="_blank" rel="noopener noreferrer">Bill Gates bought Leonardo da Vinci’s Codex for $30 million</a>.&nbsp;<span aria-label="exploding head" role="img">🤯</span><br />
+							The name ‘Codex’ is actually inspired by <A href="https://en.wikipedia.org/wiki/Codex_Leicester">Leonardo da Vinci’s Codex Leicester</A>. I actually found out when writing this that <A href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7">Bill Gates bought Leonardo da Vinci’s Codex for $30 million</A>.&nbsp;<E>🤯</E><br />
 							<br />
 							I got really inspired by this idea of ‘what would a modern, technical journal look like?’ and ‘why don’t we have one?’ This led me to building Codex.
 						</Answer>
@@ -59,61 +78,61 @@ const FAQ = () => (
 					<QuestionBlock>
 						Is Codex based on GitHub Flavored Markdown?
 						<Answer>
-							Yes! The Codex parser is based on <a className="text-blue-500 hover:underline" href="https://guides.github.com/features/mastering-markdown" target="_blank" rel="noopener noreferrer">GitHub Flavored Markdown</a>.<br />
+							Yes! The Codex parser is based on <A href="https://guides.github.com/features/mastering-markdown">GitHub Flavored Markdown</A>.<br />
 							<br />
 							So far, Codex supports:<br />
 							<br />
 							<ul>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									Headers
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									Blockquotes
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									Unordered lists
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									Ordered lists
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									Task items (also known as checklists)
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									Code blocks (includes syntax highlighting)
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									Images
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									Section breaks
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									<em>Italics</em>
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									<strong>Bold</strong>
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									<code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">code</code>
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									<button className="text-blue-500 hover:underline">Links</button> and naked links: <button className="text-blue-500 hover:underline">https://codexapp.dev</button>
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
+									<Checkmark />
 									<strike className="text-gray-500">Strikethrough</strike>
 								</li>
 							</ul>
@@ -137,13 +156,13 @@ const FAQ = () => (
 					<QuestionBlock>
 						How does the Codex editor actually work?
 						<Answer>
-							You might be surprised to learn that the Codex editor (and pretty much all the technology Codex uses) is <a className="text-blue-500 hover:underline" href="https://github.com/codex-src" target="_blank" rel="noopener noreferrer">MIT-licensed open source</a>. It’s important to me that everything I’ve learned <em>be learnable</em>.<br />
+							You might be surprised to learn that the Codex editor (and pretty much all the technology Codex uses) is <A href="https://github.com/codex-src">MIT-licensed open source</A>. It’s important to me that everything I’ve learned <em>be learnable</em>.<br />
 							<br />
 							Essentially, I use React and <code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">contenteditable</code> to seed control of user-editing to a virtual document representation (VDOM). <code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">keydown</code> and <code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">input</code> events, among other events, manipulate the VDOM. Finally, React rerenders the virtual document back to the DOM.<br />
 							<br />
-							Of course, the implementation is far more subtle and treacherous.&nbsp;<span aria-label="ghost" role="img">👻</span>.<br />
+							Of course, the implementation is far more subtle and treacherous.&nbsp;<E>👻</E>.<br />
 							<br />
-							(No — I’m not using a popular open source library like <a className="text-blue-500 hover:underline" href="https://github.com/facebook/draft-js" target="_blank" rel="noopener noreferrer">Draft.js</a> or <a className="text-blue-500 hover:underline" href="https://github.com/codemirror/CodeMirror" target="_blank" rel="noopener noreferrer">CodeMirror</a> to engineer the Codex editor.)
+							(No — I’m not using a popular open source library like <A href="https://github.com/facebook/draft-js">Draft.js</A> or <A href="https://github.com/codemirror/CodeMirror">CodeMirror</A> to engineer the Codex editor.)
 						</Answer>
 					</QuestionBlock>
 
@@ -165,28 +184,28 @@ const FAQ = () => (
 							<br />
 							<ul>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
-									<span aria-label="books" role="img">📚</span> Unlimited notes (included in the free tier)
+									<Checkmark />
+									<E>📚</E> Unlimited notes (included in the free tier)
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
-									<span aria-label="open book" role="img">📖</span> Unlimited note-length
+									<Checkmark />
+									<E>📖</E> Unlimited note-length
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
-									<span aria-label="sunglasses" role="img">🕶</span> Dark mode
+									<Checkmark />
+									<E>🕶</E> Dark mode
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
-									<span aria-label="alien monster" role="img">👾</span> Monospace-mode
+									<Checkmark />
+									<E>👾</E> Monospace-mode
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
-									<span aria-label="man artist: light skin tone" role="img">👨🏻‍🎨</span> Custom color theming and font-styling
+									<Checkmark />
+									<E>👨🏻‍🎨</E> Custom color theming and font-styling
 								</li>
 								<li className="my-px">
-									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
-									<span aria-label="rocket" role="img">🚀</span> Export notes to HTML
+									<Checkmark />
+									<E>🚀</E> Export notes to HTML
 								</li>
 							</ul>
 						</Answer>
@@ -197,7 +216,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						Do you offer refunds?
 						<Answer>
-							Yes. If you’re not satisfied with Codex, email me at <a className="text-blue-500 hover:underline" href="mailto:support@codexapp.dev" target="_blank" rel="noopener noreferrer">support@codexapp.dev</a> within 30 days of your original purchase and I’ll refund you in full, no questions asked.
+							Yes. If you’re not satisfied with Codex, email me at <A href="mailto:support@codexapp.dev">support@codexapp.dev</A> within 30 days of your original purchase and I’ll refund you in full, no questions asked.
 						</Answer>
 					</QuestionBlock>
 
