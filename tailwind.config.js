@@ -93,6 +93,7 @@ module.exports = {
 		...defaultVariants,
 		boxShadow: [...defaultVariants.boxShadow, "active"],
 		opacity: [...defaultVariants.opacity, "active"],
+		textColor: [...defaultVariants.textColor, "active"],
 	},
 	plugins: [
 		require("@tailwindcss/ui"),

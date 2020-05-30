@@ -134,7 +134,7 @@ const MetaNavItem = ({ className, children }) => (
 	// <Meta.Transition duration={75}>
 	React.cloneElement(children, {
 		className: trimSpaces(`${children.props.className}
-			px-3 flex flex-row items-center text-gray-900 hover:text-gray-500
+			px-3 flex flex-row items-center text-gray-900 hover:text-gray-500 active:text-gray-900
 				${className}`),
 	})
 	// </Meta.Transition>
