@@ -5,16 +5,10 @@
 	font-family: "Poppins";
 }
 .Poppins-clip-path-top {
-	clip-path: inset(15% 0 0 0);
+	clip-path: inset(18.75% 0 0 0);
 }
 .Poppins-clip-path-bottom {
-	clip-path: inset(0 0 15% 0);
-}
-.Poppins-clip-path-top-loose {
-	clip-path: inset(15% 0 0 0);
-}
-.Poppins-clip-path-bottom-loose {
-	clip-path: inset(0 0 15% 0);
+	clip-path: inset(0 0 18.75% 0);
 }
 
 /* DEPRECATE? */

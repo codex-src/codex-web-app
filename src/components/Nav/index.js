@@ -53,7 +53,6 @@ const Nav = () => {
 	}, [showDropDown])
 
 	return (
-		// <div className="border-t border-gray-200">
 		<AppContainer>
 			<div className="-mx-3 flex flex-row justify-between items-center h-20">
 
@@ -70,7 +69,7 @@ const Nav = () => {
 						to={paths.DEMO}
 						className="px-3 flex flex-row items-center tracking-px hover:text-md-blue-a400 transition ease-out duration-150"
 					>
-						Try the Demo!
+						Try the Demo
 					</Link>
 					<Link
 						to={paths.PRICING}
@@ -102,8 +101,8 @@ const Nav = () => {
 						Sign In
 					</Link>
 					<div className="px-3 flex flex-row items-center">
-						<Link to={paths.SIGN_UP} className="bg-white rounded-lg focus:outline-none shadow-hero focus:shadow-outline transition ease-out duration-150">
-							<p className="px-4 py-3 !-text-px tracking-px text-md-blue-a400">
+						<Link to={paths.SIGN_UP} className="bg-white rounded-md focus:outline-none shadow-hero focus:shadow-outline transition ease-out duration-150">
+							<p className="px-4 py-3 font-medium tracking-px text-md-blue-a400">
 								Sign Up for Codex
 							</p>
 						</Link>
@@ -141,7 +140,7 @@ const Nav = () => {
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
 										onClick={() => setShowDropDown(false)}
 									>
-										Try the Demo!
+										Try the Demo
 									</Link>
 									<Link
 										to={paths.PRICING}
@@ -150,7 +149,7 @@ const Nav = () => {
 									>
 										Pricing
 									</Link>
-									<hr className="my-2" />
+									<hr className="my-2 border-t border-gray-200" />
 									<ExternalLink
 										href="https://github.com/codex-src"
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
@@ -158,7 +157,7 @@ const Nav = () => {
 									>
 										Open Source
 									</ExternalLink>
-									<hr className="my-2" />
+									<hr className="my-2 border-t border-gray-200" />
 									<Link
 										to={paths.SIGN_IN}
 										className="-mx-px px-4 py-1 block -text-px tracking-px hover:text-white hover:bg-md-blue-a200"
@@ -182,7 +181,6 @@ const Nav = () => {
 
 			</div>
 		</AppContainer>
-		// </div>
 	)
 }
 

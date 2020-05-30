@@ -1,16 +1,15 @@
-import * as Meta from "./Meta"
+import * as Meta from "components/Meta"
 import * as SVG from "svgs"
 import CodexLogo from "components/CodexLogo"
 import React from "react"
 import { SplitViewRHSBlock } from "./SplitView"
-
-// document.body.classList.toggle("debug-css")
 
 const SignUpForm = () => (
 	<form>
 
 		<Meta.HeaderBlock>
 			<h1>
+				{/* Sign <span style={{ clipPath: "inset(0 0 15% 0)" }}>Up</span> */}
 				Sign <span className="Poppins-clip-path-bottom">Up</span>
 			</h1>
 			<h2 className="flex flex-row items-center">

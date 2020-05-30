@@ -1,10 +1,8 @@
-import * as Meta from "./Meta"
+import * as Meta from "components/Meta"
 import * as SVG from "svgs"
 import CodexLogo from "components/CodexLogo"
 import React from "react"
 import { SplitViewLHSBlock } from "./SplitView"
-
-// document.body.classList.toggle("debug-css")
 
 const SignInForm = () => (
 	<form>

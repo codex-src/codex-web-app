@@ -12,29 +12,25 @@ const Footer = () => (
 		<AppContainer>
 			<div className="flex flex-col sm:flex-row justify-between items-center">
 
-				{/* Copyright */}
 				<div className="order-2 sm:order-1">
-					<p className="flex flex-row items-center text-gray-500" style={{ height: "3.5rem" /* h-14 */ }}>
-						© 2020 Codex, Inc. All rights reserved.
+					<p className="flex flex-row items-center text-gray-400" style={{ height: "3.5rem" /* h-14 */ }}>
+						© 2020 Codex.
 					</p>
 				</div>
 
-				{/* Icons */}
 				<div className="order-1 sm:order-2">
 					<div className="flex flex-row items-center">
 
-						{/* GitHub */}
 						<ExternalLink
 							href="https://github.com/codex-src"
-							className="p-4 pr-2 text-gray-500 hover:text-github-gray transition ease-out duration-150"
+							className="p-4 pr-2 text-gray-400 hover:text-github-gray transition duration-150 ease-in-out"
 						>
 							<GitHubLogo className="w-6 h-6" />
 						</ExternalLink>
 
-						{/* Twitter */}
 						<ExternalLink
 							href="https://twitter.com/username_ZAYDEK"
-							className="p-4 pl-2 text-gray-500 hover:text-twitter-blue transition ease-out duration-150"
+							className="p-4 pl-2 text-gray-400 hover:text-twitter-blue transition duration-150 ease-in-out"
 						>
 							<TwitterLogo className="w-6 h-6" />
 						</ExternalLink>
