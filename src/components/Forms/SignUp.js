@@ -80,7 +80,6 @@ const SignUpForm = () => (
 			<input
 				// Sorted
 				autoComplete="new-password"
-				className="tracking-wider"
 				id="password"
 				placeholder="••••••••••"
 				spellCheck={false}

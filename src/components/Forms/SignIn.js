@@ -78,7 +78,6 @@ const SignInForm = () => (
 			<input
 				// Sorted
 				autoComplete="new-password"
-				className="tracking-wider"
 				id="password"
 				placeholder="••••••••••"
 				spellCheck={false}
