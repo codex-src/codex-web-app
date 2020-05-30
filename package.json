@@ -10,6 +10,7 @@
     "react-heroicons": "https://github.com/codex-src/react-heroicons",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
+    "react-transition-group": "^4.4.1",
     "use-methods": "^0.5.1",
     "uuidv4": "^6.0.6"
   },

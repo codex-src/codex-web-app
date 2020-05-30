@@ -4,6 +4,7 @@ import AppContainer from "components/AppContainer"
 import CodexLogo from "components/CodexLogo"
 import ExternalLink from "lib/ExternalLink"
 import React from "react"
+import Transition from "lib/Transition"
 import trimSpaces from "lib/trimSpaces"
 import useClickAway from "components/hooks/useClickAway"
 import useEscape from "components/hooks/useEscape"
@@ -52,9 +53,18 @@ const DropDown = () => {
 				</button>
 			</Meta.Transition>
 
-			{open && (
-				<div ref={ref} className="mt-2 absolute right-0 w-56 rounded-md shadow-lg">
-					<div className="bg-white rounded-md shadow-xs">
+			<Transition
+				show={open}
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
+			>
+				{/* NOTE: Use origin-top-right for <Transition> */}
+				<div ref={ref} className="mt-2 absolute right-0 w-56 rounded-lg shadow-lg origin-top-right ">
+					<div className="bg-white rounded-lg shadow-xs overflow-hidden">
 						<div className="py-1">
 							<MetaDropDownItem>
 								<Link
@@ -113,7 +123,7 @@ const DropDown = () => {
 						</div>
 					</div>
 				</div>
-			)}
+			</Transition>
 
 		</div>
 	)
