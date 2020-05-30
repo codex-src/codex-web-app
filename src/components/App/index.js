@@ -13,6 +13,13 @@ import {
 
 // document.body.classList.toggle("debug-css")
 
+// // Generates a random 4-character key.
+// function shortKey() {
+// 	return Math.random()
+// 		.toString(16)
+// 		.slice(2, 6)
+// }
+
 const App = () => (
 	<BrowserRouter>
 		<Switch>
