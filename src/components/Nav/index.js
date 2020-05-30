@@ -131,13 +131,13 @@ const DropDown = () => {
 }
 
 const MetaNavItem = ({ className, children }) => (
-	<Meta.Transition duration={75}>
-		{React.cloneElement(children, {
-			className: trimSpaces(`${children.props.className}
-				px-3 flex flex-row items-center text-gray-900 hover:text-gray-500
-					${className}`),
-		})}
-	</Meta.Transition>
+	// <Meta.Transition duration={75}>
+	React.cloneElement(children, {
+		className: trimSpaces(`${children.props.className}
+			px-3 flex flex-row items-center text-gray-900 hover:text-gray-500
+				${className}`),
+	})
+	// </Meta.Transition>
 )
 
 const Nav = () => (
