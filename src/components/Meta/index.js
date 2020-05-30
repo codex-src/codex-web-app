@@ -3,8 +3,8 @@ import trimSpaces from "lib/trimSpaces"
 
 export const SelectNone = ({ className, children }) => (
 	React.cloneElement(children, {
-		className: trimSpaces(`select-none
-			${children.props.className}
+		className: trimSpaces(`${children.props.className}
+			select-none
 				${className}`),
 	})
 )
@@ -26,18 +26,28 @@ export const HeaderBlock = ({ className, children }) => (
 	</SelectNone>
 )
 
-export const Focusable = ({ className, children }) => (
+export const Transition = ({ className, children }) => (
 	React.cloneElement(children, {
-		className: trimSpaces(`focus:outline-none focus:shadow-outline-blue transition duration-150 ease-in-out
-			${children.props.className}
+		className: trimSpaces(`${children.props.className}
+			transition duration-150 ease-in-out
 				${className}`),
 	})
 )
 
+export const Focusable = ({ className, children }) => (
+	<Transition>
+		{React.cloneElement(children, {
+			className: trimSpaces(`${children.props.className}
+				focus:outline-none focus:shadow-outline-blue
+					${className}`),
+		})}
+	</Transition>
+)
+
 export const Label = ({ className, children }) => (
 	React.cloneElement(children, {
-		className: trimSpaces(`block font-medium text-sm leading-5 text-gray-700
-			${children.props.className}
+		className: trimSpaces(`${children.props.className}
+			block font-medium text-sm leading-5 text-gray-700
 				${className}`),
 	})
 )
@@ -48,10 +58,12 @@ export const InputBlock = ({ className, children }) => (
 			{children[0]}
 		</Label>
 		<div className="mt-1 rounded-md shadow-sm">
-			{React.cloneElement(children[1], {
-				className: trimSpaces(`form-input w-full transition duration-150 ease-in-out
-					${children[1].props.className}`),
-			})}
+			<Transition>
+				{React.cloneElement(children[1], {
+					className: trimSpaces(`form-input w-full
+						${children[1].props.className}`),
+				})}
+			</Transition>
 		</div>
 		{children[2] && (
   		<p className="mt-2 text-sm text-gray-500">

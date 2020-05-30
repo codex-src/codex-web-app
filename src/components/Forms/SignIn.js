@@ -50,10 +50,10 @@ const SignInForm = () => (
 			<div className="absolute inset-0 flex flex-row items-center">
 				<div className="w-full border-t border-gray-300"></div>
 			</div>
-			<div className="relative flex flex-row justify-center text-sm leading-5">
-				<span className="px-2 bg-white text-gray-500">
+			<div className="relative flex flex-row justify-center">
+				<div className="px-2 text-sm leading-5 text-gray-500 bg-white">
 					Or use your email address
-				</span>
+				</div>
 			</div>
 		</div>
 
