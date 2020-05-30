@@ -2,6 +2,8 @@ import AppContainer from "components/AppContainer"
 import E from "lib/Emoji"
 import React from "react"
 
+/* eslint-disable jsx-a11y/accessible-emoji */
+
 // Renders a question block -- children[0] is the question
 // and children[1] is an <Answer>.
 const QuestionBlock = ({ children }) => (
@@ -21,10 +23,11 @@ const Answer = ({ children }) => (
 	</div>
 )
 
-const A = ({ href, children }) => (
-	<a className="font-medium text-gray-900" href={href} target="_blank" rel="noopener noreferrer">
-		{children}
-	</a>
+const Code = ({ children }) => (
+	<code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">{children}</code>
+)
+const Anchor = ({ href, children }) => (
+	<a className="font-medium text-gray-900" href={href} target="_blank" rel="noopener noreferrer">{children}</a>
 )
 
 const Checkmark = () => (
@@ -68,7 +71,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						Why is it called /ˈkōˌdeks/?
 						<Answer>
-							The name ‘Codex’ is actually inspired by <A href="https://en.wikipedia.org/wiki/Codex_Leicester">Leonardo da Vinci’s Codex Leicester</A>. I actually found out when writing this that <A href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7">Bill Gates bought Leonardo da Vinci’s Codex for $30 million</A>.&nbsp;<E>🤯</E><br />
+							The name ‘Codex’ is actually inspired by <Anchor href="https://en.wikipedia.org/wiki/Codex_Leicester">Leonardo da Vinci’s Codex Leicester</Anchor>. I actually found out when writing this that <Anchor href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7">Bill Gates bought Leonardo da Vinci’s Codex for $30 million</Anchor>.&nbsp;<E>🤯</E><br />
 							<br />
 							I got really inspired by this idea of ‘what would a modern, technical journal look like?’ and ‘why don’t we have one?’ This led me to building Codex.
 						</Answer>
@@ -78,7 +81,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						Is Codex based on GitHub Flavored Markdown?
 						<Answer>
-							Yes! The Codex parser is based on <A href="https://guides.github.com/features/mastering-markdown">GitHub Flavored Markdown</A>.<br />
+							Yes! The Codex parser is based on <Anchor href="https://guides.github.com/features/mastering-markdown">GitHub Flavored Markdown</Anchor>.<br />
 							<br />
 							So far, Codex supports:<br />
 							<br />
@@ -125,7 +128,7 @@ const FAQ = () => (
 								</li>
 								<li className="my-px">
 									<Checkmark />
-									<code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">code</code>
+									<Code>code</Code>
 								</li>
 								<li className="my-px">
 									<Checkmark />
@@ -156,13 +159,13 @@ const FAQ = () => (
 					<QuestionBlock>
 						How does the Codex editor actually work?
 						<Answer>
-							You might be surprised to learn that the Codex editor (and pretty much all the technology Codex uses) is <A href="https://github.com/codex-src">MIT-licensed open source</A>. It’s important to me that everything I’ve learned <em>be learnable</em>.<br />
+							You might be surprised to learn that the Codex editor (and pretty much all the technology Codex uses) is <Anchor href="https://github.com/codex-src">MIT-licensed open source</Anchor>. It’s important to me that everything I’ve learned <em>be learnable</em>.<br />
 							<br />
-							Essentially, I use React and <code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">contenteditable</code> to seed control of user-editing to a virtual document representation (VDOM). <code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">keydown</code> and <code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">input</code> events, among other events, manipulate the VDOM. Finally, React rerenders the virtual document back to the DOM.<br />
+							Essentially, I use React and <Code>contenteditable</Code> to seed control of user-editing to a virtual document representation (VDOM). <Code>keydown</Code> and <Code>input</Code> events, among other events, manipulate the VDOM. Finally, React rerenders the virtual document back to the DOM.<br />
 							<br />
 							Of course, the implementation is far more subtle and treacherous.&nbsp;<E>👻</E>.<br />
 							<br />
-							(No — I’m not using a popular open source library like <A href="https://github.com/facebook/draft-js">Draft.js</A> or <A href="https://github.com/codemirror/CodeMirror">CodeMirror</A> to engineer the Codex editor.)
+							(No — I’m not using a popular open source library like <Anchor href="https://github.com/facebook/draft-js">Draft.js</Anchor> or <Anchor href="https://github.com/codemirror/CodeMirror">CodeMirror</Anchor> to engineer the Codex editor.)
 						</Answer>
 					</QuestionBlock>
 
@@ -216,7 +219,7 @@ const FAQ = () => (
 					<QuestionBlock>
 						Do you offer refunds?
 						<Answer>
-							Yes. If you’re not satisfied with Codex, email me at <A href="mailto:support@codexapp.dev">support@codexapp.dev</A> within 30 days of your original purchase and I’ll refund you in full, no questions asked.
+							Yes. If you’re not satisfied with Codex, email me at <Anchor href="mailto:support@codexapp.dev">support@codexapp.dev</Anchor> within 30 days of your original purchase and I’ll refund you in full, no questions asked.
 						</Answer>
 					</QuestionBlock>
 
