@@ -11,14 +11,6 @@
 	clip-path: inset(0 0 18.75% 0);
 }
 
-/* DEPRECATE? */
-.-text-px {
-	font-size: 0.9375rem;
-}
-.text-px {
-	font-size: 1.0625rem;
-}
-
 [aria-label][role="img"] {
 	vertical-align: -10%;
 	font-size: 120%;

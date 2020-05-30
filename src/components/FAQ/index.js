@@ -106,7 +106,7 @@ const FAQ = () => (
 								</li>
 								<li className="my-px">
 									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
-									<code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">code</code>
+									<code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">code</code>
 								</li>
 								<li className="my-px">
 									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
@@ -139,7 +139,7 @@ const FAQ = () => (
 						<Answer>
 							You might be surprised to learn that the Codex editor (and pretty much all the technology Codex uses) is <a className="text-blue-500 hover:underline" href="https://github.com/codex-src" target="_blank" rel="noopener noreferrer">MIT-licensed open source</a>. It’s important to me that everything I’ve learned <em>be learnable</em>.<br />
 							<br />
-							Essentially, I use React and <code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">contenteditable</code> to seed control of user-editing to a virtual document representation (VDOM). <code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">keydown</code> and <code className="px-1 py-px font-mono -text-px text-md-blue-a400 border rounded">input</code> events, among other events, manipulate the VDOM. Finally, React rerenders the virtual document back to the DOM.<br />
+							Essentially, I use React and <code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">contenteditable</code> to seed control of user-editing to a virtual document representation (VDOM). <code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">keydown</code> and <code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">input</code> events, among other events, manipulate the VDOM. Finally, React rerenders the virtual document back to the DOM.<br />
 							<br />
 							Of course, the implementation is far more subtle and treacherous.&nbsp;<span aria-label="ghost" role="img">👻</span>.<br />
 							<br />

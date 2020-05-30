@@ -42,9 +42,10 @@ module.exports = {
 					...defaultTheme.fontFamily.sans,
 				],
 			},
-			// TODO: Deprecate?
+			fontSize: {
+				px: "1.0625rem",
+			},
 			letterSpacing: {
-				"-px": "-0.0125em",
 				px:  "0.0125em",
 			},
 			opacity: {
