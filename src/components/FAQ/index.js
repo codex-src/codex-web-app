@@ -24,7 +24,9 @@ const Answer = ({ children }) => (
 )
 
 const Code = ({ children }) => (
-	<code className="px-1 py-px font-mono text-sm text-md-blue-a400 border rounded">{children}</code>
+	// NOTE: Use inline-block because <code> elements default
+	// to inline
+	<code className="px-1 inline-block font-mono text-sm text-md-blue-a400 border rounded">{children}</code>
 )
 const Anchor = ({ href, children }) => (
 	<a className="font-medium text-gray-900" href={href} target="_blank" rel="noopener noreferrer">{children}</a>
@@ -86,57 +88,61 @@ const FAQ = () => (
 							So far, Codex supports:<br />
 							<br />
 							<ul>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									Headers
+									Headers <Code>#&nbsp;</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									Blockquotes
+									Blockquotes <Code>>&nbsp;</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									Unordered lists
+									Unordered lists <Code>-&nbsp;</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									Ordered lists
+									Ordered lists  <Code>1.&nbsp;</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									Task items (also known as checklists)
+									Checklists <Code>- [ ]&nbsp;</Code> or <Code>- [x]&nbsp;</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									Code blocks (includes syntax highlighting)
+									Code blocks <Code>```</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									Images
+									Images <Code>![]()</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									Section breaks
+									Breaks <Code>---</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									<em>Italics</em>
+									<em>Italics</em> <Code>*</Code> or <Code>_</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									<strong>Bold</strong>
+									<strong>Bold</strong> <Code>**</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									<Code>code</Code>
+									<Code>code</Code> <Code>`</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									<button className="text-blue-500 hover:underline">Links</button> and naked links: <button className="text-blue-500 hover:underline">https://codexapp.dev</button>
+									<Anchor>Links</Anchor> <Code>[]()</Code>
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
-									<strike className="text-gray-500">Strikethrough</strike>
+									<Anchor>https://codexapp.dev</Anchor> <Code>https://</Code> or <Code>http://</Code>
+								</li>
+								<li className="my-1">
+									<Checkmark />
+									<strike className="text-gray-500">Strikethrough</strike> <Code>~~</Code>
 								</li>
 							</ul>
 						</Answer>
@@ -186,27 +192,31 @@ const FAQ = () => (
 							However, when you pay for Codex, you get a lot more:<br />
 							<br />
 							<ul>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
 									<E>📚</E> Unlimited notes (included in the free tier)
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
 									<E>📖</E> Unlimited note-length
 								</li>
-								<li className="my-px">
-									<Checkmark />
-									<E>🕶</E> Dark mode
-								</li>
-								<li className="my-px">
+								{/* <li className="my-1"> */}
+								{/* 	<Checkmark /> */}
+								{/* 	<E>🕶</E> Dark mode */}
+								{/* </li> */}
+								<li className="my-1">
 									<Checkmark />
 									<E>👾</E> Monospace-mode
 								</li>
-								<li className="my-px">
+								<li className="my-1">
 									<Checkmark />
 									<E>👨🏻‍🎨</E> Custom color theming and font-styling
 								</li>
-								<li className="my-px">
+								<li className="my-1">
+									<Checkmark />
+									<E>🔗</E> Share notes with a link
+								</li>
+								<li className="my-1">
 									<Checkmark />
 									<E>🚀</E> Export notes to HTML
 								</li>
