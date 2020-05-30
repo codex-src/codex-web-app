@@ -33,8 +33,8 @@ module.exports = {
 				"md-blue-a400": "#2979ff",
 				"md-blue-a700": "#2962ff",
 
-				"github-gray":  "#24292e",
-				"twitter-blue": "#1da1f2",
+				"gh-gray":  "#24292e",
+				"tw-blue": "#1da1f2",
 			},
 			fontFamily: {
 				sans: [

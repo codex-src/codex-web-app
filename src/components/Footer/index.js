@@ -19,13 +19,13 @@ const Footer = () => (
 					<div className="flex flex-row items-center">
 
 						<Meta.Transition>
-							<ExternalLink className="p-4 pr-2 text-gray-400 hover:text-github-gray focus:text-github-gray focus:outline-none" href="https://github.com/codex-src">
+							<ExternalLink className="p-4 pr-2 text-gray-400 hover:text-gh-gray" href="https://github.com/codex-src">
 								<SVG.GitHubLogo className="w-6 h-6" />
 							</ExternalLink>
 						</Meta.Transition>
 
 						<Meta.Transition>
-							<ExternalLink className="p-4 pl-2 text-gray-400 hover:text-twitter-blue focus:text-twitter-blue focus:outline-none" href="https://twitter.com/username_ZAYDEK">
+							<ExternalLink className="p-4 pl-2 text-gray-400 hover:text-tw-blue" href="https://twitter.com/username_ZAYDEK">
 								<SVG.TwitterLogo className="w-6 h-6" />
 							</ExternalLink>
 						</Meta.Transition>

@@ -30,9 +30,9 @@ const SignInForm = () => (
 		<div className="mt-1 grid grid-cols-2 gap-3">
 			<div className="rounded-md shadow-sm">
 				<Meta.Focusable>
-					{/* Added bg-github-gray, removed border
+					{/* Added bg-gh-gray, removed border
 					border-gray-300 */}
-					<button className="form-input flex flex-row justify-center w-full h-12 bg-github-gray border-none hover:opacity-90 active:opacity-100" aria-label="Sign in with GitHub">
+					<button className="form-input flex flex-row justify-center w-full h-12 bg-gh-gray border-none hover:opacity-90 active:opacity-100" aria-label="Sign in with GitHub">
 						<SVG.GitHubLogo className="w-6 h-6 text-white" />
 					</button>
 				</Meta.Focusable>

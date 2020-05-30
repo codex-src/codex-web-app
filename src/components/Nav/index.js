@@ -13,7 +13,7 @@ import { Link } from "react-router-dom"
 const MetaDropDownItem = ({ className, children }) => (
 	React.cloneElement(children, {
 		className: trimSpaces(`${children.props.className}
-			px-4 py-2 flex flex-row items-center font-medium text-sm leading-5 text-gray-700 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none
+			px-4 py-2 flex flex-row items-center font-medium text-sm leading-5 text-gray-700 hover:text-gray-900 hover:bg-gray-100
 				${className}`),
 	})
 )
@@ -36,7 +36,8 @@ const DropDown = () => {
 
 			<Meta.Transition>
 				<button
-					className="p-2 flex flex-row justify-center items-center text-gray-400 hover:text-gray-500 focus:text-gray-500 hover:bg-gray-100 focus:bg-gray-100 rounded-md focus:outline-none"
+					className="p-2 flex flex-row justify-center items-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 rounded-md"
+					onPointerDown={e => e.preventDefault()}
 					onClick={() => setOpen(!open)}
 				>
 					<svg
@@ -64,7 +65,7 @@ const DropDown = () => {
 			>
 				{/* NOTE: Use origin-top-right for <Transition> */}
 				<div ref={ref} className="mt-2 absolute right-0 w-56 rounded-lg shadow-lg origin-top-right ">
-					<div className="bg-white rounded-lg shadow-xs overflow-hidden">
+					<div className="bg-white rounded-lg shadow-xs">
 						<div className="py-1">
 							<MetaDropDownItem>
 								<Link
@@ -133,7 +134,7 @@ const MetaNavItem = ({ className, children }) => (
 	<Meta.Transition duration={75}>
 		{React.cloneElement(children, {
 			className: trimSpaces(`${children.props.className}
-				px-3 flex flex-row items-center focus:underline text-gray-900 hover:text-gray-500 focus:text-gray-500 focus:outline-none
+				px-3 flex flex-row items-center text-gray-900 hover:text-gray-500
 					${className}`),
 		})}
 	</Meta.Transition>
@@ -145,12 +146,9 @@ const Nav = () => (
 
 			{/* LHS */}
 			<div className="-mx-3 flex flex-row h-full">
-				<MetaNavItem>
-					{/* NOTE: Use color: #000 because of <MetaNavItem> */}
-					<Link style={{ fontSize: "50%", color: "#000" }} to={routes.HOME}>
-						<CodexLogo />
-					</Link>
-				</MetaNavItem>
+				<Link className="px-3 flex flex-row items-center" style={{ fontSize: "50%" }} to={routes.HOME}>
+					<CodexLogo />
+				</Link>
 			</div>
 
 			{/* RHS */}
