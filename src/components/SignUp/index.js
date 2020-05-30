@@ -46,17 +46,10 @@ const MetaLabel = ({ className, children }) => (
 
 const MetaInputBlock = ({ className, children: [label, input] }) => (
 	<div className={className}>
-		{/* {React.cloneElement(label, { */}
-		{/* 	className: trimSpaces(` */}
-		{/* 		block font-medium text-sm tracking-px leading-5 text-gray-700 */}
-		{/* 			${label.props.className}`), */}
-		{/* })} */}
 		<MetaLabel>
 			{label}
 		</MetaLabel>
 		<div className="mt-1 rounded-md shadow-sm">
-			{/* NOTE: <MetaFocusable> is not needed because of
-			form-input */}
 			{React.cloneElement(input, {
 				className: trimSpaces(`
 					form-input w-full transition duration-150 ease-in-out
@@ -98,25 +91,21 @@ const SignUpFormFragment = () => (
 
 			{/* Sign in with */}
 			<div className="mt-1 grid grid-cols-2 gap-3">
-				<div>
-					<span className="w-full inline-flex rounded-md shadow-sm">
-						<MetaFocusable>
-							{/* Added bg-github-gray, removed border
-							border-gray-300 */}
-							<button className="form-input flex flex-row justify-center w-full h-12 bg-github-gray border-none hover:opacity-90 active:opacity-100" aria-label="Sign in with GitHub">
-								<GitHubLogo className="w-6 h-6 text-white" />
-							</button>
-						</MetaFocusable>
-					</span>
+				<div className="rounded-md shadow-sm">
+					<MetaFocusable>
+						{/* Added bg-github-gray, removed border
+						border-gray-300 */}
+						<button className="form-input flex flex-row justify-center w-full h-12 bg-github-gray border-none hover:opacity-90 active:opacity-100" aria-label="Sign in with GitHub">
+							<GitHubLogo className="w-6 h-6 text-white" />
+						</button>
+					</MetaFocusable>
 				</div>
-				<div>
-					<span className="w-full inline-flex rounded-md shadow-sm">
-						<MetaFocusable>
-							<button className="form-input flex flex-row justify-center w-full h-12 border border-gray-300 hover:opacity-90 active:opacity-100" type="button" aria-label="Sign in with Google">
-								<GoogleLogo className="w-6 h-6" />
-							</button>
-						</MetaFocusable>
-					</span>
+				<div className="rounded-md shadow-sm">
+					<MetaFocusable>
+						<button className="form-input flex flex-row justify-center w-full h-12 border border-gray-300 hover:opacity-90 active:opacity-100" type="button" aria-label="Sign in with Google">
+							<GoogleLogo className="w-6 h-6" />
+						</button>
+					</MetaFocusable>
 				</div>
 			</div>
 
@@ -153,16 +142,17 @@ const SignUpFormFragment = () => (
 
 					{/* Sign Up for Codex */}
 					<div className="mt-12">
-						<MetaFocusable>
-							{/* Uses shadow-md */}
-							<button className="flex flex-row justify-center w-full h-12 bg-md-blue-a400 rounded-md shadow-md hover:opacity-90 active:opacity-100" type="submit">
-								<p className="flex flex-row items-center text-px tracking-px font-medium text-white">
-									Create Your Codex
-									{/* {" "} */}
-									{/* <span className="ml-2" aria-label="partying face" role="img">🥳</span> */}
-								</p>
-							</button>
-						</MetaFocusable>
+						<div className="rounded-md shadow-sm">
+							<MetaFocusable>
+								{/* Uses shadow-md */}
+								<button className="flex flex-row justify-center w-full h-12 bg-md-blue-a400 rounded-md hover:opacity-90 active:opacity-100" type="submit">
+									<p className="flex flex-row items-center font-semibold text-px tracking-px text-white">
+										Create Your Codex{" "}
+										<span className="ml-2" aria-label="partying face" role="img">🥳</span>
+									</p>
+								</button>
+							</MetaFocusable>
+						</div>
 					</div>
 
 					{/* Legal disclaimer */}
