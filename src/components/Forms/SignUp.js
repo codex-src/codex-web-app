@@ -123,7 +123,7 @@ const SignUpForm = () => (
 
 const SignUp = () => (
 	<SplitViewRHSBlock>
-		<img src="https://images.unsplash.com/photo-1528297506728-9533d2ac3fa4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="" />
+		<img className="bg-gray-200" src="https://images.unsplash.com/photo-1528297506728-9533d2ac3fa4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="" />
 		<SignUpForm />
 	</SplitViewRHSBlock>
 )

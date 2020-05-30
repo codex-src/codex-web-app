@@ -16,7 +16,7 @@ export const SplitViewLHSBlock = ({ children }) => (
 				{children[0]}
 			</div>
 		</div>
-		<div className="flex-1 hidden lg:block bg-gray-100">
+		<div className="flex-1 hidden lg:block">
 			<ImageClasses>
 				{children[1]}
 			</ImageClasses>
@@ -26,7 +26,7 @@ export const SplitViewLHSBlock = ({ children }) => (
 
 export const SplitViewRHSBlock = ({ children }) => (
 	<div className="flex flex-row justify-center min-h-screen">
-		<div className="flex-1 hidden lg:block bg-gray-100">
+		<div className="flex-1 hidden lg:block">
 			<ImageClasses>
 				{children[0]}
 			</ImageClasses>

@@ -11,7 +11,9 @@ function useEscape(ref, callback) {
 				// No-op
 				return
 			}
-			callback()
+			if (e.key === "Escape") {
+				callback()
+			}
 		}
 		document.addEventListener("keydown", handler)
 		return () => {
