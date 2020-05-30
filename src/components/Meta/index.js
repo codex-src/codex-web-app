@@ -26,10 +26,10 @@ export const HeaderBlock = ({ className, children }) => (
 	</SelectNone>
 )
 
-export const Transition = ({ className, children }) => (
+export const Transition = ({ className, duration, children }) => (
 	React.cloneElement(children, {
 		className: trimSpaces(`${children.props.className}
-			transition duration-150 ease-in-out
+			transition duration-${duration || 150} ease-in-out
 				${className}`),
 	})
 )

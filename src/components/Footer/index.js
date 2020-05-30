@@ -1,11 +1,8 @@
+import * as Meta from "components/Meta"
+import * as SVG from "svgs"
 import AppContainer from "components/AppContainer"
 import ExternalLink from "lib/ExternalLink"
 import React from "react"
-
-import {
-	GitHubLogo,
-	TwitterLogo,
-} from "svgs"
 
 const Footer = () => (
 	<div className="py-4 border-t-4 border-gray-100">
@@ -21,19 +18,17 @@ const Footer = () => (
 				<div className="order-1 sm:order-2">
 					<div className="flex flex-row items-center">
 
-						<ExternalLink
-							href="https://github.com/codex-src"
-							className="p-4 pr-2 text-gray-400 hover:text-github-gray transition duration-150 ease-in-out"
-						>
-							<GitHubLogo className="w-6 h-6" />
-						</ExternalLink>
+						<Meta.Transition>
+							<ExternalLink className="p-4 pr-2 text-gray-400 hover:text-github-gray focus:text-github-gray focus:outline-none" href="https://github.com/codex-src">
+								<SVG.GitHubLogo className="w-6 h-6" />
+							</ExternalLink>
+						</Meta.Transition>
 
-						<ExternalLink
-							href="https://twitter.com/username_ZAYDEK"
-							className="p-4 pl-2 text-gray-400 hover:text-twitter-blue transition duration-150 ease-in-out"
-						>
-							<TwitterLogo className="w-6 h-6" />
-						</ExternalLink>
+						<Meta.Transition>
+							<ExternalLink className="p-4 pl-2 text-gray-400 hover:text-twitter-blue focus:text-twitter-blue focus:outline-none" href="https://twitter.com/username_ZAYDEK">
+								<SVG.TwitterLogo className="w-6 h-6" />
+							</ExternalLink>
+						</Meta.Transition>
 
 					</div>
 				</div>

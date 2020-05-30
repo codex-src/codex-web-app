@@ -130,11 +130,13 @@ const DropDown = () => {
 }
 
 const MetaNavItem = ({ className, children }) => (
-	React.cloneElement(children, {
-		className: trimSpaces(`${children.props.className}
-			px-3 flex flex-row items-center
-				${className}`),
-	})
+	<Meta.Transition duration={75}>
+		{React.cloneElement(children, {
+			className: trimSpaces(`${children.props.className}
+				px-3 flex flex-row items-center focus:underline text-gray-900 hover:text-gray-500 focus:text-gray-500 focus:outline-none
+					${className}`),
+		})}
+	</Meta.Transition>
 )
 
 const Nav = () => (
@@ -144,7 +146,8 @@ const Nav = () => (
 			{/* LHS */}
 			<div className="-mx-3 flex flex-row h-full">
 				<MetaNavItem>
-					<Link style={{ fontSize: "50%" }} to={routes.HOME}>
+					{/* NOTE: Use color: #000 because of <MetaNavItem> */}
+					<Link style={{ fontSize: "50%", color: "#000" }} to={routes.HOME}>
 						<CodexLogo />
 					</Link>
 				</MetaNavItem>
