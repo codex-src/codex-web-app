@@ -41,8 +41,11 @@ const FAQContentsFragment = () => (
 	<React.Fragment>
 
 		<Meta.HeaderBlock>
-			<h2 className="Poppins-clip-path-bottom">
-				Frequently asked questions
+			<h2>
+				<span className="inline-block Poppins-clip-path-bottom">Frequently</span>{" "}
+				<span className="inline-block Poppins-clip-path-bottom">asked</span>{" "}
+				<span className="inline-block Poppins-clip-path-bottom">questions</span>{" "}
+				<E>🤔</E>
 			</h2>
 		</Meta.HeaderBlock>
 
@@ -60,10 +63,10 @@ const FAQContentsFragment = () => (
 						What is Codex?
 					</h3>
 					<p>
-						Codex is a new WYSIWYG, what-you-see-is-what-you-get, markdown editor and notebook for the developer community.&nbsp;<E>👍</E>
+						Codex is a new WYSIWYG, what-you-see-is-what-you-get, markdown editor and notebook for the developer community. <E>👍</E>
 					</p>
 					<p className="mt-4">
-						Codex enables you to be more productive by helping you focus on what matters.
+						Codex enables you to be more productive by helping you focus on what matters — expressing yourself in words and <Code>code</Code>.
 					</p>
 				</QuestionBlock>
 
@@ -73,7 +76,7 @@ const FAQContentsFragment = () => (
 					</h3>
 					<p>
 						The name ‘Codex’ is actually inspired by <Anchor href="https://en.wikipedia.org/wiki/Codex_Leicester">Leonardo da Vinci’s Codex Leicester</Anchor>.{" "}
-						I actually found out when writing this that <Anchor href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7">Bill Gates bought Leonardo da Vinci’s Codex for $30 million</Anchor>.&nbsp;<E>🤯</E>
+						I actually found out when writing this that <Anchor href="https://businessinsider.com/look-inside-the-codex-leicester-which-bill-gates-bought-for-30-million-2015-7">Bill Gates bought Leonardo da Vinci’s Codex for $30 million</Anchor>. <E>🤯</E>
 					</p>
 					<p className="mt-4">
 						I got really inspired by this idea of ‘what would a modern, technical journal look like?’ and ‘why don’t we have one?’{" "}
@@ -157,7 +160,7 @@ const FAQContentsFragment = () => (
 						Does Codex support embeds and tables?
 					</h3>
 					<p>
-						Not just yet, but these are planned features.&nbsp;<E>👍</E>
+						Not just yet, but these are planned features. <E>👍</E>
 					</p>
 				</QuestionBlock>
 
@@ -180,7 +183,7 @@ const FAQContentsFragment = () => (
 						Finally, React rerenders the virtual document back to the DOM.
 					</p>
 					<p className="mt-4">
-						Of course, the implementation is far more subtle and treacherous.&nbsp;<E>👻</E>.
+						Of course, the implementation is far more subtle and treacherous. <E>👻</E>.
 					</p>
 					<p className="mt-4">
 						(No — I’m not using a popular open source library like <Anchor href="https://github.com/facebook/draft-js">Draft.js</Anchor> or <Anchor href="https://github.com/codemirror/CodeMirror">CodeMirror</Anchor> to engineer the Codex editor.)
