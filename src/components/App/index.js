@@ -1,4 +1,4 @@
-import * as paths from "paths"
+import * as routes from "routes"
 import HomePage from "pages/HomePage"
 import PricingPage from "pages/PricingPage"
 import React from "react"
@@ -19,23 +19,16 @@ const App = () => (
 
 			{/* TODO: Extract to <UnauthHome> */}
 
-			<Route path={paths.BLOG}>
-				{/* TODO */}
-			</Route>
-			<Route path={paths.DEMO}>
-				{/* TODO */}
-			</Route>
-			<Route path={paths.PRICING}>
+			<Route path={routes.PRICING}>
 				<PricingPage />
 			</Route>
-			<Route path={paths.SIGN_IN}>
+			<Route path={routes.SIGN_IN}>
 				<SignInPage />
 			</Route>
-			<Route path={paths.SIGN_UP}>
+			<Route path={routes.SIGN_UP}>
 				<SignUpPage />
 			</Route>
-
-			<Route path={paths.HOME}>
+			<Route path={routes.HOME}>
 				<HomePage />
 			</Route>
 

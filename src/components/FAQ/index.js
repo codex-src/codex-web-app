@@ -1,5 +1,4 @@
 import AppContainer from "components/AppContainer"
-import Button from "lib/Button"
 import React from "react"
 
 // Renders a question block -- children[0] is the question
@@ -111,7 +110,7 @@ const FAQ = () => (
 								</li>
 								<li className="my-px">
 									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />
-									<Button className="text-blue-500 hover:underline" >Links</Button> and naked links: <Button className="text-blue-500 hover:underline">https://codexapp.dev</Button>
+									<button className="text-blue-500 hover:underline">Links</button> and naked links: <button className="text-blue-500 hover:underline">https://codexapp.dev</button>
 								</li>
 								<li className="my-px">
 									<input className="form-checkbox mr-3 text-green-400 rounded-full shadow transform scale-105 pointer-events-none" type="checkbox" defaultChecked tabIndex="-1" />

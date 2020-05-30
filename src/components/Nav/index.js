@@ -1,12 +1,11 @@
 import * as Meta from "components/Meta"
-import * as paths from "paths"
+import * as routes from "routes"
 import AppContainer from "components/AppContainer"
-import Button from "lib/Button"
 import CodexLogo from "components/CodexLogo"
 import ExternalLink from "lib/ExternalLink"
 import React from "react"
 import trimSpaces from "lib/trimSpaces"
-import { Link } from Router from "react-router-dom"
+import { Link } from "react-router-dom"
 
 const MetaDropDownItem = ({ className, children }) => (
 	React.cloneElement(children, {
@@ -46,12 +45,12 @@ const DropDown = () => {
 					<div className="bg-white rounded-md shadow-xs">
 						<div className="py-1">
 							<MetaDropDownItem>
-								<Link to={paths.DEMO}>
+								<Link to={routes.DEMO}>
 									Try the Demo!
 								</Link>
 							</MetaDropDownItem>
 							<MetaDropDownItem>
-								<Link to={paths.PRICING}>
+								<Link to={routes.PRICING}>
 									Pricing
 								</Link>
 							</MetaDropDownItem>
@@ -78,12 +77,12 @@ const DropDown = () => {
 						<div className="border-t border-gray-100" />
 						<div className="py-1">
 							<MetaDropDownItem>
-								<Link to={paths.SIGN_IN}>
+								<Link to={routes.SIGN_IN}>
 									Sign In
 								</Link>
 							</MetaDropDownItem>
 							<MetaDropDownItem>
-								<Link to={paths.SIGN_UP}>
+								<Link to={routes.SIGN_UP}>
 									Sign Up for Codex
 								</Link>
 							</MetaDropDownItem>
@@ -111,7 +110,7 @@ const Nav = () => (
 			{/* LHS */}
 			<div className="-mx-3 flex flex-row h-full">
 				<MetaNavItem>
-					<Link style={{ fontSize: "50%" }} to={paths.HOME}>
+					<Link style={{ fontSize: "50%" }} to={routes.HOME}>
 						<CodexLogo />
 					</Link>
 				</MetaNavItem>
@@ -120,12 +119,12 @@ const Nav = () => (
 			{/* RHS */}
 			<div className="-mx-3 hidden lg:flex lg:flex-row h-full">
 				<MetaNavItem>
-					<Link to={paths.DEMO}>
+					<Link to={routes.DEMO}>
 						Try the Demo!
 					</Link>
 				</MetaNavItem>
 				<MetaNavItem>
-					<Link to={paths.PRICING}>
+					<Link to={routes.PRICING}>
 						Pricing
 					</Link>
 				</MetaNavItem>
@@ -146,14 +145,14 @@ const Nav = () => (
 					</ExternalLink>
 				</MetaNavItem>
 				<MetaNavItem>
-					<Link to={paths.SIGN_IN}>
+					<Link to={routes.SIGN_IN}>
 						Sign In
 					</Link>
 				</MetaNavItem>
 				<div className="px-3 flex flex-row items-center">
 					<div className="rounded-md shadow-hero">
 						<Meta.Focusable>
-							<Link className="px-4 flex flex-row items-center h-12 font-medium text-md-blue-a400 rounded-md" to={paths.SIGN_UP}>
+							<Link className="px-4 flex flex-row items-center h-12 font-medium text-md-blue-a400 rounded-md" to={routes.SIGN_UP}>
 								Sign Up for Codex
 							</Link>
 						</Meta.Focusable>

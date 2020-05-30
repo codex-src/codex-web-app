@@ -37,8 +37,12 @@ module.exports = {
 				"twitter-blue": "#1da1f2",
 			},
 			fontFamily: {
-				sans: ["Inter", ...defaultTheme.fontFamily.sans],
+				sans: [
+					"Inter",
+					...defaultTheme.fontFamily.sans,
+				],
 			},
+			// TODO: Deprecate?
 			letterSpacing: {
 				"-px": "-0.0125em",
 				px:  "0.0125em",
@@ -63,20 +67,7 @@ module.exports = {
 				"9/16":  "56.25%",
 				"1/2":   "50%",
 			},
-			// TODO: Deprecate
-			strokeWidth: {
-				hairline:  1.25, // -> font-weight: 100;
-				thin:      1.5,  // -> font-weight: 200;
-				light:     1.75, // -> font-weight: 300;
-				normal:    2,    // -> font-weight: 400;
-				medium:    2.25, // -> font-weight: 500;
-				semibold:  2.5,  // -> font-weight: 600;
-				bold:      2.75, // -> font-weight: 700;
-				extrabold: 3,    // -> font-weight: 800;
-				black:     3.25, // -> font-weight: 900;
-			},
 		},
-		// https://tailwindcss.com/docs/breakpoints
 		screens: {
 			xs: `${24 + 512 + 24}px`,
 			// => @media (min-width: 560px) { ... }
@@ -102,9 +93,7 @@ module.exports = {
 		boxShadow: [...defaultVariants.boxShadow, "active"],
 		opacity: [...defaultVariants.opacity, "active"],
 	},
-	// https://tailwindcss-custom-forms.netlify.app
 	plugins: [
-		// require("@tailwindcss/custom-forms"),
 		require("@tailwindcss/ui"),
 	],
 }
