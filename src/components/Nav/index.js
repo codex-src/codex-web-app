@@ -12,8 +12,9 @@ import { Link } from "react-router-dom"
 
 const MetaDropDownItem = ({ className, children }) => (
 	React.cloneElement(children, {
+		// NOTE: bg-md-blue-a400 is too dark
 		className: trimSpaces(`${children.props.className}
-			px-4 py-2 flex flex-row items-center font-medium text-sm leading-5 text-gray-700 hover:text-gray-900 hover:bg-gray-100
+			px-4 py-2 flex flex-row items-center font-medium text-sm leading-5 text-gray-700 hover:text-white hover:bg-md-blue-a200
 				${className}`),
 	})
 )
@@ -64,8 +65,8 @@ const DropDown = () => {
 				leaveTo="transform opacity-0 scale-95"
 			>
 				{/* NOTE: Use origin-top-right for <Transition> */}
-				<div ref={ref} className="mt-2 absolute right-0 w-56 rounded-lg shadow-lg origin-top-right ">
-					<div className="bg-white rounded-lg shadow-xs">
+				<div ref={ref} className="mt-2 absolute right-0 w-56 rounded-lg shadow-lg origin-top-right">
+					<div className="bg-white rounded-lg shadow-xs overflow-hidden">
 						<div className="py-1">
 							<MetaDropDownItem>
 								<Link
@@ -131,13 +132,13 @@ const DropDown = () => {
 }
 
 const MetaNavItem = ({ className, children }) => (
-	// <Meta.Transition duration={75}>
-	React.cloneElement(children, {
-		className: trimSpaces(`${children.props.className}
-			px-3 flex flex-row items-center text-gray-900 hover:text-gray-500 active:text-gray-900
-				${className}`),
-	})
-	// </Meta.Transition>
+	<Meta.Transition duration={75}>
+		{React.cloneElement(children, {
+			className: trimSpaces(`${children.props.className}
+				px-3 flex flex-row items-center hover:text-md-blue-a400
+					${className}`),
+		})}
+	</Meta.Transition>
 )
 
 const Nav = () => (

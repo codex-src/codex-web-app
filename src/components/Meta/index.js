@@ -47,6 +47,33 @@ export const Focusable = ({ className, children }) => (
 	</Transition>
 )
 
+// https://tailwindui.com/components/application-ui/forms/sign-in-forms
+export const SocialButton = ({ className, children }) => (
+	<Focusable>
+		<Transition>
+			{React.cloneElement(children, {
+				className: trimSpaces(`${children.props.className}
+					px-4 py-2 w-full inline-flex flex-row justify-center leading-5 bg-white border border-gray-300 focus:border-blue-300 rounded-md hover:opacity-90 active:opacity-100
+						${className}`),
+			})}
+		</Transition>
+	</Focusable>
+)
+
+// // https://tailwindui.com/components/application-ui/forms/sign-in-forms
+// export const SolidSocialButton = ({ className, children }) => (
+// 	<Focusable>
+// 		<Transition>
+// 			{React.cloneElement(children, {
+// 				className: trimSpaces(`${children.props.className}
+// 					px-4 py-2 w-full inline-flex flex-row justify-center leading-5 border border-transparent rounded-md hover:opacity-90 active:opacity-100
+// 						${className}`),
+// 				},
+// 			)}
+// 		</Transition>
+// 	</Focusable>
+// )
+
 export const Label = ({ className, children }) => (
 	React.cloneElement(children, {
 		className: trimSpaces(`${children.props.className}
@@ -68,10 +95,10 @@ export const InputBlock = ({ className, children }) => (
 				})}
 			</Transition>
 		</div>
-		{children[2] && (
-  		<p className="mt-2 text-sm text-gray-500">
-				{children[2]}
-			</p>
-		)}
+		{/* {children[2] && ( */}
+  	{/* 	<p className="mt-2 text-sm text-gray-500"> */}
+		{/* 		{children[2]} */}
+		{/* 	</p> */}
+		{/* )} */}
 	</div>
 )

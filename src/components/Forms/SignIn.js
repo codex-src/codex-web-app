@@ -1,6 +1,7 @@
 import * as Meta from "components/Meta"
 import * as SVG from "svgs"
 import CodexLogo from "components/CodexLogo"
+import E from "lib/Emoji"
 import React from "react"
 import { SplitViewLHSBlock } from "./SplitView"
 
@@ -26,23 +27,27 @@ const SignInForm = () => (
 				</p>
 			</Meta.Label>
 		</div>
-
-		<div className="mt-1 grid grid-cols-2 gap-3">
+		<div className="mt-1 grid grid-cols-3 gap-3">
 			<div className="rounded-md shadow-sm">
-				<Meta.Focusable>
-					{/* Added bg-gh-gray, removed border
-					border-gray-300 */}
-					<button className="form-input flex flex-row justify-center w-full h-12 bg-gh-gray border-none hover:opacity-90 active:opacity-100" aria-label="Sign in with GitHub">
-						<SVG.GitHubLogo className="w-6 h-6 text-white" />
+				<Meta.SocialButton>
+					<button aria-label="Sign in with GitHub">
+						<SVG.GitHubLogo className="w-5 h-5 text-gh-gray" />
 					</button>
-				</Meta.Focusable>
+				</Meta.SocialButton>
 			</div>
 			<div className="rounded-md shadow-sm">
-				<Meta.Focusable>
-					<button className="form-input flex flex-row justify-center w-full h-12 border border-gray-300 hover:opacity-90 active:opacity-100" type="button" aria-label="Sign in with Google">
-						<SVG.GoogleLogo className="w-6 h-6" />
+				<Meta.SocialButton>
+					<button aria-label="Sign in with Twitter">
+						<SVG.TwitterLogo className="w-5 h-5 text-tw-blue" />
 					</button>
-				</Meta.Focusable>
+				</Meta.SocialButton>
+			</div>
+			<div className="rounded-md shadow-sm">
+				<Meta.SocialButton>
+					<button aria-label="Sign in with Google">
+						<SVG.GoogleLogo className="w-5 h-5" />
+					</button>
+				</Meta.SocialButton>
 			</div>
 		</div>
 
@@ -85,22 +90,19 @@ const SignInForm = () => (
 			/>
 		</Meta.InputBlock>
 
+		{/* Uses mt-8 not mt-6 */}
 		<div className="mt-8">
 			<div className="rounded-md shadow-sm">
 				<Meta.Focusable>
-					<button className="flex flex-row justify-center w-full h-12 bg-md-blue-a400 rounded-md hover:opacity-90 active:opacity-100" type="submit">
-						<Meta.SelectNone>
-							<p className="flex flex-row items-center font-semibold text-white">
-								Sign In{" "}
-								<span className="ml-2" style={{ transform: "scaleX(-1)" }} aria-label="waving hand" role="img">👋</span>
-							</p>
-						</Meta.SelectNone>
+					{/* Uses py-3 not py-2 */}
+					<button className="px-4 py-3 w-full font-bold text-sm tracking-wider leading-5 text-white bg-md-blue-a400 border border-transparent rounded-md">
+						SIGN IN
 					</button>
 				</Meta.Focusable>
 			</div>
 		</div>
 
-		<div className="mt-6">
+		<div className="mt-4">
 			<p className="text-sm text-gray-600">
 				We’ll keep you signed in until you click <span className="underline">Sign Out</span>.
 			</p>
