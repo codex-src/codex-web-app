@@ -30,7 +30,7 @@ const NoteApp = () => (
 
 			<div>
 
-				<div className="mb-12 flex flex-row justify-between items-center">
+				<div className="flex flex-row justify-between items-center">
 
 					{/* <div style={{ fontSize: "50%" }}> */}
 					{/* 	<div className="em-context flex flex-row items-center"> */}
@@ -48,10 +48,14 @@ const NoteApp = () => (
 					<div className="flex flex-row items-center truncate">
 						{/* <img className="mr-4 flex-none w-10 h-10 object-cover bg-cool-gray-200 rounded-full" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60" alt="" /> */}
 						<img className="mr-3 flex-none w-10 h-10 object-cover bg-cool-gray-200 rounded-full" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
+
 						<div className="truncate">
 							<h2 className="flex flex-row items-center font-medium text-sm leading-5 text-gray-900">
 								<span className="truncate">Russ Perry</span>{" "}
-								<E className="ml-1">👾</E>
+								<E className="mx-1">👾</E>{" "}
+								{/* <button className="mx-1 px-2 py-1 block font-extrabold tracking-wider leading-none text-white bg-gh-gray rounded-full" style={{ fontSize: "0.625rem" }}> */}
+								{/* 	PRO */}
+								{/* </button> */}
 							</h2>
 							<p className="font-medium text-sm text-gray-500 leading-6 truncate">
 								Front End Developer and Collector of Video Games
@@ -59,6 +63,12 @@ const NoteApp = () => (
 								{/* <span className="mx-1"><E>👀</E></span>{" "} */}
 								{/* looking to make his mark on the world. */}
 							</p>
+
+							{/* <div className="flex-none flex flex-row justify-center items-center w-10 h-10 bg-md-blue-a400 rounded-full"> */}
+							{/* 	<svg className="w-5 h-5 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor"> */}
+							{/* 		<path d="M12 4v16m8-8H4" /> */}
+							{/* 	</svg> */}
+							{/* </div> */}
 
 							{/* <div className="mt-1"> */}
 							{/* 	<button className="px-2 py-0.5 block font-extrabold tracking-wider leading-4 text-white bg-gh-gray rounded-full" style={{ fontSize: "0.625rem" }}> */}
@@ -78,6 +88,33 @@ const NoteApp = () => (
 				</div>
 
 				<nav className="mt-8">
+					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+								<path d="M12 4v16m8-8H4" />
+							</svg>
+							New Note
+						</p>
+					</div>
+					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+								<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+							</svg>
+							Open Note from Desktop
+						</p>
+					</div>
+					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+								<path d="M8 17a5 5 0 01-.916-9.916 5.002 5.002 0 019.832 0A5.002 5.002 0 0116 17m-7-5l3-3m0 0l3 3m-3-3v12" />
+							</svg>
+							Import from GitHub
+						</p>
+					</div>
+				</nav>
+
+				<nav className="mt-6">
 					<div className="mt-4">
 
 						<h2 className="font-semibold text-xs tracking-wider leading-6 uppercase truncate text-cool-gray-400">
@@ -108,7 +145,7 @@ const NoteApp = () => (
 					</div>
 				</nav>
 
-				<nav className="mt-8">
+				<nav className="mt-6">
 					<div className="mt-4">
 
 						<h2 className="font-semibold text-xs tracking-wider leading-6 uppercase truncate text-cool-gray-400">
@@ -159,7 +196,7 @@ const NoteApp = () => (
 					</div>
 				</nav>
 
-				<nav className="mt-8">
+				<nav className="mt-6">
 					<div className="mt-4">
 
 						<h2 className="font-semibold text-xs tracking-wider leading-6 uppercase truncate text-cool-gray-400">
@@ -212,7 +249,8 @@ const NoteApp = () => (
 
 			</div>
 
-			<nav>
+			{/* TODO */}
+			<nav className="mt-8">
 				<div>
 					<button className="flex flex-row items-center w-full font-medium text-sm leading-5 text-cool-gray-500">
 						<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" fill="none" viewBox="0 0 24 24">
