@@ -38,6 +38,8 @@ module.exports = {
 			},
 			fontFamily: {
 				sans: [
+					"-apple-system",
+					"BlinkMacSystemFont",
 					"Inter",
 					...defaultTheme.fontFamily.sans,
 				],

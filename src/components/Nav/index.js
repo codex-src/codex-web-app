@@ -73,7 +73,7 @@ const DropDown = () => {
 									to={routes.DEMO}
 									onClick={() => setOpen(false)}
 								>
-									Try the Demo!
+									Demo
 								</Link>
 							</MetaDropDownItem>
 							<MetaDropDownItem>
@@ -156,7 +156,7 @@ const Nav = () => (
 			<div className="-mx-3 hidden lg:flex lg:flex-row h-full">
 				<MetaNavItem>
 					<Link to={routes.DEMO}>
-						Try the Demo!
+						Demo
 					</Link>
 				</MetaNavItem>
 				<MetaNavItem>
