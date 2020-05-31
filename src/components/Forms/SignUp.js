@@ -87,7 +87,7 @@ const SignUpForm = () => (
 			{"You can always change your password."}
 		</Meta.InputBlock>
 
-		<div className="mt-12">
+		<div className="mt-8">
 			<div className="rounded-md shadow-sm">
 				<Meta.Focusable>
 					<button className="flex flex-row justify-center w-full h-12 bg-md-blue-a400 rounded-md hover:opacity-90 active:opacity-100" type="submit">
