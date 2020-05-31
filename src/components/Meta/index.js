@@ -63,7 +63,7 @@ export const InputBlock = ({ className, children }) => (
 		<div className="mt-1 rounded-md shadow-sm">
 			<Transition>
 				{React.cloneElement(children[1], {
-					className: trimSpaces(`form-input w-full
+					className: trimSpaces(`form-input w-full sm:text-sm sm:leading-5
 						${children[1].props.className}`),
 				})}
 			</Transition>

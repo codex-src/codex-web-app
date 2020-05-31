@@ -92,7 +92,7 @@ const SignUpForm = () => (
 				<Meta.Focusable>
 					<button className="flex flex-row justify-center w-full h-12 bg-md-blue-a400 rounded-md hover:opacity-90 active:opacity-100" type="submit">
 						<Meta.SelectNone>
-							<p className="flex flex-row items-center font-semibold text-px tracking-px text-white">
+							<p className="flex flex-row items-center font-semibold text-white">
 								Create Your Codex{" "}
 								<span className="ml-2" aria-label="partying face" role="img">🥳</span>
 							</p>

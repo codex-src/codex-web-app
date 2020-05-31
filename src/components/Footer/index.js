@@ -25,7 +25,7 @@ const Footer = () => (
 					</ExternalLink>
 				</div>
 				<div className="mt-8 md:mt-0 order-2 md:order-1">
-					<p className="text-center text-base leading-6 text-gray-400">
+					<p className="text-center leading-6 text-gray-400">
 						&copy; Codex
 					</p>
 				</div>

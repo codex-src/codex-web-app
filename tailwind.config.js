@@ -42,12 +42,6 @@ module.exports = {
 					...defaultTheme.fontFamily.sans,
 				],
 			},
-			fontSize: {
-				px: "1.0625rem",
-			},
-			letterSpacing: {
-				px:  "0.0125em",
-			},
 			opacity: {
 				90: "0.90",
 				95: "0.95",
