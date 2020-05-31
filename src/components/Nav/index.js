@@ -134,8 +134,9 @@ const DropDown = () => {
 const MetaNavItem = ({ className, children }) => (
 	<Meta.Transition duration={75}>
 		{React.cloneElement(children, {
+			// px-3 flex flex-row items-center font-semibold text-xs tracking-wider uppercase text-gray-500 hover:text-gray-900
 			className: trimSpaces(`${children.props.className}
-				px-3 flex flex-row items-center hover:text-md-blue-a400
+				px-3 flex flex-row items-center font-medium text-gray-500 hover:text-gray-900
 					${className}`),
 		})}
 	</Meta.Transition>
