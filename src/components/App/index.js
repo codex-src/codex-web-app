@@ -1,4 +1,5 @@
 import * as routes from "routes"
+import * as SVG from "svgs"
 import E from "lib/Emoji"
 import HomePage from "pages/HomePage"
 import PricingPage from "pages/PricingPage"
@@ -26,7 +27,7 @@ import {
 const NoteApp = () => (
 	<div className="flex flex-row min-h-screen">
 
-		<div className="relative flex-shrink-0 hidden lg:flex lg:flex-col lg:justify-between w-80 bg-cool-gray-100">
+		<div className="relative flex-shrink-0 hidden lg:flex lg:flex-col lg:justify-between w-80 bg-cool-gray-100 !border-r !border-gray-200">
 
 			<div className="py-6">
 
@@ -47,11 +48,19 @@ const NoteApp = () => (
 
 					<div className="flex flex-row items-center truncate">
 						{/* <img className="mr-4 flex-none w-10 h-10 object-cover bg-cool-gray-200 rounded-full" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60" alt="" /> */}
-						<img className="mr-3 flex-none w-12 h-12 object-cover bg-cool-gray-200 rounded-full" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
+
+						<div className="mr-3 relative">
+							<img className="flex-none w-12 h-12 object-cover bg-cool-gray-200 rounded-full" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
+							{/* <div className="-mr-1 -mb-1 absolute bottom-0 right-0"> */}
+							{/* 	<div className="p-0.5 bg-white rounded-full z:10"> */}
+							{/* 		<SVG.TwitterLogo className="w-4 h-4 text-tw-blue" /> */}
+							{/* 	</div> */}
+							{/* </div> */}
+						</div>
 
 						<div className="truncate">
 							<h2 className="flex flex-row items-center font-medium text-sm leading-6 text-cool-gray-600">
-								<span className="truncate">Russ Perry</span>{" "}
+								<span className="truncate">Russ Perry’s Codex</span>{" "}
 								<E className="mx-1">👾</E>{" "}
 								{/* <button className="mx-1 px-2 py-1 block font-extrabold tracking-wider leading-none text-white bg-gh-gray rounded-full" style={{ fontSize: "0.625rem" }}> */}
 								{/* 	PRO */}
@@ -70,13 +79,15 @@ const NoteApp = () => (
 							{/* </p> */}
 
 							<div className="mt-1">
-								<button className="px-2 py-0.5 flex flex-row items-center font-extrabold tracking-wider leading-4 uppercase text-cool-gray-100 bg-cool-gray-900 rounded-full transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
+								<button className="px-2 py-0.5 block font-extrabold tracking-wider leading-4 uppercase text-cool-gray-100 bg-cool-gray-900 rounded-full transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
 									Upgrade to Pro
-									{/* <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"> */}
-									{/* 	<path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /> */}
-									{/* </svg> */}
 								</button>
 							</div>
+
+							{/* <p className="flex flex-row items-center font-medium text-sm leading-6 text-cool-gray-400"> */}
+							{/* 	<span className="truncate">Google</span>{" "} */}
+							{/* 	<SVG.GoogleLogo className="ml-2 w-4 h-4" /> */}
+							{/* </p> */}
 
 						</div>
 					</div>
@@ -238,7 +249,7 @@ const NoteApp = () => (
 
 			</div>
 
-			<nav className="py-6 sticky bottom-0 left-0 bg-cool-gray-100 !border-t !border-cool-gray-300">
+			<nav className="py-6 sticky bottom-0 left-0 bg-cool-gray-100 !border-t !border-cool-gray-200">
 				<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 					<p className="flex flex-row items-center font-medium text-sm leading-5">
 						<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" fill="none" viewBox="0 0 24 24">
