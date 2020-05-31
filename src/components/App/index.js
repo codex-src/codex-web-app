@@ -7,6 +7,9 @@ import React from "react"
 import SignInPage from "pages/SignInPage"
 import SignUpPage from "pages/SignUpPage"
 
+// TODO: Add archive and trash icons to the right-side of a
+// list item
+
 import {
 	BrowserRouter,
 	Route,
@@ -62,7 +65,7 @@ const NoteApp = () => (
 							<h2 className="flex flex-row items-center font-medium text-sm leading-6 text-cool-gray-600">
 								<span className="truncate">Russ Perry’s Codex</span>{" "}
 								<E className="mx-1">👾</E>{" "}
-								{/* <button className="mx-1 px-2 py-1 block font-extrabold tracking-wider leading-none text-white bg-gh-gray rounded-full" style={{ fontSize: "0.625rem" }}> */}
+								{/* <button className="mx-1 px-2 py-1 block font-extrabold tracking-wider leading-none text-white bg-cool-gray-800 rounded-full" style={{ fontSize: "0.625rem" }}> */}
 								{/* 	PRO */}
 								{/* </button> */}
 							</h2>
@@ -79,7 +82,7 @@ const NoteApp = () => (
 							{/* </p> */}
 
 							<div className="mt-1">
-								<button className="px-2 py-0.5 block font-extrabold tracking-wider leading-4 uppercase text-cool-gray-100 bg-cool-gray-900 rounded-full transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
+								<button className="px-2 py-0.5 block font-extrabold tracking-wider leading-4 uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
 									Upgrade to Pro
 								</button>
 							</div>
@@ -92,7 +95,7 @@ const NoteApp = () => (
 						</div>
 					</div>
 
-					<button className="flex-none flex flex-row justify-center items-center w-8 h-8 bg-cool-gray-300 hover:bg-gh-gray focus:bg-gh-gray rounded-full focus:outline-none transition duration-150 ease-in-out">
+					<button className="flex-none flex flex-row justify-center items-center w-8 h-8 bg-cool-gray-300 hover:bg-cool-gray-800 focus:bg-cool-gray-800 rounded-full focus:outline-none transition duration-150 ease-in-out">
 						<svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
 							<path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
 						</svg>

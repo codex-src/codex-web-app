@@ -11,9 +11,15 @@
 	clip-path: inset(0 0 18.75% 0);
 }
 
+/* [aria-label][role="img"] { */
+/* 	vertical-align: -10%; */
+/* 	font-size: 120%; */
+/* 	line-height: 1; */
+/* } */
+
 [aria-label][role="img"] {
-	vertical-align: -10%;
-	font-size: 120%;
+	vertical-align: -18.75%;
+	font-size: 137.5%;
 	line-height: 1;
 }
 
