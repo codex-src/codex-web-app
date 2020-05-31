@@ -26,9 +26,9 @@ import {
 const NoteApp = () => (
 	<div className="flex flex-row min-h-screen">
 
-		<div className="px-4 py-6 flex-shrink-0 hidden lg:flex lg:flex-col lg:justify-between w-80 bg-cool-gray-100">
+		<div className="relative flex-shrink-0 hidden lg:flex lg:flex-col lg:justify-between w-80 bg-cool-gray-100">
 
-			<div>
+			<div className="py-6">
 
 				<div className="flex flex-row justify-between items-center">
 
@@ -45,19 +45,20 @@ const NoteApp = () => (
 					{/* 	</div> */}
 					{/* </div> */}
 
-					<div className="flex flex-row items-center truncate">
+					<div className="px-4 flex flex-row items-center truncate">
 						{/* <img className="mr-4 flex-none w-10 h-10 object-cover bg-cool-gray-200 rounded-full" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60" alt="" /> */}
 						<img className="mr-3 flex-none w-10 h-10 object-cover bg-cool-gray-200 rounded-full" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
 
 						<div className="truncate">
-							<h2 className="flex flex-row items-center font-medium text-sm leading-5 text-gray-900">
-								<span className="truncate">Russ Perry</span>{" "}
+							<h2 className="flex flex-row items-center font-medium text-sm leading-6 text-gray-900">
+								{/* <span className="truncate">Russ Perry</span>{" "} */}
+								<span className="truncate">Russ’s Codex</span>{" "}
 								<E className="mx-1">👾</E>{" "}
 								{/* <button className="mx-1 px-2 py-1 block font-extrabold tracking-wider leading-none text-white bg-gh-gray rounded-full" style={{ fontSize: "0.625rem" }}> */}
 								{/* 	PRO */}
 								{/* </button> */}
 							</h2>
-							<p className="font-medium text-sm text-gray-500 leading-6 truncate">
+							<p className="font-medium text-sm text-gray-400 leading-6 truncate">
 								Front End Developer and Collector of Video Games
 								{/* Developer-in-training,{" "} */}
 								{/* <span className="mx-1"><E>👀</E></span>{" "} */}
@@ -65,7 +66,7 @@ const NoteApp = () => (
 							</p>
 
 							{/* <div className="flex-none flex flex-row justify-center items-center w-10 h-10 bg-md-blue-a400 rounded-full"> */}
-							{/* 	<svg className="w-5 h-5 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor"> */}
+							{/* 	<svg className="w-5 h-5 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" viewBox="0 0 24 24" stroke="currentColor"> */}
 							{/* 		<path d="M12 4v16m8-8H4" /> */}
 							{/* 	</svg> */}
 							{/* </div> */}
@@ -88,8 +89,28 @@ const NoteApp = () => (
 				</div>
 
 				<nav className="mt-8">
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
+							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" viewBox="0 0 24 24" stroke="currentColor">
+								<path d="M12 4v16m8-8H4" />
+							</svg>
+							<span className="truncate">New Note</span>
+						</p>
+					</button>
+					{/* <button className="px-4 py-1 block w-full.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out"> */}
+					{/* 	<button className="flex flex-row items-center w-full font-medium text-sm leading-5 text-cool-gray-500"> */}
+					{/* 		<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" viewBox="0 0 24 24" stroke="currentColor"> */}
+					{/* 			<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> */}
+					{/* 			<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> */}
+					{/* 		</svg> */}
+					{/* 		<span className="truncate">Settings</span> */}
+					{/* 	</buttontton> */}
+					{/* </div> */}
+				</nav>
 
-					<h2 className="font-semibold text-xs tracking-wider leading-6 uppercase truncate text-cool-gray-400">
+				<nav className="mt-8">
+
+					<h2 className="px-4 font-semibold text-xs tracking-wider leading-6 uppercase truncate text-cool-gray-400">
 						Starred
 						{/* {" "} */}
 						{/* <svg className="ml-1 w-4 h-4 text-cool-gray-300" fill="currentColor" viewBox="0 0 20 20"> */}
@@ -97,174 +118,142 @@ const NoteApp = () => (
 						{/* </svg> */}
 					</h2>
 
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" stroke="currentColor">
 								<path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
 							</svg>
 							<span className="truncate">JavaScript in 2020</span>
 						</p>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					</button>
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<span className="mr-2 flex-shrink-0 inline-flex flex-row justify-center items-center w-5 h-5">
 								<E>🧠</E>
 							</span>
 							<span className="truncate">Programming isn’t as hard as you think</span>
 						</p>
-					</div>
+					</button>
 
 				</nav>
 
 				<nav className="mt-6">
 
-					<h2 className="font-semibold text-xs tracking-wider leading-6 uppercase truncate text-cool-gray-400">
-						Drafts
+					<h2 className="px-4 font-semibold text-xs tracking-wider leading-6 uppercase truncate text-cool-gray-400">
+						Private
 					</h2>
 
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" stroke="currentColor">
 								<path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
 							</svg>
 							<span className="truncate">How to build a beautiful blog</span>
 						</p>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					</button>
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<span className="mr-2 flex-shrink-0 inline-flex flex-row justify-center items-center w-5 h-5">
 								<E>🤔</E>
 							</span>
 							<span className="truncate">What I wish I’d known one year ago</span>
 						</p>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					</button>
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<span className="mr-2 flex-shrink-0 inline-flex flex-row justify-center items-center w-5 h-5">
 								<E>🤦‍♀️</E>
 							</span>
 							<span className="truncate">You don’t know what you don’t know</span>
 						</p>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					</button>
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<span className="mr-2 flex-shrink-0 inline-flex flex-row justify-center items-center w-5 h-5">
 								<E>🚀</E>
 							</span>
 							<span className="truncate">What I learned from Carl Sagan</span>
 						</p>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					</button>
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<span className="mr-2 flex-shrink-0 inline-flex flex-row justify-center items-center w-5 h-5">
 								<E>👏</E>
 							</span>
 							<span className="truncate">Why I love StarTalk</span>
 						</p>
-					</div>
+					</button>
 
 				</nav>
 
 				<nav className="mt-6">
 
-					<h2 className="font-semibold text-xs tracking-wider leading-6 uppercase truncate text-cool-gray-400">
-						Shared
+					<h2 className="px-4 font-semibold text-xs tracking-wider leading-6 uppercase truncate text-cool-gray-400">
+						Public
 					</h2>
 
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" stroke="currentColor">
 								<path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
 							</svg>
 							<span className="truncate">Why you should learn programming in 2020</span>
 						</p>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					</button>
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<span className="mr-2 flex-shrink-0 inline-flex flex-row justify-center items-center w-5 h-5">
 								<E>🤷‍♀️</E>
 							</span>
 							<span className="truncate">Who really knows what programming is?</span>
 						</p>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					</button>
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<span className="mr-2 flex-shrink-0 inline-flex flex-row justify-center items-center w-5 h-5">
 								<E>🎨</E>
 							</span>
 							<span className="truncate">The missing CSS property</span>
 						</p>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					</button>
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" stroke="currentColor">
 								<path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
 							</svg>
 							<span className="truncate">To build or not to build a blog</span>
 						</p>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500">
+					</button>
+					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5">
 							<span className="mr-2 flex-shrink-0 inline-flex flex-row justify-center items-center w-5 h-5">
 								<E>🥳</E>
 							</span>
 							<span className="truncate">Surprise! You can now fund me on Patreon</span>
 						</p>
-					</div>
+					</button>
 
 				</nav>
 
 			</div>
 
-			{/* TODO */}
-			<nav className="mt-8">
-
-				<div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<button className="flex flex-row items-center w-full font-medium text-sm leading-5 text-cool-gray-500">
-							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-								<path d="M12 4v16m8-8H4" />
-							</svg>
-							<span className="truncate">New Note</span>
-						</button>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<button className="flex flex-row items-center w-full font-medium text-sm leading-5 text-cool-gray-500">
-							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-								<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-							</svg>
-							<span className="truncate">Open Note from Desktop</span>
-						</button>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<button className="flex flex-row items-center w-full font-medium text-sm leading-5 text-cool-gray-500">
-							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-								<path d="M8 17a5 5 0 01-.916-9.916 5.002 5.002 0 019.832 0A5.002 5.002 0 0116 17m-7-5l3-3m0 0l3 3m-3-3v12" />
-							</svg>
-							<span className="truncate">Import from GitHub</span>
-						</button>
-					</div>
-				</div>
-
-				<div className="mt-6">
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<button className="flex flex-row items-center w-full font-medium text-sm leading-5 text-cool-gray-500">
-							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-								<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-							</svg>
-							<span className="truncate">Archive</span>
-						</button>
-					</div>
-					<div className="-mx-4 px-4 py-1.5 hover:bg-cool-gray-200 transition duration-150 ease-in-out">
-						<button className="flex flex-row items-center w-full font-medium text-sm leading-5 text-cool-gray-500">
-							<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-								<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-							</svg>
-							<span className="truncate">Trash</span>
-						</button>
-					</div>
-				</div>
-
+			<nav className="py-6 sticky bottom-0 left-0 bg-cool-gray-100 border-t border-cool-gray-300">
+				<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+					<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+							<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+						</svg>
+						<span className="truncate">Archive</span>
+					</p>
+				</button>
+				<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-gray-600 focus:text-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+					<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<svg className="mr-2 flex-shrink-0 w-5 h-5 text-cool-gray-400" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+							<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+						</svg>
+						<span className="truncate">Trash</span>
+					</p>
+				</button>
 			</nav>
 
 		</div>
