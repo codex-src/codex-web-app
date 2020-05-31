@@ -70,7 +70,7 @@ const SignInForm = () => (
 				// Sorted
 				autoComplete="username"
 				id="email"
-				placeholder="email@address.com"
+				placeholder="leonardo@codexapp.dev"
 				spellCheck={false}
 				type="text"
 			/>
@@ -84,7 +84,7 @@ const SignInForm = () => (
 				// Sorted
 				autoComplete="new-password"
 				id="password"
-				placeholder="••••••••••"
+				placeholder="••••••••"
 				spellCheck={false}
 				type="password"
 			/>

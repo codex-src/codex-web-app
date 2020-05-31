@@ -12,7 +12,7 @@ import { Link } from "react-router-dom"
 
 const MetaDropDownItem = ({ className, children }) => (
 	React.cloneElement(children, {
-		// NOTE: bg-md-blue-a400 is too dark
+		// px-4 py-2 flex flex-row items-center font-medium text-sm leading-5 text-gray-700 hover:text-gray-900 hover:bg-gray-100
 		className: trimSpaces(`${children.props.className}
 			px-4 py-2 flex flex-row items-center font-medium text-sm leading-5 text-gray-700 hover:text-white hover:bg-md-blue-a200
 				${className}`),
