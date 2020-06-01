@@ -164,10 +164,10 @@ const NoteAppFragment = () => (
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 rounded focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								How to build a beautiful blog <E>👨🏻‍🍳</E>
 							</span>
@@ -227,10 +227,10 @@ const NoteAppFragment = () => (
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 rounded focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								Why you should learn programming in 2020 <E>👨🏻‍🍳</E>
 							</span>
