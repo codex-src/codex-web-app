@@ -96,9 +96,10 @@ const NoteAppFragment = () => (
 				</div>
 			</div>
 
+			{/* TODO: Shortcuts */}
 			<nav className="mt-6">
 				<button className="px-4 py-1.5 group block w-full hover:bg-blue-100 focus:bg-blue-100 focus:outline-none transition duration-150 ease-in-out">
-					<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-md-blue-a400 group-focus:text-md-blue-a400">
+					<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-md-blue-a400 group-focus:text-md-blue-a400 transition duration-150 ease-in-out">
 						<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-md-blue-a200 group-focus:text-md-blue-a200 transform scale-90 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
 							<path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
 						</svg>
@@ -108,10 +109,7 @@ const NoteAppFragment = () => (
 					</p>
 				</button>
 				<button className="px-4 py-1.5 group block w-full hover:bg-blue-100 focus:bg-blue-100 focus:outline-none transition duration-150 ease-in-out">
-					<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-md-blue-a400 group-focus:text-md-blue-a400">
-						{/* <svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24"> */}
-						{/* 	<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /> */}
-						{/* </svg> */}
+					<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-md-blue-a400 group-focus:text-md-blue-a400 transition duration-150 ease-in-out">
 						<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-md-blue-a200 group-focus:text-md-blue-a200 transform scale-90 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
 							<path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
 						</svg>
@@ -121,10 +119,7 @@ const NoteAppFragment = () => (
 					</p>
 				</button>
 				<button className="px-4 py-1.5 group block w-full hover:bg-blue-100 focus:bg-blue-100 focus:outline-none transition duration-150 ease-in-out">
-					<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-md-blue-a400 group-focus:text-md-blue-a400">
-						{/* <svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400" fill="currentColor" viewBox="0 0 16 16"> */}
-						{/* 	<path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /> */}
-						{/* </svg> */}
+					<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-md-blue-a400 group-focus:text-md-blue-a400 transition duration-150 ease-in-out">
 						<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-md-blue-a200 group-focus:text-md-blue-a200 transform scale-90 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
 							<path fillRule="evenodd" d="M2 10a4 4 0 004 4h3v3a1 1 0 102 0v-3h3a4 4 0 000-8 4 4 0 00-8 0 4 4 0 00-4 4zm9 4H9V9.414l-1.293 1.293a1 1 0 01-1.414-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 9.414V14z" clipRule="evenodd" />
 						</svg>
@@ -138,9 +133,9 @@ const NoteAppFragment = () => (
 			<div className="py-6">
 
 				<nav>
-					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
-							<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
+					<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
 							</svg>
 							<span className="truncate">
@@ -149,20 +144,20 @@ const NoteAppFragment = () => (
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								JavaScript in 2020
 							</span>
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								Programming isn’t as hard as you think <E>😤</E>
 							</span>
@@ -179,40 +174,40 @@ const NoteAppFragment = () => (
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								What I wish I’d known one year ago
 							</span>
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								You don’t know what you don’t know
 							</span>
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								What I learned from Carl Sagan <E>🚀</E>
 							</span>
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								Why I love StarTalk <E>❤️</E>
 							</span>
@@ -221,9 +216,9 @@ const NoteAppFragment = () => (
 				</nav>
 
 				<nav className="mt-6">
-					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
-							<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
+					<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
 							</svg>
 							<span className="truncate">
@@ -242,40 +237,40 @@ const NoteAppFragment = () => (
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								Who really knows what programming is <E>🤔</E>
 							</span>
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								The missing CSS property{" "}
 							</span>
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								To build or not to build a blog <E>🚀</E>
 							</span>
 						</p>
 					</button>
 					<button
-						className="pr-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+						className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 						style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 					>
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 							<span className="truncate">
 								Surprise! You can now fund me on Patreon <E>❤️</E>
 							</span>
@@ -284,9 +279,9 @@ const NoteAppFragment = () => (
 				</nav>
 
 				<nav className="mt-6">
-					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
-							<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
+					<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
 							</svg>
 							<span className="truncate">
@@ -294,9 +289,9 @@ const NoteAppFragment = () => (
 							</span>
 						</p>
 					</button>
-					<button className="px-4 py-1.5 block w-full text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5">
-							<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
+					<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 hover:text-cool-gray-600 focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 							</svg>
 							<span className="truncate">
@@ -308,7 +303,7 @@ const NoteAppFragment = () => (
 
 				<nav className="mt-6">
 					<button className="px-4 py-1.5 group block w-full hover:bg-blue-100 focus:bg-blue-100 focus:outline-none transition duration-150 ease-in-out">
-						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-md-blue-a400 group-focus:text-md-blue-a400">
+						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-md-blue-a400 group-focus:text-md-blue-a400 transition duration-150 ease-in-out">
 							<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-md-blue-a200 group-focus:text-md-blue-a200 transform scale-90 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
 								<path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
 							</svg>
