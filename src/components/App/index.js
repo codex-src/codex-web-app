@@ -29,6 +29,7 @@ import {
 
 const NoteAppFragment = () => {
 	const [hoverUser, setHoverUser] = React.useState(false)
+	const [hoverHideSidebarButton, setHoverHideSidebarButton] = React.useState(false)
 
 	const scollingElementRef = React.useRef()
 	const [scrollPercent, setScrollPercent] = React.useState(0)
@@ -59,18 +60,35 @@ const NoteAppFragment = () => {
 					onMouseEnter={() => setHoverUser(true)}
 					onMouseLeave={() => setHoverUser(false)}
 				>
-					<div className="px-4" style={{ fontSize: "37.5%" }}>
-						<div className="em-context flex flex-row items-center">
-							<svg className="w-16 h-16 text-md-blue-a400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
-								<path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-							</svg>
-							<div className="ml-1 -mt-2">
-								<h1 className="text-6xl leading-none Poppins Poppins-clip-path-top lowercase" style={{ letterSpacing: "-0.025em" }}>
-									Codex
-								</h1>
+
+					<div className="px-4 flex flex-row justify-between items-center">
+						<div style={{ fontSize: "37.5%" }}>
+							<div className="em-context flex flex-row items-center">
+								<svg className="w-16 h-16 text-md-blue-a400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
+									<path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+								</svg>
+								<div className="ml-1 -mt-2">
+									<h1 className="text-6xl leading-none Poppins Poppins-clip-path-top lowercase" style={{ letterSpacing: "-0.025em" }}>
+										Codex
+									</h1>
+								</div>
 							</div>
 						</div>
+						<button
+							// NOTE: hover:text-cool-gray-500 does not
+							// work because of group-hover -- uses
+							// hoverHideSidebarButton as a backup
+							className="mr-2 flex-none block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transition duration-150 ease-in-out"
+							style={{ color: hoverHideSidebarButton && "var(--cool-gray-500)" }}
+							onMouseEnter={() => setHoverHideSidebarButton(true)}
+							onMouseLeave={() => setHoverHideSidebarButton(false)}
+						>
+							<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+								<path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+							</svg>
+						</button>
 					</div>
+
 					{/* NOTE: Uses mt-5 -mb-1 because of py-1 -- was
 					my-t */}
 					<div className="!mt-6 mt-5 -mb-1 px-4 py-1 flex flex-row items-center truncate">
@@ -103,6 +121,7 @@ const NoteAppFragment = () => {
 							</p>
 						</div>
 					</div>
+
 				</header>
 
 				{/* TODO: Add shortcuts */}
