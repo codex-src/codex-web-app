@@ -24,6 +24,61 @@ import {
 // 		.slice(2, 6)
 // }
 
+const NoteActionsFragment = () => {
+	const [hoverA, setHoverA] = React.useState(false)
+	const [focusA, setFocusA] = React.useState(false)
+	const [hoverB, setHoverB] = React.useState(false)
+	const [focusB, setFocusB] = React.useState(false)
+	const [hoverC, setHoverC] = React.useState(false)
+	const [focusC, setFocusC] = React.useState(false)
+	return (
+		<React.Fragment>
+			<button
+				className="group block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
+				style={{ color: (hoverA || focusA) && "var(--cool-gray-500)" }}
+				// hover:text-cool-gray-500
+				onMouseEnter={() => setHoverA(true)}
+				onMouseLeave={() => setHoverA(false)}
+				// focus:text-cool-gray-500
+				onFocus={() => setFocusA(true)}
+				onBlur={() => setFocusA(false)}
+			>
+				<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+					<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+				</svg>
+			</button>
+			<button
+				className="group block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
+				style={{ color: (hoverB || focusB) && "var(--cool-gray-500)" }}
+				// hover:text-cool-gray-500
+				onMouseEnter={() => setHoverB(true)}
+				onMouseLeave={() => setHoverB(false)}
+				// focus:text-cool-gray-500
+				onFocus={() => setFocusB(true)}
+				onBlur={() => setFocusB(false)}
+			>
+				<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+					<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+				</svg>
+			</button>
+			<button
+				className="group block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
+				style={{ color: (hoverC || focusC) && "var(--cool-gray-500)" }}
+				// hover:text-cool-gray-500
+				onMouseEnter={() => setHoverC(true)}
+				onMouseLeave={() => setHoverC(false)}
+				// focus:text-cool-gray-500
+				onFocus={() => setFocusC(true)}
+				onBlur={() => setFocusC(false)}
+			>
+				<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+					<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+				</svg>
+			</button>
+		</React.Fragment>
+	)
+}
+
 const NoteAppFragment = () => {
 	const [hoverSettings, setHoverSettings] = React.useState(false)
 
@@ -49,7 +104,7 @@ const NoteAppFragment = () => {
 		<React.Fragment>
 
 			{/* LHS */}
-			<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch transform -translate-x-80 lg:translate-x-0 transition duration-500 ease-in-out">
+			<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch transform -translate-x-80 lg:translate-x-0 transition duration-500 ease-in-out cursor-pointer">
 
 				<header
 					// NOTE: Uses duration-300 not duration-150
@@ -98,11 +153,11 @@ const NoteAppFragment = () => {
 					<div className="!mt-6 mt-5 -mb-1 px-4 py-1 flex flex-row items-center truncate">
 						<div className="mr-3 relative flex-none">
 							<img className="w-12 h-12 object-cover bg-cool-gray-200 rounded-full shadow-hero" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
-							<div className="absolute bottom-0 right-0">
-								<div className="p-0.5 bg-tw-blue rounded-full shadow-hero">
-									<SVG.TwitterLogo className="w-3 h-3 text-white transform scale-90" />
-								</div>
-							</div>
+							{/* <div className="absolute bottom-0 right-0"> */}
+							{/* 	<div className="p-0.5 bg-tw-blue rounded-full shadow-hero"> */}
+							{/* 		<SVG.TwitterLogo className="w-3 h-3 text-white transform scale-90" /> */}
+							{/* 	</div> */}
+							{/* </div> */}
 						</div>
 						<div className="truncate">
 							<h2 className="flex flex-row items-center font-medium text-sm leading-6 text-cool-gray-600 group-hover:text-cool-gray-700 transition duration-150 ease-in-out">
@@ -110,7 +165,7 @@ const NoteAppFragment = () => {
 									Russ Perry
 								</span>{" "}
 								<E className="ml-2">👾</E>{" "}
-								<button className="ml-2 px-2.5 py-1 block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full origin-left transform scale-90" style={{ fontSize: "0.625rem" }}>
+								<button className="ml-2 px-2.5 py-1 block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90" style={{ fontSize: "0.625rem" }}>
 									Upgrad<span className="tracking-normal">e</span>
 								</button>
 							</h2>
@@ -119,7 +174,7 @@ const NoteAppFragment = () => {
 									{!hoverSettings ? (
 										"Front End Developer and Collector of Video Games"
 									) : (
-										"Open Settings…"
+										"Click to Open Settings"
 									)}
 								</span>
 							</p>
@@ -189,29 +244,7 @@ const NoteAppFragment = () => {
 									JavaScript in 2020
 								</span>
 								<div className="ml-auto flex flex-row items-center">
-
-									{/* <svg className="ml-2 w-5 h-5 text-cool-gray400  text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transform -rotate-45" fill="currentColor" viewBox="0 0 20 20"> */}
-									{/* 	<path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" /> */}
-									{/* </svg> */}
-
-									<button className="group block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 transition duration-150 ease-in-out">
-										<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-											<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-										</svg>
-									</button>
-									<button className="group block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 transition duration-150 ease-in-out">
-										<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-											<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-										</svg>
-									</button>
-									<button className="group block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 transition duration-150 ease-in-out">
-										<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-											<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-										</svg>
-										{/* <svg className="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"> */}
-										{/* 	<path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /> */}
-										{/* </svg> */}
-									</button>
+									<NoteActionsFragment />
 								</div>
 							</p>
 						</button>
@@ -223,6 +256,9 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									Programming isn’t as hard as you think <E>😤</E>
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 						<button
@@ -233,6 +269,9 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									How to build a beautiful blog <E>👨🏻‍🍳</E>
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 						<button
@@ -243,6 +282,9 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									What I wish I’d known one year ago
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 						<button
@@ -253,6 +295,9 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									You don’t know what you don’t know
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 						<button
@@ -263,6 +308,9 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									What I learned from Carl Sagan <E>🚀</E>
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 						<button
@@ -273,6 +321,9 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									Why I love StarTalk <E>❤️</E>
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 					</nav>
@@ -299,6 +350,9 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									Why you should learn programming in 2020 <E>👨🏻‍🍳</E>
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 						<button
@@ -309,6 +363,9 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									Who really knows what programming is <E>🤔</E>
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 						<button
@@ -317,8 +374,11 @@ const NoteAppFragment = () => {
 						>
 							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
-									The missing CSS property{" "}
+									The missing CSS property
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 						<button
@@ -329,6 +389,9 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									To build or not to build a blog <E>🚀</E>
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 						<button
@@ -339,6 +402,9 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									Surprise! You can now fund me on Patreon <E>❤️</E>
 								</span>
+								<div className="ml-auto flex flex-row items-center">
+									<NoteActionsFragment />
+								</div>
 							</p>
 						</button>
 					</nav>
@@ -427,8 +493,8 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									VSCode Extension
 								</span>{" "}
-								<button className="ml-2 px-2.5 py-1 block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full origin-left transform scale-90" style={{ fontSize: "0.625rem" }}>
-									Upgrad<span className="tracking-normal">e</span>
+								<button className="ml-2 px-2.5 py-1 block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90" style={{ fontSize: "0.625rem" }}>
+									Downloa<span className="tracking-normal">d</span>
 								</button>
 							</p>
 						</button>
