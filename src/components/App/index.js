@@ -113,8 +113,8 @@ const NoteAppFragment = () => {
 									Russ Perry
 								</span>{" "}
 								<E className="ml-2">👾</E>{" "}
-								<div className="ml-2 px-2 py-1 font-extrabold tracking-wider leading-none text-cool-gray-100 bg-cool-gray-800 rounded-full transform scale-90" style={{ fontSize: "0.625rem" }}>
-									UPGRADE
+								<div className="ml-2 px-2 py-0.5 font-extrabold tracking-wider leading-4 uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full origin-left transform scale-90" style={{ fontSize: "0.625rem" }}>
+									Upgrad<span className="tracking-normal">e</span>
 								</div>
 							</h2>
 							<p className="font-medium text-sm leading-6 truncate text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out">
@@ -383,7 +383,7 @@ const NoteAppFragment = () => {
 									<path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
 								</svg>
 								<span className="truncate">
-									Readme
+									Readme & Guides
 								</span>
 							</p>
 						</button>
