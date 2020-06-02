@@ -24,58 +24,43 @@ import {
 // 		.slice(2, 6)
 // }
 
-const NoteActionsFragment = () => {
-	const [hoverA, setHoverA] = React.useState(false)
-	const [focusA, setFocusA] = React.useState(false)
-	const [hoverB, setHoverB] = React.useState(false)
-	const [focusB, setFocusB] = React.useState(false)
-	const [hoverC, setHoverC] = React.useState(false)
-	const [focusC, setFocusC] = React.useState(false)
+const NoteItem = ({ children }) => {
+	const [hovered, setHovered] = React.useState(false)
+	const [focused, setFocused] = React.useState(false)
 	return (
-		<React.Fragment>
-			<button
-				className="group block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
-				style={{ color: (hoverA || focusA) && "var(--cool-gray-500)" }}
-				// hover:text-cool-gray-500
-				onMouseEnter={() => setHoverA(true)}
-				onMouseLeave={() => setHoverA(false)}
-				// focus:text-cool-gray-500
-				onFocus={() => setFocusA(true)}
-				onBlur={() => setFocusA(false)}
-			>
-				<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-					<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-				</svg>
-			</button>
-			<button
-				className="group block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
-				style={{ color: (hoverB || focusB) && "var(--cool-gray-500)" }}
-				// hover:text-cool-gray-500
-				onMouseEnter={() => setHoverB(true)}
-				onMouseLeave={() => setHoverB(false)}
-				// focus:text-cool-gray-500
-				onFocus={() => setFocusB(true)}
-				onBlur={() => setFocusB(false)}
-			>
-				<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-					<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-				</svg>
-			</button>
-			<button
-				className="group block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
-				style={{ color: (hoverC || focusC) && "var(--cool-gray-500)" }}
-				// hover:text-cool-gray-500
-				onMouseEnter={() => setHoverC(true)}
-				onMouseLeave={() => setHoverC(false)}
-				// focus:text-cool-gray-500
-				onFocus={() => setFocusC(true)}
-				onBlur={() => setFocusC(false)}
-			>
-				<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-					<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-				</svg>
-			</button>
-		</React.Fragment>
+		<div
+			className="pr-4 py-1.5 group hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out cursor-pointer"
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
+			onFocus={() => setFocused(true)}
+			onBlur={() => setFocused(false)}
+			style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
+		>
+			<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+				<span className="truncate">
+					{children}
+				</span>
+				{(hovered || focused) && (
+					<div className="ml-auto flex flex-row items-center">
+						<button className="group block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
+							<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+								<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+							</svg>
+						</button>
+						<button className="group block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
+							<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+								<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+							</svg>
+						</button>
+						<button className="group block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
+							<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+								<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+							</svg>
+						</button>
+					</div>
+				)}
+			</p>
+		</div>
 	)
 }
 
@@ -235,97 +220,27 @@ const NoteAppFragment = () => {
 								</span>
 							</p>
 						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									JavaScript in 2020
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									Programming isn’t as hard as you think <E>😤</E>
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									How to build a beautiful blog <E>👨🏻‍🍳</E>
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									What I wish I’d known one year ago
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									You don’t know what you don’t know
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									What I learned from Carl Sagan <E>🚀</E>
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									Why I love StarTalk <E>❤️</E>
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
+						<NoteItem>
+							JavaScript in 2020
+						</NoteItem>
+						<NoteItem>
+							Programming isn’t as hard as you think <E>😤</E>
+						</NoteItem>
+						<NoteItem>
+							How to build a beautiful blog <E>👨🏻‍🍳</E>
+						</NoteItem>
+						<NoteItem>
+							What I wish I’d known one year ago
+						</NoteItem>
+						<NoteItem>
+							You don’t know what you don’t know
+						</NoteItem>
+						<NoteItem>
+							What I learned from Carl Sagan <E>🚀</E>
+						</NoteItem>
+						<NoteItem>
+							Why I love StarTalk <E>❤️</E>
+						</NoteItem>
 					</nav>
 
 					<nav className="my-2">
@@ -342,71 +257,21 @@ const NoteAppFragment = () => {
 								</span>
 							</p>
 						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									Why you should learn programming in 2020 <E>👨🏻‍🍳</E>
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									Who really knows what programming is <E>🤔</E>
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									The missing CSS property
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									To build or not to build a blog <E>🚀</E>
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
-						<button
-							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
-							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<span className="truncate">
-									Surprise! You can now fund me on Patreon <E>❤️</E>
-								</span>
-								<div className="ml-auto flex flex-row items-center">
-									<NoteActionsFragment />
-								</div>
-							</p>
-						</button>
+						<NoteItem>
+							Why you should learn programming in 2020 <E>👨🏻‍🍳</E>
+						</NoteItem>
+						<NoteItem>
+							Who really knows what programming is <E>🤔</E>
+						</NoteItem>
+						<NoteItem>
+							The missing CSS property
+						</NoteItem>
+						<NoteItem>
+							To build or not to build a blog <E>🚀</E>
+						</NoteItem>
+						<NoteItem>
+							Surprise! You can now fund me on Patreon <E>❤️</E>
+						</NoteItem>
 					</nav>
 
 					<nav className="my-2">
