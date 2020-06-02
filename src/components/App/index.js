@@ -28,7 +28,7 @@ import {
 // }
 
 const NoteAppFragment = () => {
-	const [hoverUser, setHoverUser] = React.useState(false)
+	const [hoverSettings, setHoverSettings] = React.useState(false)
 
 	const [hoverHideButton, setHoverHideButton] = React.useState(false)
 	const [focusHideButton, setFocusHideButton] = React.useState(false)
@@ -59,8 +59,8 @@ const NoteAppFragment = () => {
 					className="py-6 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none z-10 transition duration-300 ease-in-out"
 					style={{ borderColor: !scrollPercent && "transparent" }}
 					tabIndex="0"
-					onMouseEnter={() => setHoverUser(true)}
-					onMouseLeave={() => setHoverUser(false)}
+					onMouseEnter={() => setHoverSettings(true)}
+					onMouseLeave={() => setHoverSettings(false)}
 				>
 
 					<div className="px-4 flex flex-row justify-between items-center">
@@ -119,10 +119,10 @@ const NoteAppFragment = () => {
 							</h2>
 							<p className="font-medium text-sm leading-6 truncate text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out">
 								<span className="truncate">
-									{!hoverUser ? (
+									{!hoverSettings ? (
 										"Front End Developer and Collector of Video Games"
 									) : (
-										"Open Settings and Preferences"
+										"Open Settings…"
 									)}
 								</span>
 							</p>
@@ -184,70 +184,70 @@ const NoteAppFragment = () => {
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									JavaScript in 2020
 								</span>
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									Programming isn’t as hard as you think <E>😤</E>
 								</span>
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									How to build a beautiful blog <E>👨🏻‍🍳</E>
 								</span>
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									What I wish I’d known one year ago
 								</span>
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									You don’t know what you don’t know
 								</span>
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									What I learned from Carl Sagan <E>🚀</E>
 								</span>
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									Why I love StarTalk <E>❤️</E>
 								</span>
@@ -270,50 +270,50 @@ const NoteAppFragment = () => {
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									Why you should learn programming in 2020 <E>👨🏻‍🍳</E>
 								</span>
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									Who really knows what programming is <E>🤔</E>
 								</span>
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									The missing CSS property{" "}
 								</span>
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									To build or not to build a blog <E>🚀</E>
 								</span>
 							</p>
 						</button>
 						<button
-							className="pr-4 py-1.5 group block w-full text-cool-gray-500 hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
+							className="pr-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"
 							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 						>
-							<p className="flex flex-row items-center font-medium text-sm leading-5 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<span className="truncate">
 									Surprise! You can now fund me on Patreon <E>❤️</E>
 								</span>
@@ -336,6 +336,16 @@ const NoteAppFragment = () => {
 								</span>
 							</p>
 						</button>
+						<div
+							className="pr-4 py-1.5"
+							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
+						>
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-400">
+								<span className="truncate">
+									(Empty)
+								</span>
+							</p>
+						</div>
 					</nav>
 
 					<nav className="my-2 mb-0">
@@ -352,6 +362,16 @@ const NoteAppFragment = () => {
 								</span>
 							</p>
 						</button>
+						<div
+							className="pr-4 py-1.5"
+							style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
+						>
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-400">
+								<span className="truncate">
+									(Empty)
+								</span>
+							</p>
+						</div>
 					</nav>
 
 					<hr className="mt-6 border-t-2 border-cool-gray-200" />
