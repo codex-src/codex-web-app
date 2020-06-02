@@ -49,9 +49,9 @@ const NoteAppFragment = () => {
 		<React.Fragment>
 
 			{/* LHS */}
-			<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none hidden lg:block w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch">
+			<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch transform -translate-x-80 lg:translate-x-0 transition duration-500 ease-in-out">
 
-				<div
+				<header
 					// NOTE: Uses duration-300 not duration-150
 					className="py-6 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none z-10 transition duration-300 ease-in-out"
 					style={{ borderColor: !scrollPercent && "transparent" }}
@@ -59,7 +59,6 @@ const NoteAppFragment = () => {
 					onMouseEnter={() => setHoverUser(true)}
 					onMouseLeave={() => setHoverUser(false)}
 				>
-
 					<div className="px-4" style={{ fontSize: "37.5%" }}>
 						<div className="em-context flex flex-row items-center">
 							<svg className="w-16 h-16 text-md-blue-a400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,11 +71,9 @@ const NoteAppFragment = () => {
 							</div>
 						</div>
 					</div>
-
 					{/* NOTE: Uses mt-5 -mb-1 because of py-1 -- was
 					my-t */}
 					<div className="!mt-6 mt-5 -mb-1 px-4 py-1 flex flex-row items-center truncate">
-
 						<div className="mr-3 relative flex-none">
 							<img className="w-12 h-12 object-cover bg-cool-gray-200 rounded-full shadow-hero" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
 							<div className="absolute bottom-0 right-0">
@@ -105,12 +102,10 @@ const NoteAppFragment = () => {
 								</span>
 							</p>
 						</div>
-
 					</div>
+				</header>
 
-				</div>
-
-				{/* TODO: Shortcuts */}
+				{/* TODO: Add shortcuts */}
 				<nav className="mt-6">
 					<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 						<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
@@ -384,7 +379,7 @@ const NoteAppFragment = () => {
 								<span className="truncate">
 									Contribute on GitHub
 								</span>{" "}
-								<svg className="ml-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transform scale-90 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+								<svg className="ml-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-blue-500 group-focus:text-blue-500 transform scale-90 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 									<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
 								</svg>
 							</p>
