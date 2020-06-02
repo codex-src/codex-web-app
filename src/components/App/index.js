@@ -7,9 +7,6 @@ import React from "react"
 import SignInPage from "pages/SignInPage"
 import SignUpPage from "pages/SignUpPage"
 
-// TODO: Add archive and trash icons to the right-side of a
-// list item
-
 import {
 	BrowserRouter,
 	Route,
@@ -113,7 +110,7 @@ const NoteAppFragment = () => {
 									Russ Perry
 								</span>{" "}
 								<E className="ml-2">👾</E>{" "}
-								<div className="ml-2 px-2 py-0.5 font-extrabold tracking-wider leading-4 uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full origin-left transform scale-90" style={{ fontSize: "0.625rem" }}>
+								<div className="ml-2 px-2.5 py-1 font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full origin-left transform scale-90" style={{ fontSize: "0.625rem" }}>
 									Upgrad<span className="tracking-normal">e</span>
 								</div>
 							</h2>
@@ -149,7 +146,7 @@ const NoteAppFragment = () => {
 								<path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
 							</svg>
 							<span className="truncate">
-								Import from Computer
+								Open from Computer
 							</span>
 						</p>
 					</button>
@@ -159,7 +156,7 @@ const NoteAppFragment = () => {
 								<path fillRule="evenodd" d="M2 10a4 4 0 004 4h3v3a1 1 0 102 0v-3h3a4 4 0 000-8 4 4 0 00-8 0 4 4 0 00-4 4zm9 4H9V9.414l-1.293 1.293a1 1 0 01-1.414-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 9.414V14z" clipRule="evenodd" />
 							</svg>
 							<span className="truncate">
-								Import from URL
+								Open from URL
 							</span>
 						</p>
 					</button>
@@ -342,7 +339,7 @@ const NoteAppFragment = () => {
 						>
 							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-400">
 								<span className="truncate">
-									(Empty)
+									Empty
 								</span>
 							</p>
 						</div>
@@ -368,7 +365,7 @@ const NoteAppFragment = () => {
 						>
 							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-400">
 								<span className="truncate">
-									(Empty)
+									Empty
 								</span>
 							</p>
 						</div>
@@ -393,7 +390,7 @@ const NoteAppFragment = () => {
 									<path fillRule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
 								</svg>
 								<span className="truncate">
-									Changelog
+									Changelog (Updated June 3, 2020)
 								</span>
 							</p>
 						</button>
@@ -407,16 +404,19 @@ const NoteAppFragment = () => {
 								</span>
 							</p>
 						</button>
-						{/* <button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"> */}
-						{/* 	<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out"> */}
-						{/* 		<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20"> */}
-						{/* 			<path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" /> */}
-						{/* 		</svg> */}
-						{/* 		<span className="truncate"> */}
-						{/* 			Suggestions & Feedback */}
-						{/* 		</span> */}
-						{/* 	</p> */}
-						{/* </button> */}
+						<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+								<svg  className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out"viewBox="0 0 20 20" fill="currentColor">
+									<path fillRule="evenodd" d="M13.5516 17.3702C13.5516 17.3702 13.2265 17.4601 12.9582 17.1855L12.9344 17.1592L6.67553 11.4759L4.00544 13.5006C3.59512 13.8399 3.31736 13.5416 3.31736 13.5416L2.14796 12.478C1.88914 12.1339 2.14796 11.9414 2.14796 11.9414L4.66648 9.65164L2.14795 7.36472C2.14795 7.36472 1.7692 7.0917 2.2237 6.72715L3.28262 5.78027C3.28262 5.78027 3.58562 5.46149 3.90598 5.73924L6.67778 7.8378L12.8225 2.24523C12.8752 2.21313 12.925 2.18853 12.9719 2.17045C12.8819 2.20244 12.8225 2.24522 12.8225 2.24522C12.8225 2.24522 13.2691 1.7481 13.9509 2.16947L17.0708 3.67344C17.0708 3.67344 17.5474 3.83441 17.5474 4.29996V14.8925C17.5474 14.8925 17.6121 15.2823 17.1513 15.5963L13.5516 17.3702ZM13.6778 16.6205V6.16616L9.09344 9.66672L13.6777 13.1375V16.6319C13.6778 16.6281 13.6778 16.6243 13.6778 16.6205Z" clipRule="evenodd" />
+								</svg>
+								<span className="truncate">
+									VSCode Extension
+								</span>{" "}
+								<div className="ml-2 px-2.5 py-1 font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full origin-left transform scale-90" style={{ fontSize: "0.625rem" }}>
+									Downloa<span className="tracking-normal">d</span>
+								</div>
+							</p>
+						</button>
 						<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" style={{ transform: "scale(0.8125)" }} fill="currentColor" viewBox="0 0 16 16">
