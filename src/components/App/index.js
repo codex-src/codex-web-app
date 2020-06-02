@@ -29,7 +29,9 @@ import {
 
 const NoteAppFragment = () => {
 	const [hoverUser, setHoverUser] = React.useState(false)
-	const [hoverHideSidebarButton, setHoverHideSidebarButton] = React.useState(false)
+
+	const [hoverHideButton, setHoverHideButton] = React.useState(false)
+	const [focusHideButton, setFocusHideButton] = React.useState(false)
 
 	const scollingElementRef = React.useRef()
 	const [scrollPercent, setScrollPercent] = React.useState(0)
@@ -75,13 +77,18 @@ const NoteAppFragment = () => {
 							</div>
 						</div>
 						<button
-							// NOTE: hover:text-cool-gray-500 does not
-							// work because of group-hover -- uses
-							// hoverHideSidebarButton as a backup
+							// NOTE: hover:text-cool-gray-500 and
+							// focus:text-cool-gray-500 does not work
+							// because of group-hover and group-focus --
+							// uses hoverHideButton and focusHideButton
 							className="mr-2 flex-none block text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transition duration-150 ease-in-out"
-							style={{ color: hoverHideSidebarButton && "var(--cool-gray-500)" }}
-							onMouseEnter={() => setHoverHideSidebarButton(true)}
-							onMouseLeave={() => setHoverHideSidebarButton(false)}
+							style={{ color: (hoverHideButton || focusHideButton) && "var(--cool-gray-500)" }}
+							// hover:text-cool-gray-500
+							onMouseEnter={() => setHoverHideButton(true)}
+							onMouseLeave={() => setHoverHideButton(false)}
+							// focus:text-cool-gray-500
+							onFocus={() => setFocusHideButton(true)}
+							onBlur={() => setFocusHideButton(false)}
 						>
 							<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
 								<path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
