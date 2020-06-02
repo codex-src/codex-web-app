@@ -50,10 +50,11 @@ const NoteAppFragment = () => {
 			<div ref={sidebarRef} className="fixed left-0 inset-y-0 flex-none hidden lg:block w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch">
 
 				{/* NOTE: Uses py-5 ... py-1 ... my-1 not py-6 */}
-				<button
+				<div
 					// NOTE: Uses duration-300 not duration-150
-					className="py-5 sticky top-0 inset-x-0 group block w-full bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none z-10 transition duration-300 ease-in-out"
+					className="py-5 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none z-10 transition duration-300 ease-in-out"
 					style={{ borderColor: !scrollPercent && "transparent" }}
+					tabIndex="0"
 					onMouseEnter={() => setHoverUser(true)}
 					onMouseLeave={() => setHoverUser(false)}
 				>
@@ -88,10 +89,9 @@ const NoteAppFragment = () => {
 									Russ Perry
 								</span>{" "}
 								<E className="ml-2">👾</E>{" "}
-								{/* NOTE: text-cool-gray-100 matches the background */}
-								<button className="ml-2 px-2 py-1 block font-extrabold tracking-wider leading-none text-cool-gray-100 bg-cool-gray-800 rounded-full transform scale-90" style={{ fontSize: "0.625rem" }}>
+								<div className="ml-2 px-2 py-1 font-extrabold tracking-wider leading-none text-cool-gray-100 bg-cool-gray-800 rounded-full transform scale-90" style={{ fontSize: "0.625rem" }}>
 									UPGRADE
-								</button>
+								</div>
 							</h2>
 
 							{/* <span className="truncate"> */}
@@ -106,7 +106,7 @@ const NoteAppFragment = () => {
 						</div>
 
 					</div>
-				</button>
+				</div>
 
 				{/* TODO: Shortcuts */}
 				<nav className="mt-6">
@@ -144,7 +144,7 @@ const NoteAppFragment = () => {
 
 				<div className="py-6">
 
-					<nav>
+					<nav className="my-2 mt-0">
 						<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
@@ -227,7 +227,7 @@ const NoteAppFragment = () => {
 						</button>
 					</nav>
 
-					<nav className="mt-6">
+					<nav className="my-2">
 						<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
@@ -290,7 +290,7 @@ const NoteAppFragment = () => {
 						</button>
 					</nav>
 
-					<nav className="mt-6">
+					<nav className="my-2">
 						<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
@@ -301,6 +301,9 @@ const NoteAppFragment = () => {
 								</span>
 							</p>
 						</button>
+					</nav>
+
+					<nav className="my-2 mb-0">
 						<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 								<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
