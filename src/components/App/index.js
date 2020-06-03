@@ -43,19 +43,19 @@ const NoteItem = ({ children }) => {
 					{children}
 				</span>
 				{(hovered || focused) && (
-					<span className="ml-auto flex flex-row items-center">
-						<span className="group block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
-							<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+					<span className="ml-auto -mr-0.5 flex flex-row items-center">
+						<span className="-my-1.5 px-0.5 py-1.5 group block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
+							<svg className="w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
 							</svg>
 						</span>
-						<span className="group block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
-							<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+						<span className="-my-1.5 px-0.5 py-1.5 group block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
+							<svg className="w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
 							</svg>
 						</span>
-						<span className="group block text-cool-gray-400 hover:text-red-600 focus:text-red-600 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
-							<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+						<span className="-my-1.5 px-0.5 py-1.5 group block text-cool-gray-400 hover:text-red-600 focus:text-red-600 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
+							<svg className="w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 							</svg>
 						</span>
