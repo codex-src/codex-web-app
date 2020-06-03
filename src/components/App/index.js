@@ -32,12 +32,8 @@ const NoteItem = ({ children }) => {
 		<button
 			// NOTE: Uses text-left to reset text-align
 			className="pr-4 py-1.5 group block w-full text-left hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out cursor-pointer"
-			onMouseEnter={() => {
-				console.log("A"); setHovered(true)
-			}}
-			onMouseLeave={() => {
-				console.log("B"); setHovered(false)
-			}}
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
 			onFocus={() => setFocused(true)}
 			onBlur={() => setFocused(false)}
 			style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
@@ -58,7 +54,7 @@ const NoteItem = ({ children }) => {
 								<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
 							</svg>
 						</span>
-						<span className="group block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
+						<span className="group block text-cool-gray-400 hover:text-red-600 focus:text-red-600 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
 							<svg className="ml-2 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 							</svg>
@@ -408,8 +404,8 @@ const NoteAppFragment = () => {
 
 					<nav className="mt-6">
 						<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-								<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-red-600 group-focus:text-red-600 transition duration-150 ease-in-out">
+								<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-red-500 group-focus:text-red-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
 									<path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
 								</svg>
 								<span className="truncate">
