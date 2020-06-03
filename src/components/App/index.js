@@ -404,8 +404,8 @@ const NoteAppFragment = () => {
 
 					<nav className="mt-6">
 						<button className="px-4 py-1.5 group block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-red-600 group-focus:text-red-600 transition duration-150 ease-in-out">
-								<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-red-500 group-focus:text-red-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+							<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+								<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
 									<path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
 								</svg>
 								<span className="truncate">
