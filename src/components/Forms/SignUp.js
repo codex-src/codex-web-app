@@ -3,8 +3,9 @@ import * as SVG from "svgs"
 import CodexLogo from "components/CodexLogo"
 import E from "lib/Emoji"
 import React from "react"
-import trimSpaces from "lib/trimSpaces"
 import { SplitViewRHSBlock } from "./SplitView"
+
+/* eslint-disable jsx-a11y/accessible-emoji */
 
 const SignUpForm = () => (
 	<form>
@@ -100,8 +101,8 @@ const SignUpForm = () => (
 					{/* Uses py-3 not py-2 */}
 					<button className="px-4 py-3 w-full flex flex-row justify-center items-center font-bold text-sm tracking-wider leading-5 text-white bg-md-blue-a400 border border-transparent rounded-md">
 						CREATE YOUR CODEX{" "}
-						<span className="ml-2"><E>🥳</E></span>{" "}
-						<span><E>🎉</E></span>
+						<E className="ml-2">🥳</E>{" "}
+						<E className="ml-1">🎉</E>
 					</button>
 				</Meta.Focusable>
 			</div>

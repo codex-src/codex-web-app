@@ -1,7 +1,6 @@
+// import HomePage from "pages/HomePage"
 import * as routes from "routes"
-import * as SVG from "svgs"
 import E from "lib/Emoji"
-import HomePage from "pages/HomePage"
 import PricingPage from "pages/PricingPage"
 import React from "react"
 import SignInPage from "pages/SignInPage"
@@ -26,25 +25,16 @@ import {
 // }
 
 const NoteItem = ({ children }) => {
-	const rootRef = React.useRef()
-
 	const [hovered, setHovered] = React.useState(false)
 	const [focused, setFocused] = React.useState(false)
 	return (
 		<div
-			ref={rootRef}
 			className="pr-4 py-1.5 group hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out cursor-pointer"
 			style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			onFocus={() => setFocused(true)}
-			onBlur={e => {
-				// if (e.target === rootRef.current) {
-				// 	// No-op
-				// 	return
-				// }
-				setFocused(false)
-			}}
+			onBlur={() => setFocused(false)}
 			tabIndex="0"
 		>
 			<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
@@ -53,26 +43,17 @@ const NoteItem = ({ children }) => {
 				</span>
 				{(hovered || focused) && (
 					<span className="ml-auto flex flex-row items-center">
-						<span
-							className="group inline-block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
-							// onBlur={e => e.stopPropagation()}
-						>
+						<span className="group inline-block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
 							<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
 							</svg>
 						</span>
-						<span
-							className="group inline-block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
-							// onBlur={e => e.stopPropagation()}
-						>
+						<span className="group inline-block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
 							<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
 							</svg>
 						</span>
-						<span
-							className="group inline-block text-cool-gray-400 hover:text-red-600 focus:text-red-600 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
-							// onBlur={e => e.stopPropagation()}
-						>
+						<span className="group inline-block text-cool-gray-400 hover:text-red-600 focus:text-red-600 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
 							<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 								<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 							</svg>
@@ -86,33 +67,22 @@ const NoteItem = ({ children }) => {
 
 const NoteAppFragment = () => {
 	const [showSidebar, setShowSidebar] = React.useState(true)
-	const [hoverSettings, setHoverSettings] = React.useState(false)
-	const [hoveredHideButton, setHoveredHideButton] = React.useState(false)
-	const [focusedHideButton, setFocusedHideButton] = React.useState(false)
+	const [hoveredAccount, setHoveredAccount] = React.useState(false)
 
 	const scollingElementRef = React.useRef()
 	const [scrollPercent, setScrollPercent] = React.useState(0)
 
 	React.useEffect(() => {
+		// react-hooks/exhaustive-deps
+		const scollingElement = scollingElementRef.current
 		const handler = () => {
-			setScrollPercent(scollingElementRef.current.scrollTop / (scollingElementRef.current.scrollHeight - scollingElementRef.current.offsetHeight))
+			setScrollPercent(scollingElement.scrollTop / (scollingElement.scrollHeight - scollingElement.offsetHeight))
 		}
-		scollingElementRef.current.addEventListener("scroll", handler, false)
+		scollingElement.addEventListener("scroll", handler, false)
 		return () => {
-			scollingElementRef.current.removeEventListener("scroll", handler, false)
+			scollingElement.removeEventListener("scroll", handler, false)
 		}
 	}, [])
-
-	// // 24 + 1024 + 24
-	// React.useEffect(() => {
-	// 	const handler = () => {
-	// 	}
-	// 	return () => {
-	// 		window.removeEventListener()
-	// 	}
-	// }, [])
-
-	// document.body.classList.toggle("debug-css")
 
 	return (
 		<React.Fragment>
@@ -138,8 +108,8 @@ const NoteAppFragment = () => {
 						className="py-6 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none z-10 transition duration-300 ease-in-out"
 						style={{ borderColor: !scrollPercent && "transparent" }}
 						tabIndex="0"
-						onMouseEnter={() => setHoverSettings(true)}
-						onMouseLeave={() => setHoverSettings(false)}
+						onMouseEnter={() => setHoveredAccount(true)}
+						onMouseLeave={() => setHoveredAccount(false)}
 					>
 
 						<div className="px-4 flex flex-row justify-between items-center">
@@ -155,24 +125,8 @@ const NoteAppFragment = () => {
 									</div>
 								</div>
 							</div>
-							{/* NOTE: hover:text-cool-gray-500 and
-							focus:text-cool-gray-500 does not work because
-							of group-hover and group-focus -- uses
-							hoveredHideButton and focusedHideButton */}
-							<button
-								className="mr-2 flex-none group inline-block focus:outline-none"
-								onMouseEnter={() => setHoveredHideButton(true)}
-								onMouseLeave={() => setHoveredHideButton(false)}
-								onFocus={() => setFocusedHideButton(true)}
-								onBlur={() => setFocusedHideButton(false)}
-								onClick={() => setShowSidebar(false)}
-							>
-								<svg
-									className="w-5 h-5 text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transition duration-150 ease-in-out"
-									style={{ color: (hoveredHideButton || focusedHideButton) && "var(--cool-gray-500)" }}
-									fill="currentColor"
-									viewBox="0 0 20 20"
-								>
+							<button className="mr-2 flex-none group inline-block focus:outline-none" /* onClick={() => setShowSidebar(false)} */>
+								<svg className="w-5 h-5 text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
 									<path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
 								</svg>
 							</button>
@@ -195,13 +149,13 @@ const NoteAppFragment = () => {
 										Russ Perry
 									</span>{" "}
 									<E className="ml-2">👾</E>{" "}
-									<button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90" style={{ fontSize: "0.625rem" }}>
+									<button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90 transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
 										Upgrad<span className="tracking-normal">e</span>
 									</button>
 								</h2>
 								<p className="font-medium text-sm leading-6 truncate text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out">
 									<span className="truncate">
-										{!hoverSettings ? (
+										{!hoveredAccount ? (
 											"Front End Developer and Collector of Video Games"
 										) : (
 											"Click to Open Settings"
@@ -395,7 +349,7 @@ const NoteAppFragment = () => {
 									</span>
 								</p>
 							</button>
-							<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
+							<span className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out" tabIndex="0">
 								<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 									<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out"viewBox="0 0 20 20" fill="currentColor">
 										<path fillRule="evenodd" d="M13.5516 17.3702C13.5516 17.3702 13.2265 17.4601 12.9582 17.1855L12.9344 17.1592L6.67553 11.4759L4.00544 13.5006C3.59512 13.8399 3.31736 13.5416 3.31736 13.5416L2.14796 12.478C1.88914 12.1339 2.14796 11.9414 2.14796 11.9414L4.66648 9.65164L2.14795 7.36472C2.14795 7.36472 1.7692 7.0917 2.2237 6.72715L3.28262 5.78027C3.28262 5.78027 3.58562 5.46149 3.90598 5.73924L6.67778 7.8378L12.8225 2.24523C12.8752 2.21313 12.925 2.18853 12.9719 2.17045C12.8819 2.20244 12.8225 2.24522 12.8225 2.24522C12.8225 2.24522 13.2691 1.7481 13.9509 2.16947L17.0708 3.67344C17.0708 3.67344 17.5474 3.83441 17.5474 4.29996V14.8925C17.5474 14.8925 17.6121 15.2823 17.1513 15.5963L13.5516 17.3702ZM13.6778 16.6205V6.16616L9.09344 9.66672L13.6777 13.1375V16.6319C13.6778 16.6281 13.6778 16.6243 13.6778 16.6205Z" clipRule="evenodd" />
@@ -403,11 +357,11 @@ const NoteAppFragment = () => {
 									<span className="truncate">
 										VSCode Extension
 									</span>{" "}
-									<button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90" style={{ fontSize: "0.625rem" }}>
+									<button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90 transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
 										Downloa<span className="tracking-normal">d</span>
 									</button>
 								</p>
-							</button>
+							</span>
 							<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 								<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 									<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">

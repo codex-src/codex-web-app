@@ -1,7 +1,4 @@
-import * as Meta from "components/Meta"
-import * as SVG from "svgs"
 import AppContainer from "components/AppContainer"
-import E from "lib/Emoji"
 import ExternalLink from "lib/ExternalLink"
 import React from "react"
 

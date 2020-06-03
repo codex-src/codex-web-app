@@ -1,7 +1,6 @@
 import * as Meta from "components/Meta"
 import * as SVG from "svgs"
 import CodexLogo from "components/CodexLogo"
-import E from "lib/Emoji"
 import React from "react"
 import { SplitViewLHSBlock } from "./SplitView"
 
