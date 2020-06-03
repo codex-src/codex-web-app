@@ -71,7 +71,7 @@ const SignUpForm = () => (
 				// Sorted
 				autoComplete="username"
 				id="email"
-				placeholder="leonardo@codexapp.dev"
+				placeholder="leonardo.da.vinci@gmail.com"
 				spellCheck={false}
 				type="text"
 			/>

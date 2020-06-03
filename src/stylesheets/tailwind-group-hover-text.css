@@ -1,0 +1,683 @@
+/*
+ * Tailwind CSS does not support group-hover *and* hover.
+ * This fixes the problem for hover:text-* classes where *
+ * represents all color (text color) classes.
+ *
+ * https://codepen.io/zaydek/pen/qBbBxPr
+*/
+
+.group:hover .hover\:text-transparent:hover {
+	color: transparent;
+}
+
+.group:hover .hover\:text-white:hover {
+	--text-opacity: 1;
+	color: #ffffff;
+	color: rgba(255, 255, 255, var(--text-opacity));
+}
+
+.group:hover .hover\:text-black:hover {
+	--text-opacity: 1;
+	color: #000000;
+	color: rgba(0, 0, 0, var(--text-opacity));
+}
+
+.group:hover .hover\:text-gray-50:hover {
+	--text-opacity: 1;
+	color: #f9fafb;
+	color: rgba(249, 250, 251, var(--text-opacity));
+}
+
+.group:hover .hover\:text-gray-100:hover {
+	--text-opacity: 1;
+	color: #f4f5f7;
+	color: rgba(244, 245, 247, var(--text-opacity));
+}
+
+.group:hover .hover\:text-gray-200:hover {
+	--text-opacity: 1;
+	color: #e5e7eb;
+	color: rgba(229, 231, 235, var(--text-opacity));
+}
+
+.group:hover .hover\:text-gray-300:hover {
+	--text-opacity: 1;
+	color: #d2d6dc;
+	color: rgba(210, 214, 220, var(--text-opacity));
+}
+
+.group:hover .hover\:text-gray-400:hover {
+	--text-opacity: 1;
+	color: #9fa6b2;
+	color: rgba(159, 166, 178, var(--text-opacity));
+}
+
+.group:hover .hover\:text-gray-500:hover {
+	--text-opacity: 1;
+	color: #6b7280;
+	color: rgba(107, 114, 128, var(--text-opacity));
+}
+
+.group:hover .hover\:text-gray-600:hover {
+	--text-opacity: 1;
+	color: #4b5563;
+	color: rgba(75, 85, 99, var(--text-opacity));
+}
+
+.group:hover .hover\:text-gray-700:hover {
+	--text-opacity: 1;
+	color: #374151;
+	color: rgba(55, 65, 81, var(--text-opacity));
+}
+
+.group:hover .hover\:text-gray-800:hover {
+	--text-opacity: 1;
+	color: #252f3f;
+	color: rgba(37, 47, 63, var(--text-opacity));
+}
+
+.group:hover .hover\:text-gray-900:hover {
+	--text-opacity: 1;
+	color: #161e2e;
+	color: rgba(22, 30, 46, var(--text-opacity));
+}
+
+.group:hover .hover\:text-cool-gray-50:hover {
+	--text-opacity: 1;
+	color: #fbfdfe;
+	color: rgba(251, 253, 254, var(--text-opacity));
+}
+
+.group:hover .hover\:text-cool-gray-100:hover {
+	--text-opacity: 1;
+	color: #f1f5f9;
+	color: rgba(241, 245, 249, var(--text-opacity));
+}
+
+.group:hover .hover\:text-cool-gray-200:hover {
+	--text-opacity: 1;
+	color: #e2e8f0;
+	color: rgba(226, 232, 240, var(--text-opacity));
+}
+
+.group:hover .hover\:text-cool-gray-300:hover {
+	--text-opacity: 1;
+	color: #cfd8e3;
+	color: rgba(207, 216, 227, var(--text-opacity));
+}
+
+.group:hover .hover\:text-cool-gray-400:hover {
+	--text-opacity: 1;
+	color: #97a6ba;
+	color: rgba(151, 166, 186, var(--text-opacity));
+}
+
+.group:hover .hover\:text-cool-gray-500:hover {
+	--text-opacity: 1;
+	color: #64748b;
+	color: rgba(100, 116, 139, var(--text-opacity));
+}
+
+.group:hover .hover\:text-cool-gray-600:hover {
+	--text-opacity: 1;
+	color: #475569;
+	color: rgba(71, 85, 105, var(--text-opacity));
+}
+
+.group:hover .hover\:text-cool-gray-700:hover {
+	--text-opacity: 1;
+	color: #364152;
+	color: rgba(54, 65, 82, var(--text-opacity));
+}
+
+.group:hover .hover\:text-cool-gray-800:hover {
+	--text-opacity: 1;
+	color: #27303f;
+	color: rgba(39, 48, 63, var(--text-opacity));
+}
+
+.group:hover .hover\:text-cool-gray-900:hover {
+	--text-opacity: 1;
+	color: #1a202e;
+	color: rgba(26, 32, 46, var(--text-opacity));
+}
+
+.group:hover .hover\:text-red-50:hover {
+	--text-opacity: 1;
+	color: #fdf2f2;
+	color: rgba(253, 242, 242, var(--text-opacity));
+}
+
+.group:hover .hover\:text-red-100:hover {
+	--text-opacity: 1;
+	color: #fde8e8;
+	color: rgba(253, 232, 232, var(--text-opacity));
+}
+
+.group:hover .hover\:text-red-200:hover {
+	--text-opacity: 1;
+	color: #fbd5d5;
+	color: rgba(251, 213, 213, var(--text-opacity));
+}
+
+.group:hover .hover\:text-red-300:hover {
+	--text-opacity: 1;
+	color: #f8b4b4;
+	color: rgba(248, 180, 180, var(--text-opacity));
+}
+
+.group:hover .hover\:text-red-400:hover {
+	--text-opacity: 1;
+	color: #f98080;
+	color: rgba(249, 128, 128, var(--text-opacity));
+}
+
+.group:hover .hover\:text-red-500:hover {
+	--text-opacity: 1;
+	color: #f05252;
+	color: rgba(240, 82, 82, var(--text-opacity));
+}
+
+.group:hover .hover\:text-red-600:hover {
+	--text-opacity: 1;
+	color: #e02424;
+	color: rgba(224, 36, 36, var(--text-opacity));
+}
+
+.group:hover .hover\:text-red-700:hover {
+	--text-opacity: 1;
+	color: #c81e1e;
+	color: rgba(200, 30, 30, var(--text-opacity));
+}
+
+.group:hover .hover\:text-red-800:hover {
+	--text-opacity: 1;
+	color: #9b1c1c;
+	color: rgba(155, 28, 28, var(--text-opacity));
+}
+
+.group:hover .hover\:text-red-900:hover {
+	--text-opacity: 1;
+	color: #771d1d;
+	color: rgba(119, 29, 29, var(--text-opacity));
+}
+
+.group:hover .hover\:text-orange-50:hover {
+	--text-opacity: 1;
+	color: #fff8f1;
+	color: rgba(255, 248, 241, var(--text-opacity));
+}
+
+.group:hover .hover\:text-orange-100:hover {
+	--text-opacity: 1;
+	color: #feecdc;
+	color: rgba(254, 236, 220, var(--text-opacity));
+}
+
+.group:hover .hover\:text-orange-200:hover {
+	--text-opacity: 1;
+	color: #fcd9bd;
+	color: rgba(252, 217, 189, var(--text-opacity));
+}
+
+.group:hover .hover\:text-orange-300:hover {
+	--text-opacity: 1;
+	color: #fdba8c;
+	color: rgba(253, 186, 140, var(--text-opacity));
+}
+
+.group:hover .hover\:text-orange-400:hover {
+	--text-opacity: 1;
+	color: #ff8a4c;
+	color: rgba(255, 138, 76, var(--text-opacity));
+}
+
+.group:hover .hover\:text-orange-500:hover {
+	--text-opacity: 1;
+	color: #ff5a1f;
+	color: rgba(255, 90, 31, var(--text-opacity));
+}
+
+.group:hover .hover\:text-orange-600:hover {
+	--text-opacity: 1;
+	color: #d03801;
+	color: rgba(208, 56, 1, var(--text-opacity));
+}
+
+.group:hover .hover\:text-orange-700:hover {
+	--text-opacity: 1;
+	color: #b43403;
+	color: rgba(180, 52, 3, var(--text-opacity));
+}
+
+.group:hover .hover\:text-orange-800:hover {
+	--text-opacity: 1;
+	color: #8a2c0d;
+	color: rgba(138, 44, 13, var(--text-opacity));
+}
+
+.group:hover .hover\:text-orange-900:hover {
+	--text-opacity: 1;
+	color: #771d1d;
+	color: rgba(119, 29, 29, var(--text-opacity));
+}
+
+.group:hover .hover\:text-yellow-50:hover {
+	--text-opacity: 1;
+	color: #fdfdea;
+	color: rgba(253, 253, 234, var(--text-opacity));
+}
+
+.group:hover .hover\:text-yellow-100:hover {
+	--text-opacity: 1;
+	color: #fdf6b2;
+	color: rgba(253, 246, 178, var(--text-opacity));
+}
+
+.group:hover .hover\:text-yellow-200:hover {
+	--text-opacity: 1;
+	color: #fce96a;
+	color: rgba(252, 233, 106, var(--text-opacity));
+}
+
+.group:hover .hover\:text-yellow-300:hover {
+	--text-opacity: 1;
+	color: #faca15;
+	color: rgba(250, 202, 21, var(--text-opacity));
+}
+
+.group:hover .hover\:text-yellow-400:hover {
+	--text-opacity: 1;
+	color: #e3a008;
+	color: rgba(227, 160, 8, var(--text-opacity));
+}
+
+.group:hover .hover\:text-yellow-500:hover {
+	--text-opacity: 1;
+	color: #c27803;
+	color: rgba(194, 120, 3, var(--text-opacity));
+}
+
+.group:hover .hover\:text-yellow-600:hover {
+	--text-opacity: 1;
+	color: #9f580a;
+	color: rgba(159, 88, 10, var(--text-opacity));
+}
+
+.group:hover .hover\:text-yellow-700:hover {
+	--text-opacity: 1;
+	color: #8e4b10;
+	color: rgba(142, 75, 16, var(--text-opacity));
+}
+
+.group:hover .hover\:text-yellow-800:hover {
+	--text-opacity: 1;
+	color: #723b13;
+	color: rgba(114, 59, 19, var(--text-opacity));
+}
+
+.group:hover .hover\:text-yellow-900:hover {
+	--text-opacity: 1;
+	color: #633112;
+	color: rgba(99, 49, 18, var(--text-opacity));
+}
+
+.group:hover .hover\:text-green-50:hover {
+	--text-opacity: 1;
+	color: #f3faf7;
+	color: rgba(243, 250, 247, var(--text-opacity));
+}
+
+.group:hover .hover\:text-green-100:hover {
+	--text-opacity: 1;
+	color: #def7ec;
+	color: rgba(222, 247, 236, var(--text-opacity));
+}
+
+.group:hover .hover\:text-green-200:hover {
+	--text-opacity: 1;
+	color: #bcf0da;
+	color: rgba(188, 240, 218, var(--text-opacity));
+}
+
+.group:hover .hover\:text-green-300:hover {
+	--text-opacity: 1;
+	color: #84e1bc;
+	color: rgba(132, 225, 188, var(--text-opacity));
+}
+
+.group:hover .hover\:text-green-400:hover {
+	--text-opacity: 1;
+	color: #31c48d;
+	color: rgba(49, 196, 141, var(--text-opacity));
+}
+
+.group:hover .hover\:text-green-500:hover {
+	--text-opacity: 1;
+	color: #0e9f6e;
+	color: rgba(14, 159, 110, var(--text-opacity));
+}
+
+.group:hover .hover\:text-green-600:hover {
+	--text-opacity: 1;
+	color: #057a55;
+	color: rgba(5, 122, 85, var(--text-opacity));
+}
+
+.group:hover .hover\:text-green-700:hover {
+	--text-opacity: 1;
+	color: #046c4e;
+	color: rgba(4, 108, 78, var(--text-opacity));
+}
+
+.group:hover .hover\:text-green-800:hover {
+	--text-opacity: 1;
+	color: #03543f;
+	color: rgba(3, 84, 63, var(--text-opacity));
+}
+
+.group:hover .hover\:text-green-900:hover {
+	--text-opacity: 1;
+	color: #014737;
+	color: rgba(1, 71, 55, var(--text-opacity));
+}
+
+.group:hover .hover\:text-teal-50:hover {
+	--text-opacity: 1;
+	color: #edfafa;
+	color: rgba(237, 250, 250, var(--text-opacity));
+}
+
+.group:hover .hover\:text-teal-100:hover {
+	--text-opacity: 1;
+	color: #d5f5f6;
+	color: rgba(213, 245, 246, var(--text-opacity));
+}
+
+.group:hover .hover\:text-teal-200:hover {
+	--text-opacity: 1;
+	color: #afecef;
+	color: rgba(175, 236, 239, var(--text-opacity));
+}
+
+.group:hover .hover\:text-teal-300:hover {
+	--text-opacity: 1;
+	color: #7edce2;
+	color: rgba(126, 220, 226, var(--text-opacity));
+}
+
+.group:hover .hover\:text-teal-400:hover {
+	--text-opacity: 1;
+	color: #16bdca;
+	color: rgba(22, 189, 202, var(--text-opacity));
+}
+
+.group:hover .hover\:text-teal-500:hover {
+	--text-opacity: 1;
+	color: #0694a2;
+	color: rgba(6, 148, 162, var(--text-opacity));
+}
+
+.group:hover .hover\:text-teal-600:hover {
+	--text-opacity: 1;
+	color: #047481;
+	color: rgba(4, 116, 129, var(--text-opacity));
+}
+
+.group:hover .hover\:text-teal-700:hover {
+	--text-opacity: 1;
+	color: #036672;
+	color: rgba(3, 102, 114, var(--text-opacity));
+}
+
+.group:hover .hover\:text-teal-800:hover {
+	--text-opacity: 1;
+	color: #05505c;
+	color: rgba(5, 80, 92, var(--text-opacity));
+}
+
+.group:hover .hover\:text-teal-900:hover {
+	--text-opacity: 1;
+	color: #014451;
+	color: rgba(1, 68, 81, var(--text-opacity));
+}
+
+.group:hover .hover\:text-blue-50:hover {
+	--text-opacity: 1;
+	color: #ebf5ff;
+	color: rgba(235, 245, 255, var(--text-opacity));
+}
+
+.group:hover .hover\:text-blue-100:hover {
+	--text-opacity: 1;
+	color: #e1effe;
+	color: rgba(225, 239, 254, var(--text-opacity));
+}
+
+.group:hover .hover\:text-blue-200:hover {
+	--text-opacity: 1;
+	color: #c3ddfd;
+	color: rgba(195, 221, 253, var(--text-opacity));
+}
+
+.group:hover .hover\:text-blue-300:hover {
+	--text-opacity: 1;
+	color: #a4cafe;
+	color: rgba(164, 202, 254, var(--text-opacity));
+}
+
+.group:hover .hover\:text-blue-400:hover {
+	--text-opacity: 1;
+	color: #76a9fa;
+	color: rgba(118, 169, 250, var(--text-opacity));
+}
+
+.group:hover .hover\:text-blue-500:hover {
+	--text-opacity: 1;
+	color: #3f83f8;
+	color: rgba(63, 131, 248, var(--text-opacity));
+}
+
+.group:hover .hover\:text-blue-600:hover {
+	--text-opacity: 1;
+	color: #1c64f2;
+	color: rgba(28, 100, 242, var(--text-opacity));
+}
+
+.group:hover .hover\:text-blue-700:hover {
+	--text-opacity: 1;
+	color: #1a56db;
+	color: rgba(26, 86, 219, var(--text-opacity));
+}
+
+.group:hover .hover\:text-blue-800:hover {
+	--text-opacity: 1;
+	color: #1e429f;
+	color: rgba(30, 66, 159, var(--text-opacity));
+}
+
+.group:hover .hover\:text-blue-900:hover {
+	--text-opacity: 1;
+	color: #233876;
+	color: rgba(35, 56, 118, var(--text-opacity));
+}
+
+.group:hover .hover\:text-indigo-50:hover {
+	--text-opacity: 1;
+	color: #f0f5ff;
+	color: rgba(240, 245, 255, var(--text-opacity));
+}
+
+.group:hover .hover\:text-indigo-100:hover {
+	--text-opacity: 1;
+	color: #e5edff;
+	color: rgba(229, 237, 255, var(--text-opacity));
+}
+
+.group:hover .hover\:text-indigo-200:hover {
+	--text-opacity: 1;
+	color: #cddbfe;
+	color: rgba(205, 219, 254, var(--text-opacity));
+}
+
+.group:hover .hover\:text-indigo-300:hover {
+	--text-opacity: 1;
+	color: #b4c6fc;
+	color: rgba(180, 198, 252, var(--text-opacity));
+}
+
+.group:hover .hover\:text-indigo-400:hover {
+	--text-opacity: 1;
+	color: #8da2fb;
+	color: rgba(141, 162, 251, var(--text-opacity));
+}
+
+.group:hover .hover\:text-indigo-500:hover {
+	--text-opacity: 1;
+	color: #6875f5;
+	color: rgba(104, 117, 245, var(--text-opacity));
+}
+
+.group:hover .hover\:text-indigo-600:hover {
+	--text-opacity: 1;
+	color: #5850ec;
+	color: rgba(88, 80, 236, var(--text-opacity));
+}
+
+.group:hover .hover\:text-indigo-700:hover {
+	--text-opacity: 1;
+	color: #5145cd;
+	color: rgba(81, 69, 205, var(--text-opacity));
+}
+
+.group:hover .hover\:text-indigo-800:hover {
+	--text-opacity: 1;
+	color: #42389d;
+	color: rgba(66, 56, 157, var(--text-opacity));
+}
+
+.group:hover .hover\:text-indigo-900:hover {
+	--text-opacity: 1;
+	color: #362f78;
+	color: rgba(54, 47, 120, var(--text-opacity));
+}
+
+.group:hover .hover\:text-purple-50:hover {
+	--text-opacity: 1;
+	color: #f6f5ff;
+	color: rgba(246, 245, 255, var(--text-opacity));
+}
+
+.group:hover .hover\:text-purple-100:hover {
+	--text-opacity: 1;
+	color: #edebfe;
+	color: rgba(237, 235, 254, var(--text-opacity));
+}
+
+.group:hover .hover\:text-purple-200:hover {
+	--text-opacity: 1;
+	color: #dcd7fe;
+	color: rgba(220, 215, 254, var(--text-opacity));
+}
+
+.group:hover .hover\:text-purple-300:hover {
+	--text-opacity: 1;
+	color: #cabffd;
+	color: rgba(202, 191, 253, var(--text-opacity));
+}
+
+.group:hover .hover\:text-purple-400:hover {
+	--text-opacity: 1;
+	color: #ac94fa;
+	color: rgba(172, 148, 250, var(--text-opacity));
+}
+
+.group:hover .hover\:text-purple-500:hover {
+	--text-opacity: 1;
+	color: #9061f9;
+	color: rgba(144, 97, 249, var(--text-opacity));
+}
+
+.group:hover .hover\:text-purple-600:hover {
+	--text-opacity: 1;
+	color: #7e3af2;
+	color: rgba(126, 58, 242, var(--text-opacity));
+}
+
+.group:hover .hover\:text-purple-700:hover {
+	--text-opacity: 1;
+	color: #6c2bd9;
+	color: rgba(108, 43, 217, var(--text-opacity));
+}
+
+.group:hover .hover\:text-purple-800:hover {
+	--text-opacity: 1;
+	color: #5521b5;
+	color: rgba(85, 33, 181, var(--text-opacity));
+}
+
+.group:hover .hover\:text-purple-900:hover {
+	--text-opacity: 1;
+	color: #4a1d96;
+	color: rgba(74, 29, 150, var(--text-opacity));
+}
+
+.group:hover .hover\:text-pink-50:hover {
+	--text-opacity: 1;
+	color: #fdf2f8;
+	color: rgba(253, 242, 248, var(--text-opacity));
+}
+
+.group:hover .hover\:text-pink-100:hover {
+	--text-opacity: 1;
+	color: #fce8f3;
+	color: rgba(252, 232, 243, var(--text-opacity));
+}
+
+.group:hover .hover\:text-pink-200:hover {
+	--text-opacity: 1;
+	color: #fad1e8;
+	color: rgba(250, 209, 232, var(--text-opacity));
+}
+
+.group:hover .hover\:text-pink-300:hover {
+	--text-opacity: 1;
+	color: #f8b4d9;
+	color: rgba(248, 180, 217, var(--text-opacity));
+}
+
+.group:hover .hover\:text-pink-400:hover {
+	--text-opacity: 1;
+	color: #f17eb8;
+	color: rgba(241, 126, 184, var(--text-opacity));
+}
+
+.group:hover .hover\:text-pink-500:hover {
+	--text-opacity: 1;
+	color: #e74694;
+	color: rgba(231, 70, 148, var(--text-opacity));
+}
+
+.group:hover .hover\:text-pink-600:hover {
+	--text-opacity: 1;
+	color: #d61f69;
+	color: rgba(214, 31, 105, var(--text-opacity));
+}
+
+.group:hover .hover\:text-pink-700:hover {
+	--text-opacity: 1;
+	color: #bf125d;
+	color: rgba(191, 18, 93, var(--text-opacity));
+}
+
+.group:hover .hover\:text-pink-800:hover {
+	--text-opacity: 1;
+	color: #99154b;
+	color: rgba(153, 21, 75, var(--text-opacity));
+}
+
+.group:hover .hover\:text-pink-900:hover {
+	--text-opacity: 1;
+	color: #751a3d;
+	color: rgba(117, 26, 61, var(--text-opacity));
+}

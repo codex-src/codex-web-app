@@ -7,9 +7,10 @@ import firebase from "firebase/app"
 import "firebase/auth"
 
 import "debug.css"
+import "stylesheets/tailwind.generated.css" // Takes precedence
 import "stylesheets/tailwind-color-variables.css"
 import "stylesheets/tailwind-em-context.css"
-import "stylesheets/tailwind.generated.css"
+import "stylesheets/tailwind-group-hover-text.css"
 
 ;(() => {
 	firebase.initializeApp({
