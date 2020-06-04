@@ -97,8 +97,16 @@ const NoteDetails = ({ className, open: $open, children }) => {
 
 	const [open, setOpen] = React.useState($open)
 
+	// const [offsetHeight, scrollHeight] = React.useMemo(() => {
+	// 	if (!ref.current) {
+	// 		return [6 + (16 * 1.25) + 6, 0] // py-1.5 (text-base) leading-5
+	// 	}
+	// 	return [ref.current.children[0].offsetHeight, ref.current.scrollHeight]
+	// }, [ref.current])
+	// console.log(offsetHeight, scrollHeight)
+
 	const [offsetHeight, setOffsetHeight] = React.useState(6 + (16 * 1.25) + 6) // py-1.5 (text-base) leading-5
-	const [scrollHeight, setScrollHeight] = React.useState(0)
+	const [scrollHeight, setScrollHeight] = React.useState(6 + (16 * 1.25) + 6)
 
 	React.useLayoutEffect(() => {
 		setOffsetHeight(ref.current.children[0].offsetHeight)
@@ -115,7 +123,7 @@ const NoteDetails = ({ className, open: $open, children }) => {
 						from="transform rotate-0"
 						to="transform rotate-90"
 					>
-						<svg className="mr-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transform rotate-90 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+						<svg className="mr-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500" fill="currentColor" viewBox="0 0 20 20">
 							<path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
 						</svg>
 					</TransitionV2>
