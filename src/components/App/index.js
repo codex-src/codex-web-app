@@ -1,6 +1,7 @@
 // import HomePage from "pages/HomePage"
 // import Transition from "lib/Transition"
 import * as routes from "routes"
+import asArray from "lib/asArray"
 import E from "lib/Emoji"
 import PricingPage from "pages/PricingPage"
 import React from "react"
@@ -8,6 +9,11 @@ import SignInPage from "pages/SignInPage"
 import SignUpPage from "pages/SignUpPage"
 import TransitionV2 from "lib/TransitionV2"
 import trimSpaces from "lib/trimSpaces"
+
+import {
+	SwitchOn,
+	SwitchOnCase,
+} from "lib/SwitchOn"
 
 import {
 	BrowserRouter,
@@ -26,7 +32,7 @@ import {
 // 		.slice(2, 6)
 // }
 
-const NoteDetailsItem = ({ tabIndex, children }) => {
+const NoteItem = ({ tabIndex, children }) => {
 	const ref = React.useRef()
 
 	const [hovered, setHovered] = React.useState(false)
@@ -86,14 +92,7 @@ const NoteDetailsItem = ({ tabIndex, children }) => {
 	)
 }
 
-function asArray(children) {
-	if (!Array.isArray(children)) {
-		return [children]
-	}
-	return children
-}
-
-const NoteDetails = ({ className, open: $open, children }) => {
+const NoteList = ({ className, open: $open, children }) => {
 	const ref = React.useRef()
 
 	const [open, setOpen] = React.useState($open)
@@ -101,7 +100,6 @@ const NoteDetails = ({ className, open: $open, children }) => {
 	const [offsetHeight, setOffsetHeight] = React.useState(6 + (16 * 1.25) + 6) // py-1.5 (text-base) leading-5
 	const [scrollHeight, setScrollHeight] = React.useState(6 + (16 * 1.25) + 6)
 
-	const mounted = React.useRef()
 	React.useEffect(() => {
 		const id = setTimeout(() => {
 			setOffsetHeight(ref.current.children[0].offsetHeight)
@@ -112,6 +110,7 @@ const NoteDetails = ({ className, open: $open, children }) => {
 		}
 	}, [])
 
+	const childrenAsArray = asArray(children)
 	return (
 		<nav
 			ref={ref}
@@ -131,14 +130,27 @@ const NoteDetails = ({ className, open: $open, children }) => {
 						</svg>
 					</TransitionV2>
 					<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-						<path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+						<SwitchOn on={childrenAsArray[0]}>
+							<SwitchOnCase case="Notes">
+								<path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+							</SwitchOnCase>
+							<SwitchOnCase case="Archive">
+								<React.Fragment>
+									<path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+									<path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
+								</React.Fragment>
+							</SwitchOnCase>
+							<SwitchOnCase case="Trash">
+								<path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+							</SwitchOnCase>
+						</SwitchOn>
 					</svg>
 					<span className="truncate">
-						{asArray(children)[0]}
+						{childrenAsArray[0]}
 					</span>
 				</p>
 			</button>
-			{!asArray(children).slice(1).length ? (
+			{!childrenAsArray.slice(1).length ? (
 				<div className="pr-4 py-1.5" style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}>
 					<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-400">
 						<span className="truncate">
@@ -147,7 +159,7 @@ const NoteDetails = ({ className, open: $open, children }) => {
 					</p>
 				</div>
 			) : (
-				asArray(children).slice(1).map((each, x) => (
+				childrenAsArray.slice(1).map((each, x) => (
 					React.cloneElement(each, {
 						key: x,
 						tabIndex: !open ? -1 : 0,
@@ -188,7 +200,7 @@ const NoteAppFragment = () => {
 				to="transform translate-x-0"
 			>
 				{/* NOTE: Use overflow-x-hidden because of width:
-				(!hovered && !focused) && 0 in <NoteDetailsItem> */}
+				(!hovered && !focused) && 0 in <NoteItem> */}
 				<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-x-hidden overflow-y-scroll scrolling-touch z-10 cursor-pointer">
 
 					<header
@@ -289,61 +301,40 @@ const NoteAppFragment = () => {
 						</button>
 					</nav>
 
-					{/* <hr className="mt-6 border-t-2 border-cool-gray-200" /> */}
-
 					<div className="mt-6">
 
-						<NoteDetails className="my-2 mt-0" open>
+						<NoteList className="my-2 mt-0" open>
 							Notes
-							<NoteDetailsItem>
+							<NoteItem>
 								JavaScript in 2020
-							</NoteDetailsItem>
-							<NoteDetailsItem>
+							</NoteItem>
+							<NoteItem>
 								Programming isn’t as hard as you think <E>😤</E>
-							</NoteDetailsItem>
-							<NoteDetailsItem>
+							</NoteItem>
+							<NoteItem>
 								How to build a beautiful blog <E>👨🏻‍🍳</E>
-							</NoteDetailsItem>
-							<NoteDetailsItem>
+							</NoteItem>
+							<NoteItem>
 								What I wish I’d known one year ago
-							</NoteDetailsItem>
-							<NoteDetailsItem>
+							</NoteItem>
+							<NoteItem>
 								You don’t know what you don’t know
-							</NoteDetailsItem>
-							<NoteDetailsItem>
+							</NoteItem>
+							<NoteItem>
 								What I learned from Carl Sagan <E>🚀</E>
-							</NoteDetailsItem>
-							<NoteDetailsItem>
+							</NoteItem>
+							<NoteItem>
 								Why I love StarTalk <E>❤️</E>
-							</NoteDetailsItem>
-						</NoteDetails>
+							</NoteItem>
+						</NoteList>
 
-						{/* <NoteDetails className="my-2"> */}
-						{/* 	Public */}
-						{/* 	<NoteDetailsItem> */}
-						{/* 		Why you should learn programming in 2020 <E>👨🏻‍🍳</E> */}
-						{/* 	</NoteDetailsItem> */}
-						{/* 	<NoteDetailsItem> */}
-						{/* 		Who really knows what programming is <E>🤔</E> */}
-						{/* 	</NoteDetailsItem> */}
-						{/* 	<NoteDetailsItem> */}
-						{/* 		The missing CSS property */}
-						{/* 	</NoteDetailsItem> */}
-						{/* 	<NoteDetailsItem> */}
-						{/* 		To build or not to build a blog <E>🚀</E> */}
-						{/* 	</NoteDetailsItem> */}
-						{/* 	<NoteDetailsItem> */}
-						{/* 		Surprise! You can now fund me on Patreon <E>❤️</E> */}
-						{/* 	</NoteDetailsItem> */}
-						{/* </NoteDetails> */}
-
-						<NoteDetails className="my-2">
+						<NoteList className="my-2">
 							Archive
-						</NoteDetails>
+						</NoteList>
 
-						<NoteDetails className="my-2">
+						<NoteList className="my-2">
 							Trash
-						</NoteDetails>
+						</NoteList>
 
 						<hr className="mt-6 border-t-2 border-cool-gray-200" />
 
