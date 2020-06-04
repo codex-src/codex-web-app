@@ -7,6 +7,7 @@ import React from "react"
 import SignInPage from "pages/SignInPage"
 import SignUpPage from "pages/SignUpPage"
 import TransitionV2 from "lib/TransitionV2"
+import trimSpaces from "lib/trimSpaces"
 
 import {
 	BrowserRouter,
@@ -97,24 +98,26 @@ const NoteDetails = ({ className, open: $open, children }) => {
 
 	const [open, setOpen] = React.useState($open)
 
-	// const [offsetHeight, scrollHeight] = React.useMemo(() => {
-	// 	if (!ref.current) {
-	// 		return [6 + (16 * 1.25) + 6, 0] // py-1.5 (text-base) leading-5
-	// 	}
-	// 	return [ref.current.children[0].offsetHeight, ref.current.scrollHeight]
-	// }, [ref.current])
-	// console.log(offsetHeight, scrollHeight)
-
 	const [offsetHeight, setOffsetHeight] = React.useState(6 + (16 * 1.25) + 6) // py-1.5 (text-base) leading-5
 	const [scrollHeight, setScrollHeight] = React.useState(6 + (16 * 1.25) + 6)
 
-	React.useLayoutEffect(() => {
-		setOffsetHeight(ref.current.children[0].offsetHeight)
-		setScrollHeight(ref.current.scrollHeight)
-	}, [open])
+	const mounted = React.useRef()
+	React.useEffect(() => {
+		const id = setTimeout(() => {
+			setOffsetHeight(ref.current.children[0].offsetHeight)
+			setScrollHeight(ref.current.scrollHeight)
+		}, 500)
+		return () => {
+			clearTimeout(id)
+		}
+	}, [])
 
 	return (
-		<nav ref={ref} className={className} style={{ height: !open ? offsetHeight : scrollHeight, overflowY: "hidden", transition: "height 300ms cubic-bezier(0.4, 0, 0.2, 1)" }}>
+		<nav
+			ref={ref}
+			className={trimSpaces(`overflow-y-hidden ${className}`)}
+			style={{ height: !open ? offsetHeight : scrollHeight, transition: "height 300ms cubic-bezier(0.4, 0, 0.2, 1)" }}
+		>
 			<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out" onClick={() => setOpen(!open)}>
 				<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 					<TransitionV2
@@ -190,7 +193,7 @@ const NoteAppFragment = () => {
 
 					<header
 						// NOTE: Uses duration-300 not duration-150
-						className="py-6 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none transition duration-300 ease-in-out"
+						className="py-6 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none transition duration-300 ease-in-out z-10"
 						style={{ borderColor: !scrollPercent && "transparent" }}
 						onMouseEnter={() => setHoveredAccount(true)}
 						onMouseLeave={() => setHoveredAccount(false)}
