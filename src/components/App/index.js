@@ -1,11 +1,12 @@
 // import HomePage from "pages/HomePage"
+// import Transition from "lib/Transition"
 import * as routes from "routes"
 import E from "lib/Emoji"
 import PricingPage from "pages/PricingPage"
 import React from "react"
 import SignInPage from "pages/SignInPage"
 import SignUpPage from "pages/SignUpPage"
-import Transition from "lib/Transition"
+import TransitionV2 from "lib/TransitionV2"
 
 import {
 	BrowserRouter,
@@ -25,10 +26,14 @@ import {
 // }
 
 const NoteItem = ({ children }) => {
+	const ref = React.useRef()
+
 	const [hovered, setHovered] = React.useState(false)
 	const [focused, setFocused] = React.useState(false)
+
 	return (
 		<div
+			ref={ref}
 			className="pr-4 py-1.5 group hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out cursor-pointer"
 			style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
 			onMouseEnter={() => setHovered(true)}
@@ -41,25 +46,37 @@ const NoteItem = ({ children }) => {
 				<span className="truncate">
 					{children}
 				</span>
-				{(hovered || focused) && (
-					<span className="ml-auto flex flex-row items-center">
-						<span className="group inline-block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
-							<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-								<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-							</svg>
-						</span>
-						<span className="group inline-block text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
-							<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-								<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-							</svg>
-						</span>
-						<span className="group inline-block text-cool-gray-400 hover:text-red-600 focus:text-red-600 focus:outline-none transform scale-90 transition duration-150 ease-in-out">
-							<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
-								<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-							</svg>
-						</span>
-					</span>
-				)}
+				<span
+					// NOTE: Do not use add transition classes because
+					// of width: 0
+					className="ml-auto flex flex-row items-center"
+					style={{ width: (!hovered && !focused) && 0, opacity: (!hovered && !focused) && 0 }}
+				>
+					<button
+						className="group inline-block w-full text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
+						onBlur={e => e.stopPropagation()}
+					>
+						<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+							<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+						</svg>
+					</button>
+					<button
+						className="group inline-block w-full text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
+						onBlur={e => e.stopPropagation()}
+					>
+						<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+							<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+						</svg>
+					</button>
+					<button
+						className="group inline-block w-full text-cool-gray-400 hover:text-red-600 focus:text-red-600 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
+						// onBlur={e => e.stopPropagation()}
+					>
+						<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
+							<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+						</svg>
+					</button>
+				</span>
 			</p>
 		</div>
 	)
@@ -72,17 +89,17 @@ const NoteAppFragment = () => {
 	const scollingElementRef = React.useRef()
 	const [scrollPercent, setScrollPercent] = React.useState(0)
 
-	React.useEffect(() => {
-		// react-hooks/exhaustive-deps
-		const scollingElement = scollingElementRef.current
-		const handler = () => {
-			setScrollPercent(scollingElement.scrollTop / (scollingElement.scrollHeight - scollingElement.offsetHeight))
-		}
-		scollingElement.addEventListener("scroll", handler, false)
-		return () => {
-			scollingElement.removeEventListener("scroll", handler, false)
-		}
-	}, [])
+	// React.useEffect(() => {
+	// 	// react-hooks/exhaustive-deps
+	// 	const scollingElement = scollingElementRef.current
+	// 	const handler = () => {
+	// 		setScrollPercent(scollingElement.scrollTop / (scollingElement.scrollHeight - scollingElement.offsetHeight))
+	// 	}
+	// 	scollingElement.addEventListener("scroll", handler, false)
+	// 	return () => {
+	// 		scollingElement.removeEventListener("scroll", handler, false)
+	// 	}
+	// }, [])
 
 	return (
 		<React.Fragment>
@@ -100,16 +117,21 @@ const NoteAppFragment = () => {
 			{/* 	leaveTo="transform -translate-x-80" */}
 			{/* > */}
 
- 				{/* transform -translate-x-80 lg:translate-x-0 transition duration-500 ease-in-out */}
-				<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch transform -translate-x-80 lg:translate-x-0 transition duration-500 ease-in-out cursor-pointer">
+			<TransitionV2
+				on={showSidebar}
+				before="transition duration-500 ease-in-out transform translate-x-0"
+				after="transition duration-500 ease-in-out transform -translate-x-80"
+				unmountAfterEnd
+			>
+				<div /* ref={scollingElementRef} */ className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch cursor-pointer">
 
 					<header
 						// NOTE: Uses duration-300 not duration-150
 						className="py-6 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none z-10 transition duration-300 ease-in-out"
 						style={{ borderColor: !scrollPercent && "transparent" }}
-						tabIndex="0"
 						onMouseEnter={() => setHoveredAccount(true)}
 						onMouseLeave={() => setHoveredAccount(false)}
+						tabIndex="0"
 					>
 
 						<div className="px-4 flex flex-row justify-between items-center">
@@ -125,16 +147,16 @@ const NoteAppFragment = () => {
 									</div>
 								</div>
 							</div>
-							<button className="mr-2 flex-none group inline-block focus:outline-none" /* onClick={() => setShowSidebar(false)} */>
+							<button className="mr-2 flex-none group inline-block focus:outline-none" onClick={() => setShowSidebar(false)}>
 								<svg className="w-5 h-5 text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+									{/* <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" /> */}
 									<path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
 								</svg>
 							</button>
 						</div>
 
-						{/* NOTE: Uses mt-5 -mb-1 because of py-1 -- was
-						mt-6 */}
-						<div className="!mt-6 mt-5 -mb-1 px-4 py-1 flex flex-row items-center truncate">
+						{/* NOTE: Uses mt-5 -mb-1 py-1 -- was mt-6 */}
+						<div className="mt-5 -mb-1 px-4 py-1 flex flex-row items-center truncate">
 							<div className="mr-3 relative flex-none">
 								<img className="w-12 h-12 object-cover bg-cool-gray-200 rounded-full shadow-hero" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
 								{/* <div className="absolute bottom-0 right-0"> */}
@@ -158,7 +180,7 @@ const NoteAppFragment = () => {
 										{!hoveredAccount ? (
 											"Front End Developer and Collector of Video Games"
 										) : (
-											"Click to Open Settings"
+											"Open Settings"
 										)}
 									</span>
 								</p>
@@ -415,8 +437,7 @@ const NoteAppFragment = () => {
 					</div>
 
 				</div>
-
-			{/* </Transition> */}
+			</TransitionV2>
 
 			{/* RHS */}
 			<div className="ml-0 lg:ml-80 px-6 py-24 flex-1">
