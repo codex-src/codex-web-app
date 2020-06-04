@@ -25,7 +25,7 @@ import {
 // 		.slice(2, 6)
 // }
 
-const NoteItem = ({ children }) => {
+const NoteDetailsItem = ({ tabIndex, children }) => {
 	const ref = React.useRef()
 
 	const [hovered, setHovered] = React.useState(false)
@@ -40,7 +40,7 @@ const NoteItem = ({ children }) => {
 			onMouseLeave={() => setHovered(false)}
 			onFocus={() => setFocused(true)}
 			onBlur={() => setFocused(false)}
-			tabIndex={0}
+			tabIndex={tabIndex}
 		>
 			<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 				<span className="truncate">
@@ -55,6 +55,7 @@ const NoteItem = ({ children }) => {
 					<button
 						className="group inline-block w-full text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
 						onBlur={e => e.stopPropagation()}
+						tabIndex={tabIndex}
 					>
 						<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 							<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -63,6 +64,7 @@ const NoteItem = ({ children }) => {
 					<button
 						className="group inline-block w-full text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
 						onBlur={e => e.stopPropagation()}
+						tabIndex={tabIndex}
 					>
 						<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 							<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
@@ -71,6 +73,7 @@ const NoteItem = ({ children }) => {
 					<button
 						className="group inline-block w-full text-cool-gray-400 hover:text-red-600 focus:text-red-600 focus:outline-none transform scale-90 transition duration-150 ease-in-out"
 						// onBlur={e => e.stopPropagation()}
+						tabIndex={tabIndex}
 					>
 						<svg className="ml-1 w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 							<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -79,6 +82,68 @@ const NoteItem = ({ children }) => {
 				</span>
 			</p>
 		</div>
+	)
+}
+
+function asArray(children) {
+	if (!Array.isArray(children)) {
+		return [children]
+	}
+	return children
+}
+
+const NoteDetails = ({ className, open: $open, children }) => {
+	const ref = React.useRef()
+
+	const [open, setOpen] = React.useState($open)
+
+	const [offsetHeight, setOffsetHeight] = React.useState(6 + (16 * 1.25) + 6) // py-1.5 (text-base) leading-5
+	const [scrollHeight, setScrollHeight] = React.useState(0)
+
+	React.useLayoutEffect(() => {
+		setOffsetHeight(ref.current.children[0].offsetHeight)
+		setScrollHeight(ref.current.scrollHeight)
+	}, [open])
+
+	return (
+		<nav ref={ref} className={className} style={{ height: !open ? offsetHeight : scrollHeight, overflowY: "hidden", transition: "height 300ms cubic-bezier(0.4, 0, 0.2, 1)" }}>
+			<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out" onClick={() => setOpen(!open)}>
+				<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
+					<TransitionV2
+						on={open}
+						transition="transition duration-300 ease-in-out"
+						from="transform rotate-0"
+						to="transform rotate-90"
+					>
+						<svg className="mr-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transform rotate-90 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+							<path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+						</svg>
+					</TransitionV2>
+					<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+						<path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+					</svg>
+					<span className="truncate">
+						{asArray(children)[0]}
+					</span>
+				</p>
+			</button>
+			{!asArray(children).slice(1).length ? (
+				<div className="pr-4 py-1.5" style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}>
+					<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-400">
+						<span className="truncate">
+							(Empty)
+						</span>
+					</p>
+				</div>
+			) : (
+				asArray(children).slice(1).map((each, x) => (
+					React.cloneElement(each, {
+						key: x,
+						tabIndex: !open ? -1 : 0,
+					})
+				))
+			)}
+		</nav>
 	)
 }
 
@@ -105,25 +170,15 @@ const NoteAppFragment = () => {
 		<React.Fragment>
 
 			{/* LHS */}
-
-			{/* <Transition */}
-			{/* 	unmountOnExit={false} */}
-			{/* 	show={showSidebar} */}
-			{/* 	enter="transition duration-500 ease-in-out" */}
-			{/* 	enterFrom="transform -translate-x-80" */}
-			{/* 	enterTo="transform translate-x-0" */}
-			{/* 	leave="transition duration-500 ease-in-out" */}
-			{/* 	leaveFrom="transform translate-x-0" */}
-			{/* 	leaveTo="transform -translate-x-80" */}
-			{/* > */}
-
 			<TransitionV2
 				on={showSidebar}
 				transition="transition duration-500 ease-in-out"
 				from="transform -translate-x-80"
 				to="transform translate-x-0"
 			>
-				<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch z-10 cursor-pointer">
+				{/* NOTE: Use overflow-x-hidden because of width:
+				(!hovered && !focused) && 0 in <NoteDetailsItem> */}
+				<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-x-hidden overflow-y-scroll scrolling-touch z-10 cursor-pointer">
 
 					<header
 						// NOTE: Uses duration-300 not duration-150
@@ -227,126 +282,57 @@ const NoteAppFragment = () => {
 
 					<div className="mt-6">
 
-						<nav className="my-2 mt-0">
-							<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-								<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-									<svg className="mr-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transform rotate-90 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-										<path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-									</svg>
-									<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-										<path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
-									</svg>
-									<span className="truncate">
-										Private
-									</span>
-								</p>
-							</button>
-							<NoteItem>
+						<NoteDetails className="my-2 mt-0" open>
+							Notes
+							<NoteDetailsItem>
 								JavaScript in 2020
-							</NoteItem>
-							<NoteItem>
+							</NoteDetailsItem>
+							<NoteDetailsItem>
 								Programming isn’t as hard as you think <E>😤</E>
-							</NoteItem>
-							<NoteItem>
+							</NoteDetailsItem>
+							<NoteDetailsItem>
 								How to build a beautiful blog <E>👨🏻‍🍳</E>
-							</NoteItem>
-							<NoteItem>
+							</NoteDetailsItem>
+							<NoteDetailsItem>
 								What I wish I’d known one year ago
-							</NoteItem>
-							<NoteItem>
+							</NoteDetailsItem>
+							<NoteDetailsItem>
 								You don’t know what you don’t know
-							</NoteItem>
-							<NoteItem>
+							</NoteDetailsItem>
+							<NoteDetailsItem>
 								What I learned from Carl Sagan <E>🚀</E>
-							</NoteItem>
-							<NoteItem>
+							</NoteDetailsItem>
+							<NoteDetailsItem>
 								Why I love StarTalk <E>❤️</E>
-							</NoteItem>
-						</nav>
+							</NoteDetailsItem>
+						</NoteDetails>
 
-						<nav className="my-2">
-							<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-								<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-									<svg className="mr-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transform rotate-90 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-										<path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-									</svg>
-									<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-										<path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
-									</svg>
-									<span className="truncate">
-										Public
-									</span>
-								</p>
-							</button>
-							<NoteItem>
-								Why you should learn programming in 2020 <E>👨🏻‍🍳</E>
-							</NoteItem>
-							<NoteItem>
-								Who really knows what programming is <E>🤔</E>
-							</NoteItem>
-							<NoteItem>
-								The missing CSS property
-							</NoteItem>
-							<NoteItem>
-								To build or not to build a blog <E>🚀</E>
-							</NoteItem>
-							<NoteItem>
-								Surprise! You can now fund me on Patreon <E>❤️</E>
-							</NoteItem>
-						</nav>
+						{/* <NoteDetails className="my-2"> */}
+						{/* 	Public */}
+						{/* 	<NoteDetailsItem> */}
+						{/* 		Why you should learn programming in 2020 <E>👨🏻‍🍳</E> */}
+						{/* 	</NoteDetailsItem> */}
+						{/* 	<NoteDetailsItem> */}
+						{/* 		Who really knows what programming is <E>🤔</E> */}
+						{/* 	</NoteDetailsItem> */}
+						{/* 	<NoteDetailsItem> */}
+						{/* 		The missing CSS property */}
+						{/* 	</NoteDetailsItem> */}
+						{/* 	<NoteDetailsItem> */}
+						{/* 		To build or not to build a blog <E>🚀</E> */}
+						{/* 	</NoteDetailsItem> */}
+						{/* 	<NoteDetailsItem> */}
+						{/* 		Surprise! You can now fund me on Patreon <E>❤️</E> */}
+						{/* 	</NoteDetailsItem> */}
+						{/* </NoteDetails> */}
 
-						<nav className="my-2">
-							<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-								<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-									<svg className="mr-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transform rotate-90 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-										<path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-									</svg>
-									<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-										<path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
-										<path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
-									</svg>
-									<span className="truncate">
-										Archive
-									</span>
-								</p>
-							</button>
-							<div
-								className="pr-4 py-1.5"
-								style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-							>
-								<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-400">
-									<span className="truncate">
-										Empty
-									</span>
-								</p>
-							</div>
-						</nav>
+						<NoteDetails className="my-2">
+							Archive
+						</NoteDetails>
 
-						<nav className="my-2 mb-0">
-							<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-								<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-									<svg className="mr-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transform rotate-90 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-										<path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-									</svg>
-									<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-										<path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-									</svg>
-									<span className="truncate">
-										Trash
-									</span>
-								</p>
-							</button>
-							<div
-								className="pr-4 py-1.5"
-								style={{ paddingLeft: "1.625rem" /* pl-6.5 */ }}
-							>
-								<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-400">
-									<span className="truncate">
-										Empty
-									</span>
-								</p>
-							</div>
-						</nav>
+						<NoteDetails className="my-2">
+							Trash
+						</NoteDetails>
 
 						<hr className="mt-6 border-t-2 border-cool-gray-200" />
 
@@ -442,60 +428,9 @@ const NoteAppFragment = () => {
 			{/* RHS */}
 			<div className="ml-0 lg:ml-80 px-6 py-24 flex-1">
 				{/* ... */}
-
-				<Dialog />
 			</div>
 
 		</React.Fragment>
-	)
-}
-
-// FIXME: border-t and border-b
-const Dialog = () => {
-	const ref = React.useRef()
-
-	const [open, setOpen] = React.useState(false)
-
-	const [offsetHeight, setOffsetHeight] = React.useState(0)
-	const [scrollHeight, setScrollHeight] = React.useState(0)
-
-	React.useLayoutEffect(() => {
-		setOffsetHeight(ref.current.children[0].offsetHeight)
-		setScrollHeight(ref.current.scrollHeight)
-	}, [open])
-
-	return (
-		<div ref={ref} style={{ height: !open ? offsetHeight : scrollHeight, overflowY: "hidden", transition: "height 250ms cubic-bezier(0.4, 0, 0.2, 1)" }}>
-			<button className="px-2 py-4 inline-block w-full bg-green-100" onClick={() => setOpen(!open)}>
-				<p className="flex flex-row items-center">
-					<TransitionV2
-						on={open}
-						transition="transition duration-150 ease-in-out"
-						from="transform rotate-0"
-						to="transform rotate-90"
-					>
-						<svg className="mr-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500" fill="currentColor" viewBox="0 0 20 20">
-							<path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-						</svg>
-					</TransitionV2>{" "}
-					hello
-				</p>
-			</button>
-			{/* <div style={{ visibility: !open && "hidden" }}> */}
-			<button className="px-2 py-4 inline-block w-full bg-gray-100" onClick={e => e.stopPropagation()} tabIndex={!open ? -1 : undefined}>
-				hello
-			</button>
-			<button className="px-2 py-4 inline-block w-full bg-gray-100" onClick={e => e.stopPropagation()} tabIndex={!open ? -1 : undefined}>
-				hello
-			</button>
-			<button className="px-2 py-4 inline-block w-full bg-gray-100" onClick={e => e.stopPropagation()} tabIndex={!open ? -1 : undefined}>
-				hello
-			</button>
-			<button className="px-2 py-4 inline-block w-full bg-gray-100" onClick={e => e.stopPropagation()} tabIndex={!open ? -1 : undefined}>
-				hello
-			</button>
-			{/* </div> */}
-		</div>
 	)
 }
 
