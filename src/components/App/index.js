@@ -270,7 +270,7 @@ const NoteAppFragment = () => {
 									<img className="w-12 h-12 object-cover bg-cool-gray-200 rounded-full shadow-hero" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
 								</div>
 								<div className="truncate">
-									<h2 className="flex flex-row items-center font-medium text-sm leading-6 text-cool-gray-600 group-hover:text-cool-gray-700 transition duration-150 ease-in-out">
+									<h2 className="flex flex-row items-center font-medium text-sm leading-6 text-cool-gray-600">
 										<span className="truncate">
 											Russ Perry
 										</span>
@@ -279,7 +279,7 @@ const NoteAppFragment = () => {
 										{/* 	Upgrad<span className="tracking-normal">e</span> */}
 										{/* </button> */}
 									</h2>
-									<p className="font-medium text-sm leading-6 truncate text-cool-gray-400 transition duration-150 ease-in-out">
+									<p className="font-medium text-sm leading-6 truncate text-cool-gray-400">
 										<span className="truncate">
 											Connected via Google
 										</span>
