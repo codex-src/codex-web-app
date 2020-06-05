@@ -214,13 +214,14 @@ const NoteAppFragment = () => {
 		<React.Fragment>
 
 			{/* LHS */}
-			<div className="relative">
+			{/* NOTE: Uses min-h-screen because of absolute inset-0 */}
+			<div className="relative min-h-screen">
 
-				{/* Responive sidebar overlay */}
+				{/* Responsive sidebar overlay */}
 				<TransitionV2
 					on={showSidebar}
 					transition="transition duration-500 ease-in-out"
-					from="bg-transparent opacity-100 pointer-events-none"
+					from="bg-transparent opacity-0 pointer-events-none"
 					to="bg-black lg:bg-transparent opacity-50 lg:opacity-100 pointer-events-auto lg:pointer-events-none"
 				>
 					<div
@@ -279,7 +280,9 @@ const NoteAppFragment = () => {
 								{/* </div> */}
 							</div>
 
-							{/* NOTE: Uses mt-5 -mb-1 py-1 -- was mt-6 */}
+							{/* NOTE: Uses mt-5 -mb-1 py-1 (was mt-6)
+							because py-6 on the parent element (<header>)
+							cuts off shadow-hero */}
 							<div className="mt-5 -mb-1 px-4 py-1 flex flex-row items-center truncate">
 								<div className="mr-3 relative flex-none">
 									<img className="w-12 h-12 object-cover bg-cool-gray-200 rounded-full shadow-hero" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
@@ -465,24 +468,13 @@ const NoteAppFragment = () => {
 				<div className="flex-1 overflow-x-hidden">
 
 					<div className="px-4 py-6 fixed top-0 left-0 z-10 pointer-events-none">
-						<TransitionV2
-							on={showSidebar}
-							transition="transition duration-500 ease-in-out"
-							from="opacity-100 transform translate-x-0"
-							to="opacity-0 transform translate-x-64"
-						>
-							{/* NOTE: Uses a <div> to separate transition
-							classes; pointer-events-auto is hoisted */}
-							<div className="pointer-events-auto">
-								<button className="inline-block text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transform scale-105 transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
-									<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-										{/* <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" /> */}
-										{/* <path fillRule="evenodd" d="M3 7a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /> */}
-										<path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-									</svg>
-								</button>
-							</div>
-						</TransitionV2>
+						<button className="inline-block text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transform scale-105 transition duration-150 ease-in-out pointer-events-auto" onClick={() => setShowSidebar(!showSidebar)}>
+							<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+								{/* <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" /> */}
+								{/* <path fillRule="evenodd" d="M3 7a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /> */}
+								<path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+							</svg>
+						</button>
 					</div>
 
 					<TransitionV2
