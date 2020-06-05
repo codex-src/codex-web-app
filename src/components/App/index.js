@@ -244,46 +244,30 @@ const NoteAppFragment = () => {
 					from="transform -translate-x-80"
 					to="transform translate-x-0"
 				>
+
 					<aside ref={asideRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch z-20 cursor-pointer">
 
 						<header
-							className="py-6 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none transition duration-300 ease-in-out z-10"
+							className="px-4 py-6 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none transition duration-300 ease-in-out z-10"
 							style={{ borderColor: !scrollPercent && "transparent" /* , transform: "translateZ(0)" */ }}
 							onMouseEnter={() => setHoveredAccount(true)}
 							onMouseLeave={() => setHoveredAccount(false)}
 							tabIndex={0}
 						>
-							<div className="px-4 flex flex-row items-center">
-								<div className="flex-none">
-									<button className="inline-block text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transform scale-105 transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
-										<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-											{/* <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" /> */}
-											{/* <path fillRule="evenodd" d="M3 7a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /> */}
-											<path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-										</svg>
-									</button>
-								</div>
-								{/* <div style={{ fontSize: "37.5%" }}> */}
-								{/* 	<div className="em-context flex flex-row items-center"> */}
-								{/* 		<svg className="w-16 h-16 text-md-blue-a400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24"> */}
-								{/* 			<path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /> */}
-								{/* 		</svg> */}
-								{/* 		<div className="ml-1 -mt-2"> */}
-								{/* 			<h1 */}
-								{/* 				className="text-6xl leading-none Poppins Poppins-clip-path-top lowercase text-cool-gray-800" */}
-								{/* 				style={{ letterSpacing: "-0.025em" }} */}
-								{/* 			> */}
-								{/* 				Codex */}
-								{/* 			</h1> */}
-								{/* 		</div> */}
-								{/* 	</div> */}
-								{/* </div> */}
+
+							<div className="flex flex-row items-center">
+								<button className="block text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transform scale-105 transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
+									<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+										{/* <path fillRule="evenodd" d="M3 7a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /> */}
+										<path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+									</svg>
+								</button>
 							</div>
 
 							{/* NOTE: Uses mt-5 -mb-1 py-1 (was mt-6)
 							because py-6 on the parent element (<header>)
 							cuts off shadow-hero */}
-							<div className="mt-5 -mb-1 px-4 py-1 flex flex-row items-center truncate">
+							<div className="mt-5 -mb-1 py-1 flex flex-row items-center truncate">
 								<div className="mr-3 relative flex-none">
 									<img className="w-12 h-12 object-cover bg-cool-gray-200 rounded-full shadow-hero" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
 								</div>
@@ -470,7 +454,6 @@ const NoteAppFragment = () => {
 					<div className="px-4 py-6 fixed top-0 left-0 z-10 pointer-events-none">
 						<button className="inline-block text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transform scale-105 transition duration-150 ease-in-out pointer-events-auto" onClick={() => setShowSidebar(!showSidebar)}>
 							<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-								{/* <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" /> */}
 								{/* <path fillRule="evenodd" d="M3 7a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /> */}
 								<path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
 							</svg>
@@ -479,7 +462,7 @@ const NoteAppFragment = () => {
 
 					<TransitionV2
 						on={showSidebar}
-						transition="lg:transition lg:duration-500 lg:ease-in-out"
+						transition="transition duration-500 ease-in-out"
 						from="transform translate-x-0"
 						to="transform translate-x-0 lg:translate-x-40"
 					>
