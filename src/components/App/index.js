@@ -55,7 +55,7 @@ const NoteItem = ({ tabIndex, children }) => {
 				</span>
 				<span
 					// NOTE: Do not use add transition classes because
-					// of width: 0
+					// of {{ width: (!hovered && !focused) && 0 }}
 					className="ml-auto flex flex-row items-center"
 					style={{ width: (!hovered && !focused) && 0, opacity: (!hovered && !focused) && 0 }}
 				>
@@ -114,7 +114,8 @@ const NoteList = ({ className, open: $open, children }) => {
 	return (
 		<nav
 			ref={ref}
-			className={trimSpaces(`overflow-y-hidden ${className}`)}
+			// NOTE: Add overflow-x-hidden because of <NoteItem>
+			className={trimSpaces(`overflow-hidden ${className}`)}
 			style={{ height: !open ? offsetHeight : scrollHeight, transition: "height 300ms cubic-bezier(0.4, 0, 0.2, 1)" }}
 		>
 			<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out" onClick={() => setOpen(!open)}>
@@ -199,9 +200,7 @@ const NoteAppFragment = () => {
 				from="transform -translate-x-80"
 				to="transform translate-x-0"
 			>
-				{/* NOTE: Use overflow-x-hidden because of width:
-				(!hovered && !focused) && 0 in <NoteItem> */}
-				<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-x-hidden overflow-y-scroll scrolling-touch z-10 cursor-pointer">
+				<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch z-10 cursor-pointer">
 
 					<header
 						// NOTE: Uses duration-300 not duration-150
@@ -303,7 +302,7 @@ const NoteAppFragment = () => {
 
 					<div className="mt-6">
 
-						<NoteList className="my-2 mt-0" open>
+						<NoteList open>
 							Notes
 							<NoteItem>
 								JavaScript in 2020
