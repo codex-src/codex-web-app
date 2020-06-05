@@ -254,7 +254,7 @@ const NoteAppFragment = () => {
 						>
 							<div className="px-4 flex flex-row items-center">
 								<div className="flex-none">
-									<button className="inline-block text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
+									<button className="inline-block text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transform scale-105 transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
 										<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
 											{/* <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" /> */}
 											{/* <path fillRule="evenodd" d="M3 7a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /> */}
@@ -460,19 +460,21 @@ const NoteAppFragment = () => {
 				</TransitionV2>
 
 				{/* RHS */}
-				<div className="flex-1">
+				{/* NOTE: Uses overflow-x-hidden because of
+				lg:translate-x-40 */}
+				<div className="flex-1 overflow-x-hidden">
 
 					<div className="px-4 py-6 fixed top-0 left-0 z-10 pointer-events-none">
-						{/* <TransitionV2 */}
-						{/* 	on={showSidebar} */}
-						{/* 	transition="transition duration-500 ease-in-out" */}
-						{/* 	from="transform translate-x-0" */}
-						{/* 	to="transform translate-x-64" */}
-						{/* > */}
+						<TransitionV2
+							on={showSidebar}
+							transition="transition duration-500 ease-in-out"
+							from="opacity-100 transform translate-x-0"
+							to="opacity-0 transform translate-x-64"
+						>
 							{/* NOTE: Uses a <div> to separate transition
 							classes; pointer-events-auto is hoisted */}
 							<div className="pointer-events-auto">
-								<button className="inline-block text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
+								<button className="inline-block text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transform scale-105 transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
 									<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
 										{/* <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" /> */}
 										{/* <path fillRule="evenodd" d="M3 7a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /> */}
@@ -480,7 +482,7 @@ const NoteAppFragment = () => {
 									</svg>
 								</button>
 							</div>
-						{/* </TransitionV2> */}
+						</TransitionV2>
 					</div>
 
 					<TransitionV2
