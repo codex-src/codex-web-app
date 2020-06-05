@@ -198,7 +198,7 @@ const NoteAppFragment = () => {
 				on={showSidebar}
 				transition="transition duration-500 ease-in-out"
 				from="transform -translate-x-80"
-				to="transform -translate-x-80 lg:translate-x-0"
+				to="transform translate-x-0 !-translate-x-80 !lg:translate-x-0"
 			>
 				<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch z-10 cursor-pointer">
 
@@ -228,16 +228,16 @@ const NoteAppFragment = () => {
 								</div>
 							</div>
 							<button className="flex-none group inline-block focus:outline-none" onClick={() => setShowSidebar(!showSidebar)}>
-								<TransitionV2
-									on={showSidebar}
-									transition="transition duration-500 ease-in-out"
-									from="opacity-0"
-									to="opacity-100"
-								>
+								{/* <TransitionV2 */}
+								{/* 	on={showSidebar} */}
+								{/* 	transition="transition duration-500 ease-in-out" */}
+								{/* 	from="opacity-0" */}
+								{/* 	to="opacity-100" */}
+								{/* > */}
 									<svg className="w-5 h-5 text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
 										<path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
 									</svg>
-								</TransitionV2>
+								{/* </TransitionV2> */}
 							</button>
 						</div>
 
@@ -426,33 +426,33 @@ const NoteAppFragment = () => {
 			</TransitionV2>
 
 			{/* RHS */}
-			{/* TODO: Change to CSS so transition can use media
-			queries */}
-			<TransitionV2
-				on={showSidebar}
-				transition="transition duration-500 ease-in-out"
-				from="w-full"
-				to="w-full lg:-w-full-80"
-			>
-				<div className="ml-auto px-6 py-24 relative flex-1" style={{ /* transform: "translateZ(0)", */ willChange: "width", transitionProperty: "width" }}>
-					{/* NOTE: Uses paddingTop: 26 to match LHS;
-					py-6 + (py-1 / 2) */}
-					<div className="px-4 py-6 pt-7 fixed top-0 left-0 pointer-events-none" style={{ paddingTop: 26 }}>
-						<button className="group inline-block focus:outline-none pointer-events-auto" onClick={() => setShowSidebar(!showSidebar)}>
-							<TransitionV2
-								on={showSidebar}
-								transition="transition duration-500 ease-in-out"
-								from="opacity-0 lg:opacity-100 transform translate-x-0"
-								to="opacity-0 transform translate-x-64"
-							>
-								<svg className="w-5 h-5 text-cool-gray-300 hover:text-cool-gray-400 focus:text-cool-gray-400 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-									<path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-								</svg>
-							</TransitionV2>
-						</button>
-					</div>
+			<div className="px-6 py-24 flex-1">
+				{/* NOTE: Uses paddingTop: 26 to match LHS;
+				py-6 + (py-1 / 2) */}
+				<div className="px-4 py-6 pt-7 fixed top-0 left-0 pointer-events-none" style={{ paddingTop: 26 }}>
+					<button className="group inline-block focus:outline-none pointer-events-auto" onClick={() => setShowSidebar(!showSidebar)}>
+						{/* <TransitionV2 */}
+						{/* 	on={showSidebar} */}
+						{/* 	transition="transition duration-500 ease-in-out" */}
+						{/* 	from="opacity-0 lg:opacity-100 transform translate-x-0" */}
+						{/* 	to="opacity-0 transform translate-x-64" */}
+						{/* > */}
+							<svg className="w-5 h-5 text-cool-gray-300 hover:text-cool-gray-400 focus:text-cool-gray-400 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+								<path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+							</svg>
+						{/* </TransitionV2> */}
+					</button>
+				</div>
 
-					<div className="mx-auto w-full max-w-3xl">
+				<TransitionV2
+					on={showSidebar}
+					// NOTE: Use transition-all because of max-w-*
+					transition="transition-all duration-500 ease-in-out"
+					from="transform translate-x-0"
+					to="transform translate-x-0 lg:translate-x-40"
+				>
+					{/* style={{ transition: "max-width 500ms cubic-bezier(0.4, 0, 0.2, 1)" }} */}
+					<div className="mx-auto w-full max-w-full lg:max-w-full-sidebar">
 						<form>
 							<div>
 								<div>
@@ -764,9 +764,9 @@ const NoteAppFragment = () => {
 							</div>
 						</form>
 					</div>
+				</TransitionV2>
 
-				</div>
-			</TransitionV2>
+			</div>
 
 		</React.Fragment>
 	)

@@ -1,15 +1,6 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 
-.-w-full-80 {
-	width: calc(100% - 20rem);
-}
-@screen lg {
-	.lg\:-w-full-80 {
-		width: calc(100% - 20rem) !important;
-	}
-}
-
 .Poppins {
 	font-family: "Poppins";
 }
@@ -32,4 +23,34 @@
 	line-height: 1;
 }
 
-@import "tailwindcss/utilities";
+.max-w-full-sidebar {
+	max-width: calc(100% - 20rem);
+}
+
+@import "tailwindcss/utilities"; /* Takes precedence */
+
+@media (min-width: 560px) {
+	.xs\:max-w-full-sidebar {
+		max-width: calc(100% - 20rem);
+	}
+}
+@media (min-width: 688px) {
+	.sm\:max-w-full-sidebar {
+		max-width: calc(100% - 20rem);
+	}
+}
+@media (min-width: 816px) {
+	.md\:max-w-full-sidebar {
+		max-width: calc(100% - 20rem);
+	}
+}
+@media (min-width: 1072px) {
+	.lg\:max-w-full-sidebar {
+		max-width: calc(100% - 20rem);
+	}
+}
+@media (min-width: 1328px) {
+	.xl\:max-w-full-sidebar {
+		max-width: calc(100% - 20rem);
+	}
+}
