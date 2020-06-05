@@ -1,6 +1,15 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 
+.-w-full-80 {
+	width: calc(100% - 20rem);
+}
+@screen lg {
+	.lg\:-w-full-80 {
+		width: calc(100% - 20rem) !important;
+	}
+}
+
 .Poppins {
 	font-family: "Poppins";
 }
