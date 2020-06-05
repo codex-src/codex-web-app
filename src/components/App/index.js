@@ -133,7 +133,8 @@ const NoteList = ({ className, open: $open, children }) => {
 					<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
 						<SwitchOn on={childrenAsArray[0]}>
 							<SwitchOnCase case="Notes">
-								<path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+								{/* <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" /> */}
+								<path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
 							</SwitchOnCase>
 							<SwitchOnCase case="Archive">
 								<React.Fragment>
@@ -252,7 +253,7 @@ const NoteAppFragment = () => {
 						>
 							<div className="flex flex-row items-center">
 								{/* NOTE: Uses duration-300 not duration-150 */}
-								<button className="inline-flex flex flex-row items-center text-gray-400 hover:text-gray-500 focus:text-gray-500 focus:outline-none transform scale-105 transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
+								<button className="inline-flex flex flex-row items-center text-gray-400 hover:text-gray-500 focus:text-gray-500 focus:outline-none transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
 									<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
 										<path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
 									</svg>
@@ -273,10 +274,10 @@ const NoteAppFragment = () => {
 										<span className="truncate">
 											Russ Perry
 										</span>
-										<E className="ml-2">👾</E>
-										<button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90 transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
-											Upgrad<span className="tracking-normal">e</span>
-										</button>
+										{/* <E className="ml-2">👾</E> */}
+										{/* <button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90 transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}> */}
+										{/* 	Upgrad<span className="tracking-normal">e</span> */}
+										{/* </button> */}
 									</h2>
 									<p className="font-medium text-sm leading-6 truncate text-cool-gray-400 transition duration-150 ease-in-out">
 										<span className="truncate">
@@ -372,36 +373,53 @@ const NoteAppFragment = () => {
 								<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 									<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 										<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+											{/* <path fillRule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clipRule="evenodd" /> */}
 											<path fillRule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
 										</svg>
 										<span className="truncate">
-											Changelog (Updated June 3, 2020)
+											Changelog
+											{/* (Updated June 3, 2020) */}
 										</span>
 									</p>
 								</button>
 								<span className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out" tabIndex={0}>
 									<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-										<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out"viewBox="0 0 20 20" fill="currentColor">
-											<path fillRule="evenodd" d="M13.5516 17.3702C13.5516 17.3702 13.2265 17.4601 12.9582 17.1855L12.9344 17.1592L6.67553 11.4759L4.00544 13.5006C3.59512 13.8399 3.31736 13.5416 3.31736 13.5416L2.14796 12.478C1.88914 12.1339 2.14796 11.9414 2.14796 11.9414L4.66648 9.65164L2.14795 7.36472C2.14795 7.36472 1.7692 7.0917 2.2237 6.72715L3.28262 5.78027C3.28262 5.78027 3.58562 5.46149 3.90598 5.73924L6.67778 7.8378L12.8225 2.24523C12.8752 2.21313 12.925 2.18853 12.9719 2.17045C12.8819 2.20244 12.8225 2.24522 12.8225 2.24522C12.8225 2.24522 13.2691 1.7481 13.9509 2.16947L17.0708 3.67344C17.0708 3.67344 17.5474 3.83441 17.5474 4.29996V14.8925C17.5474 14.8925 17.6121 15.2823 17.1513 15.5963L13.5516 17.3702ZM13.6778 16.6205V6.16616L9.09344 9.66672L13.6777 13.1375V16.6319C13.6778 16.6281 13.6778 16.6243 13.6778 16.6205Z" clipRule="evenodd" />
+										<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+											{/* <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" /> */}
+											{/* <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /> */}
+											<path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
 										</svg>
 										<span className="truncate">
-											VSCode Extension
+											Upgrade to Pro
 										</span>
 										<button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90 transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
-											Downloa<span className="tracking-normal">d</span>
+											Upgrad<span className="tracking-normal">e</span>
 										</button>
 									</p>
 								</span>
-								<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
-									<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
-										<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-											<path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clipRule="evenodd" />
-										</svg>
-										<span className="truncate">
-											Support
-										</span>
-									</p>
-								</button>
+								{/* <span className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out" tabIndex={0}> */}
+								{/* 	<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out"> */}
+								{/* 		<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" viewBox="0 0 20 20" fill="currentColor"> */}
+								{/* 			<path fillRule="evenodd" d="M13.5516 17.3702C13.5516 17.3702 13.2265 17.4601 12.9582 17.1855L12.9344 17.1592L6.67553 11.4759L4.00544 13.5006C3.59512 13.8399 3.31736 13.5416 3.31736 13.5416L2.14796 12.478C1.88914 12.1339 2.14796 11.9414 2.14796 11.9414L4.66648 9.65164L2.14795 7.36472C2.14795 7.36472 1.7692 7.0917 2.2237 6.72715L3.28262 5.78027C3.28262 5.78027 3.58562 5.46149 3.90598 5.73924L6.67778 7.8378L12.8225 2.24523C12.8752 2.21313 12.925 2.18853 12.9719 2.17045C12.8819 2.20244 12.8225 2.24522 12.8225 2.24522C12.8225 2.24522 13.2691 1.7481 13.9509 2.16947L17.0708 3.67344C17.0708 3.67344 17.5474 3.83441 17.5474 4.29996V14.8925C17.5474 14.8925 17.6121 15.2823 17.1513 15.5963L13.5516 17.3702ZM13.6778 16.6205V6.16616L9.09344 9.66672L13.6777 13.1375V16.6319C13.6778 16.6281 13.6778 16.6243 13.6778 16.6205Z" clipRule="evenodd" /> */}
+								{/* 		</svg> */}
+								{/* 		<span className="truncate"> */}
+								{/* 			VSCode Extension */}
+								{/* 		</span> */}
+								{/* 		<button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90 transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}> */}
+								{/* 			Downloa<span className="tracking-normal">d</span> */}
+								{/* 		</button> */}
+								{/* 	</p> */}
+								{/* </span> */}
+								{/* <button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"> */}
+								{/* 	<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out"> */}
+								{/* 		<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20"> */}
+								{/* 			<path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clipRule="evenodd" /> */}
+								{/* 		</svg> */}
+								{/* 		<span className="truncate"> */}
+								{/* 			Support */}
+								{/* 		</span> */}
+								{/* 	</p> */}
+								{/* </button> */}
 								<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 									<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 										<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" style={{ transform: "scale(0.8125)" }} fill="currentColor" viewBox="0 0 16 16">
@@ -443,7 +461,7 @@ const NoteAppFragment = () => {
 				<div className="flex-1 overflow-x-hidden">
 
 					<div className="px-4 py-6 fixed top-0 left-0 z-10 pointer-events-none">
-						<button className="inline-flex flex-row items-center text-gray-400 hover:text-gray-500 focus:text-gray-500 focus:outline-none transform scale-105 transition duration-150 ease-in-out pointer-events-auto" onClick={() => setShowSidebar(!showSidebar)}>
+						<button className="inline-flex flex-row items-center text-gray-400 hover:text-gray-500 focus:text-gray-500 focus:outline-none transition duration-150 ease-in-out pointer-events-auto" onClick={() => setShowSidebar(!showSidebar)}>
 							<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
 								<path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
 							</svg>
