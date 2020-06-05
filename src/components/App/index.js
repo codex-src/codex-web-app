@@ -243,44 +243,42 @@ const NoteAppFragment = () => {
 
 						<header
 							className="py-6 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none transition duration-300 ease-in-out z-10"
-							style={{ borderColor: !scrollPercent && "transparent" }}
+							style={{ borderColor: !scrollPercent && "transparent" /* , transform: "translateZ(0)" */ }}
 							onMouseEnter={() => setHoveredAccount(true)}
 							onMouseLeave={() => setHoveredAccount(false)}
 							tabIndex={0}
 						>
-
-							<div className="px-4 flex flex-row justify-between items-center">
-								<div style={{ fontSize: "37.5%" }}>
-									<div className="em-context flex flex-row items-center">
-										<svg className="w-16 h-16 text-md-blue-a400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24">
-											<path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+							<div className="px-4 flex flex-row items-center">
+								<div className="flex-none">
+									<button className="inline-block text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
+										<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+											{/* <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" /> */}
+											{/* <path fillRule="evenodd" d="M3 7a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /> */}
+											<path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
 										</svg>
-										<div className="ml-1 -mt-2">
-											<h1
-												className="text-6xl leading-none Poppins Poppins-clip-path-top lowercase text-cool-gray-800"
-												style={{ letterSpacing: "-0.025em" }}
-											>
-												Codex
-											</h1>
-										</div>
-									</div>
+									</button>
 								</div>
-								<button className="flex-none group inline-block focus:outline-none" onClick={() => setShowSidebar(!showSidebar)}>
-									<svg className="w-5 h-5 text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-										<path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
-									</svg>
-								</button>
+								{/* <div style={{ fontSize: "37.5%" }}> */}
+								{/* 	<div className="em-context flex flex-row items-center"> */}
+								{/* 		<svg className="w-16 h-16 text-md-blue-a400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" stroke="currentColor" viewBox="0 0 24 24"> */}
+								{/* 			<path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /> */}
+								{/* 		</svg> */}
+								{/* 		<div className="ml-1 -mt-2"> */}
+								{/* 			<h1 */}
+								{/* 				className="text-6xl leading-none Poppins Poppins-clip-path-top lowercase text-cool-gray-800" */}
+								{/* 				style={{ letterSpacing: "-0.025em" }} */}
+								{/* 			> */}
+								{/* 				Codex */}
+								{/* 			</h1> */}
+								{/* 		</div> */}
+								{/* 	</div> */}
+								{/* </div> */}
 							</div>
 
 							{/* NOTE: Uses mt-5 -mb-1 py-1 -- was mt-6 */}
 							<div className="mt-5 -mb-1 px-4 py-1 flex flex-row items-center truncate">
 								<div className="mr-3 relative flex-none">
 									<img className="w-12 h-12 object-cover bg-cool-gray-200 rounded-full shadow-hero" src="https://pbs.twimg.com/profile_images/1217476210910994434/J1XO8K2n_400x400.jpg" alt="" />
-									{/* <div className="absolute bottom-0 right-0"> */}
-									{/* 	<div className="p-0.5 bg-tw-blue rounded-full shadow-hero"> */}
-									{/* 		<SVG.TwitterLogo className="w-3 h-3 text-white transform scale-90" /> */}
-									{/* 	</div> */}
-									{/* </div> */}
 								</div>
 								<div className="truncate">
 									<h2 className="flex flex-row items-center font-medium text-sm leading-6 text-cool-gray-600 group-hover:text-cool-gray-700 transition duration-150 ease-in-out">
@@ -459,25 +457,25 @@ const NoteAppFragment = () => {
 				{/* RHS */}
 				<div className="flex-1">
 
-					{/* NOTE: Uses paddingTop: "1.625rem" to match
-					LHS; py-6 + py-0.5 */}
-					<div className="px-4 py-6 pt-7 fixed top-0 left-0 z-10 pointer-events-none" style={{ paddingTop: "1.625rem" }}>
-						<TransitionV2
-							on={showSidebar}
-							transition="transition duration-500 ease-in-out"
-							from="transform translate-x-0"
-							to="transform translate-x-64"
-						>
+					<div className="px-4 py-6 fixed top-0 left-0 z-10 pointer-events-none">
+						{/* <TransitionV2 */}
+						{/* 	on={showSidebar} */}
+						{/* 	transition="transition duration-500 ease-in-out" */}
+						{/* 	from="transform translate-x-0" */}
+						{/* 	to="transform translate-x-64" */}
+						{/* > */}
 							{/* NOTE: Uses a <div> to separate transition
-							classes */}
-							<div className="-ml-2 -mt-2">
-								<button className="p-2 group inline-block bg-white hover:bg-cool-gray-100 focus:bg-cool-gray-100 rounded-full focus:outline-none transform scale-110 transition duration-300 ease-in-out pointer-events-auto" onClick={() => setShowSidebar(!showSidebar)}>
-									<svg className="w-5 h-5 text-cool-gray-800" fill="currentColor" viewBox="0 0 20 20">
+							classes; pointer-events-auto is hoisted */}
+							<div className="pointer-events-auto">
+								<button className="inline-block text-gray-500 hover:text-gray-800 focus:text-gray-800 focus:outline-none transition duration-150 ease-in-out" onClick={() => setShowSidebar(!showSidebar)}>
+									<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+										{/* <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" /> */}
+										{/* <path fillRule="evenodd" d="M3 7a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 13a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" /> */}
 										<path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
 									</svg>
 								</button>
 							</div>
-						</TransitionV2>
+						{/* </TransitionV2> */}
 					</div>
 
 					<TransitionV2
