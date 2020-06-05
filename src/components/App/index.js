@@ -218,7 +218,10 @@ const NoteAppFragment = () => {
 										<path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
 									</svg>
 									<div className="ml-1 -mt-2">
-										<h1 className="text-6xl leading-none Poppins Poppins-clip-path-top lowercase" style={{ letterSpacing: "-0.025em" }}>
+										<h1
+											className="text-6xl leading-none Poppins Poppins-clip-path-top lowercase text-cool-gray-800"
+											style={{ letterSpacing: "-0.025em" }}
+										>
 											Codex
 										</h1>
 									</div>
