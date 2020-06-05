@@ -197,7 +197,7 @@ const NoteAppFragment = () => {
 			<TransitionV2
 				on={showSidebar}
 				transition="transition duration-500 ease-in-out"
-				from="transform -translate-x-80"
+				from="transform -translate-x-64"
 				to="transform translate-x-0"
 			>
 				<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch z-10 cursor-pointer">
@@ -225,10 +225,16 @@ const NoteAppFragment = () => {
 								</div>
 							</div>
 							<button className="mr-2 flex-none group inline-block focus:outline-none" onClick={() => setShowSidebar(!showSidebar)}>
-								<svg className="w-5 h-5 text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
-									{/* <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" /> */}
-									<path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
-								</svg>
+								<TransitionV2
+									on={showSidebar}
+									transition="transition duration-500 ease-in-out"
+									from="transform rotate-180"
+									to="transform rotate-0"
+								>
+									<svg className="w-5 h-5 text-transparent group-hover:text-cool-gray-400 group-focus:text-cool-gray-400 hover:text-cool-gray-500 focus:text-cool-gray-500 focus:outline-none transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20">
+										<path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+									</svg>
+								</TransitionV2>
 							</button>
 						</div>
 
@@ -246,8 +252,8 @@ const NoteAppFragment = () => {
 								<h2 className="flex flex-row items-center font-medium text-sm leading-6 text-cool-gray-600 group-hover:text-cool-gray-700 transition duration-150 ease-in-out">
 									<span className="truncate">
 										Russ Perry
-									</span>{" "}
-									<E className="ml-2">👾</E>{" "}
+									</span>
+									<E className="ml-2">👾</E>
 									<button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90 transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
 										Upgrad<span className="tracking-normal">e</span>
 									</button>
@@ -365,7 +371,7 @@ const NoteAppFragment = () => {
 									</svg>
 									<span className="truncate">
 										VSCode Extension
-									</span>{" "}
+									</span>
 									<button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90 transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
 										Downloa<span className="tracking-normal">d</span>
 									</button>
@@ -381,16 +387,6 @@ const NoteAppFragment = () => {
 									</span>
 								</p>
 							</button>
-							{/* <button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out"> */}
-							{/* 	<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out"> */}
-							{/* 		<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" fill="currentColor" viewBox="0 0 20 20"> */}
-							{/* 			<path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" /> */}
-							{/* 		</svg> */}
-							{/* 		<span className="truncate"> */}
-							{/* 			Feedback */}
-							{/* 		</span> */}
-							{/* 	</p> */}
-							{/* </button> */}
 							<button className="px-4 py-1.5 group inline-block w-full hover:bg-cool-gray-200 focus:bg-cool-gray-200 focus:outline-none transition duration-150 ease-in-out">
 								<p className="flex flex-row items-center font-medium text-sm leading-5 text-cool-gray-500 group-hover:text-cool-gray-600 group-focus:text-cool-gray-600 transition duration-150 ease-in-out">
 									<svg className="mr-2 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transition duration-150 ease-in-out" style={{ transform: "scale(0.8125)" }} fill="currentColor" viewBox="0 0 16 16">
@@ -398,7 +394,7 @@ const NoteAppFragment = () => {
 									</svg>
 									<span className="truncate">
 										Open Source
-									</span>{" "}
+									</span>
 									<svg className="ml-1 flex-none w-5 h-5 text-cool-gray-400 group-hover:text-cool-gray-500 group-focus:text-cool-gray-500 transform scale-90 transition duration-150 ease-in-out" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" stroke="currentColor" viewBox="0 0 24 24">
 										<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
 									</svg>

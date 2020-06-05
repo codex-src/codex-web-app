@@ -16,7 +16,7 @@ const TransitionV2 = ({
 	const mounted = React.useRef()
 	React.useLayoutEffect(() => {
 		const actualRef = children.ref || ref
-		if (!mounted.current && transitionClasses.length) {
+		if (!mounted.current && transitionClasses.length && transitionClasses[0]) { // Guards "".split(/\s+/) -> [""]
 			actualRef.current.classList.add(...transitionClasses)
 		}
 		if (!on) {
