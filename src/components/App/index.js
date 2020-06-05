@@ -175,12 +175,12 @@ const NoteAppFragment = () => {
 	const [showSidebar, setShowSidebar] = React.useState(true)
 	const [hoveredAccount, setHoveredAccount] = React.useState(false)
 
-	const scollingElementRef = React.useRef()
+	const asideRef = React.useRef()
 	const [scrollPercent, setScrollPercent] = React.useState(0)
 
 	React.useEffect(() => {
 		// react-hooks/exhaustive-deps
-		const scollingElement = scollingElementRef.current
+		const scollingElement = asideRef.current
 		const handler = () => {
 			setScrollPercent(scollingElement.scrollTop / (scollingElement.scrollHeight - scollingElement.offsetHeight))
 		}
@@ -215,11 +215,13 @@ const NoteAppFragment = () => {
 
 			{/* LHS */}
 			<div className="relative">
+
+				{/* Responive sidebar overlay */}
 				<TransitionV2
 					on={showSidebar}
 					transition="transition duration-500 ease-in-out"
-					from="bg-transparent opacity-100"
-					to="bg-black lg:bg-transparent opacity-50 lg:opacity-100"
+					from="bg-transparent opacity-100 pointer-events-none"
+					to="bg-black lg:bg-transparent opacity-50 lg:opacity-100 pointer-events-auto lg:pointer-events-none"
 				>
 					<div
 						className="absolute inset-0 z-10"
@@ -233,13 +235,15 @@ const NoteAppFragment = () => {
 						}}
 					/>
 				</TransitionV2>
+
+				{/* Sidebar */}
 				<TransitionV2
 					on={showSidebar}
 					transition="transition duration-500 ease-in-out"
 					from="transform -translate-x-80"
 					to="transform translate-x-0"
 				>
-					<div ref={scollingElementRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch z-20 cursor-pointer">
+					<aside ref={asideRef} className="pb-6 fixed left-0 inset-y-0 flex-none w-80 bg-cool-gray-100 overflow-y-scroll scrolling-touch z-20 cursor-pointer">
 
 						<header
 							className="py-6 sticky top-0 inset-x-0 group bg-cool-gray-100 hover:bg-cool-gray-200 focus:bg-cool-gray-200 border-b-2 border-cool-gray-200 focus:outline-none transition duration-300 ease-in-out z-10"
@@ -451,7 +455,8 @@ const NoteAppFragment = () => {
 
 						</div>
 
-					</div>
+					</aside>
+
 				</TransitionV2>
 
 				{/* RHS */}
