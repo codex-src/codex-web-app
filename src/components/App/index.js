@@ -275,11 +275,11 @@ const NoteAppFragment = () => {
 											Russ Perry
 										</span>
 										{/* <E className="ml-2">👾</E> */}
-										{/* <button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90 transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}> */}
-										{/* 	Upgrad<span className="tracking-normal">e</span> */}
-										{/* </button> */}
+										<button className="ml-2 px-2.5 py-1 inline-block font-extrabold tracking-wider leading-none uppercase text-cool-gray-100 bg-cool-gray-800 rounded-full focus:outline-none focus:shadow-outline origin-left transform scale-90 transition duration-150 ease-in-out" style={{ fontSize: "0.625rem" }}>
+											Free tie<span className="tracking-normal">r</span>
+										</button>
 									</h2>
-									<p className="font-medium text-sm leading-6 truncate text-cool-gray-400">
+									<p className="font-medium text-sm leading-6 truncate text-blue-500">
 										<span className="truncate">
 											Connected via Google
 										</span>
