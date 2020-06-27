@@ -1,4 +1,4 @@
-// import HomePage from "pages/HomePage"
+import HomePage from "pages/HomePage"
 // import Transition from "lib/Transition"
 import * as routes from "routes"
 import asArray from "lib/asArray"
@@ -514,8 +514,8 @@ const App = () => (
 				<SignUpPage />
 			</Route>
 			<Route path={routes.HOME}>
-				{/* <HomePage /> */}
-				<NoteAppFragment />
+				<HomePage />
+				{/* <NoteAppFragment /> */}
 			</Route>
 
 			{/* <Route */}
